@@ -8979,15 +8979,15 @@ pub const RP1_ETHERNET_BCM54213PE_AUTONEG_CONVERGENCE_SOURCE_EVIDENCE: &[&str] =
 ];
 
 pub const RP1_ETHERNET_BCM54213PE_RGMII_DELAY_PROOF_CORE_TASK_ID: &str =
-    "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-proof-core-20260616";
+    "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-proof-core-20260616";
 pub const RP1_ETHERNET_BCM54213PE_RGMII_DELAY_PI5_PROOF_TASK_ID: &str =
-    "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof-20260616";
+    "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-pi5-proof-20260616";
 pub const RP1_ETHERNET_BCM54213PE_RGMII_DELAY_PROOF_CONTRACT_ID: &str =
-    "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-proof-contract-v1";
+    "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-proof-contract-v1";
 pub const RP1_ETHERNET_BCM54213PE_RGMII_DELAY_SOURCE_TASK_ID: &str =
-    "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-source-contract-20260616";
+    "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-source-correction-20260616";
 pub const RP1_ETHERNET_BCM54213PE_RGMII_DELAY_SOURCE_COMMIT: &str =
-    "817712f6837a7e3ca659cea1833875c22e04f588";
+    "0b947e8e9bc2025b2072490266479b490f34327e";
 pub const RP1_ETHERNET_BCM54213PE_RGMII_DELAY_CANDIDATE_BOOT_SCENARIO: &str =
     "rpi5_rp1_ethernet_bcm54213pe_rgmii_delay_candidate";
 pub const RP1_ETHERNET_BCM54213PE_RGMII_DELAY_CONTROL_BOOT_SCENARIO: &str =
@@ -8997,13 +8997,13 @@ pub const RP1_ETHERNET_BCM54213PE_RGMII_DELAY_BOOT_SCENARIOS: &[&str] = &[
     RP1_ETHERNET_BCM54213PE_RGMII_DELAY_CONTROL_BOOT_SCENARIO,
 ];
 pub const RP1_ETHERNET_BCM54213PE_RGMII_DELAY_SELECTED_DISCRIMINATOR: &str =
-    "bcm54213pe-phy1-rgmii-id-rx-tx-delay-write-readback";
+    "bcm54213pe-phy1-rgmii-id-rx-then-tx-delay-stage-accounting";
 pub const RP1_ETHERNET_BCM54213PE_RGMII_DELAY_CANDIDATE_CLASSIFICATION: &str =
-    "bcm54213pe-rgmii-delay-proof-core-candidate-local-static";
+    "bcm54213pe-rgmii-delay-tx-order-proof-core-candidate-local-static";
 pub const RP1_ETHERNET_BCM54213PE_RGMII_DELAY_CONTROL_CLASSIFICATION: &str =
-    "no-mdio-no-ethernet-bcm54213pe-rgmii-delay-control";
+    "no-mdio-no-ethernet-bcm54213pe-rgmii-delay-tx-order-control";
 pub const RP1_ETHERNET_BCM54213PE_RGMII_DELAY_BOUNDARY_CLASSIFICATION: &str =
-    "bcm54213pe-rgmii-delay-proof-core-local-static";
+    "bcm54213pe-rgmii-delay-tx-order-proof-core-local-static";
 pub const RP1_ETHERNET_BCM54213PE_RGMII_DELAY_PHY_ADDRESS: u32 = 1;
 pub const RP1_ETHERNET_BCM54213PE_RGMII_DELAY_RX_REGISTER: u32 = 0x18;
 pub const RP1_ETHERNET_BCM54213PE_RGMII_DELAY_TX_REGISTER: u32 = 0x1c;
@@ -9037,29 +9037,37 @@ pub const RP1_ETHERNET_BCM54213PE_RGMII_DELAY_SELECTED_WRITE_SURFACES: &[&str] =
     "RX selector write MII_BCM54XX_AUX_CTL 0x18 value 0x7007",
     "RX RMW write MII_BCM54XX_AUX_CTL 0x18 with WREN 0x8000, RGMII_SKEW_EN 0x0100, shadow 0x0007, preserving pre-read bits",
     "TX selector write MII_BCM54XX_SHD 0x1c value 0x0c00",
-    "TX RMW write MII_BCM54XX_SHD 0x1c with SHD_WRITE 0x8000, SHD_VAL(0x03) 0x0c00, GTXCLK_EN 0x0200, preserving SHD_DATA bits",
+    "TX RMW write MII_BCM54XX_SHD 0x1c with SHD_WRITE 0x8000, SHD_VAL(0x03) 0x0c00, GTXCLK_EN 0x0200, preserving SHD_DATA bits only when the selected TX read lacks GTXCLK_EN",
     "one accepted PHY1 BMCR autoneg restart write frame 0x50821200 only after RX and TX readbacks match",
 ];
 pub const RP1_ETHERNET_BCM54213PE_RGMII_DELAY_OPERATION_ORDER: &[&str] = &[
     "candidate/control emits contract marker and capture nonce",
-    "candidate performs RX delay read-modify-write/readback on PHY1 MII_BCM54XX_AUX_CTL 0x18 shadow 0x07",
-    "candidate performs TX delay read-modify-write/readback on PHY1 MII_BCM54XX_SHD 0x1c shadow 0x03",
-    "candidate stops before BMCR restart if either delay readback mismatches",
-    "candidate performs exactly one accepted BMCR autoneg restart write frame 0x50821200 only after RX and TX readbacks match",
+    "candidate checks accepted MACB NCR.MPE precondition before MDIO writes",
+    "candidate performs RX selector write, RX selected read, RX RMW write, and RX selected readback on PHY1 MII_BCM54XX_AUX_CTL 0x18 shadow 0x07",
+    "candidate records rx-selected-read-completed, rx-delay-write-completed, and rx-readback-completed before any TX selector access",
+    "candidate performs TX selector write and selected TX read only after RX readback satisfies RGMII_SKEW_EN 0x0100",
+    "candidate skips a redundant TX RMW write when the selected TX read already has GTXCLK_EN 0x0200 after SHD_DATA mask 0x03ff",
+    "candidate otherwise performs TX RMW write/readback on PHY1 MII_BCM54XX_SHD 0x1c shadow 0x03",
+    "candidate records tx-selected-read-completed, tx-delay-write-completed or tx-delay-write-skipped-already-enabled, and tx-readback-completed before BMCR restart",
+    "candidate stops before BMCR restart if any RX or TX stage blocks or readback mismatches",
+    "candidate performs exactly one accepted BMCR autoneg restart write frame 0x50821200 only after RX and TX delay criteria are satisfied",
     "candidate runs the accepted bounded eight-sample convergence poll",
     "control emits the same report/rejection shape without MDIO, MAN, MACB, GPIO32, PHY, interrupt, packet, networking, or SSH target construction",
     "local/static core does not accept hardware success, link readiness, packet I/O, networking, SSH, Phase 12.2, or a phase transition",
 ];
 pub const RP1_ETHERNET_BCM54213PE_RGMII_DELAY_ALLOWED_HARDWARE_CLASSIFICATIONS: &[&str] = &[
-    "rgmii-delay-link-ready-frontier",
-    "rgmii-delay-timeout-link-not-ready",
-    "rgmii-delay-readback-mismatch",
-    "rgmii-delay-precondition-blocker",
-    "rgmii-delay-capture-blocker",
+    "rgmii-delay-tx-order-link-ready-frontier",
+    "rgmii-delay-tx-order-timeout-link-not-ready",
+    "rgmii-delay-tx-order-rx-stage-blocker",
+    "rgmii-delay-tx-order-tx-selected-read-visible",
+    "rgmii-delay-tx-order-tx-stage-blocker",
+    "rgmii-delay-tx-order-readback-mismatch",
+    "rgmii-delay-tx-order-precondition-blocker",
+    "rgmii-delay-tx-order-capture-blocker",
     RP1_ETHERNET_BCM54213PE_RGMII_DELAY_CONTROL_CLASSIFICATION,
 ];
 pub const RP1_ETHERNET_BCM54213PE_RGMII_DELAY_REJECTED_CLAIMS: &[&str] = &[
-    "target drift beyond PHY1 RGMII RX/TX delay write/readback, accepted BMCR restart, bounded convergence poll, and passive MACB_NSR_LINK context",
+    "target drift beyond PHY1 RGMII RX then TX delay stage-accounting, accepted BMCR restart, bounded convergence poll, and passive MACB_NSR_LINK context",
     "MII_CTRL1000 master-mode writes",
     "PHY register writes other than the contracted RX/TX delay writes and accepted BMCR restart",
     "Broadcom APD, EEE, LED, WOL, suspend/resume, or uncontracted selector/config access",
@@ -9075,11 +9083,14 @@ pub const RP1_ETHERNET_BCM54213PE_RGMII_DELAY_REJECTED_CLAIMS: &[&str] = &[
     "phase transition",
 ];
 pub const RP1_ETHERNET_BCM54213PE_RGMII_DELAY_RETAINED_RISKS: &[&str] = &[
-    "RGMII delay write/readback plus register convergence can classify PHY/MAC register state but cannot prove packet transport",
+    "RGMII delay TX-order stage accounting plus register convergence can classify PHY/MAC register state but cannot prove packet transport",
     "The later Pi 5 proof must serialize under hardwareTestLock and retain selected-tree, TFTP, serial freshness, final identity, and restore evidence",
     "GPIO32/ETH_RST_N reset ownership, interrupts, DMA, packet I/O, networking, sockets, SSH, and Phase 12.2 remain unaccepted",
 ];
 pub const RP1_ETHERNET_BCM54213PE_RGMII_DELAY_SOURCE_EVIDENCE: &[&str] = &[
+    "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-source-correction.md",
+    "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-source-correction/classification.json",
+    "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-source-correction/evidence-map.json",
     "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-source-contract.md",
     "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-source-contract/classification.json",
     "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-source-contract/evidence-map.json",
@@ -17511,7 +17522,7 @@ mod tests {
         );
         assert_eq!(
             evidence.source_commit,
-            "817712f6837a7e3ca659cea1833875c22e04f588"
+            "0b947e8e9bc2025b2072490266479b490f34327e"
         );
         assert_eq!(
             evidence.candidate_boot_scenario,
@@ -17523,7 +17534,7 @@ mod tests {
         );
         assert_eq!(
             evidence.selected_discriminator,
-            "bcm54213pe-phy1-rgmii-id-rx-tx-delay-write-readback"
+            "bcm54213pe-phy1-rgmii-id-rx-then-tx-delay-stage-accounting"
         );
         assert_eq!(evidence.phy_address, 1);
         assert_eq!(evidence.rx_register, 0x18);
@@ -17572,12 +17583,15 @@ mod tests {
         assert_eq!(
             evidence.allowed_hardware_classifications,
             &[
-                "rgmii-delay-link-ready-frontier",
-                "rgmii-delay-timeout-link-not-ready",
-                "rgmii-delay-readback-mismatch",
-                "rgmii-delay-precondition-blocker",
-                "rgmii-delay-capture-blocker",
-                "no-mdio-no-ethernet-bcm54213pe-rgmii-delay-control",
+                "rgmii-delay-tx-order-link-ready-frontier",
+                "rgmii-delay-tx-order-timeout-link-not-ready",
+                "rgmii-delay-tx-order-rx-stage-blocker",
+                "rgmii-delay-tx-order-tx-selected-read-visible",
+                "rgmii-delay-tx-order-tx-stage-blocker",
+                "rgmii-delay-tx-order-readback-mismatch",
+                "rgmii-delay-tx-order-precondition-blocker",
+                "rgmii-delay-tx-order-capture-blocker",
+                "no-mdio-no-ethernet-bcm54213pe-rgmii-delay-tx-order-control",
             ]
         );
         assert_eq!(

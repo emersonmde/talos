@@ -1,0 +1,59 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-proof-core-20260616",
+  "classification": "bcm54213pe-rgmii-delay-tx-order-proof-core-local-static",
+  "implementation": {
+    "source_files": [
+      "src/target/rpi5.rs",
+      "src/rp1_ethernet.rs"
+    ],
+    "scripts": [
+      "scripts/rpi5-rp1-ethernet-bcm54213pe-rgmii-delay-candidate-review.sh",
+      "scripts/rpi5-rp1-ethernet-bcm54213pe-rgmii-delay-control-review.sh"
+    ],
+    "docs": [
+      "docs/src/roadmap.md",
+      "docs/src/project/phase12-networking-ssh.md",
+      "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-proof-core.md"
+    ]
+  },
+  "validation": [
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet rp1_ethernet_bcm54213pe_rgmii_delay",
+      "result": "passed"
+    },
+    {
+      "level": "fmt/lint/typecheck",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet",
+      "result": "passed",
+      "count": 529
+    },
+    {
+      "level": "compile-only image inspection",
+      "command": "TALOS_CAPTURE_NONCE=tx-order-core-candidate-20260616 ./scripts/rpi5-rp1-ethernet-bcm54213pe-rgmii-delay-candidate-image.sh",
+      "result": "passed",
+      "sha256": "322b6ee02f2160ee04f2b2c70f40bd32367272ad69afbfa97978915b606394ae",
+      "size_bytes": 55016
+    },
+    {
+      "level": "compile-only image inspection",
+      "command": "TALOS_CAPTURE_NONCE=tx-order-core-control-20260616 ./scripts/rpi5-rp1-ethernet-bcm54213pe-rgmii-delay-control-image.sh",
+      "result": "passed",
+      "sha256": "9f6b90c2da9ac8e4147c2db0bd18d2ee7d808539c10a4a2ab6ddd4602b3aa08a",
+      "size_bytes": 50632
+    },
+    {
+      "level": "static image/string/marker inspection",
+      "command": "strings/grep required TX-order candidate/control markers and forbidden packet/networking/SSH claims",
+      "result": "passed",
+      "candidate_review": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-proof-core/image-review/candidate-review.txt",
+      "control_review": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-proof-core/image-review/control-review.txt"
+    }
+  ],
+  "next_action": "Promote phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-pi5-proof-20260616 after commit if dependencies remain satisfied and hardwareTestLock is unlocked/restored."
+}

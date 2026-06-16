@@ -2307,3 +2307,14 @@ selected-read failure after RX. The selected next boundary is a local/static
 proof core that fixes stage accounting, preserves Linux RX-then-TX order, names
 the exact Clause 22 frames and readback masks, and rejects packet/networking/SSH
 claims before any Pi 5 proof can be promoted.
+
+phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-proof-core-20260616
+accepts bcm54213pe-rgmii-delay-tx-order-proof-core-local-static. The corrected
+candidate/control proof core removes the source-control-flow blocker by recording
+separate RX selected-read, RX delay write, RX readback, TX selector write,
+TX selected-read, optional TX delay write/readback, BMCR restart, and convergence
+poll stages. It preserves the accepted Linux-backed RX-then-TX order and records
+an explicit skip policy when the selected TX read already has GTXCLK_EN set. The
+next boundary is the serialized Pi 5 proof task; local/static evidence still
+rejects hardware success, link readiness, packet I/O, networking, sockets, SSH,
+Phase 12.2, and phase transition.

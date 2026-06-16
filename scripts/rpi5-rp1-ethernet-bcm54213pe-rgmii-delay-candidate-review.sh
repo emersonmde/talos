@@ -35,22 +35,31 @@ for required in \
     "rpi5-rp1-ethernet-bcm54213pe-rgmii-delay-candidate: start" \
     "before-rgmii-id-rx-tx-delay-write-readback" \
     "TALOS: rp1-ethernet-bcm54213pe-rgmii-delay-candidate" \
-    "bcm54213pe-rgmii-delay-proof-contract-id=phase12-rp1-ethernet-bcm54213pe-rgmii-delay-proof-contract-v1" \
-    "task-id=phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof-20260616" \
-    "proof-core-task-id=phase12-rp1-ethernet-bcm54213pe-rgmii-delay-proof-core-20260616" \
-    "source-contract-task-id=phase12-rp1-ethernet-bcm54213pe-rgmii-delay-source-contract-20260616" \
-    "source-contract-commit=817712f6837a7e3ca659cea1833875c22e04f588" \
-    "selected-discriminator=bcm54213pe-phy1-rgmii-id-rx-tx-delay-write-readback" \
+    "bcm54213pe-rgmii-delay-proof-contract-id=phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-proof-contract-v1" \
+    "task-id=phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-pi5-proof-20260616" \
+    "proof-core-task-id=phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-proof-core-20260616" \
+    "source-correction-task-id=phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-source-correction-20260616" \
+    "source-correction-commit=0b947e8e9bc2025b2072490266479b490f34327e" \
+    "selected-discriminator=bcm54213pe-phy1-rgmii-id-rx-then-tx-delay-stage-accounting" \
     "report-kind=" \
     "candidate" \
-    "hardware-proof-boundary-classification=bcm54213pe-rgmii-delay-proof-core-local-static" \
+    "hardware-proof-boundary-classification=bcm54213pe-rgmii-delay-tx-order-proof-core-local-static" \
     "target=phy1-rgmii-id-rx-tx-delay-write-readback" \
     "phy-model=Broadcom-BCM54213PE" \
     "phy-handle=phy1 phy-node=ethernet-phy@1 phy-address=1" \
     "rx-selector-write-value=0x7007 rx-read-frame=0x60e20000 rx-write-frame-prefix=0x50e20000" \
     "rx-readback-rgmii-skew-en=" \
+    "rx-selector-write-completed=" \
+    "rx-selected-read-completed=" \
+    "rx-delay-write-completed=" \
+    "rx-readback-completed=" \
     "tx-selector-write-value=0x0c00 tx-read-frame=0x60f20000 tx-write-frame-prefix=0x50f20000" \
     "tx-readback-gtxclk-en=" \
+    "tx-selector-write-completed=" \
+    "tx-selected-read-completed=" \
+    "tx-delay-write-completed=" \
+    "tx-delay-write-skipped-already-enabled=" \
+    "tx-readback-completed=" \
     "rgmii-delay-write-count=" \
     "bmcr-write-frame=0x50821200 bmcr-write-count=" \
     "poll-count-bound=" \
@@ -61,7 +70,7 @@ for required in \
     "mdio-man-transactions-performed=" \
     "macb-read-performed=true macb-write-performed=false" \
     "phy-reset-or-gpio32-action=false" \
-    "allowed-hardware-classifications=rgmii-delay-link-ready-frontier,rgmii-delay-timeout-link-not-ready,rgmii-delay-readback-mismatch,rgmii-delay-precondition-blocker,rgmii-delay-capture-blocker,no-mdio-no-ethernet-bcm54213pe-rgmii-delay-control" \
+    "allowed-hardware-classifications=rgmii-delay-tx-order-link-ready-frontier,rgmii-delay-tx-order-timeout-link-not-ready,rgmii-delay-tx-order-rx-stage-blocker,rgmii-delay-tx-order-tx-selected-read-visible,rgmii-delay-tx-order-tx-stage-blocker,rgmii-delay-tx-order-readback-mismatch,rgmii-delay-tx-order-precondition-blocker,rgmii-delay-tx-order-capture-blocker,no-mdio-no-ethernet-bcm54213pe-rgmii-delay-tx-order-control" \
     "rejected-runtime-hardware-claims=target-drift,mii-ctrl1000-master-mode-writes,extra-phy-writes,uncontracted-selector-config-access,gpio32-reset-action,interrupt-ownership,phy-mac-configuration,link-ready-acceptance,packet-io,networking,sockets,ssh,phase-12-2,phase-transition" \
     "claims-rgmii-delay-write-count=" \
     "claims-mii-ctrl1000-master-mode-write=false" \
@@ -87,7 +96,7 @@ for forbidden in \
     "TALOS: rp1-ethernet-bcm54213pe-rgmii-delay-control" \
     "no-mdio-no-macb-no-gpio32-no-phy-target-construction" \
     "target=none controller=none compatible=none" \
-    "classification=no-mdio-no-ethernet-bcm54213pe-rgmii-delay-control" \
+    "classification=no-mdio-no-ethernet-bcm54213pe-rgmii-delay-tx-order-control" \
     "macb-write-performed=true" \
     "phy-reset-or-gpio32-action=true" \
     "claims-link-ready-acceptance=true" \

@@ -1,0 +1,49 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-proof-core-20260616",
+  "status": "accepted",
+  "classification": "bcm54213pe-rgmii-delay-tx-order-proof-core-local-static",
+  "evidence_level": [
+    "static/source/task evidence inspection",
+    "fmt/lint/typecheck",
+    "unit tests",
+    "compile-only image inspection",
+    "static image/string/marker inspection",
+    "docs build",
+    "diff checks"
+  ],
+  "source_correction": {
+    "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-source-correction-20260616",
+    "classification": "bcm54213pe-rgmii-delay-tx-order-source-correction-proof-core-selected",
+    "commit": "0b947e8e9bc2025b2072490266479b490f34327e"
+  },
+  "proof_core": {
+    "candidate_boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_rgmii_delay_candidate",
+    "control_boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_rgmii_delay_no_mdio_control",
+    "contract_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-proof-contract-v1",
+    "candidate_classification": "bcm54213pe-rgmii-delay-tx-order-proof-core-candidate-local-static",
+    "control_classification": "no-mdio-no-ethernet-bcm54213pe-rgmii-delay-tx-order-control",
+    "selected_discriminator": "bcm54213pe-phy1-rgmii-id-rx-then-tx-delay-stage-accounting",
+    "tx_write_policy": "skip-redundant-tx-write-when-selected-tx-read-already-has-gtxclk-en-after-mask-0x03ff",
+    "next_task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-pi5-proof-20260616"
+  },
+  "allowed_hardware_classifications": [
+    "rgmii-delay-tx-order-link-ready-frontier",
+    "rgmii-delay-tx-order-timeout-link-not-ready",
+    "rgmii-delay-tx-order-rx-stage-blocker",
+    "rgmii-delay-tx-order-tx-selected-read-visible",
+    "rgmii-delay-tx-order-tx-stage-blocker",
+    "rgmii-delay-tx-order-readback-mismatch",
+    "rgmii-delay-tx-order-precondition-blocker",
+    "rgmii-delay-tx-order-capture-blocker",
+    "no-mdio-no-ethernet-bcm54213pe-rgmii-delay-tx-order-control"
+  ],
+  "rejected_claims": [
+    "hardware-success-from-local-static-evidence",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ]
+}

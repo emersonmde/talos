@@ -35,34 +35,39 @@ for required in \
     "rpi5-rp1-ethernet-bcm54213pe-rgmii-delay-control: start" \
     "no-mdio-no-macb-no-gpio32-no-phy-target-construction" \
     "TALOS: rp1-ethernet-bcm54213pe-rgmii-delay-control" \
-    "bcm54213pe-rgmii-delay-proof-contract-id=phase12-rp1-ethernet-bcm54213pe-rgmii-delay-proof-contract-v1" \
-    "task-id=phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof-20260616" \
-    "proof-core-task-id=phase12-rp1-ethernet-bcm54213pe-rgmii-delay-proof-core-20260616" \
-    "source-contract-task-id=phase12-rp1-ethernet-bcm54213pe-rgmii-delay-source-contract-20260616" \
-    "source-contract-commit=817712f6837a7e3ca659cea1833875c22e04f588" \
-    "selected-discriminator=bcm54213pe-phy1-rgmii-id-rx-tx-delay-write-readback" \
+    "bcm54213pe-rgmii-delay-proof-contract-id=phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-proof-contract-v1" \
+    "task-id=phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-pi5-proof-20260616" \
+    "proof-core-task-id=phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-proof-core-20260616" \
+    "source-correction-task-id=phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-source-correction-20260616" \
+    "source-correction-commit=0b947e8e9bc2025b2072490266479b490f34327e" \
+    "selected-discriminator=bcm54213pe-phy1-rgmii-id-rx-then-tx-delay-stage-accounting" \
     "report-kind=" \
     "no-mdio-no-ethernet-control" \
-    "hardware-proof-boundary-classification=bcm54213pe-rgmii-delay-proof-core-local-static" \
+    "hardware-proof-boundary-classification=bcm54213pe-rgmii-delay-tx-order-proof-core-local-static" \
     "target=none controller=none compatible=none" \
     "phy-model=none physid1=withheld physid2=withheld" \
     "phy-handle=none phy-node=none phy-address=none" \
     "rx-selector-write-value=withheld rx-read-frame=withheld rx-write-frame-prefix=withheld" \
     "rx-readback-rgmii-skew-en=false" \
+    "rx-selector-write-completed=false rx-selected-read-completed=false" \
+    "rx-delay-write-completed=false rx-readback-completed=false" \
     "tx-selector-write-value=withheld tx-read-frame=withheld tx-write-frame-prefix=withheld" \
     "tx-readback-gtxclk-en=false" \
+    "tx-selector-write-completed=false tx-selected-read-completed=false" \
+    "tx-delay-write-completed=false tx-delay-write-skipped-already-enabled=false" \
+    "tx-readback-completed=false" \
     "rgmii-delay-write-count=0x0 bmcr-write-frame=withheld bmcr-write-count=0x0" \
     "selected-registers=withheld" \
     "bmcr-write-performed=false mdio-man-transactions-performed=false" \
     "macb-read-performed=false macb-write-performed=false" \
     "phy-reset-or-gpio32-action=false" \
-    "allowed-hardware-classifications=rgmii-delay-link-ready-frontier,rgmii-delay-timeout-link-not-ready,rgmii-delay-readback-mismatch,rgmii-delay-precondition-blocker,rgmii-delay-capture-blocker,no-mdio-no-ethernet-bcm54213pe-rgmii-delay-control" \
+    "allowed-hardware-classifications=rgmii-delay-tx-order-link-ready-frontier,rgmii-delay-tx-order-timeout-link-not-ready,rgmii-delay-tx-order-rx-stage-blocker,rgmii-delay-tx-order-tx-selected-read-visible,rgmii-delay-tx-order-tx-stage-blocker,rgmii-delay-tx-order-readback-mismatch,rgmii-delay-tx-order-precondition-blocker,rgmii-delay-tx-order-capture-blocker,no-mdio-no-ethernet-bcm54213pe-rgmii-delay-tx-order-control" \
     "claims-runtime-mdio-transaction=" \
     "claims-rgmii-delay-write-count=" \
     "claims-bmcr-write-executed=" \
     "claims-mii-ctrl1000-master-mode-write=false" \
     "claims-extra-phy-writes=false claims-uncontracted-selector-config-access=false" \
-    "classification=no-mdio-no-ethernet-bcm54213pe-rgmii-delay-control"; do
+    "classification=no-mdio-no-ethernet-bcm54213pe-rgmii-delay-tx-order-control"; do
     if ! grep -Fq -- "$required" "$kernel_strings"; then
         echo "kernel image missing BCM54213PE RGMII delay control string: $required" >&2
         exit 1

@@ -18563,7 +18563,16 @@ pub fn run_rp1_ethernet_bcm54213pe_rgmii_delay_candidate() -> ! {
     let mut tx_pre_raw = 0u16;
     let mut tx_write_value = 0u16;
     let mut tx_readback_raw = 0u16;
+    let mut rx_selector_write_completed = false;
+    let mut rx_selected_read_completed = false;
+    let mut rx_delay_write_completed = false;
+    let mut rx_readback_completed = false;
     let mut rx_readback_match = false;
+    let mut tx_selector_write_completed = false;
+    let mut tx_selected_read_completed = false;
+    let mut tx_delay_write_completed = false;
+    let mut tx_delay_write_skipped_already_enabled = false;
+    let mut tx_readback_completed = false;
     let mut tx_readback_match = false;
     let mut rgmii_delay_write_count = 0u32;
     let mut bmcr_write_count = 0u32;
@@ -18581,225 +18590,260 @@ pub fn run_rp1_ethernet_bcm54213pe_rgmii_delay_candidate() -> ! {
     let mut last_macb_nsr_raw = 0u32;
     let mut link_ready = false;
 
-    let mut classification = "rgmii-delay-capture-blocker";
-    if ncr_before & NCR_MPE == 0 {
-        classification = "rgmii-delay-precondition-blocker";
-    } else if let Some(value) = read_rp1_ethernet_bcm54213pe_rgmii_delay_selected_phy1_register(
+    let classification = if ncr_before & NCR_MPE == 0 {
+        "rgmii-delay-tx-order-precondition-blocker"
+    } else if !write_rp1_ethernet_bcm54213pe_rgmii_delay_phy1_register(
         NSR,
         MAN,
         NSR_IDLE,
-        RX_SELECTOR_VALUE,
         RX_WRITE_PREFIX,
-        RX_READ_FRAME,
+        RX_SELECTOR_VALUE,
     ) {
+        "rgmii-delay-tx-order-rx-stage-blocker"
+    } else {
         mdio_man_transactions_performed = true;
-        rx_pre_raw = value;
-        rx_write_value = rx_pre_raw | RX_WREN | RX_SKEW_EN | RX_MISC_SHADOW;
-        if write_rp1_ethernet_bcm54213pe_rgmii_delay_phy1_register(
+        rx_selector_write_completed = true;
+        if let Some(value) = read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
             NSR,
             MAN,
             NSR_IDLE,
-            RX_WRITE_PREFIX,
-            rx_write_value,
+            RX_READ_FRAME,
         ) {
-            rgmii_delay_write_count += 1;
-            if let Some(value) = read_rp1_ethernet_bcm54213pe_rgmii_delay_selected_phy1_register(
+            rx_selected_read_completed = true;
+            rx_pre_raw = value;
+            rx_write_value = rx_pre_raw | RX_WREN | RX_SKEW_EN | RX_MISC_SHADOW;
+            if write_rp1_ethernet_bcm54213pe_rgmii_delay_phy1_register(
                 NSR,
                 MAN,
                 NSR_IDLE,
-                RX_SELECTOR_VALUE,
                 RX_WRITE_PREFIX,
-                RX_READ_FRAME,
+                rx_write_value,
             ) {
-                rx_readback_raw = value;
-                rx_readback_match = rx_readback_raw & RX_SKEW_EN != 0;
+                rx_delay_write_completed = true;
+                rgmii_delay_write_count += 1;
+                if write_rp1_ethernet_bcm54213pe_rgmii_delay_phy1_register(
+                    NSR,
+                    MAN,
+                    NSR_IDLE,
+                    RX_WRITE_PREFIX,
+                    RX_SELECTOR_VALUE,
+                ) {
+                    if let Some(value) =
+                        read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
+                            NSR,
+                            MAN,
+                            NSR_IDLE,
+                            RX_READ_FRAME,
+                        )
+                    {
+                        rx_readback_completed = true;
+                        rx_readback_raw = value;
+                        rx_readback_match = rx_readback_raw & RX_SKEW_EN != 0;
+                    }
+                }
             }
         }
-    }
 
-    let classification = if classification == "rgmii-delay-capture-blocker"
-        || classification == "rgmii-delay-precondition-blocker"
-    {
-        classification
-    } else if !rx_readback_match {
-        "rgmii-delay-readback-mismatch"
-    } else if let Some(value) = read_rp1_ethernet_bcm54213pe_rgmii_delay_selected_phy1_register(
-        NSR,
-        MAN,
-        NSR_IDLE,
-        TX_SELECTOR_VALUE,
-        TX_WRITE_PREFIX,
-        TX_READ_FRAME,
-    ) {
-        tx_pre_raw = value;
-        let tx_data = (tx_pre_raw | TX_GTXCLK_EN) & TX_SHD_DATA_MASK;
-        tx_write_value = TX_SHD_WRITE | TX_CLK_CTL_SELECTOR | tx_data;
-        if write_rp1_ethernet_bcm54213pe_rgmii_delay_phy1_register(
+        if !rx_selected_read_completed || !rx_delay_write_completed || !rx_readback_completed {
+            "rgmii-delay-tx-order-rx-stage-blocker"
+        } else if !rx_readback_match {
+            "rgmii-delay-tx-order-readback-mismatch"
+        } else if !write_rp1_ethernet_bcm54213pe_rgmii_delay_phy1_register(
             NSR,
             MAN,
             NSR_IDLE,
             TX_WRITE_PREFIX,
-            tx_write_value,
+            TX_SELECTOR_VALUE,
         ) {
-            rgmii_delay_write_count += 1;
-            if let Some(value) = read_rp1_ethernet_bcm54213pe_rgmii_delay_selected_phy1_register(
+            "rgmii-delay-tx-order-tx-stage-blocker"
+        } else {
+            tx_selector_write_completed = true;
+            if let Some(value) = read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
                 NSR,
                 MAN,
                 NSR_IDLE,
-                TX_SELECTOR_VALUE,
-                TX_WRITE_PREFIX,
                 TX_READ_FRAME,
             ) {
-                tx_readback_raw = value;
-                tx_readback_match = tx_readback_raw & TX_GTXCLK_EN != 0;
-                if !tx_readback_match {
-                    "rgmii-delay-readback-mismatch"
-                } else if let Some(pre_bmcr_raw) =
-                    read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
-                        NSR,
-                        MAN,
-                        NSR_IDLE,
-                        BMCR_READ_MAN_FRAME,
-                    )
-                {
-                    let pre_bmcr = crate::rp1_ethernet::decode_rp1_ethernet_phy1_bmcr(pre_bmcr_raw);
-                    if pre_bmcr.isolate {
-                        "rgmii-delay-precondition-blocker"
-                    } else {
-                        let bmcr_write_value = pre_bmcr_raw | BMCR_ANENABLE | BMCR_ANRESTART;
-                        if write_rp1_ethernet_bcm54213pe_bmcr_autoneg_restart_bmcr(
+                tx_selected_read_completed = true;
+                tx_pre_raw = value;
+                let tx_data = (tx_pre_raw | TX_GTXCLK_EN) & TX_SHD_DATA_MASK;
+                tx_write_value = TX_SHD_WRITE | TX_CLK_CTL_SELECTOR | tx_data;
+                if tx_pre_raw & TX_SHD_DATA_MASK & TX_GTXCLK_EN != 0 {
+                    tx_delay_write_skipped_already_enabled = true;
+                    tx_readback_completed = true;
+                    tx_readback_raw = tx_pre_raw;
+                    tx_readback_match = true;
+                } else if write_rp1_ethernet_bcm54213pe_rgmii_delay_phy1_register(
+                    NSR,
+                    MAN,
+                    NSR_IDLE,
+                    TX_WRITE_PREFIX,
+                    tx_write_value,
+                ) {
+                    tx_delay_write_completed = true;
+                    rgmii_delay_write_count += 1;
+                    if let Some(value) =
+                        read_rp1_ethernet_bcm54213pe_rgmii_delay_selected_phy1_register(
                             NSR,
                             MAN,
                             NSR_IDLE,
-                            bmcr_write_value,
-                        ) {
-                            bmcr_write_count = 1;
-                            bmcr_write_performed = true;
-                            let mut poll_index = 0;
-                            while poll_index < POLL_COUNT {
-                                let mut delay = POLL_DELAY_SPINS;
-                                while delay > 0 {
-                                    core::hint::spin_loop();
-                                    delay -= 1;
-                                }
-                                if let Some(value) =
-                                    read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
-                                        NSR,
-                                        MAN,
-                                        NSR_IDLE,
-                                        BMCR_READ_MAN_FRAME,
-                                    )
-                                {
-                                    last_bmcr_raw = value;
-                                } else {
-                                    break;
-                                }
-                                if let Some(value) =
-                                    read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
-                                        NSR,
-                                        MAN,
-                                        NSR_IDLE,
-                                        BMSR_READ_MAN_FRAME,
-                                    )
-                                {
-                                    last_bmsr_first_raw = value;
-                                } else {
-                                    break;
-                                }
-                                if let Some(value) =
-                                    read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
-                                        NSR,
-                                        MAN,
-                                        NSR_IDLE,
-                                        BMSR_READ_MAN_FRAME,
-                                    )
-                                {
-                                    last_bmsr_second_raw = value;
-                                } else {
-                                    break;
-                                }
-                                if let Some(value) =
-                                    read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
-                                        NSR,
-                                        MAN,
-                                        NSR_IDLE,
-                                        ANAR_READ_MAN_FRAME,
-                                    )
-                                {
-                                    last_anar_raw = value;
-                                } else {
-                                    break;
-                                }
-                                if let Some(value) =
-                                    read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
-                                        NSR,
-                                        MAN,
-                                        NSR_IDLE,
-                                        ANLPAR_READ_MAN_FRAME,
-                                    )
-                                {
-                                    last_anlpar_raw = value;
-                                } else {
-                                    break;
-                                }
-                                if let Some(value) =
-                                    read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
-                                        NSR,
-                                        MAN,
-                                        NSR_IDLE,
-                                        CTRL1000_READ_MAN_FRAME,
-                                    )
-                                {
-                                    last_ctrl1000_raw = value;
-                                } else {
-                                    break;
-                                }
-                                if let Some(value) =
-                                    read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
-                                        NSR,
-                                        MAN,
-                                        NSR_IDLE,
-                                        STAT1000_READ_MAN_FRAME,
-                                    )
-                                {
-                                    last_stat1000_raw = value;
-                                } else {
-                                    break;
-                                }
-                                last_macb_nsr_raw = read_rp1_reg_u32(NSR);
-                                samples_taken = poll_index + 1;
-                                terminal_sample = samples_taken;
-                                let bmsr = crate::rp1_ethernet::decode_rp1_ethernet_phy1_bmsr(
-                                    last_bmsr_second_raw,
-                                );
-                                link_ready = bmsr.link_status
-                                    && bmsr.autoneg_complete
-                                    && last_macb_nsr_raw & MACB_NSR_LINK != 0;
-                                if link_ready {
-                                    break;
-                                }
-                                poll_index += 1;
-                            }
-                            if link_ready {
-                                "rgmii-delay-link-ready-frontier"
-                            } else {
-                                "rgmii-delay-timeout-link-not-ready"
-                            }
-                        } else {
-                            "rgmii-delay-capture-blocker"
-                        }
+                            TX_SELECTOR_VALUE,
+                            TX_WRITE_PREFIX,
+                            TX_READ_FRAME,
+                        )
+                    {
+                        tx_readback_completed = true;
+                        tx_readback_raw = value;
+                        tx_readback_match = tx_readback_raw & TX_GTXCLK_EN != 0;
                     }
+                }
+            }
+
+            if !tx_selected_read_completed {
+                "rgmii-delay-tx-order-tx-stage-blocker"
+            } else if !tx_readback_completed {
+                "rgmii-delay-tx-order-tx-stage-blocker"
+            } else if !tx_readback_match {
+                "rgmii-delay-tx-order-readback-mismatch"
+            } else if let Some(pre_bmcr_raw) =
+                read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
+                    NSR,
+                    MAN,
+                    NSR_IDLE,
+                    BMCR_READ_MAN_FRAME,
+                )
+            {
+                let pre_bmcr = crate::rp1_ethernet::decode_rp1_ethernet_phy1_bmcr(pre_bmcr_raw);
+                if pre_bmcr.isolate {
+                    "rgmii-delay-tx-order-precondition-blocker"
                 } else {
-                    "rgmii-delay-capture-blocker"
+                    let bmcr_write_value = pre_bmcr_raw | BMCR_ANENABLE | BMCR_ANRESTART;
+                    if write_rp1_ethernet_bcm54213pe_bmcr_autoneg_restart_bmcr(
+                        NSR,
+                        MAN,
+                        NSR_IDLE,
+                        bmcr_write_value,
+                    ) {
+                        bmcr_write_count = 1;
+                        bmcr_write_performed = true;
+                        let mut poll_index = 0;
+                        while poll_index < POLL_COUNT {
+                            let mut delay = POLL_DELAY_SPINS;
+                            while delay > 0 {
+                                core::hint::spin_loop();
+                                delay -= 1;
+                            }
+                            if let Some(value) =
+                                read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
+                                    NSR,
+                                    MAN,
+                                    NSR_IDLE,
+                                    BMCR_READ_MAN_FRAME,
+                                )
+                            {
+                                last_bmcr_raw = value;
+                            } else {
+                                break;
+                            }
+                            if let Some(value) =
+                                read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
+                                    NSR,
+                                    MAN,
+                                    NSR_IDLE,
+                                    BMSR_READ_MAN_FRAME,
+                                )
+                            {
+                                last_bmsr_first_raw = value;
+                            } else {
+                                break;
+                            }
+                            if let Some(value) =
+                                read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
+                                    NSR,
+                                    MAN,
+                                    NSR_IDLE,
+                                    BMSR_READ_MAN_FRAME,
+                                )
+                            {
+                                last_bmsr_second_raw = value;
+                            } else {
+                                break;
+                            }
+                            if let Some(value) =
+                                read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
+                                    NSR,
+                                    MAN,
+                                    NSR_IDLE,
+                                    ANAR_READ_MAN_FRAME,
+                                )
+                            {
+                                last_anar_raw = value;
+                            } else {
+                                break;
+                            }
+                            if let Some(value) =
+                                read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
+                                    NSR,
+                                    MAN,
+                                    NSR_IDLE,
+                                    ANLPAR_READ_MAN_FRAME,
+                                )
+                            {
+                                last_anlpar_raw = value;
+                            } else {
+                                break;
+                            }
+                            if let Some(value) =
+                                read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
+                                    NSR,
+                                    MAN,
+                                    NSR_IDLE,
+                                    CTRL1000_READ_MAN_FRAME,
+                                )
+                            {
+                                last_ctrl1000_raw = value;
+                            } else {
+                                break;
+                            }
+                            if let Some(value) =
+                                read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
+                                    NSR,
+                                    MAN,
+                                    NSR_IDLE,
+                                    STAT1000_READ_MAN_FRAME,
+                                )
+                            {
+                                last_stat1000_raw = value;
+                            } else {
+                                break;
+                            }
+                            last_macb_nsr_raw = read_rp1_reg_u32(NSR);
+                            samples_taken = poll_index + 1;
+                            terminal_sample = samples_taken;
+                            let bmsr = crate::rp1_ethernet::decode_rp1_ethernet_phy1_bmsr(
+                                last_bmsr_second_raw,
+                            );
+                            link_ready = bmsr.link_status
+                                && bmsr.autoneg_complete
+                                && last_macb_nsr_raw & MACB_NSR_LINK != 0;
+                            if link_ready {
+                                break;
+                            }
+                            poll_index += 1;
+                        }
+                        if link_ready {
+                            "rgmii-delay-tx-order-link-ready-frontier"
+                        } else {
+                            "rgmii-delay-tx-order-timeout-link-not-ready"
+                        }
+                    } else {
+                        "rgmii-delay-tx-order-capture-blocker"
+                    }
                 }
             } else {
-                "rgmii-delay-capture-blocker"
+                "rgmii-delay-tx-order-capture-blocker"
             }
-        } else {
-            "rgmii-delay-capture-blocker"
         }
-    } else {
-        "rgmii-delay-capture-blocker"
     };
 
     let ncr_after = read_rp1_reg_u32(NCR);
@@ -18834,6 +18878,14 @@ pub fn run_rp1_ethernet_bcm54213pe_rgmii_delay_candidate() -> ! {
         write_early_hex_u64(rx_readback_raw as u64);
         write_early_static(" rx-readback-rgmii-skew-en=");
         write_bool(rx_readback_match);
+        write_early_static(" rx-selector-write-completed=");
+        write_bool(rx_selector_write_completed);
+        write_early_static(" rx-selected-read-completed=");
+        write_bool(rx_selected_read_completed);
+        write_early_static(" rx-delay-write-completed=");
+        write_bool(rx_delay_write_completed);
+        write_early_static(" rx-readback-completed=");
+        write_bool(rx_readback_completed);
         write_early_static(
             " tx-selector-write-value=0x0c00 tx-read-frame=0x60f20000 tx-write-frame-prefix=0x50f20000",
         );
@@ -18845,6 +18897,16 @@ pub fn run_rp1_ethernet_bcm54213pe_rgmii_delay_candidate() -> ! {
         write_early_hex_u64(tx_readback_raw as u64);
         write_early_static(" tx-readback-gtxclk-en=");
         write_bool(tx_readback_match);
+        write_early_static(" tx-selector-write-completed=");
+        write_bool(tx_selector_write_completed);
+        write_early_static(" tx-selected-read-completed=");
+        write_bool(tx_selected_read_completed);
+        write_early_static(" tx-delay-write-completed=");
+        write_bool(tx_delay_write_completed);
+        write_early_static(" tx-delay-write-skipped-already-enabled=");
+        write_bool(tx_delay_write_skipped_already_enabled);
+        write_early_static(" tx-readback-completed=");
+        write_bool(tx_readback_completed);
         write_early_static(" rgmii-delay-write-count=");
         write_early_hex_u64(rgmii_delay_write_count as u64);
         write_early_static(" bmcr-write-frame=0x50821200 bmcr-write-count=");
@@ -18925,11 +18987,18 @@ pub fn run_rp1_ethernet_bcm54213pe_rgmii_delay_no_mdio_control() -> ! {
         );
         write_early_static(" rx-pre-raw=withheld rx-write-value=withheld rx-readback-raw=withheld");
         write_early_static(" rx-readback-rgmii-skew-en=false");
+        write_early_static(" rx-selector-write-completed=false rx-selected-read-completed=false");
+        write_early_static(" rx-delay-write-completed=false rx-readback-completed=false");
         write_early_static(
             " tx-selector-write-value=withheld tx-read-frame=withheld tx-write-frame-prefix=withheld",
         );
         write_early_static(" tx-pre-raw=withheld tx-write-value=withheld tx-readback-raw=withheld");
         write_early_static(" tx-readback-gtxclk-en=false");
+        write_early_static(" tx-selector-write-completed=false tx-selected-read-completed=false");
+        write_early_static(
+            " tx-delay-write-completed=false tx-delay-write-skipped-already-enabled=false",
+        );
+        write_early_static(" tx-readback-completed=false");
         write_early_static(
             " rgmii-delay-write-count=0x0 bmcr-write-frame=withheld bmcr-write-count=0x0",
         );
@@ -18941,7 +19010,9 @@ pub fn run_rp1_ethernet_bcm54213pe_rgmii_delay_no_mdio_control() -> ! {
         write_early_static(" macb-read-performed=false macb-write-performed=false");
         write_early_static(" phy-reset-or-gpio32-action=false");
         write_rp1_ethernet_bcm54213pe_rgmii_delay_rejections(false, 0, false);
-        write_early_static(" classification=no-mdio-no-ethernet-bcm54213pe-rgmii-delay-control\n");
+        write_early_static(
+            " classification=no-mdio-no-ethernet-bcm54213pe-rgmii-delay-tx-order-control\n",
+        );
         wait_uart10_empty_early_phase();
     }
 }
@@ -19184,26 +19255,28 @@ fn write_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_rejections(
 ))]
 fn write_rp1_ethernet_bcm54213pe_rgmii_delay_common(report_kind: &str) {
     write_early_static(
-        " bcm54213pe-rgmii-delay-proof-contract-id=phase12-rp1-ethernet-bcm54213pe-rgmii-delay-proof-contract-v1",
-    );
-    write_early_static(" task-id=phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof-20260616");
-    write_early_static(
-        " proof-core-task-id=phase12-rp1-ethernet-bcm54213pe-rgmii-delay-proof-core-20260616",
+        " bcm54213pe-rgmii-delay-proof-contract-id=phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-proof-contract-v1",
     );
     write_early_static(
-        " source-contract-task-id=phase12-rp1-ethernet-bcm54213pe-rgmii-delay-source-contract-20260616",
+        " task-id=phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-pi5-proof-20260616",
     );
-    write_early_static(" source-contract-commit=817712f6837a7e3ca659cea1833875c22e04f588");
+    write_early_static(
+        " proof-core-task-id=phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-proof-core-20260616",
+    );
+    write_early_static(
+        " source-correction-task-id=phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-source-correction-20260616",
+    );
+    write_early_static(" source-correction-commit=0b947e8e9bc2025b2072490266479b490f34327e");
     write_early_static(
         " accepted-convergence-contract-id=phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-proof-contract-v1",
     );
     write_early_static(
-        " selected-discriminator=bcm54213pe-phy1-rgmii-id-rx-tx-delay-write-readback",
+        " selected-discriminator=bcm54213pe-phy1-rgmii-id-rx-then-tx-delay-stage-accounting",
     );
     write_early_static(" report-kind=");
     write_early_static(report_kind);
     write_early_static(
-        " hardware-proof-boundary-classification=bcm54213pe-rgmii-delay-proof-core-local-static",
+        " hardware-proof-boundary-classification=bcm54213pe-rgmii-delay-tx-order-proof-core-local-static",
     );
 }
 
@@ -19230,13 +19303,13 @@ fn write_rp1_ethernet_bcm54213pe_rgmii_delay_rejections(
     bmcr_write_executed: bool,
 ) {
     write_early_static(
-        " allowed-hardware-classifications=rgmii-delay-link-ready-frontier,rgmii-delay-timeout-link-not-ready,rgmii-delay-readback-mismatch,rgmii-delay-precondition-blocker,rgmii-delay-capture-blocker,no-mdio-no-ethernet-bcm54213pe-rgmii-delay-control",
+        " allowed-hardware-classifications=rgmii-delay-tx-order-link-ready-frontier,rgmii-delay-tx-order-timeout-link-not-ready,rgmii-delay-tx-order-rx-stage-blocker,rgmii-delay-tx-order-tx-selected-read-visible,rgmii-delay-tx-order-tx-stage-blocker,rgmii-delay-tx-order-readback-mismatch,rgmii-delay-tx-order-precondition-blocker,rgmii-delay-tx-order-capture-blocker,no-mdio-no-ethernet-bcm54213pe-rgmii-delay-tx-order-control",
     );
     write_early_static(
         " rejected-runtime-hardware-claims=target-drift,mii-ctrl1000-master-mode-writes,extra-phy-writes,uncontracted-selector-config-access,gpio32-reset-action,interrupt-ownership,phy-mac-configuration,link-ready-acceptance,packet-io,networking,sockets,ssh,phase-12-2,phase-transition",
     );
     write_early_static(
-        " retained-risks=rgmii-delay-register-convergence-does-not-prove-packet-transport,hardware-proof-must-retain-identity-tftp-serial-restore,gpio32-interrupt-dma-packet-network-ssh-phase-12-2-remain-unaccepted",
+        " retained-risks=tx-order-stage-accounting-does-not-prove-packet-transport,hardware-proof-must-retain-identity-tftp-serial-restore,gpio32-interrupt-dma-packet-network-ssh-phase-12-2-remain-unaccepted",
     );
     write_early_static(" claims-runtime-mdio-transaction=");
     write_bool(runtime_mdio_transaction);
