@@ -1,0 +1,55 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-core-20260616",
+  "classification": "bcm54213pe-autoneg-convergence-proof-core-local-static",
+  "accepted_restart_closeout_commit": "0de9450e8e1c2d5f458d1c778f4f25e80860c0a2",
+  "accepted_restart_contract_id": "phase12-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-proof-contract-v1",
+  "selected_discriminator": "bcm54213pe-phy1-bmcr-autoneg-restart-plus-convergence-poll",
+  "candidate_boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_autoneg_convergence_candidate",
+  "control_boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_autoneg_convergence_no_mdio_control",
+  "bmcr_write_frame": "0x50821200",
+  "bmcr_write_count": 1,
+  "poll_count_bound": 8,
+  "poll_delay_spins": 200000,
+  "poll_sample_registers": [
+    "BMCR",
+    "BMSR-first",
+    "BMSR-second",
+    "ANAR",
+    "ANLPAR",
+    "MII_CTRL1000",
+    "MII_STAT1000",
+    "passive-MACB_NSR_LINK"
+  ],
+  "candidate_compile_only_image": {
+    "sha256": "e005a79bb39f24c804a63a1c072ff127aa0124af7faf4bae82258ff46bd444d4",
+    "size_bytes": 52224
+  },
+  "control_compile_only_image": {
+    "sha256": "49e34f482f36fe488a1686448f840763c73a430413add20c51b878cdd78af7d1",
+    "size_bytes": 49704
+  },
+  "allowed_terminal_classifications": [
+    "bcm54213pe-autoneg-convergence-link-ready",
+    "bcm54213pe-autoneg-convergence-still-timeout",
+    "bcm54213pe-autoneg-convergence-precondition-blocker",
+    "bcm54213pe-autoneg-convergence-capture-blocker",
+    "no-mdio-no-ethernet-bcm54213pe-autoneg-convergence-control"
+  ],
+  "rejected_claims": [
+    "target drift",
+    "extra PHY writes",
+    "selector/config access",
+    "GPIO32 reset action",
+    "Broadcom shadow/MMD/AUX access",
+    "interrupt ownership",
+    "PHY/MAC configuration",
+    "link forcing",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "hardware_action_performed": false
+}

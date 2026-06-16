@@ -1,0 +1,87 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-core-20260616",
+  "classification": "bcm54213pe-autoneg-convergence-proof-core-local-static",
+  "evidence": [
+    {
+      "label": "accepted BMCR/autoneg restart closeout",
+      "level": "static/task evidence inspection",
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-closeout.md"
+    },
+    {
+      "label": "local/static convergence core contract",
+      "level": "source inspection and Rust tests",
+      "paths": [
+        "src/rp1_ethernet.rs",
+        "src/target/rpi5.rs",
+        "src/main.rs",
+        "build.rs"
+      ]
+    },
+    {
+      "label": "candidate compile-only image",
+      "level": "compile-only artifact build",
+      "path": "scripts/rpi5-rp1-ethernet-bcm54213pe-autoneg-convergence-candidate-image.sh",
+      "sha256": "e005a79bb39f24c804a63a1c072ff127aa0124af7faf4bae82258ff46bd444d4",
+      "size_bytes": 52224
+    },
+    {
+      "label": "control compile-only image",
+      "level": "compile-only artifact build",
+      "path": "scripts/rpi5-rp1-ethernet-bcm54213pe-autoneg-convergence-control-image.sh",
+      "sha256": "49e34f482f36fe488a1686448f840763c73a430413add20c51b878cdd78af7d1",
+      "size_bytes": 49704
+    },
+    {
+      "label": "task classification",
+      "level": "task-owned JSON evidence",
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-core/classification.json"
+    },
+    {
+      "label": "task record",
+      "level": "task-owned markdown evidence",
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-core.md"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "cargo fmt --all -- --check",
+      "result": "pass"
+    },
+    {
+      "gate": "focused Rust tests for bcm54213pe autoneg convergence core",
+      "command": "cargo -Zjson-target-spec test rp1_ethernet_bcm54213pe_autoneg_convergence -- --nocapture",
+      "result": "pass"
+    },
+    {
+      "gate": "candidate compile-only build",
+      "command": "TALOS_CAPTURE_NONCE=bcm54213pe-convergence-core-candidate-20260616T1553Z ./scripts/rpi5-rp1-ethernet-bcm54213pe-autoneg-convergence-candidate-image.sh",
+      "result": "pass"
+    },
+    {
+      "gate": "control compile-only build",
+      "command": "TALOS_CAPTURE_NONCE=bcm54213pe-convergence-core-control-20260616T1553Z ./scripts/rpi5-rp1-ethernet-bcm54213pe-autoneg-convergence-control-image.sh",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test --quiet",
+      "result": "pass"
+    },
+    {
+      "gate": "jq empty on task-owned JSON evidence",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "mdbook build",
+      "result": "not-run-no-docs-src-touched"
+    },
+    {
+      "gate": "git diff --cached --check before commit",
+      "result": "pass"
+    }
+  ],
+  "commit": null
+}
