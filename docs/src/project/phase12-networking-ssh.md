@@ -2115,6 +2115,25 @@ This checkpoint does not authorize a hardware run, BMCR write, GPIO32/reset
 recovery, Broadcom shadow/MMD/AUX access, interrupt ownership, broad PHY/MAC
 configuration, packet I/O, networking, SSH, Phase 12.2, or a phase transition.
 
+phase12-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-core-20260616,
+phase12-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-pi5-proof-20260616, and
+phase12-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-closeout-20260616 close
+the BCM54213PE BMCR/autoneg restart frontier as
+bcm54213pe-bmcr-autoneg-restart-frontier-closed-post-status-link-not-ready. The
+core pinned exactly one corrected-target PHY1 BMCR write frame 0x50821200 for
+value 0x1200 and a paired no-MDIO/no-Ethernet control. Serialized Pi 5 proof
+retained selected-tree identity, same-power-cycle TFTP byte serves,
+cursor-nonce serial freshness, final pre-restore identity, and restore proof
+for both control and candidate. The candidate executed the bounded restart path
+and sampled post-BMCR 0x1000, post-BMSR 0x7949/0x7949, ANAR 0x01e1, ANLPAR
+0x0000, MII_CTRL1000 0x0200, MII_STAT1000 0x0000, and passive MACB_NSR
+0x00000006 with BMSR link false, BMSR autoneg-complete false, and
+MACB_NSR_LINK false. This accepts the bounded write/status sample only; it does
+not accept link readiness, GPIO32/PHY reset ownership, Broadcom selector/config
+writes, interrupt ownership, packet I/O, networking, sockets, SSH, Phase 12.2,
+or a phase transition. Supervisor planning is required before any follow-up
+task or explicit pause.
+
 phase12-rp1-ethernet-bootinfo-report-serial-visibility-closeout-20260616 closes
 that frontier as
 bootinfo-report-serial-visibility-frontier-closed-serial-drain-blocked. The
