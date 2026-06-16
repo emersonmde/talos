@@ -1,0 +1,49 @@
+Source: https://github.com/raspberrypi/linux/blob/rpi-6.12.y/drivers/net/phy/phy-core.c
+Ref: rpi-6.12.y
+Path: drivers/net/phy/phy-core.c
+Sections: Clause 45/MMD indirect read selector mechanics for Clause 22 PHYs.
+
+   528	static void mmd_phy_indirect(struct mii_bus *bus, int phy_addr, int devad,
+   529				     u16 regnum)
+   530	{
+   531		/* Write the desired MMD Devad */
+   532		__mdiobus_write(bus, phy_addr, MII_MMD_CTRL, devad);
+   533	
+   534		/* Write the desired MMD register address */
+   535		__mdiobus_write(bus, phy_addr, MII_MMD_DATA, regnum);
+   536	
+   537		/* Select the Function : DATA with no post increment */
+   538		__mdiobus_write(bus, phy_addr, MII_MMD_CTRL,
+   539				devad | MII_MMD_CTRL_NOINCR);
+   540	}
+   542	static int mmd_phy_read(struct mii_bus *bus, int phy_addr, bool is_c45,
+   543				int devad, u32 regnum)
+   544	{
+   545		if (is_c45)
+   546			return __mdiobus_c45_read(bus, phy_addr, devad, regnum);
+   547	
+   548		mmd_phy_indirect(bus, phy_addr, devad, regnum);
+   549		/* Read the content of the MMD's selected register */
+   550		return __mdiobus_read(bus, phy_addr, MII_MMD_DATA);
+   551	}
+   569	int __phy_read_mmd(struct phy_device *phydev, int devad, u32 regnum)
+   570	{
+   571		if (regnum > (u16)~0 || devad > 32)
+   572			return -EINVAL;
+   573	
+   574		if (phydev->drv && phydev->drv->read_mmd)
+   575			return phydev->drv->read_mmd(phydev, devad, regnum);
+   576	
+   577		return mmd_phy_read(phydev->mdio.bus, phydev->mdio.addr,
+   578				    phydev->is_c45, devad, regnum);
+   579	}
+   590	int phy_read_mmd(struct phy_device *phydev, int devad, u32 regnum)
+   591	{
+   592		int ret;
+   593	
+   594		phy_lock_mdio_bus(phydev);
+   595		ret = __phy_read_mmd(phydev, devad, regnum);
+   596		phy_unlock_mdio_bus(phydev);
+   597	
+   598		return ret;
+   599	}

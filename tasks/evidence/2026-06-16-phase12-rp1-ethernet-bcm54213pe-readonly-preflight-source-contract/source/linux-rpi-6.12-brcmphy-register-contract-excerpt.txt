@@ -1,0 +1,115 @@
+Source: https://github.com/raspberrypi/linux/blob/rpi-6.12.y/include/linux/brcmphy.h
+Ref: rpi-6.12.y
+Path: include/linux/brcmphy.h
+Sections: BCM54213PE ID, Broadcom Clause 22 registers, shadow registers, RGMII/APD/EEE constants.
+
+    20	#define PHY_ID_BCM53128			0x03625e10
+    21	#define PHY_ID_BCM54810			0x03625d00
+    22	#define PHY_ID_BCM54811			0x03625cc0
+    23	#define PHY_ID_BCM5482			0x0143bcb0
+    24	#define PHY_ID_BCM5411			0x00206070
+    25	#define PHY_ID_BCM5421			0x002060e0
+    26	#define PHY_ID_BCM54210E		0x600d84a0
+    27	#define PHY_ID_BCM54213PE		0x600d84a2
+    28	#define PHY_ID_BCM5464			0x002060b0
+    29	#define PHY_ID_BCM5461			0x002060c0
+    30	#define PHY_ID_BCM54612E		0x03625e60
+    31	#define PHY_ID_BCM54616S		0x03625d10
+    32	#define PHY_ID_BCM54140			0xae025009
+    69	
+    70	#define PHY_BRCM_AUTO_PWRDWN_ENABLE	0x00000001
+    71	#define PHY_BRCM_RX_REFCLK_UNUSED	0x00000002
+    72	#define PHY_BRCM_CLEAR_RGMII_MODE	0x00000004
+    73	#define PHY_BRCM_DIS_TXCRXC_NOENRGY	0x00000008
+    74	#define PHY_BRCM_EN_MASTER_MODE		0x00000010
+    75	#define PHY_BRCM_IDDQ_SUSPEND		0x00000020
+    76	
+    77	/* Broadcom BCM7xxx specific workarounds */
+    78	#define PHY_BRCM_7XXX_REV(x)		(((x) >> 8) & 0xff)
+    79	#define PHY_BRCM_7XXX_PATCH(x)		((x) & 0xff)
+    80	#define PHY_BCM_FLAGS_VALID		0x80000000
+    81	
+    82	/* Broadcom BCM54XX register definitions, common to most Broadcom PHYs */
+    83	#define MII_BCM54XX_ECR		0x10	/* BCM54xx extended control register */
+    84	#define MII_BCM54XX_ECR_IM	0x1000	/* Interrupt mask */
+    85	#define MII_BCM54XX_ECR_IF	0x0800	/* Interrupt force */
+    86	#define MII_BCM54XX_ECR_FIFOE	0x0001	/* FIFO elasticity */
+    87	
+    88	#define MII_BCM54XX_ESR		0x11	/* BCM54xx extended status register */
+    89	#define MII_BCM54XX_ESR_IS	0x1000	/* Interrupt status */
+    90	
+    91	#define MII_BCM54XX_EXP_DATA	0x15	/* Expansion register data */
+    92	#define MII_BCM54XX_EXP_SEL	0x17	/* Expansion register select */
+    93	#define MII_BCM54XX_EXP_SEL_TOP	0x0d00	/* TOP_MISC expansion register select */
+    94	#define MII_BCM54XX_EXP_SEL_SSD	0x0e00	/* Secondary SerDes select */
+    95	#define MII_BCM54XX_EXP_SEL_WOL	0x0e00	/* Wake-on-LAN expansion select register */
+    96	#define MII_BCM54XX_EXP_SEL_ER	0x0f00	/* Expansion register select */
+    97	#define MII_BCM54XX_EXP_SEL_ETC	0x0d00	/* Expansion register spare + 2k mem */
+    98	
+    99	#define MII_BCM54XX_AUX_CTL	0x18	/* Auxiliary control register */
+   100	#define MII_BCM54XX_ISR		0x1a	/* BCM54xx interrupt status register */
+   101	#define MII_BCM54XX_IMR		0x1b	/* BCM54xx interrupt mask register */
+   102	#define MII_BCM54XX_INT_CRCERR	0x0001	/* CRC error */
+   103	#define MII_BCM54XX_INT_LINK	0x0002	/* Link status changed */
+   104	#define MII_BCM54XX_INT_SPEED	0x0004	/* Link speed change */
+   105	#define MII_BCM54XX_INT_DUPLEX	0x0008	/* Duplex mode changed */
+   106	#define MII_BCM54XX_INT_LRS	0x0010	/* Local receiver status changed */
+   107	#define MII_BCM54XX_INT_RRS	0x0020	/* Remote receiver status changed */
+   108	#define MII_BCM54XX_INT_SSERR	0x0040	/* Scrambler synchronization error */
+   109	#define MII_BCM54XX_INT_UHCD	0x0080	/* Unsupported HCD negotiated */
+   110	#define MII_BCM54XX_INT_NHCD	0x0100	/* No HCD */
+   111	#define MII_BCM54XX_INT_NHCDL	0x0200	/* No HCD link */
+   112	#define MII_BCM54XX_INT_ANPR	0x0400	/* Auto-negotiation page received */
+   113	#define MII_BCM54XX_INT_LC	0x0800	/* All counters below 128 */
+   114	#define MII_BCM54XX_INT_HC	0x1000	/* Counter above 32768 */
+   115	#define MII_BCM54XX_INT_MDIX	0x2000	/* MDIX status change */
+   116	#define MII_BCM54XX_INT_PSERR	0x4000	/* Pair swap error */
+   329	#define LRE_ADVERTISE_FULL		(LREANAA_100_1PAIR | LREANAA_100_4PAIR | \
+   330						 LREANAA_100_2PAIR | LREANAA_10_2PAIR | \
+   331						 LREANAA_10_1PAIR)
+   332	
+   333	#define LRE_ADVERTISE_ALL		LRE_ADVERTISE_FULL
+   334	
+   335	/* LDS Link Partner Ability. */
+   336	#define LRELPA_PAUSE_ASYM		0x8000	/* Supports asymmetric pause   */
+   337	#define LRELPA_PAUSE			0x4000	/* Supports pause capability   */
+   338	#define LRELPA_100_1PAIR		0x0020	/* 100Mbps 1 Pair capable      */
+   339	#define LRELPA_100_4PAIR		0x0010	/* 100Mbps 4 Pair capable      */
+   340	#define LRELPA_100_2PAIR		0x0008	/* 100Mbps 2 Pair capable      */
+   341	#define LRELPA_10_2PAIR			0x0004	/* 10Mbps 2 Pair capable       */
+   342	#define LRELPA_10_1PAIR			0x0002	/* 10Mbps 1 Pair capable       */
+   343	
+   344	/* LDS Expansion register. */
+   345	#define LDSE_DOWNGRADE			0x8000	/* Can do LDS Speed Downgrade  */
+   346	#define LDSE_MASTER			0x4000	/* Master / Slave              */
+   347	#define LDSE_PAIRS_MASK			0x3000	/* Pair Count Mask             */
+   348	#define LDSE_PAIRS_SHIFT		12
+   349	#define LDSE_4PAIRS			(2 << LDSE_PAIRS_SHIFT)	/* 4 Pairs Connection */
+   350	#define LDSE_2PAIRS			(1 << LDSE_PAIRS_SHIFT)	/* 2 Pairs Connection */
+   351	#define LDSE_1PAIR			(0 << LDSE_PAIRS_SHIFT)	/* 1 Pair  Connection */
+   352	#define LDSE_CABLEN_MASK		0x0FFF	/* Cable Length Mask           */
+   353	
+   354	/* BCM54810 Registers */
+   355	#define BCM54810_EXP_BROADREACH_LRE_MISC_CTL	(MII_BCM54XX_EXP_SEL_ER + 0x90)
+   356	#define BCM54810_EXP_BROADREACH_LRE_MISC_CTL_EN	(1 << 0)
+   357	#define BCM54810_SHD_CLK_CTL			0x3
+   358	#define BCM54810_SHD_CLK_CTL_GTXCLK_EN		(1 << 9)
+   359	
+   360	/* BCM54811 Registers */
+   361	#define BCM54811_EXP_BROADREACH_LRE_OVERLAY_CTL	(MII_BCM54XX_EXP_SEL_ER + 0x9A)
+   362	/* Access Control Override Enable */
+   363	#define BCM54811_EXP_BROADREACH_LRE_OVERLAY_CTL_EN		BIT(15)
+   364	/* Access Control Override Value */
+   365	#define BCM54811_EXP_BROADREACH_LRE_OVERLAY_CTL_OVERRIDE_VAL	BIT(14)
+   455	#define MII_BRCM_FET_SHDW_AM4_LED_MASK	0x0003
+   456	#define MII_BRCM_FET_SHDW_AM4_LED_MODE1 0x0001
+   457	
+   458	#define MII_BRCM_FET_SHDW_AUXSTAT2	0x1b	/* Auxiliary status 2 */
+   459	#define MII_BRCM_FET_SHDW_AS2_APDE	0x0020	/* Auto power down enable */
+   460	
+   461	#define BRCM_CL45VEN_EEE_CONTROL	0x803d
+   462	#define LPI_FEATURE_EN			0x8000
+   463	#define LPI_FEATURE_EN_DIG1000X		0x4000
+   464	
+   465	#define BRCM_CL45VEN_EEE_LPI_CNT	0x803f
+   466	

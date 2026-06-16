@@ -1,0 +1,65 @@
+Source: https://github.com/raspberrypi/linux/blob/rpi-6.12.y/drivers/net/phy/bcm-phy-lib.c
+Ref: rpi-6.12.y
+Path: drivers/net/phy/bcm-phy-lib.c
+Sections: Broadcom expansion, AUX/shadow, and misc read helper selector mechanics.
+
+    21	int __bcm_phy_write_exp(struct phy_device *phydev, u16 reg, u16 val)
+    22	{
+    23		int rc;
+    24	
+    25		rc = __phy_write(phydev, MII_BCM54XX_EXP_SEL, reg);
+    26		if (rc < 0)
+    27			return rc;
+    28	
+    29		return __phy_write(phydev, MII_BCM54XX_EXP_DATA, val);
+    30	}
+    42	int __bcm_phy_read_exp(struct phy_device *phydev, u16 reg)
+    43	{
+    44		int val;
+    45	
+    46		val = __phy_write(phydev, MII_BCM54XX_EXP_SEL, reg);
+    47		if (val < 0)
+    48			return val;
+    49	
+    50		val = __phy_read(phydev, MII_BCM54XX_EXP_DATA);
+    51	
+    52		/* Restore default value.  It's O.K. if this write fails. */
+    53		__phy_write(phydev, MII_BCM54XX_EXP_SEL, 0);
+    54	
+    55		return val;
+    56	}
+    93	int bcm54xx_auxctl_read(struct phy_device *phydev, u16 regnum)
+    94	{
+    95		/* The register must be written to both the Shadow Register Select and
+    96		 * the Shadow Read Register Selector
+    97		 */
+    98		phy_write(phydev, MII_BCM54XX_AUX_CTL, MII_BCM54XX_AUXCTL_SHDWSEL_MASK |
+    99			  regnum << MII_BCM54XX_AUXCTL_SHDWSEL_READ_SHIFT);
+   100		return phy_read(phydev, MII_BCM54XX_AUX_CTL);
+   101	}
+   104	int bcm54xx_auxctl_write(struct phy_device *phydev, u16 regnum, u16 val)
+   105	{
+   106		return phy_write(phydev, MII_BCM54XX_AUX_CTL, regnum | val);
+   107	}
+   111	int bcm_phy_write_misc(struct phy_device *phydev,
+   112			       u16 reg, u16 chl, u16 val)
+   113	{
+   117		rc = phy_write(phydev, MII_BCM54XX_AUX_CTL,
+   118			       MII_BCM54XX_AUXCTL_SHDWSEL_MISC);
+   122		tmp = phy_read(phydev, MII_BCM54XX_AUX_CTL);
+   123		tmp |= MII_BCM54XX_AUXCTL_ACTL_SMDSP_ENA;
+   124		rc = phy_write(phydev, MII_BCM54XX_AUX_CTL, tmp);
+   129		tmp = (chl * MII_BCM_CHANNEL_WIDTH) | reg;
+   130		rc = bcm_phy_write_exp(phydev, tmp, val);
+   135	int bcm_phy_read_misc(struct phy_device *phydev,
+   136			      u16 reg, u16 chl)
+   137	{
+   141		rc = phy_write(phydev, MII_BCM54XX_AUX_CTL,
+   142			       MII_BCM54XX_AUXCTL_SHDWSEL_MISC);
+   146		tmp = phy_read(phydev, MII_BCM54XX_AUX_CTL);
+   147		tmp |= MII_BCM54XX_AUXCTL_ACTL_SMDSP_ENA;
+   148		rc = phy_write(phydev, MII_BCM54XX_AUX_CTL, tmp);
+   153		tmp = (chl * MII_BCM_CHANNEL_WIDTH) | reg;
+   154		rc = bcm_phy_read_exp(phydev, tmp);
+   156		return rc;
+   157	}

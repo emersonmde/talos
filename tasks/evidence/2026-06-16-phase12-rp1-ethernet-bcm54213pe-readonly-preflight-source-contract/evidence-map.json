@@ -1,0 +1,99 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract-20260616",
+  "classification": "bcm54213pe-readonly-preflight-source-contract-report-core-selected",
+  "checkpoint": {
+    "task_record": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract.md",
+    "classification": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/evidence-map.json"
+  },
+  "source_excerpts": {
+    "bcm_phy_lib_contract": {
+      "source_url": "https://github.com/raspberrypi/linux/blob/rpi-6.12.y/drivers/net/phy/bcm-phy-lib.c",
+      "ref": "rpi-6.12.y",
+      "path": "drivers/net/phy/bcm-phy-lib.c",
+      "retained_excerpt": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/source/linux-rpi-6.12-bcm-phy-lib-contract-excerpt.txt",
+      "sha256": "0470e8ff685cdafa8171d1153eea17d6726f16d1cda290bf1a24a78a676cf21f"
+    },
+    "bcm_phy_lib_selector_read_contract": {
+      "source_url": "https://github.com/raspberrypi/linux/blob/rpi-6.12.y/drivers/net/phy/bcm-phy-lib.c",
+      "ref": "rpi-6.12.y",
+      "path": "drivers/net/phy/bcm-phy-lib.c",
+      "retained_excerpt": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/source/linux-rpi-6.12-bcm-phy-lib-selector-read-contract-excerpt.txt",
+      "sha256": "d477caf222dfe5eae1e3e8e54eafc21898d1cd4b8bf1a2a53217f6867adcf647"
+    },
+    "brcmphy_register_contract": {
+      "source_url": "https://github.com/raspberrypi/linux/blob/rpi-6.12.y/include/linux/brcmphy.h",
+      "ref": "rpi-6.12.y",
+      "path": "include/linux/brcmphy.h",
+      "retained_excerpt": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/source/linux-rpi-6.12-brcmphy-register-contract-excerpt.txt",
+      "sha256": "b4a5d4d3272d53f0898179307e66ae50947fe94b25b72193868e7118a8d7adf6"
+    },
+    "broadcom_bcm54213pe_config_contract": {
+      "source_url": "https://github.com/raspberrypi/linux/blob/rpi-6.12.y/drivers/net/phy/broadcom.c",
+      "ref": "rpi-6.12.y",
+      "path": "drivers/net/phy/broadcom.c",
+      "retained_excerpt": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/source/linux-rpi-6.12-broadcom-bcm54213pe-config-contract-excerpt.txt",
+      "sha256": "c745a529512ef69185ba7f2712079e66b5d9efbdb963eb194ec91291fc297aa6"
+    },
+    "mii_register_readonly_preflight": {
+      "source_url": "https://github.com/raspberrypi/linux/blob/rpi-6.12.y/include/uapi/linux/mii.h",
+      "ref": "rpi-6.12.y",
+      "path": "include/uapi/linux/mii.h",
+      "retained_excerpt": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/source/linux-rpi-6.12-mii-register-readonly-preflight-excerpt.txt",
+      "sha256": "4d2651ed1c2f4f9ae70d6439bdcd704d0f589bef154f553e14f5554027221662"
+    },
+    "phy_core_mmd_read_contract": {
+      "source_url": "https://github.com/raspberrypi/linux/blob/rpi-6.12.y/drivers/net/phy/phy-core.c",
+      "ref": "rpi-6.12.y",
+      "path": "drivers/net/phy/phy-core.c",
+      "retained_excerpt": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/source/linux-rpi-6.12-phy-core-mmd-read-contract-excerpt.txt",
+      "sha256": "3e8f9605a965f5c914266ce75b7190382dd3657b633028c9774459b73a3c064a"
+    },
+    "phy_device_master_slave_readonly_preflight": {
+      "source_url": "https://github.com/raspberrypi/linux/blob/rpi-6.12.y/drivers/net/phy/phy_device.c",
+      "ref": "rpi-6.12.y",
+      "path": "drivers/net/phy/phy_device.c",
+      "retained_excerpt": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/source/linux-rpi-6.12-phy-device-master-slave-readonly-preflight-excerpt.txt",
+      "sha256": "5e0b2d53d69b837e74c8d99ce6028816b091fa85935bcb471d7c097c4410fcce"
+    },
+    "phy_device_read_status_register_contract": {
+      "source_url": "https://github.com/raspberrypi/linux/blob/rpi-6.12.y/drivers/net/phy/phy_device.c",
+      "ref": "rpi-6.12.y",
+      "path": "drivers/net/phy/phy_device.c",
+      "retained_excerpt": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/source/linux-rpi-6.12-phy-device-read-status-register-contract-excerpt.txt",
+      "sha256": "21cfdfc28a90b76a37935402a1aa02aa7f10491ce99048b0c52409ec57ac3898"
+    },
+    "sha256sums": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/source/sha256sums.txt"
+  },
+  "input_evidence": {
+    "config_init_contract_task": "tasks/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract.md",
+    "config_init_contract_classification": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract/classification.json",
+    "config_init_contract_evidence_map": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract/evidence-map.json",
+    "broadcom_phy_id_inventory_task": "tasks/2026-06-15-phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory.md",
+    "phy_power_strap_checkpoint_task": "tasks/2026-06-15-phase12-rp1-ethernet-phy-power-strap-source-checkpoint.md",
+    "gpio32_reset_recovery_checkpoint_task": "tasks/2026-06-15-phase12-rp1-ethernet-post-physical-gpio32-reset-recovery-source-checkpoint.md",
+    "post_physical_v2_closeout_task": "tasks/2026-06-15-phase12-rp1-ethernet-post-physical-link-status-v2-closeout.md"
+  },
+  "docs": {
+    "phase12": "docs/src/project/phase12-networking-ssh.md",
+    "roadmap": "docs/src/roadmap.md"
+  },
+  "validation": {
+    "json": [
+      "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/classification.json",
+      "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/evidence-map.json"
+    ],
+    "source_checksums": "cd tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/source && sha256sum -c sha256sums.txt",
+    "diff_check": "git diff --check",
+    "docs": "mdbook build",
+    "staged_diff_check": "git diff --cached --check before commit"
+  },
+  "next_action": {
+    "selected_queued_followup": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-report-core-20260616",
+    "hardware_authorized": false,
+    "selected_targets": [
+      "MII_CTRL1000 0x09",
+      "MII_STAT1000 0x0a"
+    ]
+  }
+}

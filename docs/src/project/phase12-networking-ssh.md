@@ -1916,3 +1916,18 @@ the smallest potentially distinct reads still need a source/static preflight
 contract for side effects and selector mechanics. Link readiness, GPIO32/PHY
 reset ownership, BMCR retry, broad PHY/MAC configuration, packet I/O,
 networking, SSH, Phase 12.2, and phase transition remain rejected.
+
+phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract-20260616
+accepts
+bcm54213pe-readonly-preflight-source-contract-report-core-selected. The source
+contract classifies the BCM54213PE candidate read surfaces and selects only a
+local/static report-core follow-up for MII_CTRL1000 0x09 and MII_STAT1000
+0x0a on PHY1. MII_BCM54XX_ISR is rejected because retained Linux source treats
+ISR reads as interrupt acknowledgement; MII_BCM54XX_ECR and MII_BCM54XX_IMR
+are deferred as interrupt context; Broadcom AUX/shadow delay and Clause 45/MMD
+EEE reads are blocked from the pure read-only set because retained Linux
+source requires selector writes before reading. The accepted phy-not-ready
+status and GPIO32 persistent-event-state blocker remain unchanged. No hardware
+proof, GPIO32 action, BMCR write, Broadcom shadow/MMD/aux access, PHY/MAC
+configuration, packet I/O, networking, SSH, Phase 12.2, or phase transition is
+authorized.

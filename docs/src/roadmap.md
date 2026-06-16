@@ -10277,6 +10277,22 @@ BCM54213PE read-only preflight contract or explicit pause; link readiness,
 GPIO32/PHY reset ownership, BMCR retry, broad PHY/MAC configuration, packet
 I/O, networking, SSH, Phase 12.2, and phase transition remain rejected.
 
+phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract-20260616
+accepts
+bcm54213pe-readonly-preflight-source-contract-report-core-selected. It
+classifies MII_STAT1000, MII_CTRL1000, MII_BCM54XX_ISR,
+MII_BCM54XX_ECR, MII_BCM54XX_IMR, Broadcom AUX/shadow delay context, Clause
+45/MMD EEE candidates, and already sampled BMCR/BMSR/ANAR/ANLPAR/MACB_NSR
+status surfaces. The only selected follow-up is the local/static report-core
+task for MII_CTRL1000 0x09 and MII_STAT1000 0x0a on PHY1. ISR is rejected as
+read-with-side-effect, ECR/IMR are deferred as interrupt context, and
+Broadcom AUX/shadow plus Clause 45/MMD EEE reads are blocked from the pure
+read-only set because retained Linux source requires selector writes. The
+accepted phy-not-ready status and GPIO32 blocker remain unchanged; hardware,
+GPIO32 action, BMCR write, Broadcom shadow/MMD/aux access, PHY/MAC
+configuration, packet I/O, networking, SSH, Phase 12.2, and phase transition
+remain unauthorized.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

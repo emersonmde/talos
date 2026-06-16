@@ -1,0 +1,194 @@
+Source: https://github.com/raspberrypi/linux/blob/rpi-6.12.y/drivers/net/phy/bcm-phy-lib.c
+Ref: rpi-6.12.y
+Path: drivers/net/phy/bcm-phy-lib.c
+Sections: Broadcom interrupt acknowledgement/configuration/handling, APD, EEE helper.
+
+     1	// SPDX-License-Identifier: GPL-2.0
+     2	/*
+     3	 * Copyright (C) 2015-2017 Broadcom
+     4	 */
+     5	
+     6	#include "bcm-phy-lib.h"
+     7	#include <linux/bitfield.h>
+     8	#include <linux/brcmphy.h>
+     9	#include <linux/etherdevice.h>
+    10	#include <linux/export.h>
+    11	#include <linux/mdio.h>
+    12	#include <linux/module.h>
+    13	#include <linux/phy.h>
+    14	#include <linux/ethtool.h>
+    15	#include <linux/ethtool_netlink.h>
+    16	#include <linux/netdevice.h>
+    17	
+    18	#define MII_BCM_CHANNEL_WIDTH     0x2000
+    19	#define BCM_CL45VEN_EEE_ADV       0x3c
+    20	
+    21	int __bcm_phy_write_exp(struct phy_device *phydev, u16 reg, u16 val)
+    22	{
+    23		int rc;
+    24	
+   171	int bcm_phy_ack_intr(struct phy_device *phydev)
+   172	{
+   173		int reg;
+   174	
+   175		/* Clear pending interrupts.  */
+   176		reg = phy_read(phydev, MII_BCM54XX_ISR);
+   177		if (reg < 0)
+   178			return reg;
+   179	
+   180		return 0;
+   181	}
+   182	EXPORT_SYMBOL_GPL(bcm_phy_ack_intr);
+   183	
+   184	int bcm_phy_config_intr(struct phy_device *phydev)
+   185	{
+   186		int reg, err;
+   187	
+   188		reg = phy_read(phydev, MII_BCM54XX_ECR);
+   189		if (reg < 0)
+   190			return reg;
+   191	
+   192		if (phydev->interrupts == PHY_INTERRUPT_ENABLED) {
+   193			err = bcm_phy_ack_intr(phydev);
+   194			if (err)
+   195				return err;
+   196	
+   197			reg &= ~MII_BCM54XX_ECR_IM;
+   198			err = phy_write(phydev, MII_BCM54XX_ECR, reg);
+   199		} else {
+   200			reg |= MII_BCM54XX_ECR_IM;
+   201			err = phy_write(phydev, MII_BCM54XX_ECR, reg);
+   202			if (err)
+   203				return err;
+   204	
+   205			err = bcm_phy_ack_intr(phydev);
+   206		}
+   207		return err;
+   208	}
+   209	EXPORT_SYMBOL_GPL(bcm_phy_config_intr);
+   210	
+   211	irqreturn_t bcm_phy_handle_interrupt(struct phy_device *phydev)
+   212	{
+   213		int irq_status, irq_mask;
+   214	
+   215		irq_status = phy_read(phydev, MII_BCM54XX_ISR);
+   216		if (irq_status < 0) {
+   217			phy_error(phydev);
+   218			return IRQ_NONE;
+   219		}
+   220	
+   221		/* If a bit from the Interrupt Mask register is set, the corresponding
+   222		 * bit from the Interrupt Status register is masked. So read the IMR
+   223		 * and then flip the bits to get the list of possible interrupt
+   224		 * sources.
+   225		 */
+   226		irq_mask = phy_read(phydev, MII_BCM54XX_IMR);
+   227		if (irq_mask < 0) {
+   228			phy_error(phydev);
+   229			return IRQ_NONE;
+   230		}
+   231		irq_mask = ~irq_mask;
+   232	
+   233		if (!(irq_status & irq_mask))
+   234			return IRQ_NONE;
+   235	
+   236		phy_trigger_machine(phydev);
+   237	
+   238		return IRQ_HANDLED;
+   239	}
+   240	EXPORT_SYMBOL_GPL(bcm_phy_handle_interrupt);
+   339	int bcm_phy_enable_apd(struct phy_device *phydev, bool dll_pwr_down)
+   340	{
+   341		int val;
+   342	
+   343		if (dll_pwr_down) {
+   344			val = bcm_phy_read_shadow(phydev, BCM54XX_SHD_SCR3);
+   345			if (val < 0)
+   346				return val;
+   347	
+   348			val |= BCM54XX_SHD_SCR3_DLLAPD_DIS;
+   349			bcm_phy_write_shadow(phydev, BCM54XX_SHD_SCR3, val);
+   350		}
+   351	
+   352		val = bcm_phy_read_shadow(phydev, BCM54XX_SHD_APD);
+   353		if (val < 0)
+   354			return val;
+   355	
+   356		/* Clear APD bits */
+   357		val &= BCM_APD_CLR_MASK;
+   358	
+   359		if (phydev->autoneg == AUTONEG_ENABLE)
+   360			val |= BCM54XX_SHD_APD_EN;
+   361		else
+   362			val |= BCM_NO_ANEG_APD_EN;
+   363	
+   364		/* Enable energy detect single link pulse for easy wakeup */
+   365		val |= BCM_APD_SINGLELP_EN;
+   366	
+   367		/* Enable Auto Power-Down (APD) for the PHY */
+   368		return bcm_phy_write_shadow(phydev, BCM54XX_SHD_APD, val);
+   369	}
+   370	EXPORT_SYMBOL_GPL(bcm_phy_enable_apd);
+   371	
+   372	int bcm_phy_set_eee(struct phy_device *phydev, bool enable)
+   373	{
+   374		int val, mask = 0;
+   375	
+   376		/* Enable EEE at PHY level */
+   377		val = phy_read_mmd(phydev, MDIO_MMD_AN, BRCM_CL45VEN_EEE_CONTROL);
+   378		if (val < 0)
+   379			return val;
+   380	
+   381		if (enable)
+   382			val |= LPI_FEATURE_EN | LPI_FEATURE_EN_DIG1000X;
+   383		else
+   384			val &= ~(LPI_FEATURE_EN | LPI_FEATURE_EN_DIG1000X);
+   385	
+   386		phy_write_mmd(phydev, MDIO_MMD_AN, BRCM_CL45VEN_EEE_CONTROL, (u32)val);
+   387	
+   388		/* Advertise EEE */
+   389		val = phy_read_mmd(phydev, MDIO_MMD_AN, BCM_CL45VEN_EEE_ADV);
+   390		if (val < 0)
+   391			return val;
+   392	
+   393		if (linkmode_test_bit(ETHTOOL_LINK_MODE_1000baseT_Full_BIT,
+   394				      phydev->supported))
+   395			mask |= MDIO_EEE_1000T;
+   396		if (linkmode_test_bit(ETHTOOL_LINK_MODE_100baseT_Full_BIT,
+   397				      phydev->supported))
+   398			mask |= MDIO_EEE_100TX;
+   399	
+   400		if (enable)
+   401			val |= mask;
+   402		else
+   403			val &= ~mask;
+   404	
+   405		phy_write_mmd(phydev, MDIO_MMD_AN, BCM_CL45VEN_EEE_ADV, (u32)val);
+   406	
+   407		return 0;
+   408	}
+   409	EXPORT_SYMBOL_GPL(bcm_phy_set_eee);
+  1136	int bcm_config_lre_aneg(struct phy_device *phydev, bool changed)
+  1137	{
+  1138		int err;
+  1139	
+  1140		if (genphy_config_eee_advert(phydev))
+  1141			changed = true;
+  1142	
+  1143		err = bcm_setup_lre_master_slave(phydev);
+  1144		if (err < 0)
+  1145			return err;
+  1146		else if (err)
+  1147			changed = true;
+  1148	
+  1149		if (phydev->autoneg != AUTONEG_ENABLE)
+  1150			return bcm_setup_lre_forced(phydev);
+  1151	
+  1152		err = bcm_config_lre_advert(phydev);
+  1153		if (err < 0)
+  1154			return err;
+  1155		else if (err)
+  1156			changed = true;
+  1157	
+  1158		return genphy_check_and_restart_aneg(phydev, changed);
+  1159	}

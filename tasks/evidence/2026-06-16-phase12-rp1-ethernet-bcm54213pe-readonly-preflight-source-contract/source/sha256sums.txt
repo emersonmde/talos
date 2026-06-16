@@ -1,0 +1,8 @@
+0470e8ff685cdafa8171d1153eea17d6726f16d1cda290bf1a24a78a676cf21f  linux-rpi-6.12-bcm-phy-lib-contract-excerpt.txt
+d477caf222dfe5eae1e3e8e54eafc21898d1cd4b8bf1a2a53217f6867adcf647  linux-rpi-6.12-bcm-phy-lib-selector-read-contract-excerpt.txt
+b4a5d4d3272d53f0898179307e66ae50947fe94b25b72193868e7118a8d7adf6  linux-rpi-6.12-brcmphy-register-contract-excerpt.txt
+c745a529512ef69185ba7f2712079e66b5d9efbdb963eb194ec91291fc297aa6  linux-rpi-6.12-broadcom-bcm54213pe-config-contract-excerpt.txt
+4d2651ed1c2f4f9ae70d6439bdcd704d0f589bef154f553e14f5554027221662  linux-rpi-6.12-mii-register-readonly-preflight-excerpt.txt
+3e8f9605a965f5c914266ce75b7190382dd3657b633028c9774459b73a3c064a  linux-rpi-6.12-phy-core-mmd-read-contract-excerpt.txt
+5e0b2d53d69b837e74c8d99ce6028816b091fa85935bcb471d7c097c4410fcce  linux-rpi-6.12-phy-device-master-slave-readonly-preflight-excerpt.txt
+21cfdfc28a90b76a37935402a1aa02aa7f10491ce99048b0c52409ec57ac3898  linux-rpi-6.12-phy-device-read-status-register-contract-excerpt.txt

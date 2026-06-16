@@ -1,0 +1,243 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract-20260616",
+  "status": "accepted",
+  "classification": "bcm54213pe-readonly-preflight-source-contract-report-core-selected",
+  "evidence_level": [
+    "static/source/task evidence inspection",
+    "retained public source excerpts with SHA-256 checksums",
+    "JSON evidence validation",
+    "diff checks",
+    "docs build"
+  ],
+  "accepted_inputs": {
+    "bcm54213pe_config_init_contract": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-config-init-source-contract-20260615",
+      "commit": "0158575dbdb74a29c7940bd755029ee15ed7a606",
+      "classification": "bcm54213pe-config-init-source-contract-readonly-preflight-contract-selected"
+    },
+    "phy_id": {
+      "model": "Broadcom BCM54213PE",
+      "physid1": "0x600d",
+      "physid2": "0x84a2",
+      "combined_phy_id": "0x600d84a2",
+      "driver_table_mask": "0xffffffff"
+    },
+    "post_physical_status": {
+      "classification": "post-physical-link-status-phy-not-ready",
+      "bmcr": "0x1000",
+      "bmsr_first": "0x7949",
+      "bmsr_second": "0x7949",
+      "anar": "0x01e1",
+      "anlpar": "0x0000",
+      "macb_nsr": "0x00000006",
+      "bmsr_link_status": false,
+      "bmsr_autoneg_complete": false,
+      "anlpar_nonzero": false,
+      "macb_nsr_link": false
+    },
+    "gpio32_blocker": {
+      "classification": "persistent-or-firmware-owned-event-state",
+      "decision": "GPIO32 / ETH_RST_N reset recovery remains blocked; no GPIO32/RIO/pad/MMIO write or event-clear retry is authorized."
+    }
+  },
+  "candidate_read_surfaces": [
+    {
+      "surface": "MII_STAT1000",
+      "address": "0x0a",
+      "source_paths": [
+        "drivers/net/phy/phy_device.c:genphy_read_master_slave",
+        "drivers/net/phy/phy_device.c:genphy_read_lpa",
+        "include/uapi/linux/mii.h"
+      ],
+      "safety_classification": "pure-read-only",
+      "side_effects": "none identified in retained Linux source; plain Clause 22 phy_read",
+      "selector_mechanics": "none",
+      "usefulness": "materially distinct only as 1000BASE-T master/slave and link-partner status context; it cannot prove link readiness while the accepted BMSR autoneg-complete bit remains false.",
+      "disposition": "selected",
+      "selected_for_report_core": true
+    },
+    {
+      "surface": "MII_CTRL1000",
+      "address": "0x09",
+      "source_paths": [
+        "drivers/net/phy/phy_device.c:genphy_read_master_slave",
+        "drivers/net/phy/phy_device.c:genphy_read_lpa error context",
+        "drivers/net/phy/broadcom.c:bcm54210e_config_init",
+        "include/uapi/linux/mii.h"
+      ],
+      "safety_classification": "pure-read-only-with-write-adjacent-risk",
+      "side_effects": "none identified for the read; CTL1000_AS_MASTER and CTL1000_ENABLE_MASTER writes remain forbidden",
+      "selector_mechanics": "none",
+      "usefulness": "selected as required interpretation context for MII_STAT1000 master/slave results and to reject hidden forced-master assumptions.",
+      "disposition": "selected",
+      "selected_for_report_core": true
+    },
+    {
+      "surface": "MII_BCM54XX_ISR",
+      "address": "0x1a",
+      "source_paths": [
+        "drivers/net/phy/bcm-phy-lib.c:bcm_phy_ack_intr",
+        "drivers/net/phy/bcm-phy-lib.c:bcm_phy_handle_interrupt",
+        "include/linux/brcmphy.h"
+      ],
+      "safety_classification": "read-with-side-effect",
+      "side_effects": "Linux documents the read in bcm_phy_ack_intr as clearing pending interrupts",
+      "selector_mechanics": "none",
+      "usefulness": "interrupt-pending context is not a link-readiness discriminator at the accepted phy-not-ready frontier",
+      "disposition": "rejected",
+      "selected_for_report_core": false
+    },
+    {
+      "surface": "MII_BCM54XX_ECR",
+      "address": "0x10",
+      "source_paths": [
+        "drivers/net/phy/bcm-phy-lib.c:bcm_phy_config_intr",
+        "drivers/net/phy/broadcom.c:bcm54xx_config_init",
+        "include/linux/brcmphy.h"
+      ],
+      "safety_classification": "pure-read-only-with-write-adjacent-risk",
+      "side_effects": "none identified for the read; ECR_IM writes remain forbidden",
+      "selector_mechanics": "none",
+      "usefulness": "interrupt routing context only; not a distinct phy-not-ready discriminator without enabling interrupt ownership",
+      "disposition": "deferred",
+      "selected_for_report_core": false
+    },
+    {
+      "surface": "MII_BCM54XX_IMR",
+      "address": "0x1b",
+      "source_paths": [
+        "drivers/net/phy/bcm-phy-lib.c:bcm_phy_handle_interrupt",
+        "drivers/net/phy/broadcom.c:bcm54xx_config_init",
+        "include/linux/brcmphy.h"
+      ],
+      "safety_classification": "pure-read-only-with-write-adjacent-risk",
+      "side_effects": "none identified for the read; IMR unmask writes remain forbidden",
+      "selector_mechanics": "none",
+      "usefulness": "interrupt mask context only; not a distinct phy-not-ready discriminator without enabling interrupt ownership",
+      "disposition": "deferred",
+      "selected_for_report_core": false
+    },
+    {
+      "surface": "Broadcom AUX/shadow delay context",
+      "address": "MII_BCM54XX_AUX_CTL 0x18 shadow selectors, BCM54810_SHD_CLK_CTL",
+      "source_paths": [
+        "drivers/net/phy/bcm-phy-lib.c:bcm54xx_auxctl_read",
+        "drivers/net/phy/bcm-phy-lib.c:bcm_phy_read_misc",
+        "drivers/net/phy/broadcom.c:bcm54xx_config_clock_delay",
+        "include/linux/brcmphy.h"
+      ],
+      "safety_classification": "selector-write-required",
+      "side_effects": "retained source requires selector writes before reads and write/restore paths for delay changes",
+      "selector_mechanics": "AUX/shadow reads write MII_BCM54XX_AUX_CTL or expansion selectors before reading",
+      "usefulness": "RGMII delay state may matter later, but reading it is not pure read-only and is unsafe while GPIO32 reset ownership is unresolved",
+      "disposition": "blocked",
+      "selected_for_report_core": false
+    },
+    {
+      "surface": "Clause 45/MMD EEE candidates",
+      "address": "BRCM_CL45VEN_EEE_CONTROL 0x803d, BCM_CL45VEN_EEE_ADV 0x3c, MDIO_AN_EEE_ADV",
+      "source_paths": [
+        "drivers/net/phy/bcm-phy-lib.c:bcm_phy_set_eee",
+        "drivers/net/phy/phy-core.c:mmd_phy_read",
+        "include/uapi/linux/mii.h"
+      ],
+      "safety_classification": "selector-write-required",
+      "side_effects": "Clause 22 MMD indirect reads write MII_MMD_CTRL and MII_MMD_DATA selectors before reading MII_MMD_DATA",
+      "selector_mechanics": "MMD indirect read writes devad, register address, and no-increment selector",
+      "usefulness": "EEE advertisement is source-relevant but not a direct link-readiness discriminator at the current no-autoneg-complete frontier",
+      "disposition": "blocked",
+      "selected_for_report_core": false
+    },
+    {
+      "surface": "MII_BMCR / MII_BMSR / MII_LPA / MACB_NSR",
+      "address": "0x00 / 0x01 / 0x05 / 0x0008",
+      "source_paths": [
+        "accepted post-physical v2 status proof",
+        "accepted MACB_NSR readonly proof"
+      ],
+      "safety_classification": "already-sampled",
+      "side_effects": "BMSR latch behavior already accounted for by accepted double sample; no new side-effect claim",
+      "selector_mechanics": "none for Clause 22 status reads; MACB_NSR is passive MACB register read",
+      "usefulness": "baseline context only; repeating the same shape is rejected",
+      "disposition": "already-sampled",
+      "selected_for_report_core": false
+    }
+  ],
+  "selected_report_core": {
+    "selected": true,
+    "task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-report-core-20260616",
+    "selected_targets": [
+      {
+        "surface": "MII_CTRL1000",
+        "phy_addr": 1,
+        "register": "0x09",
+        "access": "Clause 22 PHY1 MAN read-command only in a future hardware proof; this task selects only a local/static report core."
+      },
+      {
+        "surface": "MII_STAT1000",
+        "phy_addr": 1,
+        "register": "0x0a",
+        "access": "Clause 22 PHY1 MAN read-command only in a future hardware proof; this task selects only a local/static report core."
+      }
+    ],
+    "required_context": [
+      "accepted BMCR/BMSR/ANAR/ANLPAR/MACB_NSR phy-not-ready status",
+      "accepted Broadcom BCM54213PE exact ID",
+      "accepted GPIO32 persistent-event-state blocker",
+      "paired no-MDIO/no-Ethernet control for any later proof task"
+    ],
+    "local_static_boundary": "The follow-up may build report structures, decoder constants, validators, and task docs for MII_CTRL1000/MII_STAT1000 only. It may not run hardware or add GPIO32, BMCR write, Broadcom shadow/MMD/aux, interrupt ISR, PHY configuration, MACB configuration, packet I/O, networking, SSH, Phase 12.2, or phase-transition behavior."
+  },
+  "rejected_claims": [
+    "link-readiness",
+    "gpio32-ownership",
+    "phy-reset-ownership",
+    "gpio32-reset-recovery",
+    "bmcr-autoneg-retry",
+    "same-shaped-bmcr-bmsr-anar-anlpar-macb-nsr-retry",
+    "broad-phy-configuration",
+    "broadcom-shadow-mmd-aux-write",
+    "interrupt-ownership",
+    "macb-configuration",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "The preflight splits pure Clause 22 read candidates from selector-write, read-with-side-effect, and write-adjacent Broadcom surfaces."
+    },
+    {
+      "disposition": "selected",
+      "finding": "MII_CTRL1000 and MII_STAT1000 are the only selected targets for the next local/static report-core follow-up."
+    },
+    {
+      "disposition": "already-sampled",
+      "finding": "BMCR, BMSR, ANAR/ANLPAR, and MACB_NSR repeats are same-shaped against the accepted phy-not-ready frontier and are not selected."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "MII_BCM54XX_ISR is rejected for the report core because retained Linux source treats ISR reads as interrupt acknowledgement/clear-pending."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "MII_BCM54XX_ECR and MII_BCM54XX_IMR reads are deferred as interrupt context only; their writes remain forbidden."
+    },
+    {
+      "disposition": "blocked",
+      "finding": "Broadcom AUX/shadow delay and Clause 45/MMD EEE reads are blocked from the read-only set because retained Linux source requires selector writes before reading."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "The accepted physical Ethernet link precondition remains accepted and was not re-asked."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No source, helper, task, or evidence files were removed."
+    }
+  ]
+}

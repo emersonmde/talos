@@ -1,0 +1,131 @@
+Source: https://github.com/raspberrypi/linux/blob/rpi-6.12.y/drivers/net/phy/phy_device.c
+Ref: rpi-6.12.y
+Path: drivers/net/phy/phy_device.c
+Sections: generic link update, LPA/master-slave reads, and read_status register dependencies.
+
+  2610			if (!phydev->autoneg_complete) {
+  2611				mii_stat1000_mod_linkmode_lpa_t(phydev->lp_advertising,
+  2612								0);
+  2613				mii_lpa_mod_linkmode_lpa_t(phydev->lp_advertising, 0);
+  2614				return 0;
+  2615			}
+  2616	
+  2617			if (phydev->is_gigabit_capable) {
+  2618				lpagb = phy_read(phydev, MII_STAT1000);
+  2619				if (lpagb < 0)
+  2620					return lpagb;
+  2621	
+  2622				if (lpagb & LPA_1000MSFAIL) {
+  2623					int adv = phy_read(phydev, MII_CTRL1000);
+  2624	
+  2625					if (adv < 0)
+  2626						return adv;
+  2627	
+  2628					if (adv & CTL1000_ENABLE_MASTER)
+  2629						phydev_err(phydev, "Master/Slave resolution failed, maybe conflicting manual settings?\n");
+  2630					else
+  2631						phydev_err(phydev, "Master/Slave resolution failed\n");
+  2632					return -ENOLINK;
+  2633				}
+  2634	
+  2635				mii_stat1000_mod_linkmode_lpa_t(phydev->lp_advertising,
+  2636								lpagb);
+  2637			}
+  2638	
+  2639			lpa = phy_read(phydev, MII_LPA);
+  2640			if (lpa < 0)
+  2641				return lpa;
+  2642	
+  2643			mii_lpa_mod_linkmode_lpa_t(phydev->lp_advertising, lpa);
+  2644		} else {
+  2645			linkmode_zero(phydev->lp_advertising);
+  2646		}
+  2647	
+  2648		return 0;
+  2649	}
+  2650	EXPORT_SYMBOL(genphy_read_lpa);
+  2651	
+  2652	/**
+  2653	 * genphy_read_status_fixed - read the link parameters for !aneg mode
+  2654	 * @phydev: target phy_device struct
+  2655	 *
+  2656	 * Read the current duplex and speed state for a PHY operating with
+  2657	 * autonegotiation disabled.
+  2658	 */
+  2659	int genphy_read_status_fixed(struct phy_device *phydev)
+  2660	{
+  2661		int bmcr = phy_read(phydev, MII_BMCR);
+  2662	
+  2663		if (bmcr < 0)
+  2664			return bmcr;
+  2665	
+  2666		if (bmcr & BMCR_FULLDPLX)
+  2667			phydev->duplex = DUPLEX_FULL;
+  2668		else
+  2669			phydev->duplex = DUPLEX_HALF;
+  2670	
+  2671		if (bmcr & BMCR_SPEED1000)
+  2672			phydev->speed = SPEED_1000;
+  2673		else if (bmcr & BMCR_SPEED100)
+  2674			phydev->speed = SPEED_100;
+  2675		else
+  2676			phydev->speed = SPEED_10;
+  2677	
+  2678		return 0;
+  2679	}
+  2680	EXPORT_SYMBOL(genphy_read_status_fixed);
+  2681	
+  2682	/**
+  2683	 * genphy_read_status - check the link status and update current link state
+  2684	 * @phydev: target phy_device struct
+  2685	 *
+  2686	 * Description: Check the link, then figure out the current state
+  2687	 *   by comparing what we advertise with what the link partner
+  2688	 *   advertises.  Start by checking the gigabit possibilities,
+  2689	 *   then move on to 10/100.
+  2690	 */
+  2691	int genphy_read_status(struct phy_device *phydev)
+  2692	{
+  2693		int err, old_link = phydev->link;
+  2694	
+  2695		/* Update the link, but return if there was an error */
+  2696		err = genphy_update_link(phydev);
+  2697		if (err)
+  2698			return err;
+  2699	
+  2700		/* why bother the PHY if nothing can have changed */
+  2701		if (phydev->autoneg == AUTONEG_ENABLE && old_link && phydev->link)
+  2702			return 0;
+  2703	
+  2704		phydev->master_slave_get = MASTER_SLAVE_CFG_UNSUPPORTED;
+  2705		phydev->master_slave_state = MASTER_SLAVE_STATE_UNSUPPORTED;
+  2706		phydev->speed = SPEED_UNKNOWN;
+  2707		phydev->duplex = DUPLEX_UNKNOWN;
+  2708		phydev->pause = 0;
+  2709		phydev->asym_pause = 0;
+  2710	
+  2711		if (phydev->is_gigabit_capable) {
+  2712			err = genphy_read_master_slave(phydev);
+  2713			if (err < 0)
+  2714				return err;
+  2715		}
+  2716	
+  2717		err = genphy_read_lpa(phydev);
+  2718		if (err < 0)
+  2719			return err;
+  2720	
+  2721		if (phydev->autoneg == AUTONEG_ENABLE && phydev->autoneg_complete) {
+  2722			phy_resolve_aneg_linkmode(phydev);
+  2723		} else if (phydev->autoneg == AUTONEG_DISABLE) {
+  2724			err = genphy_read_status_fixed(phydev);
+  2725			if (err < 0)
+  2726				return err;
+  2727		}
+  2728	
+  2729		return 0;
+  2730	}
+  2731	EXPORT_SYMBOL(genphy_read_status);
+  2732	
+  2733	/**
+  2734	 * genphy_c37_read_status - check the link status and update current link state
+  2735	 * @phydev: target phy_device struct
