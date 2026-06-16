@@ -1,0 +1,45 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-proof-core-20260616",
+  "status": "accepted",
+  "classification": "bcm54213pe-rgmii-delay-proof-core-local-static",
+  "source_contract": {
+    "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-source-contract-20260616",
+    "commit": "817712f6837a7e3ca659cea1833875c22e04f588",
+    "classification": "bcm54213pe-rgmii-delay-source-contract-proof-core-selected"
+  },
+  "candidate": {
+    "boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_rgmii_delay_candidate",
+    "image": "target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-bcm54213pe-rgmii-delay-candidate.img",
+    "sha256": "e5592f1671b42ffd14057668ae22ca48d70e25a52ce0200b377b93e71d294a0c",
+    "size_bytes": 53720,
+    "classification": "bcm54213pe-rgmii-delay-proof-core-candidate-local-static"
+  },
+  "control": {
+    "boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_rgmii_delay_no_mdio_control",
+    "image": "target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-bcm54213pe-rgmii-delay-control.img",
+    "sha256": "240348cbd3f023a7915aab3486c0dc36a8b857098d2a6c093f21847ae62377e3",
+    "size_bytes": 49984,
+    "classification": "no-mdio-no-ethernet-bcm54213pe-rgmii-delay-control"
+  },
+  "selected_boundary": {
+    "next_task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof-20260616",
+    "summary": "Serialized Pi 5 proof for the accepted candidate/control RGMII delay write/readback core."
+  },
+  "allowed_terminal_classifications": [
+    "rgmii-delay-link-ready-frontier",
+    "rgmii-delay-timeout-link-not-ready",
+    "rgmii-delay-readback-mismatch",
+    "rgmii-delay-precondition-blocker",
+    "rgmii-delay-capture-blocker",
+    "no-mdio-no-ethernet-bcm54213pe-rgmii-delay-control"
+  ],
+  "rejected_claims": [
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "commit": "recorded-in-supervisor-state-after-commit"
+}

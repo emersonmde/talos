@@ -2219,3 +2219,15 @@ accepted BMCR restart write frame 0x50821200 followed by the bounded convergence
 poll vector. Hardware execution, link-ready acceptance, GPIO32/PHY reset,
 interrupt ownership, packet I/O, networking, sockets, SSH, Phase 12.2, and phase
 transition remain rejected here.
+
+phase12-rp1-ethernet-bcm54213pe-rgmii-delay-proof-core-20260616 accepts
+bcm54213pe-rgmii-delay-proof-core-local-static. The candidate/control core adds
+the selected boot-scenario routing, source-contract validators, compile-only
+candidate image e5592f1671b42ffd14057668ae22ca48d70e25a52ce0200b377b93e71d294a0c
+(53,720 bytes), and no-MDIO control image
+240348cbd3f023a7915aab3486c0dc36a8b857098d2a6c093f21847ae62377e3
+(49,984 bytes). Static string inspection confirms the candidate carries the
+PHY1 RGMII RX/TX delay write/readback contract and the control withholds target
+construction. The only mechanically unblocked follow-up is the serialized Pi 5
+RGMII delay proof; packet I/O, networking, sockets, SSH, Phase 12.2, and phase
+transition remain rejected.

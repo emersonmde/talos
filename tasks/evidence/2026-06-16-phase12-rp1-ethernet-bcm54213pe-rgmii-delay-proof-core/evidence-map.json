@@ -1,0 +1,65 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-proof-core-20260616",
+  "classification": "bcm54213pe-rgmii-delay-proof-core-local-static",
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Candidate/control boot scenarios and runtime routes were added."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Candidate path is limited to PHY1 RX delay AUX_CTL 0x18 selector 0x7007, TX delay SHD 0x1c selector 0x0c00, readbacks, one accepted BMCR restart frame, and bounded convergence poll."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Control path withholds MDIO, MAN, MACB, GPIO32, PHY, interrupt, packet, networking, and SSH target construction."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Scenario image builds emit the existing unreachable-tail warning for cfg-selected early proof functions returning never."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Pi 5 hardware proof, link-ready/runtime classification, and restore evidence remain queued for a separate serialized task."
+    }
+  ],
+  "source_contract": [
+    "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-source-contract.md",
+    "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-source-contract/classification.json",
+    "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-source-contract/evidence-map.json",
+    "commit 817712f6837a7e3ca659cea1833875c22e04f588"
+  ],
+  "validation": [
+    {
+      "level": "fmt/lint/typecheck",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "level": "unit tests/QEMU substitute",
+      "command": "cargo -Zjson-target-spec test --quiet",
+      "result": "passed",
+      "count": 527
+    },
+    {
+      "level": "image/archive inspection",
+      "command": "TALOS_BOOT_SCENARIO=rpi5_rp1_ethernet_bcm54213pe_rgmii_delay_candidate ./scripts/rpi5-image.sh",
+      "result": "passed",
+      "sha256": "e5592f1671b42ffd14057668ae22ca48d70e25a52ce0200b377b93e71d294a0c",
+      "size_bytes": 53720
+    },
+    {
+      "level": "image/archive inspection",
+      "command": "TALOS_BOOT_SCENARIO=rpi5_rp1_ethernet_bcm54213pe_rgmii_delay_no_mdio_control ./scripts/rpi5-image.sh",
+      "result": "passed",
+      "sha256": "240348cbd3f023a7915aab3486c0dc36a8b857098d2a6c093f21847ae62377e3",
+      "size_bytes": 49984
+    },
+    {
+      "level": "static image inspection",
+      "command": "strings/grep required and forbidden candidate/control markers",
+      "result": "passed"
+    }
+  ],
+  "next_action": "Promote phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof-20260616 after commit if dependencies remain satisfied."
+}

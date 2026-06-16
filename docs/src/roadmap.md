@@ -10661,6 +10661,16 @@ readback succeeds. Hardware, link-ready acceptance, GPIO32/PHY reset,
 interrupts, packet I/O, networking, sockets, SSH, Phase 12.2, and phase
 transition remain rejected by this static task.
 
+phase12-rp1-ethernet-bcm54213pe-rgmii-delay-proof-core-20260616 accepts
+bcm54213pe-rgmii-delay-proof-core-local-static. The local/static candidate and
+control boot scenarios compile and retain required/forbidden string evidence:
+candidate image e5592f1671b42ffd14057668ae22ca48d70e25a52ce0200b377b93e71d294a0c
+is 53,720 bytes and no-MDIO control image
+240348cbd3f023a7915aab3486c0dc36a8b857098d2a6c093f21847ae62377e3 is
+49,984 bytes. The accepted core authorizes only the queued serialized Pi 5
+RGMII delay proof under hardwareTestLock; packet I/O, networking, sockets, SSH,
+Phase 12.2, and phase transition remain rejected.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

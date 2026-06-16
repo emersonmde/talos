@@ -1046,6 +1046,24 @@ pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
 
     #[cfg(all(
         talos_target_rpi5_bcm2712,
+        talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_rgmii_delay_candidate"
+    ))]
+    {
+        let _ = dtb_pa;
+        target::rpi5::run_rp1_ethernet_bcm54213pe_rgmii_delay_candidate();
+    }
+
+    #[cfg(all(
+        talos_target_rpi5_bcm2712,
+        talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_rgmii_delay_no_mdio_control"
+    ))]
+    {
+        let _ = dtb_pa;
+        target::rpi5::run_rp1_ethernet_bcm54213pe_rgmii_delay_no_mdio_control();
+    }
+
+    #[cfg(all(
+        talos_target_rpi5_bcm2712,
         talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_boot_transport_sentinel_candidate"
     ))]
     {
