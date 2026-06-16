@@ -1,0 +1,126 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof-20260616",
+  "status": "accepted",
+  "classification": "bcm54213pe-readonly-preflight-candidate-rerun-no-tftp-fetch-blocked",
+  "result": "accepted-with-candidate-blocker",
+  "evidence_level": [
+    "static archive/image review",
+    "lab-controller API evidence",
+    "serial hardware boot/output",
+    "stable TFTP delta",
+    "boot-staging identity replay",
+    "restore proof"
+  ],
+  "selected_targets": [
+    {
+      "phy": "PHY1",
+      "register": "MII_CTRL1000",
+      "address": "0x09",
+      "man_frame": "0x60a60000"
+    },
+    {
+      "phy": "PHY1",
+      "register": "MII_STAT1000",
+      "address": "0x0a",
+      "man_frame": "0x60aa0000"
+    }
+  ],
+  "control": {
+    "disposition": "fixed",
+    "classification": "no-mdio-no-ethernet-bcm54213pe-readonly-preflight-control",
+    "selected_tree": "ad6afd3218a37a509c31b587c107dedec7b33fcd48df4a43c6eab939f5cd2ad5",
+    "expected_fetch_bytes": 50536,
+    "serial_marker_occurrences": 18,
+    "tftp_expected_fetch_count": 2,
+    "boot_staging_identity": "boot-staging-identity-ready",
+    "static_review": {
+      "kind": "control",
+      "archive": "target/tmp/phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof-20260616-control-20260616T023725Z.tar.gz",
+      "archive_sha256": "f92762ef0fe819faf7a953031fb5a8e69031e9b2d6c88f13e73fc860efd732da",
+      "kernel_2712_sha256": "7c0154d97f878a8867a3605ace9c86107658d42dd40ecf7415d8983dc6c4fa07",
+      "kernel_2712_bytes": 50536,
+      "required_marker": "TALOS: rp1-ethernet-bcm54213pe-readonly-preflight-control",
+      "capture_nonce": "bcm54213pe-preflight-20260616T023725Z-control",
+      "missing_required": [],
+      "forbidden_hits": [],
+      "static_review_passed": true
+    }
+  },
+  "candidate_first_attempt": {
+    "disposition": "deferred",
+    "reason": "inconclusive after operator/worker restore contaminated final identity while the original capture command was still completing; retained as non-acceptance evidence.",
+    "selected_tree": "c517a2e05e7270baa36f0b09a6aaa70fb32927b5df8380a683dfc8ae5bc07ced",
+    "expected_fetch_bytes": 51512,
+    "tftp_expected_fetch_count": 2,
+    "static_review": {
+      "kind": "candidate",
+      "archive": "target/tmp/phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof-20260616-candidate-20260616T023725Z.tar.gz",
+      "archive_sha256": "cc0c7cecaaf2ec8510985c2e1beba14012eac188c63713c03a0f8149c4cab4e7",
+      "kernel_2712_sha256": "74d2a8097e06b8a242cc8ae83bdca10c514633e75ab7044dc9234106b0ce9c18",
+      "kernel_2712_bytes": 51512,
+      "required_marker": "TALOS: rp1-ethernet-bcm54213pe-readonly-preflight-candidate",
+      "capture_nonce": "bcm54213pe-preflight-20260616T023725Z-candidate",
+      "missing_required": [],
+      "forbidden_hits": [],
+      "static_review_passed": true
+    }
+  },
+  "candidate_rerun": {
+    "disposition": "blocked",
+    "precise_blocker": "no fresh TFTP events or serial output after selected candidate publication and power-cycle",
+    "selected_tree": "189219336873dd6f335fd3ad2f97bb20b8cb2f4a01e2635e4f3ae9dd5eacb5c8",
+    "expected_fetch_bytes": 51512,
+    "tftp_expected_fetch_count": 0,
+    "serial_has_marker": false,
+    "final_tree": "189219336873dd6f335fd3ad2f97bb20b8cb2f4a01e2635e4f3ae9dd5eacb5c8",
+    "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "boot_staging_identity": "boot-staging-identity-blocked",
+    "static_review": {
+      "kind": "candidate-rerun",
+      "archive": "target/tmp/phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof-20260616-candidate-rerun-20260616T024407Z.tar.gz",
+      "archive_sha256": "fb5983f27f3f7e80c48ce435bc6349d31a2063b1402f5233b78f1a4766970168",
+      "kernel_2712_sha256": "11d45951fc4454cf4ca2163b246db4277a8c02f4ffeee961247ccc0602f934f5",
+      "kernel_2712_bytes": 51512,
+      "capture_nonce": "bcm54213pe-preflight-20260616T024407Z-cand-rerun",
+      "missing_required": [],
+      "forbidden_hits": [],
+      "static_review_passed": true
+    }
+  },
+  "rejected_claims": [
+    "packet I/O",
+    "networking",
+    "SSH",
+    "Phase 12.2",
+    "phase transition",
+    "link readiness",
+    "GPIO32 reset ownership/action",
+    "BMCR writes",
+    "Broadcom shadow/MMD/aux access",
+    "interrupt ownership",
+    "broad PHY/MAC configuration"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Control archive and hardware run proved the paired no-MDIO/no-Ethernet control shape with selected-tree, TFTP, serial marker, and restore evidence."
+    },
+    {
+      "disposition": "blocked",
+      "finding": "Candidate rerun selected-tree publication remained staged in lab status, but no fresh TFTP events or serial output arrived after power-cycle."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Candidate raw/decoded MII_CTRL1000/MII_STAT1000 values remain deferred until the lab power/network fetch blocker is resolved."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "GET / returned 404 in this lab deployment; retained endpoint evidence and used /status plus /boot/files for identity per deployed lab docs."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Generated candidate/control boot archives were removed after upload; retained static review hashes and lab evidence."
+    }
+  ],
+  "next_task": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-hw-proof-closeout-20260616"
+}

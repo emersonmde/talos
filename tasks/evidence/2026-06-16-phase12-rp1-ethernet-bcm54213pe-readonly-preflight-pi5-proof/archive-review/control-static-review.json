@@ -1,0 +1,12 @@
+{
+  "kind": "control",
+  "archive": "target/tmp/phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof-20260616-control-20260616T023725Z.tar.gz",
+  "archive_sha256": "f92762ef0fe819faf7a953031fb5a8e69031e9b2d6c88f13e73fc860efd732da",
+  "kernel_2712_sha256": "7c0154d97f878a8867a3605ace9c86107658d42dd40ecf7415d8983dc6c4fa07",
+  "kernel_2712_bytes": 50536,
+  "required_marker": "TALOS: rp1-ethernet-bcm54213pe-readonly-preflight-control",
+  "capture_nonce": "bcm54213pe-preflight-20260616T023725Z-control",
+  "missing_required": [],
+  "forbidden_hits": [],
+  "static_review_passed": true
+}

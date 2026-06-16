@@ -1,0 +1,57 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof-20260616",
+  "classification": "bcm54213pe-readonly-preflight-candidate-rerun-no-tftp-fetch-blocked",
+  "primary_files": {
+    "task_record": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof.md",
+    "classification": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof/classification.json",
+    "capture_summary": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof/capture-summary.json"
+  },
+  "evidence": {
+    "static_reviews": [
+      "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof/archive-review/control-static-review.json",
+      "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof/archive-review/candidate-static-review.json",
+      "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof/candidate-rerun/static-review.json"
+    ],
+    "control_run": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof/control-run",
+    "candidate_first_attempt": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof/candidate-run",
+    "candidate_rerun": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof/candidate-rerun",
+    "final_lab_status": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof/final-lab-status.json",
+    "final_boot_files": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof/final-boot-files.json"
+  },
+  "validation_commands": [
+    {
+      "level": "static archive/image review",
+      "command": "task-local strings/static review for control, candidate, and candidate rerun archives",
+      "result": "pass"
+    },
+    {
+      "level": "lab-controller API",
+      "command": "/status + /boot/files before/after publish, power-cycle, restore snapshot",
+      "result": "control ready; candidate rerun no fresh TFTP/serial after power"
+    },
+    {
+      "level": "serial hardware boot/output",
+      "command": "rpi5-observe-serial-window.sh",
+      "result": "control pass; candidate rerun no marker/output"
+    },
+    {
+      "level": "TFTP delta",
+      "command": "rpi5-wait-tftp-delta.sh",
+      "result": "control pass with two 50536-byte fetches; candidate rerun stable empty delta"
+    },
+    {
+      "level": "boot-staging identity",
+      "command": "rpi5-boot-staging-identity-check.sh",
+      "result": "control pass; candidate rerun blocked"
+    },
+    {
+      "level": "restore proof",
+      "command": "POST /boot/restore?name=<snapshot> and /status",
+      "result": "final tree restored to pre-run baseline"
+    }
+  ],
+  "notes": [
+    "GET / returned 404 in this deployment and is retained as endpoint evidence; identity used /status plus /boot/files.",
+    "capture-chain-v4 helper was not used as acceptance evidence because this task did not create its optional restore-snapshot/serial-drain contract shape."
+  ]
+}

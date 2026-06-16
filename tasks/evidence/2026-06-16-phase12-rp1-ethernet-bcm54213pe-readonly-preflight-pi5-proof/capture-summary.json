@@ -1,0 +1,85 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof-20260616",
+  "classification": "bcm54213pe-readonly-preflight-candidate-rerun-no-tftp-fetch-blocked",
+  "result": "accepted-with-candidate-blocker",
+  "run_summaries": {
+    "control": {
+      "kind": "control",
+      "marker": "TALOS: rp1-ethernet-bcm54213pe-readonly-preflight-control",
+      "nonce": "bcm54213pe-preflight-20260616T023725Z-control",
+      "exits": {
+        "serial_observe": 0,
+        "tftp_delta": 0,
+        "boot_staging_identity": 0,
+        "capture_chain_v4": 2
+      },
+      "selected_tree": "ad6afd3218a37a509c31b587c107dedec7b33fcd48df4a43c6eab939f5cd2ad5",
+      "expected_fetch": "da591740/kernel_2712.img",
+      "expected_fetch_bytes": 50536,
+      "serial_has_marker": true,
+      "serial_marker_occurrences": 18,
+      "tftp_stable": true,
+      "tftp_expected_fetch_count": 2,
+      "final_tree": "ad6afd3218a37a509c31b587c107dedec7b33fcd48df4a43c6eab939f5cd2ad5",
+      "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "staging_identity_classification": "boot-staging-identity-ready",
+      "capture_chain_v4_classification": null,
+      "hardware_result_ready": false
+    },
+    "candidate_first_attempt": {
+      "kind": "candidate",
+      "marker": "TALOS: rp1-ethernet-bcm54213pe-readonly-preflight-candidate",
+      "nonce": "bcm54213pe-preflight-20260616T023725Z-candidate",
+      "exits": {
+        "serial_observe": 1,
+        "tftp_delta": 0,
+        "boot_staging_identity": 1,
+        "capture_chain_v4": 2
+      },
+      "selected_tree": "c517a2e05e7270baa36f0b09a6aaa70fb32927b5df8380a683dfc8ae5bc07ced",
+      "expected_fetch": "da591740/kernel_2712.img",
+      "expected_fetch_bytes": 51512,
+      "serial_has_marker": false,
+      "serial_marker_occurrences": 0,
+      "tftp_stable": true,
+      "tftp_expected_fetch_count": 2,
+      "final_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "staging_identity_classification": "boot-staging-identity-blocked",
+      "capture_chain_v4_classification": null,
+      "hardware_result_ready": false
+    },
+    "candidate_rerun": {
+      "kind": "candidate-rerun",
+      "marker": "TALOS: rp1-ethernet-bcm54213pe-readonly-preflight-candidate",
+      "nonce": "bcm54213pe-preflight-20260616T024407Z-cand-rerun",
+      "exits": {
+        "serial_observe": 1,
+        "tftp_delta": 1,
+        "boot_staging_identity": 1
+      },
+      "selected_tree": "189219336873dd6f335fd3ad2f97bb20b8cb2f4a01e2635e4f3ae9dd5eacb5c8",
+      "expected_fetch": "da591740/kernel_2712.img",
+      "expected_fetch_bytes": 51512,
+      "serial_has_marker": false,
+      "serial_marker_occurrences": 0,
+      "tftp_stable": true,
+      "tftp_expected_fetch_count": 0,
+      "tftp_expected_fetch_bytes_seen": [],
+      "final_tree": "189219336873dd6f335fd3ad2f97bb20b8cb2f4a01e2635e4f3ae9dd5eacb5c8",
+      "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "staging_identity_classification": "boot-staging-identity-blocked",
+      "hardware_result_ready": false
+    }
+  },
+  "pre_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "final_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "restored_to_pre_tree": true,
+  "acceptance": {
+    "control_no_mdio_no_ethernet_proven": true,
+    "candidate_first_attempt_inconclusive_due_to_operator_restore_contamination_and_baseline_tftp": true,
+    "candidate_rerun_precise_blocker": "no fresh TFTP events or serial output after selected candidate publication and power-cycle",
+    "candidate_rerun_blocked": true,
+    "forbidden_claims_rejected": true
+  }
+}

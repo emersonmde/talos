@@ -10306,6 +10306,21 @@ candidate/control hardware-proof contract, separate source/static
 write-restore contract, or explicit pause; this closeout authorizes no
 hardware, packet I/O, networking, SSH, Phase 12.2, or phase transition.
 
+phase12-rp1-ethernet-bcm54213pe-readonly-preflight-hw-proof-core-20260616 and
+phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof-20260616 accept
+bcm54213pe-readonly-preflight-candidate-rerun-no-tftp-fetch-blocked. The
+non-hardware proof core added the accepted candidate/control boot scenarios for
+PHY1 MII_CTRL1000 0x09 and MII_STAT1000 0x0a only. Serialized Pi 5 evidence
+then proved the no-MDIO/no-Ethernet control path with selected-tree identity,
+two matching 50536-byte TFTP fetches, fresh serial marker output, and restore to
+the baseline tree. The candidate rerun published a selected 51512-byte candidate
+tree, but the post-power TFTP delta was stable and empty and serial observe saw
+no fresh candidate output; MII_CTRL1000/MII_STAT1000 raw/decoded values remain
+deferred behind that precise candidate power/network-fetch blocker. Link
+readiness, GPIO32/PHY reset ownership, BMCR writes, Broadcom shadow/MMD/aux
+access, interrupt ownership, broad PHY/MAC configuration, packet I/O,
+networking, SSH, Phase 12.2, and phase transition remain rejected.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

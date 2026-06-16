@@ -1,0 +1,11 @@
+{
+  "kind": "candidate-rerun",
+  "archive": "target/tmp/phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof-20260616-candidate-rerun-20260616T024407Z.tar.gz",
+  "archive_sha256": "fb5983f27f3f7e80c48ce435bc6349d31a2063b1402f5233b78f1a4766970168",
+  "kernel_2712_sha256": "11d45951fc4454cf4ca2163b246db4277a8c02f4ffeee961247ccc0602f934f5",
+  "kernel_2712_bytes": 51512,
+  "capture_nonce": "bcm54213pe-preflight-20260616T024407Z-cand-rerun",
+  "missing_required": [],
+  "forbidden_hits": [],
+  "static_review_passed": true
+}

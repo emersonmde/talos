@@ -1,0 +1,37 @@
+{
+  "contract_version": "pi5-boot-staging-identity-v1",
+  "staging_identity_decisive": true,
+  "classification": "boot-staging-identity-ready",
+  "rejection_reasons": [],
+  "baseline_tree_hash": null,
+  "selected": {
+    "tree_hash": "ad6afd3218a37a509c31b587c107dedec7b33fcd48df4a43c6eab939f5cd2ad5",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 50536
+  },
+  "tftp": {
+    "cursor_file": 4513748,
+    "delta_cursor_start": 4513748,
+    "delta_cursor_end": 4515099,
+    "stable": true,
+    "event_count": 13,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "expected_fetch_bytes_seen": [
+      50536,
+      50536
+    ]
+  },
+  "final_pre_restore": {
+    "tree_hash": "ad6afd3218a37a509c31b587c107dedec7b33fcd48df4a43c6eab939f5cd2ad5",
+    "effective_kernel": "kernel_2712.img",
+    "selected_tree_still_staged": true,
+    "expected_fetch_present": true,
+    "expected_fetch_bytes": 50536
+  },
+  "restore": {
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "rule": "candidate serial output is not decisive unless selected-tree identity, expected TFTP fetch bytes, final pre-restore identity, and restore identity all match one staged boot tree"
+}

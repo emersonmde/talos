@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "ZCBvYnNlcnZlZC13aW5kb3ctbWFjYi1taWQtY29udGV4dC1yYXc9d2l0aGhlbGQgbmNyLW9ic2VydmVkLXRhcmdldD1ub3QtY29uc3RydWN0ZWQgbnNyLW9ic2VydmVkLXRhcmdldD1ub3QtY29uc3RydWN0ZWQgbWFuLW9ic2VydmVkLXRhcmdldD1ub3QtY29uc3RydWN0ZWQgbmNyLWJlZm9yZT13aXRoaGVsZCBuY3ItbXBlLXByZWNvbmRpdGlvbi1tZXQ9ZmFsc2UgbmNyLWFmdGVyPXdpdGhoZWxkIHNlbGVjdGVkLXJlZ2lzdGVycz13aXRoaGVsZCBjdHJsMTAwMC1tYW4tZnJhbWU9d2l0aGhlbGQgc3RhdDEwMDAtbWFuLWZyYW1lPXdpdGhoZWxkIGN0cmwxMDAwLXJhdz13aXRoaGVsZCBjdHJsMTAwMC12YWxpZD1mYWxzZSBzdGF0MTAwMC1yYXc9d2l0aGhlbGQgc3RhdDEwMDAtdmFsaWQ9ZmFsc2UgY3RybDEwMDAtYWR2ZXJ0aXNlLTEwMDAtaGFsZj1mYWxzZSBjdHJsMTAwMC1hZHZlcnRpc2UtMTAwMC1mdWxsPWZhbHNlIGN0cmwxMDAwLXByZWZlci1tYXN0ZXI9ZmFsc2UgY3RybDE=",
+  "bytes": 500,
+  "cursor": 4194304,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "d observed-window-macb-mid-context-raw=withheld ncr-observed-target=not-constructed nsr-observed-target=not-constructed man-observed-target=not-constructed ncr-before=withheld ncr-mpe-precondition-met=false ncr-after=withheld selected-registers=withheld ctrl1000-man-frame=withheld stat1000-man-frame=withheld ctrl1000-raw=withheld ctrl1000-valid=false stat1000-raw=withheld stat1000-valid=false ctrl1000-advertise-1000-half=false ctrl1000-advertise-1000-full=false ctrl1000-prefer-master=false ctrl1"
+}

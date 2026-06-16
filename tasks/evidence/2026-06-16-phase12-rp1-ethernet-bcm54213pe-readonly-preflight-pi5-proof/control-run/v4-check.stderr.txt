@@ -1,0 +1,1 @@
+missing required v4 proof bundle file: tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof/control-run/restore-snapshot.json

@@ -1,0 +1,23 @@
+{
+  "kind": "control",
+  "marker": "TALOS: rp1-ethernet-bcm54213pe-readonly-preflight-control",
+  "nonce": "bcm54213pe-preflight-20260616T023725Z-control",
+  "exits": {
+    "serial_observe": 0,
+    "tftp_delta": 0,
+    "boot_staging_identity": 0,
+    "capture_chain_v4": 2
+  },
+  "selected_tree": "ad6afd3218a37a509c31b587c107dedec7b33fcd48df4a43c6eab939f5cd2ad5",
+  "expected_fetch": "da591740/kernel_2712.img",
+  "expected_fetch_bytes": 50536,
+  "serial_has_marker": true,
+  "serial_marker_occurrences": 18,
+  "tftp_stable": true,
+  "tftp_expected_fetch_count": 2,
+  "final_tree": "ad6afd3218a37a509c31b587c107dedec7b33fcd48df4a43c6eab939f5cd2ad5",
+  "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "staging_identity_classification": "boot-staging-identity-ready",
+  "capture_chain_v4_classification": null,
+  "hardware_result_ready": false
+}

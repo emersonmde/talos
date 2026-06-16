@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "dGFydD13aXRoaGVsZCBibWNyLWlzb2xhdGU9d2l0aGhlbGQgYm1jci1zcGVlZD13aXRoaGVsZCBibXNyLWZpcnN0LWxpbmstc3RhdHVzPXdpdGhoZWxkIGJtc3ItZmlyc3QtYXV0b25lZy1jb21wbGV0ZT13aXRoaGVsZCBibXNyLXNlY29uZC1saW5rLXN0YXR1cz13aXRoaGVsZCBibXNyLXNlY29uZC1hdXRvbmVnLWNvbXBsZXRlPXdpdGhoZWxkIGJtc3Itc2Vjb25kLWF1dG9uZWctYWJpbGl0eT13aXRoaGVsZCBhbmFyLXNlbGVjdG9yPXdpdGhoZWxkIGFuYXItMTBoZD13aXRoaGVsZCBhbmFyLTEwZmQ9d2l0aGhlbGQgYW5hci0xMDB0eC1oZD13aXRoaGVsZCBhbmFyLTEwMHR4LWZkPXdpdGhoZWxkIGFubHBhci1zZWxlY3Rvcj13aXRoaGVsZCBhbmxwYXItMTBoZD13aXRoaGVsZCBhbmxwYXItMTBmZD13aXRoaGVsZCBhbmxwYXItMTAwdHgtaGQ9d2l0aGhlbGQgYW5scGFyLTEwMHR4LWZkPXdpdGhoZWxkIGFubHBhci1hY2tub3dsZWRnZT13aXRoaGVsZCBhbmxwYXItbm9uemVybz0=",
+  "bytes": 500,
+  "cursor": 4194304,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "tart=withheld bmcr-isolate=withheld bmcr-speed=withheld bmsr-first-link-status=withheld bmsr-first-autoneg-complete=withheld bmsr-second-link-status=withheld bmsr-second-autoneg-complete=withheld bmsr-second-autoneg-ability=withheld anar-selector=withheld anar-10hd=withheld anar-10fd=withheld anar-100tx-hd=withheld anar-100tx-fd=withheld anlpar-selector=withheld anlpar-10hd=withheld anlpar-10fd=withheld anlpar-100tx-hd=withheld anlpar-100tx-fd=withheld anlpar-acknowledge=withheld anlpar-nonzero="
+}

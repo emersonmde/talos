@@ -1,0 +1,22 @@
+{
+  "kind": "candidate-rerun",
+  "marker": "TALOS: rp1-ethernet-bcm54213pe-readonly-preflight-candidate",
+  "nonce": "bcm54213pe-preflight-20260616T024407Z-cand-rerun",
+  "exits": {
+    "serial_observe": 1,
+    "tftp_delta": 1,
+    "boot_staging_identity": 1
+  },
+  "selected_tree": "189219336873dd6f335fd3ad2f97bb20b8cb2f4a01e2635e4f3ae9dd5eacb5c8",
+  "expected_fetch": "da591740/kernel_2712.img",
+  "expected_fetch_bytes": 51512,
+  "serial_has_marker": false,
+  "serial_marker_occurrences": 0,
+  "tftp_stable": true,
+  "tftp_expected_fetch_count": 0,
+  "tftp_expected_fetch_bytes_seen": [],
+  "final_tree": "189219336873dd6f335fd3ad2f97bb20b8cb2f4a01e2635e4f3ae9dd5eacb5c8",
+  "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "staging_identity_classification": "boot-staging-identity-blocked",
+  "hardware_result_ready": false
+}
