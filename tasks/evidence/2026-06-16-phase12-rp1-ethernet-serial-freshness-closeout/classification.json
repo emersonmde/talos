@@ -1,0 +1,130 @@
+{
+  "task_id": "phase12-rp1-ethernet-serial-freshness-closeout-20260616",
+  "status": "accepted",
+  "classification": "serial-freshness-frontier-closed-cursor-nonce-accepted",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "accepted serial freshness contract review",
+    "accepted guard-core review",
+    "accepted serialized Pi 5 proof review",
+    "JSON evidence validation",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_inputs": {
+    "contract": {
+      "task_id": "phase12-rp1-ethernet-serial-freshness-contract-20260616",
+      "classification": "serial-freshness-contract-cursor-nonce-replaces-empty-drain-hard-gate",
+      "contract_id": "phase12-rp1-ethernet-serial-freshness-contract-v1",
+      "freshness_invariant": "cursor-nonce-post-power-freshness-v1",
+      "empty_drain_decision": "empty-drain remains strong positive evidence but is not a hard gate for marker-only transport proofs when cursor/nonce freshness and identity joins pass"
+    },
+    "guard_core": {
+      "task_id": "phase12-rp1-ethernet-serial-freshness-guard-core-20260616",
+      "classification": "serial-freshness-guard-core-local-static-accepted",
+      "guard_script": "scripts/rpi5-serial-freshness-guard-v1-check.sh",
+      "accepts_cursor_fresh_fixture": true,
+      "rejects_stale_or_mismatched_fixtures": true
+    },
+    "pi5_proof": {
+      "task_id": "phase12-rp1-ethernet-serial-freshness-pi5-proof-20260616",
+      "classification": "serial-cursor-freshness-proved",
+      "guard_classification": "serial-freshness-guard-v1-ready",
+      "serial_freshness_proven": true
+    }
+  },
+  "frontier": {
+    "name": "serial-freshness-frontier-closed-cursor-nonce-accepted",
+    "accepted": [
+      "cursor-nonce-post-power-freshness-v1 for marker-only transport proofs",
+      "non-empty bounded pre-power drain is not decisive when nonce is absent before power and present after the saved cursor boundary or saturated-cursor direct-read fallback",
+      "task-owned guard replay over retained evidence",
+      "selected-tree identity joined with same-power-cycle TFTP delta, final pre-restore identity, and restore proof",
+      "marker-only no-MDIO/no-Ethernet Pi 5 proof with accepted serial freshness"
+    ],
+    "deferred": [
+      "supervisor-selected BootInfo/report-path rerun",
+      "supervisor-selected BCM54213PE register discriminator",
+      "explicit pause or other Phase 12.1 boundary"
+    ],
+    "same_shaped_retry_authorized": false,
+    "hardware_authorized_by_this_task": false
+  },
+  "pi5_proof_summary": {
+    "label": "serial-freshness-kernel-entry-beacon-20260616T085546Z",
+    "nonce": "serial-freshness-20260616T085546Z",
+    "selected_tree": "f73c75438663373b3d6df4e0ce451a45f163c4a582d8ba84bd79d161cf9cc68f",
+    "baseline_tree_after_restore": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 47352,
+    "tftp_expected_fetch_count": 2,
+    "tftp_expected_fetch_byte_match_count": 2,
+    "pre_power_peek_cursor": 4194304,
+    "pre_power_retained_bytes": 65536,
+    "pre_power_nonce_occurrences": 0,
+    "serial_drain_terminal_state": "bounded-drain-exhausted-before-power",
+    "serial_drain_empty_before_power": false,
+    "serial_capture_mode": "read",
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "start_cursor_saturated": true,
+    "post_power_response_bytes": 70594,
+    "marker_occurrences_after_saved_cursor": 45,
+    "nonce_occurrences_after_saved_cursor": 45,
+    "cursor_nonce_fresh": true,
+    "serial_freshness_ok": true
+  },
+  "next_boundary": {
+    "decision": "supervisor-planning-required",
+    "planning_needed": true,
+    "planning_reason": "Serial freshness closeout accepted cursor-nonce freshness for marker-only transport evidence; no queued mechanically unblocked follow-up exists. Supervisor must select any BootInfo/report-path rerun, BCM54213PE register discriminator, explicit pause, or other Phase 12.1 boundary.",
+    "hardware_authorized_by_this_task": false
+  },
+  "forbidden_claims": [
+    "bcm54213pe-register-values",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition",
+    "link-readiness",
+    "ethernet-driver-readiness",
+    "gpio32-phy-reset-ownership",
+    "bmcr-write-or-autoneg-retry",
+    "broadcom-shadow-mmd-aux-access",
+    "interrupt-ownership",
+    "broad-phy-configuration",
+    "macb-configuration"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Cursor-nonce-post-power-freshness-v1 replaces the hard empty-drain gate for marker-only transport proofs when all identity joins pass."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Guard-core retained replay accepts cursor-fresh evidence and rejects stale/cursor/marker/TFTP/restore failure classes."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Pi 5 marker-only proof retained selected-tree identity, matching TFTP byte serves, nonce absence before power, nonce presence after the saved cursor boundary, final identity, and restore proof."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Any BootInfo/report-path rerun, BCM54213PE register discriminator, or pause requires supervisor planning."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "No register values, link readiness, Ethernet behavior, packet I/O, networking, SSH, Phase 12.2, or phase transition are accepted."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No task-owned source or docs were removed by closeout."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "The accepted Pi 5 proof's pre-power drain remained non-empty, but run-unique cursor/nonce freshness makes retained backlog non-decisive for this marker-only proof."
+    }
+  ]
+}

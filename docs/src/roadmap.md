@@ -10501,6 +10501,21 @@ Ethernet/link readiness, packet I/O, networking, SSH, Phase 12.2, and phase
 transition remain rejected. The only selected follow-up is the dependency-gated
 closeout phase12-rp1-ethernet-serial-freshness-closeout-20260616.
 
+phase12-rp1-ethernet-serial-freshness-closeout-20260616 closes that frontier
+as serial-freshness-frontier-closed-cursor-nonce-accepted. Future marker-only
+transport proofs may rely on cursor-nonce-post-power-freshness-v1 when the
+retained evidence proves the run-unique marker/nonce absent before power,
+present after the saved cursor boundary or saturated-cursor direct-read
+fallback, and joined with selected-tree, same-power-cycle TFTP, final
+pre-restore identity, and restore proof. Empty pre-power drain remains strong
+positive evidence but is not a hard gate for this marker-only class. No queued
+follow-up remains mechanically unblocked; supervisor planning must select any
+BootInfo/report-path rerun, BCM54213PE register discriminator, explicit pause,
+or other Phase 12.1 boundary. BCM54213PE register values, Ethernet/link
+readiness, GPIO32/PHY reset ownership, BMCR/autoneg, Broadcom shadow/MMD/aux
+access, interrupt ownership, packet I/O, networking, SSH, Phase 12.2, and
+phase transition remain rejected.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

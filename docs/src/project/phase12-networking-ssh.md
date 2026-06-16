@@ -2068,3 +2068,26 @@ contract, or an explicit pause. BCM54213PE register values, link readiness,
 Ethernet readiness, GPIO32/PHY reset ownership, BMCR writes, Broadcom
 shadow/MMD/aux access, interrupt ownership, broad PHY/MAC configuration, packet
 I/O, networking, SSH, Phase 12.2, and phase transition remain rejected.
+
+phase12-rp1-ethernet-serial-freshness-contract-20260616,
+phase12-rp1-ethernet-serial-freshness-guard-core-20260616,
+phase12-rp1-ethernet-serial-freshness-pi5-proof-20260616, and
+phase12-rp1-ethernet-serial-freshness-closeout-20260616 close the serial
+freshness frontier as serial-freshness-frontier-closed-cursor-nonce-accepted.
+The accepted boundary replaces the hard empty-drain gate for marker-only
+transport proofs with cursor-nonce-post-power-freshness-v1: retained evidence
+must show the run-unique marker/nonce absent before power, present after the
+saved cursor boundary or saturated-cursor direct-read fallback, and joined with
+selected-tree identity, same-power-cycle TFTP, final pre-restore identity, and
+restore proof. The Pi 5 proof retained selected tree
+f73c75438663373b3d6df4e0ce451a45f163c4a582d8ba84bd79d161cf9cc68f, two
+matching 47,352-byte da591740/kernel_2712.img serves, zero pre-power nonce
+occurrences, 45 post-power marker/nonce occurrences, final identity, and
+restore proof. Empty pre-power drain remains strong positive evidence, but it
+is no longer a hard gate for this marker-only class. Supervisor planning is
+required for any BootInfo/report-path rerun, BCM54213PE register discriminator,
+explicit pause, or other Phase 12.1 boundary. BCM54213PE register values, link
+readiness, Ethernet readiness, GPIO32/PHY reset ownership, BMCR/autoneg,
+Broadcom shadow/MMD/aux access, interrupt ownership, broad PHY/MAC
+configuration, packet I/O, networking, SSH, Phase 12.2, and phase transition
+remain rejected.
