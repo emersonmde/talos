@@ -1,0 +1,44 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-post-txorder-link-not-ready-source-checkpoint-20260616",
+  "classification": "bcm54213pe-post-txorder-link-not-ready-no-distinct-source-backed-discriminator-pause",
+  "evidence": {
+    "accepted_tx_order_closeout": {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-closeout.md",
+      "classification_path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-closeout/classification.json",
+      "commit": "009a57a6bb69b33be32d2f8da07ff552e7779b0f",
+      "finding": "Closed frontier is timeout/link-not-ready, not link-ready/autoneg-complete."
+    },
+    "accepted_tx_order_pi5_proof": {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-pi5-proof.md",
+      "classification_path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-pi5-proof/classification.json",
+      "capture_summary_path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-pi5-proof/capture-summary.json",
+      "finding": "Runtime facts include RX/TX delay stage completion, TX GTXCLK_EN already set, exactly one BMCR restart, and terminal link_ready=false."
+    },
+    "prior_bmcr_and_convergence": {
+      "bmcr_closeout_path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-closeout.md",
+      "convergence_closeout_path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-closeout.md",
+      "finding": "BMCR restart and bounded convergence attempts are already accepted and ended link-not-ready."
+    },
+    "bcm54213pe_source": {
+      "config_init_contract_path": "tasks/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract.md",
+      "readonly_contract_path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract.md",
+      "retained_source_excerpt": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract/source/linux-rpi-6.12-broadcom-bcm54213pe-config-contract-excerpt.txt",
+      "finding": "Retained Linux source backs multiple possible lifecycle/config paths, but none is mechanically selected by this checkpoint."
+    },
+    "gpio32_reset_context": {
+      "project_doc_path": "docs/src/project/phase12-networking-ssh.md",
+      "finding": "Accepted GPIO32 event-clear proof left persistent-or-firmware-owned event bits and does not accept ETH_RST_N ownership."
+    },
+    "roadmap_update": {
+      "path": "docs/src/roadmap.md",
+      "finding": "Roadmap records the explicit pause and supervisor planning boundary."
+    }
+  },
+  "validation": {
+    "static_source_task_evidence_inspection": "pass",
+    "jq_empty_on_task_owned_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check_before_commit": "pass"
+  }
+}

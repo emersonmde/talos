@@ -10793,6 +10793,26 @@ frontier was accepted. Supervisor planning is required for any bounded
 timeout/link-not-ready follow-up or explicit pause; packet I/O, networking,
 sockets, SSH, Phase 12.2, and phase transition remain rejected.
 
+phase12-rp1-ethernet-bcm54213pe-post-txorder-link-not-ready-source-checkpoint-20260616
+accepts
+bcm54213pe-post-txorder-link-not-ready-no-distinct-source-backed-discriminator-pause.
+The checkpoint reconciles the TX-order timeout/link-not-ready frontier against
+accepted BMCR/autoneg restart, convergence, RGMII delay, GPIO32/reset,
+physical-link, BCM54213PE config_init, and read-only preflight evidence. It
+does not select the queued generic discriminator core because no mechanically
+ready, source-backed, qualitatively distinct feature path remains inside this
+task. Same-shaped status polling, another bare BMCR restart, convergence
+wait-count tweaks, and marker/capture-only retries are rejected. GPIO32 /
+ETH_RST_N reset ownership remains feature-relevant but deferred behind the
+accepted persistent-or-firmware-owned GPIO32 event-state blocker; MII_CTRL1000
+master-mode writes remain deferred behind the unselected PHY_BRCM_EN_MASTER_MODE
+gate; interrupt, APD/EEE/lifecycle, MAC/phylink, packet I/O, networking,
+sockets, SSH, Phase 12.2, and phase transition work all require supervisor
+planning. selected_next_task and selected_discriminator are null, planningNeeded
+is required, and the link-ready packet-readiness checkpoint remains
+dependency-gated until a future accepted proof establishes link-ready or
+autoneg-complete.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

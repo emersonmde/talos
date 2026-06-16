@@ -1,0 +1,119 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-post-txorder-link-not-ready-source-checkpoint-20260616",
+  "status": "accepted",
+  "classification": "bcm54213pe-post-txorder-link-not-ready-no-distinct-source-backed-discriminator-pause",
+  "evidence_level": [
+    "static/source/task evidence inspection",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_input_frontier": {
+    "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-closeout-20260616",
+    "commit": "009a57a6bb69b33be32d2f8da07ff552e7779b0f",
+    "classification": "bcm54213pe-rgmii-delay-tx-order-frontier-closed-timeout-link-not-ready",
+    "terminal_runtime_fact": {
+      "rx_readback_rgmii_skew_en": true,
+      "tx_selected_read_completed": true,
+      "tx_readback_gtxclk_en": true,
+      "tx_delay_write_skipped_already_enabled": true,
+      "bmcr_write_count": "0x1",
+      "samples_taken": "0x8",
+      "poll_bmsr_link_status": false,
+      "poll_bmsr_autoneg_complete": false,
+      "passive_macb_nsr_link": false,
+      "link_ready_terminal": false
+    }
+  },
+  "selected_next_task": null,
+  "selected_discriminator": null,
+  "planning_needed": true,
+  "planning_reason": "No mechanically ready, source-backed, qualitatively distinct feature discriminator remains in this task after accepted TX-order RGMII delay plus BMCR restart plus bounded convergence still ended link-not-ready.",
+  "reconciled_context": {
+    "bmcr_autoneg_restart": "accepted exactly one corrected-target BMCR restart write and link-not-ready post-status",
+    "autoneg_convergence": "accepted exactly one BMCR restart plus eight bounded convergence samples ending link-not-ready",
+    "rgmii_delay": "accepted RX/TX delay path after source correction; TX GTXCLK_EN already set and link still not ready",
+    "gpio32_reset": "deferred because accepted event-clear proof left persistent-or-firmware-owned event bits 0x08800000 and did not accept ETH_RST_N ownership",
+    "physical_link": "accepted precondition remains accepted and is not reopened",
+    "bcm54213pe_source": "retained Linux source backs config_init, RGMII delay, optional master-mode, APD/EEE, interrupt, and suspend/resume surfaces, but none is mechanically selected here"
+  },
+  "candidate_followups": [
+    {
+      "option": "GPIO32/ETH_RST_N reset ownership re-evaluation",
+      "disposition": "deferred",
+      "reason": "feature-led but blocked by accepted persistent-or-firmware-owned GPIO32 event-state evidence; requires supervisor-selected new discriminator before any reset or write/restore retry"
+    },
+    {
+      "option": "MII_CTRL1000 master-mode write",
+      "disposition": "deferred",
+      "reason": "Linux gates the write on PHY_BRCM_EN_MASTER_MODE and accepted Talos/board evidence has not selected that dev_flags bit"
+    },
+    {
+      "option": "interrupt ISR/IMR/ECR work",
+      "disposition": "deferred",
+      "reason": "ISR reads can acknowledge pending interrupts and IMR/ECR writes are interrupt ownership, not direct link-readiness progress"
+    },
+    {
+      "option": "APD/EEE/LED/WOL/expansion/suspend-resume/MACB-phylink work",
+      "disposition": "deferred",
+      "reason": "broader PHY lifecycle or MAC configuration work requires a separate supervisor-planned source contract"
+    },
+    {
+      "option": "same-shaped status polling, BMCR restart, convergence wait tweak, or marker/capture retry",
+      "disposition": "rejected",
+      "reason": "would repeat accepted timeout/link-not-ready evidence"
+    },
+    {
+      "option": "packet I/O, networking, sockets, SSH, Phase 12.2, or phase transition",
+      "disposition": "rejected",
+      "reason": "link readiness/autoneg-complete and lower-level ownership remain unaccepted"
+    }
+  ],
+  "next_boundary": {
+    "decision": "supervisor-planning-required",
+    "selected_next_task": null,
+    "selected_discriminator": null,
+    "generic_discriminator_core_unblocked": false,
+    "link_ready_packet_readiness_checkpoint_unblocked": false,
+    "hardware_authorized_by_this_task": false
+  },
+  "forbidden_claims": [
+    "link-readiness",
+    "autoneg-complete",
+    "ethernet-driver-readiness",
+    "gpio32-phy-reset-ownership",
+    "interrupt-ownership",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "The accepted TX-order closeout is reconciled as timeout/link-not-ready after corrected RX/TX delay criteria, skipped redundant TX write, exactly one BMCR restart, and eight bounded convergence samples."
+    },
+    {
+      "disposition": "blocked",
+      "finding": "The link-ready packet-readiness checkpoint remains dependency-gated because no link-ready/autoneg-complete frontier is accepted."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "Same-shaped status polling, BMCR restart retry, convergence wait tweak, and marker/capture-only retry are not progress."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "GPIO32/ETH_RST_N reset ownership, master-mode writes, interrupt paths, APD/EEE/lifecycle paths, and MAC/phylink work need supervisor-planned scope before implementation."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No source, helper, task, docs, or evidence files were removed."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No hardware lock or inconclusive-run triage was needed for a source/task/evidence-only checkpoint."
+    }
+  ]
+}
