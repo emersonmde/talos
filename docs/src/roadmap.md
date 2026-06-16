@@ -2272,6 +2272,20 @@ The post-review correction chain is:
     range overlapped early memory setup. Milestone 10.3 remains open until a
     planned implementation reserves or copies that range and a fresh serialized
     Pi 5 proof passes.
+119. Pi 5 generated-root firmware initramfs reservation source contract:
+    accepted in
+    'phase10-pi5-generated-root-firmware-initramfs-reservation-source-contract-20260616'.
+    Static/source review selects
+    'pi5-generated-root-firmware-initramfs-reserve-by-memory-plan-exclusion-v1':
+    exclude the FDT /chosen 'linux,initrd-start'..'linux,initrd-end' range from
+    the Pi 5 early usable-memory candidate before bootstrap page reservation,
+    translation-table layout, allocator initialization, and cache transition.
+    This preserves the existing firmware-initramfs artifact parser and fallback
+    behavior while preventing early memory setup from reusing the
+    firmware-loaded artifact bytes. Copy-first remediation, high-memory
+    ownership, DMA-safe allocation, persistence, SD/USB/block drivers,
+    networking, SSH, hardware proof, boot publication, and phase transition
+    remain deferred to explicit follow-up tasks.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -6853,6 +6867,13 @@ Selected first slice:
   but does not accept Pi 5 generated-root artifact consumption or close
   Milestone 10.3. The next Milestone 10.3 task should be explicitly planned
   around the firmware initramfs range overlap.
+- 'phase10-pi5-generated-root-firmware-initramfs-reservation-source-contract-20260616'
+  accepts the source contract for that planned remediation. The selected
+  implementation boundary is to exclude FDT /chosen initrd bounds from the Pi 5
+  early usable-memory candidate before bootstrap reservation and translation
+  table placement. The task does not implement the change, publish a boot
+  archive, run Pi 5 hardware, accept generated-root consumption, or broaden into
+  persistence, SD/USB/block drivers, networking, SSH, or phase transition.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The
@@ -6874,9 +6895,10 @@ Acceptance criteria:
   Pi 5 candidate boot archive placement is accepted only as a non-published
   static archive. The first Pi 5 boot-transport proof and its closeout retain a
   source-backed blocker: firmware initramfs range overlap with early memory
-  setup. Pi 5 consumption acceptance, writable persistence, SD/USB/block
-  storage, networking, SSH, and phase transition remain deferred and require
-  explicit follow-up tasks.
+  setup. The next accepted source boundary is reservation by early memory-plan
+  exclusion, but implementation and Pi 5 proof remain pending. Pi 5 consumption
+  acceptance, writable persistence, SD/USB/block storage, networking, SSH, and
+  phase transition remain deferred and require explicit follow-up tasks.
 - Documentation explains the chosen local storage path and remaining risks.
   Current status: accepted by the Milestone 10.3 closeout as a local/QEMU
   generated-root transport checkpoint; Pi 5 generated-root consumption and true

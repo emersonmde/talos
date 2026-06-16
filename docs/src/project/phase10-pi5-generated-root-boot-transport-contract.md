@@ -121,6 +121,38 @@ initramfs range before early page-table/bootstrap allocation can overwrite it.
 The accepted archive/TFTP placement is therefore not enough by itself to claim
 Pi 5 generated-root transport acceptance.
 
+## Firmware Initramfs Reservation Contract
+
+phase10-pi5-generated-root-firmware-initramfs-reservation-source-contract-20260616
+accepts the next implementation boundary as
+pi5-generated-root-firmware-initramfs-reserve-by-memory-plan-exclusion-v1.
+
+The implementation must preserve the firmware-loaded artifact by excluding the
+FDT /chosen linux,initrd-start..linux,initrd-end range from the Pi 5 early
+usable-memory candidate before bootstrap page reservation, translation-table
+layout, bootstrap allocator initialization, and cache transition. This keeps the
+existing firmware-initramfs installer and all-or-nothing artifact parser, but
+changes the memory plan so early kernel setup cannot reuse the artifact bytes.
+
+Source ownership is split narrowly:
+
+- src/device_tree/chosen.rs continues to parse FDT /chosen initrd bounds;
+- src/boot/rpi5.rs owns DTB-phase ordering, memory planning, allocator/cache
+  startup, and the firmware-initramfs generated-root installer;
+- src/memory_map/layout.rs owns the extra exclusion in the conservative
+  low-tail candidate policy;
+- src/memory_map/page_frames.rs and src/memory_map/translation.rs remain
+  consumers of the selected candidate and should not gain generated-root
+  knowledge;
+- src/initramfs.rs keeps artifact parsing, source reporting, and compiled
+  fallback behavior.
+
+Copy-first remediation, static maximum-size buffers, high-memory ownership,
+DMA-safe allocation, SD/USB/block persistence, networking, SSH, and phase
+transition remain rejected from this boundary. Pi 5 generated-root consumption
+still requires a later local/static implementation task and a fresh serialized
+Pi 5 proof.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11 remain

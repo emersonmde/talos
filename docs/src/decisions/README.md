@@ -12,6 +12,33 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-16 - Pi 5 generated-root firmware initramfs is reserved by early memory-plan exclusion
+
+- Status: Accepted source contract in
+  'phase10-pi5-generated-root-firmware-initramfs-reservation-source-contract-20260616'.
+- Context: The accepted Pi 5 generated-root candidate archive and hardware
+  proof showed that firmware fetched 'da591740/initramfs_2712' and supplied FDT
+  '/chosen' bounds '0x2efff000..0x2efff296', but Talos later reported
+  'source=compiled-fallback reason=missing-artifact' because the range
+  overlapped early page-frame seed/bootstrap reservation/translation-table
+  memory.
+- Decision: Select
+  'pi5-generated-root-firmware-initramfs-reserve-by-memory-plan-exclusion-v1'.
+  The next implementation should thread the firmware initrd range into Pi 5
+  boot memory planning and exclude intersecting pages from the conservative
+  low-tail usable-memory candidate before bootstrap page reservation,
+  translation-table placement, allocator initialization, and cache transition.
+- Evidence level: Static/source/task evidence inspection of the accepted Pi 5
+  generated-root transport records, 'src/device_tree/chosen.rs',
+  'src/boot/rpi5.rs', 'src/memory_map/layout.rs',
+  'src/memory_map/page_frames.rs', 'src/memory_map/translation.rs', and
+  'src/initramfs.rs'; task-owned JSON evidence; docs build; diff checks.
+- Consequences: The implementation remains a separate dependency-gated task.
+  Copy-first remediation, static max-size buffers, high-memory ownership,
+  DMA-safe allocation, persistence, SD/USB/block drivers, networking, SSH,
+  hardware proof, boot publication, and phase transition remain rejected from
+  the source contract.
+
 ## 2026-06-16 - Phase 12 Serial Freshness Uses Cursor/Nonce Contract
 
 - Status: accepted as a source/static lab-contract decision. No Pi 5 hardware

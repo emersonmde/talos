@@ -1,0 +1,90 @@
+{
+  "task_id": "phase10-pi5-generated-root-firmware-initramfs-reservation-source-contract-20260616",
+  "status": "accepted",
+  "classification": "pi5-generated-root-firmware-initramfs-reservation-source-contract-selected",
+  "evidence_level": [
+    "static/source/task evidence inspection",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "selected_boundary": "pi5-generated-root-firmware-initramfs-reserve-by-memory-plan-exclusion-v1",
+  "selected_next_task": "phase10-pi5-generated-root-firmware-initramfs-reservation-core-20260616",
+  "source_contract": {
+    "goal": "Preserve firmware-loaded initramfs_2712 bytes before early memory setup can overwrite them.",
+    "strategy": "Exclude FDT /chosen linux,initrd-start..linux,initrd-end from the Pi 5 early usable-memory candidate before bootstrap reservation, translation-table layout, allocator initialization, and cache transition.",
+    "transport_goal_preserved": "Pi 5 consumes firmware-loaded talos-generated-root-v1 artifact from FDT /chosen bounds instead of compiled generated-root fallback.",
+    "implementation_kind": "reservation-by-memory-plan-exclusion",
+    "copy_first_design": "rejected"
+  },
+  "source_owners": [
+    "src/device_tree/chosen.rs",
+    "src/boot/rpi5.rs",
+    "src/memory_map/layout.rs",
+    "src/memory_map/page_frames.rs",
+    "src/memory_map/translation.rs",
+    "src/initramfs.rs",
+    "scripts/rpi5-generated-root-boot-transport-image.sh",
+    "scripts/rpi5-generated-root-boot-transport-boot-tree.sh",
+    "scripts/rpi5-generated-root-boot-transport-candidate-review.sh"
+  ],
+  "accepted_input_evidence": {
+    "contract_task": "tasks/2026-06-05-phase10-pi5-generated-root-boot-transport-contract.md",
+    "candidate_task": "tasks/2026-06-05-phase10-pi5-generated-root-boot-archive-candidate-core.md",
+    "proof_blocker_task": "tasks/2026-06-05-phase10-pi5-generated-root-boot-transport-proof.md",
+    "closeout_task": "tasks/2026-06-05-phase10-pi5-generated-root-boot-transport-closeout.md",
+    "firmware_initramfs_range": {
+      "start": "0x000000002efff000",
+      "end": "0x000000002efff296",
+      "length": "0x0000000000000296"
+    },
+    "observed_blocker": "source=compiled-fallback reason=missing-artifact after early memory setup overlapped the firmware initramfs range",
+    "tftp_artifact_fetch": "da591740/initramfs_2712, 662 bytes"
+  },
+  "memory_invariants": [
+    "Early usable-memory candidate excludes any page intersecting present non-empty FDT /chosen initrd bounds.",
+    "Kernel image, DTB blob, FDT reservation entries, and /reserved-memory exclusions remain in force.",
+    "Low-tail policy remains conservative and does not claim high memory or generalized physical-memory ownership.",
+    "No valid candidate after exclusions remains an unavailable memory plan rather than allocation over firmware initramfs bytes.",
+    "Missing or invalid initrd bounds preserve compiled generated-root fallback behavior."
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Selected reserve-by-memory-plan-exclusion as the concrete implementation boundary."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Mapped source owners and memory invariants needed by the next implementation task."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Implementation, local tests/builds, candidate archive review, and Pi 5 proof remain separate tasks."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "TFTP fetch alone is not Pi 5 generated-root consumption proof."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "Copy-first remediation, static maximum-size buffers, persistence, SD/USB/block drivers, networking, SSH, high-memory ownership, DMA-safe allocation, and phase transition are outside this task."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No hardware lock or inconclusive-run triage was needed for this static contract."
+    }
+  ],
+  "rejected_claims": [
+    "Pi 5 generated-root consumption accepted",
+    "boot archive publication",
+    "Pi 5 hardware proof",
+    "hardwareTestLock acquisition",
+    "persistence",
+    "SD/USB/block drivers",
+    "networking",
+    "SSH",
+    "high-memory ownership",
+    "DMA-safe allocation",
+    "phase transition"
+  ]
+}

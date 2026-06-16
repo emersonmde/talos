@@ -1,0 +1,69 @@
+{
+  "task_id": "phase10-pi5-generated-root-firmware-initramfs-reservation-source-contract-20260616",
+  "classification_json": "tasks/evidence/2026-06-16-phase10-pi5-generated-root-firmware-initramfs-reservation-source-contract/classification.json",
+  "task_record": "tasks/2026-06-16-phase10-pi5-generated-root-firmware-initramfs-reservation-source-contract.md",
+  "input_evidence": [
+    {
+      "label": "accepted Pi 5 generated-root boot transport contract",
+      "path": "tasks/2026-06-05-phase10-pi5-generated-root-boot-transport-contract.md",
+      "evidence_level": "static source/docs/script inspection"
+    },
+    {
+      "label": "accepted non-published candidate archive core",
+      "path": "tasks/2026-06-05-phase10-pi5-generated-root-boot-archive-candidate-core.md",
+      "evidence_level": "fmt/lint/typecheck, unit tests, archive/image inspection"
+    },
+    {
+      "label": "source-backed Pi 5 generated-root blocker",
+      "path": "tasks/2026-06-05-phase10-pi5-generated-root-boot-transport-proof.md",
+      "evidence_level": "serialized Pi 5 hardware boot/output, TFTP, serial, restore"
+    },
+    {
+      "label": "accepted generated-root boot transport closeout",
+      "path": "tasks/2026-06-05-phase10-pi5-generated-root-boot-transport-closeout.md",
+      "evidence_level": "static/task evidence inspection"
+    },
+    {
+      "label": "project generated-root boot transport contract",
+      "path": "docs/src/project/phase10-pi5-generated-root-boot-transport-contract.md",
+      "evidence_level": "architecture/project documentation"
+    }
+  ],
+  "source_inspection": [
+    {
+      "path": "src/device_tree/chosen.rs",
+      "relevance": "Existing FDT /chosen linux,initrd-start and linux,initrd-end parser."
+    },
+    {
+      "path": "src/boot/rpi5.rs",
+      "relevance": "Pi 5 DTB phase, memory plan ordering, bootstrap allocator, cache transition, and firmware initramfs installer."
+    },
+    {
+      "path": "src/memory_map/layout.rs",
+      "relevance": "Conservative low-tail usable-memory candidate and exclusion policy."
+    },
+    {
+      "path": "src/memory_map/page_frames.rs",
+      "relevance": "Page-frame seed and bootstrap reservation consume the selected low-tail candidate."
+    },
+    {
+      "path": "src/memory_map/translation.rs",
+      "relevance": "Translation tables are placed from the bootstrap reservation derived from the selected candidate."
+    },
+    {
+      "path": "src/initramfs.rs",
+      "relevance": "Generated-root artifact parsing, external source selection, and compiled fallback behavior."
+    }
+  ],
+  "selected_boundary": {
+    "name": "pi5-generated-root-firmware-initramfs-reserve-by-memory-plan-exclusion-v1",
+    "next_task": "phase10-pi5-generated-root-firmware-initramfs-reservation-core-20260616",
+    "validation_level_required_next": "local/static implementation tests and build gates before any hardware proof"
+  },
+  "validation": {
+    "jq_empty": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed before commit"
+  }
+}
