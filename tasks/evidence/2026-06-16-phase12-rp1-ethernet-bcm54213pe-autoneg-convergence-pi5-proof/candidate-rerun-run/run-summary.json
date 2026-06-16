@@ -1,0 +1,88 @@
+{
+  "kind": "candidate",
+  "run_label": "bcm54213pe-convergence-candidate-rerun-20260616T1642Z",
+  "nonce": "bcm54213pe-convergence-candidate-rerun-20260616T1642Z",
+  "exits": {
+    "capture_bundle": 0,
+    "capture_chain_v4": 0,
+    "serial_freshness_guard": 0
+  },
+  "v4": {
+    "classification": "capture-chain-v4-ready",
+    "allowed": true,
+    "rejection_reasons": [],
+    "identity": {
+      "selected_tree_hash": "a932c281bd02341694a1440eb1316b6ea6c582c814e1add9f1fef5e2727bafa4",
+      "effective_kernel": "kernel_2712.img",
+      "expected_fetch_path": "da591740/kernel_2712.img",
+      "expected_fetch_byte_count": 52248,
+      "tftp": {
+        "cursor_file": 4540768,
+        "delta_cursor_start": 4540768,
+        "delta_cursor_end": 4542119,
+        "stable": true,
+        "event_count": 13,
+        "expected_fetch_count": 2,
+        "expected_fetch_byte_match_count": 2,
+        "expected_fetch_bytes_seen": [
+          52248,
+          52248
+        ]
+      },
+      "final_pre_restore": {
+        "tree_hash": "a932c281bd02341694a1440eb1316b6ea6c582c814e1add9f1fef5e2727bafa4",
+        "effective_kernel": "kernel_2712.img",
+        "selected_tree_still_staged": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes": 52248
+      },
+      "restore": {
+        "snapshot_name": "bcm54213pe-convergence-rerun-pre-20260616T1642Z",
+        "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+      }
+    },
+    "serial_capture": {
+      "capture_mode": "read",
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+      "cursor_file": 4194304,
+      "cursor_start": 4194304,
+      "cursor_end": 4194304,
+      "response_bytes": 136951,
+      "required_marker": "TALOS: rp1-ethernet-bcm54213pe-autoneg-convergence-candidate capture-nonce=bcm54213pe-convergence-candidate-rerun-20260616T1642Z",
+      "required_marker_occurrences": 39,
+      "required_marker_excerpt": "ion=false classification=bcm54213pe-autoneg-convergence-timeout-link-not-ready\r\nTALOS: rp1-ethernet-bcm54213pe-autoneg-convergence-candidate capture-nonce=bcm54213pe-convergence-candidate-rerun-20260616T1642Z bcm54213pe-autoneg-convergence-proof-contract-id=phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-proof-contract-v1 task-id=phase12-rp1-ethernet-bcm54213pe-",
+      "nonce_token": "capture-nonce=bcm54213pe-convergence-candidate-rerun-20260616T1642Z",
+      "nonce_token_occurrences": 39,
+      "pre_power_nonce_occurrences": 0,
+      "empty_pre_power": false,
+      "nonce_fresh": true,
+      "serial_freshness_ok": true
+    }
+  },
+  "serial_freshness": {
+    "classification": "serial-freshness-guard-v1-ready",
+    "rejection_reasons": [],
+    "fields": {
+      "pre_power_peek_cursor": 4194304,
+      "pre_power_retained_bytes": 65536,
+      "pre_power_marker_occurrences": 0,
+      "pre_power_nonce_occurrences": 0,
+      "serial_drain_attempts": 16,
+      "serial_drain_terminal_state": "bounded-drain-exhausted-before-power",
+      "serial_drain_empty_before_power": false,
+      "serial_drain_final_cursor": 4194304,
+      "post_power_observe_cursor_start": 4194304,
+      "post_power_observe_cursor_end": 4194304,
+      "serial_capture_mode": "read",
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+      "start_cursor_saturated": true,
+      "observed_byte_range_or_response_bytes": 136951,
+      "required_marker": "TALOS: rp1-ethernet-bcm54213pe-autoneg-convergence-candidate capture-nonce=bcm54213pe-convergence-candidate-rerun-20260616T1642Z",
+      "marker_occurrences_after_saved_cursor": 39,
+      "run_unique_nonce": "bcm54213pe-convergence-candidate-rerun-20260616T1642Z",
+      "nonce_occurrences_after_saved_cursor": 39,
+      "cursor_nonce_fresh": true,
+      "serial_freshness_ok": true
+    }
+  }
+}

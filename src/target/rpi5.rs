@@ -18372,7 +18372,7 @@ pub fn run_rp1_ethernet_bcm54213pe_autoneg_convergence_candidate() -> ! {
                 if link_ready {
                     "bcm54213pe-autoneg-convergence-link-ready"
                 } else {
-                    "bcm54213pe-autoneg-convergence-still-timeout"
+                    "bcm54213pe-autoneg-convergence-timeout-link-not-ready"
                 }
             } else {
                 "bcm54213pe-autoneg-convergence-capture-blocker"
@@ -20659,7 +20659,7 @@ fn write_rp1_ethernet_bcm54213pe_autoneg_convergence_rejections(
     bmcr_write_executed: bool,
 ) {
     write_early_static(
-        " allowed-hardware-classifications=bcm54213pe-autoneg-convergence-link-ready,bcm54213pe-autoneg-convergence-still-timeout,bcm54213pe-autoneg-convergence-precondition-blocker,bcm54213pe-autoneg-convergence-capture-blocker,no-mdio-no-ethernet-bcm54213pe-autoneg-convergence-control",
+        " allowed-hardware-classifications=bcm54213pe-autoneg-convergence-link-ready,bcm54213pe-autoneg-convergence-timeout-link-not-ready,bcm54213pe-autoneg-convergence-precondition-blocker,bcm54213pe-autoneg-convergence-capture-blocker,no-mdio-no-ethernet-bcm54213pe-autoneg-convergence-control",
     );
     write_early_static(
         " rejected-runtime-hardware-claims=target-drift,extra-phy-writes,selector-config-access,gpio32-reset-action,broadcom-shadow-mmd-aux-access,interrupt-ownership,phy-mac-configuration,link-forcing,packet-io,networking,sockets,ssh,phase-12-2,phase-transition",

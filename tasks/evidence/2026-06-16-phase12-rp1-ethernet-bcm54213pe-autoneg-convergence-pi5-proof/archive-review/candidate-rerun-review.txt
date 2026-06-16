@@ -1,0 +1,8 @@
+candidate_archive=tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-pi5-proof/candidate-rerun/archive.tar.gz
+candidate_archive_sha256=fb16311fa5c0a1cc8aad645037e68a582d4aed9d857c8fec2921e784dee55fab
+kernel_2712_sha256=f47dab86743978fabadfda8c747e9ddb008d60a5b02d36adb22ad99e8a5c6502
+kernel_2712_size=52248
+header_image_size=52248
+text_offset=0
+flags=12
+forbidden_bcm54213pe_autoneg_convergence_candidate_runtime_strings_absent=true

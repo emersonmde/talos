@@ -10591,6 +10591,23 @@ writes, interrupt ownership, PHY/MAC configuration, packet I/O, networking,
 sockets, SSH, Phase 12.2, or a phase transition; supervisor planning must
 select any follow-up task or explicit pause.
 
+phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-core-20260616 and
+phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-pi5-proof-20260616 accept
+the bounded convergence-poll follow-up as
+bcm54213pe-autoneg-convergence-timeout-link-not-ready. The accepted runtime
+fact is one corrected-target PHY1 BMCR write frame 0x50821200 followed by eight
+poll samples. The terminal sample remained link-not-ready: BMCR 0x1000, BMSR
+0x7949/0x7949, ANAR 0x01e1, ANLPAR 0x0000, MII_CTRL1000 0x0200, MII_STAT1000
+0x0000, passive MACB_NSR 0x00000006, BMSR link false, BMSR autoneg-complete
+false, and MACB_NSR_LINK false. The proof includes selected-tree identity,
+same-power-cycle TFTP byte serves, cursor-nonce serial freshness, final
+identity, restore proof, and a no-MDIO/no-Ethernet control. The terminal timeout
+label was normalized from the local/static core's earlier still-timeout wording
+before the accepted rerun. This proof does not authorize GPIO32/PHY reset
+ownership, Broadcom selector/config writes, interrupt ownership, PHY/MAC
+configuration, packet I/O, networking, sockets, SSH, Phase 12.2, or a phase
+transition.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

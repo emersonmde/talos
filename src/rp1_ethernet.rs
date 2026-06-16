@@ -8940,13 +8940,13 @@ pub const RP1_ETHERNET_BCM54213PE_AUTONEG_CONVERGENCE_OPERATION_ORDER: &[&str] =
     "candidate performs exactly one corrected-target PHY1 BMCR autoneg enable plus restart write",
     "candidate runs a bounded eight-sample convergence poll with 200000 spin waits before each sample",
     "each poll sample reads BMCR, double-sampled BMSR, ANAR, ANLPAR, MII_CTRL1000, MII_STAT1000, and passive MACB_NSR_LINK",
-    "terminal classifications are limited to link-ready, still-timeout, precondition-blocker, capture-blocker, or no-mdio control",
+    "terminal classifications are limited to link-ready, timeout-link-not-ready, precondition-blocker, capture-blocker, or no-mdio control",
     "control emits the same freshness/report shape while withholding MDIO, MAN, MACB, GPIO32, PHY, and RP1 Ethernet target facts",
     "local/static core does not authorize reset recovery, selector/config access, interrupts, packet I/O, networking, SSH, Phase 12.2, or a phase transition",
 ];
 pub const RP1_ETHERNET_BCM54213PE_AUTONEG_CONVERGENCE_ALLOWED_HARDWARE_CLASSIFICATIONS: &[&str] = &[
     "bcm54213pe-autoneg-convergence-link-ready",
-    "bcm54213pe-autoneg-convergence-still-timeout",
+    "bcm54213pe-autoneg-convergence-timeout-link-not-ready",
     "bcm54213pe-autoneg-convergence-precondition-blocker",
     "bcm54213pe-autoneg-convergence-capture-blocker",
     RP1_ETHERNET_BCM54213PE_AUTONEG_CONVERGENCE_CONTROL_CLASSIFICATION,
@@ -16571,7 +16571,7 @@ mod tests {
             evidence.allowed_hardware_classifications,
             &[
                 "bcm54213pe-autoneg-convergence-link-ready",
-                "bcm54213pe-autoneg-convergence-still-timeout",
+                "bcm54213pe-autoneg-convergence-timeout-link-not-ready",
                 "bcm54213pe-autoneg-convergence-precondition-blocker",
                 "bcm54213pe-autoneg-convergence-capture-blocker",
                 "no-mdio-no-ethernet-bcm54213pe-autoneg-convergence-control",

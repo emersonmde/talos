@@ -1,0 +1,92 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-pi5-proof-20260616",
+  "classification": "bcm54213pe-autoneg-convergence-timeout-link-not-ready",
+  "evidence_level": [
+    "static archive/image review",
+    "lab-controller API selected-tree and restore evidence",
+    "same-power-cycle TFTP evidence",
+    "serial hardware boot/output",
+    "capture-chain-v4 replay",
+    "serial freshness guard v1 replay",
+    "focused Rust tests",
+    "JSON validation",
+    "diff checks"
+  ],
+  "source_fix": {
+    "reason": "initial hardware run exposed a local/static terminal-label mismatch: runtime emitted still-timeout while the queued Pi 5 task acceptance gate required timeout-link-not-ready",
+    "disposition": "fixed",
+    "rerun_required": true
+  },
+  "hardware_lock": {
+    "acquired_at": "2026-06-16T16:19:30Z",
+    "released_after_restore": true
+  },
+  "control": {
+    "classification": "no-mdio-no-ethernet-bcm54213pe-autoneg-convergence-control",
+    "archive_sha256": "6415a5b6967b0af5d8f022af048f8472ca5cad0200c9637ace940341c4f46510",
+    "kernel_2712_sha256": "6ca31cec3b2ff92a5ca894d10c9f308387fc20798c74456b7202ced152ccc3a7",
+    "kernel_2712_bytes": 49712,
+    "selected_tree_hash": "c0cba209ffcf845d644f4e7461e3305aaed0fc6d5bb0edf2d798bb57f331e17b",
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "serial_freshness_guard": "serial-freshness-guard-v1-ready",
+    "serial_nonce_occurrences": 44,
+    "identity_join_allowed": true,
+    "final_pre_restore_tree_hash": "c0cba209ffcf845d644f4e7461e3305aaed0fc6d5bb0edf2d798bb57f331e17b",
+    "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "candidate": {
+    "classification": "bcm54213pe-autoneg-convergence-timeout-link-not-ready",
+    "archive_sha256": "fb16311fa5c0a1cc8aad645037e68a582d4aed9d857c8fec2921e784dee55fab",
+    "kernel_2712_sha256": "f47dab86743978fabadfda8c747e9ddb008d60a5b02d36adb22ad99e8a5c6502",
+    "kernel_2712_bytes": 52248,
+    "selected_tree_hash": "a932c281bd02341694a1440eb1316b6ea6c582c814e1add9f1fef5e2727bafa4",
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "serial_freshness_guard": "serial-freshness-guard-v1-ready",
+    "serial_nonce_occurrences": 39,
+    "identity_join_allowed": true,
+    "final_pre_restore_tree_hash": "a932c281bd02341694a1440eb1316b6ea6c582c814e1add9f1fef5e2727bafa4",
+    "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "runtime_values": {
+      "bmcr_write_count": "0x1",
+      "samples_taken": "0x8",
+      "terminal_sample": "0x8",
+      "poll_bmcr": "0x1000",
+      "poll_bmsr_first": "0x7949",
+      "poll_bmsr_second": "0x7949",
+      "poll_anar": "0x1e1",
+      "poll_anlpar": "0x0",
+      "poll_ctrl1000": "0x200",
+      "poll_stat1000": "0x0",
+      "poll_bmsr_link_status": false,
+      "poll_bmsr_autoneg_complete": false,
+      "passive_macb_nsr_raw": "0x6",
+      "passive_macb_nsr_link": false,
+      "link_ready_terminal": false,
+      "bmcr_write_performed": true,
+      "mdio_man_transactions_performed": true,
+      "macb_read_performed": true,
+      "macb_write_performed": false,
+      "phy_reset_or_gpio32_action": false,
+      "link_forcing": false
+    }
+  },
+  "final_lab": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "kernel_2712_bytes": 104136
+  },
+  "rejected_claims": [
+    "GPIO32 reset ownership",
+    "Broadcom selector/config writes",
+    "interrupt ownership",
+    "broad PHY/MAC configuration",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ]
+}

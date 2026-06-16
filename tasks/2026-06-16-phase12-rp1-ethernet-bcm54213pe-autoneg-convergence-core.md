@@ -79,7 +79,7 @@ control: same freshness/report shape with no MDIO, MAN, MACB, GPIO32, PHY, or
 Allowed terminal classifications for the future Pi 5 proof are limited to:
 
 - bcm54213pe-autoneg-convergence-link-ready;
-- bcm54213pe-autoneg-convergence-still-timeout;
+- bcm54213pe-autoneg-convergence-timeout-link-not-ready;
 - bcm54213pe-autoneg-convergence-precondition-blocker;
 - bcm54213pe-autoneg-convergence-capture-blocker;
 - no-mdio-no-ethernet-bcm54213pe-autoneg-convergence-control.
