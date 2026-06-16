@@ -1,0 +1,101 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-post-tx-selected-read-source-checkpoint-20260616",
+  "classification": "bcm54213pe-post-tx-selected-read-source-contract-correction-selected",
+  "inputs": {
+    "accepted_tx_selected_read_closeout": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-closeout.md",
+    "accepted_tx_selected_read_closeout_classification": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-closeout/classification.json",
+    "accepted_tx_selected_read_pi5_proof": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-pi5-proof.md",
+    "accepted_tx_selected_read_pi5_proof_classification": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-pi5-proof/classification.json",
+    "accepted_rgmii_delay_pi5_proof": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof.md",
+    "accepted_rgmii_delay_source_contract": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-source-contract.md"
+  },
+  "source_citations": [
+    {
+      "path": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract/source/linux-rpi-6.12-broadcom-bcm54213pe-config-contract-excerpt.txt",
+      "facts": [
+        "bcm54213pe_config_init calls bcm54210e_config_init",
+        "bcm54210e_config_init calls bcm54xx_config_clock_delay",
+        "bcm54xx_config_clock_delay handles RX delay before TX delay",
+        "rgmii-id enables MII_BCM54XX_AUXCTL_SHDWSEL_MISC_RGMII_SKEW_EN",
+        "rgmii-id enables BCM54810_SHD_CLK_CTL_GTXCLK_EN"
+      ]
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/source/linux-rpi-6.12-bcm-phy-lib-selector-read-contract-excerpt.txt",
+      "facts": [
+        "bcm54xx_auxctl_read writes the AUX shadow selector before reading AUX_CTL",
+        "bcm54xx_auxctl_write writes regnum | val to AUX_CTL",
+        "Broadcom selected-register access is not passive read-only"
+      ]
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/source/linux-rpi-6.12-brcmphy-register-contract-excerpt.txt",
+      "facts": [
+        "MII_BCM54XX_SHD is register 0x1c",
+        "BCM54810_SHD_CLK_CTL is shadow 0x03",
+        "BCM54810_SHD_CLK_CTL_GTXCLK_EN is bit 9 / 0x0200"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "The accepted isolated TX selected-read proof closed generic TX selected-register read visibility."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The accepted full RGMII delay proof still blocks specifically after RX delay write/readback and before TX delay write."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The isolated selected TX raw value 0x0e00 includes GTXCLK_EN 0x0200 after SHD data masking."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "A future source contract must decide the corrected order/readback model before any new code or hardware proof."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "Immediate TX delay write/readback, BMCR restart, convergence polling, link readiness, packet I/O, networking, SSH, Phase 12.2, and phase transition are not accepted by this checkpoint."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Selected-tree/TFTP, serial freshness, capture-chain-v4, and restore proof are accepted inputs rather than the current blocker."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No source, helper, task, or evidence files were removed."
+    }
+  ],
+  "selected_boundary": {
+    "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-source-correction-20260616",
+    "status_after_acceptance": "supervisor-planning-required",
+    "must_reconcile": [
+      "Linux RX-then-TX config_clock_delay order",
+      "accepted RX delay write/readback then TX selected-read failure",
+      "accepted isolated TX selected-read success",
+      "isolated TX selected-read raw 0x0e00 with GTXCLK_EN already set",
+      "rejected TX write/readback and BMCR restart claims"
+    ],
+    "non_goals": [
+      "hardware execution",
+      "TX delay write/readback proof",
+      "BMCR restart",
+      "convergence polling",
+      "packet I/O",
+      "networking",
+      "SSH",
+      "Phase 12.2",
+      "phase transition"
+    ]
+  },
+  "validation": {
+    "json": [
+      "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-post-tx-selected-read-source-checkpoint/classification.json",
+      "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-post-tx-selected-read-source-checkpoint/evidence-map.json"
+    ],
+    "diff_check": "git diff --check",
+    "docs": "mdbook build",
+    "staged_diff_check": "git diff --cached --check before commit"
+  }
+}

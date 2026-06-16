@@ -2278,3 +2278,18 @@ write/readback resume, source-contract correction, or explicit pause. TX delay
 write/readback, BMCR restart, convergence polling, link readiness, packet I/O,
 networking, sockets, SSH, Phase 12.2, and phase transition remain rejected by
 this closeout.
+
+phase12-rp1-ethernet-bcm54213pe-post-tx-selected-read-source-checkpoint-20260616
+accepts
+bcm54213pe-post-tx-selected-read-source-contract-correction-selected. The
+checkpoint reconciles the accepted isolated TX selected-register read success
+with the earlier full RGMII delay blocker. The isolated TX discriminator proved
+the TX selector write/read path and observed raw 0x0e00, whose SHD data contains
+GTXCLK_EN 0x0200. The full RGMII delay proof still reached RX delay
+write/readback first and then failed the following TX selected-register read
+before TX write, BMCR restart, or convergence polling. The selected next
+boundary is supervisor planning for a local/static source-contract correction
+that explains the RX-to-TX order/interlock question before any fresh hardware
+proof. TX delay write/readback success, BMCR restart after delay configuration,
+convergence polling, link readiness, packet I/O, networking, sockets, SSH,
+Phase 12.2, and phase transition remain rejected.

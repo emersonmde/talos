@@ -1,0 +1,71 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-post-tx-selected-read-source-checkpoint-20260616",
+  "status": "accepted",
+  "classification": "bcm54213pe-post-tx-selected-read-source-contract-correction-selected",
+  "evidence_level": [
+    "static/task/source evidence inspection",
+    "accepted TX selected-read closeout review",
+    "accepted RGMII delay proof review",
+    "JSON evidence validation",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_inputs": {
+    "tx_selected_read_closeout": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-closeout-20260616",
+      "commit": "4859ccdcf93bef392717d8f5c5eb9b00380fb683",
+      "classification": "tx-selected-register-read-visible-frontier-closed"
+    },
+    "tx_selected_read_pi5_proof": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-pi5-proof-20260616",
+      "commit": "269c78ad7987a927e1cdae6405ed58c7bc35380b",
+      "classification": "tx-selected-register-read-visible",
+      "tx_selector_write_value": "0x0c00",
+      "tx_selected_read_raw": "0x0e00",
+      "tx_selected_read_completed": true,
+      "tx_delay_write_count": "0x0",
+      "bmcr_write_count": "0x0"
+    },
+    "rgmii_delay_pi5_proof": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof-20260616",
+      "classification": "rgmii-delay-capture-blocker",
+      "rx_delay_write_readback_reached": true,
+      "rx_readback_rgmii_skew_en": true,
+      "tx_selected_read_completed_after_rx_sequence": false,
+      "tx_delay_write_count": "0x0",
+      "bmcr_write_count": "0x0"
+    }
+  },
+  "selected_next_boundary": {
+    "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-source-correction-20260616",
+    "type": "supervisor-planned-local-static-source-contract-correction",
+    "hardware_authorized": false,
+    "summary": "Reconcile Linux RX-then-TX clock-delay order with accepted Talos evidence: full RGMII delay reached RX write/readback then failed TX selected read, while isolated TX selected read completed and showed GTXCLK_EN already set."
+  },
+  "decision": {
+    "tx_selected_read_visibility": "accepted",
+    "tx_selected_read_data_mask": "0x03ff",
+    "isolated_tx_selected_read_data": "0x0200",
+    "isolated_tx_gtxclk_en": true,
+    "full_rgmii_delay_same_shape_retry_selected": false,
+    "immediate_tx_delay_write_readback_hardware_selected": false,
+    "source_contract_correction_selected": true,
+    "planning_needed_after_acceptance": true
+  },
+  "rejected_claims": [
+    "TX delay write/readback success",
+    "BMCR restart after delay configuration",
+    "convergence polling after delay configuration",
+    "link readiness",
+    "link-not-ready after the full corrected delay path",
+    "GPIO32/PHY reset ownership",
+    "interrupt ownership",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "next_action": "Request supervisor planning for the selected local/static source-contract correction or explicit pause; do not promote packet/networking/SSH/Phase 12.2 work."
+}

@@ -10718,6 +10718,20 @@ committed. TX delay write/readback, BMCR restart, convergence polling, link
 readiness, packet I/O, networking, sockets, SSH, Phase 12.2, and phase
 transition remain rejected.
 
+phase12-rp1-ethernet-bcm54213pe-post-tx-selected-read-source-checkpoint-20260616
+accepts
+bcm54213pe-post-tx-selected-read-source-contract-correction-selected. The
+checkpoint reconciles the isolated TX selected-read success with the earlier
+full RGMII delay blocker: isolated TX selected read completed with raw 0x0e00
+and GTXCLK_EN 0x0200 already set in SHD data, while the full RGMII delay path
+reached RX delay write/readback first and then failed the following TX
+selected-register read before TX write, BMCR restart, or convergence polling.
+Supervisor planning is required for a local/static source-contract correction
+around the RX-to-TX order/interlock question or an explicit pause. TX delay
+write/readback success, BMCR restart after delay configuration, convergence
+polling, link readiness, packet I/O, networking, sockets, SSH, Phase 12.2, and
+phase transition remain rejected.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.
