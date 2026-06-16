@@ -10650,6 +10650,17 @@ checkpoint remains blocked, and GPIO32/PHY reset ownership, immediate Broadcom
 selector/config writes, interrupts, PHY/MAC configuration, packet I/O,
 networking, sockets, SSH, Phase 12.2, and phase transition remain rejected.
 
+phase12-rp1-ethernet-bcm54213pe-rgmii-delay-source-contract-20260616 accepts
+bcm54213pe-rgmii-delay-source-contract-proof-core-selected. The accepted
+source/static contract mechanically unblocks only the local/static
+phase12-rp1-ethernet-bcm54213pe-rgmii-delay-proof-core-20260616 task. That
+boundary pins PHY1, rgmii-id, AUX_CTL 0x18 shadow selector 0x7007,
+RGMII_SKEW_EN 0x0100, SHD 0x1c shadow 0x03, GTXCLK_EN 0x0200, readback checks,
+and then the already accepted BMCR restart/convergence-poll discriminator if
+readback succeeds. Hardware, link-ready acceptance, GPIO32/PHY reset,
+interrupts, packet I/O, networking, sockets, SSH, Phase 12.2, and phase
+transition remain rejected by this static task.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

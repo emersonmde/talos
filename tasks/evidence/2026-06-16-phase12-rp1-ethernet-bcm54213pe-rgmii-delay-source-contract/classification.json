@@ -1,0 +1,96 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-source-contract-20260616",
+  "status": "accepted",
+  "classification": "bcm54213pe-rgmii-delay-source-contract-proof-core-selected",
+  "evidence_level": [
+    "static/source/task evidence inspection",
+    "jq empty on task-owned JSON evidence",
+    "git diff --check",
+    "mdbook build",
+    "git diff --cached --check"
+  ],
+  "accepted_checkpoint": {
+    "task_id": "phase12-rp1-ethernet-bcm54213pe-post-convergence-timeout-source-checkpoint-20260616",
+    "commit": "0838d8569fde2244b15604c5f3b30b525c102529",
+    "classification": "bcm54213pe-post-convergence-timeout-rgmii-delay-source-contract-selected"
+  },
+  "selected_next_boundary": {
+    "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-proof-core-20260616",
+    "type": "local-static-proof-core",
+    "hardware_authorized": false,
+    "summary": "Build candidate/control code and validators for BCM54213PE PHY1 rgmii-id RX/TX delay write/readback plus the already accepted BMCR restart/convergence poll."
+  },
+  "allowed_target": {
+    "phy_address": 1,
+    "phy_model": "Broadcom BCM54213PE",
+    "physid1": "0x600d",
+    "physid2": "0x84a2",
+    "interface": "rgmii-id",
+    "mdio_path": "RP1 MACB MAN Clause 22 command path"
+  },
+  "rx_delay_contract": {
+    "register": "MII_BCM54XX_AUX_CTL",
+    "register_number": "0x18",
+    "shadow": "MII_BCM54XX_AUXCTL_SHDWSEL_MISC",
+    "shadow_number": "0x07",
+    "selector_write_value": "0x7007",
+    "read_frame": "0x60e20000",
+    "write_frame_prefix": "0x50e20000",
+    "write_mask_or_bits": [
+      "MII_BCM54XX_AUXCTL_MISC_WREN=0x8000",
+      "MII_BCM54XX_AUXCTL_SHDWSEL_MISC_RGMII_SKEW_EN=0x0100",
+      "MII_BCM54XX_AUXCTL_SHDWSEL_MISC=0x0007"
+    ],
+    "preserve_non_target_bits": true,
+    "required_readback": "After repeating selector write/read, RGMII_SKEW_EN 0x0100 is set; WREN is not required to persist."
+  },
+  "tx_delay_contract": {
+    "register": "MII_BCM54XX_SHD",
+    "register_number": "0x1c",
+    "shadow": "BCM54810_SHD_CLK_CTL",
+    "shadow_number": "0x03",
+    "selector_write_value": "0x0c00",
+    "read_frame": "0x60f20000",
+    "write_frame_prefix": "0x50f20000",
+    "write_mask_or_bits": [
+      "MII_BCM54XX_SHD_WRITE=0x8000",
+      "MII_BCM54XX_SHD_VAL(0x03)=0x0c00",
+      "BCM54810_SHD_CLK_CTL_GTXCLK_EN=0x0200"
+    ],
+    "preserve_non_target_bits": true,
+    "required_readback": "After shadow select/read, MII_BCM54XX_SHD_DATA(raw) has GTXCLK_EN 0x0200 set."
+  },
+  "required_order": [
+    "emit candidate/control contract marker and capture nonce",
+    "candidate only: RX delay read-modify-write/readback",
+    "candidate only: TX delay read-modify-write/readback",
+    "stop before BMCR restart if either delay readback mismatches",
+    "if readbacks match, perform exactly one accepted BMCR autoneg restart write frame 0x50821200 for value 0x1200",
+    "poll only the accepted bounded convergence vector",
+    "control emits the same contract/rejection shape without constructing MDIO/MAN, Ethernet, MACB, GPIO32, interrupt, packet, networking, or SSH targets"
+  ],
+  "allowed_terminal_classifications": [
+    "rgmii-delay-link-ready-frontier",
+    "rgmii-delay-timeout-link-not-ready",
+    "rgmii-delay-readback-mismatch",
+    "rgmii-delay-precondition-blocker",
+    "rgmii-delay-capture-blocker",
+    "no-mdio-no-ethernet-control"
+  ],
+  "rejected_claims": [
+    "hardware success",
+    "link readiness",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition",
+    "GPIO32/PHY reset ownership",
+    "interrupt ownership or delivery",
+    "broad PHY/MAC configuration",
+    "MII_CTRL1000 master-mode writes",
+    "APD/EEE/LED/WOL/suspend-resume behavior"
+  ],
+  "next_action": "Promote phase12-rp1-ethernet-bcm54213pe-rgmii-delay-proof-core-20260616 on the next worker wake if dependencies remain satisfied."
+}

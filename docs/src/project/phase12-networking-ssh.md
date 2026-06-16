@@ -2206,3 +2206,16 @@ or write proof. MII_CTRL1000 master-mode writes, APD/EEE/LED/WOL/suspend-resume
 paths, GPIO32/PHY reset, interrupt acknowledgement/masking, MACB configuration,
 packet I/O, networking, sockets, SSH, Phase 12.2, and phase transition remain
 rejected or deferred pending explicit supervisor planning.
+
+phase12-rp1-ethernet-bcm54213pe-rgmii-delay-source-contract-20260616 accepts
+bcm54213pe-rgmii-delay-source-contract-proof-core-selected. The selected
+implementation boundary is the local/static
+phase12-rp1-ethernet-bcm54213pe-rgmii-delay-proof-core-20260616 task only. It
+pins PHY1, rgmii-id, MII_BCM54XX_AUX_CTL 0x18 shadow 0x07 with selector
+0x7007, RGMII_SKEW_EN 0x0100, SHD 0x1c shadow 0x03, and GTXCLK_EN 0x0200. A
+future candidate must read-modify-write/read back RX then TX delay state,
+stop before BMCR restart on readback mismatch, and otherwise reuse exactly one
+accepted BMCR restart write frame 0x50821200 followed by the bounded convergence
+poll vector. Hardware execution, link-ready acceptance, GPIO32/PHY reset,
+interrupt ownership, packet I/O, networking, sockets, SSH, Phase 12.2, and phase
+transition remain rejected here.
