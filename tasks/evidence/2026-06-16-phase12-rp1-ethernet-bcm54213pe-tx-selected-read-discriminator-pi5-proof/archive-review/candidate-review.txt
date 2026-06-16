@@ -1,0 +1,6 @@
+candidate_archive=tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-pi5-proof/candidate/archive.tar.gz
+candidate_archive_sha256=4d8e836b497c7c4e992a06febd4495bb4f189b6d31d735b817694cb2af7ece20
+kernel_2712_sha256=b35bb5099318b2575ac53c61120f0f91877f76d5ca7196d13af834b067a8239a
+kernel_2712_size=50384
+capture_nonce=tx-selected-read-candidate-20260616T1924Z
+forbidden_tx_selected_read_candidate_runtime_strings_absent=true

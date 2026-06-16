@@ -1,0 +1,22 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-pi5-proof-20260616",
+  "classification": "tx-selected-register-read-visible",
+  "evidence_level": [
+    "static archive/image review",
+    "lab-controller API selected-tree/restore evidence",
+    "same-power-cycle TFTP evidence",
+    "serial hardware boot/output",
+    "capture-chain-v4 replay",
+    "serial freshness guard v1 replay"
+  ],
+  "files": {
+    "archive_review_summary": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-pi5-proof/archive-review/summary.json",
+    "capture_summary": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-pi5-proof/capture-summary.json",
+    "classification": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-pi5-proof/classification.json",
+    "control_run": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-pi5-proof/control-run",
+    "candidate_run": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-pi5-proof/candidate-run"
+  },
+  "decisive": true,
+  "accepted_frontier": "tx-selected-register-read-visible",
+  "next_boundary": "phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-closeout-20260616"
+}

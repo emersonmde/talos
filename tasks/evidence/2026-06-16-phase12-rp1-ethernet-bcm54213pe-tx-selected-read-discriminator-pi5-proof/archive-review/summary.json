@@ -1,0 +1,16 @@
+{
+  "control": {
+    "archive": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-pi5-proof/control/archive.tar.gz",
+    "archive_sha256": "b1e3b206cbbd9c830c230fcdf4d1d17795d3487c245da9691fa02510be1f5e7b",
+    "kernel_2712_sha256": "6e536fe70ccd0ef8bbca5400924b82e48851326ad4fd5b32075bcee797969727",
+    "kernel_2712_bytes": 49624,
+    "nonce": "tx-selected-read-control-20260616T1924Z"
+  },
+  "candidate": {
+    "archive": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-pi5-proof/candidate/archive.tar.gz",
+    "archive_sha256": "4d8e836b497c7c4e992a06febd4495bb4f189b6d31d735b817694cb2af7ece20",
+    "kernel_2712_sha256": "b35bb5099318b2575ac53c61120f0f91877f76d5ca7196d13af834b067a8239a",
+    "kernel_2712_bytes": 50384,
+    "nonce": "tx-selected-read-candidate-20260616T1924Z"
+  }
+}

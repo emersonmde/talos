@@ -2253,3 +2253,15 @@ and phase transition remain rejected. No explicit queued follow-up is
 mechanically unblocked; supervisor planning must select a precise TX delay
 selected-register read blocker follow-up or explicit pause before more Phase
 12.1 work.
+
+phase12-rp1-ethernet-bcm54213pe-tx-selected-read-discriminator-pi5-proof-20260616
+accepts tx-selected-register-read-visible. The control and candidate both
+passed capture-chain-v4 and serial freshness guard v1 with selected-tree
+identity, same-power-cycle TFTP byte agreement, final identity, and restore
+proof. The no-MDIO/no-Ethernet control withheld target facts. The candidate
+kept NCR 0x10 before/after, completed one TX selector write for value 0x0c00,
+read the selected TX shadow register as 0x0e00, and reported
+tx-selected-read-completed=true. The proof keeps rx-delay-write-count=0x0,
+tx-delay-write-count=0x0, and bmcr-write-count=0x0, so TX delay write/readback,
+BMCR restart, convergence polling, link readiness, packet I/O, networking,
+sockets, SSH, Phase 12.2, and phase transition remain rejected.
