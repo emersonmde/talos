@@ -1998,3 +1998,20 @@ or explicit pause. BCM54213PE register values, link readiness, GPIO32/PHY reset
 ownership, BMCR writes, Broadcom shadow/MMD/aux access, interrupt ownership,
 broad PHY/MAC configuration, packet I/O, networking, SSH, Phase 12.2, and phase
 transition remain rejected.
+
+phase12-rp1-ethernet-kernel-entry-serial-beacon-core-20260616,
+phase12-rp1-ethernet-kernel-entry-serial-beacon-pi5-proof-20260616, and
+phase12-rp1-ethernet-kernel-entry-serial-beacon-closeout-20260616 close the
+earliest-entry beacon frontier as
+kernel-entry-serial-beacon-frontier-closed-beacon-observed. The selected
+no-Ethernet/no-MDIO beacon image emits before BootInfo parsing and before any
+Ethernet or MDIO behavior. Serialized Pi 5 evidence retained selected-tree
+identity, two fresh 47,360-byte TFTP serves of da591740/kernel_2712.img,
+89 run-unique beacon serial markers, final pre-restore identity, and restore
+proof. This proves generic fetched-kernel earliest Rust-entry serial visibility
+for the selected no-Ethernet/no-MDIO shape, but it does not accept BCM54213PE
+register values, sentinel/report behavior after BootInfo parsing, link
+readiness, GPIO32/PHY reset ownership, BMCR writes, Broadcom shadow/MMD/aux
+access, interrupt ownership, broad PHY/MAC configuration, packet I/O,
+networking, SSH, Phase 12.2, or a phase transition. Supervisor planning is
+required for one distinct Phase 12.1 follow-up or an explicit pause.

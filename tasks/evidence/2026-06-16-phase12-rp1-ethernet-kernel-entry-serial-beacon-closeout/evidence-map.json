@@ -1,0 +1,105 @@
+{
+  "task_id": "phase12-rp1-ethernet-kernel-entry-serial-beacon-closeout-20260616",
+  "evidence_level": "static/task evidence inspection plus accepted serial hardware boot/output proof review",
+  "classification": "kernel-entry-serial-beacon-frontier-closed-beacon-observed",
+  "inspected_sources": [
+    {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-kernel-entry-serial-beacon-core.md",
+      "role": "accepted beacon core task record"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-kernel-entry-serial-beacon-core/classification.json",
+      "role": "accepted local/static core classification"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-kernel-entry-serial-beacon-core/evidence-map.json",
+      "role": "accepted local/static core evidence map"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-kernel-entry-serial-beacon-core/static-artifact-review.json",
+      "role": "accepted static image marker/hash review"
+    },
+    {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-kernel-entry-serial-beacon-pi5-proof.md",
+      "role": "accepted serialized Pi 5 proof task record"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-kernel-entry-serial-beacon-pi5-proof/classification.json",
+      "role": "accepted hardware proof classification"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-kernel-entry-serial-beacon-pi5-proof/evidence-map.json",
+      "role": "accepted hardware proof evidence map"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-kernel-entry-serial-beacon-pi5-proof/candidate/run-summary.json",
+      "role": "candidate selected-tree, TFTP, serial, and restore summary"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-kernel-entry-serial-beacon-pi5-proof/candidate/capture-invariant-summary.json",
+      "role": "candidate capture invariant summary"
+    }
+  ],
+  "accepted_evidence": {
+    "core": {
+      "scenario": "rpi5_rp1_ethernet_kernel_entry_serial_beacon",
+      "marker": "TALOS: rp1-ethernet-kernel-entry-serial-beacon",
+      "dispatch_boundary": "before BootInfo parsing and before Ethernet/MDIO behavior",
+      "local_static_image_bytes": 47336
+    },
+    "pi5_proof": {
+      "classification": "earliest-kernel-entry-beacon-observed",
+      "selected_tree_hash": "68d4c9ae71014c85199391abf7bb54d1bfbe62de17482a3354cb4f7cfea43376",
+      "effective_kernel": "kernel_2712.img",
+      "tftp_path": "da591740/kernel_2712.img",
+      "tftp_fetch_count": 2,
+      "tftp_fetch_bytes": 47360,
+      "serial_marker_occurrences": 89,
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "validation": [
+    {
+      "gate": "static/task evidence inspection",
+      "result": "pass",
+      "note": "Inspected accepted core/proof task records and task-owned JSON summaries."
+    },
+    {
+      "gate": "jq empty on task-owned JSON evidence",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "mdbook build",
+      "result": "pass",
+      "condition": "docs/src files touched"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "next_boundary": {
+    "status": "supervisor-planning-required",
+    "planning_needed": true,
+    "reason": "Closeout leaves no explicit queued follow-up; supervisor must select one distinct Phase 12.1 boundary or pause after accepted earliest kernel-entry serial beacon visibility."
+  },
+  "rejected_claims": [
+    "BCM54213PE register values",
+    "Ethernet readiness",
+    "link readiness",
+    "GPIO32 reset ownership",
+    "BMCR writes",
+    "Broadcom shadow/MMD/aux access",
+    "interrupt ownership",
+    "broad PHY/MAC configuration",
+    "packet I/O",
+    "networking",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ]
+}

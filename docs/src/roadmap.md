@@ -10410,6 +10410,17 @@ register values, Ethernet readiness, link readiness, packet I/O, networking,
 SSH, Phase 12.2, and phase transition remain rejected. The next queued task is
 only the kernel-entry beacon closeout.
 
+phase12-rp1-ethernet-kernel-entry-serial-beacon-closeout-20260616 closes that
+frontier as kernel-entry-serial-beacon-frontier-closed-beacon-observed. Generic
+selected-tree/TFTP transport and earliest Rust-entry serial visibility are no
+longer the remaining blocker for the selected no-Ethernet/no-MDIO beacon. The
+remaining Phase 12.1 boundary must be supervisor-planned and distinct, such as
+BootInfo/report-path visibility, candidate shape isolation, a new source/static
+contract, or an explicit pause. BCM54213PE register values, Ethernet readiness,
+link readiness, GPIO32 reset ownership, BMCR writes, Broadcom shadow/MMD/aux
+access, interrupt ownership, broad PHY/MAC configuration, packet I/O,
+networking, SSH, Phase 12.2, and phase transition remain rejected.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

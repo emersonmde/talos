@@ -1,0 +1,54 @@
+{
+  "task_id": "phase12-rp1-ethernet-kernel-entry-serial-beacon-closeout-20260616",
+  "classification": "kernel-entry-serial-beacon-frontier-closed-beacon-observed",
+  "evidence_level": "static/task evidence inspection plus accepted serial hardware boot/output proof review",
+  "closed_frontier": "kernel-entry-serial-beacon-frontier-closed-beacon-observed",
+  "accepted_inputs": {
+    "beacon_core_task": "phase12-rp1-ethernet-kernel-entry-serial-beacon-core-20260616",
+    "beacon_core_classification": "kernel-entry-serial-beacon-core-local-static",
+    "pi5_proof_task": "phase12-rp1-ethernet-kernel-entry-serial-beacon-pi5-proof-20260616",
+    "pi5_proof_classification": "earliest-kernel-entry-beacon-observed"
+  },
+  "accepted_facts": {
+    "boot_scenario": "rpi5_rp1_ethernet_kernel_entry_serial_beacon",
+    "selected_tree_hash": "68d4c9ae71014c85199391abf7bb54d1bfbe62de17482a3354cb4f7cfea43376",
+    "effective_kernel": "kernel_2712.img",
+    "tftp_path": "da591740/kernel_2712.img",
+    "tftp_fetch_count": 2,
+    "tftp_fetch_bytes": 47360,
+    "serial_marker": "TALOS: rp1-ethernet-kernel-entry-serial-beacon capture-nonce=kernel-entry-beacon-cand-20260616T053728Z",
+    "serial_marker_occurrences": 89,
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "reconciliation": {
+    "closed_as_not_generic_blockers": [
+      "selected-tree publication",
+      "TFTP serving of a selected no-Ethernet/no-MDIO kernel",
+      "firmware serial capture",
+      "earliest Rust-entry serial visibility for the selected no-Ethernet/no-MDIO beacon"
+    ],
+    "remaining_boundaries": [
+      "BCM54213PE register-read candidate behavior",
+      "boot or report path behavior after BootInfo parsing",
+      "sentinel report emission",
+      "PHY/MAC status",
+      "any distinct source/static discriminator selected by supervisor planning"
+    ]
+  },
+  "rejected_claims": [
+    "BCM54213PE register values",
+    "Ethernet readiness",
+    "link readiness",
+    "GPIO32 reset ownership",
+    "BMCR writes",
+    "Broadcom shadow/MMD/aux access",
+    "interrupt ownership",
+    "broad PHY/MAC configuration",
+    "packet I/O",
+    "networking",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "next_action": "Set planningNeeded=true for supervisor selection of one explicit Phase 12.1 follow-up or pause. Do not start register-read retry, packet I/O, networking, SSH, Phase 12.2, or phase transition from this closeout."
+}
