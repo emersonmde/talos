@@ -8635,6 +8635,16 @@ pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_SOURCE_TASK_ID: &str =
     "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract-20260616";
 pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_REPORT_CONTRACT_ID: &str =
     "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-report-contract-v1";
+pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_HW_PROOF_CORE_TASK_ID: &str =
+    "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-hw-proof-core-20260616";
+pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_PI5_PROOF_TASK_ID: &str =
+    "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof-20260616";
+pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_HW_PROOF_CONTRACT_ID: &str =
+    "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-hw-proof-contract-v1";
+pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_CANDIDATE_BOOT_SCENARIO: &str =
+    "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_candidate";
+pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_CONTROL_BOOT_SCENARIO: &str =
+    "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_no_mdio_control";
 pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_SELECTED_DISCRIMINATOR: &str =
     "bcm54213pe-phy1-mii-ctrl1000-stat1000-readonly-preflight";
 pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_CANDIDATE_CLASSIFICATION: &str =
@@ -8643,6 +8653,8 @@ pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_CONTROL_CLASSIFICATION: &st
     "no-mdio-no-ethernet-bcm54213pe-readonly-preflight-control";
 pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_BOUNDARY_CLASSIFICATION: &str =
     "local-static-mii-ctrl1000-stat1000-report-core-only";
+pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_HW_PROOF_BOUNDARY_CLASSIFICATION: &str =
+    "hardware-proof-limited-to-phy1-mii-ctrl1000-stat1000-control-output";
 pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_PURPOSE: &str =
     "encode the accepted pure Clause 22 MII_CTRL1000/MII_STAT1000 read-only preflight boundary";
 pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_REGISTER_NAMES: &[&str] =
@@ -8895,6 +8907,44 @@ pub struct Rp1EthernetBcm54213peReadonlyPreflightReportEvidence {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetBcm54213peReadonlyPreflightHwProofCoreEvidence {
+    pub proof_core_task_id: &'static str,
+    pub proof_task_id: &'static str,
+    pub hw_proof_contract_id: &'static str,
+    pub report_contract_id: &'static str,
+    pub source_task_id: &'static str,
+    pub candidate_boot_scenario: &'static str,
+    pub control_boot_scenario: &'static str,
+    pub selected_discriminator: &'static str,
+    pub selected_targets: &'static [&'static str],
+    pub register_names: &'static [&'static str],
+    pub registers: &'static [u32],
+    pub man_frames: &'static [u32],
+    pub candidate_constructs_mdio_target: bool,
+    pub candidate_constructs_man_frames: bool,
+    pub control_constructs_mdio_target: bool,
+    pub control_constructs_man_frames: bool,
+    pub constructs_macb_target: bool,
+    pub constructs_gpio_target: bool,
+    pub permits_phy_register_write: bool,
+    pub permits_selector_write_surface: bool,
+    pub permits_gpio32_reset_action: bool,
+    pub permits_bmcr_autoneg_restart: bool,
+    pub permits_broadcom_shadow_mmd_aux_access: bool,
+    pub permits_interrupt_ownership: bool,
+    pub permits_phy_or_mac_configuration: bool,
+    pub permits_link_readiness_claim: bool,
+    pub permits_packet_io: bool,
+    pub permits_networking: bool,
+    pub permits_ssh: bool,
+    pub permits_phase_12_2: bool,
+    pub permits_phase_transition: bool,
+    pub boundary_classification: &'static str,
+    pub rejected_runtime_claims: &'static [&'static str],
+    pub retained_risks: &'static [&'static str],
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Rp1EthernetBcm54213peReadonlyPreflightReportError {
     CandidateMissingSourceContract,
     ControlCarriesMdioTargetFacts,
@@ -8968,6 +9018,47 @@ pub const fn rp1_ethernet_bcm54213pe_readonly_preflight_report_contract_evidence
         operation_order: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_OPERATION_ORDER,
         allowed_classifications: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_ALLOWED_CLASSIFICATIONS,
         source_evidence: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_SOURCE_EVIDENCE,
+    }
+}
+
+pub const fn rp1_ethernet_bcm54213pe_readonly_preflight_hw_proof_core_evidence()
+-> Rp1EthernetBcm54213peReadonlyPreflightHwProofCoreEvidence {
+    Rp1EthernetBcm54213peReadonlyPreflightHwProofCoreEvidence {
+        proof_core_task_id: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_HW_PROOF_CORE_TASK_ID,
+        proof_task_id: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_PI5_PROOF_TASK_ID,
+        hw_proof_contract_id: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_HW_PROOF_CONTRACT_ID,
+        report_contract_id: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_REPORT_CONTRACT_ID,
+        source_task_id: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_SOURCE_TASK_ID,
+        candidate_boot_scenario: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_CANDIDATE_BOOT_SCENARIO,
+        control_boot_scenario: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_CONTROL_BOOT_SCENARIO,
+        selected_discriminator: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_SELECTED_DISCRIMINATOR,
+        selected_targets: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_SELECTED_TARGETS,
+        register_names: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_REGISTER_NAMES,
+        registers: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_REGISTERS,
+        man_frames: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_MAN_FRAMES,
+        candidate_constructs_mdio_target: true,
+        candidate_constructs_man_frames: true,
+        control_constructs_mdio_target: false,
+        control_constructs_man_frames: false,
+        constructs_macb_target: false,
+        constructs_gpio_target: false,
+        permits_phy_register_write: false,
+        permits_selector_write_surface: false,
+        permits_gpio32_reset_action: false,
+        permits_bmcr_autoneg_restart: false,
+        permits_broadcom_shadow_mmd_aux_access: false,
+        permits_interrupt_ownership: false,
+        permits_phy_or_mac_configuration: false,
+        permits_link_readiness_claim: false,
+        permits_packet_io: false,
+        permits_networking: false,
+        permits_ssh: false,
+        permits_phase_12_2: false,
+        permits_phase_transition: false,
+        boundary_classification:
+            RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_HW_PROOF_BOUNDARY_CLASSIFICATION,
+        rejected_runtime_claims: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_REJECTED_RUNTIME_CLAIMS,
+        retained_risks: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_RETAINED_RISKS,
     }
 }
 
@@ -14167,6 +14258,53 @@ mod tests {
         assert_eq!(
             evidence.classification,
             RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_CONTROL_CLASSIFICATION
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_bcm54213pe_readonly_preflight_hw_proof_core_shapes_candidate_and_control() {
+        let evidence = rp1_ethernet_bcm54213pe_readonly_preflight_hw_proof_core_evidence();
+
+        assert_eq!(
+            evidence.proof_core_task_id,
+            RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_HW_PROOF_CORE_TASK_ID
+        );
+        assert_eq!(
+            evidence.candidate_boot_scenario,
+            "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_candidate"
+        );
+        assert_eq!(
+            evidence.control_boot_scenario,
+            "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_no_mdio_control"
+        );
+        assert_eq!(
+            evidence.selected_targets,
+            RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_SELECTED_TARGETS
+        );
+        assert_eq!(evidence.registers, &[0x09, 0x0a]);
+        assert_eq!(evidence.man_frames, &[0x60a6_0000, 0x60aa_0000]);
+        assert!(evidence.candidate_constructs_mdio_target);
+        assert!(evidence.candidate_constructs_man_frames);
+        assert!(!evidence.control_constructs_mdio_target);
+        assert!(!evidence.control_constructs_man_frames);
+        assert!(!evidence.constructs_macb_target);
+        assert!(!evidence.constructs_gpio_target);
+        assert!(!evidence.permits_phy_register_write);
+        assert!(!evidence.permits_selector_write_surface);
+        assert!(!evidence.permits_gpio32_reset_action);
+        assert!(!evidence.permits_bmcr_autoneg_restart);
+        assert!(!evidence.permits_broadcom_shadow_mmd_aux_access);
+        assert!(!evidence.permits_interrupt_ownership);
+        assert!(!evidence.permits_phy_or_mac_configuration);
+        assert!(!evidence.permits_link_readiness_claim);
+        assert!(!evidence.permits_packet_io);
+        assert!(!evidence.permits_networking);
+        assert!(!evidence.permits_ssh);
+        assert!(!evidence.permits_phase_12_2);
+        assert!(!evidence.permits_phase_transition);
+        assert_eq!(
+            evidence.boundary_classification,
+            RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_HW_PROOF_BOUNDARY_CLASSIFICATION
         );
     }
 

@@ -1,0 +1,96 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-hw-proof-core-20260616",
+  "status": "accepted",
+  "classification": "bcm54213pe-readonly-preflight-hw-proof-core-local-static",
+  "evidence_level": [
+    "Rust local/static proof-core implementation",
+    "focused unit tests",
+    "candidate/control compile-only scenario builds",
+    "fmt/lint/typecheck",
+    "full no_std Rust tests through QEMU substitute",
+    "diff checks"
+  ],
+  "accepted_input": {
+    "closeout_task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-closeout-20260616",
+    "closeout_commit": "5eab9516542285f8fb5ff64058d3d38b71c52d54",
+    "selected_targets": [
+      {
+        "surface": "MII_CTRL1000",
+        "phy_addr": 1,
+        "register": "0x09",
+        "clause22_man_read_frame": "0x60a60000",
+        "disposition": "selected"
+      },
+      {
+        "surface": "MII_STAT1000",
+        "phy_addr": 1,
+        "register": "0x0a",
+        "clause22_man_read_frame": "0x60aa0000",
+        "disposition": "selected"
+      }
+    ]
+  },
+  "implemented_surfaces": {
+    "candidate_boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_candidate",
+    "control_boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_no_mdio_control",
+    "candidate_constructs_mdio_targets": true,
+    "candidate_constructs_man_frames": true,
+    "candidate_constructs_macb_target": false,
+    "candidate_constructs_gpio_target": false,
+    "control_constructs_mdio_targets": false,
+    "control_constructs_man_frames": false,
+    "control_constructs_macb_target": false,
+    "control_constructs_gpio_target": false,
+    "hardware_proof_deferred_to": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof-20260616"
+  },
+  "validator_rejected_claims": [
+    "phy-register-write",
+    "selector-write-surfaces",
+    "gpio32-reset-action",
+    "bmcr-autoneg-restart",
+    "broadcom-shadow-mmd-aux-access",
+    "interrupt-ownership",
+    "phy-mac-configuration",
+    "link-readiness",
+    "packet-io",
+    "dma-descriptors",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Candidate/control boot scenarios and early dispatch are registered for the later hardware proof."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Candidate output is limited to PHY1 MII_CTRL1000 and MII_STAT1000 with raw and decoded fields."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Control output withholds MDIO, MAN, MACB, GPIO, and RP1 Ethernet target facts."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Pi 5 hardware proof, hardwareTestLock, TFTP/serial evidence, and restore proof remain deferred to the queued hardware task."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No docs/src update was needed because the accepted frontier did not change."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No obsolete source, helper, task, or evidence files were removed."
+    }
+  ],
+  "hardware": {
+    "hardwareTestLock_acquired": false,
+    "pi5_hardware_run": false,
+    "boot_archive_publication": false,
+    "lab_mutation": false
+  },
+  "next_task": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof-20260616"
+}

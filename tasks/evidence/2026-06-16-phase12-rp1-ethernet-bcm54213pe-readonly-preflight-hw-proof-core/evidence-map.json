@@ -1,0 +1,105 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-hw-proof-core-20260616",
+  "source_inputs": [
+    {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-closeout.md",
+      "role": "accepted closeout selecting later explicit hardware proof boundary"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-closeout/classification.json",
+      "role": "accepted frontier and rejected-claim classification"
+    },
+    {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-report-core.md",
+      "role": "accepted local/static report-core boundary"
+    }
+  ],
+  "implemented_files": [
+    {
+      "path": "build.rs",
+      "changes": [
+        "registered candidate/control boot scenarios"
+      ]
+    },
+    {
+      "path": "src/main.rs",
+      "changes": [
+        "added early dispatch for candidate/control scenarios",
+        "included scenarios in rpi5 cfg lists"
+      ]
+    },
+    {
+      "path": "src/rp1_ethernet.rs",
+      "changes": [
+        "added hardware proof core constants and evidence shape",
+        "added focused candidate/control fail-closed proof-core test"
+      ]
+    },
+    {
+      "path": "src/target/rpi5.rs",
+      "changes": [
+        "added candidate scenario output for PHY1 MII_CTRL1000/MII_STAT1000",
+        "added no-MDIO/no-Ethernet control scenario output",
+        "added bounded read helper and shared rejected-claim report strings"
+      ]
+    }
+  ],
+  "validation": [
+    {
+      "level": "fmt/lint/typecheck",
+      "command": "cargo fmt --all -- --check",
+      "result": "pass after formatting"
+    },
+    {
+      "level": "focused unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet rp1_ethernet",
+      "result": "pass"
+    },
+    {
+      "level": "compile-only boot scenario",
+      "command": "TALOS_BOOT_SCENARIO=rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_candidate cargo -Zjson-target-spec build --quiet",
+      "result": "pass"
+    },
+    {
+      "level": "compile-only boot scenario",
+      "command": "TALOS_BOOT_SCENARIO=rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_no_mdio_control cargo -Zjson-target-spec build --quiet",
+      "result": "pass"
+    },
+    {
+      "level": "unit tests / QEMU substitute",
+      "command": "cargo -Zjson-target-spec test --quiet",
+      "environment": {
+        "TMPDIR": "/opt/strider/openclaw/current/workspace/tmp",
+        "PATH_prefix": "/opt/strider/openclaw/current/workspace/tools/qemu-9.2.0-install/bin"
+      },
+      "result": "pass"
+    },
+    {
+      "level": "JSON evidence validation",
+      "command": "jq empty tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-hw-proof-core/*.json",
+      "result": "pass"
+    },
+    {
+      "level": "diff whitespace check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "docs build",
+      "command": "mdbook build",
+      "result": "not run; no docs/src files touched"
+    },
+    {
+      "level": "staged diff whitespace check",
+      "command": "git diff --cached --check",
+      "result": "pass before commit"
+    }
+  ],
+  "hardware": {
+    "hardwareTestLock_acquired": false,
+    "pi5_hardware_run": false,
+    "boot_archive_publication": false,
+    "lab_mutation": false
+  },
+  "next_action": "Mechanically promote phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof-20260616 on the next worker wake if dependencies remain satisfied."
+}
