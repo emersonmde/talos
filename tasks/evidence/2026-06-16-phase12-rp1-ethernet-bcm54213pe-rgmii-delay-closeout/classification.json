@@ -1,0 +1,182 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-closeout-20260616",
+  "status": "accepted",
+  "classification": "bcm54213pe-rgmii-delay-frontier-closed-tx-delay-read-capture-blocker",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "accepted RGMII delay source-contract review",
+    "accepted RGMII delay proof-core review",
+    "accepted serialized Pi 5 RGMII delay proof review",
+    "JSON evidence validation",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_inputs": {
+    "source_contract": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-source-contract-20260616",
+      "commit": "817712f6837a7e3ca659cea1833875c22e04f588",
+      "classification": "bcm54213pe-rgmii-delay-source-contract-proof-core-selected"
+    },
+    "proof_core": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-proof-core-20260616",
+      "commit": "24cbff31590bc2d1d3dfa057206d8374a8b909c5",
+      "classification": "bcm54213pe-rgmii-delay-proof-core-local-static",
+      "contract_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-proof-contract-v1",
+      "candidate_image_sha256": "e5592f1671b42ffd14057668ae22ca48d70e25a52ce0200b377b93e71d294a0c",
+      "candidate_image_bytes": 53720,
+      "control_image_sha256": "240348cbd3f023a7915aab3486c0dc36a8b857098d2a6c093f21847ae62377e3",
+      "control_image_bytes": 49984,
+      "control_constructs_target_facts": false
+    },
+    "pi5_proof": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof-20260616",
+      "commit": "a00dae63bfac8793972760ec1e6d6d434b9daa25",
+      "classification": "rgmii-delay-capture-blocker",
+      "control_classification": "no-mdio-no-ethernet-bcm54213pe-rgmii-delay-control",
+      "serial_freshness_guard": "serial-freshness-guard-v1-ready",
+      "capture_chain_v4": "capture-chain-v4-ready",
+      "first_failing_runtime_layer": "TX delay selected-register read did not complete after RX delay write/readback matched"
+    }
+  },
+  "frontier": {
+    "name": "bcm54213pe-rgmii-delay-frontier-closed-tx-delay-read-capture-blocker",
+    "accepted": [
+      "candidate/control selected-tree identity joined with same-power-cycle TFTP byte serves",
+      "cursor-nonce serial freshness guard replay",
+      "final pre-restore identity and restore proof",
+      "paired no-MDIO/no-Ethernet control",
+      "PHY1 RX delay AUX_CTL read/write/readback reached hardware",
+      "RX delay readback retained RGMII_SKEW_EN true",
+      "TX delay selected-register read failed before TX write",
+      "BMCR restart was not reached",
+      "convergence polling was not reached"
+    ],
+    "deferred": [
+      "TX delay selected-register read discriminator",
+      "GPIO32/PHY reset ownership",
+      "uncontracted Broadcom selector/config writes",
+      "interrupt ownership",
+      "broad PHY/MAC configuration",
+      "packet I/O",
+      "networking",
+      "sockets",
+      "SSH",
+      "Phase 12.2",
+      "explicit pause or other Phase 12.1 boundary"
+    ],
+    "hardware_authorized_by_this_task": false,
+    "write_or_configuration_authorized_by_closeout": false,
+    "phase_transition_authorized": false
+  },
+  "control_summary": {
+    "classification": "no-mdio-no-ethernet-bcm54213pe-rgmii-delay-control",
+    "selected_tree_hash": "8064606a64700931ae0887c2a7d4a0dfb8f899af9f09e7f86c6d8f2ae3b9282c",
+    "kernel_bytes": 50008,
+    "tftp_expected_fetch_count": 2,
+    "tftp_expected_fetch_byte_match_count": 2,
+    "serial_nonce_occurrences": 41,
+    "serial_freshness_proven": true,
+    "constructed_mdio_or_ethernet_target_facts": false
+  },
+  "candidate_summary": {
+    "classification": "rgmii-delay-capture-blocker",
+    "selected_tree_hash": "9d34d9007a837a0f671c0e627fe85c98531d9a1fa5fe60b88b802a350483be58",
+    "kernel_bytes": 53736,
+    "tftp_expected_fetch_count": 2,
+    "tftp_expected_fetch_byte_match_count": 2,
+    "serial_nonce_occurrences": 36,
+    "serial_freshness_proven": true,
+    "ncr_before": "0x10",
+    "ncr_after": "0x10",
+    "rx_pre_raw": "0x71e7",
+    "rx_write_value": "0xf1e7",
+    "rx_readback_raw": "0x71e7",
+    "rx_readback_rgmii_skew_en": true,
+    "tx_pre_raw": "0x0",
+    "tx_write_value": "0x0",
+    "tx_readback_raw": "0x0",
+    "tx_readback_gtxclk_en": false,
+    "rgmii_delay_write_count": "0x1",
+    "bmcr_write_count": "0x0",
+    "bmcr_write_performed": false,
+    "link_ready_terminal": false,
+    "macb_write_performed": false,
+    "phy_reset_or_gpio32_action": false,
+    "packet_io_performed": false,
+    "first_failing_runtime_layer": "TX delay selected-register read did not complete after RX delay write/readback matched"
+  },
+  "restore_summary": {
+    "baseline_tree_after_restore": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "control_final_pre_restore_tree_hash": "8064606a64700931ae0887c2a7d4a0dfb8f899af9f09e7f86c6d8f2ae3b9282c",
+    "candidate_final_pre_restore_tree_hash": "9d34d9007a837a0f671c0e627fe85c98531d9a1fa5fe60b88b802a350483be58"
+  },
+  "next_boundary": {
+    "decision": "supervisor-planning-required",
+    "selected_boundary": "precise TX delay selected-register read blocker follow-up or explicit pause",
+    "planning_needed": true,
+    "task_id": null,
+    "link_ready_packet_readiness_checkpoint_unblocked": false,
+    "continued_link_not_ready_checkpoint_unblocked": false,
+    "hardware_authorized_by_this_task": false
+  },
+  "forbidden_claims": [
+    "tx-delay-write-readback-success",
+    "bmcr-restart-after-rgmii-delay",
+    "link-readiness",
+    "link-not-ready-after-full-rgmii-delay-path",
+    "ethernet-driver-readiness",
+    "gpio32-phy-reset-ownership",
+    "broadcom-uncontracted-selector-config-writes",
+    "interrupt-ownership",
+    "broad-phy-configuration",
+    "macb-configuration",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "The source contract and proof core bounded the feature path to RX/TX RGMII delay write/readback before the already accepted BMCR restart/convergence discriminator."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The control retained the no-MDIO/no-Ethernet shape with selected-tree, TFTP, serial freshness, final identity, and restore evidence."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The candidate retained selected-tree, TFTP, serial freshness, final identity, and restore evidence, then completed the RX delay write/readback path."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The candidate stopped at the TX delay selected-register read before TX write, BMCR restart, or convergence polling."
+    },
+    {
+      "disposition": "selected",
+      "finding": "The next bounded boundary is a supervisor-planned precise TX delay selected-register read blocker follow-up or explicit pause."
+    },
+    {
+      "disposition": "blocked",
+      "finding": "The queued link-ready packet-readiness checkpoint remains blocked because no link-ready/autoneg-complete frontier was accepted."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "GPIO32/reset, further Broadcom selector/config work, interrupt ownership, PHY/MAC configuration, packet I/O, networking, SSH, Phase 12.2, and alternate Phase 12.1 work require supervisor planning."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "No link readiness, link-not-ready after the full delay path, Ethernet driver behavior, packet I/O, networking, SSH, Phase 12.2, or phase transition is accepted."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No task-owned source, script, docs, or evidence files were removed."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No new hardware run or triage was needed because the accepted proof evidence was decisive."
+    }
+  ]
+}

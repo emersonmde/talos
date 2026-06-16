@@ -2241,3 +2241,15 @@ read did not complete, so the candidate stopped before TX write, BMCR restart,
 or convergence polling. This preserves the blocker at the TX delay read layer;
 packet I/O, networking, sockets, SSH, Phase 12.2, and phase transition remain
 rejected.
+
+phase12-rp1-ethernet-bcm54213pe-rgmii-delay-closeout-20260616 accepts
+bcm54213pe-rgmii-delay-frontier-closed-tx-delay-read-capture-blocker. The
+closeout accepts only the source/core/proof reconciliation and the precise
+runtime blocker: RX delay write/readback reached hardware and reported
+RGMII_SKEW_EN true, then the TX delay selected-register read failed before TX
+write, BMCR restart, or convergence polling. Link readiness, link-not-ready
+after the full delay path, packet I/O, networking, sockets, SSH, Phase 12.2,
+and phase transition remain rejected. No explicit queued follow-up is
+mechanically unblocked; supervisor planning must select a precise TX delay
+selected-register read blocker follow-up or explicit pause before more Phase
+12.1 work.

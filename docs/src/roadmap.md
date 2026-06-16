@@ -10681,6 +10681,19 @@ register read did not complete. BMCR restart, link-ready acceptance, packet I/O,
 networking, sockets, SSH, Phase 12.2, and phase transition remain rejected. The
 only mechanically unblocked follow-up is the queued RGMII delay closeout.
 
+phase12-rp1-ethernet-bcm54213pe-rgmii-delay-closeout-20260616 accepts
+bcm54213pe-rgmii-delay-frontier-closed-tx-delay-read-capture-blocker. The
+closeout reconciles the accepted source contract, proof core, and serialized
+Pi 5 proof without a new hardware run. The closed frontier accepts only the
+decisive selected-tree/TFTP/serial/restore evidence and the runtime fact that
+RX delay write/readback reached hardware with RGMII_SKEW_EN true before the TX
+delay selected-register read failed to complete. TX delay write/readback
+success, BMCR restart after delay configuration, link readiness,
+link-not-ready after the full delay path, packet I/O, networking, sockets, SSH,
+Phase 12.2, and phase transition remain rejected. No explicit queued follow-up
+is mechanically unblocked; supervisor planning is required for a precise TX
+delay selected-register read blocker follow-up or explicit pause.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

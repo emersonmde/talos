@@ -1,0 +1,98 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-rgmii-delay-closeout-20260616",
+  "source_inputs": [
+    {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-source-contract.md",
+      "role": "accepted RGMII delay source contract and selected PHY1 rgmii-id boundary"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-source-contract/classification.json",
+      "role": "source contract classification and rejected claims"
+    },
+    {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-proof-core.md",
+      "role": "accepted local/static RGMII delay proof-core task"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-proof-core/classification.json",
+      "role": "proof-core contract, candidate/control boundaries, and rejected claims"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-proof-core/evidence-map.json",
+      "role": "proof-core implementation and validation map"
+    },
+    {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof.md",
+      "role": "accepted serialized Pi 5 RGMII delay proof task"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof/classification.json",
+      "role": "Pi 5 proof classification and accepted control/candidate summaries"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof/capture-summary.json",
+      "role": "control/candidate selected-tree, TFTP, serial freshness, runtime facts, and restore summary"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof/evidence-map.json",
+      "role": "retained RGMII delay proof evidence references and validation map"
+    }
+  ],
+  "closeout_outputs": [
+    {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-closeout.md",
+      "role": "RGMII delay closeout task record"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-closeout/classification.json",
+      "role": "closed-frontier classification and next-boundary state"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-closeout/evidence-map.json",
+      "role": "closeout source, output, and validation map"
+    },
+    {
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "role": "Phase 12 closed RGMII delay TX-read blocker frontier documentation"
+    },
+    {
+      "path": "docs/src/roadmap.md",
+      "role": "roadmap closed RGMII delay TX-read blocker frontier documentation"
+    }
+  ],
+  "validation": [
+    {
+      "level": "static/task evidence inspection",
+      "command": "manual review of accepted RGMII delay source contract, proof core, Pi 5 proof task, and task-owned JSON evidence",
+      "result": "pass"
+    },
+    {
+      "level": "JSON evidence validation",
+      "command": "jq empty tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-closeout/*.json",
+      "result": "pass"
+    },
+    {
+      "level": "diff whitespace check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "level": "staged diff whitespace check",
+      "command": "git diff --cached --check",
+      "result": "pass before commit"
+    }
+  ],
+  "hardware": {
+    "hardwareTestLock_acquired": false,
+    "pi5_hardware_run": false,
+    "boot_archive_publication": false,
+    "lab_mutation": false,
+    "volatile_ethernet_access": false
+  },
+  "next_action": "Set planningNeeded=true after commit. Supervisor planning is required for a precise TX delay selected-register read blocker follow-up or explicit pause; do not promote link-ready packet-readiness, GPIO32/reset, Broadcom selector/config, interrupt, packet I/O, networking, SSH, Phase 12.2, or a phase transition from this closeout."
+}
