@@ -1,0 +1,94 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-closeout-20260616",
+  "source_inputs": [
+    {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-proof-core.md",
+      "role": "accepted local/static v2 proof-core task"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-proof-core/classification.json",
+      "role": "proof-core classification, target set, serial freshness contract, and rejected claims"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-proof-core/evidence-map.json",
+      "role": "proof-core implementation and validation map"
+    },
+    {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-pi5-proof.md",
+      "role": "accepted serialized Pi 5 v2 hardware proof task"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-pi5-proof/classification.json",
+      "role": "Pi 5 proof classification and accepted control/candidate summaries"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-pi5-proof/capture-summary.json",
+      "role": "control/candidate register, TFTP, serial freshness, and restore summary"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-pi5-proof/evidence-map.json",
+      "role": "retained hardware evidence references and validation map"
+    },
+    {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-serial-freshness-closeout.md",
+      "role": "accepted serial freshness frontier consumed by the v2 proof"
+    }
+  ],
+  "closeout_outputs": [
+    {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-closeout.md",
+      "role": "v2 read-only preflight closeout task record"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-closeout/classification.json",
+      "role": "closed-frontier classification and next-boundary state"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-closeout/evidence-map.json",
+      "role": "closeout source, output, and validation map"
+    },
+    {
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "role": "Phase 12 closed v2 read-only preflight frontier documentation"
+    },
+    {
+      "path": "docs/src/roadmap.md",
+      "role": "roadmap closed v2 read-only preflight frontier documentation"
+    }
+  ],
+  "validation": [
+    {
+      "level": "static/task evidence inspection",
+      "command": "manual review of accepted v2 proof-core and Pi 5 proof tasks plus task-owned JSON evidence",
+      "result": "pass"
+    },
+    {
+      "level": "JSON evidence validation",
+      "command": "jq empty tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-closeout/*.json",
+      "result": "pass"
+    },
+    {
+      "level": "diff whitespace check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "level": "staged diff whitespace check",
+      "command": "git diff --cached --check",
+      "result": "pass before commit"
+    }
+  ],
+  "hardware": {
+    "hardwareTestLock_acquired": false,
+    "pi5_hardware_run": false,
+    "boot_archive_publication": false,
+    "lab_mutation": false,
+    "volatile_ethernet_access": false
+  },
+  "next_action": "Set planningNeeded=true for supervisor planning of any GPIO32/reset, BMCR/autoneg, Broadcom selector, interrupt, PHY/MAC configuration, packet I/O, networking, SSH, Phase 12.2, explicit pause, or other follow-up boundary; no hardware, write/configuration work, networking, SSH, or phase transition is authorized by this closeout."
+}

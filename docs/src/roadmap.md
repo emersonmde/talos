@@ -10531,6 +10531,36 @@ register values, link readiness, GPIO32/PHY reset ownership, BMCR/autoneg,
 Broadcom shadow/MMD/aux access, interrupt ownership, packet I/O, networking,
 SSH, Phase 12.2, or phase transition.
 
+phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-pi5-proof-20260616
+accepts bcm54213pe-readonly-preflight-v2-post-read-values-visible. The paired
+control retained selected tree
+035d4affb2ed54ffe8d02a7f6cd2879ba404775ec49379062dd6f694f9e40abb, two
+matching 50,856-byte da591740/kernel_2712.img TFTP serves, 17 fresh serial
+marker/nonce occurrences, final identity, and restore proof while constructing
+no Ethernet or MDIO target facts. The candidate retained selected tree
+012e2aeae1fb00699b3ae9ead98433f68b8e093d96f4105332dfe6146b3b6ab3, two
+matching 52,056-byte TFTP serves, 17 fresh serial marker/nonce occurrences,
+final identity, and restore proof, then reached the post-read marker with PHY1
+MII_CTRL1000 0x09 raw 0x0200 valid and MII_STAT1000 0x0a raw 0x0000 valid.
+This accepts only bounded read-only register visibility under the v2 freshness
+and identity contract; link readiness, GPIO32/PHY reset ownership,
+BMCR/autoneg, Broadcom shadow/MMD/aux access, interrupt ownership, broad
+PHY/MAC configuration, packet I/O, networking, sockets, SSH, Phase 12.2, and
+phase transition remain rejected.
+
+phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-closeout-20260616
+closes the frontier as
+bcm54213pe-readonly-preflight-v2-frontier-closed-read-values-accepted. Accepted
+read-only visibility is PHY1 MII_CTRL1000 0x09 raw 0x0200 valid and PHY1
+MII_STAT1000 0x0a raw 0x0000 valid, joined with selected-tree identity,
+same-power-cycle TFTP byte serves, cursor-nonce serial freshness, final
+identity, restore proof, and a no-MDIO/no-Ethernet control. No follow-up write,
+configuration, link recovery, packet I/O, networking, SSH, Phase 12.2, or phase
+transition is authorized by this closeout; supervisor planning must select any
+later GPIO32/PHY reset, BMCR/autoneg, Broadcom selector, interrupt, PHY/MAC
+configuration, packet I/O, networking, SSH, explicit pause, or other Phase 12.1
+boundary.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

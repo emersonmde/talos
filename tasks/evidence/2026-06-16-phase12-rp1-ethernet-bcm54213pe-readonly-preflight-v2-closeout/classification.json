@@ -1,0 +1,168 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-closeout-20260616",
+  "status": "accepted",
+  "classification": "bcm54213pe-readonly-preflight-v2-frontier-closed-read-values-accepted-planning-required",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "accepted v2 proof-core review",
+    "accepted serialized Pi 5 proof review",
+    "JSON evidence validation",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_inputs": {
+    "proof_core": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-proof-core-20260616",
+      "commit": "a8730927a6a315073c01565726412dd52d753597",
+      "classification": "bcm54213pe-readonly-preflight-v2-proof-core-local-static",
+      "selected_target_set": [
+        "PHY1 MII_CTRL1000 0x09",
+        "PHY1 MII_STAT1000 0x0a"
+      ],
+      "serial_freshness_contract": "cursor-nonce-post-power-freshness-v1",
+      "candidate_pre_mdio_marker": "bcm54213pe-readonly-preflight-v2-pre-mdio-entry-marker",
+      "candidate_post_read_marker": "bcm54213pe-readonly-preflight-v2-post-read-values-marker"
+    },
+    "pi5_proof": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-pi5-proof-20260616",
+      "commit": "e5be8ed113ecd76e36103b5cf9a9778a4aa5f892",
+      "classification": "bcm54213pe-readonly-preflight-v2-post-read-values-visible",
+      "control_classification": "no-mdio-no-ethernet-bcm54213pe-readonly-preflight-v2-control",
+      "candidate_marker_stage": "post-read-values",
+      "serial_freshness_guard": "serial-freshness-guard-v1-ready",
+      "serial_freshness_proven": true
+    }
+  },
+  "frontier": {
+    "name": "bcm54213pe-readonly-preflight-v2-frontier-closed-read-values-accepted",
+    "accepted": [
+      "PHY1 MII_CTRL1000 0x09 raw 0x0200 valid",
+      "PHY1 MII_STAT1000 0x0a raw 0x0000 valid",
+      "completed register count 2",
+      "selected-tree identity joined with same-power-cycle TFTP byte serves",
+      "cursor-nonce serial freshness guard replay",
+      "final pre-restore identity and restore proof",
+      "paired no-MDIO/no-Ethernet control"
+    ],
+    "deferred": [
+      "GPIO32/PHY reset ownership",
+      "BMCR/autoneg writes or restart",
+      "Broadcom shadow/MMD/AUX access",
+      "interrupt ownership",
+      "broad PHY/MAC configuration",
+      "packet I/O",
+      "networking",
+      "sockets",
+      "SSH",
+      "Phase 12.2",
+      "explicit pause or other Phase 12.1 boundary"
+    ],
+    "hardware_authorized_by_this_task": false,
+    "write_or_configuration_authorized": false,
+    "phase_transition_authorized": false
+  },
+  "control_summary": {
+    "selected_tree_hash": "035d4affb2ed54ffe8d02a7f6cd2879ba404775ec49379062dd6f694f9e40abb",
+    "kernel_bytes": 50856,
+    "tftp_expected_fetch_count": 2,
+    "tftp_expected_fetch_byte_match_count": 2,
+    "serial_marker_occurrences": 17,
+    "serial_freshness_proven": true,
+    "constructed_mdio_or_ethernet_target_facts": false
+  },
+  "candidate_summary": {
+    "selected_tree_hash": "012e2aeae1fb00699b3ae9ead98433f68b8e093d96f4105332dfe6146b3b6ab3",
+    "kernel_bytes": 52056,
+    "tftp_expected_fetch_count": 2,
+    "tftp_expected_fetch_byte_match_count": 2,
+    "serial_marker_occurrences": 17,
+    "serial_freshness_proven": true,
+    "pre_mdio_marker_emitted": true,
+    "post_read_marker_emitted": true,
+    "phy_address": 1,
+    "selected_registers": [
+      "MII_CTRL1000:0x09",
+      "MII_STAT1000:0x0a"
+    ],
+    "ctrl1000_raw": "0x0200",
+    "ctrl1000_valid": true,
+    "ctrl1000_advertise_1000_full": true,
+    "ctrl1000_advertise_1000_half": false,
+    "stat1000_raw": "0x0000",
+    "stat1000_valid": true,
+    "stat1000_local_receiver_ok": false,
+    "stat1000_remote_receiver_ok": false,
+    "completed_register_count": 2,
+    "phy_register_write_performed": false,
+    "selector_write_surface": false,
+    "broadcom_shadow_mmd_aux_access": false,
+    "gpio32_or_phy_target_constructed": false,
+    "bmcr_autoneg_restart": false,
+    "packet_io_performed": false
+  },
+  "restore_summary": {
+    "baseline_tree_after_restore": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "control_final_pre_restore_tree_hash": "035d4affb2ed54ffe8d02a7f6cd2879ba404775ec49379062dd6f694f9e40abb",
+    "candidate_final_pre_restore_tree_hash": "012e2aeae1fb00699b3ae9ead98433f68b8e093d96f4105332dfe6146b3b6ab3"
+  },
+  "next_boundary": {
+    "decision": "supervisor-planning-required",
+    "planning_needed": true,
+    "planning_reason": "BCM54213PE read-only preflight v2 closeout accepted bounded MII_CTRL1000/MII_STAT1000 read visibility; a separate supervisor-planned task must select any GPIO32/reset, BMCR/autoneg, Broadcom selector, interrupt, PHY/MAC configuration, packet I/O, networking, SSH, Phase 12.2, explicit pause, or other follow-up boundary.",
+    "hardware_authorized_by_this_task": false
+  },
+  "forbidden_claims": [
+    "link-readiness",
+    "ethernet-driver-readiness",
+    "gpio32-phy-reset-ownership",
+    "bmcr-write-or-autoneg-retry",
+    "broadcom-shadow-mmd-aux-access",
+    "interrupt-ownership",
+    "broad-phy-configuration",
+    "macb-configuration",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "The v2 proof core selected exactly PHY1 MII_CTRL1000 and MII_STAT1000 with separate pre-MDIO and post-read markers plus serial freshness v1 fields."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The no-MDIO/no-Ethernet control retained selected-tree, TFTP, serial freshness, final identity, and restore evidence while constructing no Ethernet or MDIO target facts."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The candidate retained selected-tree, TFTP, serial freshness, final identity, and restore evidence, then reached the post-read marker."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The accepted candidate values are MII_CTRL1000 raw 0x0200 valid and MII_STAT1000 raw 0x0000 valid."
+    },
+    {
+      "disposition": "selected",
+      "finding": "Supervisor planning is the next boundary before any write, configuration, link recovery, networking, or phase transition work."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "GPIO32/reset, BMCR/autoneg, Broadcom selector access, interrupt ownership, PHY/MAC configuration, packet I/O, networking, SSH, and Phase 12.2 require separate supervisor planning."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "No link readiness, Ethernet driver behavior, packet I/O, networking, SSH, Phase 12.2, or phase transition is accepted."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No task-owned source, script, docs, or evidence files were removed."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "A candidate rerun was unnecessary because the retained identity, TFTP, serial freshness, final identity, and restore evidence were decisive."
+    }
+  ]
+}

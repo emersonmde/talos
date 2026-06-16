@@ -2084,6 +2084,19 @@ ownership, BMCR/autoneg, Broadcom shadow/MMD/aux access, interrupt ownership,
 broad PHY/MAC configuration, packet I/O, networking, sockets, SSH, Phase 12.2,
 or a phase transition. The selected next boundary is the queued v2 closeout.
 
+phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-closeout-20260616
+closes the frontier as
+bcm54213pe-readonly-preflight-v2-frontier-closed-read-values-accepted. The
+accepted narrow fact is read-only visibility of PHY1 MII_CTRL1000 0x09 raw
+0x0200 valid and PHY1 MII_STAT1000 0x0a raw 0x0000 valid, joined with selected
+tree identity, same-power-cycle TFTP byte serves, cursor-nonce serial
+freshness guard replay, final identity, restore proof, and the paired
+no-MDIO/no-Ethernet control. No follow-up write, configuration, link recovery,
+packet I/O, networking, SSH, Phase 12.2, or phase transition is authorized by
+this closeout. Supervisor planning must select any later GPIO32/PHY reset,
+BMCR/autoneg, Broadcom selector, interrupt, PHY/MAC configuration, packet I/O,
+networking, SSH, explicit pause, or other Phase 12.1 boundary.
+
 phase12-rp1-ethernet-bootinfo-report-serial-visibility-closeout-20260616 closes
 that frontier as
 bootinfo-report-serial-visibility-frontier-closed-serial-drain-blocked. The
