@@ -1,0 +1,66 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-proof-core-20260616",
+  "implementation": [
+    "build.rs",
+    "src/main.rs",
+    "src/rp1_ethernet.rs",
+    "src/target/rpi5.rs"
+  ],
+  "accepted_inputs": [
+    "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract.md",
+    "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-report-core.md",
+    "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-hw-proof-closeout.md",
+    "tasks/2026-06-16-phase12-rp1-ethernet-serial-freshness-contract.md",
+    "tasks/2026-06-16-phase12-rp1-ethernet-serial-freshness-guard-core.md",
+    "tasks/2026-06-16-phase12-rp1-ethernet-serial-freshness-closeout.md"
+  ],
+  "validation": [
+    {
+      "level": "fmt",
+      "command": "cargo fmt --all -- --check",
+      "result": "pass"
+    },
+    {
+      "level": "focused unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet rp1_ethernet_bcm54213pe_readonly_preflight_v2",
+      "result": "pass"
+    },
+    {
+      "level": "candidate compile-only build",
+      "command": "TALOS_BOOT_SCENARIO=rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_v2_candidate cargo -Zjson-target-spec build --quiet",
+      "result": "pass"
+    },
+    {
+      "level": "control compile-only build",
+      "command": "TALOS_BOOT_SCENARIO=rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_v2_no_mdio_control cargo -Zjson-target-spec build --quiet",
+      "result": "pass"
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet",
+      "result": "pass"
+    },
+    {
+      "level": "JSON evidence validation",
+      "command": "jq empty tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-proof-core/*.json",
+      "result": "pass"
+    },
+    {
+      "level": "diff check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "level": "staged diff check",
+      "command": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "no_hardware_performed": true,
+  "no_boot_publication_performed": true
+}

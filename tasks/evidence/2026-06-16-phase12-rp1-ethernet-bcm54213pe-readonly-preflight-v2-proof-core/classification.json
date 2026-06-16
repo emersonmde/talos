@@ -1,0 +1,53 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-proof-core-20260616",
+  "status": "accepted",
+  "classification": "bcm54213pe-readonly-preflight-v2-proof-core-local-static",
+  "evidence_level": [
+    "Rust local/static proof-core implementation",
+    "focused unit tests",
+    "candidate/control compile-only scenario builds",
+    "JSON evidence validation",
+    "Rust fmt",
+    "full no_std Rust test suite through QEMU substitute",
+    "docs build",
+    "diff checks"
+  ],
+  "selected_target_set": [
+    "PHY1 MII_CTRL1000 0x09",
+    "PHY1 MII_STAT1000 0x0a"
+  ],
+  "serial_freshness_contract": "cursor-nonce-post-power-freshness-v1",
+  "candidate_boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_v2_candidate",
+  "control_boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_v2_no_mdio_control",
+  "candidate_markers": {
+    "pre_mdio": "bcm54213pe-readonly-preflight-v2-pre-mdio-entry-marker",
+    "post_read": "bcm54213pe-readonly-preflight-v2-post-read-values-marker"
+  },
+  "allowed_hardware_classifications": [
+    "bcm54213pe-readonly-preflight-v2-pre-mdio-entry-visible",
+    "bcm54213pe-readonly-preflight-v2-post-read-values-visible",
+    "bcm54213pe-readonly-preflight-v2-missing-marker",
+    "bcm54213pe-readonly-preflight-v2-stale-backlog",
+    "bcm54213pe-readonly-preflight-v2-no-fresh-tftp",
+    "bcm54213pe-readonly-preflight-v2-final-identity-or-restore-failure",
+    "no-mdio-no-ethernet-bcm54213pe-readonly-preflight-v2-control"
+  ],
+  "rejected_claims": [
+    "target registers beyond PHY1 MII_CTRL1000 0x09 and MII_STAT1000 0x0a",
+    "PHY register write",
+    "selector-write surfaces",
+    "GPIO32 reset action",
+    "BMCR autoneg restart",
+    "Broadcom shadow/MMD/AUX access",
+    "interrupt ownership",
+    "broad PHY or MAC configuration",
+    "link readiness",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "phase transition"
+  ],
+  "next_task": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-pi5-proof-20260616"
+}

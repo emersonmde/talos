@@ -10516,6 +10516,21 @@ readiness, GPIO32/PHY reset ownership, BMCR/autoneg, Broadcom shadow/MMD/aux
 access, interrupt ownership, packet I/O, networking, SSH, Phase 12.2, and
 phase transition remain rejected.
 
+phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-proof-core-20260616
+accepts bcm54213pe-readonly-preflight-v2-proof-core-local-static. The v2 core
+keeps the accepted PHY1 MII_CTRL1000 0x09 and MII_STAT1000 0x0a target set, but
+adds the accepted cursor-nonce-post-power-freshness-v1 contract and splits the
+candidate serial surface into a pre-MDIO entry marker and a separate post-read
+values marker. The paired control emits the same capture-nonce freshness shape
+while constructing no MDIO, MAN, MACB, GPIO32/PHY, or RP1 Ethernet target
+facts. The selected queued follow-up is the serialized Pi 5 v2 proof, which may
+classify pre-MDIO entry visibility separately from post-read raw/decoded
+register values only if selected-tree, same-power-cycle TFTP, serial freshness,
+final identity, and restore evidence agree. This local/static core accepts no
+register values, link readiness, GPIO32/PHY reset ownership, BMCR/autoneg,
+Broadcom shadow/MMD/aux access, interrupt ownership, packet I/O, networking,
+SSH, Phase 12.2, or phase transition.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

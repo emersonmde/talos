@@ -8641,13 +8641,27 @@ pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_PI5_PROOF_TASK_ID: &str =
     "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-pi5-proof-20260616";
 pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_HW_PROOF_CONTRACT_ID: &str =
     "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-hw-proof-contract-v1";
+pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_PROOF_CORE_TASK_ID: &str =
+    "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-proof-core-20260616";
+pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_PI5_PROOF_TASK_ID: &str =
+    "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-pi5-proof-20260616";
+pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_PROOF_CONTRACT_ID: &str =
+    "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-proof-contract-v1";
 pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_CANDIDATE_BOOT_SCENARIO: &str =
     "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_candidate";
 pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_CONTROL_BOOT_SCENARIO: &str =
     "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_no_mdio_control";
+pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_CANDIDATE_BOOT_SCENARIO: &str =
+    "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_v2_candidate";
+pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_CONTROL_BOOT_SCENARIO: &str =
+    "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_v2_no_mdio_control";
 pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_BOOT_SCENARIOS: &[&str] = &[
     RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_CANDIDATE_BOOT_SCENARIO,
     RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_CONTROL_BOOT_SCENARIO,
+];
+pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_BOOT_SCENARIOS: &[&str] = &[
+    RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_CANDIDATE_BOOT_SCENARIO,
+    RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_CONTROL_BOOT_SCENARIO,
 ];
 pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_SELECTED_DISCRIMINATOR: &str =
     "bcm54213pe-phy1-mii-ctrl1000-stat1000-readonly-preflight";
@@ -8659,6 +8673,18 @@ pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_BOUNDARY_CLASSIFICATION: &s
     "local-static-mii-ctrl1000-stat1000-report-core-only";
 pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_HW_PROOF_BOUNDARY_CLASSIFICATION: &str =
     "hardware-proof-limited-to-phy1-mii-ctrl1000-stat1000-control-output";
+pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_BOUNDARY_CLASSIFICATION: &str =
+    "bcm54213pe-readonly-preflight-v2-cursor-freshness-proof-core-local-static";
+pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_CONTROL_CLASSIFICATION: &str =
+    "no-mdio-no-ethernet-bcm54213pe-readonly-preflight-v2-control";
+pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_SERIAL_FRESHNESS_CONTRACT_ID: &str =
+    "phase12-rp1-ethernet-serial-freshness-contract-v1";
+pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_SERIAL_FRESHNESS_INVARIANT: &str =
+    "cursor-nonce-post-power-freshness-v1";
+pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_PRE_MDIO_MARKER: &str =
+    "bcm54213pe-readonly-preflight-v2-pre-mdio-entry-marker";
+pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_POST_READ_MARKER: &str =
+    "bcm54213pe-readonly-preflight-v2-post-read-values-marker";
 pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_PURPOSE: &str =
     "encode the accepted pure Clause 22 MII_CTRL1000/MII_STAT1000 read-only preflight boundary";
 pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_REGISTER_NAMES: &[&str] =
@@ -8720,6 +8746,41 @@ pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_RETAINED_RISKS: &[&str] = &
     "GPIO32/ETH_RST_N reset recovery remains blocked by persistent or firmware-owned event state",
     "Broadcom selector-write surfaces remain blocked pending a separate write/restore contract",
     "Packet I/O, networking, sockets, SSH, and Phase 12.2 remain unaccepted",
+];
+pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_ALLOWED_HARDWARE_CLASSIFICATIONS:
+    &[&str] = &[
+    "bcm54213pe-readonly-preflight-v2-pre-mdio-entry-visible",
+    "bcm54213pe-readonly-preflight-v2-post-read-values-visible",
+    "bcm54213pe-readonly-preflight-v2-missing-marker",
+    "bcm54213pe-readonly-preflight-v2-stale-backlog",
+    "bcm54213pe-readonly-preflight-v2-no-fresh-tftp",
+    "bcm54213pe-readonly-preflight-v2-final-identity-or-restore-failure",
+    RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_CONTROL_CLASSIFICATION,
+];
+pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_OPERATION_ORDER: &[&str] = &[
+    "local/static proof core only; perform no hardware action during this task",
+    "candidate emits a run-unique pre-MDIO marker before any MDIO/MAN target access",
+    "candidate then targets exactly PHY1 MII_CTRL1000 0x09 and MII_STAT1000 0x0a",
+    "candidate emits a separate post-read marker only after both raw register reads complete",
+    "control emits the same capture-nonce freshness shape without MDIO/MAN/MACB/GPIO/RP1 Ethernet target facts",
+    "later Pi 5 proof must run the serial freshness v1 guard against retained cursor, nonce, TFTP, final identity, and restore evidence",
+];
+pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_REJECTED_CLAIMS: &[&str] = &[
+    "target registers beyond PHY1 MII_CTRL1000 0x09 and MII_STAT1000 0x0a",
+    "PHY register write",
+    "selector-write surfaces",
+    "GPIO32 reset action",
+    "BMCR autoneg restart",
+    "Broadcom shadow/MMD/AUX access",
+    "interrupt ownership",
+    "broad PHY or MAC configuration",
+    "link readiness",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "phase transition",
 ];
 pub const RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_SOURCE_EVIDENCE: &[&str] = &[
     "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract.md",
@@ -8950,6 +9011,122 @@ pub struct Rp1EthernetBcm54213peReadonlyPreflightHwProofCoreEvidence {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreEvidence {
+    pub proof_core_task_id: &'static str,
+    pub proof_task_id: &'static str,
+    pub proof_contract_id: &'static str,
+    pub prior_hw_proof_contract_id: &'static str,
+    pub report_contract_id: &'static str,
+    pub source_task_id: &'static str,
+    pub serial_freshness_contract_id: &'static str,
+    pub serial_freshness_invariant: &'static str,
+    pub candidate_boot_scenario: &'static str,
+    pub control_boot_scenario: &'static str,
+    pub boot_scenarios: &'static [&'static str],
+    pub selected_discriminator: &'static str,
+    pub selected_targets: &'static [&'static str],
+    pub register_names: &'static [&'static str],
+    pub registers: &'static [u32],
+    pub man_frames: &'static [u32],
+    pub pre_mdio_marker: &'static str,
+    pub post_read_marker: &'static str,
+    pub candidate_emits_pre_mdio_marker: bool,
+    pub candidate_emits_post_read_marker_after_reads: bool,
+    pub control_emits_capture_nonce: bool,
+    pub control_constructs_mdio_target: bool,
+    pub control_constructs_man_frames: bool,
+    pub candidate_constructs_mdio_target: bool,
+    pub candidate_constructs_man_frames: bool,
+    pub constructs_macb_target: bool,
+    pub constructs_gpio32_or_phy_target: bool,
+    pub permits_phy_register_write: bool,
+    pub permits_selector_write_surface: bool,
+    pub permits_gpio32_reset_action: bool,
+    pub permits_bmcr_autoneg_restart: bool,
+    pub permits_broadcom_shadow_mmd_aux_access: bool,
+    pub permits_interrupt_ownership: bool,
+    pub permits_phy_or_mac_configuration: bool,
+    pub permits_link_readiness_claim: bool,
+    pub permits_packet_io: bool,
+    pub permits_networking: bool,
+    pub permits_ssh: bool,
+    pub permits_phase_12_2: bool,
+    pub permits_phase_transition: bool,
+    pub boundary_classification: &'static str,
+    pub allowed_hardware_classifications: &'static [&'static str],
+    pub operation_order: &'static [&'static str],
+    pub rejected_claims: &'static [&'static str],
+    pub retained_risks: &'static [&'static str],
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError {
+    ScenarioMismatch,
+    TargetSetMismatch,
+    SerialFreshnessMismatch,
+    MarkerMismatch,
+    ClassificationMismatch,
+    OperationOrderMismatch,
+    RejectedClaimsMismatch,
+    RetainedRisksMismatch,
+    CandidateMissingPreMdioMarker,
+    CandidateMissingPostReadMarker,
+    ControlMissingNonce,
+    ControlCarriesMdioTargetFacts,
+    CandidateMissingMdioTargetFacts,
+    MacbTargetClaim,
+    Gpio32OrPhyTargetClaim,
+    PhyRegisterWriteClaim,
+    SelectorWriteSurfaceClaim,
+    Gpio32ResetActionClaim,
+    BmcrAutonegRestartClaim,
+    BroadcomShadowMmdAuxAccessClaim,
+    InterruptOwnershipClaim,
+    PhyOrMacConfigurationClaim,
+    LinkReadinessClaim,
+    PacketIoClaim,
+    NetworkingClaim,
+    SshClaim,
+    Phase122Claim,
+    PhaseTransitionClaim,
+}
+
+impl Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::ScenarioMismatch => "scenario-mismatch",
+            Self::TargetSetMismatch => "target-set-mismatch",
+            Self::SerialFreshnessMismatch => "serial-freshness-mismatch",
+            Self::MarkerMismatch => "marker-mismatch",
+            Self::ClassificationMismatch => "classification-mismatch",
+            Self::OperationOrderMismatch => "operation-order-mismatch",
+            Self::RejectedClaimsMismatch => "rejected-claims-mismatch",
+            Self::RetainedRisksMismatch => "retained-risks-mismatch",
+            Self::CandidateMissingPreMdioMarker => "candidate-missing-pre-mdio-marker",
+            Self::CandidateMissingPostReadMarker => "candidate-missing-post-read-marker",
+            Self::ControlMissingNonce => "control-missing-nonce",
+            Self::ControlCarriesMdioTargetFacts => "control-carries-mdio-target-facts",
+            Self::CandidateMissingMdioTargetFacts => "candidate-missing-mdio-target-facts",
+            Self::MacbTargetClaim => "macb-target-claim",
+            Self::Gpio32OrPhyTargetClaim => "gpio32-or-phy-target-claim",
+            Self::PhyRegisterWriteClaim => "phy-register-write-claim",
+            Self::SelectorWriteSurfaceClaim => "selector-write-surface-claim",
+            Self::Gpio32ResetActionClaim => "gpio32-reset-action-claim",
+            Self::BmcrAutonegRestartClaim => "bmcr-autoneg-restart-claim",
+            Self::BroadcomShadowMmdAuxAccessClaim => "broadcom-shadow-mmd-aux-access-claim",
+            Self::InterruptOwnershipClaim => "interrupt-ownership-claim",
+            Self::PhyOrMacConfigurationClaim => "phy-or-mac-configuration-claim",
+            Self::LinkReadinessClaim => "link-readiness-claim",
+            Self::PacketIoClaim => "packet-io-claim",
+            Self::NetworkingClaim => "networking-claim",
+            Self::SshClaim => "ssh-claim",
+            Self::Phase122Claim => "phase-12-2-claim",
+            Self::PhaseTransitionClaim => "phase-transition-claim",
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Rp1EthernetBcm54213peReadonlyPreflightReportError {
     CandidateMissingSourceContract,
     ControlCarriesMdioTargetFacts,
@@ -9066,6 +9243,192 @@ pub const fn rp1_ethernet_bcm54213pe_readonly_preflight_hw_proof_core_evidence()
         rejected_runtime_claims: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_REJECTED_RUNTIME_CLAIMS,
         retained_risks: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_RETAINED_RISKS,
     }
+}
+
+pub const fn rp1_ethernet_bcm54213pe_readonly_preflight_v2_proof_core_evidence()
+-> Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreEvidence {
+    Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreEvidence {
+        proof_core_task_id: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_PROOF_CORE_TASK_ID,
+        proof_task_id: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_PI5_PROOF_TASK_ID,
+        proof_contract_id: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_PROOF_CONTRACT_ID,
+        prior_hw_proof_contract_id: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_HW_PROOF_CONTRACT_ID,
+        report_contract_id: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_REPORT_CONTRACT_ID,
+        source_task_id: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_SOURCE_TASK_ID,
+        serial_freshness_contract_id:
+            RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_SERIAL_FRESHNESS_CONTRACT_ID,
+        serial_freshness_invariant:
+            RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_SERIAL_FRESHNESS_INVARIANT,
+        candidate_boot_scenario:
+            RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_CANDIDATE_BOOT_SCENARIO,
+        control_boot_scenario: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_CONTROL_BOOT_SCENARIO,
+        boot_scenarios: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_BOOT_SCENARIOS,
+        selected_discriminator: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_SELECTED_DISCRIMINATOR,
+        selected_targets: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_SELECTED_TARGETS,
+        register_names: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_REGISTER_NAMES,
+        registers: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_REGISTERS,
+        man_frames: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_MAN_FRAMES,
+        pre_mdio_marker: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_PRE_MDIO_MARKER,
+        post_read_marker: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_POST_READ_MARKER,
+        candidate_emits_pre_mdio_marker: true,
+        candidate_emits_post_read_marker_after_reads: true,
+        control_emits_capture_nonce: true,
+        control_constructs_mdio_target: false,
+        control_constructs_man_frames: false,
+        candidate_constructs_mdio_target: true,
+        candidate_constructs_man_frames: true,
+        constructs_macb_target: false,
+        constructs_gpio32_or_phy_target: false,
+        permits_phy_register_write: false,
+        permits_selector_write_surface: false,
+        permits_gpio32_reset_action: false,
+        permits_bmcr_autoneg_restart: false,
+        permits_broadcom_shadow_mmd_aux_access: false,
+        permits_interrupt_ownership: false,
+        permits_phy_or_mac_configuration: false,
+        permits_link_readiness_claim: false,
+        permits_packet_io: false,
+        permits_networking: false,
+        permits_ssh: false,
+        permits_phase_12_2: false,
+        permits_phase_transition: false,
+        boundary_classification:
+            RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_BOUNDARY_CLASSIFICATION,
+        allowed_hardware_classifications:
+            RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_ALLOWED_HARDWARE_CLASSIFICATIONS,
+        operation_order: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_OPERATION_ORDER,
+        rejected_claims: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_REJECTED_CLAIMS,
+        retained_risks: RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_RETAINED_RISKS,
+    }
+}
+
+pub fn validate_rp1_ethernet_bcm54213pe_readonly_preflight_v2_proof_core_evidence(
+    evidence: Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreEvidence,
+) -> Result<(), Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError> {
+    if evidence.candidate_boot_scenario
+        != RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_CANDIDATE_BOOT_SCENARIO
+        || evidence.control_boot_scenario
+            != RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_CONTROL_BOOT_SCENARIO
+        || evidence.boot_scenarios != RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_BOOT_SCENARIOS
+    {
+        return Err(Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::ScenarioMismatch);
+    }
+    if evidence.selected_targets != RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_SELECTED_TARGETS
+        || evidence.register_names != RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_REGISTER_NAMES
+        || evidence.registers != RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_REGISTERS
+        || evidence.man_frames != RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_MAN_FRAMES
+    {
+        return Err(Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::TargetSetMismatch);
+    }
+    if evidence.serial_freshness_contract_id
+        != RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_SERIAL_FRESHNESS_CONTRACT_ID
+        || evidence.serial_freshness_invariant
+            != RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_SERIAL_FRESHNESS_INVARIANT
+    {
+        return Err(
+            Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::SerialFreshnessMismatch,
+        );
+    }
+    if evidence.pre_mdio_marker != RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_PRE_MDIO_MARKER
+        || evidence.post_read_marker
+            != RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_POST_READ_MARKER
+    {
+        return Err(Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::MarkerMismatch);
+    }
+    if evidence.boundary_classification
+        != RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_BOUNDARY_CLASSIFICATION
+        || evidence.allowed_hardware_classifications
+            != RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_ALLOWED_HARDWARE_CLASSIFICATIONS
+    {
+        return Err(Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::ClassificationMismatch);
+    }
+    if evidence.operation_order != RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_OPERATION_ORDER {
+        return Err(Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::OperationOrderMismatch);
+    }
+    if evidence.rejected_claims != RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_REJECTED_CLAIMS {
+        return Err(Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::RejectedClaimsMismatch);
+    }
+    if evidence.retained_risks != RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_RETAINED_RISKS {
+        return Err(Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::RetainedRisksMismatch);
+    }
+    if !evidence.candidate_emits_pre_mdio_marker {
+        return Err(
+            Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::CandidateMissingPreMdioMarker,
+        );
+    }
+    if !evidence.candidate_emits_post_read_marker_after_reads {
+        return Err(
+            Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::CandidateMissingPostReadMarker,
+        );
+    }
+    if !evidence.control_emits_capture_nonce {
+        return Err(Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::ControlMissingNonce);
+    }
+    if evidence.control_constructs_mdio_target || evidence.control_constructs_man_frames {
+        return Err(
+            Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::ControlCarriesMdioTargetFacts,
+        );
+    }
+    if !evidence.candidate_constructs_mdio_target || !evidence.candidate_constructs_man_frames {
+        return Err(
+            Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::CandidateMissingMdioTargetFacts,
+        );
+    }
+    if evidence.constructs_macb_target {
+        return Err(Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::MacbTargetClaim);
+    }
+    if evidence.constructs_gpio32_or_phy_target {
+        return Err(Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::Gpio32OrPhyTargetClaim);
+    }
+    if evidence.permits_phy_register_write {
+        return Err(Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::PhyRegisterWriteClaim);
+    }
+    if evidence.permits_selector_write_surface {
+        return Err(
+            Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::SelectorWriteSurfaceClaim,
+        );
+    }
+    if evidence.permits_gpio32_reset_action {
+        return Err(Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::Gpio32ResetActionClaim);
+    }
+    if evidence.permits_bmcr_autoneg_restart {
+        return Err(
+            Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::BmcrAutonegRestartClaim,
+        );
+    }
+    if evidence.permits_broadcom_shadow_mmd_aux_access {
+        return Err(
+            Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::BroadcomShadowMmdAuxAccessClaim,
+        );
+    }
+    if evidence.permits_interrupt_ownership {
+        return Err(
+            Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::InterruptOwnershipClaim,
+        );
+    }
+    if evidence.permits_phy_or_mac_configuration {
+        return Err(
+            Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::PhyOrMacConfigurationClaim,
+        );
+    }
+    if evidence.permits_link_readiness_claim {
+        return Err(Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::LinkReadinessClaim);
+    }
+    if evidence.permits_packet_io {
+        return Err(Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::PacketIoClaim);
+    }
+    if evidence.permits_networking {
+        return Err(Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::NetworkingClaim);
+    }
+    if evidence.permits_ssh {
+        return Err(Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::SshClaim);
+    }
+    if evidence.permits_phase_12_2 {
+        return Err(Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::Phase122Claim);
+    }
+    if evidence.permits_phase_transition {
+        return Err(Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::PhaseTransitionClaim);
+    }
+    Ok(())
 }
 
 pub fn build_rp1_ethernet_bcm54213pe_readonly_preflight_report(
@@ -15135,6 +15498,122 @@ mod tests {
         assert_eq!(
             evidence.boundary_classification,
             RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_HW_PROOF_BOUNDARY_CLASSIFICATION
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_bcm54213pe_readonly_preflight_v2_core_adds_freshness_markers() {
+        let evidence = rp1_ethernet_bcm54213pe_readonly_preflight_v2_proof_core_evidence();
+
+        assert_eq!(
+            evidence.proof_core_task_id,
+            RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_PROOF_CORE_TASK_ID
+        );
+        assert_eq!(
+            evidence.proof_task_id,
+            RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_V2_PI5_PROOF_TASK_ID
+        );
+        assert_eq!(
+            evidence.serial_freshness_invariant,
+            "cursor-nonce-post-power-freshness-v1"
+        );
+        assert_eq!(
+            evidence.candidate_boot_scenario,
+            "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_v2_candidate"
+        );
+        assert_eq!(
+            evidence.control_boot_scenario,
+            "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_v2_no_mdio_control"
+        );
+        assert_eq!(
+            evidence.selected_targets,
+            RP1_ETHERNET_BCM54213PE_READONLY_PREFLIGHT_SELECTED_TARGETS
+        );
+        assert_eq!(evidence.registers, &[0x09, 0x0a]);
+        assert_eq!(evidence.man_frames, &[0x60a6_0000, 0x60aa_0000]);
+        assert_eq!(
+            evidence.pre_mdio_marker,
+            "bcm54213pe-readonly-preflight-v2-pre-mdio-entry-marker"
+        );
+        assert_eq!(
+            evidence.post_read_marker,
+            "bcm54213pe-readonly-preflight-v2-post-read-values-marker"
+        );
+        assert!(evidence.candidate_emits_pre_mdio_marker);
+        assert!(evidence.candidate_emits_post_read_marker_after_reads);
+        assert!(evidence.control_emits_capture_nonce);
+        assert!(evidence.candidate_constructs_mdio_target);
+        assert!(evidence.candidate_constructs_man_frames);
+        assert!(!evidence.control_constructs_mdio_target);
+        assert!(!evidence.control_constructs_man_frames);
+        assert!(!evidence.constructs_macb_target);
+        assert!(!evidence.constructs_gpio32_or_phy_target);
+        assert!(!evidence.permits_phy_register_write);
+        assert!(!evidence.permits_selector_write_surface);
+        assert!(!evidence.permits_gpio32_reset_action);
+        assert!(!evidence.permits_bmcr_autoneg_restart);
+        assert!(!evidence.permits_broadcom_shadow_mmd_aux_access);
+        assert!(!evidence.permits_interrupt_ownership);
+        assert!(!evidence.permits_phy_or_mac_configuration);
+        assert!(!evidence.permits_link_readiness_claim);
+        assert!(!evidence.permits_packet_io);
+        assert!(!evidence.permits_networking);
+        assert!(!evidence.permits_ssh);
+        assert!(!evidence.permits_phase_12_2);
+        assert!(!evidence.permits_phase_transition);
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_readonly_preflight_v2_proof_core_evidence(evidence),
+            Ok(())
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_bcm54213pe_readonly_preflight_v2_core_rejects_drift() {
+        let evidence = rp1_ethernet_bcm54213pe_readonly_preflight_v2_proof_core_evidence();
+
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_readonly_preflight_v2_proof_core_evidence(
+                Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreEvidence {
+                    candidate_emits_pre_mdio_marker: false,
+                    ..evidence
+                }
+            ),
+            Err(
+                Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::CandidateMissingPreMdioMarker
+            )
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_readonly_preflight_v2_proof_core_evidence(
+                Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreEvidence {
+                    control_constructs_mdio_target: true,
+                    ..evidence
+                }
+            ),
+            Err(
+                Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::ControlCarriesMdioTargetFacts
+            )
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_readonly_preflight_v2_proof_core_evidence(
+                Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreEvidence {
+                    permits_selector_write_surface: true,
+                    ..evidence
+                }
+            ),
+            Err(Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::SelectorWriteSurfaceClaim)
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_readonly_preflight_v2_proof_core_evidence(
+                Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreEvidence {
+                    permits_networking: true,
+                    ..evidence
+                }
+            ),
+            Err(Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::NetworkingClaim)
+        );
+        assert_eq!(
+            Rp1EthernetBcm54213peReadonlyPreflightV2ProofCoreError::PhaseTransitionClaim.name(),
+            "phase-transition-claim"
         );
     }
 

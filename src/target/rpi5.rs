@@ -12783,6 +12783,7 @@ fn clean_cache_range_to_poc(start: usize, len: usize) {
         talos_boot_scenario = "rpi5_rp1_ethernet_phy1_autoneg_restart_candidate",
         talos_boot_scenario = "rpi5_rp1_ethernet_post_physical_link_status_candidate",
         talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_candidate",
+        talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_v2_candidate",
         talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
         talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_read",
         talos_boot_scenario = "rpi5_rp1_bridge_config_preflight_read",
@@ -12815,7 +12816,8 @@ fn read_rp1_reg_u32(addr: usize) -> u32 {
         talos_boot_scenario = "rpi5_rp1_ethernet_phy1_bmsr_double_sample_link_readiness_candidate",
         talos_boot_scenario = "rpi5_rp1_ethernet_phy1_autoneg_restart_candidate",
         talos_boot_scenario = "rpi5_rp1_ethernet_post_physical_link_status_candidate",
-        talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_candidate"
+        talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_candidate",
+        talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_v2_candidate"
     )
 ))]
 fn write_rp1_reg_u32_ordered(addr: usize, value: u32) {
@@ -17623,6 +17625,221 @@ pub fn run_rp1_ethernet_bcm54213pe_readonly_preflight_no_mdio_control() -> ! {
     }
 }
 
+#[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_v2_candidate")]
+pub fn run_rp1_ethernet_bcm54213pe_readonly_preflight_v2_candidate() -> ! {
+    const MACB_MID_CONTEXT: usize = 0x1c_0010_00fc;
+    const NCR: usize = 0x1c_0010_0000;
+    const NSR: usize = 0x1c_0010_0008;
+    const MAN: usize = 0x1c_0010_0034;
+    const NCR_MPE: u32 = 1 << 4;
+    const NSR_IDLE: u32 = 1 << 2;
+    const CTRL1000_READ_MAN_FRAME: u32 = 0x60a6_0000;
+    const STAT1000_READ_MAN_FRAME: u32 = 0x60aa_0000;
+
+    write_early_static("rpi5-rp1-ethernet-bcm54213pe-readonly-preflight-v2-candidate: start\n");
+    write_early_static("TALOS: rp1-ethernet-bcm54213pe-readonly-preflight-v2-candidate");
+    write_rp1_ethernet_bcm54213pe_readonly_preflight_v2_capture_nonce();
+    write_rp1_ethernet_bcm54213pe_readonly_preflight_v2_common("candidate");
+    write_early_static(
+        " marker-stage=pre-mdio-entry marker=bcm54213pe-readonly-preflight-v2-pre-mdio-entry-marker",
+    );
+    write_early_static(" target=phy1-mii-ctrl1000-stat1000-readonly-preflight");
+    write_early_static(" classification=bcm54213pe-readonly-preflight-v2-pre-mdio-entry-visible\n");
+    wait_uart10_empty_early_phase();
+
+    let macb_mid_context = read_rp1_reg_u32(MACB_MID_CONTEXT);
+    let ncr_before = read_rp1_reg_u32(NCR);
+    let mut ctrl1000_raw = 0u16;
+    let mut stat1000_raw = 0u16;
+    let mut ctrl1000_valid = false;
+    let mut stat1000_valid = false;
+    let mut mdio_read_count = 0u32;
+
+    let classification = if ncr_before & NCR_MPE == 0 {
+        "bcm54213pe-readonly-preflight-v2-pre-mdio-entry-visible"
+    } else if let Some(value) = read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
+        NSR,
+        MAN,
+        NSR_IDLE,
+        CTRL1000_READ_MAN_FRAME,
+    ) {
+        ctrl1000_raw = value;
+        ctrl1000_valid = true;
+        mdio_read_count += 1;
+        if let Some(value) = read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
+            NSR,
+            MAN,
+            NSR_IDLE,
+            STAT1000_READ_MAN_FRAME,
+        ) {
+            stat1000_raw = value;
+            stat1000_valid = true;
+            mdio_read_count += 1;
+            "bcm54213pe-readonly-preflight-v2-post-read-values-visible"
+        } else {
+            "bcm54213pe-readonly-preflight-v2-pre-mdio-entry-visible"
+        }
+    } else {
+        "bcm54213pe-readonly-preflight-v2-pre-mdio-entry-visible"
+    };
+
+    let ncr_after = read_rp1_reg_u32(NCR);
+    let decoded = crate::rp1_ethernet::decode_rp1_ethernet_phy1_gigabit_preflight(
+        crate::rp1_ethernet::Rp1EthernetPhy1GigabitPreflightRawVector {
+            ctrl1000: ctrl1000_raw,
+            stat1000: stat1000_raw,
+        },
+    );
+    let post_read_marker_emitted = mdio_read_count == 2;
+
+    loop {
+        write_early_static("TALOS: rp1-ethernet-bcm54213pe-readonly-preflight-v2-candidate");
+        write_rp1_ethernet_bcm54213pe_readonly_preflight_v2_capture_nonce();
+        write_rp1_ethernet_bcm54213pe_readonly_preflight_v2_common("candidate");
+        if post_read_marker_emitted {
+            write_early_static(
+                " marker-stage=post-read-values marker=bcm54213pe-readonly-preflight-v2-post-read-values-marker",
+            );
+        } else {
+            write_early_static(" marker-stage=post-read-not-complete marker=withheld");
+        }
+        write_early_static(" pre-mdio-marker-emitted=true post-read-marker-emitted=");
+        write_bool(post_read_marker_emitted);
+        write_early_static(" target=phy1-mii-ctrl1000-stat1000-readonly-preflight");
+        write_early_static(" controller=rp1_eth compatible=raspberrypi,rp1-gem,cdns,macb");
+        write_early_static(" phy-model=Broadcom-BCM54213PE physid1=0x600d physid2=0x84a2");
+        write_early_static(" phy-handle=phy1 phy-node=ethernet-phy@1 phy-address=1");
+        write_early_static(" observed-window-macb-mid-context-cpu-physical-target=");
+        write_early_hex_u64(MACB_MID_CONTEXT as u64);
+        write_early_static(" observed-window-macb-mid-context-raw=");
+        write_early_hex_u64(macb_mid_context as u64);
+        write_early_static(" ncr-observed-target=");
+        write_early_hex_u64(NCR as u64);
+        write_early_static(" nsr-observed-target=");
+        write_early_hex_u64(NSR as u64);
+        write_early_static(" man-observed-target=");
+        write_early_hex_u64(MAN as u64);
+        write_early_static(" ncr-before=");
+        write_early_hex_u64(ncr_before as u64);
+        write_early_static(" ncr-mpe-precondition-met=");
+        write_bool(ncr_before & NCR_MPE != 0);
+        write_early_static(" ncr-after=");
+        write_early_hex_u64(ncr_after as u64);
+        write_early_static(" selected-registers=MII_CTRL1000:0x09,MII_STAT1000:0x0a");
+        write_early_static(" ctrl1000-man-frame=");
+        write_early_hex_u64(CTRL1000_READ_MAN_FRAME as u64);
+        write_early_static(" stat1000-man-frame=");
+        write_early_hex_u64(STAT1000_READ_MAN_FRAME as u64);
+        write_early_static(" ctrl1000-raw=");
+        write_early_hex_u64(ctrl1000_raw as u64);
+        write_early_static(" ctrl1000-valid=");
+        write_bool(ctrl1000_valid);
+        write_early_static(" stat1000-raw=");
+        write_early_hex_u64(stat1000_raw as u64);
+        write_early_static(" stat1000-valid=");
+        write_bool(stat1000_valid);
+        write_early_static(" ctrl1000-advertise-1000-half=");
+        write_bool(decoded.ctrl1000.advertise_1000_half);
+        write_early_static(" ctrl1000-advertise-1000-full=");
+        write_bool(decoded.ctrl1000.advertise_1000_full);
+        write_early_static(" ctrl1000-prefer-master=");
+        write_bool(decoded.ctrl1000.prefer_master);
+        write_early_static(" ctrl1000-force-master=");
+        write_bool(decoded.ctrl1000.force_master);
+        write_early_static(" ctrl1000-master-manual-config-enable=");
+        write_bool(decoded.ctrl1000.master_manual_config_enable);
+        write_early_static(" stat1000-master-slave-resolution-failure=");
+        write_bool(decoded.stat1000.master_slave_resolution_failure);
+        write_early_static(" stat1000-master-slave-resolution-master=");
+        write_bool(decoded.stat1000.master_slave_resolution_master);
+        write_early_static(" stat1000-local-receiver-ok=");
+        write_bool(decoded.stat1000.local_receiver_ok);
+        write_early_static(" stat1000-remote-receiver-ok=");
+        write_bool(decoded.stat1000.remote_receiver_ok);
+        write_early_static(" stat1000-link-partner-1000-full=");
+        write_bool(decoded.stat1000.link_partner_1000_full);
+        write_early_static(" stat1000-link-partner-1000-half=");
+        write_bool(decoded.stat1000.link_partner_1000_half);
+        write_early_static(" completed-register-count=");
+        write_early_hex_u64(mdio_read_count as u64);
+        write_early_static(" mdio-target-constructed=true man-frame-constructed=true");
+        write_early_static(" macb-target-constructed=false gpio32-or-phy-target-constructed=false");
+        write_early_static(" phy-register-write-performed=false selector-write-surface=false");
+        write_early_static(
+            " broadcom-shadow-mmd-aux-access=false phy-reset-or-gpio32-action=false",
+        );
+        write_early_static(" phy-or-mac-configuration-performed=false packet-io-performed=false");
+        write_rp1_ethernet_bcm54213pe_readonly_preflight_v2_rejections(
+            mdio_read_count > 0,
+            mdio_read_count > 0,
+        );
+        write_early_static(" classification=");
+        write_early_static(classification);
+        write_early_static("\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_v2_no_mdio_control")]
+pub fn run_rp1_ethernet_bcm54213pe_readonly_preflight_v2_no_mdio_control() -> ! {
+    write_early_static("rpi5-rp1-ethernet-bcm54213pe-readonly-preflight-v2-control: start\n");
+    write_early_static(
+        "rpi5-rp1-ethernet-bcm54213pe-readonly-preflight-v2-control: no-mdio-no-ethernet-no-target-construction\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: rp1-ethernet-bcm54213pe-readonly-preflight-v2-control");
+        write_rp1_ethernet_bcm54213pe_readonly_preflight_v2_capture_nonce();
+        write_rp1_ethernet_bcm54213pe_readonly_preflight_v2_common("no-mdio-no-ethernet-control");
+        write_early_static(
+            " marker-stage=control-entry marker=bcm54213pe-readonly-preflight-v2-pre-mdio-entry-marker",
+        );
+        write_early_static(" pre-mdio-marker-emitted=true post-read-marker-emitted=false");
+        write_early_static(" target=none controller=none compatible=none");
+        write_early_static(" phy-model=none physid1=withheld physid2=withheld");
+        write_early_static(" phy-handle=none phy-node=none phy-address=none");
+        write_early_static(" observed-window-macb-mid-context-cpu-physical-target=not-constructed");
+        write_early_static(" observed-window-macb-mid-context-raw=withheld");
+        write_early_static(" ncr-observed-target=not-constructed");
+        write_early_static(" nsr-observed-target=not-constructed");
+        write_early_static(" man-observed-target=not-constructed");
+        write_early_static(
+            " ncr-before=withheld ncr-mpe-precondition-met=false ncr-after=withheld",
+        );
+        write_early_static(" selected-registers=withheld");
+        write_early_static(" ctrl1000-man-frame=withheld stat1000-man-frame=withheld");
+        write_early_static(" ctrl1000-raw=withheld ctrl1000-valid=false");
+        write_early_static(" stat1000-raw=withheld stat1000-valid=false");
+        write_early_static(
+            " ctrl1000-advertise-1000-half=false ctrl1000-advertise-1000-full=false",
+        );
+        write_early_static(
+            " ctrl1000-prefer-master=false ctrl1000-force-master=false ctrl1000-master-manual-config-enable=false",
+        );
+        write_early_static(
+            " stat1000-master-slave-resolution-failure=false stat1000-master-slave-resolution-master=false",
+        );
+        write_early_static(" stat1000-local-receiver-ok=false stat1000-remote-receiver-ok=false");
+        write_early_static(
+            " stat1000-link-partner-1000-full=false stat1000-link-partner-1000-half=false",
+        );
+        write_early_static(" completed-register-count=0");
+        write_early_static(" mdio-target-constructed=false man-frame-constructed=false");
+        write_early_static(" macb-target-constructed=false gpio32-or-phy-target-constructed=false");
+        write_early_static(" phy-register-write-performed=false selector-write-surface=false");
+        write_early_static(
+            " broadcom-shadow-mmd-aux-access=false phy-reset-or-gpio32-action=false",
+        );
+        write_early_static(" phy-or-mac-configuration-performed=false packet-io-performed=false");
+        write_rp1_ethernet_bcm54213pe_readonly_preflight_v2_rejections(false, false);
+        write_early_static(
+            " classification=no-mdio-no-ethernet-bcm54213pe-readonly-preflight-v2-control\n",
+        );
+        wait_uart10_empty_early_phase();
+    }
+}
+
 #[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_boot_transport_sentinel_candidate")]
 pub fn run_rp1_ethernet_bcm54213pe_boot_transport_sentinel_candidate() -> ! {
     write_early_static("rpi5-rp1-ethernet-bcm54213pe-boot-transport-sentinel-candidate: start\n");
@@ -18904,7 +19121,8 @@ fn poll_rp1_ethernet_mdio_phy_id_after_mpe_idle(nsr: usize, idle_bit: u32) -> bo
     talos_boot_scenario = "rpi5_rp1_ethernet_phy1_bmsr_double_sample_link_readiness_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_phy1_autoneg_restart_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_post_physical_link_status_candidate",
-    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_candidate"
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_v2_candidate"
 ))]
 fn poll_rp1_ethernet_mdio_register_vector_idle(nsr: usize, idle_bit: u32) -> bool {
     let mut remaining = 1_000_000u32;
@@ -18940,7 +19158,10 @@ fn poll_rp1_ethernet_post_physical_link_status_idle(nsr: usize, idle_bit: u32) -
     poll_rp1_ethernet_mdio_register_vector_idle(nsr, idle_bit)
 }
 
-#[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_candidate")]
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_v2_candidate"
+))]
 fn poll_rp1_ethernet_bcm54213pe_readonly_preflight_idle(nsr: usize, idle_bit: u32) -> bool {
     poll_rp1_ethernet_mdio_register_vector_idle(nsr, idle_bit)
 }
@@ -19599,7 +19820,10 @@ fn read_rp1_ethernet_post_physical_link_status_phy1_register(
     Some((read_rp1_reg_u32(man) & 0xffff) as u16)
 }
 
-#[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_candidate")]
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_v2_candidate"
+))]
 fn read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
     nsr: usize,
     man: usize,
@@ -19770,6 +19994,80 @@ fn write_rp1_ethernet_bcm54213pe_readonly_preflight_rejections(
     write_early_static(" claims-phy-or-mac-configuration=false claims-link-readiness=false");
     write_early_static(" claims-packet-io=false claims-dma-descriptor-ownership=false");
     write_early_static(" claims-networking=false claims-sockets=false claims-ssh=false");
+    write_early_static(" claims-phase-12-2=false claims-phase-transition=false");
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_v2_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_v2_no_mdio_control"
+))]
+fn write_rp1_ethernet_bcm54213pe_readonly_preflight_v2_common(report_kind: &str) {
+    write_early_static(
+        " bcm54213pe-readonly-preflight-v2-proof-contract-id=phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-proof-contract-v1",
+    );
+    write_early_static(
+        " task-id=phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-pi5-proof-20260616",
+    );
+    write_early_static(
+        " proof-core-task-id=phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-proof-core-20260616",
+    );
+    write_early_static(
+        " serial-freshness-contract-id=phase12-rp1-ethernet-serial-freshness-contract-v1",
+    );
+    write_early_static(" serial-freshness-invariant=cursor-nonce-post-power-freshness-v1");
+    write_early_static(" accepted-frontier=serial-freshness-frontier-closed-cursor-nonce-accepted");
+    write_early_static(
+        " selected-discriminator=bcm54213pe-phy1-mii-ctrl1000-stat1000-readonly-preflight",
+    );
+    write_early_static(" report-kind=");
+    write_early_static(report_kind);
+    write_early_static(
+        " hardware-proof-boundary-classification=bcm54213pe-readonly-preflight-v2-cursor-freshness-proof-core-local-static",
+    );
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_v2_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_v2_no_mdio_control"
+))]
+fn write_rp1_ethernet_bcm54213pe_readonly_preflight_v2_capture_nonce() {
+    if let Some(nonce) = option_env!("TALOS_CAPTURE_NONCE") {
+        if !nonce.is_empty() {
+            write_early_static(" capture-nonce=");
+            write_early_static(nonce);
+        }
+    }
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_v2_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_v2_no_mdio_control"
+))]
+fn write_rp1_ethernet_bcm54213pe_readonly_preflight_v2_rejections(
+    runtime_mdio_reads: bool,
+    runtime_man_read_command_writes: bool,
+) {
+    write_early_static(
+        " allowed-hardware-classifications=bcm54213pe-readonly-preflight-v2-pre-mdio-entry-visible,bcm54213pe-readonly-preflight-v2-post-read-values-visible,bcm54213pe-readonly-preflight-v2-missing-marker,bcm54213pe-readonly-preflight-v2-stale-backlog,bcm54213pe-readonly-preflight-v2-no-fresh-tftp,bcm54213pe-readonly-preflight-v2-final-identity-or-restore-failure,no-mdio-no-ethernet-bcm54213pe-readonly-preflight-v2-control",
+    );
+    write_early_static(
+        " rejected-runtime-hardware-claims=extra-target-registers,phy-register-write,selector-write-surfaces,gpio32-reset-action,bmcr-autoneg-restart,broadcom-shadow-mmd-aux-access,interrupt-ownership,phy-mac-configuration,link-readiness,packet-io,networking,sockets,ssh,phase-12-2,phase-transition",
+    );
+    write_early_static(
+        " retained-risks=ctrl1000-stat1000-sample-is-only-selected-register-state,gpio32-reset-and-broadcom-selector-surfaces-remain-unowned,no-link-readiness-packet-network-ssh-phase-12-2-readiness",
+    );
+    write_early_static(" claims-runtime-mdio-reads=");
+    write_bool(runtime_mdio_reads);
+    write_early_static(" claims-runtime-man-read-command-writes=");
+    write_bool(runtime_man_read_command_writes);
+    write_early_static(" claims-extra-target-registers=false claims-phy-register-write=false");
+    write_early_static(" claims-selector-write-surface=false claims-gpio32-reset-action=false");
+    write_early_static(" claims-bmcr-autoneg-restart=false");
+    write_early_static(" claims-broadcom-shadow-mmd-aux-access=false");
+    write_early_static(" claims-interrupt-ownership=false");
+    write_early_static(" claims-phy-or-mac-configuration=false claims-link-readiness=false");
+    write_early_static(" claims-packet-io=false claims-networking=false");
+    write_early_static(" claims-sockets=false claims-ssh=false");
     write_early_static(" claims-phase-12-2=false claims-phase-transition=false");
 }
 
@@ -22555,6 +22853,8 @@ fn gpio14_ownership_preflight_classification(
     talos_boot_scenario = "rpi5_rp1_ethernet_post_physical_link_status_no_mdio_macb_control",
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_no_mdio_control",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_v2_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_v2_no_mdio_control",
     talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_control",
     talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
