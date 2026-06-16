@@ -10561,6 +10561,19 @@ later GPIO32/PHY reset, BMCR/autoneg, Broadcom selector, interrupt, PHY/MAC
 configuration, packet I/O, networking, SSH, explicit pause, or other Phase 12.1
 boundary.
 
+phase12-rp1-ethernet-bcm54213pe-link-recovery-source-checkpoint-20260616
+accepts bcm54213pe-bmcr-autoneg-restart-contract-selected. The checkpoint
+preserves accepted MII_CTRL1000 0x0200 and MII_STAT1000 0x0000 as context,
+reconciles retained BMCR/BMSR/ANAR/ANLPAR/MACB_NSR link-not-ready evidence and
+GPIO32 event-state blockers, and selects only the local/static
+phase12-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-core-20260616 follow-up.
+That core may model exactly one corrected-target PHY1 BMCR write intent of
+pre_bmcr | BMCR_ANENABLE | BMCR_ANRESTART with bounded pre/post status reads
+and a paired no-MDIO/no-Ethernet control. Hardware action, GPIO32/reset
+recovery, Broadcom shadow/MMD/AUX access, interrupts, broad PHY/MAC
+configuration, packet I/O, networking, SSH, Phase 12.2, and phase transition
+remain rejected until separately accepted.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

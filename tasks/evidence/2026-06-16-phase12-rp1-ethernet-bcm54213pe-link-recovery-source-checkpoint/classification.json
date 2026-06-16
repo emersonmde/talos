@@ -1,0 +1,147 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-link-recovery-source-checkpoint-20260616",
+  "status": "accepted",
+  "classification": "bcm54213pe-bmcr-autoneg-restart-contract-selected",
+  "evidence_level": [
+    "static/source/evidence inspection",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_inputs": {
+    "bcm54213pe_readonly_preflight_v2_closeout": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-closeout-20260616",
+      "commit": "367e8d9d92cd41b238ce9dd03ca41588463286dd",
+      "classification": "bcm54213pe-readonly-preflight-v2-frontier-closed-read-values-accepted",
+      "ctrl1000_raw": "0x0200",
+      "ctrl1000_advertise_1000_full": true,
+      "ctrl1000_advertise_1000_half": false,
+      "stat1000_raw": "0x0000",
+      "stat1000_local_receiver_ok": false,
+      "stat1000_remote_receiver_ok": false
+    },
+    "retained_link_not_ready_frontier": {
+      "bmcr_raw": "0x1000",
+      "bmsr_first_raw": "0x7949",
+      "bmsr_second_raw": "0x7949",
+      "anar_raw": "0x01e1",
+      "anlpar_raw": "0x0000",
+      "macb_nsr_raw": "0x00000006",
+      "bmsr_link_status": false,
+      "bmsr_autoneg_complete": false,
+      "anlpar_nonzero": false,
+      "macb_nsr_link": false
+    },
+    "retained_gpio32_blockers": {
+      "write_restore_v2": "stopped-before-gpio-rio-pad-writes-with-event-bits-0x0ab00000",
+      "event_clear": "persistent-or-firmware-owned-event-bits-0x08800000"
+    },
+    "retained_source_contracts": [
+      "tasks/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract.md",
+      "tasks/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-source-contract.md",
+      "tasks/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-closeout.md"
+    ]
+  },
+  "selected_boundary": {
+    "classification": "bcm54213pe-bmcr-autoneg-restart-contract-selected",
+    "selected_follow_up_task_id": "phase12-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-core-20260616",
+    "feature_value": "thinnest source-backed link-recovery feature path after accepted read-only BCM54213PE visibility and retained link-not-ready evidence",
+    "hardware_authorized_by_this_task": false,
+    "runtime_write_authorized_by_this_task": false,
+    "allowed_local_core_surface": {
+      "target": "corrected-target Clause 22 PHY1 BMCR 0x00",
+      "pre_read_context": [
+        "BMCR",
+        "BMSR",
+        "ANAR",
+        "ANLPAR",
+        "MII_CTRL1000",
+        "MII_STAT1000",
+        "passive MACB_NSR_LINK"
+      ],
+      "preconditions": [
+        "corrected NCR.MPE set",
+        "BMCR_ISOLATE clear",
+        "no GPIO32/reset ownership required"
+      ],
+      "allowed_write_intent": "exactly one PHY1 BMCR write of pre_bmcr | BMCR_ANENABLE | BMCR_ANRESTART",
+      "post_read_context": [
+        "BMCR readback",
+        "double-sampled BMSR",
+        "ANAR",
+        "ANLPAR",
+        "MII_CTRL1000",
+        "MII_STAT1000",
+        "passive MACB_NSR_LINK"
+      ],
+      "paired_control": "same report surface with no MDIO/MAN/MACB/GPIO32/PHY/RP1 Ethernet target construction and no volatile Ethernet access intent"
+    }
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Accepted read-only MII_CTRL1000/MII_STAT1000 values are preserved as context only."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Retained BMCR/BMSR/ANAR/ANLPAR/MACB_NSR evidence still classifies link-not-ready and autoneg incomplete."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Linux genphy_restart_aneg source facts support BMCR_ANENABLE | BMCR_ANRESTART as the narrow standard recovery attempt."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Selected the BMCR/autoneg restart local proof-core as the only mechanically unblocked follow-up."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Serialized Pi 5 proof, runtime BMCR write evidence, restore proof, and closeout remain separate dependency-gated tasks."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "GPIO32 reset recovery, Broadcom selector/MMD/AUX writes, interrupts, PHY/MAC configuration, packet I/O, networking, SSH, Phase 12.2, and phase transition remain out of scope."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "Exact BCM54213PE identity and read-only gigabit registers do not prove GPIO32 event bits harmless, Broadcom selector safety, link readiness, or Ethernet driver readiness."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No hardware lock was acquired because this checkpoint is source/docs/evidence only."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No stale source, helper, task, or evidence file was removed."
+    }
+  ],
+  "forbidden_claims": [
+    "gpio32-reset-ownership",
+    "gpio32-event-clear-retry",
+    "eth-rst-n-assertion-or-deassertion",
+    "broadcom-shadow-mmd-aux-writes",
+    "selector-access",
+    "interrupt-ownership",
+    "broad-phy-configuration",
+    "macb-configuration",
+    "link-forcing",
+    "link-readiness",
+    "ethernet-driver-readiness",
+    "dma-descriptors",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "next_action": {
+    "task_id": "phase12-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-core-20260616",
+    "mechanically_unblocked_after_acceptance": true,
+    "conditions": [
+      "hardwareTestLock.locked is false and hardwareTestLock.restored is true",
+      "supervisorIntervention.active is false",
+      "projects/talos has no conflicting uncommitted changes"
+    ]
+  }
+}

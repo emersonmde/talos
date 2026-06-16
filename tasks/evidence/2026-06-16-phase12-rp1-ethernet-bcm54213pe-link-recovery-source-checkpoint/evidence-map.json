@@ -1,0 +1,68 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-link-recovery-source-checkpoint-20260616",
+  "classification": "bcm54213pe-bmcr-autoneg-restart-contract-selected",
+  "evidence": [
+    {
+      "label": "accepted BCM54213PE read-only v2 closeout",
+      "level": "static/task evidence inspection",
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-closeout.md"
+    },
+    {
+      "label": "accepted BCM54213PE read-only v2 closeout classification",
+      "level": "JSON evidence inspection",
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-closeout/classification.json"
+    },
+    {
+      "label": "accepted BCM54213PE read-only v2 Pi 5 proof classification",
+      "level": "JSON evidence inspection",
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-v2-pi5-proof/classification.json"
+    },
+    {
+      "label": "BCM54213PE config-init source contract",
+      "level": "static/source/evidence inspection",
+      "path": "tasks/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract.md"
+    },
+    {
+      "label": "PHY1 autoneg restart source contract",
+      "level": "static/source/evidence inspection",
+      "path": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-source-contract.md"
+    },
+    {
+      "label": "PHY1 autoneg restart closeout blocker",
+      "level": "static/task evidence inspection",
+      "path": "tasks/2026-06-14-phase12-rp1-ethernet-phy1-autoneg-restart-closeout.md"
+    },
+    {
+      "label": "task classification",
+      "level": "task-owned JSON evidence",
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-link-recovery-source-checkpoint/classification.json"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "static/source/evidence inspection",
+      "result": "pass"
+    },
+    {
+      "gate": "jq empty on task-owned JSON evidence",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "mdbook build",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo fmt/tests",
+      "result": "not-run-runtime-rust-and-scripts-unchanged"
+    },
+    {
+      "gate": "git diff --cached --check before commit",
+      "result": "pass"
+    }
+  ],
+  "commit": null
+}

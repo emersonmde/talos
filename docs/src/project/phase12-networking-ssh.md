@@ -2097,6 +2097,24 @@ this closeout. Supervisor planning must select any later GPIO32/PHY reset,
 BMCR/autoneg, Broadcom selector, interrupt, PHY/MAC configuration, packet I/O,
 networking, SSH, explicit pause, or other Phase 12.1 boundary.
 
+phase12-rp1-ethernet-bcm54213pe-link-recovery-source-checkpoint-20260616
+accepts bcm54213pe-bmcr-autoneg-restart-contract-selected. The checkpoint keeps
+the accepted MII_CTRL1000 0x0200 and MII_STAT1000 0x0000 values as context
+only, reconciles the retained BMCR 0x1000, BMSR 0x7949/0x7949, ANAR 0x01e1,
+ANLPAR 0x0000, MACB_NSR 0x00000006 link-not-ready frontier, and preserves the
+GPIO32 persistent-event-state blocker. The only selected follow-up is the
+local/static phase12-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-core-20260616
+task. Its allowed surface is one corrected-target PHY1 BMCR restart contract:
+pre-read BMCR/BMSR/ANAR/ANLPAR/MII_CTRL1000/MII_STAT1000 plus passive
+MACB_NSR_LINK context, require corrected NCR.MPE set and BMCR_ISOLATE clear,
+model exactly one BMCR write of pre_bmcr | BMCR_ANENABLE | BMCR_ANRESTART, and
+post-read BMCR, double BMSR, ANAR, ANLPAR, MII_CTRL1000, MII_STAT1000, and
+passive MACB_NSR_LINK. The paired control must construct no
+MDIO/MAN/MACB/GPIO32/PHY/RP1 Ethernet target and no volatile Ethernet access.
+This checkpoint does not authorize a hardware run, BMCR write, GPIO32/reset
+recovery, Broadcom shadow/MMD/AUX access, interrupt ownership, broad PHY/MAC
+configuration, packet I/O, networking, SSH, Phase 12.2, or a phase transition.
+
 phase12-rp1-ethernet-bootinfo-report-serial-visibility-closeout-20260616 closes
 that frontier as
 bootinfo-report-serial-visibility-frontier-closed-serial-drain-blocked. The
