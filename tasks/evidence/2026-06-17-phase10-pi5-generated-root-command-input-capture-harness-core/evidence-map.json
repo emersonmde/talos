@@ -1,0 +1,24 @@
+{
+  "task_id": "phase10-pi5-generated-root-command-input-capture-harness-core-20260617",
+  "classification": "command-input-capture-harness-core-local-static",
+  "evidence_level": [
+    "static source/task evidence inspection",
+    "shell syntax check",
+    "local/static proof-helper review",
+    "task-owned JSON evidence"
+  ],
+  "files": {
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-capture-harness-core/classification.json",
+    "capture_harness_review": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-capture-harness-core/capture-harness-review.json",
+    "accepted_closeout": "tasks/2026-06-17-phase10-pi5-generated-root-command-input-closeout.md",
+    "blocked_pi5_proof": "tasks/2026-06-17-phase10-pi5-generated-root-command-input-pi5-proof.md",
+    "prior_proof_core": "tasks/2026-06-17-phase10-pi5-generated-root-command-input-proof-core.md",
+    "updated_helper": "scripts/rpi5-generated-root-command-input-proof-review.sh"
+  },
+  "summary": {
+    "selected_next_task": "phase10-pi5-generated-root-command-input-capture-harness-pi5-proof-20260617",
+    "first_failing_invariant": "post-prompt /serial/write accepted bytes must become shell-visible command text in retained serial",
+    "selected_strategy": "two-step command-indexed proof: write rootinfo at command=0, observe ready command=1, then write cat /generated/manifest.txt at command=1 and observe manifest output from the command=1 cursor",
+    "no_hardware_run": true
+  }
+}

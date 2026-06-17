@@ -11,6 +11,7 @@ INITRAMFS_FILE="initramfs_2712"
 SERIAL_PREFIX="da591740"
 PROOF_LABEL="rpi5-generated-root-boot-transport-proof"
 CLASSIFICATION="pi5-generated-root-boot-transport-complete"
+PRELUDE_COMMAND="rootinfo"
 COMMAND="cat /generated/manifest.txt"
 COMMAND_PATH="/generated/manifest.txt"
 EXPECTED_OUTPUT="Talos generated-root external artifact A"
@@ -82,11 +83,12 @@ jq -n \
     --arg artifact_size "$(wc -c < "$extract_dir/$INITRAMFS_FILE" | tr -d ' ')" \
     --arg proof_label "$PROOF_LABEL" \
     --arg classification "$CLASSIFICATION" \
+    --arg prelude_command "$PRELUDE_COMMAND" \
     --arg command "$COMMAND" \
     --arg expected_output "$EXPECTED_OUTPUT" \
     --argjson kernel_contains_expected_output "$kernel_contains_expected_output" \
     '{
-      review: "rpi5-generated-root-command-input-proof-core-v1",
+      review: "rpi5-generated-root-command-input-capture-harness-core-v2",
       archive: {
         path: $archive,
         sha256: $archive_sha256,
@@ -102,25 +104,85 @@ jq -n \
         classification: $classification,
         prompt_readiness: [
           "same boot serial retains source=firmware-initramfs reason=valid-artifact",
-          "serial retains rpi5-generated-root-boot-transport-proof: ready command=N",
-          "serial retains visible talos> prompt before saving the write cursor"
+          "serial retains rpi5-generated-root-boot-transport-proof: ready command=0",
+          "serial retains visible talos> prompt before saving the command=0 write cursor"
+        ],
+        command_sequence: [
+          {
+            command_index: 0,
+            purpose: "source-gate prelude required by the generated-root proof harness",
+            serial_write: {
+              endpoint: "POST /serial/write",
+              text: $prelude_command,
+              append_newline: true
+            },
+            serial_observe: {
+              endpoint: "POST /serial/observe",
+              cursor: "saved command=0 post-prompt cursor",
+              required_response_fragments: [
+                $prelude_command,
+                "talos: generated-root source=firmware-initramfs reason=valid-artifact",
+                "dispatch command=0 status=handled",
+                "responses=1",
+                "rpi5-generated-root-boot-transport-proof: ready command=1"
+              ]
+            }
+          },
+          {
+            command_index: 1,
+            purpose: "selected generated-root command-input acceptance hinge",
+            serial_write: {
+              endpoint: "POST /serial/write",
+              text: $command,
+              append_newline: true
+            },
+            serial_observe: {
+              endpoint: "POST /serial/observe",
+              cursor: "saved command=1 post-prompt cursor",
+              required_response_fragments: [
+                $command,
+                $expected_output,
+                "dispatch command=1 status=handled",
+                "responses=1",
+                "rpi5-generated-root-boot-transport-proof: ready command=2"
+              ]
+            }
+          }
         ],
         serial_write: {
           endpoint: "POST /serial/write",
           text: $command,
-          append_newline: true
+          append_newline: true,
+          acceptance_command_index: 1,
+          prerequisite_command: $prelude_command
         },
         serial_observe: {
           endpoint: "POST /serial/observe",
-          cursor: "saved post-prompt cursor",
+          cursor: "saved command=1 post-prompt cursor",
           required_response_fragments: [
             $command,
             $expected_output,
-            "status=handled",
+            "dispatch command=1 status=handled",
             "responses=1",
-            "ready-for-next prompt=true or final PASS"
+            "ready command=2 or final PASS"
           ]
         },
+        capture_strategy: {
+          first_failing_invariant: "post-prompt /serial/write accepted bytes must become shell-visible command text in retained serial",
+          command_terminator: "append_newline=true for both prelude and acceptance commands",
+          timing: "write each command only after the matching ready command=N marker and visible talos> prompt are retained in the same boot",
+          cursor_contract: "save a cursor after each matching prompt and retain command response with /serial/observe from that cursor; if cursor saturation forces /serial/read fallback, preserve the saturated-cursor classification and do not accept command input unless the command text and response are retained",
+          direct_read_fallback: "diagnostic only after observe/cursor evidence is saturated or unavailable; direct-read-only output can block or support rerun triage but cannot replace retained command-index evidence"
+        },
+        allowed_terminal_classifications: [
+          "generated-root-command-input-accepted",
+          "command-input-write-ingress-missing",
+          "command-input-observe-cursor-saturated",
+          "command-input-command0-prelude-blocked",
+          "command-input-command1-manifest-blocked",
+          "unexpected-boot-identity",
+          "restore-blocked"
+        ],
         expected_output: $expected_output,
         expected_output_source_gate: "accepted only when same-boot serial also proves source=firmware-initramfs reason=valid-artifact",
         kernel_contains_expected_output: $kernel_contains_expected_output
@@ -144,5 +206,5 @@ jq -n \
         "Phase 11/12 expansion",
         "phase transition"
       ],
-      selected_next_task: "phase10-pi5-generated-root-command-input-pi5-proof-20260617"
+      selected_next_task: "phase10-pi5-generated-root-command-input-capture-harness-pi5-proof-20260617"
     }'

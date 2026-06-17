@@ -268,6 +268,30 @@ command input remains blocked. No follow-up implementation task is selected;
 supervisor planning is required before another timing/capture or harness-
 adjusted command-input hardware attempt.
 
+## Command-Input Capture Harness Core
+
+phase10-pi5-generated-root-command-input-capture-harness-core-20260617 accepts
+a local/static proof-harness correction for the command-input blocker. The first
+failing invariant is now explicit: post-prompt /serial/write accepted bytes must
+become shell-visible command text in retained serial, or the proof must classify
+why they did not.
+
+The updated helper
+scripts/rpi5-generated-root-command-input-proof-review.sh records the source-
+backed two-step generated-root proof sequence. The next hardware proof must wait
+for command 0 readiness, write rootinfo, observe the rootinfo source-gate
+response and ready command=1, then save the command 1 cursor, write
+cat /generated/manifest.txt, and observe from that command 1 cursor. Acceptance
+requires retained command text, Talos generated-root external artifact A,
+dispatch command=1 status=handled responses=1, and ready command=2 or final
+PASS evidence. Direct /serial/read fallback is diagnostic only when observe/
+cursor evidence is saturated or unavailable.
+
+The selected dependency-gated follow-up is
+phase10-pi5-generated-root-command-input-capture-harness-pi5-proof-20260617.
+Pi 5 command-input success, persistence, storage drivers, networking, SSH,
+Phase 11/12 expansion, and phase transition remain deferred to explicit tasks.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11/12

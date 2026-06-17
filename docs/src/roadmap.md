@@ -2377,6 +2377,23 @@ The post-review correction chain is:
     before another command-input hardware attempt, proof-harness adjustment,
     persistence, storage-driver work, networking, SSH, Phase 11/12 expansion,
     or phase transition.
+126. Pi 5 generated-root command-input capture-harness core: accepted in
+    'phase10-pi5-generated-root-command-input-capture-harness-core-20260617'
+    with classification 'command-input-capture-harness-core-local-static'.
+    The first failing invariant is explicit: post-prompt '/serial/write'
+    accepted bytes must become shell-visible command text in retained serial or
+    receive a source-backed blocker classification. The proof helper now
+    records the generated-root harness's two-step command order: command 0
+    writes 'rootinfo' and must retain the source-gate response plus ready
+    command=1; command 1 writes 'cat /generated/manifest.txt' and must retain
+    the command text, 'Talos generated-root external artifact A', dispatch
+    command=1 status=handled responses=1, and ready command=2 or final PASS.
+    Direct '/serial/read' fallback is diagnostic only and cannot replace
+    command-indexed retained evidence. The selected serialized follow-up is
+    'phase10-pi5-generated-root-command-input-capture-harness-pi5-proof-20260617'.
+    This local/static task does not accept Pi 5 command-input success,
+    persistence, storage drivers, networking, SSH, Phase 11/12 expansion, or
+    phase transition.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

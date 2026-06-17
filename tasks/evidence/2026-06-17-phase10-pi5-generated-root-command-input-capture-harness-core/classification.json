@@ -1,0 +1,151 @@
+{
+  "task_id": "phase10-pi5-generated-root-command-input-capture-harness-core-20260617",
+  "status": "accepted",
+  "classification": "command-input-capture-harness-core-local-static",
+  "selected_next_task": "phase10-pi5-generated-root-command-input-capture-harness-pi5-proof-20260617",
+  "first_failing_invariant": "post-prompt /serial/write accepted bytes must become shell-visible command text in retained serial",
+  "accepted_prior_evidence": {
+    "closeout": "tasks/2026-06-17-phase10-pi5-generated-root-command-input-closeout.md",
+    "blocked_pi5_proof": "tasks/2026-06-17-phase10-pi5-generated-root-command-input-pi5-proof.md",
+    "proof_core": "tasks/2026-06-17-phase10-pi5-generated-root-command-input-proof-core.md"
+  },
+  "hypothesis_dispositions": [
+    {
+      "hypothesis": "wrong command index/prelude sequencing",
+      "disposition": "fixed",
+      "evidence": "The generated-root Pi 5 harness source expects command 0 rootinfo and command 1 cat /generated/manifest.txt; the prior contract wrote the manifest command at the first retained ready prompt. The review helper now records a two-command sequence and command-index-specific required fragments."
+    },
+    {
+      "hypothesis": "newline terminator missing or malformed",
+      "disposition": "not-an-issue",
+      "evidence": "/serial/write accepted a 28-byte payload, matching cat /generated/manifest.txt plus one newline; the updated contract preserves append_newline=true for rootinfo and the manifest command."
+    },
+    {
+      "hypothesis": "post-write observation window/cursor selection can miss decisive bytes",
+      "disposition": "fixed",
+      "evidence": "The updated contract requires saved cursor and /serial/observe per command index; direct /serial/read is diagnostic fallback only and cannot replace retained command-index evidence."
+    },
+    {
+      "hypothesis": "runtime generated-root artifact path missing",
+      "disposition": "not-an-issue",
+      "evidence": "Local/static archive review still confirms /generated/manifest.txt and Talos generated-root external artifact A in the external initramfs artifact."
+    },
+    {
+      "hypothesis": "runtime input path source fix required",
+      "disposition": "deferred",
+      "evidence": "No source-backed runtime input-path defect is proven until a command-indexed, cursor-retained two-step proof fails."
+    }
+  ],
+  "changed_paths": [
+    "scripts/rpi5-generated-root-command-input-proof-review.sh"
+  ],
+  "capture_harness_contract": {
+    "scenario": "pi5-generated-root-manifest-command-input-v1",
+    "proof_label": "rpi5-generated-root-boot-transport-proof",
+    "classification": "pi5-generated-root-boot-transport-complete",
+    "prompt_readiness": [
+      "same boot serial retains source=firmware-initramfs reason=valid-artifact",
+      "serial retains rpi5-generated-root-boot-transport-proof: ready command=0",
+      "serial retains visible talos> prompt before saving the command=0 write cursor"
+    ],
+    "command_sequence": [
+      {
+        "command_index": 0,
+        "purpose": "source-gate prelude required by the generated-root proof harness",
+        "serial_write": {
+          "endpoint": "POST /serial/write",
+          "text": "rootinfo",
+          "append_newline": true
+        },
+        "serial_observe": {
+          "endpoint": "POST /serial/observe",
+          "cursor": "saved command=0 post-prompt cursor",
+          "required_response_fragments": [
+            "rootinfo",
+            "talos: generated-root source=firmware-initramfs reason=valid-artifact",
+            "dispatch command=0 status=handled",
+            "responses=1",
+            "rpi5-generated-root-boot-transport-proof: ready command=1"
+          ]
+        }
+      },
+      {
+        "command_index": 1,
+        "purpose": "selected generated-root command-input acceptance hinge",
+        "serial_write": {
+          "endpoint": "POST /serial/write",
+          "text": "cat /generated/manifest.txt",
+          "append_newline": true
+        },
+        "serial_observe": {
+          "endpoint": "POST /serial/observe",
+          "cursor": "saved command=1 post-prompt cursor",
+          "required_response_fragments": [
+            "cat /generated/manifest.txt",
+            "Talos generated-root external artifact A",
+            "dispatch command=1 status=handled",
+            "responses=1",
+            "rpi5-generated-root-boot-transport-proof: ready command=2"
+          ]
+        }
+      }
+    ],
+    "serial_write": {
+      "endpoint": "POST /serial/write",
+      "text": "cat /generated/manifest.txt",
+      "append_newline": true,
+      "acceptance_command_index": 1,
+      "prerequisite_command": "rootinfo"
+    },
+    "serial_observe": {
+      "endpoint": "POST /serial/observe",
+      "cursor": "saved command=1 post-prompt cursor",
+      "required_response_fragments": [
+        "cat /generated/manifest.txt",
+        "Talos generated-root external artifact A",
+        "dispatch command=1 status=handled",
+        "responses=1",
+        "ready command=2 or final PASS"
+      ]
+    },
+    "capture_strategy": {
+      "first_failing_invariant": "post-prompt /serial/write accepted bytes must become shell-visible command text in retained serial",
+      "command_terminator": "append_newline=true for both prelude and acceptance commands",
+      "timing": "write each command only after the matching ready command=N marker and visible talos> prompt are retained in the same boot",
+      "cursor_contract": "save a cursor after each matching prompt and retain command response with /serial/observe from that cursor; if cursor saturation forces /serial/read fallback, preserve the saturated-cursor classification and do not accept command input unless the command text and response are retained",
+      "direct_read_fallback": "diagnostic only after observe/cursor evidence is saturated or unavailable; direct-read-only output can block or support rerun triage but cannot replace retained command-index evidence"
+    },
+    "allowed_terminal_classifications": [
+      "generated-root-command-input-accepted",
+      "command-input-write-ingress-missing",
+      "command-input-observe-cursor-saturated",
+      "command-input-command0-prelude-blocked",
+      "command-input-command1-manifest-blocked",
+      "unexpected-boot-identity",
+      "restore-blocked"
+    ],
+    "expected_output": "Talos generated-root external artifact A",
+    "expected_output_source_gate": "accepted only when same-boot serial also proves source=firmware-initramfs reason=valid-artifact",
+    "kernel_contains_expected_output": false
+  },
+  "allowed_terminal_classifications": [
+    "generated-root-command-input-accepted",
+    "command-input-write-ingress-missing",
+    "command-input-observe-cursor-saturated",
+    "command-input-command0-prelude-blocked",
+    "command-input-command1-manifest-blocked",
+    "unexpected-boot-identity",
+    "restore-blocked"
+  ],
+  "rejected_claims": [
+    "Pi 5 command-input success in this local/static task",
+    "hardware publication or power-cycle",
+    "persistence",
+    "writable filesystem",
+    "SD/USB/block storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}
