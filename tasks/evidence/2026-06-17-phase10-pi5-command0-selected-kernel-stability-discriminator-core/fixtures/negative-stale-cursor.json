@@ -1,0 +1,34 @@
+{
+  "evidence": {
+    "selected_kernel_stability": {
+      "expected_fetch": "da591740/kernel_2712.img",
+      "expected_kernel_2712_size": 208984,
+      "post_publish_identity": {
+        "selected_tree_staged": true,
+        "effective_kernel": "kernel_2712.img",
+        "expected_fetch_present": true,
+        "expected_fetch_bytes": 208984
+      },
+      "tftp": {
+        "cursor_start": 4591440,
+        "cursor_end": 4591440,
+        "stable": true,
+        "expected_fetch_count": 2,
+        "expected_fetch_byte_match_count": 2,
+        "expected_fetch_bytes_seen": [
+          208984,
+          208984
+        ]
+      },
+      "final_pre_restore": {
+        "effective_kernel": "kernel_2712.img",
+        "selected_tree_still_staged": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes": 208984
+      },
+      "restore": {
+        "ok": true
+      }
+    }
+  }
+}

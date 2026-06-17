@@ -1,0 +1,62 @@
+{
+  "task_id": "phase10-pi5-command0-selected-kernel-stability-discriminator-core-20260617",
+  "classification": "selected-kernel-stability-discriminator-core-local-static",
+  "task_record": "tasks/2026-06-17-phase10-pi5-command0-selected-kernel-stability-discriminator-core.md",
+  "classification_file": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-discriminator-core/classification.json",
+  "changed_helper": "scripts/rpi5-selected-kernel-stability-discriminator.sh",
+  "source_context": [
+    {
+      "label": "regression reconciliation selected this core",
+      "level": "static/source/task evidence inspection",
+      "task_record": "tasks/2026-06-17-phase10-pi5-command0-selected-kernel-regression-reconciliation-source-checkpoint.md",
+      "classification_file": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-regression-reconciliation-source-checkpoint/classification.json"
+    },
+    {
+      "label": "retained saturated-capture regression",
+      "level": "serial hardware boot/output + lab-controller API + TFTP evidence",
+      "task_record": "tasks/2026-06-17-phase10-pi5-serial-command0-saturated-capture-pi5-proof.md",
+      "classification_file": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-saturated-capture-pi5-proof/candidate-command0-saturated-capture-20260617T163347Z/classification.json"
+    }
+  ],
+  "fixture_results": [
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-discriminator-core/results/positive-selected-kernel-stability.result.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-discriminator-core/results/negative-no-fresh-tftp.result.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-discriminator-core/results/negative-final-identity-mismatch.result.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-discriminator-core/results/negative-stale-cursor.result.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-discriminator-core/results/negative-restore-failure.result.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-discriminator-core/results/negative-baseline-served-regression.result.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-discriminator-core/results/retained-saturated-capture-regression.result.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-discriminator-core/results/fixture-replay-summary.json"
+  ],
+  "validation": [
+    {
+      "gate": "sh -n scripts/rpi5-selected-kernel-stability-discriminator.sh",
+      "result": "pass"
+    },
+    {
+      "gate": "task-owned positive/negative fixture replay",
+      "result": "pass"
+    },
+    {
+      "gate": "retained saturated-capture regression replay",
+      "result": "pass"
+    },
+    {
+      "gate": "jq empty on task-owned JSON evidence",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "mdbook build",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check before commit",
+      "result": "pass"
+    }
+  ],
+  "selected_next_task": "phase10-pi5-command0-selected-kernel-stability-pi5-proof-20260617"
+}

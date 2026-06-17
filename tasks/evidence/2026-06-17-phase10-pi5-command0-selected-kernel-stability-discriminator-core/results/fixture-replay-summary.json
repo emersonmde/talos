@@ -1,0 +1,57 @@
+{
+  "task_id": "phase10-pi5-command0-selected-kernel-stability-discriminator-core-20260617",
+  "checker": "rpi5-selected-kernel-stability-discriminator-v1",
+  "results": [
+    {
+      "label": "positive-selected-kernel-stability",
+      "classification": "selected-kernel-stability-discriminator-accepted",
+      "accepted": true,
+      "first_failing_invariant": null,
+      "selected_next_task": "phase10-pi5-command0-selected-kernel-stability-pi5-proof-20260617"
+    },
+    {
+      "label": "negative-no-fresh-tftp",
+      "classification": "selected-kernel-stability-discriminator-rejected",
+      "accepted": false,
+      "first_failing_invariant": "no stable fresh same-power-cycle TFTP fetch",
+      "selected_next_task": null
+    },
+    {
+      "label": "negative-final-identity-mismatch",
+      "classification": "selected-kernel-stability-discriminator-rejected",
+      "accepted": false,
+      "first_failing_invariant": "final pre-restore selected identity missing or mismatched",
+      "selected_next_task": null
+    },
+    {
+      "label": "negative-stale-cursor",
+      "classification": "selected-kernel-stability-discriminator-rejected",
+      "accepted": false,
+      "first_failing_invariant": "stale or ambiguous TFTP cursor boundary",
+      "selected_next_task": null
+    },
+    {
+      "label": "negative-restore-failure",
+      "classification": "selected-kernel-stability-discriminator-rejected",
+      "accepted": false,
+      "first_failing_invariant": "restore proof missing or failed",
+      "selected_next_task": null
+    },
+    {
+      "label": "negative-baseline-served-regression",
+      "classification": "selected-kernel-stability-discriminator-rejected",
+      "accepted": false,
+      "first_failing_invariant": "same-power-cycle TFTP served bytes do not match selected kernel",
+      "selected_next_task": null
+    },
+    {
+      "label": "retained-saturated-capture-regression",
+      "classification": "selected-kernel-stability-discriminator-rejected",
+      "accepted": false,
+      "first_failing_invariant": "post-publish selected identity missing or mismatched",
+      "selected_next_task": null
+    }
+  ],
+  "positive_accepts": 1,
+  "negative_rejections": 6
+}

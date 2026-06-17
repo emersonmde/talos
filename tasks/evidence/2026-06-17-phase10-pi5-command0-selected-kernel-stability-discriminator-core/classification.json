@@ -1,0 +1,38 @@
+{
+  "task_id": "phase10-pi5-command0-selected-kernel-stability-discriminator-core-20260617",
+  "classification": "selected-kernel-stability-discriminator-core-local-static",
+  "accepted": true,
+  "checker": "rpi5-selected-kernel-stability-discriminator-v1",
+  "helper": "scripts/rpi5-selected-kernel-stability-discriminator.sh",
+  "accepted_contract": {
+    "post_publish_identity": "selected tree, effective kernel_2712.img, selected da591740/kernel_2712.img present, and selected kernel byte count match",
+    "same_power_cycle_tftp": "fresh advancing TFTP cursor, stable delta, at least one selected kernel fetch, and every selected-kernel fetch byte count matches the expected selected kernel",
+    "final_pre_restore_identity": "final pre-restore identity still exposes the selected tree and selected kernel byte count",
+    "restore": "restore proof is present and ok"
+  },
+  "fixture_replay_summary": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-discriminator-core/results/fixture-replay-summary.json",
+  "positive_fixture": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-discriminator-core/fixtures/positive-selected-kernel-stability.json",
+  "negative_fixtures": [
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-discriminator-core/fixtures/negative-no-fresh-tftp.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-discriminator-core/fixtures/negative-final-identity-mismatch.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-discriminator-core/fixtures/negative-stale-cursor.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-discriminator-core/fixtures/negative-restore-failure.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-discriminator-core/fixtures/negative-baseline-served-regression.json"
+  ],
+  "retained_regression_replay": {
+    "source": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-saturated-capture-pi5-proof/candidate-command0-saturated-capture-20260617T163347Z/classification.json",
+    "result": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-discriminator-core/results/retained-saturated-capture-regression.result.json",
+    "accepted": false
+  },
+  "selected_next_task": "phase10-pi5-command0-selected-kernel-stability-pi5-proof-20260617",
+  "rejected_claims": [
+    "command0 write-delivery success",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

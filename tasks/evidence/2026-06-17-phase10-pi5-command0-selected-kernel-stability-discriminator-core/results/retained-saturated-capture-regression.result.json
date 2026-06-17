@@ -1,0 +1,49 @@
+{
+  "task_id": "phase10-pi5-command0-selected-kernel-stability-discriminator-core-20260617",
+  "checker": "rpi5-selected-kernel-stability-discriminator-v1",
+  "accepted": false,
+  "classification": "selected-kernel-stability-discriminator-rejected",
+  "first_failing_invariant": "post-publish selected identity missing or mismatched",
+  "contract": {
+    "checker": "rpi5-selected-kernel-stability-discriminator-v1",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_kernel_2712_size": 208984,
+    "post_publish_identity": {
+      "selected_tree": false,
+      "effective_kernel": false,
+      "expected_fetch_present": false,
+      "expected_fetch_bytes_match": false
+    },
+    "tftp": {
+      "cursor_start": 4594064,
+      "cursor_end": 4595504,
+      "stable": true,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 0,
+      "expected_fetch_bytes_seen": [
+        104136,
+        104136
+      ]
+    },
+    "final_pre_restore_identity": {
+      "selected_tree": false,
+      "effective_kernel": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes_match": false
+    },
+    "restore": {
+      "ok": true
+    }
+  },
+  "selected_next_task": null,
+  "rejected_claims": [
+    "command0 write-delivery success",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

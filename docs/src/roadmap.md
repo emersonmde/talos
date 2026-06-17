@@ -2971,6 +2971,24 @@ The post-review correction chain is:
     consistency. Command0 write-delivery success, source-response retention,
     generated-root command-input success, storage, networking, SSH,
     Phase 11/12 expansion, and phase transition remain rejected.
+163. Pi 5 command0 selected-kernel stability discriminator core: accepted in
+    'phase10-pi5-command0-selected-kernel-stability-discriminator-core-20260617'
+    with classification
+    'selected-kernel-stability-discriminator-core-local-static'. The new
+    local/static helper
+    'scripts/rpi5-selected-kernel-stability-discriminator.sh' accepts only a
+    selected-kernel stability contract that preserves post-publish selected
+    identity, an advancing stable same-power-cycle TFTP cursor with all
+    selected da591740/kernel_2712.img fetches matching the expected selected
+    byte count, final pre-restore selected identity, and restore proof. The
+    fixture replay accepts the positive selected-kernel stability shape and
+    rejects no-fresh-TFTP, final-identity mismatch, stale cursor/cursor-boundary
+    ambiguity, restore failure, baseline-served regression, and the retained
+    saturated-capture regression evidence. The selected follow-up is
+    'phase10-pi5-command0-selected-kernel-stability-pi5-proof-20260617'.
+    Command0 write-delivery success, source-response retention,
+    generated-root command-input success, storage, networking, SSH,
+    Phase 11/12 expansion, and phase transition remain rejected.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
