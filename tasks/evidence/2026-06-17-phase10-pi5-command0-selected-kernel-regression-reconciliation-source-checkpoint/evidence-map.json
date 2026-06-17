@@ -1,0 +1,59 @@
+{
+  "task_id": "phase10-pi5-command0-selected-kernel-regression-reconciliation-source-checkpoint-20260617",
+  "classification": "command0-selected-kernel-regression-reconciled-stability-discriminator-selected",
+  "task_record": "tasks/2026-06-17-phase10-pi5-command0-selected-kernel-regression-reconciliation-source-checkpoint.md",
+  "classification_file": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-regression-reconciliation-source-checkpoint/classification.json",
+  "source_evidence": [
+    {
+      "label": "selected-kernel/TFTP precondition accepted single-run proof",
+      "level": "serial hardware boot/output + lab-controller API + TFTP evidence",
+      "task_record": "tasks/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-pi5-proof.md",
+      "classification_file": "tasks/evidence/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-pi5-proof/candidate-selected-kernel-tftp-precondition-20260617T121556Z/classification.json",
+      "evidence_map": "tasks/evidence/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-pi5-proof/evidence-map.json"
+    },
+    {
+      "label": "command0 write-delivery v2 blocked after selected-kernel/TFTP pass",
+      "level": "serial hardware boot/output + lab-controller API + TFTP evidence",
+      "task_record": "tasks/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof-v2-after-tftp-precondition.md",
+      "classification_file": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof-v2-after-tftp-precondition/candidate-command0-write-delivery-v2-20260617T124424Z/classification.json",
+      "evidence_map": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof-v2-after-tftp-precondition/evidence-map.json"
+    },
+    {
+      "label": "post-write observe inconclusive at saturated serial cursor",
+      "level": "serial hardware boot/output + lab-controller API + TFTP evidence",
+      "task_record": "tasks/2026-06-17-phase10-pi5-serial-command0-post-write-observe-pi5-proof.md",
+      "classification_file": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-pi5-proof/candidate-command0-post-write-observe-20260617T150944Z/classification.json",
+      "evidence_map": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-pi5-proof/evidence-map.json"
+    },
+    {
+      "label": "saturated-capture selected-kernel/TFTP regression",
+      "level": "serial hardware boot/output + lab-controller API + TFTP evidence",
+      "task_record": "tasks/2026-06-17-phase10-pi5-serial-command0-saturated-capture-pi5-proof.md",
+      "classification_file": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-saturated-capture-pi5-proof/candidate-command0-saturated-capture-20260617T163347Z/classification.json",
+      "evidence_map": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-saturated-capture-pi5-proof/evidence-map.json"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "static/source/task evidence inspection",
+      "result": "pass"
+    },
+    {
+      "gate": "jq empty on task-owned JSON evidence",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "mdbook build",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check before commit",
+      "result": "pass"
+    }
+  ],
+  "selected_next_task": "phase10-pi5-command0-selected-kernel-stability-discriminator-core-20260617"
+}

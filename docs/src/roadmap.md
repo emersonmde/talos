@@ -2952,6 +2952,25 @@ The post-review correction chain is:
     reconciliation, helper quarantine, same-feature retry, source-response
     retention proof, transition checkpoint, storage, networking, SSH,
     Phase 11/12 expansion, or phase transition.
+162. Pi 5 command0 selected-kernel regression reconciliation source checkpoint:
+    accepted in
+    'phase10-pi5-command0-selected-kernel-regression-reconciliation-source-checkpoint-20260617'
+    with classification
+    'command0-selected-kernel-regression-reconciled-stability-discriminator-selected'.
+    The checkpoint preserves the first failing invariant from the saturated-
+    capture proof as selected-kernel/TFTP/final identity regression, not
+    command0 write delivery: post-publish boot files exposed the selected
+    208984-byte tree, but same-power-cycle TFTP served 104136-byte baseline
+    bytes and final pre-restore identity exposed the baseline tree before any
+    rootinfo write. The earlier selected-kernel/TFTP precondition proof remains
+    valid only as a single-run precondition proof and no longer unblocks later
+    command0 retries by itself. The selected follow-up is
+    'phase10-pi5-command0-selected-kernel-stability-discriminator-core-20260617',
+    a local/static discriminator for post-publish identity, same-power-cycle
+    TFTP bytes, final identity, stale cursor/no-fresh-TFTP, and restore
+    consistency. Command0 write-delivery success, source-response retention,
+    generated-root command-input success, storage, networking, SSH,
+    Phase 11/12 expansion, and phase transition remain rejected.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

@@ -1,0 +1,68 @@
+{
+  "task_id": "phase10-pi5-command0-selected-kernel-regression-reconciliation-source-checkpoint-20260617",
+  "classification": "command0-selected-kernel-regression-reconciled-stability-discriminator-selected",
+  "accepted": true,
+  "first_failing_invariant": "selected-kernel/TFTP/final identity regression in saturated-capture proof: post-publish identity exposed the selected 208984-byte tree, but same-power-cycle TFTP served 104136-byte baseline bytes and final pre-restore identity exposed the baseline tree before any command0 write",
+  "invariant": {
+    "post_publish_boot_files": "selected tree and selected da591740/kernel_2712.img byte count must be present after archive publication",
+    "same_power_cycle_tftp": "stable TFTP delta from the same power cycle must serve the selected da591740/kernel_2712.img byte count",
+    "final_pre_restore_identity": "final pre-restore boot files must still expose the same selected tree and selected kernel byte count",
+    "restore": "post-run restore must return to the saved baseline"
+  },
+  "prior_evidence": {
+    "selected_kernel_precondition_proof": {
+      "task": "tasks/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-pi5-proof.md",
+      "classification_file": "tasks/evidence/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-pi5-proof/candidate-selected-kernel-tftp-precondition-20260617T121556Z/classification.json",
+      "classification": "command0-tftp-selected-kernel-precondition-accepted",
+      "disposition": "not-an-issue",
+      "note": "Valid as a single-run selected-kernel/TFTP precondition proof; no longer sufficient by itself to unblock later command0 retry planning."
+    },
+    "write_delivery_v2_proof": {
+      "task": "tasks/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof-v2-after-tftp-precondition.md",
+      "classification_file": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof-v2-after-tftp-precondition/candidate-command0-write-delivery-v2-20260617T124424Z/classification.json",
+      "classification": "command0-write-delivery-blocked",
+      "disposition": "not-an-issue",
+      "note": "Selected-kernel/TFTP agreement passed in this run; command0 write delivery blocked after accepted write and zero post-write command0 bytes."
+    },
+    "post_write_observe_proof": {
+      "task": "tasks/2026-06-17-phase10-pi5-serial-command0-post-write-observe-pi5-proof.md",
+      "classification_file": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-pi5-proof/candidate-command0-post-write-observe-20260617T150944Z/classification.json",
+      "classification": "command0-post-write-observe-inconclusive-serial-cursor-saturated",
+      "disposition": "deferred",
+      "note": "Selected-kernel/TFTP agreement passed, but serial observe from saturated cursor was non-evaluable; stale later command3 rootinfo did not satisfy command0."
+    },
+    "saturated_capture_proof": {
+      "task": "tasks/2026-06-17-phase10-pi5-serial-command0-saturated-capture-pi5-proof.md",
+      "classification_file": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-saturated-capture-pi5-proof/candidate-command0-saturated-capture-20260617T163347Z/classification.json",
+      "classification": "command0-saturated-capture-blocked-selected-kernel-tftp-precondition-regressed",
+      "disposition": "fixed",
+      "note": "Preserved as the current first failing invariant: selected-kernel/TFTP/final identity regressed before command0 write."
+    }
+  },
+  "quarantine": {
+    "single_run_precondition_only": "phase10-pi5-command0-tftp-selected-kernel-precondition-pi5-proof-20260617",
+    "quarantine_reason": "A later saturated-capture run observed post-publish selected identity followed by baseline-sized same-power-cycle TFTP and baseline final identity; earlier single-run acceptance does not prove selected-kernel stability for later command0 retries.",
+    "must_not_unblock": [
+      "same-shaped command0 retry",
+      "source-response-retention proof",
+      "generated-root command-input success"
+    ]
+  },
+  "allowed_next_surface": [
+    "scripts/rpi5-generated-root-command-input-direct-read-proof-review.sh or directly paired selected-kernel stability helper",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-discriminator-core/",
+    "tasks/2026-06-17-phase10-pi5-command0-selected-kernel-stability-discriminator-core.md",
+    "docs/src/roadmap.md if the accepted frontier or selected next task changes"
+  ],
+  "selected_next_task": "phase10-pi5-command0-selected-kernel-stability-discriminator-core-20260617",
+  "rejected_claims": [
+    "command0 write-delivery success",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}
