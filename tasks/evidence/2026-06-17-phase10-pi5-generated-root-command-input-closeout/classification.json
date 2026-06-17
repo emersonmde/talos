@@ -1,0 +1,41 @@
+{
+  "task_id": "phase10-pi5-generated-root-command-input-closeout-20260617",
+  "status": "accepted",
+  "classification": "pi5-generated-root-command-input-remains-blocked-supervisor-planning-needed",
+  "accepted_capability": null,
+  "retained_boundaries": {
+    "generated_root_consumption": "Pi 5 firmware-initramfs generated-root consumption remains accepted by phase10-pi5-generated-root-firmware-initramfs-reservation-closeout-20260616.",
+    "command_input": "blocked; retained serial does not show injected command text or generated-root manifest output"
+  },
+  "source_tasks": {
+    "checkpoint": "phase10-pi5-generated-root-command-input-source-checkpoint-20260617",
+    "proof_core": "phase10-pi5-generated-root-command-input-proof-core-20260617",
+    "pi5_proof": "phase10-pi5-generated-root-command-input-pi5-proof-20260617"
+  },
+  "blocked_proof_summary": {
+    "classification": "inconclusive-command-input-capture-or-timing",
+    "selected_evidence_run": "candidate-rerun2-direct-read-drained",
+    "observed": [
+      "source=firmware-initramfs reason=valid-artifact",
+      "visible talos> prompt after generated-root proof readiness",
+      "/serial/write accepted a nonempty 28-byte payload"
+    ],
+    "missing": [
+      "retained cat /generated/manifest.txt command text",
+      "Talos generated-root external artifact A output",
+      "handled manifest-command dispatch"
+    ]
+  },
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "Generated-root command input remains blocked by inconclusive command-input capture/timing evidence; supervisor must plan the next timing/capture or harness-adjusted follow-up before another hardware attempt.",
+  "rejected_claims": [
+    "persistence",
+    "writable filesystem",
+    "SD/USB/block storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

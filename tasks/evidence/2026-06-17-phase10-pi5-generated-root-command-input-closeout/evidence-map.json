@@ -1,0 +1,29 @@
+{
+  "task_id": "phase10-pi5-generated-root-command-input-closeout-20260617",
+  "classification": "pi5-generated-root-command-input-remains-blocked-supervisor-planning-needed",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "blocked Pi 5 serial/TFTP/restore evidence",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "files": {
+    "task_record": "tasks/2026-06-17-phase10-pi5-generated-root-command-input-closeout.md",
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-closeout/classification.json",
+    "checkpoint_task": "tasks/2026-06-17-phase10-pi5-generated-root-command-input-source-checkpoint.md",
+    "checkpoint_classification": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-source-checkpoint/classification.json",
+    "proof_core_task": "tasks/2026-06-17-phase10-pi5-generated-root-command-input-proof-core.md",
+    "proof_core_classification": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-proof-core/classification.json",
+    "pi5_proof_task": "tasks/2026-06-17-phase10-pi5-generated-root-command-input-pi5-proof.md",
+    "pi5_proof_classification": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-pi5-proof/classification.json",
+    "pi5_proof_evidence_map": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-pi5-proof/evidence-map.json",
+    "selected_pi5_evidence_run": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-pi5-proof/candidate-rerun2-direct-read-drained/"
+  },
+  "summary": {
+    "status": "accepted",
+    "accepted_capability": null,
+    "frontier": "Generated-root command input on Pi 5 remains blocked; Pi 5 firmware-initramfs generated-root consumption remains accepted by the prior reservation closeout.",
+    "next_action": "supervisor planning required; no follow-up task selected"
+  }
+}

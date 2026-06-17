@@ -2368,6 +2368,15 @@ The post-review correction chain is:
     attempt. Persistence, writable filesystem, SD/USB/block storage,
     networking, SSH, Phase 11/12 expansion, and phase transition remain
     rejected.
+125. Pi 5 generated-root command-input closeout: accepted in
+    'phase10-pi5-generated-root-command-input-closeout-20260617' as static
+    evidence/docs reconciliation only. It preserves the accepted Pi 5
+    firmware-initramfs generated-root consumption boundary, records that
+    command input remains blocked on inconclusive timing/capture evidence, and
+    selects no follow-up implementation task. Supervisor planning is required
+    before another command-input hardware attempt, proof-harness adjustment,
+    persistence, storage-driver work, networking, SSH, Phase 11/12 expansion,
+    or phase transition.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -6969,6 +6978,11 @@ Selected first slice:
   closes the prior Pi 5 generated-root hardware-consumption blocker and keeps
   command-input, writable persistence, SD/USB/block storage, broader filesystem
   mutation, networking, SSH, and phase transition dependency-gated.
+- 'phase10-pi5-generated-root-command-input-closeout-20260617' records that
+  command input remains blocked after the Pi 5 proof accepted a nonempty
+  /serial/write payload but retained no command text or generated-root manifest
+  output. It selects no follow-up task; supervisor planning is required before
+  another command-input or harness-adjusted hardware attempt.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The
@@ -6995,8 +7009,9 @@ Acceptance criteria:
   setup. The later reservation-by-early-memory-plan-exclusion slice implements
   the fix and accepts Pi 5 firmware-initramfs generated-root consumption with
   serialized hardware proof. Scripted command injection for that scenario,
-  writable persistence, SD/USB/block storage, networking, SSH, and phase
-  transition remain deferred and require explicit follow-up tasks.
+  including the later command-input closeout, remains blocked on timing/capture
+  evidence; writable persistence, SD/USB/block storage, networking, SSH, and
+  phase transition remain deferred and require explicit follow-up tasks.
 - Documentation explains the chosen local storage path and remaining risks.
   Current status: accepted by the Milestone 10.3 closeout as a local/QEMU
   generated-root transport checkpoint. Later reservation work accepts Pi 5

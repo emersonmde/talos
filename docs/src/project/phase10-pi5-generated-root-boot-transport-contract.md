@@ -251,6 +251,23 @@ boot publication, hardwareTestLock acquisition, power-cycle, TFTP/serial
 capture, persistence, storage drivers, networking, SSH, Phase 11/12 expansion,
 and phase transition remain deferred to explicit follow-up tasks.
 
+## Command-Input Pi 5 Proof And Closeout
+
+phase10-pi5-generated-root-command-input-pi5-proof-20260617 is blocked with
+classification inconclusive-command-input-capture-or-timing. The selected Pi 5
+run retained source=firmware-initramfs reason=valid-artifact and a visible
+talos> prompt, and the lab /serial/write endpoint accepted the nonempty
+cat /generated/manifest.txt payload. Retained serial did not show that command
+text, Talos generated-root external artifact A, or a handled manifest-command
+dispatch before later empty-command timeouts.
+
+phase10-pi5-generated-root-command-input-closeout-20260617 accepts only the
+static reconciliation of that blocker. Pi 5 firmware-initramfs generated-root
+consumption remains accepted from the reservation proof, but Pi 5 generated-root
+command input remains blocked. No follow-up implementation task is selected;
+supervisor planning is required before another timing/capture or harness-
+adjusted command-input hardware attempt.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11/12
