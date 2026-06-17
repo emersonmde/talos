@@ -1,0 +1,70 @@
+{
+  "evidence": {
+    "selected_kernel_paired_sentinel": {
+      "selected_discriminator": "selected-kernel-paired-sentinel-publication-boundary-v1",
+      "no_command_write": true,
+      "candidate": {
+        "kind": "candidate",
+        "label": "paired-sentinel-candidate-baseline-served-regression",
+        "expected_kernel_2712_size": 208984,
+        "post_publish_identity": {
+          "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+          "selected_tree_staged": true,
+          "effective_kernel": "kernel_2712.img",
+          "expected_fetch_present": true,
+          "expected_fetch_bytes": 208984
+        },
+        "tftp": {
+          "cursor_start": 4595504,
+          "cursor_end": 4596944,
+          "stable": true,
+          "expected_fetch_count": 2,
+          "expected_fetch_byte_match_count": 0,
+          "expected_fetch_bytes_seen": [104136, 104136]
+        },
+        "final_pre_restore": {
+          "selected_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+          "selected_tree_still_staged": false,
+          "effective_kernel": "kernel_2712.img",
+          "expected_fetch_present": true,
+          "expected_fetch_bytes": 104136
+        },
+        "restore": {
+          "ok": true,
+          "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+        }
+      },
+      "control": {
+        "kind": "control",
+        "label": "paired-sentinel-control-would-have-passed",
+        "expected_kernel_2712_size": 209016,
+        "post_publish_identity": {
+          "selected_tree_hash": "2222222222222222222222222222222222222222222222222222222222222222",
+          "selected_tree_staged": true,
+          "effective_kernel": "kernel_2712.img",
+          "expected_fetch_present": true,
+          "expected_fetch_bytes": 209016
+        },
+        "tftp": {
+          "cursor_start": 4601440,
+          "cursor_end": 4602880,
+          "stable": true,
+          "expected_fetch_count": 2,
+          "expected_fetch_byte_match_count": 2,
+          "expected_fetch_bytes_seen": [209016, 209016]
+        },
+        "final_pre_restore": {
+          "selected_tree_hash": "2222222222222222222222222222222222222222222222222222222222222222",
+          "selected_tree_still_staged": true,
+          "effective_kernel": "kernel_2712.img",
+          "expected_fetch_present": true,
+          "expected_fetch_bytes": 209016
+        },
+        "restore": {
+          "ok": true,
+          "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+        }
+      }
+    }
+  }
+}

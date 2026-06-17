@@ -1,0 +1,485 @@
+{
+  "task_id": "phase10-pi5-command0-selected-kernel-paired-sentinel-core-20260617",
+  "status": "accepted",
+  "classification": "selected-kernel-paired-sentinel-core-local-static",
+  "selected_discriminator": "selected-kernel-paired-sentinel-publication-boundary-v1",
+  "helper": "scripts/rpi5-selected-kernel-paired-sentinel-discriminator.sh",
+  "fixture_replay": {
+    "task_id": "phase10-pi5-command0-selected-kernel-paired-sentinel-core-20260617",
+    "classification": "selected-kernel-paired-sentinel-fixture-replay-complete",
+    "results": {
+      "positive": {
+        "task_id": "phase10-pi5-command0-selected-kernel-paired-sentinel-core-20260617",
+        "checker": "rpi5-selected-kernel-paired-sentinel-discriminator-v1",
+        "accepted": true,
+        "classification": "selected-kernel-paired-sentinel-discriminator-accepted",
+        "selected_discriminator": "selected-kernel-paired-sentinel-publication-boundary-v1",
+        "first_failing_invariant": null,
+        "contract": {
+          "candidate": {
+            "kind": "candidate",
+            "label": "paired-sentinel-candidate-fixture",
+            "selected_tree_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "expected_fetch": "da591740/kernel_2712.img",
+            "expected_kernel_2712_size": 209032,
+            "no_command_write": true,
+            "post_publish_identity": {
+              "selected_tree": true,
+              "effective_kernel": true,
+              "expected_fetch_present": true,
+              "expected_fetch_bytes_match": true
+            },
+            "tftp": {
+              "cursor_start": 4600000,
+              "cursor_end": 4601440,
+              "stable": true,
+              "expected_fetch_count": 2,
+              "expected_fetch_byte_match_count": 2,
+              "expected_fetch_bytes_seen": [
+                209032,
+                209032
+              ]
+            },
+            "final_pre_restore_identity": {
+              "selected_tree_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+              "selected_tree": true,
+              "effective_kernel": true,
+              "expected_fetch_present": true,
+              "expected_fetch_bytes_match": true
+            },
+            "restore": {
+              "ok": true,
+              "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+            }
+          },
+          "control": {
+            "kind": "control",
+            "label": "paired-sentinel-control-fixture",
+            "selected_tree_hash": "2222222222222222222222222222222222222222222222222222222222222222",
+            "expected_fetch": "da591740/kernel_2712.img",
+            "expected_kernel_2712_size": 209016,
+            "no_command_write": true,
+            "post_publish_identity": {
+              "selected_tree": true,
+              "effective_kernel": true,
+              "expected_fetch_present": true,
+              "expected_fetch_bytes_match": true
+            },
+            "tftp": {
+              "cursor_start": 4601440,
+              "cursor_end": 4602880,
+              "stable": true,
+              "expected_fetch_count": 2,
+              "expected_fetch_byte_match_count": 2,
+              "expected_fetch_bytes_seen": [
+                209016,
+                209016
+              ]
+            },
+            "final_pre_restore_identity": {
+              "selected_tree_hash": "2222222222222222222222222222222222222222222222222222222222222222",
+              "selected_tree": true,
+              "effective_kernel": true,
+              "expected_fetch_present": true,
+              "expected_fetch_bytes_match": true
+            },
+            "restore": {
+              "ok": true,
+              "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+            }
+          }
+        },
+        "selected_next_task": "phase10-pi5-command0-selected-kernel-paired-sentinel-pi5-proof-20260617",
+        "rejected_claims": [
+          "command0 write-delivery success",
+          "source-response retention",
+          "generated-root command-input success",
+          "storage",
+          "networking",
+          "SSH",
+          "Phase 11/12 expansion",
+          "phase transition"
+        ]
+      },
+      "negative_baseline_served_regression": {
+        "task_id": "phase10-pi5-command0-selected-kernel-paired-sentinel-core-20260617",
+        "checker": "rpi5-selected-kernel-paired-sentinel-discriminator-v1",
+        "accepted": false,
+        "classification": "selected-kernel-paired-sentinel-discriminator-rejected",
+        "selected_discriminator": "selected-kernel-paired-sentinel-publication-boundary-v1",
+        "first_failing_invariant": "candidate: same-power-cycle TFTP served bytes do not match selected kernel",
+        "contract": {
+          "candidate": {
+            "kind": "candidate",
+            "label": "paired-sentinel-candidate-baseline-served-regression",
+            "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+            "expected_fetch": "da591740/kernel_2712.img",
+            "expected_kernel_2712_size": 208984,
+            "no_command_write": true,
+            "post_publish_identity": {
+              "selected_tree": true,
+              "effective_kernel": true,
+              "expected_fetch_present": true,
+              "expected_fetch_bytes_match": true
+            },
+            "tftp": {
+              "cursor_start": 4595504,
+              "cursor_end": 4596944,
+              "stable": true,
+              "expected_fetch_count": 2,
+              "expected_fetch_byte_match_count": 0,
+              "expected_fetch_bytes_seen": [
+                104136,
+                104136
+              ]
+            },
+            "final_pre_restore_identity": {
+              "selected_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+              "selected_tree": false,
+              "effective_kernel": true,
+              "expected_fetch_present": true,
+              "expected_fetch_bytes_match": false
+            },
+            "restore": {
+              "ok": true,
+              "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+            }
+          },
+          "control": {
+            "kind": "control",
+            "label": "paired-sentinel-control-would-have-passed",
+            "selected_tree_hash": "2222222222222222222222222222222222222222222222222222222222222222",
+            "expected_fetch": "da591740/kernel_2712.img",
+            "expected_kernel_2712_size": 209016,
+            "no_command_write": true,
+            "post_publish_identity": {
+              "selected_tree": true,
+              "effective_kernel": true,
+              "expected_fetch_present": true,
+              "expected_fetch_bytes_match": true
+            },
+            "tftp": {
+              "cursor_start": 4601440,
+              "cursor_end": 4602880,
+              "stable": true,
+              "expected_fetch_count": 2,
+              "expected_fetch_byte_match_count": 2,
+              "expected_fetch_bytes_seen": [
+                209016,
+                209016
+              ]
+            },
+            "final_pre_restore_identity": {
+              "selected_tree_hash": "2222222222222222222222222222222222222222222222222222222222222222",
+              "selected_tree": true,
+              "effective_kernel": true,
+              "expected_fetch_present": true,
+              "expected_fetch_bytes_match": true
+            },
+            "restore": {
+              "ok": true,
+              "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+            }
+          }
+        },
+        "selected_next_task": null,
+        "rejected_claims": [
+          "command0 write-delivery success",
+          "source-response retention",
+          "generated-root command-input success",
+          "storage",
+          "networking",
+          "SSH",
+          "Phase 11/12 expansion",
+          "phase transition"
+        ]
+      },
+      "negative_single_run_only": {
+        "task_id": "phase10-pi5-command0-selected-kernel-paired-sentinel-core-20260617",
+        "checker": "rpi5-selected-kernel-paired-sentinel-discriminator-v1",
+        "accepted": false,
+        "classification": "selected-kernel-paired-sentinel-discriminator-rejected",
+        "selected_discriminator": "selected-kernel-paired-sentinel-publication-boundary-v1",
+        "first_failing_invariant": "control: missing expected selected kernel byte count",
+        "contract": {
+          "candidate": {
+            "kind": "candidate",
+            "label": "paired-sentinel-candidate-only",
+            "selected_tree_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "expected_fetch": "da591740/kernel_2712.img",
+            "expected_kernel_2712_size": 209032,
+            "no_command_write": true,
+            "post_publish_identity": {
+              "selected_tree": true,
+              "effective_kernel": true,
+              "expected_fetch_present": true,
+              "expected_fetch_bytes_match": true
+            },
+            "tftp": {
+              "cursor_start": 4600000,
+              "cursor_end": 4601440,
+              "stable": true,
+              "expected_fetch_count": 2,
+              "expected_fetch_byte_match_count": 2,
+              "expected_fetch_bytes_seen": [
+                209032,
+                209032
+              ]
+            },
+            "final_pre_restore_identity": {
+              "selected_tree_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+              "selected_tree": true,
+              "effective_kernel": true,
+              "expected_fetch_present": true,
+              "expected_fetch_bytes_match": true
+            },
+            "restore": {
+              "ok": true,
+              "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+            }
+          },
+          "control": {
+            "kind": null,
+            "label": null,
+            "selected_tree_hash": null,
+            "expected_fetch": "da591740/kernel_2712.img",
+            "expected_kernel_2712_size": null,
+            "no_command_write": true,
+            "post_publish_identity": {
+              "selected_tree": false,
+              "effective_kernel": false,
+              "expected_fetch_present": false,
+              "expected_fetch_bytes_match": true
+            },
+            "tftp": {
+              "cursor_start": null,
+              "cursor_end": null,
+              "stable": false,
+              "expected_fetch_count": null,
+              "expected_fetch_byte_match_count": null,
+              "expected_fetch_bytes_seen": []
+            },
+            "final_pre_restore_identity": {
+              "selected_tree_hash": null,
+              "selected_tree": true,
+              "effective_kernel": false,
+              "expected_fetch_present": false,
+              "expected_fetch_bytes_match": true
+            },
+            "restore": {
+              "ok": false,
+              "post_restore_tree_hash": null
+            }
+          }
+        },
+        "selected_next_task": null,
+        "rejected_claims": [
+          "command0 write-delivery success",
+          "source-response retention",
+          "generated-root command-input success",
+          "storage",
+          "networking",
+          "SSH",
+          "Phase 11/12 expansion",
+          "phase transition"
+        ]
+      },
+      "negative_command_write_present": {
+        "task_id": "phase10-pi5-command0-selected-kernel-paired-sentinel-core-20260617",
+        "checker": "rpi5-selected-kernel-paired-sentinel-discriminator-v1",
+        "accepted": false,
+        "classification": "selected-kernel-paired-sentinel-discriminator-rejected",
+        "selected_discriminator": "selected-kernel-paired-sentinel-publication-boundary-v1",
+        "first_failing_invariant": "candidate: command write evidence present or no-command-write guard missing",
+        "contract": {
+          "candidate": {
+            "kind": "candidate",
+            "label": "paired-sentinel-candidate-with-command-write",
+            "selected_tree_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "expected_fetch": "da591740/kernel_2712.img",
+            "expected_kernel_2712_size": 209032,
+            "no_command_write": false,
+            "post_publish_identity": {
+              "selected_tree": true,
+              "effective_kernel": true,
+              "expected_fetch_present": true,
+              "expected_fetch_bytes_match": true
+            },
+            "tftp": {
+              "cursor_start": 4600000,
+              "cursor_end": 4601440,
+              "stable": true,
+              "expected_fetch_count": 2,
+              "expected_fetch_byte_match_count": 2,
+              "expected_fetch_bytes_seen": [
+                209032,
+                209032
+              ]
+            },
+            "final_pre_restore_identity": {
+              "selected_tree_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+              "selected_tree": true,
+              "effective_kernel": true,
+              "expected_fetch_present": true,
+              "expected_fetch_bytes_match": true
+            },
+            "restore": {
+              "ok": true,
+              "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+            }
+          },
+          "control": {
+            "kind": "control",
+            "label": "paired-sentinel-control-fixture",
+            "selected_tree_hash": "2222222222222222222222222222222222222222222222222222222222222222",
+            "expected_fetch": "da591740/kernel_2712.img",
+            "expected_kernel_2712_size": 209016,
+            "no_command_write": false,
+            "post_publish_identity": {
+              "selected_tree": true,
+              "effective_kernel": true,
+              "expected_fetch_present": true,
+              "expected_fetch_bytes_match": true
+            },
+            "tftp": {
+              "cursor_start": 4601440,
+              "cursor_end": 4602880,
+              "stable": true,
+              "expected_fetch_count": 2,
+              "expected_fetch_byte_match_count": 2,
+              "expected_fetch_bytes_seen": [
+                209016,
+                209016
+              ]
+            },
+            "final_pre_restore_identity": {
+              "selected_tree_hash": "2222222222222222222222222222222222222222222222222222222222222222",
+              "selected_tree": true,
+              "effective_kernel": true,
+              "expected_fetch_present": true,
+              "expected_fetch_bytes_match": true
+            },
+            "restore": {
+              "ok": true,
+              "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+            }
+          }
+        },
+        "selected_next_task": null,
+        "rejected_claims": [
+          "command0 write-delivery success",
+          "source-response retention",
+          "generated-root command-input success",
+          "storage",
+          "networking",
+          "SSH",
+          "Phase 11/12 expansion",
+          "phase transition"
+        ]
+      },
+      "retained_selected_kernel_stability_regression": {
+        "task_id": "phase10-pi5-command0-selected-kernel-paired-sentinel-core-20260617",
+        "checker": "rpi5-selected-kernel-paired-sentinel-discriminator-v1",
+        "accepted": false,
+        "classification": "selected-kernel-paired-sentinel-discriminator-rejected",
+        "selected_discriminator": "selected-kernel-paired-sentinel-publication-boundary-v1",
+        "first_failing_invariant": "candidate: same-power-cycle TFTP served bytes do not match selected kernel",
+        "contract": {
+          "candidate": {
+            "kind": null,
+            "label": null,
+            "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+            "expected_fetch": "da591740/kernel_2712.img",
+            "expected_kernel_2712_size": 208984,
+            "no_command_write": true,
+            "post_publish_identity": {
+              "selected_tree": true,
+              "effective_kernel": true,
+              "expected_fetch_present": true,
+              "expected_fetch_bytes_match": true
+            },
+            "tftp": {
+              "cursor_start": 4595504,
+              "cursor_end": 4596944,
+              "stable": true,
+              "expected_fetch_count": 2,
+              "expected_fetch_byte_match_count": 0,
+              "expected_fetch_bytes_seen": [
+                104136,
+                104136
+              ]
+            },
+            "final_pre_restore_identity": {
+              "selected_tree_hash": null,
+              "selected_tree": false,
+              "effective_kernel": true,
+              "expected_fetch_present": true,
+              "expected_fetch_bytes_match": false
+            },
+            "restore": {
+              "ok": true,
+              "post_restore_tree_hash": null
+            }
+          },
+          "control": {
+            "kind": null,
+            "label": null,
+            "selected_tree_hash": null,
+            "expected_fetch": "da591740/kernel_2712.img",
+            "expected_kernel_2712_size": null,
+            "no_command_write": true,
+            "post_publish_identity": {
+              "selected_tree": false,
+              "effective_kernel": false,
+              "expected_fetch_present": false,
+              "expected_fetch_bytes_match": true
+            },
+            "tftp": {
+              "cursor_start": null,
+              "cursor_end": null,
+              "stable": false,
+              "expected_fetch_count": null,
+              "expected_fetch_byte_match_count": null,
+              "expected_fetch_bytes_seen": []
+            },
+            "final_pre_restore_identity": {
+              "selected_tree_hash": null,
+              "selected_tree": true,
+              "effective_kernel": false,
+              "expected_fetch_present": false,
+              "expected_fetch_bytes_match": true
+            },
+            "restore": {
+              "ok": false,
+              "post_restore_tree_hash": null
+            }
+          }
+        },
+        "selected_next_task": null,
+        "rejected_claims": [
+          "command0 write-delivery success",
+          "source-response retention",
+          "generated-root command-input success",
+          "storage",
+          "networking",
+          "SSH",
+          "Phase 11/12 expansion",
+          "phase transition"
+        ]
+      }
+    }
+  },
+  "accepted_local_static_contract": true,
+  "selected_next_task": "phase10-pi5-command0-selected-kernel-paired-sentinel-pi5-proof-20260617",
+  "hardware_follow_up_authorized": true,
+  "rejected_claims": [
+    "command0 write-delivery success",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

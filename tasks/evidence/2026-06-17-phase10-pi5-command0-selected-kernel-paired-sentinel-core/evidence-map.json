@@ -1,0 +1,60 @@
+{
+  "task_id": "phase10-pi5-command0-selected-kernel-paired-sentinel-core-20260617",
+  "classification": "selected-kernel-paired-sentinel-core-local-static",
+  "task_record": "tasks/2026-06-17-phase10-pi5-command0-selected-kernel-paired-sentinel-core.md",
+  "classification_file": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-paired-sentinel-core/classification.json",
+  "changed_helper": "scripts/rpi5-selected-kernel-paired-sentinel-discriminator.sh",
+  "source_context": [
+    {
+      "label": "recurrence checkpoint selected paired sentinel discriminator",
+      "level": "static/source/task evidence inspection",
+      "task_record": "tasks/2026-06-17-phase10-pi5-command0-selected-kernel-publication-recurrence-checkpoint.md",
+      "classification_file": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-publication-recurrence-checkpoint/classification.json"
+    },
+    {
+      "label": "retained selected-kernel stability regression",
+      "level": "serial hardware boot/output + lab-controller API + TFTP evidence",
+      "task_record": "tasks/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof.md",
+      "classification_file": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/classification.json"
+    }
+  ],
+  "fixture_results": [
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-paired-sentinel-core/results/positive-paired-sentinel.result.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-paired-sentinel-core/results/negative-baseline-served-regression.result.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-paired-sentinel-core/results/negative-single-run-only.result.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-paired-sentinel-core/results/negative-command-write-present.result.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-paired-sentinel-core/results/retained-selected-kernel-stability-regression.result.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-paired-sentinel-core/results/fixture-replay-summary.json"
+  ],
+  "validation": [
+    {
+      "gate": "sh -n scripts/rpi5-selected-kernel-paired-sentinel-discriminator.sh",
+      "result": "pass"
+    },
+    {
+      "gate": "task-owned paired sentinel positive/negative fixture replay",
+      "result": "pass"
+    },
+    {
+      "gate": "retained selected-kernel stability regression replay",
+      "result": "pass/rejected on same-power-cycle TFTP byte invariant"
+    },
+    {
+      "gate": "jq empty on task-owned JSON evidence",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "mdbook build",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check before commit",
+      "result": "pass"
+    }
+  ],
+  "selected_next_task": "phase10-pi5-command0-selected-kernel-paired-sentinel-pi5-proof-20260617"
+}

@@ -1,0 +1,93 @@
+{
+  "task_id": "phase10-pi5-command0-selected-kernel-paired-sentinel-core-20260617",
+  "checker": "rpi5-selected-kernel-paired-sentinel-discriminator-v1",
+  "accepted": false,
+  "classification": "selected-kernel-paired-sentinel-discriminator-rejected",
+  "selected_discriminator": "selected-kernel-paired-sentinel-publication-boundary-v1",
+  "first_failing_invariant": "candidate: command write evidence present or no-command-write guard missing",
+  "contract": {
+    "candidate": {
+      "kind": "candidate",
+      "label": "paired-sentinel-candidate-with-command-write",
+      "selected_tree_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "expected_fetch": "da591740/kernel_2712.img",
+      "expected_kernel_2712_size": 209032,
+      "no_command_write": false,
+      "post_publish_identity": {
+        "selected_tree": true,
+        "effective_kernel": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes_match": true
+      },
+      "tftp": {
+        "cursor_start": 4600000,
+        "cursor_end": 4601440,
+        "stable": true,
+        "expected_fetch_count": 2,
+        "expected_fetch_byte_match_count": 2,
+        "expected_fetch_bytes_seen": [
+          209032,
+          209032
+        ]
+      },
+      "final_pre_restore_identity": {
+        "selected_tree_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+        "selected_tree": true,
+        "effective_kernel": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes_match": true
+      },
+      "restore": {
+        "ok": true,
+        "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+      }
+    },
+    "control": {
+      "kind": "control",
+      "label": "paired-sentinel-control-fixture",
+      "selected_tree_hash": "2222222222222222222222222222222222222222222222222222222222222222",
+      "expected_fetch": "da591740/kernel_2712.img",
+      "expected_kernel_2712_size": 209016,
+      "no_command_write": false,
+      "post_publish_identity": {
+        "selected_tree": true,
+        "effective_kernel": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes_match": true
+      },
+      "tftp": {
+        "cursor_start": 4601440,
+        "cursor_end": 4602880,
+        "stable": true,
+        "expected_fetch_count": 2,
+        "expected_fetch_byte_match_count": 2,
+        "expected_fetch_bytes_seen": [
+          209016,
+          209016
+        ]
+      },
+      "final_pre_restore_identity": {
+        "selected_tree_hash": "2222222222222222222222222222222222222222222222222222222222222222",
+        "selected_tree": true,
+        "effective_kernel": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes_match": true
+      },
+      "restore": {
+        "ok": true,
+        "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+      }
+    }
+  },
+  "selected_next_task": null,
+  "rejected_claims": [
+    "command0 write-delivery success",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

@@ -3042,6 +3042,25 @@ The post-review correction chain is:
     Command0 write-delivery success, source-response retention,
     generated-root command-input success, storage, networking, SSH,
     Phase 11/12 expansion, and phase transition remain rejected.
+167. Pi 5 command0 selected-kernel paired sentinel core: accepted in
+    'phase10-pi5-command0-selected-kernel-paired-sentinel-core-20260617'
+    with classification 'selected-kernel-paired-sentinel-core-local-static'.
+    The new
+    'scripts/rpi5-selected-kernel-paired-sentinel-discriminator.sh' accepts
+    only the selected discriminator
+    selected-kernel-paired-sentinel-publication-boundary-v1 with paired
+    no-command-write candidate/control runs, selected post-publish identity,
+    stable same-power-cycle TFTP kernel_2712.img byte agreement, final
+    pre-restore selected identity, restore proof, and distinct selected
+    identities. Fixture replay accepts the positive paired-sentinel shape and
+    rejects baseline-served selected-kernel evidence, single-run-only evidence,
+    command-write-present evidence, and the retained selected-kernel stability
+    regression on the original same-power-cycle TFTP byte invariant. The
+    selected follow-up is
+    'phase10-pi5-command0-selected-kernel-paired-sentinel-pi5-proof-20260617'.
+    Command0 write-delivery success, source-response retention,
+    generated-root command-input success, storage, networking, SSH,
+    Phase 11/12 expansion, and phase transition remain rejected.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -7785,6 +7804,18 @@ Selected first slice:
   selected-kernel stability precondition; source-response retention and
   generated-root command-input success remain unaccepted, and no same-shaped
   retry is selected without supervisor planning.
+- 'phase10-pi5-command0-selected-kernel-paired-sentinel-core-20260617' accepts
+  the paired sentinel publication-boundary core with classification
+  selected-kernel-paired-sentinel-core-local-static. The local/static helper
+  now requires paired no-command-write candidate/control evidence with selected
+  post-publish identity, stable same-power-cycle TFTP byte agreement, final
+  selected identity, restore proof, and distinct identities before selecting
+  the serialized Pi 5 paired-sentinel proof. It rejects retained
+  baseline-served selected-kernel evidence, single-run-only evidence,
+  command-write-present evidence, and the retained selected-kernel stability
+  regression on the same-power-cycle TFTP byte invariant. Command0 write
+  delivery, source-response retention, and generated-root command-input
+  success remain unaccepted.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The
