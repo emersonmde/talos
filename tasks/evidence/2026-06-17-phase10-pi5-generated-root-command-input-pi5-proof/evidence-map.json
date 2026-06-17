@@ -1,0 +1,57 @@
+{
+  "task_id": "phase10-pi5-generated-root-command-input-pi5-proof-20260617",
+  "classification": "inconclusive-command-input-capture-or-timing",
+  "evidence_level": [
+    "lab-controller API",
+    "same-power-cycle TFTP",
+    "serial hardware boot/output",
+    "serial write attempt",
+    "restore proof",
+    "task-owned JSON evidence"
+  ],
+  "files": {
+    "first_attempt": "candidate/",
+    "baseline_direct_read_control": "control-baseline-direct-read/control-summary.json",
+    "selected_rerun": "candidate-rerun2-direct-read-drained/classification.json",
+    "selected_rerun_corrected_classification": "classification.json",
+    "archive_sha256": "candidate-rerun2-direct-read-drained/archive.sha256",
+    "candidate_identity": "candidate-rerun2-direct-read-drained/candidate-identity.json",
+    "serial_drain": "candidate-rerun2-direct-read-drained/serial-drain-summary.json",
+    "prompt_readiness": "candidate-rerun2-direct-read-drained/readiness/serial-read-summary.json",
+    "serial_write": "candidate-rerun2-direct-read-drained/serial-write-command.json",
+    "after_write_serial": "candidate-rerun2-direct-read-drained/after-write/serial-read-summary.json",
+    "tftp_delta": "candidate-rerun2-direct-read-drained/tftp-delta-stable-pre-restore.json",
+    "restore": "candidate-rerun2-direct-read-drained/restore-snapshot.json",
+    "manual_restore": "candidate-rerun-direct-read/manual-restore-snapshot.json"
+  },
+  "summary": {
+    "task_id": "phase10-pi5-generated-root-command-input-pi5-proof-20260617",
+    "status": "blocked",
+    "classification": "inconclusive-command-input-capture-or-timing",
+    "selected_next_task": null,
+    "selected_evidence_run": "candidate-rerun2-direct-read-drained",
+    "checks": {
+      "candidate_identity_ok": true,
+      "source_firmware_initramfs_valid_artifact": true,
+      "prompt_readiness": true,
+      "serial_write_nonempty": true,
+      "retained_command_text": false,
+      "expected_generated_root_output": false,
+      "dispatch_handled_responses_1": false,
+      "ready_for_next_or_pass": true,
+      "tftp_expected_fetch": false,
+      "restore_ok": true
+    },
+    "accepted_capability": null,
+    "blocker": "Pi 5 served the selected generated-root archive and reached source/prompt readiness, and /serial/write accepted 28 bytes, but retained serial never included the injected cat /generated/manifest.txt command or expected manifest output before the harness timed out subsequent empty commands.",
+    "rejected_claims": [
+      "persistence",
+      "writable filesystem",
+      "SD/USB/block storage",
+      "networking",
+      "SSH",
+      "Phase 11/12 expansion",
+      "phase transition"
+    ]
+  }
+}

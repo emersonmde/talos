@@ -2353,6 +2353,21 @@ The post-review correction chain is:
     power-cycle, command-input acceptance, persistence, storage drivers,
     networking, SSH, Phase 11/12 expansion, and phase transition remain
     deferred to that explicit proof or later tasks.
+124. Pi 5 generated-root command-input Pi 5 proof: blocked in
+    'phase10-pi5-generated-root-command-input-pi5-proof-20260617' with
+    classification 'inconclusive-command-input-capture-or-timing'. The selected
+    generated-root command-input archive was published and the strongest rerun
+    retained source=firmware-initramfs reason=valid-artifact plus
+    rpi5-generated-root-boot-transport-proof readiness and a visible talos>
+    prompt. The lab /serial/write endpoint accepted the 28-byte
+    'cat /generated/manifest.txt' payload, but retained serial did not show the
+    command text, the expected 'Talos generated-root external artifact A'
+    output, or a handled manifest-command dispatch before later empty-command
+    timeouts. This does not accept generated-root command input; supervisor
+    planning is required before another timing/capture or harness-adjusted
+    attempt. Persistence, writable filesystem, SD/USB/block storage,
+    networking, SSH, Phase 11/12 expansion, and phase transition remain
+    rejected.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

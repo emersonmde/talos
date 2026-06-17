@@ -1,0 +1,20 @@
+{
+  "expected_fetch": "da591740/kernel_2712.img",
+  "expected_fetch_bytes": 208984,
+  "status_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+  "status_effective_kernel": "kernel_2712.img",
+  "root_endpoint": {
+    "endpoint": "GET /",
+    "curl_exit": 0,
+    "http_code": 404,
+    "body_bytes": 55,
+    "parsed": {
+      "error": "unknown endpoint: GET /",
+      "ok": false
+    },
+    "usable_for_candidate_identity": false
+  },
+  "observed_fetch_bytes": 208984,
+  "candidate_identity_ok": true,
+  "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212"
+}

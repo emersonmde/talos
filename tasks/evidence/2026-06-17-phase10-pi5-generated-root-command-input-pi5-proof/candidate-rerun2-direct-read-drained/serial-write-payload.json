@@ -1,0 +1,4 @@
+{
+  "text": "cat /generated/manifest.txt",
+  "append_newline": true
+}

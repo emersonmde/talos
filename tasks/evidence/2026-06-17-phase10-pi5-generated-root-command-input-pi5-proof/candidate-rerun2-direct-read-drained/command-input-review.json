@@ -1,0 +1,61 @@
+{
+  "review": "rpi5-generated-root-command-input-proof-core-v1",
+  "archive": {
+    "path": "target/talos-rpi5-generated-root-command-input-proof-core-20260617.tar.gz",
+    "sha256": "8f6a4d0d3436308a5f3b51e4f113b75d1acbf807a7b7af2d66453806c586cf0c",
+    "kernel_2712_sha256": "c37b34ebc955a7ce11cd0660bc18424ebcec4550de23ae1e6b0b9ad7c867e4bd",
+    "kernel_2712_size": 208984,
+    "generated_root_artifact_sha256": "0341f5393502f54489acb1951633bf2773fb846a82bde89b3e4a2e82000724c6",
+    "generated_root_artifact_size": 662,
+    "root_and_serial_prefixed_artifact_match": true
+  },
+  "selected_command_contract": {
+    "scenario": "pi5-generated-root-manifest-command-input-v1",
+    "proof_label": "rpi5-generated-root-boot-transport-proof",
+    "classification": "pi5-generated-root-boot-transport-complete",
+    "prompt_readiness": [
+      "same boot serial retains source=firmware-initramfs reason=valid-artifact",
+      "serial retains rpi5-generated-root-boot-transport-proof: ready command=N",
+      "serial retains visible talos> prompt before saving the write cursor"
+    ],
+    "serial_write": {
+      "endpoint": "POST /serial/write",
+      "text": "cat /generated/manifest.txt",
+      "append_newline": true
+    },
+    "serial_observe": {
+      "endpoint": "POST /serial/observe",
+      "cursor": "saved post-prompt cursor",
+      "required_response_fragments": [
+        "cat /generated/manifest.txt",
+        "Talos generated-root external artifact A",
+        "status=handled",
+        "responses=1",
+        "ready-for-next prompt=true or final PASS"
+      ]
+    },
+    "expected_output": "Talos generated-root external artifact A",
+    "expected_output_source_gate": "accepted only when same-boot serial also proves source=firmware-initramfs reason=valid-artifact",
+    "kernel_contains_expected_output": false
+  },
+  "static_checks": {
+    "candidate_archive_review": "pass",
+    "initramfs_root_and_serial_prefixed_artifacts": "pass",
+    "artifact_contains_manifest_command_and_expected_output": "pass",
+    "kernel_contains_prompt_dispatch_ready_and_pass_markers": "pass",
+    "kernel_contains_firmware_initramfs_valid_artifact_markers": "pass"
+  },
+  "rejected_claims": [
+    "Pi 5 command-input success before serialized hardware proof",
+    "serial transact as retained acceptance evidence",
+    "prompt visibility alone proves generated-root command input",
+    "persistence",
+    "writable filesystem",
+    "SD/USB/block storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ],
+  "selected_next_task": "phase10-pi5-generated-root-command-input-pi5-proof-20260617"
+}
