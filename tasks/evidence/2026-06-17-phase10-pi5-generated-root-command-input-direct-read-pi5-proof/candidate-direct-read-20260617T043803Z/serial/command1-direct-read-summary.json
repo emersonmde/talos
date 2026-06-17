@@ -1,0 +1,139 @@
+{
+  "label": "command1-direct-read",
+  "attempts": 13,
+  "elapsed_seconds": 60,
+  "bytes": 193,
+  "retained_text": "erated-root-boot-transport-proof: final participants=5 expected=5 errors=1 classification=pi5-generated-root-boot-transport-complete-incomplete\r\nrpi5-generated-root-boot-transport-proof: FAIL\r\n",
+  "responses": [
+    {
+      "action": "serial read",
+      "base64": "ZXJhdGVkLXJvb3QtYm9vdC10cmFuc3BvcnQtcHJvb2Y6IGZpbmFsIHBhcnRpY2lwYW50cz01IGV4cGVjdGVkPTUgZXJyb3JzPTEgY2xhc3NpZmljYXRpb249cGk1LWdlbmVyYXRlZC1yb290LWJvb3QtdHJhbnNwb3J0LWNvbXBsZXRlLWluY29tcGxldGUNCnJwaTUtZ2VuZXJhdGVkLXJvb3QtYm9vdC10cmFuc3BvcnQtcHJvb2Y6IEZBSUwNCg==",
+      "bytes": 193,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "erated-root-boot-transport-proof: final participants=5 expected=5 errors=1 classification=pi5-generated-root-boot-transport-complete-incomplete\r\nrpi5-generated-root-boot-transport-proof: FAIL\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    }
+  ]
+}

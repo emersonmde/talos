@@ -1,0 +1,20 @@
+{
+  "review": "rpi5-generated-root-command-input-direct-read-proof-validation-wrapper",
+  "status": "fail",
+  "reason": "optional direct-read validator rejected selected hardware evidence",
+  "first_failing_invariant": "command0 direct-read window did not retain command text, firmware-initramfs source evidence, or dispatch command=0 status=handled responses=1 before the harness advanced",
+  "direct_read_evidence_summary": {
+    "boot": {
+      "source": "firmware-initramfs",
+      "reason": "valid-artifact",
+      "selected_tree_identity": true,
+      "stable_tftp_delta": false,
+      "final_pre_restore_identity": true,
+      "restore_ok": true
+    },
+    "command0_pre_write_text_bytes": 0,
+    "command0_direct_read_text_bytes": 515,
+    "command1_pre_write_text_bytes": 372,
+    "command1_direct_read_text_bytes": 193
+  }
+}

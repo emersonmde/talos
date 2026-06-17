@@ -1,0 +1,41 @@
+{
+  "task_id": "phase10-pi5-generated-root-command-input-direct-read-pi5-proof-20260617",
+  "classification": "command-input-command0-prelude-blocked",
+  "task_status": "accepted",
+  "proof_status": "blocked",
+  "selected_evidence_run": "candidate-direct-read-20260617T043803Z",
+  "evidence_level": [
+    "lab-controller API",
+    "serialized Pi 5 hardware proof",
+    "same-power-cycle TFTP",
+    "serial direct-read hardware output",
+    "serial write evidence",
+    "direct-read proof validator wrapper",
+    "restore proof",
+    "task-owned JSON evidence"
+  ],
+  "files": {
+    "selected_run": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-pi5-proof/candidate-direct-read-20260617T043803Z",
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-pi5-proof/candidate-direct-read-20260617T043803Z/classification.json",
+    "direct_read_evidence": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-pi5-proof/candidate-direct-read-20260617T043803Z/direct-read-evidence.json",
+    "validator": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-pi5-proof/candidate-direct-read-20260617T043803Z/direct-read-proof-validation.json",
+    "tftp_delta": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-pi5-proof/candidate-direct-read-20260617T043803Z/tftp/tftp-delta-stable-pre-restore.json",
+    "readiness": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-pi5-proof/candidate-direct-read-20260617T043803Z/serial/readiness-summary.json",
+    "command0": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-pi5-proof/candidate-direct-read-20260617T043803Z/serial/command0-direct-read-summary.json",
+    "command1": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-pi5-proof/candidate-direct-read-20260617T043803Z/serial/command1-direct-read-summary.json",
+    "restore": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-pi5-proof/candidate-direct-read-20260617T043803Z/restore/post-restore-status.json"
+  },
+  "selected_next_task": "phase10-pi5-generated-root-command-input-direct-read-closeout-20260617",
+  "accepted_capability": null,
+  "first_failing_invariant": "After readiness and a successful /serial/write of rootinfo, the command0 direct-read window did not retain rootinfo, source=firmware-initramfs reason=valid-artifact, or dispatch command=0 status=handled responses=1; it only retained the tail of command0 edit/ready output and later input-error timeouts.",
+  "rejected_claims": [
+    "generated-root command-input acceptance",
+    "persistence",
+    "writable filesystem",
+    "SD/USB/block storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

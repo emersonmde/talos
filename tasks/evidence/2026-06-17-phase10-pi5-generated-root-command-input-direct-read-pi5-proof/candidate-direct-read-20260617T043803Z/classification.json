@@ -1,0 +1,44 @@
+{
+  "task_id": "phase10-pi5-generated-root-command-input-direct-read-pi5-proof-20260617",
+  "task_status": "accepted",
+  "proof_status": "blocked",
+  "run": "candidate-direct-read-20260617T043803Z",
+  "archive": {
+    "path": "target/talos-rpi5-generated-root-command-input-proof-core-20260617.tar.gz",
+    "sha256": "8f6a4d0d3436308a5f3b51e4f113b75d1acbf807a7b7af2d66453806c586cf0c",
+    "bytes": 411787
+  },
+  "snapshot": "pre-genroot-directread-20260617T043803Z",
+  "validation_status": "fail",
+  "checks": {
+    "selected_tree_identity": true,
+    "source_firmware_initramfs_valid_artifact": true,
+    "readiness_command_0_prompt": true,
+    "command0_pre_write_fresh": true,
+    "command0_write_ok": true,
+    "command0_handled": false,
+    "command0_ready_advanced": true,
+    "command1_pre_write_fresh": true,
+    "command1_write_ok": true,
+    "command1_manifest_output_handled": false,
+    "tftp_stable_nonempty_delta": true,
+    "tftp_expected_kernel_fetch": true,
+    "tftp_expected_initramfs_fetch": true,
+    "final_pre_restore_identity": true,
+    "restore_ok": true
+  },
+  "terminal_classification": "command-input-command0-prelude-blocked",
+  "first_failing_invariant": "After readiness and a successful /serial/write of rootinfo, the command0 direct-read window did not retain rootinfo, source=firmware-initramfs reason=valid-artifact, or dispatch command=0 status=handled responses=1; it only retained the tail of command0 edit/ready output and later input-error timeouts.",
+  "accepted_capability": null,
+  "selected_next_task": "phase10-pi5-generated-root-command-input-direct-read-closeout-20260617",
+  "rejected_claims": [
+    "generated-root command-input acceptance",
+    "persistence",
+    "writable filesystem",
+    "SD/USB/block storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

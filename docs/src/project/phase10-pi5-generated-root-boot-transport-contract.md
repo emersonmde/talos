@@ -357,6 +357,19 @@ phase10-pi5-generated-root-command-input-direct-read-pi5-proof-20260617.
 Hardware publication and command-input acceptance remain deferred to that
 serialized Pi 5 proof.
 
+phase10-pi5-generated-root-command-input-direct-read-pi5-proof-20260617
+accepts a terminal blocked Pi 5 proof with classification
+command-input-command0-prelude-blocked. The candidate satisfied selected-tree
+identity, stable same-power-cycle TFTP evidence, final pre-restore identity,
+restore proof, same-boot source=firmware-initramfs reason=valid-artifact,
+ready command=0, a visible talos> prompt, command 0 pre-write freshness, and a
+successful /serial/write of rootinfo. The first failing invariant is the
+command 0 direct-read window: it did not retain rootinfo, source evidence, or
+dispatch command=0 status=handled responses=1 before the harness advanced.
+Generated-root command-input acceptance remains rejected. The selected
+dependency-gated follow-up is
+phase10-pi5-generated-root-command-input-direct-read-closeout-20260617.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11/12
