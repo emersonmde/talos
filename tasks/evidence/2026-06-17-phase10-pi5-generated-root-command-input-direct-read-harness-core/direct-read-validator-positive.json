@@ -1,0 +1,47 @@
+{
+  "direct_read_proof": {
+    "boot": {
+      "source": "firmware-initramfs",
+      "reason": "valid-artifact",
+      "selected_tree_identity": true,
+      "stable_tftp_delta": true,
+      "final_pre_restore_identity": true,
+      "restore_ok": true
+    },
+    "readiness": {
+      "text": "talos: generated-root source=firmware-initramfs reason=valid-artifact\r\nrpi5-generated-root-boot-transport-proof: ready command=0\r\ntalos> "
+    },
+    "commands": [
+      {
+        "command_index": 0,
+        "pre_write_read": {
+          "fresh_after_prompt": true,
+          "text": ""
+        },
+        "serial_write": {
+          "ok": true,
+          "text": "rootinfo",
+          "append_newline": true
+        },
+        "direct_read": {
+          "text": "rootinfo\r\ntalos: generated-root source=firmware-initramfs reason=valid-artifact\r\nrpi5-generated-root-boot-transport-proof: dispatch command=0 status=handled responses=1\r\nrpi5-generated-root-boot-transport-proof: ready command=1\r\ntalos> "
+        }
+      },
+      {
+        "command_index": 1,
+        "pre_write_read": {
+          "fresh_after_prompt": true,
+          "text": ""
+        },
+        "serial_write": {
+          "ok": true,
+          "text": "cat /generated/manifest.txt",
+          "append_newline": true
+        },
+        "direct_read": {
+          "text": "cat /generated/manifest.txt\r\nTalos generated-root external artifact A\r\nrpi5-generated-root-boot-transport-proof: dispatch command=1 status=handled responses=1\r\nrpi5-generated-root-boot-transport-proof: ready command=2\r\ntalos> "
+        }
+      }
+    ]
+  }
+}

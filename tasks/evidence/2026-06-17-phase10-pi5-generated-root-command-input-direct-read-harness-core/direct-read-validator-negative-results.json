@@ -1,0 +1,33 @@
+{
+  "validator": "rpi5-generated-root-command-input-direct-read-proof-review.sh",
+  "positive_fixture": "direct-read-validator-positive.json",
+  "positive_review": "direct-read-validator-positive-review.json",
+  "expected_negative_cases": [
+    "prompt_only",
+    "write_only",
+    "stale_pre_write",
+    "missing_dispatch"
+  ],
+  "results": [
+    {
+      "case": "prompt_only",
+      "result": "rejected",
+      "stderr": ""
+    },
+    {
+      "case": "write_only",
+      "result": "rejected",
+      "stderr": ""
+    },
+    {
+      "case": "stale_pre_write",
+      "result": "rejected",
+      "stderr": ""
+    },
+    {
+      "case": "missing_dispatch",
+      "result": "rejected",
+      "stderr": ""
+    }
+  ]
+}

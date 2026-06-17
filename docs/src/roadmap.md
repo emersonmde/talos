@@ -2425,6 +2425,20 @@ The post-review correction chain is:
     Hardware publication, command-input acceptance, persistence, storage
     drivers, networking, SSH, Phase 11/12 expansion, and phase transition
     remain deferred to explicit tasks.
+129. Pi 5 generated-root command-input direct-read harness core: accepted in
+    'phase10-pi5-generated-root-command-input-direct-read-harness-core-20260617'
+    with classification
+    'direct-read-command-input-harness-core-local-static'. The task adds
+    'scripts/rpi5-generated-root-command-input-direct-read-proof-review.sh',
+    which preserves generated-root archive/source checks and emits the accepted
+    command-indexed direct-read contract. The helper validates optional
+    task-owned evidence JSON and mechanically rejects prompt-only,
+    /serial/write-only, stale pre-write direct-read, and missing-dispatch
+    fixtures. The selected dependency-gated follow-up is
+    'phase10-pi5-generated-root-command-input-direct-read-pi5-proof-20260617'.
+    Hardware publication, command-input acceptance, persistence, storage
+    drivers, networking, SSH, Phase 11/12 expansion, and phase transition
+    remain deferred to explicit tasks.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

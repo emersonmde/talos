@@ -340,6 +340,23 @@ Pi 5 command-input success, hardware publication, persistence, storage drivers,
 networking, SSH, Phase 11/12 expansion, and phase transition remain deferred to
 explicit tasks.
 
+phase10-pi5-generated-root-command-input-direct-read-harness-core-20260617
+accepts the local/static helper for that direct-read contract. The helper is
+scripts/rpi5-generated-root-command-input-direct-read-proof-review.sh. It
+retains the archive/source checks, emits the command-indexed direct-read proof
+requirements, and can validate task-owned hardware evidence JSON. Its validator
+requires same-boot firmware-initramfs valid-artifact source evidence,
+selected-tree/TFTP/final-identity/restore proof fields, command 0 rootinfo
+pre-write freshness and handled direct-read response, and command 1
+cat /generated/manifest.txt pre-write freshness plus command text, Talos
+generated-root external artifact A, dispatch command=1 status=handled
+responses=1, and post-command readiness. Prompt-only, /serial/write-only,
+stale pre-write direct-read, and missing-dispatch fixtures are rejected. The
+selected dependency-gated follow-up is
+phase10-pi5-generated-root-command-input-direct-read-pi5-proof-20260617.
+Hardware publication and command-input acceptance remain deferred to that
+serialized Pi 5 proof.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11/12

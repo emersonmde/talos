@@ -1,0 +1,82 @@
+{
+  "task_id": "phase10-pi5-generated-root-command-input-direct-read-harness-core-20260617",
+  "status": "accepted",
+  "classification": "direct-read-command-input-harness-core-local-static",
+  "selected_next_task": "phase10-pi5-generated-root-command-input-direct-read-pi5-proof-20260617",
+  "implementation": {
+    "helper": "scripts/rpi5-generated-root-command-input-direct-read-proof-review.sh",
+    "review": "rpi5-generated-root-command-input-direct-read-harness-core-v1",
+    "changed_files": [
+      "scripts/rpi5-generated-root-command-input-direct-read-proof-review.sh"
+    ]
+  },
+  "checks": {
+    "archive_review": "pass",
+    "firmware_initramfs_source_gate_mechanical": true,
+    "generated_root_artifact_content_mechanical": true,
+    "direct_read_evidence_validator_positive_fixture": "pass",
+    "prompt_only_negative_fixture": "rejected",
+    "serial_write_only_negative_fixture": "rejected",
+    "stale_pre_write_negative_fixture": "rejected",
+    "missing_dispatch_negative_fixture": "rejected"
+  },
+  "evidence_files": {
+    "direct_read_harness_review": {
+      "path": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-harness-core/direct-read-harness-review.json",
+      "sha256": "da3981c2b277d744a85c5e2465eb0e37ebe5316358c4ef670595c25ed9ed29bd"
+    },
+    "validator_positive_review": {
+      "path": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-harness-core/direct-read-validator-positive-review.json",
+      "sha256": "c43ccc6bae47c9acf67ae22bed5e9c6272da33a16eb15b117c7cae70955224f5"
+    },
+    "validator_negative_results": {
+      "path": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-harness-core/direct-read-validator-negative-results.json",
+      "sha256": "b9fcce0627167a22bf512e3ffdf25a929ed77c3c2589741477ace9c9f4047411"
+    }
+  },
+  "findings": [
+    {
+      "finding": "the helper needed a command-indexed direct-read contract rather than the old observe-only contract",
+      "disposition": "fixed",
+      "evidence": "direct-read-harness-review.json records command 0 and command 1 pre-write freshness reads, direct-read windows, and TFTP/final-identity/restore requirements."
+    },
+    {
+      "finding": "prompt-only or write-only capture could be mistaken for command input if not mechanically rejected",
+      "disposition": "fixed",
+      "evidence": "direct-read-validator-negative-results.json rejects prompt_only and write_only fixtures."
+    },
+    {
+      "finding": "stale direct-read output could contain an old command response before the write",
+      "disposition": "fixed",
+      "evidence": "direct-read-validator-negative-results.json rejects stale_pre_write fixture."
+    },
+    {
+      "finding": "manifest output without handled dispatch is not sufficient command-input proof",
+      "disposition": "fixed",
+      "evidence": "direct-read-validator-negative-results.json rejects missing_dispatch fixture."
+    },
+    {
+      "finding": "runtime code or Pi 5 hardware publication",
+      "disposition": "deferred",
+      "evidence": "This local/static task only creates the helper and task-owned review evidence; serialized hardware proof remains dependency-gated."
+    },
+    {
+      "finding": "persistence, writable storage, networking, SSH, Phase 11/12 expansion, and phase transition",
+      "disposition": "rejected",
+      "evidence": "Rejected claims are retained in direct-read-harness-review.json."
+    }
+  ],
+  "rejected_claims": [
+    "Pi 5 command-input success before serialized hardware proof",
+    "direct-read output without command-indexed pre-write freshness",
+    "/serial/write byte acceptance alone proves command input",
+    "prompt visibility alone proves generated-root command input",
+    "persistence",
+    "writable filesystem",
+    "SD/USB/block storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

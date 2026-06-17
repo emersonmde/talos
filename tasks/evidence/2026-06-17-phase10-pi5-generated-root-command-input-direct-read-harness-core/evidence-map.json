@@ -1,0 +1,36 @@
+{
+  "task_id": "phase10-pi5-generated-root-command-input-direct-read-harness-core-20260617",
+  "evidence_level": [
+    "static source/task evidence inspection",
+    "shell syntax check",
+    "local/static generated-root command-input proof-helper review",
+    "positive and negative direct-read evidence validator fixtures",
+    "task-owned JSON evidence",
+    "docs build and diff checks"
+  ],
+  "source_inputs": [
+    "tasks/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-source-contract.md",
+    "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-source-contract/classification.json",
+    "docs/src/project/phase10-pi5-generated-root-boot-transport-contract.md",
+    "docs/src/project/lab-controller.md"
+  ],
+  "changed_files": [
+    "scripts/rpi5-generated-root-command-input-direct-read-proof-review.sh",
+    "docs/src/roadmap.md",
+    "docs/src/project/phase10-pi5-generated-root-boot-transport-contract.md",
+    "tasks/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-harness-core.md",
+    "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-harness-core/classification.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-harness-core/evidence-map.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-harness-core/direct-read-harness-review.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-harness-core/direct-read-validator-positive.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-harness-core/direct-read-validator-positive-review.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-harness-core/direct-read-validator-negative-results.json"
+  ],
+  "validation_records": {
+    "sh_n": "sh -n scripts/rpi5-generated-root-command-input-direct-read-proof-review.sh",
+    "local_static_review": "scripts/rpi5-generated-root-command-input-direct-read-proof-review.sh target/talos-rpi5-generated-root-command-input-proof-core-20260617.tar.gz",
+    "positive_fixture": "scripts/rpi5-generated-root-command-input-direct-read-proof-review.sh target/talos-rpi5-generated-root-command-input-proof-core-20260617.tar.gz tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-harness-core/direct-read-validator-positive.json",
+    "negative_fixture_summary": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-harness-core/direct-read-validator-negative-results.json"
+  },
+  "selected_next_task": "phase10-pi5-generated-root-command-input-direct-read-pi5-proof-20260617"
+}
