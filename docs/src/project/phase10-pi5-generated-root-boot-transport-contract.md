@@ -225,6 +225,32 @@ control-surface evidence only; they do not prove generated-root command input.
 The selected dependency-gated follow-up is
 phase10-pi5-generated-root-command-input-proof-core-20260617.
 
+## Command-Input Proof Core
+
+phase10-pi5-generated-root-command-input-proof-core-20260617 accepts the
+local/static proof-core helper for the selected generated-root command-input
+scenario. The helper
+scripts/rpi5-generated-root-command-input-proof-review.sh reviews a
+non-published generated-root boot archive, first by running the accepted
+candidate archive review and then by checking root and serial-prefixed
+initramfs_2712 placement, external artifact strings, and kernel prompt,
+dispatch, response-count, ready-for-next, PASS, firmware-initramfs, and
+valid-artifact marker strings.
+
+The selected serialized hardware proof remains
+pi5-generated-root-manifest-command-input-v1. It must write exactly
+cat /generated/manifest.txt through /serial/write after same-boot
+source=firmware-initramfs reason=valid-artifact, a generated-root proof ready
+marker, and a visible talos> prompt are retained. It must then observe from the
+saved post-prompt cursor through /serial/observe and retain the command text,
+Talos generated-root external artifact A, dispatch status=handled responses=1,
+and a following ready-for-next prompt=true or final PASS marker.
+
+This accepts only local/static proof preparation. Pi 5 command-input success,
+boot publication, hardwareTestLock acquisition, power-cycle, TFTP/serial
+capture, persistence, storage drivers, networking, SSH, Phase 11/12 expansion,
+and phase transition remain deferred to explicit follow-up tasks.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11/12

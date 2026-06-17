@@ -1,0 +1,89 @@
+{
+  "task_id": "phase10-pi5-generated-root-command-input-proof-core-20260617",
+  "status": "accepted",
+  "classification": "pi5-generated-root-command-input-proof-core-local-static",
+  "evidence_level": [
+    "static/source inspection",
+    "shell syntax check",
+    "compile-only Pi 5 generated-root boot transport image/archive review",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "selected_checkpoint": "phase10-pi5-generated-root-command-input-source-checkpoint-20260617",
+  "selected_proof_scenario": "pi5-generated-root-manifest-command-input-v1",
+  "selected_next_task": "phase10-pi5-generated-root-command-input-pi5-proof-20260617",
+  "proof_helper": "scripts/rpi5-generated-root-command-input-proof-review.sh",
+  "accepted_static_review": {
+    "archive_sha256": "8f6a4d0d3436308a5f3b51e4f113b75d1acbf807a7b7af2d66453806c586cf0c",
+    "kernel_2712_sha256": "c37b34ebc955a7ce11cd0660bc18424ebcec4550de23ae1e6b0b9ad7c867e4bd",
+    "kernel_2712_size": 208984,
+    "generated_root_artifact_sha256": "0341f5393502f54489acb1951633bf2773fb846a82bde89b3e4a2e82000724c6",
+    "generated_root_artifact_size": 662,
+    "root_and_serial_prefixed_artifact_match": true
+  },
+  "selected_command_contract": {
+    "required_command": "cat /generated/manifest.txt",
+    "expected_output": "Talos generated-root external artifact A",
+    "prompt_readiness": [
+      "same boot retains source=firmware-initramfs reason=valid-artifact",
+      "serial retains rpi5-generated-root-boot-transport-proof: ready command=N",
+      "serial retains visible talos> prompt before the write cursor is saved"
+    ],
+    "serial_method": {
+      "write_endpoint": "POST /serial/write",
+      "write_text": "cat /generated/manifest.txt",
+      "append_newline": true,
+      "observe_endpoint": "POST /serial/observe from saved post-prompt cursor",
+      "transact_allowed_as_acceptance_evidence": false
+    },
+    "minimum_response_evidence": [
+      "retained command text cat /generated/manifest.txt",
+      "retained output Talos generated-root external artifact A",
+      "dispatch status=handled responses=1 for the manifest command",
+      "ready-for-next prompt=true or final PASS after the command response"
+    ]
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Added a task-owned proof review helper that emits the selected manifest-command hardware proof contract."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Mechanically checked non-published archive initramfs placement, external artifact content, and kernel proof markers before hardware."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Selected the serialized Pi 5 proof follow-up only after local/static gates passed."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No runtime code change was needed; the existing generated-root harness already contains the selected manifest command and dispatch shape."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Pi 5 command-input acceptance remains with the serialized hardware proof task."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "Prompt visibility, serial transact output, or local/static strings alone do not prove generated-root command input."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "Persistence, writable filesystems, SD/USB/block storage, networking, SSH, Phase 11/12 expansion, and phase transition remain outside scope."
+    }
+  ],
+  "rejected_claims": [
+    "Pi 5 command-input success before serialized hardware proof",
+    "serial transact as retained acceptance evidence",
+    "prompt visibility alone proves generated-root command input",
+    "persistence",
+    "writable filesystem",
+    "SD/USB/block storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

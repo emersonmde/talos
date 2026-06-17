@@ -2333,6 +2333,26 @@ The post-review correction chain is:
     SD/USB/block storage, broader filesystem mutation, networking, SSH,
     Phase 11/12 expansion, and phase transition remain rejected until
     explicitly planned.
+123. Pi 5 generated-root command-input proof core: accepted in
+    'phase10-pi5-generated-root-command-input-proof-core-20260617'.
+    The local/static proof-core task adds
+    'scripts/rpi5-generated-root-command-input-proof-review.sh', which reviews
+    a non-published generated-root boot archive for root and 'da591740/'
+    'initramfs_2712' placement, external artifact content, kernel proof
+    markers, 'firmware-initramfs', 'valid-artifact', prompt readiness,
+    dispatch, response-count, ready-for-next, and PASS strings. Compile-only
+    archive review passed with kernel SHA-256
+    'c37b34ebc955a7ce11cd0660bc18424ebcec4550de23ae1e6b0b9ad7c867e4bd'
+    and artifact SHA-256
+    '0341f5393502f54489acb1951633bf2773fb846a82bde89b3e4a2e82000724c6'.
+    The selected serialized hardware follow-up is
+    'phase10-pi5-generated-root-command-input-pi5-proof-20260617', which must
+    write 'cat /generated/manifest.txt' after same-boot firmware-initramfs
+    source and prompt-readiness evidence and retain the external artifact line
+    'Talos generated-root external artifact A'. Hardware publication,
+    power-cycle, command-input acceptance, persistence, storage drivers,
+    networking, SSH, Phase 11/12 expansion, and phase transition remain
+    deferred to that explicit proof or later tasks.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

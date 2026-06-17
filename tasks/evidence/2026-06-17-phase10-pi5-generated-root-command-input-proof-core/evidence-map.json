@@ -1,0 +1,41 @@
+{
+  "task_id": "phase10-pi5-generated-root-command-input-proof-core-20260617",
+  "classification": "pi5-generated-root-command-input-proof-core-local-static",
+  "selected_next_task": "phase10-pi5-generated-root-command-input-pi5-proof-20260617",
+  "evidence": {
+    "selected_checkpoint": {
+      "path": "tasks/2026-06-17-phase10-pi5-generated-root-command-input-source-checkpoint.md",
+      "role": "accepted source checkpoint selecting the manifest-command proof contract"
+    },
+    "proof_helper": {
+      "path": "scripts/rpi5-generated-root-command-input-proof-review.sh",
+      "role": "local/static proof helper that reviews a non-published boot archive and emits the hardware evidence contract"
+    },
+    "command_input_review": {
+      "path": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-proof-core/command-input-review.json",
+      "role": "compile-only archive/image review output"
+    },
+    "boot_tree_listing": {
+      "path": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-proof-core/boot-tree-files.txt",
+      "role": "non-published generated-root boot tree listing"
+    },
+    "classification": {
+      "path": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-proof-core/classification.json",
+      "role": "accepted task classification and selected next task"
+    },
+    "generated_root_project_contract": {
+      "path": "docs/src/project/phase10-pi5-generated-root-boot-transport-contract.md",
+      "role": "current Pi 5 generated-root transport and command-input proof-core design note"
+    }
+  },
+  "validation": {
+    "static_source_inspection": "pass",
+    "sh_n_touched_scripts": "pass",
+    "compile_only_pi5_generated_root_archive_review": "pass",
+    "focused_generated_root_or_command_loop_test": "not-applicable-no-runtime-behavior-changed",
+    "jq_empty": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  }
+}
