@@ -1,0 +1,18 @@
+{
+  "label": "command0-direct-read",
+  "attempts": 1,
+  "bytes": 459,
+  "retained_text": "00000029 exec-len=0x0000000000000204 path=/generated/manifest.txt exec-path=/generated/status7\r\n\r\nrpi5-generated-root-boot-transport-proof: line command=0 hex=72 6f 6f 74 69 6e 66 6f\r\nrpi5-generated-root-boot-transport-proof: dispatch command=0 status=handled responses=1 raw-bytes=9 truncated=false controls=0\r\nrpi5-generated-root-boot-transport-proof: edit command=0 backspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=1\r\ntalos> ",
+  "responses": [
+    {
+      "action": "serial read",
+      "base64": "MDAwMDAwMjkgZXhlYy1sZW49MHgwMDAwMDAwMDAwMDAwMjA0IHBhdGg9L2dlbmVyYXRlZC9tYW5pZmVzdC50eHQgZXhlYy1wYXRoPS9nZW5lcmF0ZWQvc3RhdHVzNw0KDQpycGk1LWdlbmVyYXRlZC1yb290LWJvb3QtdHJhbnNwb3J0LXByb29mOiBsaW5lIGNvbW1hbmQ9MCBoZXg9NzIgNmYgNmYgNzQgNjkgNmUgNjYgNmYNCnJwaTUtZ2VuZXJhdGVkLXJvb3QtYm9vdC10cmFuc3BvcnQtcHJvb2Y6IGRpc3BhdGNoIGNvbW1hbmQ9MCBzdGF0dXM9aGFuZGxlZCByZXNwb25zZXM9MSByYXctYnl0ZXM9OSB0cnVuY2F0ZWQ9ZmFsc2UgY29udHJvbHM9MA0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogZWRpdCBjb21tYW5kPTAgYmFja3NwYWNlcz0wIGRlbGV0ZXM9MA0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogcmVhZHkgY29tbWFuZD0xDQp0YWxvcz4g",
+      "bytes": 459,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "00000029 exec-len=0x0000000000000204 path=/generated/manifest.txt exec-path=/generated/status7\r\n\r\nrpi5-generated-root-boot-transport-proof: line command=0 hex=72 6f 6f 74 69 6e 66 6f\r\nrpi5-generated-root-boot-transport-proof: dispatch command=0 status=handled responses=1 raw-bytes=9 truncated=false controls=0\r\nrpi5-generated-root-boot-transport-proof: edit command=0 backspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=1\r\ntalos> ",
+      "truncated": false
+    }
+  ]
+}

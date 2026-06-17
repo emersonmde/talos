@@ -1,0 +1,10 @@
+{
+  "action": "serial read",
+  "base64": "VEFMT1M6IG1lbW9yeSBwbGFuIHN0YXJ0DQp0YWxvczogbWVtb3J5IGxheW91dDoga2VybmVsPTB4MjAwMDAwLi4weDM3NDAwMCBoZWFwPTB4MjMzMDkwLi4weDMzMzA5MCBzdGFjaz0weDMzMzA5MC4uMHgzNzMwOTANCnRhbG9zOiBtZW1vcnkgbGF5b3V0OiBkdGI9MHgyZWZlYjYwMC4uMHgyZWZmZWZjMiBzaXplPTB4MTM5YzINCnRhbG9zOiBtZW1vcnkgdXNhYmxlOiBiYW5rPTAgc3RhcnQ9MHgyZjAwMDAwMCBlbmQ9MHgzZmMwMDAwMCBzaXplPTB4MTBjMDAwMDAgYWxpZ249MHgxMDAwIHBvbGljeT1sb3ctdGFpbA0KdGFsb3M6IHBhZ2UgZnJhbWVzIHNlZWQ6IHN0YXJ0PTB4MmYwMDAwMDAgZW5kPTB4M2ZjMDAwMDAgcGFnZXM9MHgxMGMwMCBwYWdlX3NpemU9MHgxMDAwIHNvdXJjZT1tZW1vcnktdXNhYmxlDQp0YWxvczogYm9vdHN0cmFwIHJlc2VydmU6IHN0YXJ0PTB4MmYwMDAwMDAgZW5kPTB4MmYwMTAwMDAgcGFnZXM9MHgxMCBwYWdlX3NpemU9MHgxMDAwIHJlYXNvbg==",
+  "bytes": 496,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "TALOS: memory plan start\r\ntalos: memory layout: kernel=0x200000..0x374000 heap=0x233090..0x333090 stack=0x333090..0x373090\r\ntalos: memory layout: dtb=0x2efeb600..0x2effefc2 size=0x139c2\r\ntalos: memory usable: bank=0 start=0x2f000000 end=0x3fc00000 size=0x10c00000 align=0x1000 policy=low-tail\r\ntalos: page frames seed: start=0x2f000000 end=0x3fc00000 pages=0x10c00 page_size=0x1000 source=memory-usable\r\ntalos: bootstrap reserve: start=0x2f000000 end=0x2f010000 pages=0x10 page_size=0x1000 reason",
+  "truncated": false
+}

@@ -1,0 +1,10 @@
+{
+  "action": "serial read",
+  "base64": "YWNoZS1lbmFibGVkDQp0YWxvczogZGF0YSBjYWNoZSBwbGFuOiBlbD0weDIgc2N0bHJfYmVmb3JlPTB4MzBjNTE4MzEgc2N0bHJfc2V0PTB4NCBraW5kPWVsMi1zdGFnZTEtZGNhY2hlLWVuYWJsZWQNClRBTE9TOiBkY2FjaGUgZW5hYmxlIHN0YXJ0DQpUQUxPUzogZGNhY2hlIGVuYWJsZSBkb25lDQp0YWxvczogZGF0YSBjYWNoZSBlbmFibGVkOiBlbD0weDIgc2N0bHI9MHgzMGM1MTgzNSBraW5kPWVsMi1zdGFnZTEtZGNhY2hlLWVuYWJsZWQNClRBTE9TOiBjYWNoZSB0cmFuc2l0aW9uIGRvbmUNCnRhbG9zOiBib290c3RyYXAgYWxsb2NhdG9yIHBsYW46IHN0YXJ0PTB4MmYwMTAwMDAgZW5kPTB4M2ZjMDAwMDAgYnl0ZXM9MHgxMGJmMDAwMCBwYWdlcz0weDEwYmYwIHBhZ2Vfc2l6ZT0weDEwMDAga2luZD1idW1wLW5vLWZyZWUtbG93LXRhaWwNCnRhbG9zOiBib290c3RyYXAgYWxsb2NhdG9yIGluaXQ6IHN0YXJ0PTB4MmYwMTAwMDAgbmV4dD0weDJmMDEwMDAwIGVuZD0weA==",
+  "bytes": 496,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "ache-enabled\r\ntalos: data cache plan: el=0x2 sctlr_before=0x30c51831 sctlr_set=0x4 kind=el2-stage1-dcache-enabled\r\nTALOS: dcache enable start\r\nTALOS: dcache enable done\r\ntalos: data cache enabled: el=0x2 sctlr=0x30c51835 kind=el2-stage1-dcache-enabled\r\nTALOS: cache transition done\r\ntalos: bootstrap allocator plan: start=0x2f010000 end=0x3fc00000 bytes=0x10bf0000 pages=0x10bf0 page_size=0x1000 kind=bump-no-free-low-tail\r\ntalos: bootstrap allocator init: start=0x2f010000 next=0x2f010000 end=0x",
+  "truncated": false
+}

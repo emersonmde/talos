@@ -1,0 +1,10 @@
+{
+  "action": "serial read",
+  "base64": "ICA0LjE=",
+  "bytes": 5,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "  4.1",
+  "truncated": false
+}

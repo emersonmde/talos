@@ -1,0 +1,11 @@
+{
+  "task_id": "phase10-pi5-serial-command0-prelude-pi5-proof-20260617",
+  "classification_file": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-prelude-pi5-proof/candidate-command0-atomic-20260617T061825Z/classification.json",
+  "direct_read_evidence": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-prelude-pi5-proof/candidate-command0-atomic-20260617T061825Z/direct-read-evidence.json",
+  "validation": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-prelude-pi5-proof/candidate-command0-atomic-20260617T061825Z/direct-read-proof-validation.json",
+  "tftp": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-prelude-pi5-proof/candidate-command0-atomic-20260617T061825Z/tftp/tftp-delta-stable-pre-restore.json",
+  "readiness": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-prelude-pi5-proof/candidate-command0-atomic-20260617T061825Z/serial/readiness-summary.json",
+  "command0": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-prelude-pi5-proof/candidate-command0-atomic-20260617T061825Z/serial/command0-direct-read-summary.json",
+  "restore": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-prelude-pi5-proof/candidate-command0-atomic-20260617T061825Z/restore/post-restore-status.json",
+  "selected_next_task": "phase10-pi5-serial-command0-prelude-closeout-20260617"
+}

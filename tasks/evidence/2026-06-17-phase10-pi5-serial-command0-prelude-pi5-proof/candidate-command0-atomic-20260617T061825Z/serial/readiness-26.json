@@ -1,0 +1,10 @@
+{
+  "action": "serial read",
+  "base64": "IDIwLjQxIERIQ1Agc3JjOiA2MDoyMjozMjo3MTo2Mjo4NyAxMC40Mi4xLjENCiAyMC40MiBZSV9BRERSIDEwLjQyLjEuNA0KIDIwLjQ0IFNJX0FERFIgMTAuNDIuMS4zDQogMjAuMjQgT1BUSU9OUzotDQoJb3A6IDUzIGxlbjogICAxIERIQ1AgcmVjdiBPRkZFUiAoMikgZXhwZWN0IE9GRkVSIDIwLjI1IA0KCW9wOiA1NCBsZW46ICAgNCAxMC40Mi4xLjEgMjAuMjUgDQoJb3A6IDUxIGxlbjogICA0ICAyMC4yNSANCglvcDogNjcgbGVuOiAgMTEgIDIwLjI2IA0KCW9wOiA1OCBsZW46ICAgNCAgMjAuMjYgDQoJb3A6IDU5IGxlbjogICA0ICAyMC4yNiANCglvcDogIDEgbGVuOiAgIDQgMjU1LjI1NS4yNTUuMCAyMC4yNiANCglvcDogNjYgbGVuOiAgMTAgMTAuNDIuMS4zIDIwLjcxIFs2Nl06IDEwLjQyLjEuMw0KIDIwLjI3IA0KCW9wOiAgMyBsZW46ICAgNCAxMC40Mi4xLjEgMjAuMjcgDQo=",
+  "bytes": 446,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": " 20.41 DHCP src: 60:22:32:71:62:87 10.42.1.1\r\n 20.42 YI_ADDR 10.42.1.4\r\n 20.44 SI_ADDR 10.42.1.3\r\n 20.24 OPTIONS:-\r\n\top: 53 len:   1 DHCP recv OFFER (2) expect OFFER 20.25 \r\n\top: 54 len:   4 10.42.1.1 20.25 \r\n\top: 51 len:   4  20.25 \r\n\top: 67 len:  11  20.26 \r\n\top: 58 len:   4  20.26 \r\n\top: 59 len:   4  20.26 \r\n\top:  1 len:   4 255.255.255.0 20.26 \r\n\top: 66 len:  10 10.42.1.3 20.71 [66]: 10.42.1.3\r\n 20.27 \r\n\top:  3 len:   4 10.42.1.1 20.27 \r\n",
+  "truncated": false
+}

@@ -2510,6 +2510,21 @@ The post-review correction chain is:
     generated-root command-input success, persistence, storage-driver work,
     networking, SSH, Phase 11/12 expansion, and phase transition remain
     unaccepted.
+135. Pi 5 serial command 0 prelude Pi 5 proof: blocked in
+    'phase10-pi5-serial-command0-prelude-pi5-proof-20260617' with
+    classification
+    'serial-command0-prelude-source-response-retention-blocked'. The selected
+    candidate reached same-boot firmware-initramfs valid-artifact readiness,
+    selected-tree identity, stable TFTP evidence, final pre-restore identity,
+    and restore proof. The atomic rootinfo write reached the command loop:
+    retained serial shows command=0 line evidence, dispatch command=0
+    status=handled responses=1, and ready command=1. The accepted guard still
+    rejects the proof because the command 0 direct-read window did not retain
+    the firmware-initramfs valid-artifact source response. Generated-root
+    command-input acceptance, persistence, storage-driver work, networking,
+    SSH, Phase 11/12 expansion, and phase transition remain rejected. The
+    selected follow-up is
+    'phase10-pi5-serial-command0-prelude-closeout-20260617'.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

@@ -1,0 +1,10 @@
+{
+  "action": "serial read",
+  "base64": "cmlwdG9yLWJhY2tlZC1vdXRwdXQ9dHJ1ZQ0KVEFMT1M6IGNvbW1hbmQgbG9vcCBpbyByZWFkeQ0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogcmVhZHkgY29tbWFuZD0wDQp0YWxvcz4g",
+  "bytes": 123,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "riptor-backed-output=true\r\nTALOS: command loop io ready\r\nrpi5-generated-root-boot-transport-proof: ready command=0\r\ntalos> ",
+  "truncated": false
+}

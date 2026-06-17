@@ -430,6 +430,18 @@ follow-up is phase10-pi5-serial-command0-prelude-pi5-proof-20260617; no Pi 5
 hardware run or generated-root command-input success is accepted by the
 guard-core task.
 
+phase10-pi5-serial-command0-prelude-pi5-proof-20260617 blocks with
+classification serial-command0-prelude-source-response-retention-blocked. The
+selected hardware run preserves firmware-initramfs generated-root readiness,
+selected-tree identity, stable TFTP evidence, final pre-restore identity, and
+baseline restore. It proves rootinfo reached the command loop: the retained
+direct-read window contains command=0 line evidence, dispatch command=0
+status=handled responses=1, and ready command=1. It does not accept
+generated-root command input because the same command 0 direct-read window did
+not retain the firmware-initramfs valid-artifact source response required by
+the accepted guard. Command 1 manifest proof remains out of scope until command
+0 satisfies the guard or a closeout changes the accepted evidence contract.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11/12
