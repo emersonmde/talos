@@ -2454,6 +2454,21 @@ The post-review correction chain is:
     networking, SSH, Phase 11/12 expansion, and phase transition remain
     rejected. The selected dependency-gated follow-up is
     'phase10-pi5-generated-root-command-input-direct-read-closeout-20260617'.
+131. Pi 5 generated-root command-input direct-read closeout: accepted in
+    'phase10-pi5-generated-root-command-input-direct-read-closeout-20260617'
+    with classification
+    'pi5-generated-root-command-input-command0-paused-milestone-closeout-selected'.
+    It reconciles the accepted direct-read source contract, local/static helper,
+    and blocked serialized Pi 5 proof. The retained boundary explicitly pauses
+    generated-root command input at the command 0 prelude blocker: after a
+    fresh pre-write read and successful /serial/write of rootinfo, the
+    direct-read window did not retain rootinfo, source=firmware-initramfs
+    reason=valid-artifact, or dispatch command=0 status=handled responses=1.
+    Pi 5 firmware-initramfs generated-root consumption remains accepted, while
+    shell-visible generated-root command-input success, persistence, storage
+    drivers, networking, SSH, Phase 11/12 expansion, and phase transition
+    remain rejected. The selected dependency-gated follow-up is
+    'phase10-pi5-generated-root-milestone-10-3-closeout-20260617'.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

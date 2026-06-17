@@ -370,10 +370,23 @@ Generated-root command-input acceptance remains rejected. The selected
 dependency-gated follow-up is
 phase10-pi5-generated-root-command-input-direct-read-closeout-20260617.
 
+phase10-pi5-generated-root-command-input-direct-read-closeout-20260617 accepts
+the static closeout for the direct-read chain with classification
+pi5-generated-root-command-input-command0-paused-milestone-closeout-selected.
+It preserves Pi 5 firmware-initramfs generated-root consumption as accepted,
+but explicitly pauses shell-visible generated-root command input at the command
+0 prelude blocker. The blocked invariant is the same as the proof: after a
+fresh command 0 pre-write read and successful /serial/write of rootinfo, the
+direct-read window did not retain rootinfo, source evidence, or
+dispatch command=0 status=handled responses=1. No hardware retry, harness
+adjustment, storage work, networking, SSH, Phase 11/12 expansion, or phase
+transition is selected. The selected dependency-gated follow-up is
+phase10-pi5-generated-root-milestone-10-3-closeout-20260617.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11/12
 feature expansion remain deferred. This contract now accepts Pi 5
 firmware-initramfs consumption of the already accepted generated-root artifact
-format, but not persistence, command-input success for the proof scenario, or a
-phase transition.
+format, but not persistence, shell-visible command-input success for the proof
+scenario, or a phase transition.

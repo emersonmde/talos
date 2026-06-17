@@ -1,0 +1,82 @@
+{
+  "task_id": "phase10-pi5-generated-root-command-input-direct-read-closeout-20260617",
+  "status": "accepted",
+  "classification": "pi5-generated-root-command-input-command0-paused-milestone-closeout-selected",
+  "accepted_capability": null,
+  "paused_blocker": {
+    "classification": "command-input-command0-prelude-blocked",
+    "first_failing_invariant": "After readiness and a successful /serial/write of rootinfo, the command0 direct-read window did not retain rootinfo, source=firmware-initramfs reason=valid-artifact, or dispatch command=0 status=handled responses=1.",
+    "pause_reason": "The next command-input attempt would require supervisor planning around the command 0 direct-read/prelude invariant; this closeout selects no retry or harness adjustment."
+  },
+  "retained_boundaries": {
+    "generated_root_consumption": "Pi 5 firmware-initramfs generated-root consumption remains accepted by phase10-pi5-generated-root-firmware-initramfs-reservation-closeout-20260616.",
+    "direct_read_contract": "Local/static direct-read source contract and helper are accepted.",
+    "command_input": "blocked and explicitly paused at command 0; no shell-visible generated-root command-input capability is accepted."
+  },
+  "source_tasks": {
+    "direct_read_source_contract": "phase10-pi5-generated-root-command-input-direct-read-source-contract-20260617",
+    "direct_read_harness_core": "phase10-pi5-generated-root-command-input-direct-read-harness-core-20260617",
+    "direct_read_pi5_proof": "phase10-pi5-generated-root-command-input-direct-read-pi5-proof-20260617"
+  },
+  "blocked_proof_summary": {
+    "run": "candidate-direct-read-20260617T043803Z",
+    "observed": [
+      "selected-tree identity",
+      "stable same-power-cycle TFTP evidence for da591740/kernel_2712.img and da591740/initramfs_2712",
+      "source=firmware-initramfs reason=valid-artifact",
+      "ready command=0",
+      "visible talos> prompt",
+      "command0 pre-write freshness",
+      "/serial/write accepted rootinfo",
+      "final pre-restore identity",
+      "post-run restore proof"
+    ],
+    "missing": [
+      "command0 direct-read rootinfo",
+      "command0 direct-read source=firmware-initramfs reason=valid-artifact",
+      "dispatch command=0 status=handled responses=1"
+    ]
+  },
+  "findings": [
+    {
+      "finding": "direct-read source/core/proof evidence needed one retained frontier",
+      "disposition": "fixed",
+      "evidence": "The closeout reconciles the accepted source contract, helper/core classification, and Pi 5 command0 blocker."
+    },
+    {
+      "finding": "Pi 5 firmware-initramfs generated-root consumption could be conflated with command-input success",
+      "disposition": "fixed",
+      "evidence": "The closeout preserves consumption as accepted while rejecting command-input capability."
+    },
+    {
+      "finding": "command0 direct-read handled response is missing",
+      "disposition": "blocked",
+      "evidence": "The direct-read Pi 5 proof classification records command0_handled=false and command0 first failing invariant."
+    },
+    {
+      "finding": "future command-input retry or harness adjustment",
+      "disposition": "deferred",
+      "evidence": "The blocker is paused for future supervisor planning; no retry is selected."
+    },
+    {
+      "finding": "prompt, write, or readiness-only command-input proof",
+      "disposition": "rejected",
+      "evidence": "The retained proof did not satisfy command-indexed dispatch evidence."
+    }
+  ],
+  "selected_next_task": "phase10-pi5-generated-root-milestone-10-3-closeout-20260617",
+  "planning_needed": false,
+  "rejected_claims": [
+    "generated-root command-input acceptance",
+    "prompt visibility proves command input",
+    "/serial/write byte acceptance proves command input",
+    "direct-read readiness proves command input without handled dispatch",
+    "persistence",
+    "writable filesystem",
+    "SD/USB/block storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "task_id": "phase10-pi5-generated-root-command-input-direct-read-closeout-20260617",
+  "classification": "pi5-generated-root-command-input-command0-paused-milestone-closeout-selected",
+  "status": "accepted",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "accepted direct-read source contract",
+    "local/static helper evidence",
+    "blocked serialized Pi 5 direct-read hardware proof evidence",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "files": {
+    "task_record": "tasks/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-closeout.md",
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-closeout/classification.json",
+    "source_contract_task": "tasks/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-source-contract.md",
+    "source_contract_classification": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-source-contract/classification.json",
+    "harness_core_task": "tasks/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-harness-core.md",
+    "harness_core_classification": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-harness-core/classification.json",
+    "pi5_proof_task": "tasks/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-pi5-proof.md",
+    "pi5_proof_classification": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-pi5-proof/classification.json",
+    "pi5_proof_evidence_map": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-pi5-proof/evidence-map.json",
+    "selected_pi5_evidence_run": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-pi5-proof/candidate-direct-read-20260617T043803Z/"
+  },
+  "summary": {
+    "accepted_capability": null,
+    "frontier": "Generated-root command input on Pi 5 remains blocked and explicitly paused at command0 prelude; Pi 5 firmware-initramfs generated-root consumption remains accepted.",
+    "selected_next_task": "phase10-pi5-generated-root-milestone-10-3-closeout-20260617"
+  }
+}
