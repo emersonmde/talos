@@ -1,0 +1,32 @@
+{
+  "task_id": "phase10-pi5-command0-tftp-selected-kernel-precondition-closeout-20260617",
+  "classification": "command0-tftp-selected-kernel-precondition-closed-write-delivery-v2-selected",
+  "precondition": "selected-tree-tftp-served-kernel-agreement",
+  "precondition_status": "accepted",
+  "first_failing_invariant": null,
+  "selected_next_task": "phase10-pi5-serial-command0-write-delivery-pi5-proof-v2-after-tftp-precondition-20260617",
+  "planning_needed": false,
+  "accepted_evidence": {
+    "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_kernel_2712_bytes": 208984,
+    "same_power_cycle_tftp_fetch_count": 2,
+    "same_power_cycle_tftp_fetch_bytes": [
+      208984,
+      208984
+    ],
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "post_restore_kernel_2712_bytes": 104136
+  },
+  "rejected_claims": [
+    "command0-write-delivery-success",
+    "command0-source-response-retention-success",
+    "generated-root-command-input-success",
+    "storage",
+    "networking",
+    "ssh",
+    "phase-11-expansion",
+    "phase-12-expansion",
+    "phase-transition"
+  ]
+}

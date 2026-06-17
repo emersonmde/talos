@@ -2774,6 +2774,21 @@ The post-review correction chain is:
     rejected. The selected follow-up is
     'phase10-pi5-command0-tftp-selected-kernel-precondition-closeout-20260617'.
 
+151. Pi 5 command0 TFTP selected-kernel precondition closeout: accepted in
+    'phase10-pi5-command0-tftp-selected-kernel-precondition-closeout-20260617'
+    with classification
+    'command0-tftp-selected-kernel-precondition-closed-write-delivery-v2-selected'.
+    The retained source contract, local/static core guard, and serialized Pi 5
+    proof are reconciled: selected-tree/TFTP-served-kernel agreement is
+    accepted for the 208984-byte da591740/kernel_2712.img candidate, final
+    pre-restore identity retained the selected tree, and restore returned to
+    the 104136-byte baseline kernel. This closeout selects the dependency-gated
+    command0 write-delivery v2 Pi 5 proof,
+    'phase10-pi5-serial-command0-write-delivery-pi5-proof-v2-after-tftp-precondition-20260617',
+    but does not accept command0 write-delivery success, command0
+    source-response retention success, generated-root command-input success,
+    storage, networking, SSH, Phase 11/12 expansion, or phase transition.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
@@ -7482,6 +7497,19 @@ Selected first slice:
   source-response-retention v2 proof is not selected. Generated-root
   command-input success, storage work, networking, SSH, Phase 11/12 expansion,
   and phase transition remain unaccepted pending supervisor planning.
+- 'phase10-pi5-command0-tftp-selected-kernel-precondition-closeout-20260617'
+  accepts the selected-kernel/TFTP-served precondition closeout with
+  classification
+  command0-tftp-selected-kernel-precondition-closed-write-delivery-v2-selected.
+  The retained source contract, selected-kernel-tftp-precondition-v1 core
+  guard, and Pi 5 proof now agree that the selected 208984-byte
+  da591740/kernel_2712.img candidate was served twice in the same power cycle,
+  final pre-restore identity retained the selected tree, and restore returned
+  to the 104136-byte baseline kernel. The selected next task is the
+  dependency-gated command0 write-delivery v2 Pi 5 proof after the TFTP
+  precondition; command0 write-delivery success, command0 source-response
+  retention success, generated-root command-input success, storage, networking,
+  SSH, Phase 11/12 expansion, and phase transition remain unaccepted.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The
