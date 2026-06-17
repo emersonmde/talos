@@ -1,0 +1,61 @@
+{
+  "task_id": "phase10-pi5-serial-command0-input-delivery-closeout-20260617",
+  "status": "accepted",
+  "classification": "command0-input-delivery-closed-outside-source-control-planning-needed",
+  "input_delivery": "paused",
+  "first_failing_invariant": "post-write-observe-missing-command0-delivery",
+  "first_unproven_assumption": "lab /serial/write bytes reach the same Pi UART10 RX/capture boundary after a visible command0 prompt",
+  "accepted_references": {
+    "write_delivery_after_selected_kernel_recovery": {
+      "task": "tasks/2026-06-17-phase10-pi5-serial-command0-write-delivery-after-selected-kernel-recovery.md",
+      "commit": "e64810f3ec2cc88eeb65a600d1edfaa5f925ec2d",
+      "classification": "command0-write-delivery-blocked-after-selected-kernel-recovery"
+    },
+    "input_delivery_core": {
+      "task": "tasks/2026-06-17-phase10-pi5-serial-command0-input-delivery-core.md",
+      "commit": "9c3e7e39cd09c96ba2d7ad57fd00441500df68db",
+      "classification": "command0-input-delivery-core-paused-outside-source-control"
+    }
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "reconciled the accepted write-delivery blocker and input-delivery core into a terminal closeout classification"
+    },
+    {
+      "disposition": "blocked",
+      "finding": "hardware evidence still lacks post-write command0/rootinfo/dispatch/response/ready bytes after accepted /serial/write"
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Pi 5 input-delivery proof requires supervisor planning for a new lab serial write-to-UART10/capture discriminator before promotion"
+    },
+    {
+      "disposition": "deferred",
+      "finding": "source-response retention remains non-evaluable until command0 input delivery is separately accepted"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "static closeout required no hardware lock, lab mutation, boot publication, or implementation change"
+    }
+  ],
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "Accepted input-delivery core selected no Pi 5 hardware proof; remaining boundary is lab /serial/write-to-UART10 delivery/capture after visible command0 prompt, which requires supervisor planning for a new discriminator.",
+  "rejected_claims": [
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ],
+  "validation": {
+    "static_source_task_evidence_inspection": "pass",
+    "jq_empty_task_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  }
+}

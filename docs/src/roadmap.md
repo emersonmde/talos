@@ -3118,6 +3118,21 @@ The post-review correction chain is:
     selected_next_task is null and planningNeeded=true; source-response
     retention, generated-root command-input success, storage, networking, SSH,
     Phase 11/12 expansion, and phase transition remain rejected.
+172. Pi 5 serial command0 input-delivery closeout: accepted in
+    'phase10-pi5-serial-command0-input-delivery-closeout-20260617' with
+    classification
+    'command0-input-delivery-closed-outside-source-control-planning-needed'.
+    The closeout reconciles the accepted write-delivery blocker and the local
+    input-delivery core. Command0 input delivery remains paused outside the
+    local source boundary: /serial/write accepted the rootinfo payload, but no
+    post-write command0/rootinfo/dispatch/response/ready bytes were retained,
+    and the local core did not select a new Pi 5 discriminator. The queued Pi 5
+    input-delivery proof and source-response-retention v3 proof remain
+    dependency-gated; selected_next_task is null and planningNeeded=true for
+    supervisor planning of any lab serial write-to-UART10/capture discriminator.
+    Source-response retention, generated-root command-input success, storage,
+    networking, SSH, Phase 11/12 expansion, and phase transition remain
+    rejected.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -7900,6 +7915,13 @@ Selected first slice:
   QEMU/substitute serial ingress smoke passed. No Pi 5 proof is selected from
   this core; supervisor planning is required for a new discriminator of lab
   /serial/write-to-UART10 delivery/capture after a visible command0 prompt.
+- 'phase10-pi5-serial-command0-input-delivery-closeout-20260617' accepts the
+  terminal input-delivery closeout with classification
+  command0-input-delivery-closed-outside-source-control-planning-needed.
+  Command0 input delivery remains paused outside the local source boundary; the
+  queued Pi 5 input-delivery proof is not dependency-satisfied because the core
+  selected null, and source-response retention remains non-evaluable until
+  command0 input delivery is separately accepted.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The
