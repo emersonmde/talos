@@ -1,0 +1,33 @@
+{
+  "task_id": "phase10-pi5-generated-root-firmware-initramfs-reservation-pi5-proof-20260616",
+  "status": "accepted",
+  "classification": "pi5-generated-root-firmware-initramfs-consumed-command-input-not-exercised",
+  "selected_next_task": "phase10-pi5-generated-root-firmware-initramfs-reservation-closeout-20260616",
+  "accepted_capability": "Pi 5 firmware-loaded initramfs_2712 bytes reached Talos after early memory setup and installed as generated-root source=firmware-initramfs reason=valid-artifact",
+  "archive": {
+    "sha256": "91c3ea1a8fb8d8f6052818e998fff8091b33290c6c5236ac44cb41146a79a551",
+    "kernel_2712_sha256": "c37b34ebc955a7ce11cd0660bc18424ebcec4550de23ae1e6b0b9ad7c867e4bd",
+    "kernel_2712_bytes": 208984,
+    "initramfs_2712_sha256": "0341f5393502f54489acb1951633bf2773fb846a82bde89b3e4a2e82000724c6",
+    "initramfs_2712_bytes": 662
+  },
+  "hardware": {
+    "capture_chain_contract": "pi5-capture-chain-v4",
+    "suggested_classification": "post-handoff-marker-visible",
+    "identity_join_rejections": [],
+    "expected_fetch_byte_match_count": 2,
+    "serial_marker_seen": true,
+    "serial_marker_excerpt": "t-boot-transport-proof: final participants=5 expected=5 errors=1 classification=pi5-generated-root-boot-transport-complete-incomplete\r\nrpi5-generated-root-boot-transport-proof: FAIL\r\n",
+    "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+    "final_pre_restore_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "rejected_claims": [
+    "interactive command injection success",
+    "persistence",
+    "SD/USB/block storage",
+    "networking",
+    "SSH",
+    "phase transition"
+  ]
+}

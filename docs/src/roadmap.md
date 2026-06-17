@@ -2303,6 +2303,23 @@ The post-review correction chain is:
     drivers, networking, SSH, Phase 11/12 work, and phase transition remain
     rejected until the dependency-gated serialized Pi 5 proof task accepts
     them directly.
+121. Pi 5 generated-root firmware initramfs reservation Pi 5 proof: accepted
+    in
+    'phase10-pi5-generated-root-firmware-initramfs-reservation-pi5-proof-20260616'.
+    The accepted rerun retained selected-tree identity, served
+    'da591740/kernel_2712.img' twice at the expected 208984 bytes in the same
+    power cycle, kept the final pre-restore tree at the selected hash
+    '06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212',
+    and restored baseline tree
+    'a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10'.
+    Serial hardware output reported the FDT firmware initramfs range
+    '0x2efff000..0x2efff296' with 'source=firmware-initramfs' and
+    'reason=valid-artifact', accepting Pi 5 generated-root artifact
+    consumption through the firmware initramfs path. The scenario's scripted
+    command input remained unexercised and reported an incomplete command-loop
+    proof, so interactive command injection success, persistence,
+    SD/USB/block storage, networking, SSH, and phase transition remain
+    rejected until separately planned.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

@@ -172,6 +172,22 @@ c37b34ebc955a7ce11cd0660bc18424ebcec4550de23ae1e6b0b9ad7c867e4bd and size
 publication, lab mutation, hardware proof, persistence, SD/USB/block drivers,
 networking, SSH, Phase 11/12 work, and phase transition remain deferred.
 
+## Firmware Initramfs Reservation Pi 5 Proof
+
+phase10-pi5-generated-root-firmware-initramfs-reservation-pi5-proof-20260616
+accepts the serialized Pi 5 proof for firmware initramfs preservation. The
+accepted rerun served the selected 'da591740/kernel_2712.img' twice at 208984
+bytes, retained the selected tree through final pre-restore identity, restored
+the baseline tree, and reported the firmware initramfs range
+0x2efff000..0x2efff296 with 'source=firmware-initramfs' and
+'reason=valid-artifact'.
+
+This accepts Pi 5 generated-root artifact consumption through the firmware
+initramfs path. The same run did not accept interactive command injection
+success because scripted command input arrived empty and the scenario reported
+an incomplete command-loop proof. Persistence, SD/USB/block drivers,
+networking, SSH, Phase 11/12 work, and phase transition remain deferred.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11 remain

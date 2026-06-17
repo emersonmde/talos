@@ -1,0 +1,1 @@
+tasks/evidence/2026-06-16-phase10-pi5-generated-root-firmware-initramfs-reservation-pi5-proof/candidate-archive.tar.gz

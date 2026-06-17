@@ -1,0 +1,31 @@
+candidate_archive=tasks/evidence/2026-06-16-phase10-pi5-generated-root-firmware-initramfs-reservation-pi5-proof/candidate-archive.tar.gz
+candidate_archive_sha256=91c3ea1a8fb8d8f6052818e998fff8091b33290c6c5236ac44cb41146a79a551
+kernel_2712_sha256=c37b34ebc955a7ce11cd0660bc18424ebcec4550de23ae1e6b0b9ad7c867e4bd
+kernel_2712_size=208984
+kernel8_matches_kernel_2712=true
+generated_root_artifact_sha256=0341f5393502f54489acb1951633bf2773fb846a82bde89b3e4a2e82000724c6
+generated_root_artifact_size=662
+serial_prefixed_artifact_matches_root=true
+initramfs_config_line=initramfs initramfs_2712 followkernel
+manifest:
+  bcm2712-rpi-5-b.dtb
+  cmdline.txt
+  config.txt
+  da591740
+  da591740/bcm2712-rpi-5-b.dtb
+  da591740/cmdline.txt
+  da591740/config.txt
+  da591740/initramfs_2712
+  da591740/kernel8.img
+  da591740/kernel_2712.img
+  da591740/overlays
+  da591740/overlays/bcm2712d0.dtbo
+  da591740/overlays/overlay_map.dtb
+  da591740/overlays/uart0-pi5.dtbo
+  initramfs_2712
+  kernel8.img
+  kernel_2712.img
+  overlays
+  overlays/bcm2712d0.dtbo
+  overlays/overlay_map.dtb
+  overlays/uart0-pi5.dtbo
