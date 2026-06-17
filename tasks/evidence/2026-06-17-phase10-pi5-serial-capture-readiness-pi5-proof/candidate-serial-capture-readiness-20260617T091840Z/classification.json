@@ -1,0 +1,34 @@
+{
+  "run_label": "candidate-serial-capture-readiness-20260617T091840Z",
+  "classification": "serial-capture-readiness-proof-blocked",
+  "terminal_classification_allowed_by_task": true,
+  "archive": {
+    "path": "target/talos-rpi5-generated-root-command-input-proof-core-20260617.tar.gz",
+    "sha256": "8f6a4d0d3436308a5f3b51e4f113b75d1acbf807a7b7af2d66453806c586cf0c",
+    "kernel_2712_sha256": "c37b34ebc955a7ce11cd0660bc18424ebcec4550de23ae1e6b0b9ad7c867e4bd",
+    "kernel_2712_size": 208984,
+    "initramfs_2712_sha256": "0341f5393502f54489acb1951633bf2773fb846a82bde89b3e4a2e82000724c6",
+    "initramfs_2712_size": 662
+  },
+  "restore_snapshot": "pre-serial-capture-readiness-20260617T091840Z",
+  "checks": {
+    "selected_candidate_identity": true,
+    "readiness_ok": true,
+    "prewrite_fresh": true,
+    "command0_write_ok": true,
+    "command0_source_response_retention_ok": false,
+    "stable_tftp_delta_ok": true,
+    "final_pre_restore_identity_ok": true,
+    "restore_ok": true
+  },
+  "first_failing_invariant": "command0-source-response-retention",
+  "rejected_claims": [
+    "persistence",
+    "storage-drivers",
+    "networking",
+    "ssh",
+    "phase-11-or-12-expansion",
+    "phase-transition",
+    "full-generated-root-command-input-success"
+  ]
+}

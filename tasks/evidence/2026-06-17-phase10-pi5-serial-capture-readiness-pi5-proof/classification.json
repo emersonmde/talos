@@ -1,0 +1,21 @@
+{
+  "run_dir": "tasks/evidence/2026-06-17-phase10-pi5-serial-capture-readiness-pi5-proof/triage-control-and-rerun-20260617T092509Z/candidate-serial-capture-readiness-rerun-20260617T092509Z",
+  "classification": "serial-capture-readiness-command0-write-delivery-blocked",
+  "checks": {
+    "selected_candidate_identity": true,
+    "readiness_ok": true,
+    "prewrite_fresh": true,
+    "command0_write_ok": true,
+    "command0_source_response_retention_ok": false,
+    "stable_tftp_delta_ok": true,
+    "final_pre_restore_identity_ok": true,
+    "restore_ok": true,
+    "command0_write_reached_loop": false
+  },
+  "first_failing_invariant": "command0-write-delivery",
+  "notes": [
+    "Rerun reached same-boot firmware-initramfs valid-artifact ready command=0 and an empty fresh pre-write read.",
+    "/serial/write accepted 9 bytes for rootinfo, but retained post-write direct-read output did not show rootinfo or line command=0; the target advanced through empty input-error timeouts for later commands.",
+    "This is a command0 write-delivery/capture blocker before command0 source-response retention can be evaluated."
+  ]
+}

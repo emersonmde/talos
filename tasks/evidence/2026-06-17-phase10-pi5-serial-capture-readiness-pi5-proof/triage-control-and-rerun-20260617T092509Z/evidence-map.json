@@ -1,0 +1,15 @@
+{
+  "task_id": "phase10-pi5-serial-capture-readiness-pi5-proof-20260617",
+  "classification": "serial-capture-readiness-command0-write-delivery-blocked",
+  "first_failing_invariant": "command0-write-delivery",
+  "triage_dir": "tasks/evidence/2026-06-17-phase10-pi5-serial-capture-readiness-pi5-proof/triage-control-and-rerun-20260617T092509Z",
+  "known_good_control": "tasks/evidence/2026-06-17-phase10-pi5-serial-capture-readiness-pi5-proof/triage-control-and-rerun-20260617T092509Z/known-good-control",
+  "candidate_rerun": "tasks/evidence/2026-06-17-phase10-pi5-serial-capture-readiness-pi5-proof/triage-control-and-rerun-20260617T092509Z/candidate-serial-capture-readiness-rerun-20260617T092509Z",
+  "evidence": {
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-capture-readiness-pi5-proof/triage-control-and-rerun-20260617T092509Z/candidate-serial-capture-readiness-rerun-20260617T092509Z/classification.json",
+    "candidate_evidence_map": "tasks/evidence/2026-06-17-phase10-pi5-serial-capture-readiness-pi5-proof/triage-control-and-rerun-20260617T092509Z/candidate-serial-capture-readiness-rerun-20260617T092509Z/evidence-map.json",
+    "known_good_control_summary": "tasks/evidence/2026-06-17-phase10-pi5-serial-capture-readiness-pi5-proof/triage-control-and-rerun-20260617T092509Z/known-good-control/serial/read-summary.json",
+    "tftp_delta_stable_pre_restore": "tasks/evidence/2026-06-17-phase10-pi5-serial-capture-readiness-pi5-proof/triage-control-and-rerun-20260617T092509Z/candidate-serial-capture-readiness-rerun-20260617T092509Z/tftp-delta-stable-pre-restore.json",
+    "restore_status": "tasks/evidence/2026-06-17-phase10-pi5-serial-capture-readiness-pi5-proof/triage-control-and-rerun-20260617T092509Z/candidate-serial-capture-readiness-rerun-20260617T092509Z/restore/post-restore-status.json"
+  }
+}

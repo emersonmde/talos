@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "bj0weDAwMDAwMDAwMDAwMDAyOTYgc291cmNlPWZpcm13YXJlLWluaXRyYW1mcyByZWFzb249dmFsaWQtYXJ0aWZhY3QgZGlnZXN0PTB4N2Q2OGZkYzgwNzM2YjMzMiB0b3RhbC1sZW49MHgwMDAwMDAwMDAwMDAwMjk2IGZpbGUtbGVuPTB4MDAwMDAwMDAwMDAwMDAyOSBleGVjLWxlbj0weDAwMDAwMDAwMDAwMDAyMDQNClRBTE9TOiBjb21tYW5kIGxvb3AgcHJvb2YgZW50ZXJlZA0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogc3RhcnQgY29tbWFuZC1jb3VudD01IGJhY2tlbmQ9cnVudGltZS1jb25zb2xlMC9iY20yNzEyLXVhcnQxMC1wbDAxMSBpbnB1dD1mZDAvcnVudGltZS1jb25zb2xlMC90dHktY2Fub25pY2FsLWxpdGUgYnVpbHRpbnM9a2VybmVsLWJhY2tlZC1yZWdyZXNzaW9uLWNvbnRyb2wrdmZzLXN5c2NpbyByZWFkeQ0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogcmVhZHkgY29tbWFuZD0wDQp0YWxvcz4gAAo=",
+  "bytes": 500,
+  "cursor": 4194304,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "n=0x0000000000000296 source=firmware-initramfs reason=valid-artifact digest=0x7d68fdc80736b332 total-len=0x0000000000000296 file-len=0x0000000000000029 exec-len=0x0000000000000204\r\nTALOS: command loop proof entered\r\nrpi5-generated-root-boot-transport-proof: start command-count=5 backend=runtime-console0/bcm2712-uart10-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed-regression-control+vfs-syscio ready\r\nrpi5-generated-root-boot-transport-proof: ready command=0\r\ntalos> \u0000\n"
+}

@@ -1,0 +1,41 @@
+{
+  "run_label": "candidate-serial-capture-readiness-rerun-20260617T092509Z",
+  "classification": "serial-capture-readiness-command0-write-delivery-blocked",
+  "archive": {
+    "path": "target/talos-rpi5-generated-root-command-input-proof-core-20260617.tar.gz",
+    "sha256": "8f6a4d0d3436308a5f3b51e4f113b75d1acbf807a7b7af2d66453806c586cf0c",
+    "kernel_2712_sha256": "c37b34ebc955a7ce11cd0660bc18424ebcec4550de23ae1e6b0b9ad7c867e4bd",
+    "kernel_2712_size": 208984,
+    "initramfs_2712_sha256": "0341f5393502f54489acb1951633bf2773fb846a82bde89b3e4a2e82000724c6",
+    "initramfs_2712_size": 662
+  },
+  "restore_snapshot": "pre-serial-capture-readiness-rerun-20260617T092509Z",
+  "checks": {
+    "selected_candidate_identity": true,
+    "readiness_ok": true,
+    "prewrite_fresh": true,
+    "command0_write_ok": true,
+    "command0_source_response_retention_ok": false,
+    "stable_tftp_delta_ok": true,
+    "final_pre_restore_identity_ok": true,
+    "restore_ok": true,
+    "command0_write_reached_loop": false
+  },
+  "first_failing_invariant": "command0-write-delivery",
+  "prior_inconclusive_candidate": "tasks/evidence/2026-06-17-phase10-pi5-serial-capture-readiness-pi5-proof/candidate-serial-capture-readiness-20260617T091840Z",
+  "known_good_control_before_rerun": "tasks/evidence/2026-06-17-phase10-pi5-serial-capture-readiness-pi5-proof/triage-control-and-rerun-20260617T092509Z/known-good-control",
+  "rejected_claims": [
+    "persistence",
+    "storage-drivers",
+    "networking",
+    "ssh",
+    "phase-11-or-12-expansion",
+    "phase-transition",
+    "full-generated-root-command-input-success"
+  ],
+  "notes": [
+    "Rerun reached same-boot firmware-initramfs valid-artifact ready command=0 and an empty fresh pre-write read.",
+    "/serial/write accepted 9 bytes for rootinfo, but retained post-write direct-read output did not show rootinfo or line command=0; the target advanced through empty input-error timeouts for later commands.",
+    "This is a command0 write-delivery/capture blocker before command0 source-response retention can be evaluated."
+  ]
+}
