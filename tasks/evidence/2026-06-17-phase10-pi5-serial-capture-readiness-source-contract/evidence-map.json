@@ -1,0 +1,55 @@
+{
+  "task_id": "phase10-pi5-serial-capture-readiness-source-contract-20260617",
+  "classification": "serial-capture-readiness-contract-guard-core-selected",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "inputs": {
+    "accepted_closeout": {
+      "path": "tasks/2026-06-17-phase10-pi5-serial-command0-source-response-retention-closeout.md",
+      "classification_path": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-closeout/classification.json",
+      "commit": "669d8390f0c8dd6113b0ed5a29dee937579405d6"
+    },
+    "accepted_source_contract": {
+      "path": "tasks/2026-06-17-phase10-pi5-serial-command0-source-response-retention-source-contract.md",
+      "classification_path": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-source-contract/classification.json"
+    },
+    "accepted_core": {
+      "path": "tasks/2026-06-17-phase10-pi5-serial-command0-source-response-retention-core.md",
+      "classification_path": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-core/classification.json"
+    },
+    "accepted_pi5_proof": {
+      "path": "tasks/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof.md",
+      "classification_path": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/classification.json",
+      "evidence_map_path": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/evidence-map.json"
+    }
+  },
+  "readiness_capture_evidence": {
+    "first_candidate_readiness_summary": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/candidate-command0-retention-20260617T074126Z/serial/readiness-summary.json",
+    "first_candidate_command0_direct_read_summary": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/candidate-command0-retention-20260617T074126Z/serial/command0-direct-read-summary.json",
+    "known_good_control_readiness": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/known-good-control/serial/readiness-control.json",
+    "candidate_rerun_readiness_summary": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/candidate-command0-retention-rerun/serial/readiness-summary.json"
+  },
+  "retained_boundary": {
+    "accepted": [
+      "Pi 5 generated-root transport remains accepted at the Milestone 10.3 boundary",
+      "Pi 5 firmware-initramfs generated-root consumption remains accepted",
+      "command0-source-response-retention-guard-v2 remains the transaction gate for future command0 proof evidence"
+    ],
+    "blocked": [
+      "serial readiness/capture stability blocks command0 source-response retention evaluation",
+      "Pi 5 shell-visible generated-root command input remains unaccepted"
+    ],
+    "selected_next_task": "phase10-pi5-serial-capture-readiness-guard-core-20260617"
+  },
+  "outputs": {
+    "task_record": "tasks/2026-06-17-phase10-pi5-serial-capture-readiness-source-contract.md",
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-capture-readiness-source-contract/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-17-phase10-pi5-serial-capture-readiness-source-contract/evidence-map.json",
+    "roadmap_update": "docs/src/roadmap.md",
+    "transport_contract_update": "docs/src/project/phase10-pi5-generated-root-boot-transport-contract.md"
+  }
+}

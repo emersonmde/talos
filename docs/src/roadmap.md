@@ -2604,6 +2604,22 @@ The post-review correction chain is:
     post-command0 transition checkpoint is selected. Supervisor planning is
     required before any retry, evidence-contract change, transition checkpoint,
     storage work, networking, SSH, Phase 11/12 expansion, or phase transition.
+141. Pi 5 serial capture readiness source contract: accepted in
+    'phase10-pi5-serial-capture-readiness-source-contract-20260617' with
+    classification
+    'serial-capture-readiness-contract-guard-core-selected'. The accepted
+    command0 source-response retention closeout left command0 non-evaluable
+    because serial readiness/capture did not retain a usable generated-root
+    ready command=0 boundary: the first candidate retained stale later-command
+    readiness with fresh_after_prompt=false and zero command0 bytes, while the
+    known-good control and candidate rerun retained only early firmware/RP1
+    bytes under the long-settle direct-read strategy. The selected follow-up is
+    'phase10-pi5-serial-capture-readiness-guard-core-20260617', a local/static
+    guard over readiness/capture evidence before any hardware retry. It must
+    preserve command0-source-response-retention-guard-v2 as the later command0
+    transaction gate. Generated-root command-input success, command0
+    response-generation failure, persistence, storage-driver work, networking,
+    SSH, Phase 11/12 expansion, and phase transition remain rejected.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

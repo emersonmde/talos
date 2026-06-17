@@ -500,6 +500,22 @@ reconciled. No transition checkpoint, retry, evidence-contract change, storage
 work, networking, SSH, Phase 11/12 expansion, or phase transition is selected
 without supervisor planning.
 
+phase10-pi5-serial-capture-readiness-source-contract-20260617 accepts the
+serial-capture-readiness source/static contract with classification
+serial-capture-readiness-contract-guard-core-selected. The retained blocker is
+serial readiness/capture setup, not command0 response generation: the first
+candidate retained stale later-command readiness with fresh_after_prompt=false
+and zero command0 direct-read bytes, while the known-good control and candidate
+rerun retained only early firmware/RP1 bytes under the long-settle direct-read
+strategy. The selected follow-up is
+phase10-pi5-serial-capture-readiness-guard-core-20260617. That local/static
+guard must accept only a same-boot firmware-initramfs valid-artifact ready
+command=0 boundary with a fresh pre-write point before applying
+command0-source-response-retention-guard-v2, and it must reject early-firmware
+capture, stale later-command readiness, dispatch-only metadata,
+prompt/write-only evidence, and tail-only source response. A readiness/capture
+pass alone does not accept generated-root command-input success.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11/12

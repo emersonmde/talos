@@ -1,0 +1,111 @@
+{
+  "task_id": "phase10-pi5-serial-capture-readiness-source-contract-20260617",
+  "task_status": "accepted",
+  "classification": "serial-capture-readiness-contract-guard-core-selected",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "accepted command0 source-response retention closeout evidence",
+    "accepted Pi 5 proof classification evidence",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "first_failing_invariant": {
+    "class": "serial readiness/capture setup",
+    "summary": "The previous Pi 5 proof reached selected candidate identity and TFTP evidence, but did not retain a usable generated-root ready command=0 window before command-loop timeout. The first candidate retained stale later-command readiness with fresh_after_prompt=false and zero command0 bytes; the known-good control and candidate rerun retained only early firmware/RP1 bytes under the long-settle direct-read strategy."
+  },
+  "contradicting_evidence": [
+    {
+      "path": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/candidate-command0-retention-20260617T074126Z/serial/readiness-summary.json",
+      "summary": "Retained input-error timeout and ready command=3, not a clean generated-root ready command=0 boundary; fresh_after_prompt=false."
+    },
+    {
+      "path": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/candidate-command0-retention-20260617T074126Z/serial/command0-direct-read-summary.json",
+      "summary": "Command0 direct-read retained zero bytes, so command0 source-response retention was non-evaluable."
+    },
+    {
+      "path": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/known-good-control/serial/readiness-control.json",
+      "summary": "Known-good control retained early firmware/RP1 bytes, proving the long-settle capture shape was not a command0 readiness discriminator."
+    },
+    {
+      "path": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/candidate-command0-retention-rerun/serial/readiness-summary.json",
+      "summary": "Candidate rerun retained only early bytes and did not establish generated-root command0 readiness."
+    }
+  ],
+  "unproven_assumptions": [
+    "direct-read polling starts from a command0-ready prompt rather than stale later-command output",
+    "long-settle direct-read capture distinguishes Talos command-loop readiness from early firmware/RP1 output",
+    "a command0 write is attempted only after an evaluable same-boot readiness boundary",
+    "serial retention cursor saturation is not hiding the command0 readiness/response window"
+  ],
+  "selected_contract": "serial-capture-readiness-guard-v1",
+  "smallest_decisive_discriminator": "A local/static guard that accepts only same-boot firmware-initramfs valid-artifact readiness for ready command=0 with a visible prompt and fresh pre-write boundary before applying command0-source-response-retention-guard-v2; it must reject early-firmware-only capture, stale later-command readiness, dispatch-only metadata, prompt/write-only evidence, and tail-only source response.",
+  "approaches": [
+    {
+      "name": "local-static-readiness-capture-guard",
+      "disposition": "selected",
+      "reason": "It directly rejects the non-evaluable evidence shape from the previous proof before any hardware retry."
+    },
+    {
+      "name": "lab-service-or-kernel-target-proof-source-change",
+      "disposition": "deferred",
+      "reason": "Only justified if guard-core evidence proves the current direct-read proof surface cannot discriminate readiness/capture quality."
+    },
+    {
+      "name": "same-shaped-hardware-retry",
+      "disposition": "rejected",
+      "reason": "The prior run already proved publication/TFTP and failed before command0 could be evaluated."
+    }
+  ],
+  "selected_next_task": "phase10-pi5-serial-capture-readiness-guard-core-20260617",
+  "accepted_capability": null,
+  "rejected_claims": [
+    "generated-root command-input hardware success",
+    "command0 source-response retention success",
+    "command0 response-generation failure",
+    "early-firmware-only capture as command0 readiness",
+    "stale later-command readiness as command0 readiness",
+    "dispatch-only command evidence",
+    "prompt-only command evidence",
+    "serial-write-only command evidence",
+    "tail-only source-response evidence",
+    "persistence",
+    "writable storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "finding": "serial readiness/capture setup blocked evaluation of command0 source-response retention",
+      "disposition": "fixed",
+      "evidence": "First candidate readiness and command0 summaries plus known-good control and candidate rerun evidence are classified."
+    },
+    {
+      "finding": "need a qualitatively different discriminator before another hardware run",
+      "disposition": "fixed",
+      "evidence": "selected_next_task is the local/static readiness/capture guard-core task."
+    },
+    {
+      "finding": "lab-service or kernel/target proof-source change",
+      "disposition": "deferred",
+      "evidence": "Only the guard-core task may justify those changes."
+    },
+    {
+      "finding": "same-shaped timing/cursor hardware retry",
+      "disposition": "rejected",
+      "evidence": "The prior proof already reached identity/TFTP and failed before command0 was evaluable."
+    },
+    {
+      "finding": "hardware success, storage, networking, SSH, Phase 11/12 expansion, and phase transition",
+      "disposition": "rejected",
+      "evidence": "No such work was performed or accepted."
+    },
+    {
+      "finding": "Pi 5 hardware run",
+      "disposition": "not-an-issue",
+      "evidence": "This task is a static source contract."
+    }
+  ]
+}
