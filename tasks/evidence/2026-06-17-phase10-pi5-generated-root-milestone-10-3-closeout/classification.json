@@ -1,0 +1,76 @@
+{
+  "task_id": "phase10-pi5-generated-root-milestone-10-3-closeout-20260617",
+  "status": "accepted",
+  "classification": "phase10-milestone-10-3-closed-generated-root-consumption-command-input-paused",
+  "milestone_boundary": {
+    "status": "closed",
+    "accepted": [
+      "local/qemu no-kernel-rebuild generated-root transport with one kernel image and two external artifacts",
+      "Pi 5 firmware-initramfs generated-root artifact consumption",
+      "Pi 5 preservation of firmware initramfs bytes through early memory setup",
+      "deterministic compiled fallback for invalid or missing generated-root artifacts"
+    ],
+    "paused": [
+      "Pi 5 shell-visible generated-root command input at command0 prelude"
+    ],
+    "not_accepted": [
+      "generated-root command input on Pi 5",
+      "writable persistence",
+      "SD/USB/block storage",
+      "broader filesystem mutation",
+      "networking",
+      "SSH",
+      "Phase 11/12 expansion",
+      "phase transition"
+    ]
+  },
+  "command_input_pause": {
+    "source_task": "phase10-pi5-generated-root-command-input-direct-read-closeout-20260617",
+    "classification": "command-input-command0-prelude-blocked",
+    "first_failing_invariant": "After command0 pre-write freshness and a successful /serial/write of rootinfo, the direct-read window did not retain rootinfo, source evidence, or dispatch command=0 status=handled responses=1.",
+    "future_work_policy": "Supervisor planning is required before another command-input hardware attempt, harness adjustment, evidence-contract change, storage work, networking, SSH, Phase 11/12 expansion, or phase transition."
+  },
+  "findings": [
+    {
+      "finding": "Milestone 10.3 evidence needed one final boundary after command-input follow-up",
+      "disposition": "fixed",
+      "evidence": "The closeout reconciles no-rebuild transport, Pi 5 firmware-initramfs consumption, and the paused direct-read command-input blocker."
+    },
+    {
+      "finding": "Command input could be mistaken for generated-root transport acceptance",
+      "disposition": "fixed",
+      "evidence": "Command input is recorded as a paused control-surface blocker while generated-root consumption remains accepted."
+    },
+    {
+      "finding": "Future command-input retry",
+      "disposition": "deferred",
+      "evidence": "No retry is selected; the paused invariant requires supervisor planning."
+    },
+    {
+      "finding": "Prompt, /serial/write, readiness, or direct-read-only command-input proof",
+      "disposition": "rejected",
+      "evidence": "The retained direct-read proof did not satisfy command-indexed handled dispatch evidence."
+    },
+    {
+      "finding": "No post-closeout implementation task is queued",
+      "disposition": "not-an-issue",
+      "evidence": "Worker state requests supervisor planning rather than creating or inferring a new task."
+    }
+  ],
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "Milestone 10.3 is closed, but no explicit queued post-closeout implementation task exists. Supervisor must plan the next feature-led task before worker promotion.",
+  "rejected_claims": [
+    "generated-root command input acceptance",
+    "prompt visibility proves command input",
+    "/serial/write byte acceptance proves command input",
+    "readiness or direct-read output proves command input without handled dispatch",
+    "persistence",
+    "writable filesystem",
+    "SD/USB/block storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

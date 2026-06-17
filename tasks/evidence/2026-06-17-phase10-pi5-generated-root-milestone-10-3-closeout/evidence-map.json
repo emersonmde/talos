@@ -1,0 +1,29 @@
+{
+  "task_id": "phase10-pi5-generated-root-milestone-10-3-closeout-20260617",
+  "classification": "phase10-milestone-10-3-closed-generated-root-consumption-command-input-paused",
+  "status": "accepted",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "accepted generated-root transport task records",
+    "accepted Pi 5 firmware-initramfs consumption evidence",
+    "blocked command-input closeout evidence",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "files": {
+    "task_record": "tasks/2026-06-17-phase10-pi5-generated-root-milestone-10-3-closeout.md",
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-milestone-10-3-closeout/classification.json",
+    "local_qemu_transport_closeout": "tasks/2026-06-05-phase10-generated-root-no-rebuild-transport-closeout.md",
+    "pi5_boot_transport_contract": "docs/src/project/phase10-pi5-generated-root-boot-transport-contract.md",
+    "firmware_initramfs_reservation_closeout": "tasks/2026-06-16-phase10-pi5-generated-root-firmware-initramfs-reservation-closeout.md",
+    "direct_read_command_input_closeout": "tasks/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-closeout.md",
+    "direct_read_command_input_classification": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-closeout/classification.json"
+  },
+  "summary": {
+    "accepted_boundary": "Milestone 10.3 is closed for generated-root transport and Pi 5 firmware-initramfs generated-root consumption.",
+    "paused_boundary": "Pi 5 shell-visible generated-root command input is paused at command0 prelude.",
+    "selected_next_task": null,
+    "planning_needed": true
+  }
+}

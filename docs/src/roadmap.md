@@ -2469,6 +2469,18 @@ The post-review correction chain is:
     drivers, networking, SSH, Phase 11/12 expansion, and phase transition
     remain rejected. The selected dependency-gated follow-up is
     'phase10-pi5-generated-root-milestone-10-3-closeout-20260617'.
+132. Pi 5 generated-root Milestone 10.3 closeout: accepted in
+    'phase10-pi5-generated-root-milestone-10-3-closeout-20260617' with
+    classification
+    'phase10-milestone-10-3-closed-generated-root-consumption-command-input-paused'.
+    The milestone boundary is closed for local/QEMU no-kernel-rebuild
+    generated-root transport and Pi 5 firmware-initramfs generated-root
+    consumption. Pi 5 shell-visible generated-root command input remains
+    unaccepted and explicitly paused at command 0. No post-closeout
+    implementation task is selected because no explicit queued task exists;
+    supervisor planning is required before any command-input retry,
+    persistence, storage-driver work, networking, SSH, Phase 11/12 expansion,
+    or phase transition.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -7084,6 +7096,20 @@ Selected first slice:
   and returned zero bytes. The capture-harness closeout accepts only that
   blocked boundary; command input remains unaccepted and supervisor planning is
   required before another hardware attempt or evidence-contract change.
+- 'phase10-pi5-generated-root-command-input-direct-read-closeout-20260617'
+  accepts the later direct-read command-input closeout with classification
+  pi5-generated-root-command-input-command0-paused-milestone-closeout-selected.
+  Pi 5 generated-root command input remains unaccepted and is paused at command
+  0 because the direct-read window did not retain rootinfo, source evidence, or
+  dispatch command=0 status=handled responses=1 after /serial/write accepted
+  rootinfo.
+- 'phase10-pi5-generated-root-milestone-10-3-closeout-20260617' closes the
+  Milestone 10.3 generated-root transport boundary for local/QEMU no-rebuild
+  transport and Pi 5 firmware-initramfs generated-root consumption. Command
+  input, writable persistence, SD/USB/block storage, broader filesystem
+  mutation, networking, SSH, Phase 11/12 expansion, and phase transition remain
+  unaccepted; no post-closeout implementation task is selected without
+  supervisor planning.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The
@@ -7109,17 +7135,18 @@ Acceptance criteria:
   a source-backed blocker: firmware initramfs range overlap with early memory
   setup. The later reservation-by-early-memory-plan-exclusion slice implements
   the fix and accepts Pi 5 firmware-initramfs generated-root consumption with
-  serialized hardware proof. Scripted command injection for that scenario,
-  including the later command-input and capture-harness closeouts, remains
-  blocked on command-input retention/capture evidence; writable persistence,
+  serialized hardware proof. The later command-input follow-ups remain paused:
+  /serial/observe first saturated at the retention boundary, and the direct-read
+  proof then failed command 0 because the post-write window did not retain
+  rootinfo, source evidence, or handled dispatch. Writable persistence,
   SD/USB/block storage, networking, SSH, and phase transition remain deferred
   and require explicit follow-up tasks.
 - Documentation explains the chosen local storage path and remaining risks.
   Current status: accepted by the Milestone 10.3 closeout as a local/QEMU
   generated-root transport checkpoint. Later reservation work accepts Pi 5
   firmware-initramfs generated-root consumption; command-input success for that
-  proof scenario remains blocked on serial observe/cursor saturation, and true
-  writable or block-backed storage remains deferred.
+  proof scenario remains explicitly paused at the direct-read command 0
+  prelude blocker, and true writable or block-backed storage remains deferred.
 
 ## Phase 11: RP1, PCIe, DMA, and Hardware Substrate
 

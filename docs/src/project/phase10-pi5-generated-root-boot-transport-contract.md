@@ -383,6 +383,23 @@ adjustment, storage work, networking, SSH, Phase 11/12 expansion, or phase
 transition is selected. The selected dependency-gated follow-up is
 phase10-pi5-generated-root-milestone-10-3-closeout-20260617.
 
+## Milestone 10.3 Closeout
+
+phase10-pi5-generated-root-milestone-10-3-closeout-20260617 accepts the final
+Milestone 10.3 generated-root transport boundary. The milestone is closed for
+local/QEMU no-kernel-rebuild generated-root transport and for Pi 5
+firmware-initramfs generated-root consumption of the same artifact format.
+
+Pi 5 shell-visible generated-root command input remains unaccepted and is
+explicitly paused at the command 0 prelude blocker from the direct-read
+closeout. That blocker is retained as future supervisor-planned control-surface
+work, not as a reason to reopen generated-root transport acceptance.
+
+No post-closeout implementation task is selected because no explicit queued task
+exists. Supervisor planning is required before command-input retry, persistence,
+storage-driver work, networking, SSH, Phase 11/12 expansion, or phase
+transition.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11/12
