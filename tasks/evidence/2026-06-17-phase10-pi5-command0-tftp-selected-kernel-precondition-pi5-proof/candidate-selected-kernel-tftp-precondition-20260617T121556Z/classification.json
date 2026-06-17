@@ -1,0 +1,151 @@
+{
+  "task_id": "phase10-pi5-command0-tftp-selected-kernel-precondition-pi5-proof-20260617",
+  "run_label": "candidate-selected-kernel-tftp-precondition-20260617T121556Z",
+  "classification": "command0-tftp-selected-kernel-precondition-accepted",
+  "accepted": true,
+  "first_failing_invariant": null,
+  "candidate_archive": {
+    "path": "target/talos-rpi5-generated-root-command-input-proof-core-20260617.tar.gz",
+    "sha256": "8f6a4d0d3436308a5f3b51e4f113b75d1acbf807a7b7af2d66453806c586cf0c",
+    "bytes": 411787,
+    "kernel_2712_sha256": "c37b34ebc955a7ce11cd0660bc18424ebcec4550de23ae1e6b0b9ad7c867e4bd",
+    "kernel_2712_size": 208984,
+    "initramfs_2712_sha256": "0341f5393502f54489acb1951633bf2773fb846a82bde89b3e4a2e82000724c6",
+    "initramfs_2712_size": 662
+  },
+  "evidence": {
+    "publish_ok": true,
+    "preflight_identity": {
+      "expected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+      "observed_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+      "expected_kernel": "kernel_2712.img",
+      "observed_effective_kernel": "kernel_2712.img",
+      "expected_fetch": "da591740/kernel_2712.img",
+      "expected_fetch_bytes": 208984,
+      "observed_fetch_bytes": 208984,
+      "selected_tree_identity_source": "/boot/files",
+      "root_endpoint": {
+        "endpoint": "GET /",
+        "curl_exit": 0,
+        "http_code": 404,
+        "body_bytes": 55,
+        "usable_for_selected_tree_identity": false,
+        "selected_tree_identity_source": "/boot/files",
+        "fallback_used": true,
+        "fallback_reason": "root-endpoint-http-non-2xx"
+      },
+      "tree_matches": true,
+      "effective_kernel_matches": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes_match": true,
+      "staging_publication_mismatch": false
+    },
+    "serial_setup": {
+      "pre_power_peek": {
+        "cursor": 4194304,
+        "bytes": 65536,
+        "required_marker_occurrences": 42,
+        "nonce_token_occurrences": 0
+      },
+      "pre_power_drain": {
+        "attempts": 1,
+        "attempt_limit": 16,
+        "read_timeout_seconds": 1,
+        "settle_ms": 100,
+        "max_bytes_per_read": 65536,
+        "total_bytes": 0,
+        "final_cursor": 4194304,
+        "empty_before_power": true,
+        "discriminator": "empty-read-before-power"
+      },
+      "cursor_start": 4194304,
+      "cursor_end": 4194304,
+      "window_bytes": 8654,
+      "response_bytes": 8654,
+      "capture_mode": "read",
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+      "required_marker": "rpi5-generated-root-boot-transport-proof",
+      "freshness_contract": {
+        "contract_version": "cursor-nonce-post-power-freshness-v1",
+        "marker_nonce": null,
+        "nonce_token": null,
+        "marker_occurrences_after_saved_cursor": 2,
+        "nonce_occurrences_after_saved_cursor": 0,
+        "post_power_capture_bound": true,
+        "cursor_nonce_fresh": false,
+        "serial_freshness_ok": true
+      }
+    },
+    "tftp_stability": {
+      "stable": true,
+      "reason": "stable",
+      "stable_samples": 3,
+      "required_samples": 3
+    },
+    "tftp_event_count": 14,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "expected_fetch_events": [
+      {
+        "bytes": 208984,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "Jun 17 12:16:22 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 208984,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "Jun 17 12:16:23 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      }
+    ],
+    "final_pre_restore_identity": {
+      "tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+      "effective_kernel": "kernel_2712.img",
+      "expected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes_match": true
+    },
+    "identity_join_rejection_reasons": [],
+    "restore_ok": true,
+    "restore_snapshot_name": "pre-command0-tftp-precondition-121556",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Selected candidate publication was hardware-proven through the TFTP-served selected-kernel precondition before any command0 behavior retry."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Same-power-cycle TFTP delta retained two da591740/kernel_2712.img serves, both matching the selected candidate 208984-byte kernel."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Final pre-restore identity retained the selected tree and post-run restore returned to the saved 104136-byte baseline tree."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "GET / returned HTTP 404 during optional endpoint metadata capture; /boot/files supplied the authoritative selected-tree identity source for this lab API version."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "Command0 write-delivery success, source-response-retention success, generated-root command-input success, storage, networking, SSH, Phase 11/12 expansion, and phase transition remain unclaimed."
+    }
+  ],
+  "rejected_claims": [
+    "command0 write-delivery success",
+    "command0 source-response retention success",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ],
+  "selected_next_task": "phase10-pi5-command0-tftp-selected-kernel-precondition-closeout-20260617"
+}

@@ -2755,6 +2755,25 @@ The post-review correction chain is:
     generated-root command-input success, storage, networking, SSH, Phase 11/12
     expansion, and phase transition remain rejected.
 
+150. Pi 5 command0 TFTP selected-kernel precondition proof: accepted in
+    'phase10-pi5-command0-tftp-selected-kernel-precondition-pi5-proof-20260617'
+    with classification
+    'command0-tftp-selected-kernel-precondition-accepted'. The selected
+    candidate tree
+    06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212 exposed
+    kernel_2712.img and da591740/kernel_2712.img at the expected 208984-byte
+    size before power-cycle. The same-power-cycle stable TFTP delta retained
+    two da591740/kernel_2712.img serves, both at 208984 bytes, and final
+    pre-restore identity still exposed the selected tree. Restore returned the
+    lab to baseline tree
+    a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 with the
+    104136-byte baseline kernel. This accepts only the selected-kernel/TFTP
+    precondition; command0 write-delivery success, command0 source-response
+    retention success, generated-root command-input success, storage,
+    networking, SSH, Phase 11/12 expansion, and phase transition remain
+    rejected. The selected follow-up is
+    'phase10-pi5-command0-tftp-selected-kernel-precondition-closeout-20260617'.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
