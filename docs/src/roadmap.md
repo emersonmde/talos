@@ -3073,6 +3073,20 @@ The post-review correction chain is:
     Command0 write-delivery success, source-response retention,
     generated-root command-input success, storage, networking, SSH,
     Phase 11/12 expansion, and phase transition remain rejected.
+169. Pi 5 command0 selected-kernel recovery closeout: accepted in
+    'phase10-pi5-command0-selected-kernel-recovery-closeout-20260617'
+    with classification
+    'selected-kernel-recovery-closeout-command0-write-delivery-discriminator-selected'.
+    The retained recurrence checkpoint, paired sentinel core, and serialized
+    Pi 5 paired sentinel proof now accept the selected-kernel/TFTP publication
+    boundary for the generated-root command-input candidate/control pair:
+    selected post-publish identity, matching same-power-cycle TFTP bytes,
+    final selected identity, distinct selected trees, and restore proof. The
+    selected follow-up is the distinct command0 write-delivery discriminator
+    'phase10-pi5-serial-command0-write-delivery-after-selected-kernel-recovery-20260617'.
+    Command0 write-delivery success, source-response retention,
+    generated-root command-input success, storage, networking, SSH,
+    Phase 11/12 expansion, and phase transition remain rejected.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -7837,6 +7851,16 @@ Selected first slice:
   selected follow-up is the selected-kernel recovery closeout; command0 write
   delivery, source-response retention, and generated-root command-input
   success remain unaccepted.
+- 'phase10-pi5-command0-selected-kernel-recovery-closeout-20260617' accepts
+  the selected-kernel recovery closeout with classification
+  selected-kernel-recovery-closeout-command0-write-delivery-discriminator-selected.
+  The retained paired sentinel candidate/control proof recovers the selected
+  post-publish identity, same-power-cycle TFTP byte agreement, final selected
+  identity, distinct selected trees, and restore invariant for the
+  generated-root command-input boundary. The selected follow-up is the distinct
+  command0 write-delivery discriminator after selected-kernel recovery;
+  command0 write delivery, source-response retention, and generated-root
+  command-input success remain unaccepted until separately proven.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The

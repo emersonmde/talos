@@ -1,0 +1,85 @@
+{
+  "task_id": "phase10-pi5-command0-selected-kernel-recovery-closeout-20260617",
+  "status": "accepted",
+  "classification": "selected-kernel-recovery-closeout-command0-write-delivery-discriminator-selected",
+  "evidence_level": [
+    "static/source/task evidence inspection",
+    "accepted recurrence checkpoint",
+    "accepted paired sentinel local/static discriminator core",
+    "accepted serialized Pi 5 paired sentinel proof",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "selected_kernel_tftp_stability": {
+    "status": "accepted",
+    "first_failing_invariant": null,
+    "accepted_boundary": "generated-root command-input candidate/control selected-kernel publication through same-power-cycle TFTP and final pre-restore identity",
+    "candidate": {
+      "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+      "expected_fetch": "da591740/kernel_2712.img",
+      "expected_kernel_2712_size": 208984,
+      "same_power_cycle_tftp_bytes": [
+        208984,
+        208984
+      ],
+      "final_pre_restore_selected_identity": true,
+      "restore_ok": true
+    },
+    "control": {
+      "selected_tree_hash": "9e3442962d40beff3b31668065df4f5d8ac37ee770fa3c4bba725d049bc78db3",
+      "expected_fetch": "da591740/kernel_2712.img",
+      "expected_kernel_2712_size": 47832,
+      "same_power_cycle_tftp_bytes": [
+        47832,
+        47832
+      ],
+      "final_pre_restore_selected_identity": true,
+      "restore_ok": true
+    }
+  },
+  "accepted_evidence": [
+    {
+      "task": "phase10-pi5-command0-selected-kernel-publication-recurrence-checkpoint-20260617",
+      "classification": "selected-kernel-publication-recurrence-checkpoint-paired-sentinel-core-selected",
+      "disposition": "fixed",
+      "evidence": "Selected the paired no-command-write sentinel discriminator after recurrence of baseline-served selected-kernel evidence."
+    },
+    {
+      "task": "phase10-pi5-command0-selected-kernel-paired-sentinel-core-20260617",
+      "classification": "selected-kernel-paired-sentinel-core-local-static",
+      "disposition": "fixed",
+      "evidence": "Encoded paired selected-kernel/TFTP discriminator and rejected retained baseline-served, single-run-only, and command-write-present shapes."
+    },
+    {
+      "task": "phase10-pi5-command0-selected-kernel-paired-sentinel-pi5-proof-20260617",
+      "classification": "selected-kernel-paired-sentinel-pi5-proof-accepted",
+      "disposition": "fixed",
+      "evidence": "Accepted candidate/control selected post-publish identity, matching same-power-cycle TFTP bytes, final selected identity, distinct selected trees, and restore proof."
+    },
+    {
+      "task": "phase10-pi5-serial-command0-saturated-capture-guard-core-20260617",
+      "classification": "command0-saturated-capture-guard-core-local-static",
+      "disposition": "deferred",
+      "evidence": "Accepted command0 write-delivery guard lineage remains applicable once selected-kernel/TFTP precondition is retained; it does not claim source-response retention or generated-root command-input success."
+    }
+  ],
+  "command0_write_delivery": {
+    "status": "not_accepted",
+    "remaining_first_invariant": "prove /serial/write and bounded post-write command0 output under the recovered selected-kernel/TFTP precondition",
+    "selected_next_task": "phase10-pi5-serial-command0-write-delivery-after-selected-kernel-recovery-20260617",
+    "selected_next_task_reason": "The queued task is the distinct write-delivery discriminator dependency-gated on this recovery closeout; it must first retain selected-kernel/TFTP precondition evidence and does not claim source-response retention or generated-root command-input success."
+  },
+  "planning_needed": false,
+  "selected_next_task": "phase10-pi5-serial-command0-write-delivery-after-selected-kernel-recovery-20260617",
+  "rejected_claims": [
+    "command0 write-delivery success",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}
