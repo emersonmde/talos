@@ -7922,6 +7922,16 @@ Selected first slice:
   queued Pi 5 input-delivery proof is not dependency-satisfied because the core
   selected null, and source-response retention remains non-evaluable until
   command0 input delivery is separately accepted.
+- 'phase10-pi5-serial-command0-lab-write-boundary-discriminator-core-20260617'
+  accepts the lab write-boundary discriminator core with classification
+  command0-lab-write-boundary-discriminator-core-selected. The current blocker
+  is narrowed to lab /serial/write-to-UART10 delivery/capture after a visible
+  command0 prompt. Same-shaped saturated observe and post-write-only direct-read
+  retries are rejected; the selected follow-up is a prearmed live /serial/read
+  capture that starts before the normal POST /serial/write rootinfo payload.
+  Source-response retention, generated-root command-input success, storage,
+  networking, SSH, Phase 11/12 expansion, and phase transition remain
+  unaccepted.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The

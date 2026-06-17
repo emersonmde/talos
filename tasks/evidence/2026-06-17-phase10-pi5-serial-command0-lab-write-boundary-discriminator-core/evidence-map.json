@@ -1,0 +1,26 @@
+{
+  "task_id": "phase10-pi5-serial-command0-lab-write-boundary-discriminator-core-20260617",
+  "classification": "command0-lab-write-boundary-discriminator-core-selected",
+  "references": {
+    "accepted_closeout": "tasks/2026-06-17-phase10-pi5-serial-command0-input-delivery-closeout.md",
+    "accepted_core": "tasks/2026-06-17-phase10-pi5-serial-command0-input-delivery-core.md",
+    "accepted_write_delivery_blocker": "tasks/2026-06-17-phase10-pi5-serial-command0-write-delivery-after-selected-kernel-recovery.md",
+    "prior_uart10_polling_rx": "tasks/2026-05-24-phase5-pi5-uart10-polling-rx-proof.md",
+    "lab_controller_serial_contract": "docs/src/project/lab-controller.md"
+  },
+  "task_owned_evidence": {
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-lab-write-boundary-discriminator-core/classification.json",
+    "discriminator_contract": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-lab-write-boundary-discriminator-core/discriminator-contract.json",
+    "evidence_map": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-lab-write-boundary-discriminator-core/evidence-map.json"
+  },
+  "validation": {
+    "static_source_task_evidence_inspection": "pass",
+    "jq_empty_task_owned_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "selected_next_task": "phase10-pi5-serial-command0-lab-write-boundary-pi5-proof-20260617",
+  "hardware_run_performed": false,
+  "lab_mutation_performed": false
+}

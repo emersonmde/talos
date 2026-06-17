@@ -1,0 +1,77 @@
+{
+  "contract": "command0-lab-write-boundary-prearmed-read-v1",
+  "selected_next_task": "phase10-pi5-serial-command0-lab-write-boundary-pi5-proof-20260617",
+  "candidate_identity": {
+    "archive": "target/talos-rpi5-generated-root-command-input-proof-core-20260617.tar.gz",
+    "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_kernel_2712_size": 208984
+  },
+  "command_payload": {
+    "endpoint": "POST /serial/write",
+    "text": "rootinfo",
+    "append_newline": true,
+    "expected_bytes": 9
+  },
+  "serial_strategy": {
+    "readiness_required_fragments": [
+      "source=firmware-initramfs",
+      "reason=valid-artifact",
+      "ready command=0",
+      "talos>"
+    ],
+    "pre_write_boundary_must_not_contain": [
+      "rootinfo",
+      "line command=0",
+      "dispatch command=0",
+      "responses=1",
+      "ready command=1",
+      "ready command=2",
+      "ready command=3",
+      "Talos generated-root external artifact A"
+    ],
+    "primary_capture": {
+      "endpoint": "POST /serial/read",
+      "label": "prearmed-direct-read-during-write",
+      "start": "before POST /serial/write",
+      "activation_delay_ms": 200,
+      "timeout_seconds": 12,
+      "settle_ms": 500,
+      "max_bytes": 16384,
+      "required_ordered_fragments": [
+        "rootinfo or line command=0",
+        "dispatch command=0 status=handled",
+        "responses=1",
+        "ready command=1"
+      ]
+    },
+    "secondary_capture": {
+      "endpoint": "POST /serial/observe",
+      "use": "corroboration only when saved cursor is not saturated",
+      "saturated_cursor_rule": "empty observe output at cursor 4194304 is diagnostic only and must not reject accepted prearmed-read evidence"
+    }
+  },
+  "terminal_classifications": {
+    "accepted": "command0-lab-write-boundary-input-delivery-accepted",
+    "capture_empty": "command0-lab-write-boundary-write-accepted-capture-empty",
+    "write_failed": "command0-lab-write-boundary-write-failed",
+    "precondition_blocked": "command0-lab-write-boundary-precondition-blocked",
+    "inconclusive": "command0-lab-write-boundary-inconclusive-triage-required"
+  },
+  "inconclusive_run_triage": [
+    "candidate identity via lab API",
+    "fresh serial cursor",
+    "TFTP delta",
+    "known-good control",
+    "candidate rerun before code changes"
+  ],
+  "rejected_claims": [
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}
