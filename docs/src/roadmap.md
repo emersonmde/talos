@@ -2539,6 +2539,24 @@ The post-review correction chain is:
     input is paused. No transition checkpoint, command-input retry, persistence,
     storage-driver work, networking, SSH, Phase 11/12 expansion, or phase
     transition is selected without supervisor planning.
+137. Pi 5 serial command 0 source-response retention source contract: accepted
+    in
+    'phase10-pi5-serial-command0-source-response-retention-source-contract-20260617'
+    with classification
+    'serial-command0-source-response-retention-contract-core-selected'. The
+    first failing invariant is narrowed to command 0 source-response retention:
+    line, dispatch command=0 status=handled responses=1, and ready command=1
+    are proven, but the retained direct-read evidence contains only the tail of
+    the generated-root source response rather than the full user-visible
+    source=firmware-initramfs reason=valid-artifact line. Dispatch metadata is
+    necessary but insufficient for generated-root command-input acceptance. The
+    selected follow-up is
+    'phase10-pi5-serial-command0-source-response-retention-core-20260617',
+    bounded to proof/capture/validation surfaces unless local/static evidence
+    proves a command-loop or target proof source change is necessary. Hardware
+    retry, generated-root command-input success, persistence, storage-driver
+    work, networking, SSH, Phase 11/12 expansion, and phase transition remain
+    rejected.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -7185,6 +7203,15 @@ Selected first slice:
   source response in the command 0 direct-read window. Command input remains
   paused; no post-command-input roadmap resumption is selected without supervisor
   planning.
+- 'phase10-pi5-serial-command0-source-response-retention-source-contract-20260617'
+  accepts the next source/static contract with classification
+  serial-command0-source-response-retention-contract-core-selected. It records
+  that dispatch responses=1 plus ready command=1 is not enough without retained
+  user-visible source text; the selected follow-up is the bounded
+  proof/capture/validation core task
+  'phase10-pi5-serial-command0-source-response-retention-core-20260617'. Kernel
+  command-loop or target proof source changes remain deferred unless that core
+  evidence proves they are necessary.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The

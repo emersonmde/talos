@@ -455,6 +455,20 @@ checkpoint promotion, retry, evidence-contract change, persistence,
 storage-driver work, networking, SSH, Phase 11/12 expansion, or phase transition
 is selected without supervisor planning.
 
+phase10-pi5-serial-command0-source-response-retention-source-contract-20260617
+accepts the next source/static contract with classification
+serial-command0-source-response-retention-contract-core-selected. The first
+failing invariant is command 0 source-response retention: the Pi 5 proof retained
+rootinfo line evidence, dispatch command=0 status=handled responses=1, and ready
+command=1, but the direct-read window started in the middle of the generated-root
+selection response and retained only the tail of that user-visible line. Dispatch
+metadata is necessary but not sufficient for shell-visible generated-root
+command-input acceptance. The selected follow-up is
+phase10-pi5-serial-command0-source-response-retention-core-20260617, bounded to
+proof/capture/validation surfaces before any hardware retry. Kernel command-loop
+or target proof source changes remain deferred unless that core evidence proves
+the response cannot be retained reliably through the proof surface.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11/12

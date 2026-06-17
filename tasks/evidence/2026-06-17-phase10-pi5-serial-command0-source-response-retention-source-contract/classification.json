@@ -1,0 +1,98 @@
+{
+  "task_id": "phase10-pi5-serial-command0-source-response-retention-source-contract-20260617",
+  "task_status": "accepted",
+  "classification": "serial-command0-source-response-retention-contract-core-selected",
+  "evidence_level": [
+    "static/source/task evidence inspection",
+    "lab serial endpoint contract inspection",
+    "command-loop source inspection",
+    "accepted command0 prelude proof evidence",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "first_failing_invariant": "command0 direct-read retained command=0 line, dispatch handled, and ready command=1, but retained only a tail fragment of the firmware-initramfs valid-artifact source response instead of the full command0 user-visible response line",
+  "retained_evidence": [
+    "firmware-initramfs generated-root readiness",
+    "selected-tree identity",
+    "stable same-power-cycle TFTP delta",
+    "final pre-restore identity",
+    "post-run baseline restore",
+    "line command=0 hex=72 6f 6f 74 69 6e 66 6f",
+    "dispatch command=0 status=handled responses=1",
+    "ready command=1"
+  ],
+  "missing_or_insufficient_evidence": [
+    "full command0 response line beginning talos: generated-root source=firmware-initramfs reason=valid-artifact",
+    "user-visible retained source text for command0 before accepting generated-root command-input success"
+  ],
+  "source_inspection": {
+    "command_loop": "src/local_command_loop.rs rootinfo dispatch writes one generated-root selection line before returning handled",
+    "target_wrapper": "src/target/rpi5.rs records command-indexed line, dispatch status, response count, edit summary, and next ready marker after the command cycle",
+    "lab_contract": "docs/src/project/lab-controller.md requires direct-read command-input evidence to retain command text, response output, dispatch status/count, and post-command readiness for the exact command index"
+  },
+  "approaches": [
+    {
+      "name": "proof-capture-validation-surface",
+      "disposition": "selected",
+      "reason": "The command loop produced one response line and target dispatch metadata; the next smallest discriminator is retaining or rejecting the full source-response line without changing runtime behavior."
+    },
+    {
+      "name": "command-loop-or-target-proof-source-anchor",
+      "disposition": "deferred",
+      "reason": "Only allowed if local/static core evidence proves the existing response cannot be retained reliably through proof/capture surfaces."
+    },
+    {
+      "name": "dispatch-plus-ready-acceptance",
+      "disposition": "rejected",
+      "reason": "Dispatch responses=1 plus ready command=1 proves target metadata but not retained user-visible generated-root source output."
+    },
+    {
+      "name": "same-shaped-retry",
+      "disposition": "rejected",
+      "reason": "Timing, wait-count, marker-name, and cursor-only changes do not alter the discriminator."
+    }
+  ],
+  "selected_next_task": "phase10-pi5-serial-command0-source-response-retention-core-20260617",
+  "accepted_capability": null,
+  "rejected_claims": [
+    "generated-root command-input acceptance",
+    "dispatch-only command-input proof",
+    "tail-only source-response proof",
+    "prompt-only command-input proof",
+    "/serial/write byte acceptance proves command input",
+    "persistence",
+    "writable filesystem",
+    "SD/USB/block storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "summary": "First failing invariant is narrowed to command0 source-response retention after proven line/dispatch/ready."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Dispatch responses=1 is documented as necessary but insufficient for user-visible generated-root command-input acceptance."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "The selected follow-up is the bounded source-response-retention core task."
+    },
+    {
+      "disposition": "deferred",
+      "summary": "Kernel command-loop or target proof source changes are deferred unless core evidence proves they are necessary."
+    },
+    {
+      "disposition": "rejected",
+      "summary": "Same-shaped timing/wait/cursor retries and dispatch-only/tail-only acceptance remain rejected."
+    },
+    {
+      "disposition": "not-an-issue",
+      "summary": "No hardware run is needed for this source/static contract."
+    }
+  ]
+}
