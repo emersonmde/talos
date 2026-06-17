@@ -2591,6 +2591,19 @@ The post-review correction chain is:
     Generated-root command-input hardware success, persistence, storage-driver
     work, networking, SSH, Phase 11/12 expansion, and phase transition remain
     rejected.
+140. Pi 5 serial command 0 source-response retention closeout: accepted in
+    'phase10-pi5-serial-command0-source-response-retention-closeout-20260617'
+    with classification
+    'serial-command0-source-response-retention-closed-serial-readiness-capture-blocked'.
+    The closeout reconciles the accepted source contract, guard-v2 core, and
+    Pi 5 proof blocker. Generated-root transport and Pi 5 firmware-initramfs
+    consumption remain accepted, but Pi 5 shell-visible generated-root command
+    input remains unaccepted. The current blocker is serial readiness/capture
+    stability before command-0 source-response retention can be evaluated; the
+    proof did not accept or reject command-0 response generation. No
+    post-command0 transition checkpoint is selected. Supervisor planning is
+    required before any retry, evidence-contract change, transition checkpoint,
+    storage work, networking, SSH, Phase 11/12 expansion, or phase transition.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -7255,6 +7268,15 @@ Selected first slice:
   ready command=1 transaction. Tail-only, dispatch-only, and unordered command-0
   source-response evidence are rejected. The selected hardware follow-up is
   'phase10-pi5-serial-command0-source-response-retention-pi5-proof-20260617'.
+- 'phase10-pi5-serial-command0-source-response-retention-closeout-20260617'
+  accepts the terminal closeout for the current source-response-retention chain
+  with classification
+  serial-command0-source-response-retention-closed-serial-readiness-capture-blocked.
+  The Pi 5 proof retained candidate publication/TFTP/control/rerun/restore
+  evidence, but serial direct-read did not retain a usable ready command=0
+  window, so command-0 source-response retention remains non-evaluable. No
+  transition checkpoint, retry, storage work, networking, SSH, Phase 11/12
+  expansion, or phase transition is selected without supervisor planning.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The

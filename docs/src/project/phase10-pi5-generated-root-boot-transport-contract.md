@@ -482,6 +482,24 @@ command-loop or target proof source change was needed. The selected follow-up is
 phase10-pi5-serial-command0-source-response-retention-pi5-proof-20260617,
 serialized under hardwareTestLock before any hardware claim is accepted.
 
+phase10-pi5-serial-command0-source-response-retention-pi5-proof-20260617 blocks
+with classification
+serial-command0-source-response-retention-serial-readiness-capture-blocked. The
+selected candidate archive published successfully and the first candidate run
+retained same-power-cycle TFTP evidence for da591740/kernel_2712.img and
+da591740/initramfs_2712, but serial direct-read did not retain a usable
+generated-root ready command=0 window before command-loop timeout. Required
+inconclusive-run triage ran a known-good control and candidate rerun; both
+retained only early firmware/RP1 serial bytes under the long-settle direct-read
+strategy. phase10-pi5-serial-command0-source-response-retention-closeout-20260617
+therefore accepts the terminal closeout with classification
+serial-command0-source-response-retention-closed-serial-readiness-capture-blocked.
+Pi 5 generated-root command input remains unaccepted; command-0 source-response
+retention is non-evaluable until serial readiness/capture stability is
+reconciled. No transition checkpoint, retry, evidence-contract change, storage
+work, networking, SSH, Phase 11/12 expansion, or phase transition is selected
+without supervisor planning.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11/12
