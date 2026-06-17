@@ -1,0 +1,39 @@
+{
+  "task_id": "phase10-pi5-serial-command0-post-write-observe-contract-20260617",
+  "classification": "command0-post-write-observe-contract-helper-core-selected",
+  "accepted": true,
+  "write_delivery_accepted": false,
+  "first_failing_invariant": "post-write command0 output was not retained after accepted rootinfo write in the v2 direct-read proof",
+  "selected_discriminator": "cursor-bound POST /serial/observe after accepted rootinfo write",
+  "selected_next_task": "phase10-pi5-serial-command0-post-write-observe-helper-core-20260617",
+  "evidence_summary": {
+    "selected_kernel_tftp_precondition_accepted": true,
+    "readiness_retained": true,
+    "visible_prompt_retained": true,
+    "fresh_pre_write_boundary_retained": true,
+    "serial_write_bytes": 9,
+    "v2_post_write_direct_read_bytes": 0,
+    "v2_post_write_contains_rootinfo": false,
+    "v2_post_write_contains_command0_line": false,
+    "v2_post_write_contains_dispatch0": false,
+    "v2_post_write_contains_responses1": false,
+    "v2_post_write_contains_ready1": false
+  },
+  "unproven_assumptions": [
+    "lab endpoint route/observe semantics after write",
+    "write timing after the visible prompt and accepted rootinfo payload",
+    "direct-read capture behavior as a substitute for cursor-bound observe",
+    "PL011 RX interrupt or polling behavior on the Pi 5 command0 path",
+    "command-loop canonical input handling after the generated-root prompt"
+  ],
+  "rejected_claims": [
+    "command0 write-delivery success",
+    "command0 source-response retention success",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

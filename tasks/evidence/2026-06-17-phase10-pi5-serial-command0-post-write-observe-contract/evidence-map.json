@@ -1,0 +1,14 @@
+{
+  "task_id": "phase10-pi5-serial-command0-post-write-observe-contract-20260617",
+  "classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-contract/classification.json",
+  "accepted_v2_closeout": "tasks/2026-06-17-phase10-pi5-serial-command0-write-delivery-v2-closeout.md",
+  "accepted_v2_closeout_classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-v2-closeout/classification.json",
+  "v2_pi5_proof": "tasks/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof-v2-after-tftp-precondition.md",
+  "v2_pi5_proof_classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof-v2-after-tftp-precondition/classification.json",
+  "v2_selected_run_classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof-v2-after-tftp-precondition/candidate-command0-write-delivery-v2-20260617T124424Z/classification.json",
+  "v2_direct_read_evidence": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof-v2-after-tftp-precondition/candidate-command0-write-delivery-v2-20260617T124424Z/direct-read-evidence.json",
+  "lab_controller_serial_endpoint_contract": "docs/src/project/lab-controller.md",
+  "accepted_local_qemu_serial_write_ingress": "scripts/qemu-local-serial-write-ingress-control.sh",
+  "accepted_pi5_serial_write_ingress_control": "tasks/2026-06-01-phase10-pi5-serial-write-ingress-control-proof.md",
+  "selected_next_task": "phase10-pi5-serial-command0-post-write-observe-helper-core-20260617"
+}
