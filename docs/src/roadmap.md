@@ -2788,6 +2788,22 @@ The post-review correction chain is:
     but does not accept command0 write-delivery success, command0
     source-response retention success, generated-root command-input success,
     storage, networking, SSH, Phase 11/12 expansion, or phase transition.
+152. Pi 5 serial command 0 write-delivery v2 proof after selected-kernel/TFTP
+    precondition: accepted in
+    'phase10-pi5-serial-command0-write-delivery-pi5-proof-v2-after-tftp-precondition-20260617'
+    with classification 'command0-write-delivery-blocked'. The selected
+    candidate retained selected-tree/TFTP agreement for the 208984-byte
+    da591740/kernel_2712.img candidate, same-boot firmware-initramfs
+    valid-artifact readiness, ready command=0, a visible prompt, a fresh
+    pre-write boundary, and an accepted 9-byte rootinfo /serial/write. The
+    post-write direct-read window retained no command0 line, dispatch
+    command=0 status=handled, responses=1, ready command=1, or rootinfo text.
+    The first failing invariant is now command0 write delivery after a proven
+    selected-kernel/TFTP precondition. Command0 source-response retention
+    success, generated-root command-input success, storage, networking, SSH,
+    Phase 11/12 expansion, and phase transition remain rejected. The selected
+    follow-up is
+    'phase10-pi5-serial-command0-write-delivery-v2-closeout-20260617'.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

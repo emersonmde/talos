@@ -1,0 +1,10 @@
+{
+  "action": "serial read",
+  "base64": "c2UNClRBTE9TOiBkdGIgbWVtb3J5IHNjYW4gc3RhcnQNCg==",
+  "bytes": 34,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "se\r\nTALOS: dtb memory scan start\r\n",
+  "truncated": false
+}
