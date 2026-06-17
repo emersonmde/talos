@@ -1,0 +1,57 @@
+{
+  "task_id": "phase10-pi5-command0-selected-kernel-precondition-discriminator-core-20260617",
+  "status": "accepted",
+  "classification": "selected-kernel-precondition-discriminator-core-local-static",
+  "evidence_level": "static source/task inspection, shell syntax check, local/static fixture replay, retained lab-boundary regression replay, task-owned JSON evidence, docs build, and diff checks",
+  "helper": "scripts/rpi5-selected-kernel-precondition-discriminator.sh",
+  "checker": "rpi5-selected-kernel-precondition-discriminator-v1",
+  "selected_discriminator": "selected-kernel-tftp-precondition-lab-boundary-v1",
+  "selected_next_task": "phase10-pi5-command0-selected-kernel-precondition-pi5-proof-20260617",
+  "fixture_replay_summary": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-discriminator-core/results/fixture-replay-summary.json",
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Added a local/static selected-kernel precondition discriminator that accepts only selected post-publish identity, fresh stable same-power-cycle TFTP byte agreement, final pre-restore selected identity, restore proof, and an explicit no-command-write boundary."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Positive fixture accepts the selected 208984-byte generated-root command-input candidate with matching post-publish, TFTP, final identity, and restore evidence."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Negative fixtures reject baseline-served retained lab-boundary regression evidence, stale/no-fresh TFTP, final identity mismatch, command-write-present evidence, and single-run durable-unblocker claims."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Retained lab-boundary regression is rejected on the original selected-kernel/TFTP invariant: same-power-cycle TFTP served 104136-byte baseline kernels while the candidate expected 208984 bytes."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Pi 5 precondition proof remains a separate serialized hardware task under hardwareTestLock."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "No command0 input delivery acceptance, source-response retention, generated-root command-input success, storage, networking, SSH, Phase 11/12 expansion, or phase transition is accepted."
+    }
+  ],
+  "validation": {
+    "shell_syntax_check": "pass",
+    "positive_fixture_replay": "pass",
+    "negative_fixture_replay": "pass",
+    "retained_lab_boundary_regression_replay": "pass-rejected-on-selected-kernel-tftp-invariant",
+    "jq_empty_task_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "rejected_claims": [
+    "command0 input delivery acceptance",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

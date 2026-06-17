@@ -3152,6 +3152,24 @@ The post-review correction chain is:
     Source-response retention, generated-root command-input success, storage,
     networking, SSH, Phase 11/12 expansion, and phase transition remain
     rejected.
+174. Pi 5 command0 selected-kernel precondition discriminator core: accepted
+    in
+    'phase10-pi5-command0-selected-kernel-precondition-discriminator-core-20260617'
+    with classification
+    'selected-kernel-precondition-discriminator-core-local-static'. The new
+    'scripts/rpi5-selected-kernel-precondition-discriminator.sh' implements
+    selected-kernel-tftp-precondition-lab-boundary-v1: selected post-publish
+    identity, fresh stable same-power-cycle TFTP byte agreement, final
+    pre-restore selected identity, restore proof, no command write evidence,
+    and no single-run durable-unblocker claim. Fixture replay accepts the
+    positive selected 208984-byte kernel case and rejects retained lab-boundary
+    baseline-served regression evidence, stale/no-fresh TFTP, final identity
+    mismatch, command-write-present evidence, and single-run durable-unblocker
+    claims. The selected follow-up is the serialized Pi 5 precondition proof
+    'phase10-pi5-command0-selected-kernel-precondition-pi5-proof-20260617'.
+    Command0 input delivery acceptance, source-response retention,
+    generated-root command-input success, storage, networking, SSH, Phase 11/12
+    expansion, and phase transition remain rejected.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

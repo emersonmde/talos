@@ -1,0 +1,51 @@
+{
+  "task_id": "phase10-pi5-command0-selected-kernel-precondition-discriminator-core-20260617",
+  "classification": "selected-kernel-precondition-discriminator-core-local-static",
+  "selected_next_task": "phase10-pi5-command0-selected-kernel-precondition-pi5-proof-20260617",
+  "inputs": {
+    "recurrence_checkpoint": "tasks/2026-06-17-phase10-pi5-command0-selected-kernel-lab-boundary-recurrence-checkpoint.md",
+    "recurrence_checkpoint_classification": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-lab-boundary-recurrence-checkpoint/classification.json",
+    "paired_sentinel_proof": "tasks/2026-06-17-phase10-pi5-command0-selected-kernel-paired-sentinel-pi5-proof.md",
+    "paired_sentinel_proof_classification": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-paired-sentinel-pi5-proof/classification.json",
+    "lab_boundary_proof": "tasks/2026-06-17-phase10-pi5-serial-command0-lab-write-boundary-pi5-proof.md",
+    "lab_boundary_proof_classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-lab-write-boundary-pi5-proof/candidate-command0-lab-boundary-prearmed-read-20260617T222745Z/classification.json",
+    "lab_boundary_tftp_delta": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-lab-write-boundary-pi5-proof/candidate-command0-lab-boundary-prearmed-read-20260617T222745Z/tftp/tftp-delta-stable-pre-restore.json",
+    "lab_boundary_final_pre_restore_identity": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-lab-write-boundary-pi5-proof/candidate-command0-lab-boundary-prearmed-read-20260617T222745Z/final-pre-restore-status.json"
+  },
+  "outputs": {
+    "helper": "scripts/rpi5-selected-kernel-precondition-discriminator.sh",
+    "task_record": "tasks/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-discriminator-core.md",
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-discriminator-core/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-discriminator-core/evidence-map.json",
+    "fixture_replay_summary": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-discriminator-core/results/fixture-replay-summary.json"
+  },
+  "fixtures": {
+    "positive_selected_kernel_precondition": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-discriminator-core/fixtures/positive-selected-kernel-precondition.json",
+    "negative_baseline_served_regression": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-discriminator-core/fixtures/negative-baseline-served-regression.json",
+    "negative_no_fresh_tftp": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-discriminator-core/fixtures/negative-no-fresh-tftp.json",
+    "negative_final_identity_mismatch": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-discriminator-core/fixtures/negative-final-identity-mismatch.json",
+    "negative_command_write_present": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-discriminator-core/fixtures/negative-command-write-present.json",
+    "negative_single_run_durable_unblocker": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-discriminator-core/fixtures/negative-single-run-durable-unblocker.json"
+  },
+  "contract": {
+    "name": "selected-kernel-tftp-precondition-lab-boundary-v1",
+    "required_fetch": "da591740/kernel_2712.img",
+    "requires": [
+      "post-publish selected tree identity",
+      "effective kernel_2712.img",
+      "selected kernel byte count present before power",
+      "fresh stable same-power-cycle TFTP cursor delta",
+      "all retained TFTP fetch byte counts equal the selected kernel byte count",
+      "final pre-restore selected tree identity",
+      "restore proof",
+      "no command write evidence"
+    ],
+    "rejects": [
+      "baseline-served retained lab-boundary regression",
+      "stale or no-fresh-TFTP evidence",
+      "final pre-restore identity mismatch",
+      "command-write-present evidence",
+      "single-run durable-unblocker claim"
+    ]
+  }
+}

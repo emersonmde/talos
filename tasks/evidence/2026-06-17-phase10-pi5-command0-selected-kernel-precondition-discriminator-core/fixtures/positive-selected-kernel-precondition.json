@@ -1,0 +1,36 @@
+{
+  "selected_kernel_precondition": {
+    "selected_discriminator": "selected-kernel-tftp-precondition-lab-boundary-v1",
+    "no_command_write": true,
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_kernel_2712_size": 208984,
+    "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+    "post_publish_identity": {
+      "selected_tree": true,
+      "effective_kernel": "kernel_2712.img",
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 208984
+    },
+    "tftp": {
+      "cursor_start": 4100,
+      "cursor_end": 4180,
+      "stable": true,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        208984,
+        208984
+      ]
+    },
+    "final_pre_restore": {
+      "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+      "selected_tree": true,
+      "effective_kernel": "kernel_2712.img",
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 208984
+    },
+    "restore": {
+      "ok": true
+    }
+  }
+}
