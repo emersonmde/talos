@@ -469,6 +469,19 @@ proof/capture/validation surfaces before any hardware retry. Kernel command-loop
 or target proof source changes remain deferred unless that core evidence proves
 the response cannot be retained reliably through the proof surface.
 
+phase10-pi5-serial-command0-source-response-retention-core-20260617 accepts
+command0-source-response-retention-guard-v2 with classification
+serial-command0-source-response-retention-core-local-static. The helper now
+checks task-owned command0-direct-read summary evidence as well as the full
+direct_read_proof shape. Command 0 source-response retention requires the
+ordered rootinfo/line marker, source=firmware-initramfs, reason=valid-artifact,
+dispatch command=0 status=handled, responses=1, and ready command=1 transaction.
+The local/static fixtures reject the previously retained tail-only shape,
+dispatch-only metadata, and unordered source-response evidence. No kernel
+command-loop or target proof source change was needed. The selected follow-up is
+phase10-pi5-serial-command0-source-response-retention-pi5-proof-20260617,
+serialized under hardwareTestLock before any hardware claim is accepted.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11/12

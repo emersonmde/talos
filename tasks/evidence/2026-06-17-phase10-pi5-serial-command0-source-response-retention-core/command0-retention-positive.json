@@ -1,0 +1,17 @@
+{
+  "label": "command0-direct-read",
+  "attempts": 1,
+  "bytes": 384,
+  "retained_text": "rootinfo\r\ntalos: generated-root source=firmware-initramfs reason=valid-artifact exec-len=0x0000000000000204 path=/generated/manifest.txt exec-path=/generated/status7\r\n\r\nrpi5-generated-root-boot-transport-proof: line command=0 hex=72 6f 6f 74 69 6e 66 6f\r\nrpi5-generated-root-boot-transport-proof: dispatch command=0 status=handled responses=1 raw-bytes=9 truncated=false controls=0\r\nrpi5-generated-root-boot-transport-proof: ready command=1\r\ntalos> ",
+  "responses": [
+    {
+      "action": "serial read",
+      "bytes": 384,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "rootinfo\r\ntalos: generated-root source=firmware-initramfs reason=valid-artifact exec-len=0x0000000000000204 path=/generated/manifest.txt exec-path=/generated/status7\r\n\r\nrpi5-generated-root-boot-transport-proof: line command=0 hex=72 6f 6f 74 69 6e 66 6f\r\nrpi5-generated-root-boot-transport-proof: dispatch command=0 status=handled responses=1 raw-bytes=9 truncated=false controls=0\r\nrpi5-generated-root-boot-transport-proof: ready command=1\r\ntalos> ",
+      "truncated": false
+    }
+  ]
+}

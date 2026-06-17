@@ -1,0 +1,87 @@
+{
+  "task_id": "phase10-pi5-serial-command0-source-response-retention-core-20260617",
+  "status": "accepted",
+  "classification": "serial-command0-source-response-retention-core-local-static",
+  "selected_next_task": "phase10-pi5-serial-command0-source-response-retention-pi5-proof-20260617",
+  "implementation": {
+    "helper": "scripts/rpi5-generated-root-command-input-direct-read-proof-review.sh",
+    "review": "rpi5-generated-root-command-input-direct-read-harness-core-v2",
+    "guard": "command0-source-response-retention-guard-v2",
+    "changed_files": [
+      "scripts/rpi5-generated-root-command-input-direct-read-proof-review.sh"
+    ]
+  },
+  "checks": {
+    "shell_syntax": "pass",
+    "positive_command0_source_response_retention_fixture": "pass",
+    "tail_only_negative_fixture": "rejected",
+    "dispatch_only_negative_fixture": "rejected",
+    "unordered_negative_fixture": "rejected",
+    "task_owned_json": "pass"
+  },
+  "evidence_files": {
+    "positive_fixture": {
+      "path": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-core/command0-retention-positive.json",
+      "sha256": "c4f07cf86af34e89b50ebd878c849d98f18f537dd754c4975d97ee830d82c3ae"
+    },
+    "positive_review": {
+      "path": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-core/command0-retention-positive-review.json",
+      "sha256": "1dee3d2545353ebb6075b89dc4bd2961b6c4d398b792e0e80501465e63fd599c"
+    },
+    "negative_results": {
+      "path": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-core/command0-retention-negative-results.json",
+      "sha256": "1d184549d236a3d9c61ecc60a1c97080dd9e6e7b9f2a9296500ed31516b5722d"
+    }
+  },
+  "findings": [
+    {
+      "finding": "command0-direct-read summary evidence needed a local/static source-response retention guard before hardware rerun",
+      "disposition": "fixed",
+      "evidence": "command0-retention-positive-review.json passes command0-source-response-retention-guard-v2."
+    },
+    {
+      "finding": "the previous retained command-0 proof shape was tail-only and must not be accepted as user-visible source response evidence",
+      "disposition": "fixed",
+      "evidence": "command0-retention-negative-results.json rejects tail-only."
+    },
+    {
+      "finding": "dispatch metadata alone is not enough to prove generated-root source response retention",
+      "disposition": "fixed",
+      "evidence": "command0-retention-negative-results.json rejects dispatch-only."
+    },
+    {
+      "finding": "source-response fragments after dispatch would weaken ordered command transaction evidence",
+      "disposition": "fixed",
+      "evidence": "command0-retention-negative-results.json rejects unordered."
+    },
+    {
+      "finding": "kernel command-loop or Pi 5 target proof source change",
+      "disposition": "not-an-issue",
+      "evidence": "Static inspection and the accepted source contract show source generation exists; the failure is retained capture shape."
+    },
+    {
+      "finding": "Pi 5 hardware proof",
+      "disposition": "deferred",
+      "evidence": "selected_next_task gates hardware proof after local/static core acceptance."
+    },
+    {
+      "finding": "persistence, storage drivers, networking, SSH, Phase 11/12 expansion, and phase transition",
+      "disposition": "rejected",
+      "evidence": "No such work was performed or accepted."
+    }
+  ],
+  "rejected_claims": [
+    "Pi 5 command-input success before serialized hardware proof",
+    "prompt-only command evidence",
+    "serial-write-only command evidence",
+    "dispatch-only command evidence",
+    "tail-only command-0 source-response evidence",
+    "unordered command-0 source-response evidence",
+    "persistence",
+    "writable storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

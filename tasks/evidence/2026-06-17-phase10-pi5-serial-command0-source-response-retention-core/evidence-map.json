@@ -1,0 +1,43 @@
+{
+  "task_id": "phase10-pi5-serial-command0-source-response-retention-core-20260617",
+  "evidence_level": [
+    "static source/task evidence inspection",
+    "shell syntax check",
+    "local/static proof-helper review",
+    "positive and negative command-0 source-response retention fixtures",
+    "task-owned JSON evidence",
+    "docs build and diff checks"
+  ],
+  "source_inputs": [
+    "tasks/2026-06-17-phase10-pi5-serial-command0-source-response-retention-source-contract.md",
+    "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-source-contract/classification.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-prelude-pi5-proof/candidate-command0-atomic-20260617T061825Z/serial/command0-direct-read-summary.json",
+    "src/local_command_loop.rs",
+    "src/target/rpi5.rs",
+    "docs/src/project/phase10-pi5-generated-root-boot-transport-contract.md",
+    "docs/src/project/lab-controller.md"
+  ],
+  "changed_files": [
+    "scripts/rpi5-generated-root-command-input-direct-read-proof-review.sh",
+    "docs/src/roadmap.md",
+    "docs/src/project/phase10-pi5-generated-root-boot-transport-contract.md",
+    "tasks/2026-06-17-phase10-pi5-serial-command0-source-response-retention-core.md",
+    "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-core/classification.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-core/evidence-map.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-core/command0-retention-positive.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-core/command0-retention-positive-review.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-core/command0-retention-tail-only-negative.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-core/command0-retention-dispatch-only-negative.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-core/command0-retention-unordered-negative.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-core/command0-retention-negative-results.json"
+  ],
+  "validation_records": {
+    "shell_syntax": "sh -n scripts/rpi5-generated-root-command-input-direct-read-proof-review.sh",
+    "positive_fixture": "scripts/rpi5-generated-root-command-input-direct-read-proof-review.sh target/talos-rpi5-generated-root-command-input-proof-core-20260617.tar.gz tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-core/command0-retention-positive.json",
+    "negative_fixture_summary": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-core/command0-retention-negative-results.json",
+    "json": "jq empty tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-core/*.json",
+    "diff": "git diff --check",
+    "docs": "mdbook build"
+  },
+  "selected_next_task": "phase10-pi5-serial-command0-source-response-retention-pi5-proof-20260617"
+}

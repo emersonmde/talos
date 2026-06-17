@@ -1,0 +1,31 @@
+{
+  "validator": "scripts/rpi5-generated-root-command-input-direct-read-proof-review.sh",
+  "guard": "command0-source-response-retention-guard-v2",
+  "positive_fixture": "command0-retention-positive.json",
+  "positive_review": "command0-retention-positive-review.json",
+  "expected_negative_cases": [
+    "tail-only",
+    "dispatch-only",
+    "unordered"
+  ],
+  "results": [
+    {
+      "case": "tail-only",
+      "fixture": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-core/command0-retention-tail-only-negative.json",
+      "result": "rejected",
+      "stderr": ""
+    },
+    {
+      "case": "dispatch-only",
+      "fixture": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-core/command0-retention-dispatch-only-negative.json",
+      "result": "rejected",
+      "stderr": ""
+    },
+    {
+      "case": "unordered",
+      "fixture": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-core/command0-retention-unordered-negative.json",
+      "result": "rejected",
+      "stderr": ""
+    }
+  ]
+}

@@ -135,6 +135,39 @@ if [ -n "$EVIDENCE_JSON" ]; then
               and $responses_pos < $ready_pos
               and ($next_timeout_pos == null or $ready_pos < $next_timeout_pos)
           );
+        def command0_summary_ok:
+          .label == "command0-direct-read"
+          and (.responses | type == "array")
+          and ((.responses | length) >= 1)
+          and (.attempts | type == "number")
+          and (.bytes | type == "number")
+          and (
+            text_of(.) as $text
+            | first_index($text; [$prelude_command, $prelude_command_line_hex]) as $line_pos
+            | ($text | index("talos: generated-root source=firmware-initramfs")) as $source_pos
+            | ($text | index("reason=valid-artifact")) as $reason_pos
+            | ($text | index("dispatch command=0 status=handled")) as $dispatch_pos
+            | ($text | index("responses=1")) as $responses_pos
+            | ($text | index("ready command=1")) as $ready_pos
+            | ($text | index("dispatch command=1 status=input-error")) as $next_timeout_pos
+            | $line_pos != null
+              and $source_pos != null
+              and $reason_pos != null
+              and $dispatch_pos != null
+              and $responses_pos != null
+              and $ready_pos != null
+              and $line_pos < $source_pos
+              and $source_pos <= $reason_pos
+              and $reason_pos < $dispatch_pos
+              and $dispatch_pos <= $responses_pos
+              and $responses_pos < $ready_pos
+              and ($next_timeout_pos == null or $ready_pos < $next_timeout_pos)
+          )
+          and all(.responses[];
+            (.ok == true)
+            and (.encoding // "") == "utf-8"
+            and (.truncated == false)
+          );
         def command1_ok:
           fresh_before(1; $command; $command_line_hex)
           and write_ok(1; $command)
@@ -155,7 +188,13 @@ if [ -n "$EVIDENCE_JSON" ]; then
               and $dispatch_pos <= $responses_pos
               and $responses_pos < $done_pos
           );
-        boot_ok and readiness_ok and command0_ok and command1_ok
+        if (.direct_read_proof? != null) then
+          boot_ok and readiness_ok and command0_ok and command1_ok
+        elif (.label? == "command0-direct-read") then
+          command0_summary_ok
+        else
+          false
+        end
         ' "$EVIDENCE_JSON" >/dev/null
     evidence_validation_status="pass"
 fi
@@ -177,7 +216,7 @@ jq -n \
     --arg evidence_validation_status "$evidence_validation_status" \
     --argjson kernel_contains_expected_output "$kernel_contains_expected_output" \
     '{
-      review: "rpi5-generated-root-command-input-direct-read-harness-core-v1",
+      review: "rpi5-generated-root-command-input-direct-read-harness-core-v2",
       archive: {
         path: $archive,
         sha256: $archive_sha256,
@@ -267,7 +306,7 @@ jq -n \
           "post-run restore proof"
         ],
         evidence_validator: {
-          guard: "command0-write-to-next-ready-guard-v1",
+          guard: "command0-source-response-retention-guard-v2",
           optional_argument: "direct-read-evidence.json",
           status: $evidence_validation_status,
           rejects: [
@@ -275,8 +314,30 @@ jq -n \
             "/serial/write-only evidence without a following direct-read window",
             "stale pre-write direct-read windows that already contain the command response",
             "missing dispatch status=handled responses=1 evidence",
+            "tail-only command 0 output that starts after the generated-root source response",
+            "dispatch-only command 0 metadata without retained generated-root source text",
             "missing firmware-initramfs valid-artifact source gate",
             "missing TFTP/final-identity/restore proof fields"
+          ]
+        },
+        command0_source_response_retention: {
+          required_ordered_fragments: [
+            ($prelude_command + " or " + $prelude_command_line_hex),
+            "talos: generated-root source=firmware-initramfs",
+            "reason=valid-artifact",
+            "dispatch command=0 status=handled",
+            "responses=1",
+            "rpi5-generated-root-boot-transport-proof: ready command=1"
+          ],
+          accepted_evidence_shapes: [
+            "full direct_read_proof.commands[0].direct_read transaction",
+            "task-owned command0-direct-read summary with retained_text and utf-8 non-truncated responses"
+          ],
+          rejected_evidence_shapes: [
+            "retained command 0 line plus dispatch/ready but missing generated-root source text",
+            "retained generated-root source tail without command 0 line and source prefix",
+            "ready command=1 without dispatch command=0 status=handled responses=1",
+            "dispatch command=0 status=handled responses=1 without retained source=firmware-initramfs reason=valid-artifact"
           ]
         },
         expected_output: $expected_output,
@@ -303,5 +364,5 @@ jq -n \
         "Phase 11/12 expansion",
         "phase transition"
       ],
-      selected_next_task: "phase10-pi5-serial-command0-prelude-pi5-proof-20260617"
+      selected_next_task: "phase10-pi5-serial-command0-source-response-retention-pi5-proof-20260617"
     }'

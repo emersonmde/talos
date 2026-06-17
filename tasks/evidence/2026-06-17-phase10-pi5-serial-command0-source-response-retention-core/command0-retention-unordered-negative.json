@@ -1,0 +1,17 @@
+{
+  "label": "command0-direct-read",
+  "attempts": 1,
+  "bytes": 268,
+  "retained_text": "rootinfo\r\nrpi5-generated-root-boot-transport-proof: dispatch command=0 status=handled responses=1\r\ntalos: generated-root source=firmware-initramfs reason=valid-artifact\r\nrpi5-generated-root-boot-transport-proof: ready command=1\r\ntalos> ",
+  "responses": [
+    {
+      "action": "serial read",
+      "bytes": 268,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "rootinfo\r\nrpi5-generated-root-boot-transport-proof: dispatch command=0 status=handled responses=1\r\ntalos: generated-root source=firmware-initramfs reason=valid-artifact\r\nrpi5-generated-root-boot-transport-proof: ready command=1\r\ntalos> ",
+      "truncated": false
+    }
+  ]
+}

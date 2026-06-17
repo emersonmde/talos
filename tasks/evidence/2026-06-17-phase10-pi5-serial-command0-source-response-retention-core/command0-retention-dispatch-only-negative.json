@@ -1,0 +1,17 @@
+{
+  "label": "command0-direct-read",
+  "attempts": 1,
+  "bytes": 198,
+  "retained_text": "rootinfo\r\nrpi5-generated-root-boot-transport-proof: line command=0 hex=72 6f 6f 74 69 6e 66 6f\r\nrpi5-generated-root-boot-transport-proof: dispatch command=0 status=handled responses=1\r\nrpi5-generated-root-boot-transport-proof: ready command=1\r\ntalos> ",
+  "responses": [
+    {
+      "action": "serial read",
+      "bytes": 198,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "rootinfo\r\nrpi5-generated-root-boot-transport-proof: line command=0 hex=72 6f 6f 74 69 6e 66 6f\r\nrpi5-generated-root-boot-transport-proof: dispatch command=0 status=handled responses=1\r\nrpi5-generated-root-boot-transport-proof: ready command=1\r\ntalos> ",
+      "truncated": false
+    }
+  ]
+}
