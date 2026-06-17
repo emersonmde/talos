@@ -2667,6 +2667,27 @@ The post-review correction chain is:
     transition checkpoint is not selected; supervisor planning is required
     before any command0 write-delivery/capture discriminator, retry, storage
     work, networking, SSH, Phase 11/12 expansion, or phase transition.
+145. Pi 5 serial command 0 write-delivery source contract: accepted in
+    'phase10-pi5-serial-command0-write-delivery-source-contract-20260617'
+    with classification
+    'serial-command0-write-delivery-contract-guard-core-selected'. The accepted
+    prelude proof is the positive contrast: rootinfo reached command 0,
+    dispatch command=0 status=handled responses=1, and ready command=1. The
+    accepted serial capture/readiness proof is the negative contrast: same-boot
+    firmware-initramfs valid-artifact readiness, ready command=0, visible
+    prompt, and an empty fresh pre-write boundary were retained, and
+    /serial/write accepted 9 bytes for rootinfo, but retained target output did
+    not show rootinfo, command 0 line evidence, dispatch command=0, ready
+    command=1, or the generated-root source response. The first failing
+    invariant is therefore command 0 write delivery/capture after readiness, not
+    source-response generation. The selected follow-up is
+    'phase10-pi5-serial-command0-write-delivery-guard-core-20260617', a
+    local/static discriminator for write-accepted-only, prompt-only,
+    dispatch-only, stale, unordered, and source-response-only evidence shapes
+    before any hardware retry. Generated-root command-input success,
+    command0 source-response retention success, storage-driver work,
+    networking, SSH, Phase 11/12 expansion, and phase transition remain
+    rejected.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -7340,6 +7361,18 @@ Selected first slice:
   window, so command-0 source-response retention remains non-evaluable. No
   transition checkpoint, retry, storage work, networking, SSH, Phase 11/12
   expansion, or phase transition is selected without supervisor planning.
+- 'phase10-pi5-serial-command0-write-delivery-source-contract-20260617'
+  accepts the command 0 write-delivery source/static contract with
+  classification
+  serial-command0-write-delivery-contract-guard-core-selected. It contrasts the
+  accepted prelude proof where rootinfo reached command 0 and dispatched with
+  the accepted readiness proof where /serial/write accepted rootinfo after a
+  valid ready command=0 boundary but retained target output never showed command
+  0 line, dispatch, or ready command=1. The selected follow-up is the bounded
+  local/static guard-core task
+  'phase10-pi5-serial-command0-write-delivery-guard-core-20260617'; hardware
+  retry, generated-root command-input acceptance, storage, networking, SSH,
+  Phase 11/12 expansion, and phase transition remain gated.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The

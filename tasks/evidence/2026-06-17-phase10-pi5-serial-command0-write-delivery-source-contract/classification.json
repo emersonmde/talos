@@ -1,0 +1,71 @@
+{
+  "task_id": "phase10-pi5-serial-command0-write-delivery-source-contract-20260617",
+  "task_status": "accepted",
+  "classification": "serial-command0-write-delivery-contract-guard-core-selected",
+  "first_failing_invariant": "command0-write-delivery-after-accepted-readiness",
+  "accepted_contrast_evidence": {
+    "prelude_pi5_proof": {
+      "task_id": "phase10-pi5-serial-command0-prelude-pi5-proof-20260617",
+      "commit": "9621a4f59e538b17c0b923d68d13c41818589b07",
+      "classification": "serial-command0-prelude-source-response-retention-blocked",
+      "command0_write_bytes": 9,
+      "retained_command0_line": true,
+      "retained_dispatch_command0_handled": true,
+      "retained_ready_command1": true,
+      "retained_source_response": false
+    },
+    "serial_capture_readiness_pi5_proof": {
+      "task_id": "phase10-pi5-serial-capture-readiness-pi5-proof-20260617",
+      "classification": "serial-capture-readiness-command0-write-delivery-blocked",
+      "readiness_ok": true,
+      "prewrite_fresh": true,
+      "command0_write_bytes": 9,
+      "command0_write_accepted": true,
+      "command0_write_reached_loop": false,
+      "retained_command0_line": false,
+      "retained_dispatch_command0": false,
+      "retained_ready_command1": false,
+      "retained_later_empty_timeouts": true
+    }
+  },
+  "evaluated_explanations": [
+    {
+      "name": "lab-write-endpoint-delivery-or-ordering",
+      "disposition": "deferred-to-guard-core",
+      "reason": "POST /serial/write accepted 9 bytes, but write-accepted-only evidence does not prove bytes reached target UART before command0 timeout."
+    },
+    {
+      "name": "target-command-loop-timeout-or-capture-consumption",
+      "disposition": "deferred-to-guard-core",
+      "reason": "Retained output advanced through empty command=1 and command=2 timeout records, consistent with command0 timing out before payload visibility."
+    },
+    {
+      "name": "source-response-generation-failure",
+      "disposition": "rejected-for-this-frontier",
+      "reason": "The readiness proof did not retain command0 line or dispatch evidence, so source-response generation remains non-evaluable."
+    }
+  ],
+  "selected_next_task": "phase10-pi5-serial-command0-write-delivery-guard-core-20260617",
+  "selected_discriminator": "command0-write-delivery-guard-v1-local-static",
+  "allowed_next_scope": [
+    "scripts/rpi5-generated-root-command-input-direct-read-proof-review.sh",
+    "task-owned fixtures or validators for command0 write-delivery evidence",
+    "tasks/2026-06-17-phase10-pi5-serial-command0-write-delivery-guard-core.md",
+    "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-guard-core/",
+    "proof-helper docs only if the evidence contract changes"
+  ],
+  "rejected_claims": [
+    "command0 source-response retention success",
+    "generated-root command-input success",
+    "write-accepted-only evidence as delivery proof",
+    "prompt-only evidence as delivery proof",
+    "dispatch-only evidence when delivery evidence is required",
+    "unordered serial evidence",
+    "stale serial output",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}
