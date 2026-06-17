@@ -1,0 +1,56 @@
+{
+  "task_id": "phase10-pi5-serial-command0-prelude-source-contract-20260617",
+  "task_status": "accepted",
+  "classification": "serial-command0-prelude-capture-boundary-guard-core-selected",
+  "evidence_level": [
+    "static/source/task evidence inspection",
+    "lab serial endpoint contract inspection",
+    "command-loop source inspection",
+    "accepted direct-read Pi 5 proof evidence",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "direct_read_boundary": {
+    "selected_run": "candidate-direct-read-20260617T043803Z",
+    "retained_before_write": [
+      "selected-tree identity",
+      "same-power-cycle TFTP evidence",
+      "same-boot source=firmware-initramfs reason=valid-artifact",
+      "ready command=0",
+      "talos> prompt",
+      "fresh command 0 pre-write direct-read evidence",
+      "successful /serial/write of rootinfo"
+    ],
+    "retained_after_write": [
+      "tail of command 0 edit output",
+      "ready command=1",
+      "later command 1 timeout/readiness output"
+    ],
+    "missing_after_write": [
+      "rootinfo command text or equivalent command=0 line record",
+      "talos: generated-root source=firmware-initramfs reason=valid-artifact response",
+      "dispatch command=0 status=handled responses=1"
+    ],
+    "source_contract_result": "kernel command loop appears to have advanced past command 0, but retained evidence cannot prove command 0 handled response"
+  },
+  "selected_invariant": "command0-write-to-next-ready-guard-v1",
+  "selected_next_task": "phase10-pi5-serial-command0-prelude-guard-core-20260617",
+  "accepted_capability": null,
+  "rejected_approaches": [
+    "same-shaped longer direct-read wait retry",
+    "/serial/write success plus ready command=1 as command-input proof",
+    "prompt-only command-input proof",
+    "later command output after missing command 0 dispatch as command 0 success"
+  ],
+  "rejected_claims": [
+    "generated-root command-input acceptance",
+    "persistence",
+    "writable filesystem",
+    "SD/USB/block storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

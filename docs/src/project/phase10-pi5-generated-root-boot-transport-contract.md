@@ -400,6 +400,25 @@ exists. Supervisor planning is required before command-input retry, persistence,
 storage-driver work, networking, SSH, Phase 11/12 expansion, or phase
 transition.
 
+phase10-pi5-serial-command0-prelude-source-contract-20260617 records the
+supervisor-planned command 0 control-surface contract. Static inspection of the
+accepted direct-read proof shows that the Pi 5 run advanced to ready command=1
+after /serial/write accepted rootinfo, but the retained post-write direct-read
+window missed rootinfo command text, the talos: generated-root
+source=firmware-initramfs reason=valid-artifact response, and dispatch
+command=0 status=handled responses=1. This is not accepted generated-root
+command input.
+
+The selected local/static follow-up is
+phase10-pi5-serial-command0-prelude-guard-core-20260617. It must make the
+command 0 prelude contract mechanically checkable: ready command=0, prompt,
+immediate pre-write freshness, successful write of rootinfo, retained rootinfo
+text or equivalent command=0 line record, retained generated-root source
+response, dispatch command=0 status=handled responses=1, and ready command=1
+before accepting any command=1 timeout or later-command evidence. Same-shaped
+direct-read timing retries, prompt-only evidence, and /serial/write-only
+evidence remain rejected.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11/12

@@ -2481,6 +2481,20 @@ The post-review correction chain is:
     supervisor planning is required before any command-input retry,
     persistence, storage-driver work, networking, SSH, Phase 11/12 expansion,
     or phase transition.
+133. Pi 5 serial command 0 prelude source contract: accepted in
+    'phase10-pi5-serial-command0-prelude-source-contract-20260617' with
+    classification
+    'serial-command0-prelude-capture-boundary-guard-core-selected'. Static
+    source/task inspection explains the retained direct-read evidence: the Pi 5
+    run advanced to ready command=1 after /serial/write accepted rootinfo, but
+    the retained post-write window missed rootinfo command text, the
+    generated-root source response, and dispatch command=0 status=handled
+    responses=1. The selected follow-up is the dependency-gated guard-core
+    helper/validator task
+    'phase10-pi5-serial-command0-prelude-guard-core-20260617'. Same-shaped
+    direct-read timing retries, prompt-only evidence, /serial/write-only
+    evidence, persistence, storage-driver work, networking, SSH, Phase 11/12
+    expansion, and phase transition remain rejected.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -7110,6 +7124,15 @@ Selected first slice:
   mutation, networking, SSH, Phase 11/12 expansion, and phase transition remain
   unaccepted; no post-closeout implementation task is selected without
   supervisor planning.
+- 'phase10-pi5-serial-command0-prelude-source-contract-20260617' selects the
+  command0-write-to-next-ready guard contract as the next bounded control
+  surface task after supervisor planning. The retained direct-read proof showed
+  ready command=1 after rootinfo was written, but did not retain rootinfo text,
+  the generated-root source response, or dispatch command=0 status=handled
+  responses=1. The selected next task is
+  'phase10-pi5-serial-command0-prelude-guard-core-20260617'; hardware rerun,
+  command-input acceptance, persistence, storage, networking, SSH, Phase 11/12
+  expansion, and phase transition remain gated.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The
