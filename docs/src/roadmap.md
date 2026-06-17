@@ -2867,6 +2867,22 @@ The post-review correction chain is:
     Command0 write-delivery success, command0 source-response retention success,
     generated-root command-input success, storage, networking, SSH,
     Phase 11/12 expansion, and phase transition remain rejected.
+157. Pi 5 serial command 0 post-write observe closeout: accepted in
+    'phase10-pi5-serial-command0-post-write-observe-closeout-20260617'
+    with classification
+    'command0-post-write-observe-closed-serial-cursor-saturated-planning-needed'.
+    The closeout reconciles the accepted post-write observe contract,
+    helper/core guard, and serialized Pi 5 proof. Selected-kernel/TFTP
+    agreement remains accepted for the 208984-byte da591740/kernel_2712.img
+    candidate, with final identity and restore proof retained. Command0 write
+    delivery remains unaccepted because the cursor-bound observe transaction
+    was non-evaluable at the serial freshness/capture boundary: the saved
+    cursor was already saturated at 4194304 and retained zero readiness or
+    post-write command0 bytes after the accepted 9-byte rootinfo write.
+    Source-response retention remains dependency-gated and is not selected.
+    Supervisor planning is required before any different discriminator,
+    same-feature retry, source-response-retention proof, transition checkpoint,
+    storage, networking, SSH, Phase 11/12 expansion, or phase transition.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

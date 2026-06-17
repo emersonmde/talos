@@ -1,0 +1,12 @@
+{
+  "task_id": "phase10-pi5-serial-command0-post-write-observe-closeout-20260617",
+  "classification": "command0-post-write-observe-closed-serial-cursor-saturated-planning-needed",
+  "command0_write_delivery_accepted": false,
+  "command0_source_response_retention_selected": false,
+  "generated_root_command_input_accepted": false,
+  "first_failing_invariant": "serial freshness/capture boundary: cursor-bound /serial/observe started from saturated cursor 4194304 and retained zero readiness/post-write command0 bytes",
+  "retained_accepted_precondition": "selected-kernel/TFTP agreement for 208984-byte da591740/kernel_2712.img plus final identity and restore proof remains accepted",
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "Command0 write delivery remains unaccepted after the observe-backed proof became non-evaluable at the saturated serial cursor boundary; no same-shaped saturated-cursor observe retry is selected without supervisor planning."
+}
