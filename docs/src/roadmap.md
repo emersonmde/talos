@@ -3087,6 +3087,24 @@ The post-review correction chain is:
     Command0 write-delivery success, source-response retention,
     generated-root command-input success, storage, networking, SSH,
     Phase 11/12 expansion, and phase transition remain rejected.
+170. Pi 5 serial command0 write-delivery after selected-kernel recovery:
+    accepted in
+    'phase10-pi5-serial-command0-write-delivery-after-selected-kernel-recovery-20260617'
+    with classification
+    'command0-write-delivery-blocked-after-selected-kernel-recovery'. The
+    selected-kernel/TFTP precondition stayed recovered: the candidate selected
+    tree exposed da591740/kernel_2712.img at 208984 bytes, the same-power-cycle
+    TFTP delta retained two matching 208984-byte serves, final pre-restore
+    identity stayed selected, and restore returned to the baseline tree.
+    Command0 readiness and the talos> prompt were retained, and /serial/write
+    accepted the 9-byte rootinfo payload, but bounded post-write
+    /serial/observe from cursor 4194304 retained zero bytes and no rootinfo,
+    command0 line, dispatch command=0 status=handled, responses=1, or ready
+    command=1 evidence. The first failing invariant is
+    post-write-observe-missing-command0-delivery. selected_next_task is null
+    and planningNeeded=true; source-response retention, generated-root
+    command-input success, storage, networking, SSH, Phase 11/12 expansion,
+    and phase transition remain rejected.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

@@ -1,0 +1,7 @@
+{
+  "review": "rpi5-generated-root-command-input-direct-read-proof-review",
+  "evidence": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-after-selected-kernel-recovery/candidate-command0-write-delivery-after-recovery-20260617T200806Z/direct-read-evidence.json",
+  "status": "expected-reject",
+  "exit_code": 1,
+  "reason": "command0 write-delivery guard rejects missing post-write command0 delivery evidence"
+}
