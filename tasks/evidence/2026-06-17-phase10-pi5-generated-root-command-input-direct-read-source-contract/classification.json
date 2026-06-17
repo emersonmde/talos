@@ -1,0 +1,120 @@
+{
+  "task_id": "phase10-pi5-generated-root-command-input-direct-read-source-contract-20260617",
+  "status": "accepted",
+  "classification": "direct-read-after-saturated-cursor-source-contract-selected",
+  "selected_next_task": "phase10-pi5-generated-root-command-input-direct-read-harness-core-20260617",
+  "prior_blocker": {
+    "task": "tasks/2026-06-17-phase10-pi5-generated-root-command-input-capture-harness-pi5-proof.md",
+    "classification": "command-input-observe-cursor-saturated",
+    "observe_contract": {
+      "cursor_start": 4194304,
+      "cursor_end": 4194304,
+      "bytes": 0,
+      "saturated": true
+    },
+    "reason_acceptance_blocked": "The accepted command-input contract required command-indexed /serial/observe bytes after saved prompt cursors, but the retained cursor was already pinned at the serial retention boundary and returned no bytes."
+  },
+  "selected_contract": {
+    "name": "direct-read-after-saturated-cursor-command-input-v1",
+    "replacement_signal": "command-indexed direct /serial/read windows bounded by same-boot source evidence and immediate pre-write freshness reads",
+    "lab_endpoint_basis": {
+      "endpoint": "POST /serial/read",
+      "contract": "Consumes newly available serial device bytes over a timeout/settle window, appends them to the retained log, and returns bytes, text, cursor, and truncated status.",
+      "source": "docs/src/project/lab-controller.md"
+    },
+    "readiness_requirements": [
+      "same boot retains source=firmware-initramfs reason=valid-artifact",
+      "same boot retains rpi5-generated-root-boot-transport-proof: ready command=0",
+      "same boot retains visible talos> prompt"
+    ],
+    "command_sequence": [
+      {
+        "command_index": 0,
+        "pre_write_freshness": "immediate direct /serial/read after command=0 prompt records no pending command response before write",
+        "serial_write": {
+          "endpoint": "POST /serial/write",
+          "text": "rootinfo",
+          "append_newline": true
+        },
+        "direct_read_window": {
+          "endpoint": "POST /serial/read",
+          "required_fragments": [
+            "rootinfo",
+            "talos: generated-root source=firmware-initramfs reason=valid-artifact",
+            "dispatch command=0 status=handled",
+            "responses=1",
+            "rpi5-generated-root-boot-transport-proof: ready command=1"
+          ]
+        }
+      },
+      {
+        "command_index": 1,
+        "pre_write_freshness": "immediate direct /serial/read after command=1 prompt records no pending manifest response before write",
+        "serial_write": {
+          "endpoint": "POST /serial/write",
+          "text": "cat /generated/manifest.txt",
+          "append_newline": true
+        },
+        "direct_read_window": {
+          "endpoint": "POST /serial/read",
+          "required_fragments": [
+            "cat /generated/manifest.txt",
+            "Talos generated-root external artifact A",
+            "dispatch command=1 status=handled",
+            "responses=1",
+            "rpi5-generated-root-boot-transport-proof: ready command=2 or ready-for-next prompt=true or final PASS"
+          ]
+        }
+      }
+    ],
+    "hardware_proof_requirements": [
+      "candidate archive hash and lab-selected identity",
+      "stable same-power-cycle TFTP delta for candidate kernel and initramfs before restore",
+      "final pre-restore identity matching the selected tree",
+      "post-run restore proof",
+      "task-owned JSON evidence preserving all direct-read windows"
+    ]
+  },
+  "findings": [
+    {
+      "finding": "prior /serial/observe signal was unavailable because the saved cursor was saturated",
+      "disposition": "fixed",
+      "evidence": "The replacement contract uses direct /serial/read only as command-indexed device-byte capture bounded by pre-write freshness and same-boot source gates."
+    },
+    {
+      "finding": "generated-root command-input feature boundary must remain real user-visible command handling",
+      "disposition": "fixed",
+      "evidence": "Command 1 must retain cat /generated/manifest.txt, Talos generated-root external artifact A, dispatch command=1 status=handled, responses=1, and readiness/PASS."
+    },
+    {
+      "finding": "lab-service mutation requirement",
+      "disposition": "not-an-issue",
+      "evidence": "The existing /serial/read endpoint consumes newly available device bytes and can support a bounded direct-read contract without service changes."
+    },
+    {
+      "finding": "helper implementation and hardware publication",
+      "disposition": "deferred",
+      "evidence": "The selected next task owns helper/core implementation; serialized Pi 5 proof remains queued behind that core."
+    },
+    {
+      "finding": "direct-read output without command-indexed pre-write freshness and retained response fragments",
+      "disposition": "rejected",
+      "evidence": "Direct-read-only output remains insufficient for generated-root command-input acceptance."
+    }
+  ],
+  "rejected_claims": [
+    "generated-root command-input success in this source-contract task",
+    "direct-read-only output as command-input proof",
+    "prompt visibility alone as command-input proof",
+    "/serial/write byte acceptance alone as command-input proof",
+    "runtime code change",
+    "hardware publication or power-cycle",
+    "persistence",
+    "writable filesystem",
+    "SD/USB/block storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

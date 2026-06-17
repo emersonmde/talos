@@ -2408,6 +2408,23 @@ The post-review correction chain is:
     consumption remains accepted, Pi 5 generated-root command input remains
     blocked, and supervisor planning is required before another command-input
     hardware attempt or evidence-contract change.
+128. Pi 5 generated-root command-input direct-read source contract: accepted in
+    'phase10-pi5-generated-root-command-input-direct-read-source-contract-20260617'
+    with classification
+    'direct-read-after-saturated-cursor-source-contract-selected'. The selected
+    contract explains the prior blocker: /serial/observe from the saved cursor
+    was pinned at the 4194304-byte retention boundary and returned zero bytes.
+    The replacement evidence is command-indexed direct /serial/read capture,
+    not direct-read output alone. A future proof must retain same-boot
+    source=firmware-initramfs reason=valid-artifact, command 0 rootinfo
+    prelude, command 1 cat /generated/manifest.txt, the command text, Talos
+    generated-root external artifact A, dispatch status=handled responses=1,
+    post-command readiness, stable TFTP evidence, final selected identity, and
+    restore proof. The selected dependency-gated follow-up is
+    'phase10-pi5-generated-root-command-input-direct-read-harness-core-20260617'.
+    Hardware publication, command-input acceptance, persistence, storage
+    drivers, networking, SSH, Phase 11/12 expansion, and phase transition
+    remain deferred to explicit tasks.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

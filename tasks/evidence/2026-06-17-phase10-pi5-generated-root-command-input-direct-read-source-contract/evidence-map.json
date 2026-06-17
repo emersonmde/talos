@@ -1,0 +1,33 @@
+{
+  "task_id": "phase10-pi5-generated-root-command-input-direct-read-source-contract-20260617",
+  "classification": "direct-read-after-saturated-cursor-source-contract-selected",
+  "evidence_level": [
+    "static/task/doc/source evidence inspection",
+    "task-owned JSON evidence",
+    "diff checks",
+    "docs build"
+  ],
+  "inputs": {
+    "accepted_capture_harness_closeout": "tasks/2026-06-17-phase10-pi5-generated-root-command-input-capture-harness-closeout.md",
+    "closeout_classification": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-capture-harness-closeout/classification.json",
+    "saturated_pi5_proof": "tasks/2026-06-17-phase10-pi5-generated-root-command-input-capture-harness-pi5-proof.md",
+    "saturated_pi5_proof_classification": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-capture-harness-pi5-proof/classification.json",
+    "lab_controller_serial_contract": "docs/src/project/lab-controller.md",
+    "existing_generated_root_contract": "docs/src/project/phase10-pi5-generated-root-boot-transport-contract.md"
+  },
+  "outputs": {
+    "task_record": "tasks/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-source-contract.md",
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-source-contract/classification.json",
+    "roadmap_update": "docs/src/roadmap.md",
+    "generated_root_contract_update": "docs/src/project/phase10-pi5-generated-root-boot-transport-contract.md",
+    "lab_controller_update": "docs/src/project/lab-controller.md"
+  },
+  "selected_next_task": "phase10-pi5-generated-root-command-input-direct-read-harness-core-20260617",
+  "validation": {
+    "static_task_doc_source_evidence_inspection": "pass",
+    "jq_empty_task_owned_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  }
+}

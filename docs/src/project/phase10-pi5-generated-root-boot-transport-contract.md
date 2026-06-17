@@ -313,6 +313,33 @@ command-input hardware attempt, serial-retention/capture change, evidence-
 contract change, persistence, storage drivers, networking, SSH, Phase 11/12
 expansion, or phase transition.
 
+## Command-Input Direct-Read Source Contract
+
+phase10-pi5-generated-root-command-input-direct-read-source-contract-20260617
+selects direct-read-after-saturated-cursor-command-input-v1 as the next bounded
+evidence contract. The prior /serial/observe contract failed because the saved
+cursor was pinned at the 4194304-byte retention boundary and returned zero
+bytes. The replacement signal is not direct-read output alone; it is
+command-indexed direct /serial/read capture bounded by same-boot source
+evidence and immediate pre-write freshness reads.
+
+The next helper/core task must require selected-tree identity, stable
+same-power-cycle TFTP evidence, final pre-restore identity, and restore proof.
+Within that same boot it must retain source=firmware-initramfs
+reason=valid-artifact, ready command=0, and a visible talos> prompt, perform a
+pre-write freshness read, write rootinfo, and retain rootinfo plus dispatch
+command=0 status=handled responses=1 and ready command=1. It must then perform
+a second pre-write freshness read, write cat /generated/manifest.txt, and
+retain the command text, Talos generated-root external artifact A, dispatch
+command=1 status=handled responses=1, and ready command=2,
+ready-for-next prompt=true, or final PASS.
+
+The selected dependency-gated follow-up is
+phase10-pi5-generated-root-command-input-direct-read-harness-core-20260617.
+Pi 5 command-input success, hardware publication, persistence, storage drivers,
+networking, SSH, Phase 11/12 expansion, and phase transition remain deferred to
+explicit tasks.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11/12

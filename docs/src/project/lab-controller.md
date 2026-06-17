@@ -857,6 +857,15 @@ Cursor notes:
 - `observe` without a cursor starts at the current end of log, waits, and returns only newly arriving bytes.
 - If the rolling log has trimmed older bytes, very old cursors may no longer be meaningful. In normal agent loops, use a cursor from the immediately preceding `peek`.
 - If the current cursor equals the retention cap, currently 4 MiB by default, cursor-based `observe` can remain pinned while new device bytes are appended and older retained bytes are dropped. Use `scripts/rpi5-observe-serial-window.sh` in its default auto mode so saturated cursors fall back to direct `/serial/read` capture. Do not accept an empty `observe` window from a saturated cursor as proof that the current boot emitted no serial output.
+- For generated-root command-input proofs that intentionally replace a
+  saturated `/serial/observe` window with `/serial/read`, direct-read output is
+  acceptable only when the task-owned contract binds it to the same boot and
+  command index. The proof must retain same-boot source evidence, a prompt or
+  ready marker for the exact command index, an immediate pre-write freshness
+  read, the `/serial/write` response, and the following direct-read window with
+  retained command text, response output, dispatch status, response count, and
+  post-command readiness. Direct-read prompt visibility alone remains
+  diagnostic.
 
 For boot/kernel output, do not wait for `login:` or a shell prompt. Use `read` or `observe` with a timeout and inspect `base64`/`text`. The base64 field preserves raw bytes for diagnosing ANSI escape sequences, encoding problems, or baud-rate issues. The current baud rate is known good because the API has received `talos-pi5 login:` from the Pi.
 
