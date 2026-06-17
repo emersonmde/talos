@@ -2920,6 +2920,23 @@ The post-review correction chain is:
     command0 write-delivery success, command0 source-response retention success,
     generated-root command-input success, storage, networking, SSH,
     Phase 11/12 expansion, and phase transition remain unaccepted.
+160. Pi 5 serial command 0 saturated-capture Pi 5 proof: accepted in
+    'phase10-pi5-serial-command0-saturated-capture-pi5-proof-20260617'
+    with classification
+    'command0-saturated-capture-blocked-selected-kernel-tftp-precondition-regressed'.
+    The run published the selected generated-root candidate and post-publish
+    boot files exposed selected tree
+    06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212 with
+    208984-byte da591740/kernel_2712.img. The same-power-cycle stable TFTP
+    delta then retained two baseline-sized 104136-byte
+    da591740/kernel_2712.img serves, and final pre-restore identity exposed
+    the baseline tree rather than the selected candidate. Command0 write
+    delivery is therefore non-evaluable in this task; no rootinfo write was
+    sent after the failed precondition. The selected follow-up is
+    'phase10-pi5-serial-command0-saturated-capture-closeout-20260617'.
+    Command0 write-delivery success, command0 source-response retention
+    success, generated-root command-input success, storage, networking, SSH,
+    Phase 11/12 expansion, and phase transition remain rejected.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

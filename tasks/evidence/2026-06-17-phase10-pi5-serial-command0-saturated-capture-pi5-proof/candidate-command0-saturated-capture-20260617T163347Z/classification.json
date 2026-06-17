@@ -1,0 +1,66 @@
+{
+  "task_id": "phase10-pi5-serial-command0-saturated-capture-pi5-proof-20260617",
+  "run_label": "candidate-command0-saturated-capture-20260617T163347Z",
+  "evidence_dir": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-saturated-capture-pi5-proof/candidate-command0-saturated-capture-20260617T163347Z",
+  "classification": "command0-saturated-capture-blocked-selected-kernel-tftp-precondition-regressed",
+  "accepted": false,
+  "first_failing_invariant": "selected-kernel/TFTP agreement failed before command0 write delivery could be evaluated: same-power-cycle TFTP served 104136-byte da591740/kernel_2712.img and final pre-restore identity was baseline-sized, not the selected 208984-byte candidate",
+  "evidence": {
+    "guard_review_exit": 1,
+    "selected_kernel_tftp_precondition": {
+      "contract": "selected-kernel-tftp-precondition-v1",
+      "expected_fetch": "da591740/kernel_2712.img",
+      "expected_kernel_2712_size": 208984,
+      "tftp": {
+        "cursor_start": 4594064,
+        "cursor_end": 4595504,
+        "stable": true,
+        "expected_fetch_count": 2,
+        "expected_fetch_byte_match_count": 0,
+        "expected_fetch_bytes_seen": [
+          104136,
+          104136
+        ]
+      },
+      "final_pre_restore": {
+        "effective_kernel": "kernel_2712.img",
+        "selected_tree_still_staged": false,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes": 104136
+      },
+      "restore": {
+        "ok": true,
+        "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+      }
+    },
+    "readiness_bytes": 9775,
+    "readiness_contains_source": true,
+    "readiness_contains_ready0": true,
+    "readiness_contains_dispatch0": true,
+    "readiness_contains_ready1": true,
+    "serial_write_sent": false,
+    "serial_write_ok": false,
+    "post_write_capture_contract": "not-run",
+    "post_write_response_bytes": 0
+  },
+  "triage": {
+    "candidate_identity": "partial: post-publish boot files exposed selected tree 06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212 and da591740/kernel_2712.img at 208984 bytes, but final pre-restore identity had already reverted to baseline-sized 104136-byte kernel",
+    "fresh_serial_cursor": "not evaluated for command0 write delivery: saturated direct-read retained generated-root readiness text, but the selected-kernel/TFTP precondition failed and the direct-read window also overran into command0 timeout/ready command=1 before write",
+    "tftp_delta": "blocked: stable same-cursor TFTP delta retained two da591740/kernel_2712.img serves at 104136 bytes, not the selected 208984-byte candidate",
+    "final_identity": "blocked: final pre-restore boot files exposed baseline tree a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 and 104136-byte kernel",
+    "restore": "pass: explicit restore left the lab at baseline tree a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "known_good_control": "not run; no code changes follow this blocked proof in this task",
+    "candidate_rerun": "not run; closeout/supervisor must reconcile why this proof regressed the selected-kernel/TFTP precondition previously accepted before selecting any retry"
+  },
+  "selected_next_task": "phase10-pi5-serial-command0-saturated-capture-closeout-20260617",
+  "rejected_claims": [
+    "command0 write-delivery success",
+    "command0 source-response retention success",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}
