@@ -3008,6 +3008,19 @@ The post-review correction chain is:
     Command0 write-delivery success, source-response retention,
     generated-root command-input success, storage, networking, SSH,
     Phase 11/12 expansion, and phase transition remain rejected.
+165. Pi 5 command0 selected-kernel stability closeout: accepted in
+    'phase10-pi5-command0-selected-kernel-stability-closeout-20260617'
+    with classification
+    'selected-kernel-stability-closed-tftp-served-baseline-final-identity-regressed-planning-needed'.
+    The closeout reconciles the accepted regression checkpoint, local/static
+    discriminator core, and serialized Pi 5 proof/blocker. Selected-kernel
+    stability remains blocked because post-publish identity exposed the
+    selected 208984-byte tree, but same-power-cycle TFTP served two 104136-byte
+    baseline kernel fetches and final pre-restore identity exposed the baseline
+    tree. No same-shaped command0 retry, source-response-retention proof,
+    generated-root command-input acceptance, storage, networking, SSH,
+    Phase 11/12 expansion, or phase transition is selected. Supervisor
+    planning is required before any follow-up.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -7741,6 +7754,16 @@ Selected first slice:
   precondition; source-response retention and generated-root command-input
   success remain unaccepted, and no same-shaped retry is selected without
   supervisor planning.
+- 'phase10-pi5-command0-selected-kernel-stability-closeout-20260617' accepts
+  the selected-kernel stability closeout with classification
+  selected-kernel-stability-closed-tftp-served-baseline-final-identity-regressed-planning-needed.
+  The stability proof retained selected post-publish identity for the
+  208984-byte generated-root kernel, but same-power-cycle TFTP served two
+  104136-byte baseline kernel fetches and final pre-restore identity exposed
+  the baseline tree. Command0 write delivery remains non-evaluable at the
+  selected-kernel stability precondition; source-response retention and
+  generated-root command-input success remain unaccepted, and no same-shaped
+  retry is selected without supervisor planning.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The

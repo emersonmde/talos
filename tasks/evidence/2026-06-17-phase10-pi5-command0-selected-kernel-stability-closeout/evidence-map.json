@@ -1,0 +1,17 @@
+{
+  "task_id": "phase10-pi5-command0-selected-kernel-stability-closeout-20260617",
+  "classification": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-closeout/classification.json",
+  "regression_reconciliation_checkpoint": "tasks/2026-06-17-phase10-pi5-command0-selected-kernel-regression-reconciliation-source-checkpoint.md",
+  "regression_reconciliation_classification": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-regression-reconciliation-source-checkpoint/classification.json",
+  "selected_kernel_stability_discriminator_core": "tasks/2026-06-17-phase10-pi5-command0-selected-kernel-stability-discriminator-core.md",
+  "selected_kernel_stability_discriminator_classification": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-discriminator-core/classification.json",
+  "selected_kernel_stability_pi5_proof": "tasks/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof.md",
+  "selected_kernel_stability_pi5_proof_classification": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/classification.json",
+  "selected_kernel_stability_pi5_proof_evidence_map": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/evidence-map.json",
+  "selected_run": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/candidate-selected-kernel-stability-20260617T180240Z",
+  "stable_tftp_delta": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/candidate-selected-kernel-stability-20260617T180240Z/capture/tftp-delta-stable-pre-restore.json",
+  "final_pre_restore_boot_files": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/candidate-selected-kernel-stability-20260617T180240Z/capture/final-pre-restore-boot-files.json",
+  "restore": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/candidate-selected-kernel-stability-20260617T180240Z/capture/restore-snapshot.json",
+  "selected_next_task": null,
+  "planning_needed": true
+}

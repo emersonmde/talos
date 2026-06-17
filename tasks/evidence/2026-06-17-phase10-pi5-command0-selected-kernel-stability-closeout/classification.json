@@ -1,0 +1,44 @@
+{
+  "task_id": "phase10-pi5-command0-selected-kernel-stability-closeout-20260617",
+  "classification": "selected-kernel-stability-closed-tftp-served-baseline-final-identity-regressed-planning-needed",
+  "selected_kernel_stability_accepted": false,
+  "command0_write_delivery_accepted": false,
+  "command0_source_response_retention_selected": false,
+  "generated_root_command_input_accepted": false,
+  "first_failing_invariant": "same-power-cycle TFTP served bytes do not match the selected kernel",
+  "secondary_failing_invariant": "final pre-restore identity exposed the baseline tree instead of the selected tree",
+  "retained_post_publish_identity": {
+    "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+    "expected_kernel_path": "da591740/kernel_2712.img",
+    "expected_kernel_bytes": 208984
+  },
+  "blocked_tftp_identity": {
+    "served_kernel_path": "da591740/kernel_2712.img",
+    "served_kernel_bytes": [
+      104136,
+      104136
+    ],
+    "expected_kernel_bytes": 208984
+  },
+  "final_pre_restore_identity": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "selected_tree_preserved": false
+  },
+  "restore": {
+    "ok": true,
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "Selected-kernel stability remains blocked because the serialized Pi 5 proof retained selected post-publish identity but same-power-cycle TFTP served baseline-sized kernel_2712.img bytes and final pre-restore identity regressed to the baseline tree; no same-shaped command0 retry or source-response-retention proof is selected without supervisor planning.",
+  "rejected_claims": [
+    "command0 write-delivery success",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}
