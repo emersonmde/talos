@@ -2394,6 +2394,20 @@ The post-review correction chain is:
     This local/static task does not accept Pi 5 command-input success,
     persistence, storage drivers, networking, SSH, Phase 11/12 expansion, or
     phase transition.
+127. Pi 5 generated-root command-input capture-harness Pi 5 proof and
+    closeout: the proof is blocked in
+    'phase10-pi5-generated-root-command-input-capture-harness-pi5-proof-20260617'
+    with classification 'command-input-observe-cursor-saturated'. The selected
+    archive reached the expected candidate TFTP fetches and direct-read
+    diagnostic serial retained source=firmware-initramfs reason=valid-artifact,
+    ready command=0, and a visible talos> prompt, but the saved /serial/observe
+    cursor was already at the 4194304-byte retention saturation boundary and
+    returned zero bytes. The closeout
+    'phase10-pi5-generated-root-command-input-capture-harness-closeout-20260617'
+    accepts only the blocked boundary: Pi 5 firmware-initramfs generated-root
+    consumption remains accepted, Pi 5 generated-root command input remains
+    blocked, and supervisor planning is required before another command-input
+    hardware attempt or evidence-contract change.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -7000,6 +7014,15 @@ Selected first slice:
   /serial/write payload but retained no command text or generated-root manifest
   output. It selects no follow-up task; supervisor planning is required before
   another command-input or harness-adjusted hardware attempt.
+- 'phase10-pi5-generated-root-command-input-capture-harness-core-20260617'
+  accepts a local/static harness correction that makes the next command-input
+  proof command-indexed: rootinfo at command 0, then
+  cat /generated/manifest.txt at command 1. The follow-up Pi 5 proof is blocked
+  with classification command-input-observe-cursor-saturated because the saved
+  /serial/observe cursor was at the 4194304-byte retention saturation boundary
+  and returned zero bytes. The capture-harness closeout accepts only that
+  blocked boundary; command input remains unaccepted and supervisor planning is
+  required before another hardware attempt or evidence-contract change.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The
@@ -7026,14 +7049,16 @@ Acceptance criteria:
   setup. The later reservation-by-early-memory-plan-exclusion slice implements
   the fix and accepts Pi 5 firmware-initramfs generated-root consumption with
   serialized hardware proof. Scripted command injection for that scenario,
-  including the later command-input closeout, remains blocked on timing/capture
-  evidence; writable persistence, SD/USB/block storage, networking, SSH, and
-  phase transition remain deferred and require explicit follow-up tasks.
+  including the later command-input and capture-harness closeouts, remains
+  blocked on command-input retention/capture evidence; writable persistence,
+  SD/USB/block storage, networking, SSH, and phase transition remain deferred
+  and require explicit follow-up tasks.
 - Documentation explains the chosen local storage path and remaining risks.
   Current status: accepted by the Milestone 10.3 closeout as a local/QEMU
   generated-root transport checkpoint. Later reservation work accepts Pi 5
   firmware-initramfs generated-root consumption; command-input success for that
-  proof scenario and true writable or block-backed storage remain deferred.
+  proof scenario remains blocked on serial observe/cursor saturation, and true
+  writable or block-backed storage remains deferred.
 
 ## Phase 11: RP1, PCIe, DMA, and Hardware Substrate
 

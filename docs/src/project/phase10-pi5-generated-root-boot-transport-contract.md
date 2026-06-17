@@ -292,6 +292,27 @@ phase10-pi5-generated-root-command-input-capture-harness-pi5-proof-20260617.
 Pi 5 command-input success, persistence, storage drivers, networking, SSH,
 Phase 11/12 expansion, and phase transition remain deferred to explicit tasks.
 
+## Command-Input Capture Harness Proof Closeout
+
+phase10-pi5-generated-root-command-input-capture-harness-pi5-proof-20260617 is
+blocked with classification command-input-observe-cursor-saturated. The
+selected archive was published and the Pi 5 fetched the expected kernel and
+initramfs before restore. Direct-read diagnostic serial retained
+source=firmware-initramfs reason=valid-artifact, ready command=0, and a visible
+talos> prompt, but the accepted /serial/observe contract could not be
+evaluated because the saved cursor was already at the 4194304-byte retention
+saturation boundary and returned zero bytes.
+
+phase10-pi5-generated-root-command-input-capture-harness-closeout-20260617
+accepts only that reconciliation. Pi 5 firmware-initramfs generated-root
+consumption remains accepted, but Pi 5 generated-root command input remains
+blocked on serial observe/cursor saturation. Direct /serial/read output remains
+diagnostic only and cannot replace command-indexed retained command text and
+manifest-output evidence. Supervisor planning is required before another
+command-input hardware attempt, serial-retention/capture change, evidence-
+contract change, persistence, storage drivers, networking, SSH, Phase 11/12
+expansion, or phase transition.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11/12

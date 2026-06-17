@@ -1,0 +1,31 @@
+{
+  "task_id": "phase10-pi5-generated-root-command-input-capture-harness-closeout-20260617",
+  "classification": "pi5-generated-root-command-input-capture-harness-blocked-serial-observe-saturated",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "task-owned JSON evidence",
+    "diff checks",
+    "docs build"
+  ],
+  "files": {
+    "task_record": "tasks/2026-06-17-phase10-pi5-generated-root-command-input-capture-harness-closeout.md",
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-capture-harness-closeout/classification.json",
+    "capture_harness_core_task": "tasks/2026-06-17-phase10-pi5-generated-root-command-input-capture-harness-core.md",
+    "capture_harness_core_classification": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-capture-harness-core/classification.json",
+    "capture_harness_pi5_proof_task": "tasks/2026-06-17-phase10-pi5-generated-root-command-input-capture-harness-pi5-proof.md",
+    "capture_harness_pi5_proof_classification": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-capture-harness-pi5-proof/classification.json",
+    "capture_harness_pi5_proof_evidence_map": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-capture-harness-pi5-proof/evidence-map.json",
+    "selected_observe_evidence": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-capture-harness-pi5-proof/candidate-observe-saturated-valid-tftp-20260617T025118Z/serial/serial-observe-from-saved-cursor.json",
+    "selected_direct_read_diagnostic": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-capture-harness-pi5-proof/candidate-observe-saturated-valid-tftp-20260617T025118Z/serial/serial-read-diagnostic-summary.json",
+    "selected_tftp_delta": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-capture-harness-pi5-proof/candidate-observe-saturated-valid-tftp-20260617T025118Z/tftp/tftp-delta-stable-pre-restore.json",
+    "baseline_control": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-capture-harness-pi5-proof/control-baseline-direct-read-20260617T025231Z/control-summary.json"
+  },
+  "summary": {
+    "core_classification": "command-input-capture-harness-core-local-static",
+    "proof_classification": "command-input-observe-cursor-saturated",
+    "closeout_classification": "pi5-generated-root-command-input-capture-harness-blocked-serial-observe-saturated",
+    "accepted_command_input": false,
+    "selected_next_task": null,
+    "planning_needed": true
+  }
+}

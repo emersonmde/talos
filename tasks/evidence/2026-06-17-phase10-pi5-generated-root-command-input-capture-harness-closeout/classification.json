@@ -1,0 +1,79 @@
+{
+  "task_id": "phase10-pi5-generated-root-command-input-capture-harness-closeout-20260617",
+  "status": "accepted",
+  "classification": "pi5-generated-root-command-input-capture-harness-blocked-serial-observe-saturated",
+  "accepted_capability": null,
+  "blocked_invariant": "post-prompt /serial/write accepted bytes must become shell-visible command text in retained serial via command-indexed /serial/observe",
+  "blocking_reason": "The capture-harness Pi 5 proof's saved cursor was already at the 4194304-byte serial retention saturation boundary and /serial/observe from that cursor returned zero bytes.",
+  "source_frontier": {
+    "pi5_generated_root_consumption": "accepted by phase10-pi5-generated-root-firmware-initramfs-reservation-pi5-proof-20260616",
+    "command_input": "blocked",
+    "command_input_blocker": "serial observe/cursor saturation",
+    "direct_read_fallback": "diagnostic-only"
+  },
+  "core_evidence": {
+    "task": "tasks/2026-06-17-phase10-pi5-generated-root-command-input-capture-harness-core.md",
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-capture-harness-core/classification.json",
+    "classification_value": "command-input-capture-harness-core-local-static",
+    "selected_strategy": "two-step command-indexed proof: rootinfo at command 0, then cat /generated/manifest.txt at command 1"
+  },
+  "proof_evidence": {
+    "task": "tasks/2026-06-17-phase10-pi5-generated-root-command-input-capture-harness-pi5-proof.md",
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-capture-harness-pi5-proof/classification.json",
+    "classification_value": "command-input-observe-cursor-saturated",
+    "observe_contract": {
+      "cursor_start": 4194304,
+      "cursor_end": 4194304,
+      "bytes": 0,
+      "saturated": true
+    },
+    "direct_read_diagnostic": {
+      "bytes": 12771,
+      "source_firmware_initramfs_valid_artifact": true,
+      "ready_command_0": true,
+      "visible_prompt": true,
+      "expected_output": false
+    },
+    "tftp_expected_kernel_fetch": true,
+    "tftp_expected_initramfs_fetch": true,
+    "restore_ok": true,
+    "known_good_control": "baseline-direct-read-control-retained"
+  },
+  "findings": [
+    {
+      "finding": "capture-harness core records source-backed two-step command-indexed proof contract",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "Pi 5 proof retained expected candidate identity, TFTP, direct-read diagnostic prompt readiness, control, and restore evidence",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "command-input acceptance cannot be evaluated because /serial/observe was saturated at the saved cursor and returned no bytes",
+      "disposition": "blocked"
+    },
+    {
+      "finding": "serial retention/cursor saturation resolution or evidence-contract replanning",
+      "disposition": "deferred-to-supervisor-planning"
+    },
+    {
+      "finding": "direct /serial/read output as a substitute for command-indexed retained proof",
+      "disposition": "rejected"
+    }
+  ],
+  "rejected_claims": [
+    "generated-root command-input success",
+    "/serial/write byte acceptance as command-input proof",
+    "direct-read-only output as command-input proof",
+    "persistence",
+    "writable filesystem",
+    "SD/USB/block storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ],
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "Supervisor planning is required before another generated-root command-input hardware attempt or evidence-contract change because the remaining blocker is serial observe/cursor saturation, not a mechanically unblocked feature task."
+}
