@@ -1,0 +1,46 @@
+{
+  "task_id": "phase10-pi5-generated-root-firmware-initramfs-reservation-closeout-20260616",
+  "classification": "pi5-generated-root-firmware-initramfs-consumption-accepted-command-input-deferred",
+  "evidence": {
+    "source_contract": {
+      "path": "tasks/2026-06-16-phase10-pi5-generated-root-firmware-initramfs-reservation-source-contract.md",
+      "classification_path": "tasks/evidence/2026-06-16-phase10-pi5-generated-root-firmware-initramfs-reservation-source-contract/classification.json",
+      "evidence_map_path": "tasks/evidence/2026-06-16-phase10-pi5-generated-root-firmware-initramfs-reservation-source-contract/evidence-map.json",
+      "commit": "9f2831a2363a5cd75cdd46bffb0927c58e4be526",
+      "finding": "Selected reservation by early memory-plan exclusion for FDT /chosen initrd bounds."
+    },
+    "core_implementation": {
+      "path": "tasks/2026-06-16-phase10-pi5-generated-root-firmware-initramfs-reservation-core.md",
+      "classification_path": "tasks/evidence/2026-06-16-phase10-pi5-generated-root-firmware-initramfs-reservation-core/classification.json",
+      "evidence_map_path": "tasks/evidence/2026-06-16-phase10-pi5-generated-root-firmware-initramfs-reservation-core/evidence-map.json",
+      "commit": "9ae70f93e4b1841f7ccd032f2083c591ce16b120",
+      "finding": "Implemented optional firmware-initrd exclusion in Pi 5 boot-memory planning and passed local/static gates."
+    },
+    "pi5_proof": {
+      "path": "tasks/2026-06-16-phase10-pi5-generated-root-firmware-initramfs-reservation-pi5-proof.md",
+      "classification_path": "tasks/evidence/2026-06-16-phase10-pi5-generated-root-firmware-initramfs-reservation-pi5-proof/classification.json",
+      "evidence_map_path": "tasks/evidence/2026-06-16-phase10-pi5-generated-root-firmware-initramfs-reservation-pi5-proof/evidence-map.json",
+      "capture_summary_path": "tasks/evidence/2026-06-16-phase10-pi5-generated-root-firmware-initramfs-reservation-pi5-proof/candidate-rerun/capture-invariant-summary.json",
+      "commit": "3880ffbf02e586bd717168392f8dc5d770ca647b",
+      "finding": "Decisive rerun accepted source=firmware-initramfs reason=valid-artifact with selected-tree/TFTP/restore evidence."
+    },
+    "docs_updates": {
+      "roadmap_path": "docs/src/roadmap.md",
+      "project_contract_path": "docs/src/project/phase10-pi5-generated-root-boot-transport-contract.md",
+      "finding": "Docs record Pi 5 generated-root consumption as accepted while command input, persistence, storage, networking, SSH, and phase transition remain deferred."
+    }
+  },
+  "accepted_capability": {
+    "firmware_initramfs_range": "0x2efff000..0x2efff296",
+    "runtime_source": "source=firmware-initramfs reason=valid-artifact",
+    "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "validation": {
+    "static_task_evidence_inspection": "pass",
+    "jq_empty_on_task_owned_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check_before_commit": "pass"
+  }
+}

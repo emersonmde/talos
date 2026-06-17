@@ -1,0 +1,110 @@
+{
+  "task_id": "phase10-pi5-generated-root-firmware-initramfs-reservation-closeout-20260616",
+  "status": "accepted",
+  "classification": "pi5-generated-root-firmware-initramfs-consumption-accepted-command-input-deferred",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "accepted Pi 5 serial hardware boot/output",
+    "accepted same-power-cycle TFTP evidence",
+    "accepted lab-controller identity and restore evidence",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_input_frontier": {
+    "source_contract": {
+      "task_id": "phase10-pi5-generated-root-firmware-initramfs-reservation-source-contract-20260616",
+      "commit": "9f2831a2363a5cd75cdd46bffb0927c58e4be526",
+      "classification": "pi5-generated-root-firmware-initramfs-reservation-source-contract-selected",
+      "selected_boundary": "pi5-generated-root-firmware-initramfs-reserve-by-memory-plan-exclusion-v1"
+    },
+    "core": {
+      "task_id": "phase10-pi5-generated-root-firmware-initramfs-reservation-core-20260616",
+      "commit": "9ae70f93e4b1841f7ccd032f2083c591ce16b120",
+      "classification": "pi5-generated-root-firmware-initramfs-reservation-core-local-static",
+      "kernel_2712_sha256": "c37b34ebc955a7ce11cd0660bc18424ebcec4550de23ae1e6b0b9ad7c867e4bd",
+      "kernel_2712_bytes": 208984
+    },
+    "pi5_proof": {
+      "task_id": "phase10-pi5-generated-root-firmware-initramfs-reservation-pi5-proof-20260616",
+      "commit": "3880ffbf02e586bd717168392f8dc5d770ca647b",
+      "classification": "pi5-generated-root-firmware-initramfs-consumed-command-input-not-exercised",
+      "decisive_run": "candidate-rerun"
+    }
+  },
+  "accepted_capability": {
+    "name": "Pi 5 firmware-initramfs generated-root consumption",
+    "artifact": "talos-generated-root-v1 via initramfs_2712",
+    "source": "firmware-initramfs",
+    "reason": "valid-artifact",
+    "fdt_initrd_range": {
+      "start": "0x000000002efff000",
+      "end": "0x000000002efff296",
+      "length": "0x0000000000000296"
+    },
+    "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 208984,
+    "expected_fetch_byte_match_count": 2,
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "deferred": [
+    "scripted Pi 5 command injection for this generated-root scenario",
+    "writable persistence",
+    "SD/USB/block storage",
+    "broader filesystem mutation",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 11/12 feature expansion from this evidence",
+    "phase transition"
+  ],
+  "rejected_claims": [
+    "interactive command injection success",
+    "persistence",
+    "SD/USB/block driver support",
+    "networking",
+    "SSH",
+    "phase transition"
+  ],
+  "selected_next_task": null,
+  "planning_needed_after_acceptance": true,
+  "planning_reason": "Pi 5 generated-root consumption is accepted, but no explicit queued follow-up task is mechanically unblocked by this closeout; supervisor must select the next dependency-gated task.",
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Accepted source, implementation, and hardware evidence are reconciled as Pi 5 firmware-initramfs generated-root consumption."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The prior firmware-initramfs range-overlap blocker is closed by memory-plan exclusion evidence and serialized Pi 5 proof."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Generated-root parser and compiled fallback behavior remain all-or-nothing and retained."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Scripted command injection for the Pi 5 generated-root proof scenario remains unaccepted because command input arrived empty."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Writable persistence, SD/USB/block storage, broader filesystem mutation, networking, SSH, and phase transition require explicit future tasks."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "Pi 5 generated-root consumption does not imply persistence, storage drivers, networking, SSH, or a phase transition."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No hardware lock or new hardware run was needed for this static closeout."
+    }
+  ],
+  "validation": {
+    "static_task_evidence_inspection": "pass",
+    "jq_empty_on_task_owned_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check_before_commit": "pass"
+  }
+}

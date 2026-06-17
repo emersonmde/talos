@@ -149,9 +149,10 @@ Source ownership is split narrowly:
 
 Copy-first remediation, static maximum-size buffers, high-memory ownership,
 DMA-safe allocation, SD/USB/block persistence, networking, SSH, and phase
-transition remain rejected from this boundary. Pi 5 generated-root consumption
-still requires a later local/static implementation task and a fresh serialized
-Pi 5 proof.
+transition remain rejected from this boundary. At source-contract acceptance
+time, Pi 5 generated-root consumption still required a later local/static
+implementation task and a fresh serialized Pi 5 proof; both follow-up tasks are
+recorded below.
 
 ## Firmware Initramfs Reservation Core
 
@@ -188,8 +189,25 @@ success because scripted command input arrived empty and the scenario reported
 an incomplete command-loop proof. Persistence, SD/USB/block drivers,
 networking, SSH, Phase 11/12 work, and phase transition remain deferred.
 
+## Firmware Initramfs Reservation Closeout
+
+phase10-pi5-generated-root-firmware-initramfs-reservation-closeout-20260616
+accepts the Pi 5 firmware-initramfs generated-root consumption boundary. The
+source contract, core implementation, and serialized Pi 5 proof now reconcile:
+Talos preserves the firmware-loaded initramfs_2712 bytes through early memory
+setup and installs the artifact as generated-root source firmware-initramfs
+with reason valid-artifact on Pi 5 hardware.
+
+The prior hardware blocker from the first boot-transport proof is closed.
+Scripted command injection for this proof scenario remains deferred because
+the accepted run captured empty command input. Writable persistence,
+SD/USB/block drivers, broader filesystem mutation, networking, SSH, Phase
+11/12 expansion, and phase transition remain outside this contract.
+
 ## Deferred
 
-Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11 remain
-deferred. This contract accepts only the Pi 5 boot-transport candidate shape for
-the already accepted generated-root artifact format.
+Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11/12
+feature expansion remain deferred. This contract now accepts Pi 5
+firmware-initramfs consumption of the already accepted generated-root artifact
+format, but not persistence, command-input success for the proof scenario, or a
+phase transition.

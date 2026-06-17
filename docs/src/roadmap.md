@@ -2320,6 +2320,19 @@ The post-review correction chain is:
     proof, so interactive command injection success, persistence,
     SD/USB/block storage, networking, SSH, and phase transition remain
     rejected until separately planned.
+122. Pi 5 generated-root firmware initramfs reservation closeout: accepted in
+    'phase10-pi5-generated-root-firmware-initramfs-reservation-closeout-20260616'.
+    The closeout reconciles the source contract, memory-plan exclusion
+    implementation, and serialized Pi 5 proof as accepted Pi 5
+    firmware-initramfs generated-root consumption. The former hardware blocker
+    is closed: Talos now preserves the firmware-loaded 'initramfs_2712' bytes
+    through early memory setup and installs the artifact with
+    'source=firmware-initramfs' and 'reason=valid-artifact' on Pi 5 hardware.
+    Scripted command injection for that proof scenario remains deferred because
+    the run captured empty command input. Writable persistence,
+    SD/USB/block storage, broader filesystem mutation, networking, SSH,
+    Phase 11/12 expansion, and phase transition remain rejected until
+    explicitly planned.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -6908,14 +6921,27 @@ Selected first slice:
   table placement. The task does not implement the change, publish a boot
   archive, run Pi 5 hardware, accept generated-root consumption, or broaden into
   persistence, SD/USB/block drivers, networking, SSH, or phase transition.
+- 'phase10-pi5-generated-root-firmware-initramfs-reservation-core-20260616'
+  implements that boundary and validates it with focused planner tests, full
+  unit tests, and a compile-only generated-root Pi 5 image build.
+- 'phase10-pi5-generated-root-firmware-initramfs-reservation-pi5-proof-20260616'
+  accepts Pi 5 firmware-initramfs generated-root consumption with
+  source=firmware-initramfs and reason=valid-artifact after selected-tree,
+  same-power-cycle TFTP, serial, final identity, and restore evidence. The
+  proof does not accept scripted command injection success because command
+  input arrived empty.
+- 'phase10-pi5-generated-root-firmware-initramfs-reservation-closeout-20260616'
+  closes the prior Pi 5 generated-root hardware-consumption blocker and keeps
+  command-input, writable persistence, SD/USB/block storage, broader filesystem
+  mutation, networking, SSH, and phase transition dependency-gated.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The
   accepted frontier covers generated-root file and executable content through
   the read-only VFS/loader/process path plus same-kernel/two-artifact
-  local/QEMU no-rebuild transport. Pi 5 generated-root consumption remains
-  deferred until Talos reserves or copies the firmware initramfs range before
-  early memory setup and passes a fresh serialized hardware proof. Writable
+  local/QEMU no-rebuild transport. A later reservation-by-memory-plan-exclusion
+  slice accepted Pi 5 firmware-initramfs generated-root consumption, while
+  scripted command injection for that proof scenario remains deferred. Writable
   persistence, SD/USB/block storage, broader filesystem mutation, networking,
   SSH, and Phase 11 transition remain unaccepted.
 
@@ -6923,20 +6949,24 @@ Acceptance criteria:
 
 - Talos can load a nontrivial userland image without rebuilding the kernel for
   every user program change. Current status: accepted for the local/QEMU
-  generated-root transport boundary only. The accepted evidence runs the same
-  kernel ELF/image hashes against two different external generated-root
-  artifacts and observes distinct generated file and executable behavior.
+  generated-root transport boundary and, later, for Pi 5 firmware-initramfs
+  consumption of the same read-only generated-root artifact format. The
+  local/QEMU evidence runs the same kernel ELF/image hashes against two
+  different external generated-root artifacts and observes distinct generated
+  file and executable behavior.
   Pi 5 candidate boot archive placement is accepted only as a non-published
-  static archive. The first Pi 5 boot-transport proof and its closeout retain a
-  source-backed blocker: firmware initramfs range overlap with early memory
-  setup. The next accepted source boundary is reservation by early memory-plan
-  exclusion, but implementation and Pi 5 proof remain pending. Pi 5 consumption
-  acceptance, writable persistence, SD/USB/block storage, networking, SSH, and
-  phase transition remain deferred and require explicit follow-up tasks.
+  static archive. The first Pi 5 boot-transport proof and its closeout retained
+  a source-backed blocker: firmware initramfs range overlap with early memory
+  setup. The later reservation-by-early-memory-plan-exclusion slice implements
+  the fix and accepts Pi 5 firmware-initramfs generated-root consumption with
+  serialized hardware proof. Scripted command injection for that scenario,
+  writable persistence, SD/USB/block storage, networking, SSH, and phase
+  transition remain deferred and require explicit follow-up tasks.
 - Documentation explains the chosen local storage path and remaining risks.
   Current status: accepted by the Milestone 10.3 closeout as a local/QEMU
-  generated-root transport checkpoint; Pi 5 generated-root consumption and true
-  writable or block-backed storage remain deferred.
+  generated-root transport checkpoint. Later reservation work accepts Pi 5
+  firmware-initramfs generated-root consumption; command-input success for that
+  proof scenario and true writable or block-backed storage remain deferred.
 
 ## Phase 11: RP1, PCIe, DMA, and Hardware Substrate
 
@@ -6946,10 +6976,11 @@ networking, GPIO, storage, or broader hardware support.
 Entry status: Phase 10 is closed by
 `phase10-to-phase11-transition-checkpoint-20260605`. The accepted Phase 10
 frontier covers local shell behavior and local/QEMU generated-root transport.
-Pi 5 generated-root consumption remains deferred on the firmware initramfs
-range-overlap blocker, but that storage transport blocker does not prevent
-Phase 11 RP1/PCIe mapping from starting. The first Phase 11 slice must stay on
-RP1/PCIe mapping and a narrow register-read diagnostic before GPIO,
+A later Phase 10.3 reservation-by-memory-plan-exclusion slice accepted Pi 5
+firmware-initramfs generated-root consumption, but command-input,
+writable-storage, SD/USB/block-driver, networking, SSH, and phase-transition
+boundaries still require explicit future tasks. The first Phase 11 slice must
+stay on RP1/PCIe mapping and a narrow register-read diagnostic before GPIO,
 interrupts, DMA, networking, or SSH work.
 
 Milestone 11.1: RP1 and PCIe Mapping
@@ -10884,9 +10915,12 @@ convergence wait tweaks, marker/capture-only retries, GPIO32/PHY reset action,
 packet I/O, networking, sockets, SSH, Phase 12.2, and phase transition work
 from this frontier. The selected next non-Ethernet task is
 phase10-pi5-generated-root-firmware-initramfs-reservation-source-contract-20260616,
-returning to the known generated-root boot transport blocker where Pi 5
-firmware-loaded initramfs consumption remains deferred on reservation/copy of
-the firmware initramfs range before early memory setup can overwrite it.
+returning to the then-known generated-root boot transport blocker: Pi 5
+firmware-loaded initramfs consumption required reservation/copy of the firmware
+initramfs range before early memory setup could overwrite it. That selected
+Phase 10 slice has since accepted Pi 5 firmware-initramfs generated-root
+consumption, but it does not unblock Phase 12 packet I/O, networking, sockets,
+SSH, or phase transition work.
 
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
