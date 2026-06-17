@@ -557,6 +557,15 @@ Command0 write delivery remains non-evaluable until that precondition is
 reconciled; command0 write-delivery success, source-response retention success,
 and generated-root command-input success remain unaccepted.
 
+phase10-pi5-serial-command0-write-delivery-closeout-20260617 accepts the static
+frontier closeout with classification
+command0-write-delivery-closed-tftp-served-kernel-mismatch-blocked. The
+selected-tree/TFTP-served kernel mismatch is the first failing invariant, so
+command0 write delivery remains blocked and non-evaluable. The queued command0
+source-response-retention v2 proof is not selected; generated-root command-input
+success, storage, networking, SSH, Phase 11/12 expansion, and phase transition
+remain unaccepted pending supervisor planning.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11/12

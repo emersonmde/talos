@@ -1,0 +1,90 @@
+{
+  "task_id": "phase10-pi5-serial-command0-write-delivery-closeout-20260617",
+  "task_status": "accepted",
+  "classification": "command0-write-delivery-closed-tftp-served-kernel-mismatch-blocked",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "accepted source-contract evidence",
+    "accepted guard-core local/static evidence",
+    "accepted serialized Pi 5 proof/blocker evidence",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "frontier": {
+    "generated_root_transport": "accepted by prior Phase 10.3 closeout evidence",
+    "pi5_firmware_initramfs_consumption": "accepted by prior Phase 10.3 closeout evidence",
+    "serial_capture_readiness": "accepted by prior serial-capture-readiness proof/closeout evidence",
+    "command0_write_delivery": "blocked-non-evaluable",
+    "command0_source_response_retention_v2": "not-selected",
+    "generated_root_command_input_success": "not-accepted"
+  },
+  "first_failing_invariant": {
+    "class": "selected-tree-tftp-served-kernel-mismatch",
+    "summary": "The first candidate retained ready command=0, a prompt, an accepted 9-byte rootinfo write, and ready command=1, but same-cursor TFTP evidence showed baseline-sized 104136-byte kernel_2712.img fetches instead of the selected candidate's expected 208984-byte kernel. Known-good control and candidate rerun preserved the mismatch."
+  },
+  "accepted_evidence": [
+    {
+      "task": "phase10-pi5-serial-command0-write-delivery-source-contract-20260617",
+      "commit": "7c7bf0759c93c44e62318e6cfadf20e475a76920",
+      "classification": "serial-command0-write-delivery-contract-guard-core-selected",
+      "disposition": "fixed"
+    },
+    {
+      "task": "phase10-pi5-serial-command0-write-delivery-guard-core-20260617",
+      "commit": "8c3dd451a33955238607ff7ecd838019c7f5d984",
+      "classification": "serial-command0-write-delivery-guard-core-local-static",
+      "disposition": "fixed"
+    },
+    {
+      "task": "phase10-pi5-serial-command0-write-delivery-pi5-proof-20260617",
+      "commit": "f21ebf8774af227ab2ec5c7490895ad07f56de63",
+      "classification": "command0-write-delivery-blocked-tftp-served-kernel-mismatch-after-control-rerun",
+      "disposition": "blocked"
+    }
+  ],
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "Command0 write delivery was not accepted. The first failing invariant is selected-tree/TFTP-served kernel mismatch after required known-good-control and candidate-rerun triage, so command0 source-response retention v2 is not dependency-satisfied.",
+  "source_response_retention_v2_dependency_satisfied": false,
+  "source_response_retention_v2_task": "phase10-pi5-serial-command0-source-response-retention-pi5-proof-v2-20260617",
+  "findings": [
+    {
+      "finding": "command0 write delivery needed a distinct discriminator before source-response retention",
+      "disposition": "fixed",
+      "evidence": "write-delivery source contract and guard-core evidence"
+    },
+    {
+      "finding": "readiness/write attempt was retained in the hardware proof",
+      "disposition": "fixed",
+      "evidence": "first candidate retained ready command=0, visible prompt, accepted rootinfo write, and ready command=1"
+    },
+    {
+      "finding": "selected-tree/TFTP-served kernel precondition failed",
+      "disposition": "blocked",
+      "evidence": "candidate and rerun TFTP deltas retained 104136-byte baseline kernel fetches rather than the expected 208984-byte selected candidate kernel"
+    },
+    {
+      "finding": "command0 source-response retention v2",
+      "disposition": "deferred",
+      "evidence": "It cannot be evaluated until command0 write delivery is accepted."
+    },
+    {
+      "finding": "hardware run or implementation change for closeout",
+      "disposition": "not-an-issue",
+      "evidence": "This task is static evidence reconciliation only."
+    }
+  ],
+  "rejected_claims": [
+    "command0 write-delivery success",
+    "command0 source-response retention success",
+    "generated-root command-input success",
+    "source-response-retention v2 proof selected",
+    "storage",
+    "writable storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

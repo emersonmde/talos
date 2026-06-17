@@ -1,0 +1,32 @@
+{
+  "task_id": "phase10-pi5-serial-command0-write-delivery-closeout-20260617",
+  "classification": "command0-write-delivery-closed-tftp-served-kernel-mismatch-blocked",
+  "first_failing_invariant": "selected-tree-tftp-served-kernel-mismatch",
+  "selected_next_task": null,
+  "planning_needed": true,
+  "inputs": {
+    "source_contract_task": "tasks/2026-06-17-phase10-pi5-serial-command0-write-delivery-source-contract.md",
+    "source_contract_classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-source-contract/classification.json",
+    "guard_core_task": "tasks/2026-06-17-phase10-pi5-serial-command0-write-delivery-guard-core.md",
+    "guard_core_classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-guard-core/classification.json",
+    "pi5_proof_task": "tasks/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof.md",
+    "pi5_proof_classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/classification.json",
+    "pi5_proof_evidence_map": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/evidence-map.json",
+    "pi5_proof_first_candidate": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/candidate-command0-write-delivery-20260617T103448Z",
+    "pi5_proof_known_good_control": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/triage-control-and-rerun-20260617T103840Z/known-good-control",
+    "pi5_proof_candidate_rerun": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/triage-control-and-rerun-20260617T103840Z/candidate-rerun"
+  },
+  "commits": {
+    "source_contract": "7c7bf0759c93c44e62318e6cfadf20e475a76920",
+    "guard_core": "8c3dd451a33955238607ff7ecd838019c7f5d984",
+    "pi5_proof": "f21ebf8774af227ab2ec5c7490895ad07f56de63",
+    "phase10_milestone_10_3_closeout": "8b42e5f901c4a97b397b91b3c6e988fbf34ccaab"
+  },
+  "outputs": {
+    "closeout_task": "tasks/2026-06-17-phase10-pi5-serial-command0-write-delivery-closeout.md",
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-closeout/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-closeout/evidence-map.json",
+    "roadmap": "docs/src/roadmap.md",
+    "architecture_contract": "docs/src/project/phase10-pi5-generated-root-boot-transport-contract.md"
+  }
+}
