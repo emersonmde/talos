@@ -566,6 +566,18 @@ source-response-retention v2 proof is not selected; generated-root command-input
 success, storage, networking, SSH, Phase 11/12 expansion, and phase transition
 remain unaccepted pending supervisor planning.
 
+phase10-pi5-command0-tftp-selected-kernel-precondition-source-contract-20260617
+accepts the source/static precondition contract with classification
+command0-tftp-selected-kernel-precondition-source-contract-core-selected. The
+contract restates the blocker as selected-tree/TFTP-served-kernel agreement:
+the command0 candidate selected a 208984-byte kernel_2712.img, while retained
+same-power-cycle TFTP evidence served the 104136-byte baseline kernel during
+the first candidate and candidate rerun. The selected follow-up is
+phase10-pi5-command0-tftp-selected-kernel-precondition-core-20260617, which
+must implement a repo-owned preflight guard before any command0 behavior retry.
+The lab/boot-root reconciliation path remains deferred unless the guard or a
+future precondition proof requires lab-service/operator diagnosis.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11/12

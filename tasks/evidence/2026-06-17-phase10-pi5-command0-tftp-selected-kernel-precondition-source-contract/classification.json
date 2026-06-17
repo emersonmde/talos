@@ -1,0 +1,95 @@
+{
+  "task_id": "phase10-pi5-command0-tftp-selected-kernel-precondition-source-contract-20260617",
+  "task_status": "accepted",
+  "classification": "command0-tftp-selected-kernel-precondition-source-contract-core-selected",
+  "evidence_level": [
+    "static/source/task evidence inspection",
+    "accepted command0 write-delivery source/guard/proof/closeout evidence",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "first_failing_invariant": {
+    "class": "selected-tree-tftp-served-kernel-mismatch",
+    "summary": "The accepted command0 write-delivery proof selected a 208984-byte candidate kernel, and lab API status listed that selected kernel after publication, but same-cursor TFTP evidence served 104136-byte baseline kernel_2712.img bytes during the first candidate and candidate rerun."
+  },
+  "accepted_evidence": {
+    "candidate_archive": {
+      "sha256": "8f6a4d0d3436308a5f3b51e4f113b75d1acbf807a7b7af2d66453806c586cf0c",
+      "kernel_2712_sha256": "c37b34ebc955a7ce11cd0660bc18424ebcec4550de23ae1e6b0b9ad7c867e4bd",
+      "kernel_2712_bytes": 208984,
+      "initramfs_2712_sha256": "0341f5393502f54489acb1951633bf2773fb846a82bde89b3e4a2e82000724c6",
+      "initramfs_2712_bytes": 662
+    },
+    "first_candidate": {
+      "lab_status_effective_kernel": "kernel_2712.img",
+      "lab_status_kernel_2712_bytes": 208984,
+      "tftp_kernel_fetch_bytes": [
+        104136,
+        104136
+      ],
+      "expected_kernel_fetch_seen": false
+    },
+    "known_good_control": {
+      "tftp_kernel_fetch_bytes": [
+        104136,
+        104136
+      ]
+    },
+    "candidate_rerun": {
+      "lab_status_effective_kernel": "kernel_2712.img",
+      "lab_status_kernel_2712_bytes": 208984,
+      "tftp_kernel_fetch_bytes": [
+        104136,
+        104136
+      ],
+      "expected_kernel_fetch_seen": false
+    }
+  },
+  "approaches_compared": [
+    {
+      "name": "publication-served-root-preflight-guard",
+      "disposition": "selected",
+      "reason": "Repo-owned helper/core work can reject the retained mismatch and require selected-kernel/TFTP-served byte agreement before command0 behavior proof."
+    },
+    {
+      "name": "lab-boot-root-reconciliation",
+      "disposition": "deferred",
+      "reason": "May require lab-service/operator inspection of publication, served root, cache, or status semantics after the repo-owned preflight contract is implemented."
+    }
+  ],
+  "selected_next_task": "phase10-pi5-command0-tftp-selected-kernel-precondition-core-20260617",
+  "findings": [
+    {
+      "finding": "first failing invariant is selected-tree/TFTP-served-kernel mismatch",
+      "disposition": "fixed",
+      "evidence": "candidate and rerun selected 208984-byte kernel in lab status but TFTP served 104136-byte kernel_2712.img"
+    },
+    {
+      "finding": "same-shaped command0 retries before selected-kernel/TFTP agreement",
+      "disposition": "removed",
+      "evidence": "contract rejects timing, wait-count, marker-name, cursor-only, command-loop, and source-response-retention retries until precondition is proven"
+    },
+    {
+      "finding": "lab/boot-root root-cause reconciliation",
+      "disposition": "deferred",
+      "evidence": "selected core task can implement a repo-owned preflight guard first"
+    },
+    {
+      "finding": "hardware run or lab mutation for source/static contract",
+      "disposition": "not-an-issue",
+      "evidence": "this task only reconciles retained evidence and selects a dependency-gated core task"
+    }
+  ],
+  "rejected_claims": [
+    "command0 write-delivery success",
+    "command0 source-response retention success",
+    "generated-root command-input success",
+    "same-shaped command0 behavior retry selected",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

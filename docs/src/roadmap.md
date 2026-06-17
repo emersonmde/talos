@@ -2720,6 +2720,23 @@ The post-review correction chain is:
     rejected. The selected follow-up is
     'phase10-pi5-serial-command0-write-delivery-closeout-20260617'.
 
+148. Pi 5 command0 TFTP selected-kernel precondition source contract: accepted
+    in
+    'phase10-pi5-command0-tftp-selected-kernel-precondition-source-contract-20260617'
+    with classification
+    'command0-tftp-selected-kernel-precondition-source-contract-core-selected'.
+    The first failing invariant is selected-tree/TFTP-served-kernel agreement,
+    not command-loop behavior: the selected command0 candidate expected a
+    208984-byte kernel_2712.img, while the first candidate and candidate rerun
+    retained same-power-cycle TFTP serves of the 104136-byte baseline kernel.
+    The contract compares a repo-owned publication/served-root preflight guard
+    with a lab/boot-root reconciliation path and selects the preflight guard as
+    the next bounded implementation task. Timing, wait-count, marker-name,
+    cursor-only, command-loop, and source-response-retention retries remain
+    rejected until selected-tree/TFTP-served-kernel agreement is proven. The
+    selected follow-up is
+    'phase10-pi5-command0-tftp-selected-kernel-precondition-core-20260617'.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
