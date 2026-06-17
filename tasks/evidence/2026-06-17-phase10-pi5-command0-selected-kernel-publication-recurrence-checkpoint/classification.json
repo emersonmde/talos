@@ -1,0 +1,65 @@
+{
+  "task_id": "phase10-pi5-command0-selected-kernel-publication-recurrence-checkpoint-20260617",
+  "status": "accepted",
+  "classification": "selected-kernel-publication-recurrence-checkpoint-paired-sentinel-core-selected",
+  "first_still_failing_invariant": "same-power-cycle TFTP served bytes do not match the selected kernel",
+  "secondary_failing_invariant": "final pre-restore identity exposed the baseline tree instead of the selected tree",
+  "selected_kernel_stability_accepted": false,
+  "command0_write_delivery_accepted": false,
+  "command0_source_response_retention_selected": false,
+  "generated_root_command_input_accepted": false,
+  "selected_kernel_stability_regression": {
+    "task_id": "phase10-pi5-command0-selected-kernel-stability-pi5-proof-20260617",
+    "classification": "selected-kernel-stability-blocked-tftp-served-baseline-final-identity-regressed",
+    "post_publish_selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+    "expected_kernel_path": "da591740/kernel_2712.img",
+    "expected_kernel_bytes": 208984,
+    "same_power_cycle_tftp_stable": true,
+    "same_power_cycle_served_kernel_bytes": [
+      104136,
+      104136
+    ],
+    "same_power_cycle_expected_fetch_byte_match_count": 0,
+    "final_pre_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "restore_ok": true
+  },
+  "capture_staging_minimal_sentinel_recovery": {
+    "task_id": "phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof-20260614",
+    "classification": "capture-staging-minimal-sentinel-proof-accepted",
+    "control": {
+      "selected_tree_hash": "9e3442962d40beff3b31668065df4f5d8ac37ee770fa3c4bba725d049bc78db3",
+      "expected_kernel_path": "da591740/kernel_2712.img",
+      "expected_kernel_bytes": 47832,
+      "same_power_cycle_tftp_stable": true,
+      "same_power_cycle_expected_fetch_count": 2,
+      "same_power_cycle_expected_fetch_byte_match_count": 2,
+      "final_pre_restore_selected_tree": true
+    },
+    "candidate_rerun": {
+      "selected_tree_hash": "520785f412ba93da8c25577e5f5e4635ffba02b2969fbf3e02a346e97e061799",
+      "expected_kernel_path": "da591740/kernel_2712.img",
+      "expected_kernel_bytes": 47848,
+      "same_power_cycle_tftp_stable": true,
+      "same_power_cycle_expected_fetch_count": 2,
+      "same_power_cycle_expected_fetch_byte_match_count": 2,
+      "final_pre_restore_selected_tree": true
+    },
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "checkpoint_decision": {
+    "recurrence_classification": "renewed selected-kernel/TFTP publication failure on command0 generated-root candidate after prior minimal sentinel recovery",
+    "selected_discriminator": "selected-kernel-paired-sentinel-publication-boundary-v1",
+    "selected_next_task": "phase10-pi5-command0-selected-kernel-paired-sentinel-core-20260617",
+    "planning_needed": false
+  },
+  "rejected_claims": [
+    "command0 write-delivery success",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

@@ -3021,6 +3021,27 @@ The post-review correction chain is:
     generated-root command-input acceptance, storage, networking, SSH,
     Phase 11/12 expansion, or phase transition is selected. Supervisor
     planning is required before any follow-up.
+166. Pi 5 command0 selected-kernel publication recurrence checkpoint: accepted
+    in
+    'phase10-pi5-command0-selected-kernel-publication-recurrence-checkpoint-20260617'
+    with classification
+    'selected-kernel-publication-recurrence-checkpoint-paired-sentinel-core-selected'.
+    The checkpoint compares the accepted 2026-06-14 capture-staging minimal
+    sentinel recovery with the 2026-06-17 selected-kernel stability regression.
+    The minimal sentinel control and candidate rerun each retained selected
+    tree identity, two same-power-cycle TFTP kernel_2712.img serves matching
+    their selected byte counts, final pre-restore selected identity, and
+    baseline restore. The later command0 selected-kernel stability proof
+    instead retained post-publish selected identity for the 208984-byte
+    generated-root candidate but served two 104136-byte baseline kernel fetches
+    and regressed final identity to the baseline tree. The first still-failing
+    invariant is same-power-cycle TFTP served bytes not matching the selected
+    kernel. The selected follow-up is
+    'phase10-pi5-command0-selected-kernel-paired-sentinel-core-20260617', a
+    no-command-write paired sentinel publication-boundary discriminator.
+    Command0 write-delivery success, source-response retention,
+    generated-root command-input success, storage, networking, SSH,
+    Phase 11/12 expansion, and phase transition remain rejected.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

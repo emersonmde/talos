@@ -1,0 +1,43 @@
+{
+  "task_id": "phase10-pi5-command0-selected-kernel-publication-recurrence-checkpoint-20260617",
+  "classification": "selected-kernel-publication-recurrence-checkpoint-paired-sentinel-core-selected",
+  "evidence_level": [
+    "static/source/task evidence inspection",
+    "retained lab-controller API evidence review",
+    "retained serial hardware boot/output evidence review",
+    "retained stable same-cursor TFTP delta evidence review",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "references": {
+    "selected_kernel_stability_closeout_task": "tasks/2026-06-17-phase10-pi5-command0-selected-kernel-stability-closeout.md",
+    "selected_kernel_stability_closeout_classification": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-closeout/classification.json",
+    "selected_kernel_stability_proof_task": "tasks/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof.md",
+    "selected_kernel_stability_proof_classification": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/classification.json",
+    "selected_kernel_stability_tftp_delta": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/candidate-selected-kernel-stability-20260617T180240Z/capture/tftp-delta-stable-pre-restore.json",
+    "selected_kernel_stability_final_identity": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/candidate-selected-kernel-stability-20260617T180240Z/capture/final-pre-restore-boot-files.json",
+    "selected_kernel_regression_reconciliation_checkpoint": "tasks/2026-06-17-phase10-pi5-command0-selected-kernel-regression-reconciliation-source-checkpoint.md",
+    "capture_staging_minimal_sentinel_task": "tasks/2026-06-14-phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof.md",
+    "capture_staging_minimal_sentinel_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof/classification.json",
+    "capture_staging_candidate_tftp_delta": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof/candidate-run/tftp-delta-stable-pre-restore.json",
+    "capture_staging_control_tftp_delta": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof/control-run/tftp-delta-stable-pre-restore.json",
+    "capture_staging_recovery_closeout_task": "tasks/2026-06-14-phase12-rp1-ethernet-capture-staging-recovery-closeout.md",
+    "capture_staging_recovery_closeout_classification": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-capture-staging-recovery-closeout/classification.json",
+    "lab_controller_docs": "docs/src/project/lab-controller.md",
+    "selected_kernel_stability_helper": "scripts/rpi5-selected-kernel-stability-discriminator.sh",
+    "checkpoint_classification": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-publication-recurrence-checkpoint/classification.json"
+  },
+  "selected_next_task": "phase10-pi5-command0-selected-kernel-paired-sentinel-core-20260617",
+  "selected_discriminator": "selected-kernel-paired-sentinel-publication-boundary-v1",
+  "rejected_claims": [
+    "command0 write-delivery success",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}
