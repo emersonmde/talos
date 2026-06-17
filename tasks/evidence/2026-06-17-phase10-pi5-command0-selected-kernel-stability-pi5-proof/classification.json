@@ -1,0 +1,91 @@
+{
+  "task_id": "phase10-pi5-command0-selected-kernel-stability-pi5-proof-20260617",
+  "status": "accepted",
+  "classification": "selected-kernel-stability-blocked-tftp-served-baseline-final-identity-regressed",
+  "proof_result": {
+    "task_id": "phase10-pi5-command0-selected-kernel-stability-discriminator-core-20260617",
+    "checker": "rpi5-selected-kernel-stability-discriminator-v1",
+    "accepted": false,
+    "classification": "selected-kernel-stability-discriminator-rejected",
+    "first_failing_invariant": "same-power-cycle TFTP served bytes do not match selected kernel",
+    "contract": {
+      "checker": "rpi5-selected-kernel-stability-discriminator-v1",
+      "expected_fetch": "da591740/kernel_2712.img",
+      "expected_kernel_2712_size": 208984,
+      "post_publish_identity": {
+        "selected_tree": true,
+        "effective_kernel": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes_match": true
+      },
+      "tftp": {
+        "cursor_start": 4595504,
+        "cursor_end": 4596944,
+        "stable": true,
+        "expected_fetch_count": 2,
+        "expected_fetch_byte_match_count": 0,
+        "expected_fetch_bytes_seen": [
+          104136,
+          104136
+        ]
+      },
+      "final_pre_restore_identity": {
+        "selected_tree": false,
+        "effective_kernel": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes_match": false
+      },
+      "restore": {
+        "ok": true
+      }
+    },
+    "selected_next_task": null,
+    "rejected_claims": [
+      "command0 write-delivery success",
+      "source-response retention",
+      "generated-root command-input success",
+      "storage",
+      "networking",
+      "SSH",
+      "Phase 11/12 expansion",
+      "phase transition"
+    ]
+  },
+  "run": "candidate-selected-kernel-stability-20260617T180240Z",
+  "run_dir": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/candidate-selected-kernel-stability-20260617T180240Z",
+  "decisive": true,
+  "first_failing_invariant": "same-power-cycle TFTP served bytes do not match selected kernel",
+  "post_publish_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+  "same_power_cycle_tftp": {
+    "cursor_start": 4595504,
+    "cursor_end": 4596944,
+    "stable": true,
+    "kernel_fetches": [
+      {
+        "bytes": 104136,
+        "line": "Jun 17 18:03:05 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4"
+      },
+      {
+        "bytes": 104136,
+        "line": "Jun 17 18:03:06 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4"
+      }
+    ]
+  },
+  "final_pre_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "restore": {
+    "ok": true,
+    "snapshot_name": "pre-selected-kernel-stability-180240",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "selected_next_task": "phase10-pi5-command0-selected-kernel-stability-closeout-20260617",
+  "rejected_claims": [
+    "command0 write-delivery success",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

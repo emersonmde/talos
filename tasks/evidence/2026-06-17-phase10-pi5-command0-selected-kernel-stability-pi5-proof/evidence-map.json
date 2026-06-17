@@ -1,0 +1,36 @@
+{
+  "task_id": "phase10-pi5-command0-selected-kernel-stability-pi5-proof-20260617",
+  "classification": "selected-kernel-stability-blocked-tftp-served-baseline-final-identity-regressed",
+  "run": "candidate-selected-kernel-stability-20260617T180240Z",
+  "files": {
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/classification.json",
+    "selected_kernel_evidence": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/candidate-selected-kernel-stability-20260617T180240Z/selected-kernel-stability-evidence.json",
+    "run_classification": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/candidate-selected-kernel-stability-20260617T180240Z/classification.json",
+    "archive_sha256": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/candidate-selected-kernel-stability-20260617T180240Z/archive.sha256",
+    "kernel_sha256": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/candidate-selected-kernel-stability-20260617T180240Z/kernel_2712.sha256",
+    "pre_publish_boot_files": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/candidate-selected-kernel-stability-20260617T180240Z/pre-publish-boot-files.json",
+    "create_restore_snapshot": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/candidate-selected-kernel-stability-20260617T180240Z/create-restore-snapshot.json",
+    "publish_archive": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/candidate-selected-kernel-stability-20260617T180240Z/publish-archive.json",
+    "post_publish_boot_files": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/candidate-selected-kernel-stability-20260617T180240Z/post-publish-boot-files.json",
+    "serial_cursor_before_power": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/candidate-selected-kernel-stability-20260617T180240Z/capture/serial-cursor-before-power.txt",
+    "tftp_cursor_before_power": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/candidate-selected-kernel-stability-20260617T180240Z/capture/tftp-cursor-before-power.json",
+    "tftp_delta_stable_pre_restore": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/candidate-selected-kernel-stability-20260617T180240Z/capture/tftp-delta-stable-pre-restore.json",
+    "final_pre_restore_boot_files": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/candidate-selected-kernel-stability-20260617T180240Z/capture/final-pre-restore-boot-files.json",
+    "restore_snapshot": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/candidate-selected-kernel-stability-20260617T180240Z/capture/restore-snapshot.json",
+    "post_restore_boot_files": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/candidate-selected-kernel-stability-20260617T180240Z/capture/post-restore-boot-files.json",
+    "serial_observe_window": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/candidate-selected-kernel-stability-20260617T180240Z/capture/serial-observe-window.json",
+    "serial_observe_window_exit": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/candidate-selected-kernel-stability-20260617T180240Z/capture/serial-observe-window.exit",
+    "serial_observe_window_raw_empty": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/candidate-selected-kernel-stability-20260617T180240Z/capture/serial-observe-window.raw-empty",
+    "discriminator_replay_validation": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-stability-pi5-proof/candidate-selected-kernel-stability-20260617T180240Z/discriminator-replay-validation.json"
+  },
+  "rejected_claims": [
+    "command0 write-delivery success",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

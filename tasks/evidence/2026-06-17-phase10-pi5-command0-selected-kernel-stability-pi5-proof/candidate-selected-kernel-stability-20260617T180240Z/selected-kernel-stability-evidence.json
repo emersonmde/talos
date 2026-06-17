@@ -1,0 +1,41 @@
+{
+  "evidence": {
+    "selected_kernel_stability": {
+      "expected_fetch": "da591740/kernel_2712.img",
+      "expected_kernel_2712_size": 208984,
+      "post_publish_identity": {
+        "selected_tree_staged": true,
+        "tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+        "effective_kernel": "kernel_2712.img",
+        "expected_fetch_present": true,
+        "expected_fetch_bytes": 208984,
+        "expected_fetch_bytes_match": true
+      },
+      "tftp": {
+        "cursor_start": 4595504,
+        "cursor_end": 4596944,
+        "stable": true,
+        "expected_fetch_count": 2,
+        "expected_fetch_byte_match_count": 0,
+        "expected_fetch_bytes_seen": [
+          104136,
+          104136
+        ]
+      },
+      "final_pre_restore": {
+        "selected_tree_still_staged": false,
+        "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+        "effective_kernel": "kernel_2712.img",
+        "expected_fetch_present": true,
+        "expected_fetch_bytes": 104136,
+        "expected_fetch_bytes_match": false
+      },
+      "restore": {
+        "ok": true,
+        "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+        "expected_baseline_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+        "kernel_2712_bytes": 104136
+      }
+    }
+  }
+}

@@ -2989,6 +2989,25 @@ The post-review correction chain is:
     Command0 write-delivery success, source-response retention,
     generated-root command-input success, storage, networking, SSH,
     Phase 11/12 expansion, and phase transition remain rejected.
+164. Pi 5 command0 selected-kernel stability proof: accepted in
+    'phase10-pi5-command0-selected-kernel-stability-pi5-proof-20260617'
+    with classification
+    'selected-kernel-stability-blocked-tftp-served-baseline-final-identity-regressed'.
+    The serialized Pi 5 proof published the selected generated-root candidate
+    tree
+    06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212
+    with da591740/kernel_2712.img at 208984 bytes, but the stable same-power-
+    cycle TFTP delta served two da591740/kernel_2712.img fetches at 104136
+    bytes and final pre-restore identity exposed baseline tree
+    a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+    Restore returned the lab to that baseline tree. The first failing
+    invariant is same-power-cycle TFTP served bytes do not match the selected
+    kernel; this is decisive, so inconclusive-run triage was not triggered.
+    The selected follow-up is
+    'phase10-pi5-command0-selected-kernel-stability-closeout-20260617'.
+    Command0 write-delivery success, source-response retention,
+    generated-root command-input success, storage, networking, SSH,
+    Phase 11/12 expansion, and phase transition remain rejected.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
