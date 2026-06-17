@@ -1,0 +1,27 @@
+{
+  "task_id": "phase10-pi5-serial-command0-write-delivery-pi5-proof-20260617",
+  "classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/classification.json",
+  "first_candidate": {
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/candidate-command0-write-delivery-20260617T103448Z/classification.json",
+    "direct_read_proof": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/candidate-command0-write-delivery-20260617T103448Z/direct-read-proof.json",
+    "direct_read_proof_review_exit": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/candidate-command0-write-delivery-20260617T103448Z/direct-read-proof-review.exit",
+    "tftp_delta_requery": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/candidate-command0-write-delivery-20260617T103448Z/tftp-delta-after-restore-requery.json",
+    "restore_status": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/candidate-command0-write-delivery-20260617T103448Z/restore/post-restore-status.json"
+  },
+  "known_good_control": {
+    "tftp_delta": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/triage-control-and-rerun-20260617T103840Z/known-good-control/tftp-delta-stable.json",
+    "serial_read": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/triage-control-and-rerun-20260617T103840Z/known-good-control/serial-read-summary.json",
+    "final_status": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/triage-control-and-rerun-20260617T103840Z/known-good-control/final-status.json"
+  },
+  "candidate_rerun": {
+    "archive_static_review": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/triage-control-and-rerun-20260617T103840Z/candidate-rerun/archive-static-review.json",
+    "post_publish_status": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/triage-control-and-rerun-20260617T103840Z/candidate-rerun/post-publish-status.json",
+    "tftp_delta_requery": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/triage-control-and-rerun-20260617T103840Z/candidate-rerun/tftp-delta-after-restore-requery.json",
+    "readiness_summary": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/triage-control-and-rerun-20260617T103840Z/candidate-rerun/serial/readiness-summary.json",
+    "command0_pre_write_read": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/triage-control-and-rerun-20260617T103840Z/candidate-rerun/serial/command0-pre-write-read.json",
+    "command0_write": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/triage-control-and-rerun-20260617T103840Z/candidate-rerun/serial/command0-write.json",
+    "command0_direct_read_summary": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/triage-control-and-rerun-20260617T103840Z/candidate-rerun/serial/command0-direct-read-summary.json",
+    "final_pre_restore_status": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/triage-control-and-rerun-20260617T103840Z/candidate-rerun/final-pre-restore-status.json",
+    "restore_status": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/triage-control-and-rerun-20260617T103840Z/candidate-rerun/restore/post-restore-status.json"
+  }
+}

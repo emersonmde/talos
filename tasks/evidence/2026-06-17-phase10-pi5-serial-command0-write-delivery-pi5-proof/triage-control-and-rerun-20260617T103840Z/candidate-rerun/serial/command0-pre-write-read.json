@@ -1,0 +1,5 @@
+{
+  "action": "serial command0 pre-write skipped",
+  "ok": false,
+  "reason": "candidate-kernel-tftp-fetch-mismatch"
+}

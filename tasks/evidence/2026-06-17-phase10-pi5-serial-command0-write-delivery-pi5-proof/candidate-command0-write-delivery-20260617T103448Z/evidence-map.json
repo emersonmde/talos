@@ -1,0 +1,20 @@
+{
+  "task_id": "phase10-pi5-serial-command0-write-delivery-pi5-proof-20260617",
+  "run_label": "candidate-command0-write-delivery-20260617T103448Z",
+  "evidence_dir": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/candidate-command0-write-delivery-20260617T103448Z",
+  "files": {
+    "archive_static_review": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/candidate-command0-write-delivery-20260617T103448Z/archive-static-review.json",
+    "pre_status": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/candidate-command0-write-delivery-20260617T103448Z/pre-status.json",
+    "post_publish_status": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/candidate-command0-write-delivery-20260617T103448Z/post-publish-status.json",
+    "tftp_delta_stable_pre_restore": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/candidate-command0-write-delivery-20260617T103448Z/tftp-delta-stable-pre-restore.json",
+    "readiness_summary": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/candidate-command0-write-delivery-20260617T103448Z/serial/readiness-summary.json",
+    "command0_pre_write_read": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/candidate-command0-write-delivery-20260617T103448Z/serial/command0-pre-write-read.json",
+    "command0_write": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/candidate-command0-write-delivery-20260617T103448Z/serial/command0-write.json",
+    "command0_direct_read_summary": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/candidate-command0-write-delivery-20260617T103448Z/serial/command0-direct-read-summary.json",
+    "direct_read_proof": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/candidate-command0-write-delivery-20260617T103448Z/direct-read-proof.json",
+    "direct_read_proof_review": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/candidate-command0-write-delivery-20260617T103448Z/direct-read-proof-review.json",
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/candidate-command0-write-delivery-20260617T103448Z/classification.json",
+    "final_pre_restore_status": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/candidate-command0-write-delivery-20260617T103448Z/final-pre-restore-status.json",
+    "restore_status": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/candidate-command0-write-delivery-20260617T103448Z/restore/post-restore-status.json"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "action": "serial write skipped",
+  "ok": false,
+  "bytes": 0,
+  "reason": "candidate-kernel-tftp-fetch-mismatch"
+}

@@ -2702,6 +2702,23 @@ The post-review correction chain is:
     source-response retention success, generated-root command-input success,
     storage-driver work, networking, SSH, Phase 11/12 expansion, and phase
     transition remain rejected.
+147. Pi 5 serial command 0 write-delivery Pi 5 proof: accepted in
+    'phase10-pi5-serial-command0-write-delivery-pi5-proof-20260617'
+    with classification
+    'command0-write-delivery-blocked-tftp-served-kernel-mismatch-after-control-rerun'.
+    The first candidate retained same-boot firmware-initramfs valid-artifact
+    readiness, ready command=0, a visible prompt, and an accepted 9-byte
+    /serial/write for rootinfo, but the same-cursor TFTP log requery showed
+    baseline-sized 104136-byte kernel_2712.img fetches instead of the selected
+    candidate's expected 208984-byte kernel. After the required known-good
+    control and candidate rerun, the candidate again retained baseline-sized
+    104136-byte kernel_2712.img fetches. Command0 write-delivery behavior is
+    therefore blocked at the TFTP-served selected-tree precondition and remains
+    non-evaluable. Command0 write-delivery success, command0 source-response
+    retention success, generated-root command-input success, storage-driver
+    work, networking, SSH, Phase 11/12 expansion, and phase transition remain
+    rejected. The selected follow-up is
+    'phase10-pi5-serial-command0-write-delivery-closeout-20260617'.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

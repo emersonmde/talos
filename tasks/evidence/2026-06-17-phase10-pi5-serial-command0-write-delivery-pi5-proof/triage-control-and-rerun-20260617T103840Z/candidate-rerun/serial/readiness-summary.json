@@ -1,0 +1,5 @@
+{
+  "action": "serial readiness skipped",
+  "ok": false,
+  "reason": "candidate-kernel-tftp-fetch-mismatch"
+}

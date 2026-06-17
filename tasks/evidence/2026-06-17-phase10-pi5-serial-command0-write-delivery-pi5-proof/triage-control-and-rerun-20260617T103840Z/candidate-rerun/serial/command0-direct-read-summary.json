@@ -1,0 +1,9 @@
+{
+  "action": "serial command0 direct-read aggregate",
+  "ok": false,
+  "attempts": 0,
+  "bytes": 0,
+  "text": "",
+  "responses": [],
+  "reason": "candidate-kernel-tftp-fetch-mismatch"
+}

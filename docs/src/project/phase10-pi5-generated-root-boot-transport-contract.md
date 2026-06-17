@@ -545,6 +545,18 @@ phase10-pi5-serial-command0-write-delivery-pi5-proof-20260617; command0
 source-response retention success and generated-root command-input success
 remain unaccepted.
 
+phase10-pi5-serial-command0-write-delivery-pi5-proof-20260617 accepts a
+blocked Pi 5 proof with classification
+command0-write-delivery-blocked-tftp-served-kernel-mismatch-after-control-rerun.
+The first candidate reached same-boot firmware-initramfs valid-artifact ready
+command=0 and accepted the 9-byte rootinfo write, but same-cursor TFTP evidence
+showed baseline-sized 104136-byte kernel_2712.img fetches instead of the
+selected candidate's expected 208984-byte kernel. A known-good control and
+candidate rerun preserved the same TFTP-served selected-tree mismatch.
+Command0 write delivery remains non-evaluable until that precondition is
+reconciled; command0 write-delivery success, source-response retention success,
+and generated-root command-input success remain unaccepted.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11/12
