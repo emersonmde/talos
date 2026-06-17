@@ -735,6 +735,7 @@ mod tests {
             Some(&reservations),
             Some(&reserved_memory),
             Some(dtb),
+            None,
             kernel,
         )
         .expect("candidate");

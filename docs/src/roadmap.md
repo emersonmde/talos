@@ -2286,6 +2286,23 @@ The post-review correction chain is:
     ownership, DMA-safe allocation, persistence, SD/USB/block drivers,
     networking, SSH, hardware proof, boot publication, and phase transition
     remain deferred to explicit follow-up tasks.
+120. Pi 5 generated-root firmware initramfs reservation core: accepted in
+    'phase10-pi5-generated-root-firmware-initramfs-reservation-core-20260616'.
+    The Pi 5 DTB phase retains optional FDT /chosen initrd bounds and threads
+    them into the boot-memory planner. The conservative low-tail planner
+    page-rounds that range and excludes it before page-frame seeding,
+    bootstrap reservation, translation-table placement, allocator
+    initialization, and cache transition can reuse the firmware-loaded
+    artifact bytes. Focused planner tests cover the retained blocker range
+    '0x2efff000..0x2efff296' and the exhausted-tail failure path. Full unit
+    tests and a compile-only generated-root Pi 5 image build passed; the image
+    SHA-256 is
+    'c37b34ebc955a7ce11cd0660bc18424ebcec4550de23ae1e6b0b9ad7c867e4bd'
+    and its size is 208984 bytes. Pi 5 generated-root consumption, boot
+    publication, lab mutation, hardware proof, persistence, SD/USB/block
+    drivers, networking, SSH, Phase 11/12 work, and phase transition remain
+    rejected until the dependency-gated serialized Pi 5 proof task accepts
+    them directly.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

@@ -153,6 +153,25 @@ transition remain rejected from this boundary. Pi 5 generated-root consumption
 still requires a later local/static implementation task and a fresh serialized
 Pi 5 proof.
 
+## Firmware Initramfs Reservation Core
+
+phase10-pi5-generated-root-firmware-initramfs-reservation-core-20260616
+implements the accepted local/static boundary. The Pi 5 DTB phase now retains
+the optional FDT /chosen initrd bounds and passes them into the boot-memory
+planner. The conservative low-tail planner page-rounds that range and excludes
+it before page-frame seeding, bootstrap reservation, translation-table
+placement, allocator initialization, and cache transition can claim the same
+physical pages.
+
+Focused tests cover the retained blocker shape
+0x2efff000..0x2efff296 and the no-valid-low-tail failure case. The
+generated-root artifact parser and compiled fallback path are unchanged. A
+compile-only generated-root Pi 5 image build passed with image SHA-256
+c37b34ebc955a7ce11cd0660bc18424ebcec4550de23ae1e6b0b9ad7c867e4bd and size
+208984 bytes, but this is not Pi 5 consumption evidence. Boot archive
+publication, lab mutation, hardware proof, persistence, SD/USB/block drivers,
+networking, SSH, Phase 11/12 work, and phase transition remain deferred.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11 remain

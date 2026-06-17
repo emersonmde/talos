@@ -1,0 +1,93 @@
+{
+  "task_id": "phase10-pi5-generated-root-firmware-initramfs-reservation-core-20260616",
+  "status": "accepted",
+  "classification": "pi5-generated-root-firmware-initramfs-reservation-core-local-static",
+  "selected_boundary": "pi5-generated-root-firmware-initramfs-reserve-by-memory-plan-exclusion-v1",
+  "accepted_source_contract_commit": "9f2831a2363a5cd75cdd46bffb0927c58e4be526",
+  "selected_next_task": "phase10-pi5-generated-root-firmware-initramfs-reservation-pi5-proof-20260616",
+  "evidence_level": [
+    "static/source inspection",
+    "focused unit tests",
+    "full unit tests",
+    "compile-only Pi 5 generated-root image build",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "implementation": {
+    "src/boot/rpi5.rs": [
+      "retains FDT /chosen firmware initrd bounds during the DTB phase",
+      "threads firmware_initrd into plan_boot_memory before page-frame seeding and translation-table layout"
+    ],
+    "src/memory_map/layout.rs": [
+      "adds optional FdtInitrdRange exclusion to conservative_low_memory_candidate",
+      "page-rounds initrd.start..initrd.end with EARLY_USABLE_ALIGNMENT before exclusion",
+      "returns unavailable candidate if the exclusion exhausts the low-tail bank"
+    ],
+    "src/memory_map/page_frames.rs": [
+      "updates existing consumer tests to pass no firmware-initrd exclusion"
+    ]
+  },
+  "validation": {
+    "cargo_fmt_check": "passed",
+    "focused_tests": {
+      "command": "cargo -Zjson-target-spec test --quiet conservative_candidate_",
+      "result": "passed"
+    },
+    "full_tests": {
+      "command": "cargo -Zjson-target-spec test --quiet",
+      "result": "passed"
+    },
+    "compile_only_pi5_generated_root_image": {
+      "command": "./scripts/rpi5-generated-root-boot-transport-image.sh",
+      "result": "passed",
+      "path": "target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-generated-root-boot-transport.img",
+      "sha256": "c37b34ebc955a7ce11cd0660bc18424ebcec4550de23ae1e6b0b9ad7c867e4bd",
+      "size_bytes": 208984,
+      "publication": "not-published"
+    },
+    "jq_empty_task_json": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed before commit"
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Pi 5 boot-memory planning now excludes present firmware initrd bounds before early allocation ownership."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Exclusion is page-rounded so no page intersecting firmware initrd bytes is selected as early usable memory."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Focused tests cover the accepted blocker range and the exhausted low-tail failure path."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Generated-root artifact parser and compiled fallback behavior required no source change."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Pi 5 generated-root consumption proof remains a serialized hardware task."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "Hardware proof, boot publication, persistence, SD/USB/block drivers, networking, SSH, Phase 11/12 work, and phase transition claims are outside this task."
+    }
+  ],
+  "rejected_claims": [
+    "Pi 5 generated-root consumption accepted",
+    "boot archive publication",
+    "Pi 5 hardware proof",
+    "hardwareTestLock acquisition",
+    "persistence",
+    "SD/USB/block drivers",
+    "networking",
+    "SSH",
+    "Phase 11 work",
+    "Phase 12 work",
+    "phase transition"
+  ]
+}

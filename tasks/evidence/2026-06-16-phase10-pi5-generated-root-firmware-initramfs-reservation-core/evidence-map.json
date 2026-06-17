@@ -1,0 +1,93 @@
+{
+  "task_id": "phase10-pi5-generated-root-firmware-initramfs-reservation-core-20260616",
+  "task_record": "tasks/2026-06-16-phase10-pi5-generated-root-firmware-initramfs-reservation-core.md",
+  "classification_json": "tasks/evidence/2026-06-16-phase10-pi5-generated-root-firmware-initramfs-reservation-core/classification.json",
+  "input_evidence": [
+    {
+      "label": "accepted source contract",
+      "path": "tasks/2026-06-16-phase10-pi5-generated-root-firmware-initramfs-reservation-source-contract.md",
+      "commit": "9f2831a2363a5cd75cdd46bffb0927c58e4be526",
+      "selected_boundary": "pi5-generated-root-firmware-initramfs-reserve-by-memory-plan-exclusion-v1"
+    },
+    {
+      "label": "accepted generated-root transport project contract",
+      "path": "docs/src/project/phase10-pi5-generated-root-boot-transport-contract.md"
+    },
+    {
+      "label": "source-backed Pi 5 blocker",
+      "path": "tasks/2026-06-05-phase10-pi5-generated-root-boot-transport-proof.md",
+      "retained_fact": "firmware initramfs bounds 0x2efff000..0x2efff296 overlapped early memory ownership and runtime fell back to compiled generated-root"
+    }
+  ],
+  "changed_files": [
+    {
+      "path": "src/boot/rpi5.rs",
+      "reason": "retain FDT /chosen initrd bounds during DTB phase and thread them into boot-memory planning"
+    },
+    {
+      "path": "src/memory_map/layout.rs",
+      "reason": "exclude page-rounded firmware initrd range from conservative low-tail candidate and add focused tests"
+    },
+    {
+      "path": "src/memory_map/page_frames.rs",
+      "reason": "update existing consumer test call site for the optional exclusion"
+    },
+    {
+      "path": "docs/src/project/phase10-pi5-generated-root-boot-transport-contract.md",
+      "reason": "document implemented local/static reservation boundary"
+    },
+    {
+      "path": "docs/src/roadmap.md",
+      "reason": "record accepted core implementation frontier"
+    }
+  ],
+  "validation_gates": [
+    {
+      "level": "fmt/lint",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet conservative_candidate_",
+      "result": "passed"
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet",
+      "result": "passed"
+    },
+    {
+      "level": "compile-only image/archive inspection",
+      "command": "./scripts/rpi5-generated-root-boot-transport-image.sh",
+      "result": "passed",
+      "artifact": "target/aarch64-talos-rpi5-bcm2712/debug/kernel_2712-generated-root-boot-transport.img",
+      "sha256": "c37b34ebc955a7ce11cd0660bc18424ebcec4550de23ae1e6b0b9ad7c867e4bd",
+      "size_bytes": 208984
+    },
+    {
+      "level": "json",
+      "command": "jq empty tasks/evidence/2026-06-16-phase10-pi5-generated-root-firmware-initramfs-reservation-core/classification.json tasks/evidence/2026-06-16-phase10-pi5-generated-root-firmware-initramfs-reservation-core/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "diff",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs",
+      "command": "mdbook build",
+      "result": "passed"
+    },
+    {
+      "level": "diff",
+      "command": "git diff --cached --check",
+      "result": "passed before commit"
+    }
+  ],
+  "next_task": {
+    "id": "phase10-pi5-generated-root-firmware-initramfs-reservation-pi5-proof-20260616",
+    "dependency": "promote only after this core implementation commit is accepted and hardwareTestLock is available/restored"
+  }
+}

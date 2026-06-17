@@ -1,6 +1,6 @@
 use super::{BootInfo, rpi5_reports::*};
 use crate::device_tree::{
-    FdtHeader, FdtMemoryBanks, FdtMemoryReservations, FdtReservedMemoryRanges,
+    FdtHeader, FdtInitrdRange, FdtMemoryBanks, FdtMemoryReservations, FdtReservedMemoryRanges,
 };
 use crate::target::TargetServices;
 use crate::{KERNEL_GLOBAL_ALLOCATOR, arch, diagnostics, memory_map, println, target};
@@ -11,6 +11,7 @@ struct Rpi5DtbPhase {
     reserved_memory_ranges: Option<FdtReservedMemoryRanges>,
     memory_banks: Option<FdtMemoryBanks>,
     blob: Option<memory_map::FdtBlobRange>,
+    firmware_initrd: Option<FdtInitrdRange>,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -235,12 +236,14 @@ fn report_boot_identity(boot_info: &BootInfo, services: &TargetServices) -> Rpi5
     let reserved_memory_ranges = scan_reserved_memory_ranges(services);
     let memory_banks = scan_memory_banks(services);
     let blob = dtb_blob_range(services, dtb_header);
+    let firmware_initrd = unsafe { services.device_tree.chosen_initrd_range() };
 
     Rpi5DtbPhase {
         reservations,
         reserved_memory_ranges,
         memory_banks,
         blob,
+        firmware_initrd,
     }
 }
 
@@ -434,6 +437,7 @@ fn plan_boot_memory(dtb: &Rpi5DtbPhase) -> Option<Rpi5MemoryPhase> {
         dtb.reservations.as_ref(),
         dtb.reserved_memory_ranges.as_ref(),
         dtb.blob,
+        dtb.firmware_initrd,
         kernel_layout,
     ) {
         candidate

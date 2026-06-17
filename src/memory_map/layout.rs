@@ -1,4 +1,6 @@
-use crate::device_tree::{FdtMemoryBanks, FdtMemoryReservations, FdtReservedMemoryRanges};
+use crate::device_tree::{
+    FdtInitrdRange, FdtMemoryBanks, FdtMemoryReservations, FdtReservedMemoryRanges,
+};
 
 use super::common::{align_down, align_up, contains_address, reserve_after};
 
@@ -35,6 +37,7 @@ pub fn conservative_low_memory_candidate(
     reservations: Option<&FdtMemoryReservations>,
     reserved_memory: Option<&FdtReservedMemoryRanges>,
     dtb: Option<FdtBlobRange>,
+    firmware_initrd: Option<FdtInitrdRange>,
     kernel: KernelLayout,
 ) -> Option<EarlyUsableMemory> {
     let bank_count = banks.reported_len();
@@ -61,6 +64,18 @@ pub fn conservative_low_memory_candidate(
                     bank_end,
                     dtb.address,
                     dtb_end,
+                )?;
+            }
+
+            if let Some(initrd) = firmware_initrd {
+                let initrd_start = align_down(initrd.start, EARLY_USABLE_ALIGNMENT);
+                let initrd_end = align_up(initrd.end, EARLY_USABLE_ALIGNMENT)?;
+                candidate_start = reserve_after(
+                    candidate_start,
+                    bank.address,
+                    bank_end,
+                    initrd_start,
+                    initrd_end,
                 )?;
             }
 
@@ -162,8 +177,9 @@ mod tests {
             size: 0x1f000,
         };
 
-        let candidate = conservative_low_memory_candidate(&banks, None, None, Some(dtb), kernel)
-            .expect("candidate");
+        let candidate =
+            conservative_low_memory_candidate(&banks, None, None, Some(dtb), None, kernel)
+                .expect("candidate");
 
         assert_eq!(candidate.bank_index, 0);
         assert_eq!(candidate.start, 0x2f00_c000);
@@ -211,9 +227,15 @@ mod tests {
             stack_top: 0x44_0000,
         };
 
-        let candidate =
-            conservative_low_memory_candidate(&banks, Some(&reservations), None, None, kernel)
-                .expect("candidate");
+        let candidate = conservative_low_memory_candidate(
+            &banks,
+            Some(&reservations),
+            None,
+            None,
+            None,
+            kernel,
+        )
+        .expect("candidate");
 
         assert_eq!(candidate.start, 0x0800_3000);
         assert_eq!(candidate.end, 0x1000_0000);
@@ -268,9 +290,15 @@ mod tests {
             stack_top: 0x44_0000,
         };
 
-        let candidate =
-            conservative_low_memory_candidate(&banks, None, Some(&reserved_memory), None, kernel)
-                .expect("candidate");
+        let candidate = conservative_low_memory_candidate(
+            &banks,
+            None,
+            Some(&reserved_memory),
+            None,
+            None,
+            kernel,
+        )
+        .expect("candidate");
 
         assert_eq!(candidate.start, 0x3fd2_4000);
         assert_eq!(candidate.end, 0x4000_0000);
@@ -320,11 +348,91 @@ mod tests {
             stack_top: 0x44_0000,
         };
 
-        let candidate =
-            conservative_low_memory_candidate(&banks, None, Some(&reserved_memory), None, kernel)
-                .expect("candidate");
+        let candidate = conservative_low_memory_candidate(
+            &banks,
+            None,
+            Some(&reserved_memory),
+            None,
+            None,
+            kernel,
+        )
+        .expect("candidate");
 
         assert_eq!(candidate.start, 0x30_0000);
         assert_eq!(candidate.end, 0x1000_0000);
+    }
+
+    #[test_case]
+    fn conservative_candidate_excludes_page_rounded_firmware_initrd_range() {
+        let banks = FdtMemoryBanks {
+            address_cells: 2,
+            size_cells: 2,
+            count: 1,
+            entries: [
+                Some(FdtMemoryBank {
+                    address: 0,
+                    size: 0x4000_0000,
+                }),
+                None,
+                None,
+                None,
+            ],
+            truncated: false,
+        };
+        let kernel = KernelLayout {
+            start: 0x20_0000,
+            end: 0x30_0000,
+            heap_start: 0x30_0000,
+            heap_end: 0x40_0000,
+            stack_bottom: 0x40_0000,
+            stack_top: 0x44_0000,
+        };
+        let initrd = FdtInitrdRange {
+            start: 0x2eff_f000,
+            end: 0x2eff_f296,
+        };
+
+        let candidate =
+            conservative_low_memory_candidate(&banks, None, None, None, Some(initrd), kernel)
+                .expect("candidate");
+
+        assert_eq!(candidate.start, 0x2f00_0000);
+        assert_eq!(candidate.end, 0x4000_0000);
+    }
+
+    #[test_case]
+    fn conservative_candidate_fails_when_firmware_initrd_exhausts_low_tail() {
+        let banks = FdtMemoryBanks {
+            address_cells: 2,
+            size_cells: 2,
+            count: 1,
+            entries: [
+                Some(FdtMemoryBank {
+                    address: 0,
+                    size: 0x2f00_0000,
+                }),
+                None,
+                None,
+                None,
+            ],
+            truncated: false,
+        };
+        let kernel = KernelLayout {
+            start: 0x20_0000,
+            end: 0x30_0000,
+            heap_start: 0x30_0000,
+            heap_end: 0x40_0000,
+            stack_bottom: 0x40_0000,
+            stack_top: 0x44_0000,
+        };
+        let initrd = FdtInitrdRange {
+            start: 0x2eff_f000,
+            end: 0x2eff_f296,
+        };
+
+        let candidate =
+            conservative_low_memory_candidate(&banks, None, None, None, Some(initrd), kernel);
+
+        assert_eq!(candidate, None);
     }
 }
