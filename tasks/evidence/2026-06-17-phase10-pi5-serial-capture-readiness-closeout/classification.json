@@ -1,0 +1,89 @@
+{
+  "task_id": "phase10-pi5-serial-capture-readiness-closeout-20260617",
+  "task_status": "accepted",
+  "classification": "serial-capture-readiness-closed-command0-write-delivery-blocked",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "accepted source-contract evidence",
+    "accepted guard-core local/static evidence",
+    "accepted serialized Pi 5 proof/blocker evidence",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "frontier": {
+    "generated_root_transport": "accepted by prior Phase 10.3 closeout evidence",
+    "pi5_firmware_initramfs_consumption": "accepted by prior Phase 10.3 closeout evidence",
+    "serial_capture_readiness": "evaluable boundary reached in the accepted Pi 5 proof rerun",
+    "command0_write_delivery_capture": "blocked",
+    "command0_source_response_retention": "blocked-non-evaluable",
+    "generated_root_command_input_success": "not-accepted"
+  },
+  "first_failing_invariant": {
+    "class": "command0-write-delivery-capture-after-readiness",
+    "summary": "The candidate rerun retained same-boot firmware-initramfs valid-artifact ready command=0, a visible prompt, and an empty fresh pre-write boundary. The lab accepted the 9-byte rootinfo serial write, but retained target output did not show rootinfo, a command 0 line marker, dispatch command=0, ready command=1, or the generated-root source response."
+  },
+  "accepted_evidence": [
+    {
+      "task": "phase10-pi5-serial-capture-readiness-source-contract-20260617",
+      "commit": "b5bc44eb158abf88c08b6f67a68e9a48b7c07016",
+      "classification": "serial-capture-readiness-contract-guard-core-selected",
+      "disposition": "fixed"
+    },
+    {
+      "task": "phase10-pi5-serial-capture-readiness-guard-core-20260617",
+      "commit": "c27cbc7bc1b2e430464c0c416f3253b7ccbab2ed",
+      "classification": "serial-capture-readiness-guard-core-local-static",
+      "disposition": "fixed"
+    },
+    {
+      "task": "phase10-pi5-serial-capture-readiness-pi5-proof-20260617",
+      "commit": "30c7d60d348b16ea09e051223e16addbb1fef5b8",
+      "classification": "serial-capture-readiness-command0-write-delivery-blocked",
+      "disposition": "blocked"
+    }
+  ],
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "Command0 source-response retention was not accepted. The remaining blocker is command0 write delivery/capture after an accepted readiness boundary, and no explicit dependency-satisfied queued task exists for that blocker.",
+  "transition_checkpoint_dependency_satisfied": false,
+  "transition_checkpoint": "phase10-to-phase11-post-command0-source-response-retention-transition-checkpoint-20260617",
+  "findings": [
+    {
+      "finding": "serial readiness/capture quality needed a distinct discriminator",
+      "disposition": "fixed",
+      "evidence": "serial-capture-readiness source contract and guard-core evidence"
+    },
+    {
+      "finding": "readiness boundary was not previously retained",
+      "disposition": "fixed",
+      "evidence": "Pi 5 proof rerun retained source=firmware-initramfs reason=valid-artifact ready command=0, prompt, and fresh pre-write boundary"
+    },
+    {
+      "finding": "command0 write delivery/capture after readiness",
+      "disposition": "blocked",
+      "evidence": "Lab accepted rootinfo write, but retained target output omitted command0 loop evidence and later showed empty input-error timeouts."
+    },
+    {
+      "finding": "command0 source-response retention",
+      "disposition": "deferred",
+      "evidence": "It cannot be evaluated until command0 write delivery/capture is reconciled."
+    },
+    {
+      "finding": "hardware run or implementation change for closeout",
+      "disposition": "not-an-issue",
+      "evidence": "This task is static evidence reconciliation only."
+    }
+  ],
+  "rejected_claims": [
+    "generated-root command-input success",
+    "command0 source-response retention success",
+    "post-command0 transition checkpoint selected",
+    "persistence",
+    "writable storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

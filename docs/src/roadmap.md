@@ -2651,6 +2651,22 @@ The post-review correction chain is:
     invariant. Generated-root command-input success, persistence,
     storage-driver work, networking, SSH, Phase 11/12 expansion, and phase
     transition remain rejected.
+144. Pi 5 serial capture readiness closeout: accepted in
+    'phase10-pi5-serial-capture-readiness-closeout-20260617' with
+    classification
+    'serial-capture-readiness-closed-command0-write-delivery-blocked'. The
+    closeout reconciles the accepted source contract, guard-core discriminator,
+    and serialized Pi 5 proof. The serial readiness/capture boundary is now
+    evaluable, but command0 source-response retention remains non-evaluable
+    because command0 write delivery/capture after readiness is the first failing
+    invariant: the lab accepted the rootinfo write, while retained target output
+    omitted rootinfo, command 0 line evidence, dispatch command=0, ready
+    command=1, and generated-root source response. Generated-root transport and
+    Pi 5 firmware-initramfs consumption remain accepted, but shell-visible
+    generated-root command-input success is not accepted. The post-command0
+    transition checkpoint is not selected; supervisor planning is required
+    before any command0 write-delivery/capture discriminator, retry, storage
+    work, networking, SSH, Phase 11/12 expansion, or phase transition.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
