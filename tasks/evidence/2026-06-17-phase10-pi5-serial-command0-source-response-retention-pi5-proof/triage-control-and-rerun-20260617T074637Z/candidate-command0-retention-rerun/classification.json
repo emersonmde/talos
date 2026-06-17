@@ -1,0 +1,72 @@
+{
+  "classification": "serial-command0-source-response-retention-serial-readiness-capture-blocked",
+  "task": "phase10-pi5-serial-command0-source-response-retention-pi5-proof-20260617",
+  "evidence_level": "serialized Pi 5 hardware proof under hardwareTestLock, lab-controller API, same-power-cycle TFTP, serial direct-read hardware output, known-good control triage, candidate rerun, restore proof, task-owned JSON evidence",
+  "first_candidate_attempt": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/candidate-command0-retention-20260617T074126Z",
+  "triage_root": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z",
+  "known_good_control": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/known-good-control",
+  "selected_run": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/candidate-command0-retention-rerun",
+  "archive": {
+    "path": "target/talos-rpi5-generated-root-command-input-proof-core-20260617.tar.gz",
+    "sha256": "8f6a4d0d3436308a5f3b51e4f113b75d1acbf807a7b7af2d66453806c586cf0c",
+    "kernel_2712_sha256": "c37b34ebc955a7ce11cd0660bc18424ebcec4550de23ae1e6b0b9ad7c867e4bd",
+    "kernel_2712_bytes": 208984,
+    "initramfs_2712_sha256": "0341f5393502f54489acb1951633bf2773fb846a82bde89b3e4a2e82000724c6",
+    "initramfs_2712_bytes": 662
+  },
+  "first_failing_invariant": {
+    "class": "serial freshness/capture readiness setup",
+    "summary": "Candidate identity and TFTP reached the selected archive, but direct-read capture did not retain the generated-root ready command=0 prompt before command-loop timeout in the first attempt. The required command-0 transaction could therefore not be evaluated. A known-good control and candidate rerun were then run; both retained only early firmware/RP1 serial bytes under the long-settle direct-read strategy before command write, so the first durable blocker remains serial capture/readiness rather than command0 source-response generation.",
+    "not_accepted_as": "command0 source-response retention proof"
+  },
+  "command0_source_response_retention_guard_v2": {
+    "validator_status": "fail",
+    "reason": "required command0 ordered fragments were not present in retained command0 direct-read evidence",
+    "required_ordered_fragments": [
+      "rootinfo or line command=0 hex=726f6f74696e666f",
+      "talos: generated-root source=firmware-initramfs",
+      "reason=valid-artifact",
+      "dispatch command=0 status=handled",
+      "responses=1",
+      "ready command=1"
+    ]
+  },
+  "dispositions": [
+    {
+      "finding": "candidate archive publication, selected TFTP byte counts, final identity, and restore evidence",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "first candidate command0 attempt after ready command=0",
+      "disposition": "blocked"
+    },
+    {
+      "finding": "known-good control before rerun for inconclusive capture/readiness",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "candidate rerun after control",
+      "disposition": "blocked"
+    },
+    {
+      "finding": "command0 source-response retention",
+      "disposition": "deferred-not-evaluable-until-serial-readiness-capture-is-stable"
+    },
+    {
+      "finding": "persistence, storage drivers, networking, SSH, Phase 11/12 expansion, phase transition",
+      "disposition": "rejected"
+    }
+  ],
+  "rejected_claims": [
+    "generated-root command-input hardware success",
+    "command0 source-response retention success",
+    "prompt-only or write-only command-input proof",
+    "persistence",
+    "storage drivers",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ],
+  "selected_next_task": "phase10-pi5-serial-command0-source-response-retention-closeout-20260617"
+}

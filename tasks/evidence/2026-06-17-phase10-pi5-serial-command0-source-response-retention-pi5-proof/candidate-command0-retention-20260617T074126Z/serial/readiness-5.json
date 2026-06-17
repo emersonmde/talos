@@ -1,0 +1,10 @@
+{
+  "action": "serial read",
+  "base64": "CiAgNC4xNiB1c2JfcGRfaW5pdCBzdGF0dXMgMA0K",
+  "bytes": 30,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "\n  4.16 usb_pd_init status 0\r\n",
+  "truncated": false
+}

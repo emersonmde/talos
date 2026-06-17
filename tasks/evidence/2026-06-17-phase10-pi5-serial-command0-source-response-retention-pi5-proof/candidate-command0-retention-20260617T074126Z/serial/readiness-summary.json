@@ -1,0 +1,709 @@
+{
+  "label": "readiness",
+  "attempts": 70,
+  "bytes": 1420,
+  "retained_text": "\u0000\n1.89 MESS:00:00:21.892921:0: 00000030: -> 00100080\r\n 21.89 MESS:00:00:21.897634:0: 00000034: -> 00100080\r\n 21.90 MESS:00:00:21.902347:0: 00000038: -> 00100080\r\n 21.90 MESS:00:00:21.907060:0: 0000003c: -> 00100080\r\n\r\nNOTICE:  BL31: v2.6(release):v2.6-240-gfc45bc492\r\nNOTICE:  BL31: Built : 12:55:13, Dec  4 2024\r\nTALOS: rust_entry\r\nTALOS: boot info parsed\r\nTALOS: target init\r\nTALOS: exceptions ready\r\nTALOS: kernel_main\r\n\r\ntalos: boot start\r\ntalos: board raspberry-pi-5-bcm2712\r\ntalos: version 0.1.0\r\ntalos: console early-uart fmt\r\ntalos: boot core 0\r\ntalos: boot dtb 0x2efeb600\r\ntalos: boot target talos-rpi5-bcm2712\r\ntalos: pointer delta 0x0\r\ntalos: boot info: dtb=0x2efeb600 core=0 el=2 target=talos-rpi5-bcm2712\r\ntalos: services: uart=firmware-preserved timer=arm-generic irq=gic-v2 mmio_regions=7 dtb=0x2efeb600\r\ntalos: dtb header: magic=0xd00dfeed size=80322 version=17 last_comp=16 struct=72528 strings=7738\r\n\u0000 \u0000 \u0000\n\u0000 talos: input-error timeout\r\n\r\nrpi5-generated-root-boot-transport-proof: line command=2 hex=\r\nrpi5-generated-root-boot-transport-proof: dispatch command=2 status=input-error responses=1 raw-bytes=0 truncated=false controls=0\r\nrpi5-generated-root-boot-transport-proof: edit command=2 backspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=3\r\ntalos>   2.98 RP1 FW: load 1\r\n\u0000 \n  4.16 usb_pd_init status 0\r\n\u0000\n\u0000\n  9.18 NETWORK: 88:a2:9e:ae:c8:7f wait for link TFTP: 0.0.0.0\r\n",
+  "fresh_after_prompt": false,
+  "responses": [
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "AAo=",
+      "bytes": 2,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "\u0000\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "MS44OSBNRVNTOjAwOjAwOjIxLjg5MjkyMTowOiAwMDAwMDAzMDogLT4gMDAxMDAwODANCiAyMS44OSBNRVNTOjAwOjAwOjIxLjg5NzYzNDowOiAwMDAwMDAzNDogLT4gMDAxMDAwODANCiAyMS45MCBNRVNTOjAwOjAwOjIxLjkwMjM0NzowOiAwMDAwMDAzODogLT4gMDAxMDAwODANCiAyMS45MCBNRVNTOjAwOjAwOjIxLjkwNzA2MDowOiAwMDAwMDAzYzogLT4gMDAxMDAwODANCg0KTk9USUNFOiAgQkwzMTogdjIuNihyZWxlYXNlKTp2Mi42LTI0MC1nZmM0NWJjNDkyDQpOT1RJQ0U6ICBCTDMxOiBCdWlsdCA6IDEyOjU1OjEzLCBEZWMgIDQgMjAyNA0KVEFMT1M6IHJ1c3RfZW50cnkNClRBTE9TOiBib290IGluZm8gcGFyc2VkDQpUQUxPUzogdGFyZ2V0IGluaXQNClRBTE9TOiBleGNlcHRpb25zIHJlYWR5DQpUQUxPUzoga2VybmVsX21haW4NCg0KdGFsb3M6IGJvb3Qgc3RhcnQNCnRhbG9zOiBib2FyZCByYXNwYmVycnktcGktNS1iY20yNzEyDQp0YWxvczogdmVyc2lvbiAwLjEuMA0KdGFsb3M6IGNvbnNvbGUgZWFybHktdWFydCBmbXQNCnRhbG9zOiBib290IGNvcmUgMA0KdGFsb3M6IGJvb3QgZHRiIDB4MmVmZWI2MDANCnRhbG9zOiBib290IHRhcmdldCB0YWxvcy1ycGk1LWJjbTI3MTINCnRhbG9zOiBwb2ludGVyIGRlbHRhIDB4MA0KdGFsb3M6IGJvb3QgaW5mbzogZHRiPTB4MmVmZWI2MDAgY29yZT0wIGVsPTIgdGFyZ2V0PXRhbG9zLXJwaTUtYmNtMjcxMg0KdGFsb3M6IHNlcnZpY2VzOiB1YXJ0PWZpcm13YXJlLXByZXNlcnZlZCB0aW1lcj1hcm0tZ2VuZXJpYyBpcnE9Z2ljLXYyIG1taW9fcmVnaW9ucz03IGR0Yj0weDJlZmViNjAwDQp0YWxvczogZHRiIGhlYWRlcjogbWFnaWM9MHhkMDBkZmVlZCBzaXplPTgwMzIyIHZlcnNpb249MTcgbGFzdF9jb21wPTE2IHN0cnVjdD03MjUyOCBzdHJpbmdzPTc3MzgNCg==",
+      "bytes": 916,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "1.89 MESS:00:00:21.892921:0: 00000030: -> 00100080\r\n 21.89 MESS:00:00:21.897634:0: 00000034: -> 00100080\r\n 21.90 MESS:00:00:21.902347:0: 00000038: -> 00100080\r\n 21.90 MESS:00:00:21.907060:0: 0000003c: -> 00100080\r\n\r\nNOTICE:  BL31: v2.6(release):v2.6-240-gfc45bc492\r\nNOTICE:  BL31: Built : 12:55:13, Dec  4 2024\r\nTALOS: rust_entry\r\nTALOS: boot info parsed\r\nTALOS: target init\r\nTALOS: exceptions ready\r\nTALOS: kernel_main\r\n\r\ntalos: boot start\r\ntalos: board raspberry-pi-5-bcm2712\r\ntalos: version 0.1.0\r\ntalos: console early-uart fmt\r\ntalos: boot core 0\r\ntalos: boot dtb 0x2efeb600\r\ntalos: boot target talos-rpi5-bcm2712\r\ntalos: pointer delta 0x0\r\ntalos: boot info: dtb=0x2efeb600 core=0 el=2 target=talos-rpi5-bcm2712\r\ntalos: services: uart=firmware-preserved timer=arm-generic irq=gic-v2 mmio_regions=7 dtb=0x2efeb600\r\ntalos: dtb header: magic=0xd00dfeed size=80322 version=17 last_comp=16 struct=72528 strings=7738\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "ACA=",
+      "bytes": 2,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "\u0000 ",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "ACA=",
+      "bytes": 2,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "\u0000 ",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "AAo=",
+      "bytes": 2,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "\u0000\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "ACA=",
+      "bytes": 2,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "\u0000 ",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "dGFsb3M6IGlucHV0LWVycm9yIHRpbWVvdXQNCg0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogbGluZSBjb21tYW5kPTIgaGV4PQ0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogZGlzcGF0Y2ggY29tbWFuZD0yIHN0YXR1cz1pbnB1dC1lcnJvciByZXNwb25zZXM9MSByYXctYnl0ZXM9MCB0cnVuY2F0ZWQ9ZmFsc2UgY29udHJvbHM9MA0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogZWRpdCBjb21tYW5kPTIgYmFja3NwYWNlcz0wIGRlbGV0ZXM9MA0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogcmVhZHkgY29tbWFuZD0zDQp0YWxvcz4g",
+      "bytes": 372,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "talos: input-error timeout\r\n\r\nrpi5-generated-root-boot-transport-proof: line command=2 hex=\r\nrpi5-generated-root-boot-transport-proof: dispatch command=2 status=input-error responses=1 raw-bytes=0 truncated=false controls=0\r\nrpi5-generated-root-boot-transport-proof: edit command=2 backspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=3\r\ntalos> ",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "ICAyLjk4IFJQMSBGVzogbG9hZCAxDQo=",
+      "bytes": 23,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "  2.98 RP1 FW: load 1\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "ACA=",
+      "bytes": 2,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "\u0000 ",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "CiAgNC4xNiB1c2JfcGRfaW5pdCBzdGF0dXMgMA0K",
+      "bytes": 30,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "\n  4.16 usb_pd_init status 0\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "AAo=",
+      "bytes": 2,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "\u0000\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "AAo=",
+      "bytes": 2,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "\u0000\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "ICA5LjE4IE5FVFdPUks6IDg4OmEyOjllOmFlOmM4OjdmIHdhaXQgZm9yIGxpbmsgVEZUUDogMC4wLjAuMA0K",
+      "bytes": 63,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "  9.18 NETWORK: 88:a2:9e:ae:c8:7f wait for link TFTP: 0.0.0.0\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    }
+  ]
+}

@@ -2572,6 +2572,25 @@ The post-review correction chain is:
     gated on serialized Pi 5 hardware evidence. Hardware success, persistence,
     storage-driver work, networking, SSH, Phase 11/12 expansion, and phase
     transition remain rejected until that proof is accepted.
+139. Pi 5 serial command 0 source-response retention Pi 5 proof: accepted in
+    'phase10-pi5-serial-command0-source-response-retention-pi5-proof-20260617'
+    with classification
+    'serial-command0-source-response-retention-serial-readiness-capture-blocked'.
+    The selected candidate archive published successfully, the first candidate
+    attempt retained same-power-cycle TFTP evidence for the expected
+    da591740/kernel_2712.img and da591740/initramfs_2712 byte counts, and the
+    lab was restored afterward. The command-0 source-response guard was not
+    accepted: serial direct-read did not retain a usable generated-root ready
+    command=0 window before command-loop timeout, so the command-0 transaction
+    was non-evaluable. The required inconclusive-run triage ran a known-good
+    control before a candidate rerun; both retained only early firmware/RP1
+    serial bytes under the long-settle direct-read strategy. The retained
+    frontier is therefore a serial freshness/capture readiness blocker, not a
+    command-0 response-generation result. The selected follow-up is
+    'phase10-pi5-serial-command0-source-response-retention-closeout-20260617'.
+    Generated-root command-input hardware success, persistence, storage-driver
+    work, networking, SSH, Phase 11/12 expansion, and phase transition remain
+    rejected.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

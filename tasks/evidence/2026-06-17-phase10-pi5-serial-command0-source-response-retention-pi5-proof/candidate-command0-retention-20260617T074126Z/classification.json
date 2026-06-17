@@ -1,0 +1,44 @@
+{
+  "classification": "serial-command0-source-response-retention-blocked",
+  "task": "phase10-pi5-serial-command0-source-response-retention-pi5-proof-20260617",
+  "evidence_level": "serialized Pi 5 hardware proof under hardwareTestLock, lab-controller API, same-power-cycle TFTP, serial direct-read hardware output, restore proof, task-owned JSON evidence",
+  "selected_run": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/candidate-command0-retention-20260617T074126Z",
+  "archive": {
+    "path": "target/talos-rpi5-generated-root-command-input-proof-core-20260617.tar.gz",
+    "sha256": "8f6a4d0d3436308a5f3b51e4f113b75d1acbf807a7b7af2d66453806c586cf0c",
+    "kernel_2712_sha256": "c37b34ebc955a7ce11cd0660bc18424ebcec4550de23ae1e6b0b9ad7c867e4bd",
+    "kernel_2712_bytes": 208984,
+    "initramfs_2712_sha256": "0341f5393502f54489acb1951633bf2773fb846a82bde89b3e4a2e82000724c6",
+    "initramfs_2712_bytes": 662
+  },
+  "command0_source_response_retention_guard_v2": {
+    "validator_status": "fail",
+    "required_ordered_fragments": [
+      "rootinfo or line command=0 hex=726f6f74696e666f",
+      "talos: generated-root source=firmware-initramfs",
+      "reason=valid-artifact",
+      "dispatch command=0 status=handled",
+      "responses=1",
+      "ready command=1"
+    ]
+  },
+  "dispositions": [
+    {
+      "finding": "hardware lock, publication, TFTP, serial, final identity, and restore evidence recorded",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "command0 source-response retention",
+      "disposition": "blocked"
+    },
+    {
+      "finding": "known-good control and candidate rerun",
+      "disposition": "not-run-not-required-unless-inconclusive"
+    },
+    {
+      "finding": "persistence, storage drivers, networking, SSH, Phase 11/12 expansion, phase transition",
+      "disposition": "rejected"
+    }
+  ],
+  "selected_next_task": "phase10-pi5-serial-command0-source-response-retention-closeout-20260617"
+}

@@ -1,0 +1,32 @@
+{
+  "task": "phase10-pi5-serial-command0-source-response-retention-pi5-proof-20260617",
+  "first_candidate_attempt": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/candidate-command0-retention-20260617T074126Z",
+  "triage_root": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z",
+  "known_good_control": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/known-good-control",
+  "selected_run": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/candidate-command0-retention-rerun",
+  "evidence": {
+    "first_candidate_readiness": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/candidate-command0-retention-20260617T074126Z/serial/readiness-summary.json",
+    "first_candidate_command0_summary": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/candidate-command0-retention-20260617T074126Z/serial/command0-direct-read-summary.json",
+    "first_candidate_tftp_delta": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/candidate-command0-retention-20260617T074126Z/tftp/tftp-delta-stable-pre-restore.json",
+    "known_good_control_readiness": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/known-good-control/serial/readiness-control.json",
+    "known_good_control_tftp_delta": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/known-good-control/tftp/tftp-delta-stable-pre-restore.json",
+    "candidate_archive_static_review": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/candidate-command0-retention-rerun/archive-static-review.json",
+    "candidate_post_publish_status": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/candidate-command0-retention-rerun/post-publish-status.json",
+    "candidate_post_publish_boot_files": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/candidate-command0-retention-rerun/post-publish-boot-files.json",
+    "candidate_tftp_cursor": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/candidate-command0-retention-rerun/tftp/tftp-cursor-before-power.txt",
+    "candidate_power_cycle": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/candidate-command0-retention-rerun/power-cycle.json",
+    "candidate_readiness_summary": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/candidate-command0-retention-rerun/serial/readiness-summary.json",
+    "command0_pre_write_read": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/candidate-command0-retention-rerun/serial/command0-pre-write-read.json",
+    "command0_write": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/candidate-command0-retention-rerun/serial/command0-write.json",
+    "command0_direct_read_summary": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/candidate-command0-retention-rerun/serial/command0-direct-read-summary.json",
+    "validator": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/candidate-command0-retention-rerun/direct-read-proof-validation.json",
+    "validator_status": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/candidate-command0-retention-rerun/direct-read-proof-validation.status",
+    "candidate_tftp_delta": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/candidate-command0-retention-rerun/tftp/tftp-delta-stable-pre-restore.json",
+    "candidate_final_pre_restore_status": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/candidate-command0-retention-rerun/final-pre-restore-status.json",
+    "candidate_final_pre_restore_boot_files": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/candidate-command0-retention-rerun/final-pre-restore-boot-files.json",
+    "candidate_restore": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/candidate-command0-retention-rerun/restore/restore-snapshot.json",
+    "candidate_post_restore_status": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/candidate-command0-retention-rerun/restore/post-restore-status.json",
+    "candidate_post_restore_boot_files": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/candidate-command0-retention-rerun/restore/post-restore-boot-files.json",
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-pi5-proof/triage-control-and-rerun-20260617T074637Z/candidate-command0-retention-rerun/classification.json"
+  }
+}
