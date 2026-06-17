@@ -3105,6 +3105,19 @@ The post-review correction chain is:
     and planningNeeded=true; source-response retention, generated-root
     command-input success, storage, networking, SSH, Phase 11/12 expansion,
     and phase transition remain rejected.
+171. Pi 5 serial command0 input-delivery core: accepted in
+    'phase10-pi5-serial-command0-input-delivery-core-20260617' with
+    classification 'command0-input-delivery-core-paused-outside-source-control'.
+    Static/source inspection found no command-loop, rootinfo dispatch,
+    canonical input, or Pi UART10 polling defect. The QEMU serial ingress
+    helper was fixed to tolerate the expanded builtins boundary and the
+    QEMU/substitute serial ingress smoke passed, proving prompt-delayed local
+    serial writes still reach command dispatch. The remaining first unproven
+    assumption is outside the local source boundary: lab /serial/write bytes
+    reaching the same Pi UART10 RX/capture path after a visible command0 prompt.
+    selected_next_task is null and planningNeeded=true; source-response
+    retention, generated-root command-input success, storage, networking, SSH,
+    Phase 11/12 expansion, and phase transition remain rejected.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -7879,6 +7892,14 @@ Selected first slice:
   command0 write-delivery discriminator after selected-kernel recovery;
   command0 write delivery, source-response retention, and generated-root
   command-input success remain unaccepted until separately proven.
+- 'phase10-pi5-serial-command0-input-delivery-core-20260617' accepts the local
+  source/core follow-up with classification
+  command0-input-delivery-core-paused-outside-source-control. The local
+  command-loop and rootinfo dispatch path remains intact, the QEMU serial
+  ingress helper was fixed for the expanded builtins banner, and the
+  QEMU/substitute serial ingress smoke passed. No Pi 5 proof is selected from
+  this core; supervisor planning is required for a new discriminator of lab
+  /serial/write-to-UART10 delivery/capture after a visible command0 prompt.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The

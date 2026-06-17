@@ -1,0 +1,44 @@
+{
+  "task_id": "phase10-pi5-serial-command0-input-delivery-core-20260617",
+  "status": "accepted",
+  "classification": "command0-input-delivery-core-paused-outside-source-control",
+  "prior_blocker_commit": "e64810f3ec2cc88eeb65a600d1edfaa5f925ec2d",
+  "fixed": [
+    {
+      "surface": "scripts/qemu-local-serial-write-ingress-control.sh",
+      "finding": "serial ingress smoke expected an obsolete short builtins banner",
+      "disposition": "fixed"
+    }
+  ],
+  "not_an_issue": [
+    "rootinfo dispatch exists and writes the generated-root selection line",
+    "canonical-lite input accepts CR and LF command terminators",
+    "Pi generated-root proof wrapper polls runtime-console0/bcm2712-uart10-pl011 input"
+  ],
+  "blocked": {
+    "first_unproven_assumption": "lab /serial/write bytes reach the same Pi UART10 RX/capture boundary after a visible command0 prompt",
+    "prior_first_failing_invariant": "post-write-observe-missing-command0-delivery",
+    "outside_local_source_control": true
+  },
+  "selected_next_task": null,
+  "planning_needed": true,
+  "rejected_claims": [
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ],
+  "validation": {
+    "source_static_inspection": "pass",
+    "bash_n_qemu_local_serial_write_ingress_control": "pass",
+    "cargo_no_std_tests": "pass: 531 tests",
+    "qemu_substitute_serial_ingress_control": "pass: serial-write-ingress-control-complete",
+    "jq_empty_task_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  }
+}

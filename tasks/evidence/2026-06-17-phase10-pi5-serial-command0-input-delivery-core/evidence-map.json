@@ -1,0 +1,23 @@
+{
+  "task_id": "phase10-pi5-serial-command0-input-delivery-core-20260617",
+  "classification": "command0-input-delivery-core-paused-outside-source-control",
+  "selected_next_task": null,
+  "planning_needed": true,
+  "files": {
+    "task_record": "tasks/2026-06-17-phase10-pi5-serial-command0-input-delivery-core.md",
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-input-delivery-core/classification.json",
+    "source_inspection": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-input-delivery-core/source-inspection.json",
+    "qemu_serial_ingress_log": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-input-delivery-core/qemu-local-serial-write-ingress-control.log",
+    "prior_blocker_task": "tasks/2026-06-17-phase10-pi5-serial-command0-write-delivery-after-selected-kernel-recovery.md",
+    "prior_blocker_classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-after-selected-kernel-recovery/classification.json"
+  },
+  "changed_files": [
+    "scripts/qemu-local-serial-write-ingress-control.sh",
+    "docs/src/roadmap.md",
+    "tasks/2026-06-17-phase10-pi5-serial-command0-input-delivery-core.md",
+    "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-input-delivery-core/classification.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-input-delivery-core/evidence-map.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-input-delivery-core/source-inspection.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-input-delivery-core/qemu-local-serial-write-ingress-control.log"
+  ]
+}

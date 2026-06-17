@@ -1,0 +1,39 @@
+{
+  "task_id": "phase10-pi5-serial-command0-input-delivery-core-20260617",
+  "inspection": [
+    {
+      "file": "src/target/rpi5.rs",
+      "finding": "run_local_serial_command_loop_proof uses firmware_console for input and reports runtime-console0/bcm2712-uart10-pl011 for the generated-root proof scenarios",
+      "disposition": "not-an-issue"
+    },
+    {
+      "file": "src/local_command_loop.rs",
+      "finding": "run_one_descriptor_backed_serial_command_with_limit writes talos>, polls the ConsoleInputBackend through tty::run_polling_rx_diagnostic_with_limit, and dispatches completed lines",
+      "disposition": "not-an-issue"
+    },
+    {
+      "file": "src/local_command_loop.rs",
+      "finding": "rootinfo dispatch writes the generated-root selection line and returns Handled with one response",
+      "disposition": "not-an-issue"
+    },
+    {
+      "file": "src/tty.rs",
+      "finding": "canonical-lite mode treats both CR and LF as line completion",
+      "disposition": "not-an-issue"
+    },
+    {
+      "file": "src/pl011.rs",
+      "finding": "Pl011 poll_read_byte reads UART_DR when UART_FR_RXFE is clear for the Pi local-command scenarios",
+      "disposition": "not-an-issue"
+    },
+    {
+      "file": "scripts/qemu-local-serial-write-ingress-control.sh",
+      "finding": "smoke assertion used an obsolete short builtins banner and failed after boundary growth",
+      "disposition": "fixed"
+    }
+  ],
+  "remaining_blocker": {
+    "first_unproven_assumption": "lab /serial/write-to-Pi UART10 RX/capture delivery after visible command0 prompt",
+    "requires_supervisor_planning": true
+  }
+}
