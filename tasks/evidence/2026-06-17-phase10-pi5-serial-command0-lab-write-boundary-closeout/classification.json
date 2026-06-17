@@ -1,0 +1,39 @@
+{
+  "task_id": "phase10-pi5-serial-command0-lab-write-boundary-closeout-20260617",
+  "classification": "command0-lab-write-boundary-closed-selected-kernel-tftp-precondition-regressed-planning-needed",
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "The lab-boundary Pi 5 proof retained positive prearmed serial command0 delivery evidence, but selected-kernel/TFTP precondition regressed to baseline-sized TFTP serves and baseline final identity. Supervisor planning is required before another retry or before using the serial evidence to unblock source-response retention.",
+  "closeout": {
+    "command0_input_delivery_accepted": false,
+    "source_response_retention_selected": false,
+    "generated_root_command_input_success_accepted": false,
+    "first_failing_invariant": "selected-kernel-tftp-precondition-missing",
+    "serial_delivery_shape_retained": true,
+    "selected_kernel_tftp_precondition_passed": false
+  },
+  "evidence_summary": {
+    "accepted_core": "tasks/2026-06-17-phase10-pi5-serial-command0-lab-write-boundary-discriminator-core.md",
+    "accepted_proof": "tasks/2026-06-17-phase10-pi5-serial-command0-lab-write-boundary-pi5-proof.md",
+    "proof_classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-lab-write-boundary-pi5-proof/candidate-command0-lab-boundary-prearmed-read-20260617T222745Z/classification.json",
+    "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+    "expected_kernel_size": 208984,
+    "observed_tftp_kernel_sizes": [
+      104136,
+      104136
+    ],
+    "final_pre_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "serial_write_ok": true,
+    "serial_write_bytes": 9,
+    "prearmed_read_ordered_command0": true
+  },
+  "rejected_claims": [
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}
