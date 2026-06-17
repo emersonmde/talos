@@ -1,0 +1,59 @@
+{
+  "task_id": "phase10-pi5-command0-tftp-selected-kernel-precondition-core-20260617",
+  "classification": "command0-tftp-selected-kernel-precondition-core-local-static",
+  "selected_next_task": "phase10-pi5-command0-tftp-selected-kernel-precondition-pi5-proof-20260617",
+  "accepted_source_contract": "tasks/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-source-contract.md",
+  "changed_files": [
+    "scripts/rpi5-generated-root-command-input-direct-read-proof-review.sh",
+    "docs/src/project/phase10-pi5-generated-root-boot-transport-contract.md",
+    "docs/src/roadmap.md",
+    "tasks/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-core.md",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-core/classification.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-core/evidence-map.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-core/selected-kernel-tftp-positive.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-core/selected-kernel-tftp-positive-review.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-core/no-fresh-tftp-negative.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-core/no-fresh-tftp-negative-review.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-core/baseline-sized-tftp-negative.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-core/baseline-sized-tftp-negative-review.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-core/final-identity-mismatch-negative.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-core/final-identity-mismatch-negative-review.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-core/stale-serial-only-negative.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-core/stale-serial-only-negative-review.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-core/restore-failure-negative.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-core/restore-failure-negative-review.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-core/selected-kernel-tftp-negative-results.txt",
+    "tasks/evidence/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-core/known-mismatch-negative-review.json"
+  ],
+  "inputs": {
+    "source_contract": "tasks/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-source-contract.md",
+    "source_contract_commit": "1c4b08e01f9b0232364f0b395b1643d62d76287e",
+    "write_delivery_guard_core": "tasks/2026-06-17-phase10-pi5-serial-command0-write-delivery-guard-core.md",
+    "write_delivery_proof": "tasks/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof.md",
+    "known_mismatch_evidence": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/candidate-command0-write-delivery-20260617T103448Z/direct-read-proof.json",
+    "known_mismatch_tftp": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/candidate-command0-write-delivery-20260617T103448Z/tftp-delta-after-restore-requery.json",
+    "candidate_rerun_tftp": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof/triage-control-and-rerun-20260617T103840Z/candidate-rerun/tftp-delta-after-restore-requery.json",
+    "candidate_archive": "target/talos-rpi5-generated-root-command-input-proof-core-20260617.tar.gz"
+  },
+  "outputs": {
+    "task_record": "tasks/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-core.md",
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-core/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-core/evidence-map.json",
+    "positive_fixture": "tasks/evidence/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-core/selected-kernel-tftp-positive.json",
+    "positive_review": "tasks/evidence/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-core/selected-kernel-tftp-positive-review.json",
+    "negative_results": "tasks/evidence/2026-06-17-phase10-pi5-command0-tftp-selected-kernel-precondition-core/selected-kernel-tftp-negative-results.txt"
+  },
+  "guard_contract": {
+    "name": "selected-kernel-tftp-precondition-v1",
+    "required_fetch": "da591740/kernel_2712.img",
+    "required_expected_kernel_size": 208984,
+    "rejects": [
+      "no fresh TFTP",
+      "baseline-sized TFTP under candidate identity",
+      "final pre-restore identity mismatch",
+      "stale serial-only evidence",
+      "restore failure",
+      "known 208984-expected versus 104136-served mismatch"
+    ]
+  }
+}

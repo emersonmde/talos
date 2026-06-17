@@ -1,0 +1,77 @@
+{
+  "contract": "command0-write-delivery",
+  "direct_read_proof": {
+    "boot": {
+      "source": "firmware-initramfs",
+      "reason": "valid-artifact",
+      "archive_sha256": "8f6a4d0d3436308a5f3b51e4f113b75d1acbf807a7b7af2d66453806c586cf0c",
+      "kernel_2712_sha256": "c37b34ebc955a7ce11cd0660bc18424ebcec4550de23ae1e6b0b9ad7c867e4bd",
+      "kernel_2712_size": 208984,
+      "initramfs_2712_sha256": "0341f5393502f54489acb1951633bf2773fb846a82bde89b3e4a2e82000724c6",
+      "initramfs_2712_size": 662,
+      "selected_tree_identity": true,
+      "stable_tftp_delta": true,
+      "final_pre_restore_identity": true,
+      "restore_ok": true,
+      "selected_kernel_tftp_precondition": {
+        "contract": "selected-kernel-tftp-precondition-v1",
+        "expected_fetch": "da591740/kernel_2712.img",
+        "expected_kernel_2712_size": 208984,
+        "expected_kernel_2712_sha256": "c37b34ebc955a7ce11cd0660bc18424ebcec4550de23ae1e6b0b9ad7c867e4bd",
+        "tftp": {
+          "cursor_start": 4585602,
+          "cursor_end": 4587042,
+          "stable": true,
+          "expected_fetch_count": 2,
+          "expected_fetch_byte_match_count": 0,
+          "expected_fetch_bytes_seen": [
+            104136,
+            104136
+          ]
+        },
+        "final_pre_restore": {
+          "effective_kernel": "kernel_2712.img",
+          "selected_tree_still_staged": true,
+          "expected_fetch_present": true,
+          "expected_fetch_bytes": 208984
+        },
+        "restore": {
+          "ok": true,
+          "snapshot_name": "command0-write-delivery-pre-20260617T103448Z"
+        }
+      }
+    },
+    "readiness": {
+      "text": "talos: generated-root source=firmware-initramfs reason=valid-artifact\r\nrpi5-generated-root-boot-transport-proof: ready command=0\r\ntalos> ",
+      "fresh_after_prompt": true
+    },
+    "commands": [
+      {
+        "command_index": 0,
+        "pre_write_read": {
+          "text": "",
+          "fresh_after_prompt": true
+        },
+        "serial_write": {
+          "ok": true,
+          "text": "rootinfo",
+          "append_newline": true,
+          "bytes": 9
+        },
+        "direct_read": {
+          "retained_text": "rpi5-generated-root-boot-transport-proof: line command=0 hex=72 6f 6f 74 69 6e 66 6f\r\nrpi5-generated-root-boot-transport-proof: dispatch command=0 status=handled responses=1 raw-bytes=9 truncated=false controls=0\r\nrpi5-generated-root-boot-transport-proof: ready command=1\r\ntalos> ",
+          "responses": [
+            {
+              "action": "serial read",
+              "bytes": 249,
+              "encoding": "utf-8",
+              "ok": true,
+              "text": "rpi5-generated-root-boot-transport-proof: line command=0 hex=72 6f 6f 74 69 6e 66 6f\r\nrpi5-generated-root-boot-transport-proof: dispatch command=0 status=handled responses=1 raw-bytes=9 truncated=false controls=0\r\nrpi5-generated-root-boot-transport-proof: ready command=1\r\ntalos> ",
+              "truncated": false
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

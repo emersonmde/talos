@@ -1,0 +1,7 @@
+{
+  "fixture": "stale-serial-only",
+  "guard": "selected-kernel-tftp-precondition-v1",
+  "expected_result": "rejected",
+  "actual_result": "rejected",
+  "note": "The proof-review helper exited non-zero before emitting an acceptance review JSON."
+}

@@ -2737,6 +2737,24 @@ The post-review correction chain is:
     selected follow-up is
     'phase10-pi5-command0-tftp-selected-kernel-precondition-core-20260617'.
 
+149. Pi 5 command0 TFTP selected-kernel precondition core: accepted in
+    'phase10-pi5-command0-tftp-selected-kernel-precondition-core-20260617'
+    with classification
+    'command0-tftp-selected-kernel-precondition-core-local-static'. The
+    proof-review helper now records selected-kernel-tftp-precondition-v1 before
+    command0 behavior can be evaluated in a full direct_read_proof: the selected
+    da591740/kernel_2712.img expected byte count must match the same-power-cycle
+    TFTP-served kernel bytes, final pre-restore identity must still expose the
+    selected kernel bytes, and restore proof must be ok. Local/static fixtures
+    accept the 208984-byte selected-kernel positive case and reject no fresh
+    TFTP, baseline-sized 104136-byte TFTP under candidate identity, final
+    identity mismatch, stale serial-only evidence, restore failure, and the
+    retained known mismatch. The selected follow-up is
+    'phase10-pi5-command0-tftp-selected-kernel-precondition-pi5-proof-20260617';
+    command0 write-delivery success, command0 source-response retention success,
+    generated-root command-input success, storage, networking, SSH, Phase 11/12
+    expansion, and phase transition remain rejected.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed

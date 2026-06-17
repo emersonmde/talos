@@ -95,13 +95,40 @@ if [ -n "$EVIDENCE_JSON" ]; then
         def first_index($text; $needles):
           reduce $needles[] as $needle
             (null; if . == null then ($text | index($needle)) else . end);
+        def selected_kernel_tftp_precondition:
+          .direct_read_proof.boot.selected_kernel_tftp_precondition // {};
+        def selected_kernel_tftp_precondition_ok:
+          selected_kernel_tftp_precondition as $p
+          | (.direct_read_proof.boot.kernel_2712_size | tonumber?) as $expected_bytes
+          | ($p.expected_fetch // "") as $expected_fetch
+          | (($p.tftp.expected_fetch_count // 0) | tonumber?) as $fetch_count
+          | (($p.tftp.expected_fetch_byte_match_count // 0) | tonumber?) as $match_count
+          | (($p.tftp.expected_fetch_bytes_seen // []) | map(tonumber?)) as $bytes_seen
+          | $p.contract == "selected-kernel-tftp-precondition-v1"
+            and $expected_fetch == "da591740/kernel_2712.img"
+            and $expected_bytes != null
+            and (($p.expected_kernel_2712_size | tonumber?) == $expected_bytes)
+            and (($p.tftp.cursor_start // null) != null)
+            and (($p.tftp.cursor_end // null) != null)
+            and (($p.tftp.cursor_end | tonumber?) > ($p.tftp.cursor_start | tonumber?))
+            and (($p.tftp.stable // false) == true)
+            and $fetch_count > 0
+            and $match_count == $fetch_count
+            and ($bytes_seen | length) == $fetch_count
+            and all($bytes_seen[]; . == $expected_bytes)
+            and (($p.final_pre_restore.effective_kernel // "") == "kernel_2712.img")
+            and (($p.final_pre_restore.selected_tree_still_staged // false) == true)
+            and (($p.final_pre_restore.expected_fetch_present // false) == true)
+            and (($p.final_pre_restore.expected_fetch_bytes | tonumber?) == $expected_bytes)
+            and (($p.restore.ok // false) == true);
         def boot_ok:
           .direct_read_proof.boot.source == "firmware-initramfs"
           and .direct_read_proof.boot.reason == "valid-artifact"
           and .direct_read_proof.boot.selected_tree_identity == true
           and .direct_read_proof.boot.stable_tftp_delta == true
           and .direct_read_proof.boot.final_pre_restore_identity == true
-          and .direct_read_proof.boot.restore_ok == true;
+          and .direct_read_proof.boot.restore_ok == true
+          and selected_kernel_tftp_precondition_ok;
         def stale_readiness($text):
           ($text | has("input-error"))
           or ($text | has("ready command=3"))
@@ -314,7 +341,7 @@ jq -n \
     --arg evidence_validation_status "$evidence_validation_status" \
     --argjson kernel_contains_expected_output "$kernel_contains_expected_output" \
     '{
-      review: "rpi5-generated-root-command-input-direct-read-harness-core-v4-command0-write-delivery",
+      review: "rpi5-generated-root-command-input-direct-read-harness-core-v5-selected-kernel-tftp-precondition",
       archive: {
         path: $archive,
         sha256: $archive_sha256,
@@ -399,15 +426,22 @@ jq -n \
         ],
         hardware_identity_requirements: [
           "candidate archive hash and selected tree identity",
+          "selected-kernel-tftp-precondition-v1 same-power-cycle TFTP-served kernel byte agreement",
           "stable same-power-cycle TFTP delta before restore",
-          "final pre-restore identity matching the selected tree",
+          "final pre-restore identity matching the selected tree and selected kernel bytes",
           "post-run restore proof"
         ],
         evidence_validator: {
-          guard: "serial-capture-readiness-guard-v1 + command0-write-delivery-guard-v1",
+          guard: "selected-kernel-tftp-precondition-v1 + serial-capture-readiness-guard-v1 + command0-write-delivery-guard-v1",
           optional_argument: "direct-read-evidence.json",
           status: $evidence_validation_status,
           rejects: [
+            "selected lab/API candidate without same-power-cycle TFTP-served kernel byte agreement",
+            "no fresh TFTP delta after candidate publication",
+            "baseline-sized TFTP fetches under candidate identity",
+            "final pre-restore identity missing the selected kernel bytes",
+            "stale serial-only evidence without selected-kernel/TFTP agreement",
+            "missing or failed restore proof",
             "prompt-only evidence without command text and response output",
             "/serial/write-only evidence without a following direct-read window",
             "stale pre-write direct-read windows that already contain the command response",
@@ -473,6 +507,25 @@ jq -n \
             "source-response-only evidence without command 0 write-delivery evidence"
           ]
         },
+        selected_kernel_tftp_precondition: {
+          guard: "selected-kernel-tftp-precondition-v1",
+          accepted_evidence_shape: "full direct_read_proof.boot.selected_kernel_tftp_precondition",
+          required_fetch: "da591740/kernel_2712.img",
+          required_boundaries: [
+            "expected_kernel_2712_size equals direct_read_proof.boot.kernel_2712_size",
+            "TFTP cursor advances and stable same-power-cycle delta is retained",
+            "all selected kernel TFTP fetches match the expected byte count",
+            "final pre-restore identity still exposes kernel_2712.img at the expected byte count",
+            "restore proof is present and ok"
+          ],
+          rejected_evidence_shapes: [
+            "no fresh TFTP delta after candidate publication",
+            "baseline-sized TFTP fetches under candidate identity",
+            "final pre-restore selected-kernel mismatch",
+            "stale serial-only evidence without selected-kernel/TFTP agreement",
+            "restore failure"
+          ]
+        },
         command0_source_response_retention: {
           required_ordered_fragments: [
             ($prelude_command + " or " + $prelude_command_line_hex),
@@ -517,5 +570,5 @@ jq -n \
         "Phase 11/12 expansion",
         "phase transition"
       ],
-      selected_next_task: "phase10-pi5-serial-command0-write-delivery-pi5-proof-20260617"
+      selected_next_task: "phase10-pi5-command0-tftp-selected-kernel-precondition-pi5-proof-20260617"
     }'

@@ -578,6 +578,24 @@ must implement a repo-owned preflight guard before any command0 behavior retry.
 The lab/boot-root reconciliation path remains deferred unless the guard or a
 future precondition proof requires lab-service/operator diagnosis.
 
+phase10-pi5-command0-tftp-selected-kernel-precondition-core-20260617 accepts
+selected-kernel-tftp-precondition-v1 with classification
+command0-tftp-selected-kernel-precondition-core-local-static. The proof-review
+helper now requires a full direct_read_proof to include explicit selected
+kernel/TFTP agreement before command0 behavior can be evaluated: the selected
+expected fetch is da591740/kernel_2712.img, its expected byte count must match
+direct_read_proof.boot.kernel_2712_size, the same-power-cycle TFTP cursor must
+advance with stable matching kernel fetches, final pre-restore identity must
+still expose kernel_2712.img at that byte count, and restore proof must be ok.
+Task-owned fixtures prove the 208984-byte selected-kernel positive case and
+reject no fresh TFTP, baseline-sized 104136-byte TFTP, final identity mismatch,
+stale serial-only evidence, restore failure, and the retained known mismatch.
+The selected hardware follow-up is
+phase10-pi5-command0-tftp-selected-kernel-precondition-pi5-proof-20260617.
+Command0 write-delivery success, command0 source-response retention success,
+generated-root command-input success, storage, networking, SSH, Phase 11/12
+expansion, and phase transition remain unaccepted.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11/12

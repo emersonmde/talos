@@ -1,0 +1,43 @@
+{
+  "task_id": "phase10-pi5-command0-tftp-selected-kernel-precondition-core-20260617",
+  "classification": "command0-tftp-selected-kernel-precondition-core-local-static",
+  "status": "accepted",
+  "evidence_level": "static source/task inspection, shell syntax check, local/static proof-helper fixtures, task-owned JSON evidence, docs build, and diff checks",
+  "selected_next_task": "phase10-pi5-command0-tftp-selected-kernel-precondition-pi5-proof-20260617",
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "The proof-review helper now requires selected-kernel-tftp-precondition-v1 before a full direct_read_proof can pass command0 write-delivery review."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The positive fixture proves a selected 208984-byte kernel with two matching same-power-cycle TFTP fetches can pass before command0 behavior is evaluated."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Negative fixtures reject no fresh TFTP, baseline-sized TFTP under candidate identity, final pre-restore identity mismatch, stale serial-only evidence, restore failure, and the retained known 208984-expected versus 104136-served mismatch."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "The existing command0-write-delivery-guard-v1 and command0-source-response-retention-guard-v2 transaction semantics remain separate later gates."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Lab/boot-root reconciliation remains deferred until a serialized precondition proof shows the mismatch persists with the new guard contract."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "No command0 write-delivery success, command0 source-response retention success, generated-root command-input success, storage, networking, SSH, Phase 11/12 expansion, or phase transition is accepted."
+    }
+  ],
+  "validation": {
+    "sh_n": "pass",
+    "positive_fixture": "pass",
+    "negative_fixtures": "pass",
+    "known_mismatch_rejected": true,
+    "jq_empty_task_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  }
+}

@@ -1,0 +1,6 @@
+no-fresh-tftp: rejected
+baseline-sized-tftp: rejected
+final-identity-mismatch: rejected
+stale-serial-only: rejected
+restore-failure: rejected
+known-mismatch: rejected
