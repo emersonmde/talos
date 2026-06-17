@@ -1,0 +1,41 @@
+{
+  "task_id": "phase10-pi5-serial-command0-saturated-capture-guard-core-20260617",
+  "classification": "command0-saturated-capture-guard-core-local-static",
+  "evidence_level": [
+    "shell helper syntax check",
+    "task-owned positive and negative fixture checks",
+    "retained-blocker replay",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "inputs": {
+    "source_contract": "tasks/2026-06-17-phase10-pi5-serial-command0-saturated-capture-source-contract.md",
+    "source_contract_classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-saturated-capture-source-contract/classification.json",
+    "retained_post_write_observe_evidence": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-pi5-proof/candidate-command0-post-write-observe-20260617T150944Z/post-write-observe-evidence.json",
+    "retained_write_delivery_v2_evidence": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof-v2-after-tftp-precondition/candidate-command0-write-delivery-v2-20260617T124424Z/direct-read-evidence.json",
+    "saturated_cursor_helper_precedent": "scripts/rpi5-observe-serial-window.sh"
+  },
+  "outputs": {
+    "helper": "scripts/rpi5-command0-saturated-capture-proof-review.sh",
+    "task_record": "tasks/2026-06-17-phase10-pi5-serial-command0-saturated-capture-guard-core.md",
+    "helper_contract_output": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-saturated-capture-guard-core/helper-contract-output.json",
+    "positive_fixture": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-saturated-capture-guard-core/fixtures/positive-command0-saturated-capture.json",
+    "positive_output": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-saturated-capture-guard-core/positive-output.json",
+    "fixture_results": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-saturated-capture-guard-core/fixture-results.json",
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-saturated-capture-guard-core/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-saturated-capture-guard-core/evidence-map.json",
+    "roadmap_update": "docs/src/roadmap.md"
+  },
+  "selected_next_task": "phase10-pi5-serial-command0-saturated-capture-pi5-proof-20260617",
+  "validation": {
+    "sh_n_helper": "pass",
+    "positive_fixture_replay": "pass",
+    "negative_fixture_replay": "pass",
+    "retained_blocker_replay": "pass",
+    "jq_empty_task_owned_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  }
+}

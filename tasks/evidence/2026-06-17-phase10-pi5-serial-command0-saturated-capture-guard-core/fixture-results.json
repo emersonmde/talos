@@ -1,0 +1,61 @@
+{
+  "results": [
+    {
+      "fixture": "negative-empty-saturated-capture",
+      "expected": "reject",
+      "actual": "rejected",
+      "ok": true
+    },
+    {
+      "fixture": "negative-prompt-only",
+      "expected": "reject",
+      "actual": "rejected",
+      "ok": true
+    },
+    {
+      "fixture": "negative-source-response-only",
+      "expected": "reject",
+      "actual": "rejected",
+      "ok": true
+    },
+    {
+      "fixture": "negative-stale-later-command-only",
+      "expected": "reject",
+      "actual": "rejected",
+      "ok": true
+    },
+    {
+      "fixture": "negative-stale-pre-write",
+      "expected": "reject",
+      "actual": "rejected",
+      "ok": true
+    },
+    {
+      "fixture": "negative-unordered-output",
+      "expected": "reject",
+      "actual": "rejected",
+      "ok": true
+    },
+    {
+      "fixture": "negative-write-only",
+      "expected": "reject",
+      "actual": "rejected",
+      "ok": true
+    },
+    {
+      "fixture": "retained-candidate-command0-post-write-observe-20260617T150944Z",
+      "expected": "reject",
+      "actual": "rejected",
+      "ok": true,
+      "source": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-pi5-proof/candidate-command0-post-write-observe-20260617T150944Z/post-write-observe-evidence.json"
+    },
+    {
+      "fixture": "retained-candidate-command0-write-delivery-v2-20260617T124424Z",
+      "expected": "reject",
+      "actual": "rejected",
+      "ok": true,
+      "source": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-pi5-proof-v2-after-tftp-precondition/candidate-command0-write-delivery-v2-20260617T124424Z/direct-read-evidence.json"
+    }
+  ],
+  "all_ok": true
+}

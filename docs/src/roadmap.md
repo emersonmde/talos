@@ -2902,6 +2902,24 @@ The post-review correction chain is:
     source-response retention success, generated-root command-input success,
     storage, networking, SSH, Phase 11/12 expansion, and phase transition
     remain rejected.
+159. Pi 5 serial command 0 saturated-capture guard core: accepted in
+    'phase10-pi5-serial-command0-saturated-capture-guard-core-20260617'
+    with classification 'command0-saturated-capture-guard-core-local-static'.
+    The helper now records command0-saturated-capture-guard-v1: selected-kernel
+    TFTP agreement for the 208984-byte da591740/kernel_2712.img candidate,
+    same-boot firmware-initramfs valid-artifact ready command=0, a fresh
+    pre-write direct-read boundary, accepted 9-byte rootinfo write, and ordered
+    post-write command0 output from a direct-read window labeled
+    deadline-loop-direct-read-after-saturated-cursor. Task-owned fixtures
+    accept the positive evaluable shape and reject empty saturated capture,
+    write-only, prompt-only, stale pre-write, stale later-command-only,
+    unordered, and source-response-only shapes. The retained post-write observe
+    and v2 direct-read blocker evidence both remain rejected by this guard. The
+    selected hardware follow-up is
+    'phase10-pi5-serial-command0-saturated-capture-pi5-proof-20260617';
+    command0 write-delivery success, command0 source-response retention success,
+    generated-root command-input success, storage, networking, SSH,
+    Phase 11/12 expansion, and phase transition remain unaccepted.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

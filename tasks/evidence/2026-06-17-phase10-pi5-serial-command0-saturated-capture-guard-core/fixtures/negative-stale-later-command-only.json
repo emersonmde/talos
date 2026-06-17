@@ -1,0 +1,54 @@
+{
+  "label": "command0-saturated-capture",
+  "guard": "command0-saturated-capture-guard-v1",
+  "selected_kernel_tftp_precondition": {
+    "contract": "selected-kernel-tftp-precondition-v1",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_kernel_2712_size": 208984,
+    "tftp": {
+      "stable": true,
+      "expected_fetch_count": 1,
+      "expected_fetch_byte_match_count": 1,
+      "expected_fetch_bytes_seen": [208984]
+    },
+    "final_pre_restore": {
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 208984
+    },
+    "restore": {
+      "ok": true
+    }
+  },
+  "readiness": {
+    "fresh_after_prompt": true,
+    "text": "talos: generated-root source=firmware-initramfs reason=valid-artifact\nrpi5-generated-root-boot-transport-proof: ready command=0\ntalos> "
+  },
+  "pre_write_read": {
+    "cursor_start": 4194304,
+    "fresh_after_prompt": true,
+    "text": "\n"
+  },
+  "serial_write": {
+    "ok": true,
+    "text": "rootinfo",
+    "append_newline": true,
+    "bytes": 9
+  },
+  "post_write_direct_read": {
+    "capture_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "cursor_start": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 256,
+    "text": "rpi5-generated-root-boot-transport-proof: dispatch command=1 status=input-error responses=0\nrpi5-generated-root-boot-transport-proof: ready command=2\ntalos> rootinfo\nrpi5-generated-root-boot-transport-proof: line command=0 hex=726f6f74696e666f\nrpi5-generated-root-boot-transport-proof: dispatch command=0 status=handled responses=1\nrpi5-generated-root-boot-transport-proof: ready command=1",
+    "responses": [
+      {
+        "ok": true,
+        "encoding": "utf-8",
+        "truncated": false
+      }
+    ]
+  }
+}

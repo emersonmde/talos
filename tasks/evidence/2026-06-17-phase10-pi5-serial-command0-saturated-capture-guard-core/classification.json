@@ -1,0 +1,62 @@
+{
+  "task_id": "phase10-pi5-serial-command0-saturated-capture-guard-core-20260617",
+  "status": "accepted",
+  "classification": "command0-saturated-capture-guard-core-local-static",
+  "guard": "command0-saturated-capture-guard-v1",
+  "selected_next_task": "phase10-pi5-serial-command0-saturated-capture-pi5-proof-20260617",
+  "planning_needed": false,
+  "command0_write_delivery_accepted": false,
+  "command0_source_response_retention_accepted": false,
+  "generated_root_command_input_accepted": false,
+  "hardware_run_performed": false,
+  "capture_contract": "deadline-loop-direct-read-after-saturated-cursor",
+  "saturation_cursor": 4194304,
+  "required_candidate": {
+    "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_kernel_2712_size": 208984
+  },
+  "accepted_shapes": [
+    "selected-kernel/TFTP agreement for 208984-byte da591740/kernel_2712.img",
+    "same-boot firmware-initramfs valid-artifact ready command=0 prompt",
+    "fresh pre-write direct-read boundary with no command0, later-command, or source-response output",
+    "accepted 9-byte rootinfo write with append_newline=true",
+    "post-write direct read labeled deadline-loop-direct-read-after-saturated-cursor from saturated cursor 4194304",
+    "ordered command0 rootinfo or line marker, dispatch command=0 status=handled, responses=1, and ready command=1"
+  ],
+  "rejected_shapes": [
+    "empty saturated observe or direct-read windows",
+    "write-accepted-only evidence",
+    "prompt-only evidence",
+    "stale pre-write output",
+    "stale later-command-only output",
+    "unordered command0 fragments",
+    "source-response-only evidence"
+  ],
+  "retained_blocker_replay": {
+    "post_write_observe_evidence_rejected": true,
+    "write_delivery_v2_evidence_rejected": true
+  },
+  "validation": {
+    "shell_syntax": "pass",
+    "positive_fixture_replay": "pass",
+    "negative_fixture_replay": "pass",
+    "retained_blocker_replay": "pass",
+    "jq_empty_task_owned_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "rejected_claims": [
+    "command0 write-delivery success",
+    "command0 source-response retention success",
+    "generated-root command-input success",
+    "hardware publication or power-cycle",
+    "lab mutation",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}
