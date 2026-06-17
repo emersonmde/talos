@@ -14,6 +14,7 @@ PROOF_LABEL="rpi5-generated-root-boot-transport-proof"
 CLASSIFICATION="pi5-generated-root-boot-transport-complete"
 PRELUDE_COMMAND="rootinfo"
 PRELUDE_COMMAND_LINE_HEX="line command=0 hex=726f6f74696e666f"
+PRELUDE_COMMAND_LINE_HEX_SPACED="line command=0 hex=72 6f 6f 74 69 6e 66 6f"
 COMMAND="cat /generated/manifest.txt"
 COMMAND_LINE_HEX="line command=1 hex=636174202f67656e6572617465642f6d616e69666573742e747874"
 COMMAND_PATH="/generated/manifest.txt"
@@ -83,6 +84,7 @@ if [ -n "$EVIDENCE_JSON" ]; then
     jq -e \
         --arg prelude_command "$PRELUDE_COMMAND" \
         --arg prelude_command_line_hex "$PRELUDE_COMMAND_LINE_HEX" \
+        --arg prelude_command_line_hex_spaced "$PRELUDE_COMMAND_LINE_HEX_SPACED" \
         --arg command "$COMMAND" \
         --arg command_line_hex "$COMMAND_LINE_HEX" \
         --arg expected_output "$EXPECTED_OUTPUT" \
@@ -115,6 +117,16 @@ if [ -n "$EVIDENCE_JSON" ]; then
               and (stale_readiness($text) | not)
           )
           and ((.direct_read_proof.readiness.fresh_after_prompt // true) == true);
+        def readiness_obj_ok($obj):
+          (
+            text_of($obj) as $text
+            | ($text | has("source=firmware-initramfs"))
+              and ($text | has("reason=valid-artifact"))
+              and ($text | has("ready command=0"))
+              and ($text | has("talos>"))
+              and (stale_readiness($text) | not)
+          )
+          and (($obj.fresh_after_prompt // true) == true);
         def fresh_before($idx; $command_text; $line_text):
           (
             text_of((cmd($idx).pre_write_read // {}))
@@ -130,11 +142,65 @@ if [ -n "$EVIDENCE_JSON" ]; then
             | not
           )
           and ((cmd($idx).pre_write_read.fresh_after_prompt // false) == true);
+        def fresh_obj_before($obj; $idx; $command_text):
+          (
+            text_of($obj)
+            | (
+                has($command_text)
+                or has("line command=\($idx)")
+                or has("dispatch command=\($idx)")
+                or has("source=firmware-initramfs")
+                or has("reason=valid-artifact")
+                or has("ready command=\($idx + 1)")
+                or has($expected_output)
+              )
+            | not
+          )
+          and (($obj.fresh_after_prompt // false) == true);
         def write_ok($idx; $command_text):
           cmd($idx).serial_write.ok == true
           and cmd($idx).serial_write.text == $command_text
           and cmd($idx).serial_write.append_newline == true;
+        def write_obj_ok($obj; $command_text):
+          $obj.ok == true
+          and $obj.text == $command_text
+          and $obj.append_newline == true
+          and (($obj.bytes // 9) == 9);
         def direct_read_text($idx): text_of(cmd($idx).direct_read);
+        def command0_delivery_text_ok($text):
+          first_index($text; [$prelude_command, $prelude_command_line_hex, $prelude_command_line_hex_spaced]) as $line_pos
+          | ($text | index("dispatch command=0 status=handled")) as $dispatch_pos
+          | ($text | index("responses=1")) as $responses_pos
+          | ($text | index("ready command=1")) as $ready_pos
+          | ($text | index("dispatch command=1 status=input-error")) as $next_timeout_pos
+          | $line_pos != null
+            and $dispatch_pos != null
+            and $responses_pos != null
+            and $ready_pos != null
+            and $line_pos < $dispatch_pos
+            and $dispatch_pos <= $responses_pos
+            and $responses_pos < $ready_pos
+            and ($next_timeout_pos == null or $ready_pos < $next_timeout_pos);
+        def command0_write_delivery_ok:
+          fresh_before(0; $prelude_command; $prelude_command_line_hex)
+          and write_ok(0; $prelude_command)
+          and (direct_read_text(0) as $text | command0_delivery_text_ok($text));
+        def responses_ok($obj):
+          all(($obj.responses? // [])[];
+            (.ok == true)
+            and (.encoding // "") == "utf-8"
+            and (.truncated == false)
+          );
+        def command0_write_delivery_summary_ok:
+          .label == "command0-write-delivery"
+          and readiness_obj_ok(.readiness)
+          and fresh_obj_before(.pre_write_read; 0; $prelude_command)
+          and write_obj_ok(.serial_write; $prelude_command)
+          and (
+            text_of((.direct_read // .)) as $text
+            | command0_delivery_text_ok($text)
+          )
+          and responses_ok((.direct_read // .));
         def command0_ok:
           fresh_before(0; $prelude_command; $prelude_command_line_hex)
           and write_ok(0; $prelude_command)
@@ -214,7 +280,13 @@ if [ -n "$EVIDENCE_JSON" ]; then
               and $responses_pos < $done_pos
           );
         if (.direct_read_proof? != null) then
-          boot_ok and readiness_ok and command0_ok and command1_ok
+          if (.contract? == "command0-write-delivery") then
+            boot_ok and readiness_ok and command0_write_delivery_ok
+          else
+            boot_ok and readiness_ok and command0_ok and command1_ok
+          end
+        elif (.label? == "command0-write-delivery") then
+          command0_write_delivery_summary_ok
         elif (.label? == "command0-direct-read") then
           command0_summary_ok
         else
@@ -235,13 +307,14 @@ jq -n \
     --arg classification "$CLASSIFICATION" \
     --arg prelude_command "$PRELUDE_COMMAND" \
     --arg prelude_command_line_hex "$PRELUDE_COMMAND_LINE_HEX" \
+    --arg prelude_command_line_hex_spaced "$PRELUDE_COMMAND_LINE_HEX_SPACED" \
     --arg command "$COMMAND" \
     --arg command_line_hex "$COMMAND_LINE_HEX" \
     --arg expected_output "$EXPECTED_OUTPUT" \
     --arg evidence_validation_status "$evidence_validation_status" \
     --argjson kernel_contains_expected_output "$kernel_contains_expected_output" \
     '{
-      review: "rpi5-generated-root-command-input-direct-read-harness-core-v3",
+      review: "rpi5-generated-root-command-input-direct-read-harness-core-v4-command0-write-delivery",
       archive: {
         path: $archive,
         sha256: $archive_sha256,
@@ -331,7 +404,7 @@ jq -n \
           "post-run restore proof"
         ],
         evidence_validator: {
-          guard: "serial-capture-readiness-guard-v1 + command0-source-response-retention-guard-v2",
+          guard: "serial-capture-readiness-guard-v1 + command0-write-delivery-guard-v1",
           optional_argument: "direct-read-evidence.json",
           status: $evidence_validation_status,
           rejects: [
@@ -366,6 +439,38 @@ jq -n \
             "dispatch-only command 0 metadata without retained generated-root source text",
             "tail-only command 0 source response missing the source prefix or command 0 line",
             "prompt-only or /serial/write-only command evidence"
+          ]
+        },
+        command0_write_delivery: {
+          guard: "command0-write-delivery-guard-v1",
+          required_ordered_fragments: [
+            ($prelude_command + " or " + $prelude_command_line_hex + " or " + $prelude_command_line_hex_spaced),
+            "dispatch command=0 status=handled",
+            "responses=1",
+            "rpi5-generated-root-boot-transport-proof: ready command=1"
+          ],
+          required_boundaries: [
+            "same-boot firmware-initramfs valid-artifact ready command=0 and visible prompt",
+            "fresh command 0 pre-write read after prompt",
+            "accepted 9-byte /serial/write text=rootinfo append_newline=true",
+            "post-write direct-read or retained summary keeps command 0 line/dispatch/ready in order"
+          ],
+          accepted_evidence_shapes: [
+            "full direct_read_proof with contract=command0-write-delivery",
+            "task-owned command0-write-delivery summary with readiness, pre-write, write, and direct-read fields"
+          ],
+          terminal_classifications: [
+            "command0-write-delivery-accepted",
+            "command0-write-delivery-blocked",
+            "command0-write-delivery-inconclusive-triage-required"
+          ],
+          rejected_evidence_shapes: [
+            "/serial/write accepted without command 0 line/dispatch/ready evidence",
+            "prompt-only evidence",
+            "dispatch-only command 0 metadata without retained command 0 line/rootinfo evidence",
+            "unordered command 0 line/dispatch/ready output",
+            "stale later-command serial output",
+            "source-response-only evidence without command 0 write-delivery evidence"
           ]
         },
         command0_source_response_retention: {
@@ -412,5 +517,5 @@ jq -n \
         "Phase 11/12 expansion",
         "phase transition"
       ],
-      selected_next_task: "phase10-pi5-serial-capture-readiness-pi5-proof-20260617"
+      selected_next_task: "phase10-pi5-serial-command0-write-delivery-pi5-proof-20260617"
     }'

@@ -1,0 +1,30 @@
+{
+  "label": "command0-write-delivery",
+  "readiness": {
+    "text": "talos: generated-root source=firmware-initramfs reason=valid-artifact\r\nrpi5-generated-root-boot-transport-proof: ready command=0\r\ntalos> ",
+    "fresh_after_prompt": true
+  },
+  "pre_write_read": {
+    "text": "",
+    "fresh_after_prompt": true
+  },
+  "serial_write": {
+    "ok": true,
+    "text": "rootinfo",
+    "append_newline": true,
+    "bytes": 9
+  },
+  "direct_read": {
+    "retained_text": "talos> ",
+    "responses": [
+      {
+        "action": "serial read",
+        "bytes": 7,
+        "encoding": "utf-8",
+        "ok": true,
+        "text": "talos> ",
+        "truncated": false
+      }
+    ]
+  }
+}

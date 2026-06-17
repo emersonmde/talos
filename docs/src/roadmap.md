@@ -2688,6 +2688,20 @@ The post-review correction chain is:
     command0 source-response retention success, storage-driver work,
     networking, SSH, Phase 11/12 expansion, and phase transition remain
     rejected.
+146. Pi 5 serial command 0 write-delivery guard core: accepted in
+    'phase10-pi5-serial-command0-write-delivery-guard-core-20260617'
+    with classification 'serial-command0-write-delivery-guard-core-local-static'.
+    The proof-review helper now records command0-write-delivery-guard-v1:
+    same-boot firmware-initramfs valid-artifact ready command=0, visible prompt,
+    fresh command 0 pre-write boundary, accepted 9-byte rootinfo write, and
+    ordered command 0 line/dispatch/responses/ready evidence. Task-owned
+    fixtures reject write-accepted-only, prompt-only, dispatch-only, unordered,
+    stale-readiness, and source-response-only evidence shapes. The selected
+    follow-up is
+    'phase10-pi5-serial-command0-write-delivery-pi5-proof-20260617'. Command0
+    source-response retention success, generated-root command-input success,
+    storage-driver work, networking, SSH, Phase 11/12 expansion, and phase
+    transition remain rejected.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -7373,6 +7387,18 @@ Selected first slice:
   'phase10-pi5-serial-command0-write-delivery-guard-core-20260617'; hardware
   retry, generated-root command-input acceptance, storage, networking, SSH,
   Phase 11/12 expansion, and phase transition remain gated.
+- 'phase10-pi5-serial-command0-write-delivery-guard-core-20260617' accepts
+  command0-write-delivery-guard-v1 with classification
+  serial-command0-write-delivery-guard-core-local-static. The helper checks a
+  same-boot firmware-initramfs valid-artifact ready command=0 boundary, visible
+  prompt, fresh command 0 pre-write point, accepted 9-byte rootinfo write, and
+  ordered command 0 line/dispatch/responses/ready evidence. The local/static
+  fixtures reject write-accepted-only, prompt-only, dispatch-only, unordered,
+  stale-readiness, and source-response-only shapes. The selected hardware
+  follow-up is
+  'phase10-pi5-serial-command0-write-delivery-pi5-proof-20260617'; command0
+  source-response retention success and generated-root command-input success
+  remain unaccepted.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The

@@ -1,0 +1,13 @@
+{
+  "task_id": "phase10-pi5-serial-command0-write-delivery-guard-core-20260617",
+  "evidence_level": "static source/task inspection + shell syntax check + local/static proof-helper fixtures",
+  "source_contract": "tasks/2026-06-17-phase10-pi5-serial-command0-write-delivery-source-contract.md",
+  "changed_helper": "scripts/rpi5-generated-root-command-input-direct-read-proof-review.sh",
+  "local_static_validation": {
+    "positive_review": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-guard-core/command0-write-delivery-positive-review.json",
+    "negative_results": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-write-delivery-guard-core/command0-write-delivery-negative-results.txt"
+  },
+  "hardware": "not-run",
+  "lab_mutation": "not-run",
+  "boot_publication": "not-run"
+}

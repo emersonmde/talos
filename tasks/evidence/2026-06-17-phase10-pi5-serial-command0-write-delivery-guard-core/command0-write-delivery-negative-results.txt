@@ -1,0 +1,6 @@
+write-accepted-only-negative rejected
+prompt-only-negative rejected
+dispatch-only-negative rejected
+unordered-negative rejected
+stale-readiness-negative rejected
+source-response-only-negative rejected
