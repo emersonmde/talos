@@ -3133,6 +3133,25 @@ The post-review correction chain is:
     Source-response retention, generated-root command-input success, storage,
     networking, SSH, Phase 11/12 expansion, and phase transition remain
     rejected.
+173. Pi 5 command0 selected-kernel lab-boundary recurrence checkpoint:
+    accepted in
+    'phase10-pi5-command0-selected-kernel-lab-boundary-recurrence-checkpoint-20260617'
+    with classification
+    'selected-kernel-lab-boundary-recurrence-checkpoint-precondition-discriminator-selected'.
+    The checkpoint reconciles the accepted no-command-write paired-sentinel
+    recovery with the later command0 lab-boundary regression. The paired
+    sentinel proof remains accepted for its retained candidate/control
+    publication boundary, but is scope-limited: it is not a durable unblocker
+    for later command0 retries after same-power-cycle TFTP again serves
+    baseline bytes or final pre-restore identity is baseline. The lab-boundary
+    proof retained useful prearmed serial command0 delivery evidence, but
+    command0 input delivery remains unaccepted because the selected-kernel/TFTP
+    precondition failed first. The selected follow-up is the local/static
+    precondition discriminator core
+    'phase10-pi5-command0-selected-kernel-precondition-discriminator-core-20260617'.
+    Source-response retention, generated-root command-input success, storage,
+    networking, SSH, Phase 11/12 expansion, and phase transition remain
+    rejected.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -7952,6 +7971,15 @@ Selected first slice:
   null and planningNeeded=true; source-response retention, generated-root
   command-input success, storage, networking, SSH, Phase 11/12 expansion, and
   phase transition remain unaccepted.
+- 'phase10-pi5-command0-selected-kernel-lab-boundary-recurrence-checkpoint-20260617'
+  accepts the static recurrence checkpoint with classification
+  selected-kernel-lab-boundary-recurrence-checkpoint-precondition-discriminator-selected.
+  The accepted paired-sentinel recovery is scope-limited to its retained
+  no-command-write candidate/control publication-boundary runs; it does not
+  durably unblock later command0 lab-boundary proofs after baseline TFTP/final
+  identity evidence recurs. The positive prearmed serial command0 delivery
+  shape remains useful non-accepting evidence. The selected follow-up is
+  phase10-pi5-command0-selected-kernel-precondition-discriminator-core-20260617.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The

@@ -1,0 +1,38 @@
+{
+  "task_id": "phase10-pi5-command0-selected-kernel-lab-boundary-recurrence-checkpoint-20260617",
+  "classification": "selected-kernel-lab-boundary-recurrence-checkpoint-precondition-discriminator-selected",
+  "selected_next_task": "phase10-pi5-command0-selected-kernel-precondition-discriminator-core-20260617",
+  "files": {
+    "task_record": "tasks/2026-06-17-phase10-pi5-command0-selected-kernel-lab-boundary-recurrence-checkpoint.md",
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-lab-boundary-recurrence-checkpoint/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-lab-boundary-recurrence-checkpoint/evidence-map.json",
+    "paired_sentinel_recovery_closeout": "tasks/2026-06-17-phase10-pi5-command0-selected-kernel-recovery-closeout.md",
+    "paired_sentinel_recovery_classification": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-recovery-closeout/classification.json",
+    "paired_sentinel_pi5_proof": "tasks/2026-06-17-phase10-pi5-command0-selected-kernel-paired-sentinel-pi5-proof.md",
+    "paired_sentinel_pi5_proof_classification": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-paired-sentinel-pi5-proof/classification.json",
+    "paired_sentinel_pi5_proof_evidence_map": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-paired-sentinel-pi5-proof/evidence-map.json",
+    "lab_boundary_pi5_proof": "tasks/2026-06-17-phase10-pi5-serial-command0-lab-write-boundary-pi5-proof.md",
+    "lab_boundary_pi5_proof_classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-lab-write-boundary-pi5-proof/candidate-command0-lab-boundary-prearmed-read-20260617T222745Z/classification.json",
+    "lab_boundary_tftp_delta": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-lab-write-boundary-pi5-proof/candidate-command0-lab-boundary-prearmed-read-20260617T222745Z/tftp/tftp-delta-stable-pre-restore.json",
+    "lab_boundary_final_pre_restore_identity": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-lab-write-boundary-pi5-proof/candidate-command0-lab-boundary-prearmed-read-20260617T222745Z/final-pre-restore-status.json",
+    "lab_boundary_closeout": "tasks/2026-06-17-phase10-pi5-serial-command0-lab-write-boundary-closeout.md",
+    "lab_boundary_closeout_classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-lab-write-boundary-closeout/classification.json"
+  },
+  "validation": {
+    "static_source_task_evidence_consistency_review": "pass",
+    "jq_task_owned_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "rejected_claims": [
+    "command0 input delivery acceptance",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}
