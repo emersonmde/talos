@@ -1,0 +1,55 @@
+{
+  "task_id": "phase10-pi5-command0-selected-kernel-paired-sentinel-pi5-proof-20260617",
+  "classification": "selected-kernel-paired-sentinel-pi5-proof-accepted",
+  "selected_next_task": "phase10-pi5-command0-selected-kernel-recovery-closeout-20260617",
+  "files": {
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-paired-sentinel-pi5-proof/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-paired-sentinel-pi5-proof/evidence-map.json",
+    "proof_evidence": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-paired-sentinel-pi5-proof/paired-sentinel-proof-evidence.json",
+    "discriminator_output": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-paired-sentinel-pi5-proof/discriminator-output.json",
+    "candidate_run": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-paired-sentinel-pi5-proof/candidate-selected-kernel-paired-sentinel-20260617T193449Z/",
+    "control_run": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-paired-sentinel-pi5-proof/control-selected-kernel-paired-sentinel-20260617T193449Z/",
+    "candidate_rerun": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-paired-sentinel-pi5-proof/candidate-rerun-selected-kernel-paired-sentinel-20260617T193449Z/",
+    "final_post_restore_boot_files": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-paired-sentinel-pi5-proof/final-post-restore-boot-files.json"
+  },
+  "validation": [
+    {
+      "gate": "serialized Pi 5 hardware proof under hardwareTestLock",
+      "result": "pass"
+    },
+    {
+      "gate": "candidate/control identity via lab API before power",
+      "result": "pass"
+    },
+    {
+      "gate": "fresh serial cursor before power",
+      "result": "pass for accepted candidate/control capture bundle"
+    },
+    {
+      "gate": "stable same-cursor TFTP delta before restore",
+      "result": "pass"
+    },
+    {
+      "gate": "final pre-restore boot identity",
+      "result": "pass"
+    },
+    {
+      "gate": "post-run baseline restore proof",
+      "result": "pass"
+    },
+    {
+      "gate": "task-owned proof validator/classifier",
+      "result": "pass"
+    }
+  ],
+  "rejected_claims": [
+    "command0 write-delivery success",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

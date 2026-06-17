@@ -1,0 +1,52 @@
+{
+  "kind": "candidate",
+  "label": "candidate-rerun-selected-kernel-paired-sentinel-20260617T193449Z",
+  "archive": "target/talos-rpi5-generated-root-command-input-proof-core-20260617.tar.gz",
+  "capture_exit": 0,
+  "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+  "expected_fetch": "da591740/kernel_2712.img",
+  "expected_kernel_2712_size": 208984,
+  "no_command_write": true,
+  "post_publish_identity": {
+    "selected_tree": true,
+    "effective_kernel": true,
+    "expected_fetch_present": true,
+    "expected_fetch_bytes_match": true
+  },
+  "tftp": {
+    "cursor_start": 4599735,
+    "cursor_end": 4601175,
+    "stable": true,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "expected_fetch_bytes_seen": [
+      208984,
+      208984
+    ]
+  },
+  "final_pre_restore_identity": {
+    "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+    "selected_tree": true,
+    "effective_kernel": true,
+    "expected_fetch_present": true,
+    "expected_fetch_bytes_match": true
+  },
+  "restore": {
+    "ok": true,
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "snapshot_name": "pre-selected-kernel-paired-sentinel-20260617T193449Z"
+  },
+  "serial_freshness": {
+    "contract_version": "cursor-nonce-post-power-freshness-v1",
+    "marker_nonce": null,
+    "nonce_token": null,
+    "marker_occurrences_after_saved_cursor": 0,
+    "nonce_occurrences_after_saved_cursor": 0,
+    "post_power_capture_bound": true,
+    "cursor_nonce_fresh": false,
+    "serial_freshness_ok": false
+  },
+  "identity_join_rejection_reasons": [
+    "serial-freshness-v1-not-proven"
+  ]
+}

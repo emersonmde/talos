@@ -3061,6 +3061,18 @@ The post-review correction chain is:
     Command0 write-delivery success, source-response retention,
     generated-root command-input success, storage, networking, SSH,
     Phase 11/12 expansion, and phase transition remain rejected.
+168. Pi 5 command0 selected-kernel paired sentinel proof: accepted in
+    'phase10-pi5-command0-selected-kernel-paired-sentinel-pi5-proof-20260617'
+    with classification 'selected-kernel-paired-sentinel-pi5-proof-accepted'.
+    The serialized no-command-write Pi 5 proof retained selected post-publish
+    identity, stable same-power-cycle TFTP byte agreement, final pre-restore
+    selected identity, and restore proof for both the 208984-byte generated-root
+    command-input candidate and the distinct 47832-byte paired control. The
+    selected follow-up is
+    'phase10-pi5-command0-selected-kernel-recovery-closeout-20260617'.
+    Command0 write-delivery success, source-response retention,
+    generated-root command-input success, storage, networking, SSH,
+    Phase 11/12 expansion, and phase transition remain rejected.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -7814,6 +7826,15 @@ Selected first slice:
   baseline-served selected-kernel evidence, single-run-only evidence,
   command-write-present evidence, and the retained selected-kernel stability
   regression on the same-power-cycle TFTP byte invariant. Command0 write
+  delivery, source-response retention, and generated-root command-input
+  success remain unaccepted.
+- 'phase10-pi5-command0-selected-kernel-paired-sentinel-pi5-proof-20260617'
+  accepts the paired sentinel Pi 5 proof with classification
+  selected-kernel-paired-sentinel-pi5-proof-accepted. The accepted
+  no-command-write candidate/control pair retained selected post-publish
+  identity, matching same-power-cycle TFTP served bytes, final selected
+  identity, distinct selected trees, and restore to the baseline tree. The
+  selected follow-up is the selected-kernel recovery closeout; command0 write
   delivery, source-response retention, and generated-root command-input
   success remain unaccepted.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone

@@ -1,0 +1,275 @@
+{
+  "task_id": "phase10-pi5-command0-selected-kernel-paired-sentinel-pi5-proof-20260617",
+  "status": "accepted",
+  "classification": "selected-kernel-paired-sentinel-pi5-proof-accepted",
+  "discriminator_result": {
+    "task_id": "phase10-pi5-command0-selected-kernel-paired-sentinel-core-20260617",
+    "checker": "rpi5-selected-kernel-paired-sentinel-discriminator-v1",
+    "accepted": true,
+    "classification": "selected-kernel-paired-sentinel-discriminator-accepted",
+    "selected_discriminator": "selected-kernel-paired-sentinel-publication-boundary-v1",
+    "first_failing_invariant": null,
+    "contract": {
+      "candidate": {
+        "kind": "candidate",
+        "label": "candidate-selected-kernel-paired-sentinel-20260617T193449Z",
+        "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+        "expected_fetch": "da591740/kernel_2712.img",
+        "expected_kernel_2712_size": 208984,
+        "no_command_write": true,
+        "post_publish_identity": {
+          "selected_tree": true,
+          "effective_kernel": true,
+          "expected_fetch_present": true,
+          "expected_fetch_bytes_match": true
+        },
+        "tftp": {
+          "cursor_start": 4596944,
+          "cursor_end": 4598384,
+          "stable": true,
+          "expected_fetch_count": 2,
+          "expected_fetch_byte_match_count": 2,
+          "expected_fetch_bytes_seen": [
+            208984,
+            208984
+          ]
+        },
+        "final_pre_restore_identity": {
+          "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+          "selected_tree": true,
+          "effective_kernel": true,
+          "expected_fetch_present": true,
+          "expected_fetch_bytes_match": true
+        },
+        "restore": {
+          "ok": true,
+          "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+        }
+      },
+      "control": {
+        "kind": "control",
+        "label": "control-selected-kernel-paired-sentinel-20260617T193449Z",
+        "selected_tree_hash": "9e3442962d40beff3b31668065df4f5d8ac37ee770fa3c4bba725d049bc78db3",
+        "expected_fetch": "da591740/kernel_2712.img",
+        "expected_kernel_2712_size": 47832,
+        "no_command_write": true,
+        "post_publish_identity": {
+          "selected_tree": true,
+          "effective_kernel": true,
+          "expected_fetch_present": true,
+          "expected_fetch_bytes_match": true
+        },
+        "tftp": {
+          "cursor_start": 4598384,
+          "cursor_end": 4599735,
+          "stable": true,
+          "expected_fetch_count": 2,
+          "expected_fetch_byte_match_count": 2,
+          "expected_fetch_bytes_seen": [
+            47832,
+            47832
+          ]
+        },
+        "final_pre_restore_identity": {
+          "selected_tree_hash": "9e3442962d40beff3b31668065df4f5d8ac37ee770fa3c4bba725d049bc78db3",
+          "selected_tree": true,
+          "effective_kernel": true,
+          "expected_fetch_present": true,
+          "expected_fetch_bytes_match": true
+        },
+        "restore": {
+          "ok": true,
+          "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+        }
+      }
+    },
+    "selected_next_task": "phase10-pi5-command0-selected-kernel-paired-sentinel-pi5-proof-20260617",
+    "rejected_claims": [
+      "command0 write-delivery success",
+      "source-response retention",
+      "generated-root command-input success",
+      "storage",
+      "networking",
+      "SSH",
+      "Phase 11/12 expansion",
+      "phase transition"
+    ]
+  },
+  "run_ts": "20260617T193449Z",
+  "candidate": {
+    "kind": "candidate",
+    "label": "candidate-selected-kernel-paired-sentinel-20260617T193449Z",
+    "archive": "target/talos-rpi5-generated-root-command-input-proof-core-20260617.tar.gz",
+    "capture_exit": 0,
+    "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_kernel_2712_size": 208984,
+    "no_command_write": true,
+    "post_publish_identity": {
+      "selected_tree": true,
+      "effective_kernel": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes_match": true
+    },
+    "tftp": {
+      "cursor_start": 4596944,
+      "cursor_end": 4598384,
+      "stable": true,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        208984,
+        208984
+      ]
+    },
+    "final_pre_restore_identity": {
+      "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+      "selected_tree": true,
+      "effective_kernel": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes_match": true
+    },
+    "restore": {
+      "ok": true,
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "snapshot_name": "pre-selected-kernel-paired-sentinel-20260617T193449Z"
+    },
+    "serial_freshness": {
+      "contract_version": "cursor-nonce-post-power-freshness-v1",
+      "marker_nonce": null,
+      "nonce_token": null,
+      "marker_occurrences_after_saved_cursor": 0,
+      "nonce_occurrences_after_saved_cursor": 0,
+      "post_power_capture_bound": true,
+      "cursor_nonce_fresh": false,
+      "serial_freshness_ok": true
+    },
+    "identity_join_rejection_reasons": []
+  },
+  "control": {
+    "kind": "control",
+    "label": "control-selected-kernel-paired-sentinel-20260617T193449Z",
+    "archive": "tasks/evidence/2026-06-14-phase12-rp1-ethernet-capture-staging-minimal-sentinel-pi5-proof/control-archive.tar.gz",
+    "capture_exit": 0,
+    "selected_tree_hash": "9e3442962d40beff3b31668065df4f5d8ac37ee770fa3c4bba725d049bc78db3",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_kernel_2712_size": 47832,
+    "no_command_write": true,
+    "post_publish_identity": {
+      "selected_tree": true,
+      "effective_kernel": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes_match": true
+    },
+    "tftp": {
+      "cursor_start": 4598384,
+      "cursor_end": 4599735,
+      "stable": true,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        47832,
+        47832
+      ]
+    },
+    "final_pre_restore_identity": {
+      "selected_tree_hash": "9e3442962d40beff3b31668065df4f5d8ac37ee770fa3c4bba725d049bc78db3",
+      "selected_tree": true,
+      "effective_kernel": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes_match": true
+    },
+    "restore": {
+      "ok": true,
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "snapshot_name": "pre-selected-kernel-paired-sentinel-20260617T193449Z"
+    },
+    "serial_freshness": {
+      "contract_version": "cursor-nonce-post-power-freshness-v1",
+      "marker_nonce": null,
+      "nonce_token": null,
+      "marker_occurrences_after_saved_cursor": 42,
+      "nonce_occurrences_after_saved_cursor": 0,
+      "post_power_capture_bound": true,
+      "cursor_nonce_fresh": false,
+      "serial_freshness_ok": true
+    },
+    "identity_join_rejection_reasons": []
+  },
+  "candidate_rerun": {
+    "kind": "candidate",
+    "label": "candidate-rerun-selected-kernel-paired-sentinel-20260617T193449Z",
+    "archive": "target/talos-rpi5-generated-root-command-input-proof-core-20260617.tar.gz",
+    "capture_exit": 0,
+    "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_kernel_2712_size": 208984,
+    "no_command_write": true,
+    "post_publish_identity": {
+      "selected_tree": true,
+      "effective_kernel": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes_match": true
+    },
+    "tftp": {
+      "cursor_start": 4599735,
+      "cursor_end": 4601175,
+      "stable": true,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        208984,
+        208984
+      ]
+    },
+    "final_pre_restore_identity": {
+      "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+      "selected_tree": true,
+      "effective_kernel": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes_match": true
+    },
+    "restore": {
+      "ok": true,
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "snapshot_name": "pre-selected-kernel-paired-sentinel-20260617T193449Z"
+    },
+    "serial_freshness": {
+      "contract_version": "cursor-nonce-post-power-freshness-v1",
+      "marker_nonce": null,
+      "nonce_token": null,
+      "marker_occurrences_after_saved_cursor": 0,
+      "nonce_occurrences_after_saved_cursor": 0,
+      "post_power_capture_bound": true,
+      "cursor_nonce_fresh": false,
+      "serial_freshness_ok": false
+    },
+    "identity_join_rejection_reasons": [
+      "serial-freshness-v1-not-proven"
+    ]
+  },
+  "decisive": true,
+  "selected_kernel_tftp_stability_accepted": true,
+  "first_failing_invariant": null,
+  "final_lab_before_release": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "kernel_2712_bytes": 104136
+  },
+  "hardware_lock": {
+    "acquired": true,
+    "released_after_restore": true,
+    "restored": true
+  },
+  "selected_next_task": "phase10-pi5-command0-selected-kernel-recovery-closeout-20260617",
+  "rejected_claims": [
+    "command0 write-delivery success",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}
