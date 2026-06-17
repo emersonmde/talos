@@ -1,0 +1,9 @@
+{
+  "task_id": "phase10-pi5-serial-command0-post-write-observe-pi5-proof-20260617",
+  "classification": "command0-post-write-observe-inconclusive-serial-cursor-saturated",
+  "accepted": false,
+  "first_failing_invariant": "fresh command0 readiness/prompt cursor was not retained by cursor-bound observe; serial log cursor was saturated at 4194304",
+  "selected_run": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-pi5-proof/candidate-command0-post-write-observe-20260617T150944Z",
+  "selected_next_task": "phase10-pi5-serial-command0-post-write-observe-closeout-20260617",
+  "run_classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-pi5-proof/candidate-command0-post-write-observe-20260617T150944Z/classification.json"
+}

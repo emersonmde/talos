@@ -1,0 +1,62 @@
+{
+  "task_id": "phase10-pi5-serial-command0-post-write-observe-pi5-proof-20260617",
+  "run_label": "candidate-command0-post-write-observe-20260617T150944Z",
+  "evidence_dir": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-pi5-proof/candidate-command0-post-write-observe-20260617T150944Z",
+  "classification": "command0-post-write-observe-inconclusive-serial-cursor-saturated",
+  "accepted": false,
+  "first_failing_invariant": "fresh command0 readiness/prompt cursor was not retained by cursor-bound observe; serial log cursor was saturated at 4194304",
+  "evidence": {
+    "readiness_hit": false,
+    "readiness_bytes": 0,
+    "pre_write_cursor": 4194304,
+    "pre_write_bytes": 0,
+    "serial_write_ok": true,
+    "serial_write_bytes": 9,
+    "post_write_observe_cursor_start": 4194304,
+    "post_write_observe_cursor_end": 4194304,
+    "post_write_observe_bytes": 0,
+    "post_write_contains_rootinfo": false,
+    "post_write_contains_line_command0": false,
+    "post_write_contains_dispatch0": false,
+    "post_write_contains_responses1": false,
+    "post_write_contains_ready1": false,
+    "selected_kernel_tftp_precondition": {
+      "stable": true,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        208984,
+        208984
+      ],
+      "final_selected_tree_still_staged": true,
+      "final_effective_kernel": "kernel_2712.img",
+      "restore_ok": true,
+      "final_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212"
+    },
+    "review_exit": 1,
+    "post_run_peek_after_restore": {
+      "file": "serial/post-run-peek-after-restore.json",
+      "contains_command3_rootinfo": true,
+      "note": "Non-gating post-run peek showed the rootinfo write was eventually processed as stale later command=3 after command=1/2 timeouts; this does not satisfy command0 write-delivery acceptance."
+    }
+  },
+  "rejected_claims": [
+    "command0 source-response retention success unless selected separately after write delivery",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ],
+  "selected_next_task": "phase10-pi5-serial-command0-post-write-observe-closeout-20260617",
+  "triage": {
+    "candidate_identity": "pass: /boot/files after archive publish exposed selected tree 06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212 and da591740/kernel_2712.img at 208984 bytes",
+    "fresh_serial_cursor": "inconclusive: /serial/observe from saturated cursor 4194304 returned zero bytes through the readiness loop and post-write window",
+    "tftp_delta": "pass: stable same-cursor TFTP delta retained two selected da591740/kernel_2712.img serves at 208984 bytes",
+    "final_identity": "pass: final pre-restore /boot/files still exposed selected tree and selected kernel bytes",
+    "restore": "pass: restored to baseline tree a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "known_good_control": "not run in this task; no code change followed this inconclusive observe run",
+    "candidate_rerun": "not run in this task; supervisor/closeout must decide whether to plan a different freshness discriminator instead of a same-shaped saturated-cursor retry"
+  }
+}

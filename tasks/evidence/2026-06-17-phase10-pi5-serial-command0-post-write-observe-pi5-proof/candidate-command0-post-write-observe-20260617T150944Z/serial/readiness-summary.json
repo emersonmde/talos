@@ -1,0 +1,10 @@
+{
+  "hit": false,
+  "attempts": 41,
+  "file": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-pi5-proof/candidate-command0-post-write-observe-20260617T150944Z/serial/readiness-1.json",
+  "bytes": 0,
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "retained_text": "",
+  "fresh_after_prompt": true
+}

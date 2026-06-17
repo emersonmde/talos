@@ -2834,6 +2834,39 @@ The post-review correction chain is:
     Command0 write-delivery success, command0 source-response retention
     success, generated-root command-input success, storage, networking, SSH,
     Phase 11/12 expansion, and phase transition remain rejected.
+155. Pi 5 serial command 0 post-write observe helper core: accepted in
+    'phase10-pi5-serial-command0-post-write-observe-helper-core-20260617'
+    with classification 'command0-post-write-observe-helper-core-local-static'.
+    The proof helper now records command0-post-write-observe-guard-v1:
+    readiness must retain same-boot firmware-initramfs valid-artifact ready
+    command=0 and a visible prompt, the pre-write boundary must be fresh, the
+    rootinfo write must be accepted as 9 bytes, and cursor-bound post-write
+    /serial/observe must retain ordered rootinfo or command0 line evidence,
+    dispatch command=0 status=handled, responses=1, and ready command=1.
+    Task-owned fixtures accept the positive ordered observe shape and reject
+    write-only, empty observe, stale pre-write, unordered, stale later-readiness,
+    and source-response-only evidence. The selected follow-up is
+    'phase10-pi5-serial-command0-post-write-observe-pi5-proof-20260617'.
+    Hardware success, command0 source-response retention success,
+    generated-root command-input success, storage, networking, SSH,
+    Phase 11/12 expansion, and phase transition remain rejected.
+156. Pi 5 serial command 0 post-write observe Pi 5 proof: accepted in
+    'phase10-pi5-serial-command0-post-write-observe-pi5-proof-20260617'
+    with classification
+    'command0-post-write-observe-inconclusive-serial-cursor-saturated'. The
+    selected candidate retained selected-tree/TFTP agreement for the 208984-byte
+    da591740/kernel_2712.img candidate, final pre-restore identity, and restore
+    proof. The cursor-bound observe transaction was non-evaluable: the serial
+    cursor was saturated at 4194304 before the run, repeated /serial/observe
+    calls from that cursor retained zero bytes during readiness, and the
+    post-write observe window also retained zero bytes after /serial/write
+    accepted 9 bytes for rootinfo. A non-gating post-run peek showed rootinfo
+    eventually processed as stale later command=3 after command=1/2 timeouts,
+    which does not satisfy command0 write delivery. The selected follow-up is
+    'phase10-pi5-serial-command0-post-write-observe-closeout-20260617'.
+    Command0 write-delivery success, command0 source-response retention success,
+    generated-root command-input success, storage, networking, SSH,
+    Phase 11/12 expansion, and phase transition remain rejected.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

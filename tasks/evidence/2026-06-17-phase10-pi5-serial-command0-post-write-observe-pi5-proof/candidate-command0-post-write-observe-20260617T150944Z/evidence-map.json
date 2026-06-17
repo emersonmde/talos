@@ -1,0 +1,10 @@
+{
+  "task_id": "phase10-pi5-serial-command0-post-write-observe-pi5-proof-20260617",
+  "selected_run": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-pi5-proof/candidate-command0-post-write-observe-20260617T150944Z",
+  "run_label": "candidate-command0-post-write-observe-20260617T150944Z",
+  "classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-pi5-proof/candidate-command0-post-write-observe-20260617T150944Z/classification.json",
+  "post_write_observe_evidence": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-pi5-proof/candidate-command0-post-write-observe-20260617T150944Z/post-write-observe-evidence.json",
+  "proof_review": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-pi5-proof/candidate-command0-post-write-observe-20260617T150944Z/post-write-observe-proof-review.json",
+  "stable_tftp_delta": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-pi5-proof/candidate-command0-post-write-observe-20260617T150944Z/tftp/tftp-delta-stable-pre-restore.json",
+  "restore": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-pi5-proof/candidate-command0-post-write-observe-20260617T150944Z/restore/post-restore-boot-files.json"
+}
