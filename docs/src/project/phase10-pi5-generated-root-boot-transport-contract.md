@@ -442,6 +442,19 @@ not retain the firmware-initramfs valid-artifact source response required by
 the accepted guard. Command 1 manifest proof remains out of scope until command
 0 satisfies the guard or a closeout changes the accepted evidence contract.
 
+phase10-pi5-serial-command0-prelude-closeout-20260617 accepts the static
+closeout for that source/core/proof chain with classification
+serial-command0-prelude-frontier-closed-source-response-retention-paused. The
+closeout keeps the stronger hardware result from the latest proof: rootinfo
+reached the command loop, dispatched as command=0 with status=handled
+responses=1, and advanced to ready command=1. It still pauses shell-visible
+generated-root command-input success because the command 0 direct-read window
+did not retain the firmware-initramfs valid-artifact source response required by
+the accepted guard. No post-command-input roadmap resumption, transition
+checkpoint promotion, retry, evidence-contract change, persistence,
+storage-driver work, networking, SSH, Phase 11/12 expansion, or phase transition
+is selected without supervisor planning.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11/12

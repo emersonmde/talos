@@ -2525,6 +2525,20 @@ The post-review correction chain is:
     SSH, Phase 11/12 expansion, and phase transition remain rejected. The
     selected follow-up is
     'phase10-pi5-serial-command0-prelude-closeout-20260617'.
+136. Pi 5 serial command 0 prelude closeout: accepted in
+    'phase10-pi5-serial-command0-prelude-closeout-20260617' with
+    classification
+    'serial-command0-prelude-frontier-closed-source-response-retention-paused'.
+    The closeout reconciles the accepted source contract, local/static guard,
+    and serialized Pi 5 proof. The selected hardware run proves command=0 line
+    evidence, dispatch command=0 status=handled responses=1, and ready command=1,
+    but generated-root command-input success remains unaccepted because the same
+    command 0 direct-read window did not retain the firmware-initramfs
+    valid-artifact source response required by the accepted guard. Generated-root
+    transport and Pi 5 firmware-initramfs consumption remain accepted; command
+    input is paused. No transition checkpoint, command-input retry, persistence,
+    storage-driver work, networking, SSH, Phase 11/12 expansion, or phase
+    transition is selected without supervisor planning.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -7163,6 +7177,14 @@ Selected first slice:
   'phase10-pi5-serial-command0-prelude-guard-core-20260617'; hardware rerun,
   command-input acceptance, persistence, storage, networking, SSH, Phase 11/12
   expansion, and phase transition remain gated.
+- 'phase10-pi5-serial-command0-prelude-closeout-20260617' accepts the command 0
+  prelude frontier closeout with classification
+  serial-command0-prelude-frontier-closed-source-response-retention-paused. The
+  latest Pi 5 proof retained command=0 line evidence, handled dispatch, and
+  ready command=1, but missed the guard-required firmware-initramfs valid-artifact
+  source response in the command 0 direct-read window. Command input remains
+  paused; no post-command-input roadmap resumption is selected without supervisor
+  planning.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The

@@ -1,0 +1,105 @@
+{
+  "task_id": "phase10-pi5-serial-command0-prelude-closeout-20260617",
+  "task_status": "accepted",
+  "classification": "serial-command0-prelude-frontier-closed-source-response-retention-paused",
+  "evidence_level": [
+    "static/task evidence inspection",
+    "accepted source/core/proof classification evidence",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "source_contract": {
+    "task_id": "phase10-pi5-serial-command0-prelude-source-contract-20260617",
+    "classification": "serial-command0-prelude-capture-boundary-guard-core-selected",
+    "selected_invariant": "command0-write-to-next-ready-guard-v1"
+  },
+  "guard_core": {
+    "task_id": "phase10-pi5-serial-command0-prelude-guard-core-20260617",
+    "classification": "serial-command0-prelude-guard-core-accepted-hardware-proof-selected",
+    "mechanically_checked": [
+      "same-boot source=firmware-initramfs reason=valid-artifact",
+      "ready command=0 and prompt",
+      "fresh command 0 pre-write read",
+      "/serial/write rootinfo with newline",
+      "rootinfo command text or line command=0 hex=726f6f74696e666f",
+      "talos: generated-root source=firmware-initramfs reason=valid-artifact response",
+      "dispatch command=0 status=handled responses=1",
+      "ready command=1"
+    ]
+  },
+  "pi5_proof": {
+    "task_id": "phase10-pi5-serial-command0-prelude-pi5-proof-20260617",
+    "classification": "serial-command0-prelude-source-response-retention-blocked",
+    "retained": [
+      "same-boot source=firmware-initramfs reason=valid-artifact readiness",
+      "selected-tree identity",
+      "stable same-power-cycle TFTP delta",
+      "final pre-restore identity",
+      "post-run baseline restore",
+      "line command=0 hex=72 6f 6f 74 69 6e 66 6f",
+      "dispatch command=0 status=handled responses=1",
+      "ready command=1"
+    ],
+    "missing": [
+      "command 0 direct-read retained talos: generated-root source=firmware-initramfs reason=valid-artifact response"
+    ],
+    "first_failing_invariant": "command0 direct-read retained command=0 line, dispatch handled, and ready command=1, but did not retain the firmware-initramfs valid-artifact source response required by the guard"
+  },
+  "accepted_boundary": [
+    "Pi 5 generated-root transport remains accepted at the Milestone 10.3 local/QEMU no-rebuild boundary",
+    "Pi 5 firmware-initramfs generated-root consumption remains accepted",
+    "Pi 5 serial command 0 dispatch to the command loop is proven for the selected proof run"
+  ],
+  "paused_boundary": [
+    "Pi 5 shell-visible generated-root command-input success remains paused on command 0 source-response retention"
+  ],
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "Command 0 prelude closeout is terminal for the current bounded task, but no post-command-input roadmap resumption is selected. Supervisor must plan before promoting the queued transition checkpoint or any retry/evidence-contract change.",
+  "findings": [
+    {
+      "finding": "Source/core/proof evidence needed one terminal closeout",
+      "disposition": "fixed",
+      "evidence": "The closeout reconciles the accepted source contract, guard core, and Pi 5 proof classifications."
+    },
+    {
+      "finding": "Latest Pi 5 proof retained stronger command 0 evidence than the prior direct-read blocker",
+      "disposition": "fixed",
+      "evidence": "The selected hardware run retained command=0 line evidence, dispatch command=0 status=handled responses=1, and ready command=1."
+    },
+    {
+      "finding": "Command 0 generated-root source response was not retained",
+      "disposition": "deferred",
+      "evidence": "The accepted guard still rejects the proof because the command 0 direct-read window missed the firmware-initramfs valid-artifact source response."
+    },
+    {
+      "finding": "Rootinfo dispatch plus ready command=1 as generated-root command-input success",
+      "disposition": "rejected",
+      "evidence": "The accepted guard requires the source response before accepting command 0 success."
+    },
+    {
+      "finding": "Post-generated-root transition checkpoint promotion",
+      "disposition": "rejected",
+      "evidence": "selected_next_task is null; supervisor planning is required before transition/resumption."
+    },
+    {
+      "finding": "No hardware run was required for closeout",
+      "disposition": "not-an-issue",
+      "evidence": "This task is static reconciliation over committed source/core/proof evidence."
+    }
+  ],
+  "rejected_claims": [
+    "generated-root command-input acceptance",
+    "prompt visibility proves command input",
+    "/serial/write byte acceptance proves command input",
+    "command loop dispatch plus ready command=1 proves generated-root command input without the source response",
+    "persistence",
+    "writable filesystem",
+    "SD/USB/block storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}
