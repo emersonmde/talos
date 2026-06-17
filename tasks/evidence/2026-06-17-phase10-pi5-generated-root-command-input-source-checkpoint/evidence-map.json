@@ -1,0 +1,48 @@
+{
+  "task_id": "phase10-pi5-generated-root-command-input-source-checkpoint-20260617",
+  "classification": "pi5-generated-root-command-input-source-checkpoint-selected",
+  "selected_next_task": "phase10-pi5-generated-root-command-input-proof-core-20260617",
+  "evidence": {
+    "accepted_generated_root_closeout": {
+      "path": "tasks/2026-06-16-phase10-pi5-generated-root-firmware-initramfs-reservation-closeout.md",
+      "role": "accepted Pi 5 firmware-initramfs generated-root consumption boundary"
+    },
+    "accepted_generated_root_pi5_proof": {
+      "path": "tasks/2026-06-16-phase10-pi5-generated-root-firmware-initramfs-reservation-pi5-proof.md",
+      "role": "source=firmware-initramfs reason=valid-artifact evidence and command-input deferred note"
+    },
+    "accepted_command_loop_control": {
+      "path": "tasks/2026-05-31-phase10-pi5-local-serial-command-loop-proof.md",
+      "role": "Pi 5 kernel-backed command loop control surface only"
+    },
+    "accepted_serial_write_ingress_control": {
+      "path": "tasks/2026-06-01-phase10-pi5-serial-write-ingress-control-proof.md",
+      "role": "Pi 5 post-prompt serial write/observe method control"
+    },
+    "prompt_only_blocker": {
+      "path": "tasks/2026-06-01-phase10-pi5-serial-command-response-control-discriminator.md",
+      "role": "rejection of prompt-only evidence when post-prompt writes retain no response"
+    },
+    "generated_root_project_contract": {
+      "path": "docs/src/project/phase10-pi5-generated-root-boot-transport-contract.md",
+      "role": "current generated-root transport and deferred command-input design note"
+    }
+  },
+  "selected_contract": {
+    "scenario": "pi5-generated-root-manifest-command-input-v1",
+    "required_command": "cat /generated/manifest.txt",
+    "expected_output": "Talos generated-root external artifact A",
+    "prompt_condition": "source=firmware-initramfs reason=valid-artifact plus rpi5-generated-root-boot-transport-proof ready command=N and visible talos> prompt before saving the write cursor",
+    "serial_method": "POST /serial/write then POST /serial/observe from saved post-prompt cursor",
+    "minimum_acceptance": "command text, external artifact output, dispatch status=handled responses=1, and ready-for-next or PASS retained in the same boot"
+  },
+  "validation": {
+    "static_source_task_inspection": "pass",
+    "sh_n_touched_scripts": "not-applicable",
+    "focused_local_command_loop_test": "not-applicable",
+    "jq_empty": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  }
+}

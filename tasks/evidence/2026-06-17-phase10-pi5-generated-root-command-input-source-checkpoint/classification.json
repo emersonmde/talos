@@ -1,0 +1,90 @@
+{
+  "task_id": "phase10-pi5-generated-root-command-input-source-checkpoint-20260617",
+  "status": "accepted",
+  "classification": "pi5-generated-root-command-input-source-checkpoint-selected",
+  "evidence_level": [
+    "static/source/task evidence inspection",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "selected_proof_scenario": "pi5-generated-root-manifest-command-input-v1",
+  "selected_next_task": "phase10-pi5-generated-root-command-input-proof-core-20260617",
+  "accepted_input_frontier": {
+    "generated_root_consumption": "source=firmware-initramfs reason=valid-artifact accepted by phase10-pi5-generated-root-firmware-initramfs-reservation-closeout-20260616",
+    "command_input_status": "deferred until generated-root manifest command proof",
+    "control_surface_only": [
+      "phase10-pi5-local-serial-command-loop-proof-20260531",
+      "phase10-pi5-serial-write-ingress-control-proof-20260601"
+    ]
+  },
+  "selected_command_contract": {
+    "required_command": "cat /generated/manifest.txt",
+    "expected_output": "Talos generated-root external artifact A",
+    "prompt_readiness": [
+      "same boot retains source=firmware-initramfs reason=valid-artifact",
+      "serial retains rpi5-generated-root-boot-transport-proof: ready command=N",
+      "serial retains visible talos> prompt before the write cursor is saved"
+    ],
+    "serial_method": {
+      "write_endpoint": "POST /serial/write",
+      "write_text": "cat /generated/manifest.txt",
+      "append_newline": true,
+      "observe_endpoint": "POST /serial/observe from saved post-prompt cursor",
+      "transact_allowed_as_acceptance_evidence": false
+    },
+    "minimum_response_evidence": [
+      "retained command text cat /generated/manifest.txt",
+      "retained output Talos generated-root external artifact A",
+      "dispatch status=handled responses=1 for the manifest command",
+      "ready-for-next prompt=true or final PASS marker after the command response"
+    ],
+    "multi_command_harness_note": "The proof-core task may inject prerequisite commands if the retained harness requires them, but only the manifest command/output satisfies generated-root command-input acceptance."
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Selected cat /generated/manifest.txt as the feature-led generated-root command-input proof hinge."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Required same-boot firmware-initramfs generated-root source classification before command-input evidence can count."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Selected cursor-based serial write/observe evidence and rejected serial transact as acceptance evidence."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Proof helper/source changes and local/static validation belong to the proof-core task."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Serialized Pi 5 hardware proof belongs to the dependency-gated Pi 5 proof task."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "Existing firmware-initramfs consumption and local command-loop controls are not generated-root command-input proof."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "Persistence, writable filesystems, SD/USB/block storage, networking, SSH, Phase 11/12 expansion, and phase transition remain outside scope."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No hardware lock or inconclusive-run triage was needed for this static checkpoint."
+    }
+  ],
+  "rejected_claims": [
+    "generated-root command input accepted before manifest command proof",
+    "prompt visibility alone proves input responsiveness",
+    "kernel-backed command-loop controls prove generated-root command input",
+    "persistence",
+    "writable filesystem",
+    "SD/USB/block storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

@@ -204,6 +204,27 @@ the accepted run captured empty command input. Writable persistence,
 SD/USB/block drivers, broader filesystem mutation, networking, SSH, Phase
 11/12 expansion, and phase transition remain outside this contract.
 
+## Command-Input Source Checkpoint
+
+phase10-pi5-generated-root-command-input-source-checkpoint-20260617 selects
+the next generated-root command-input proof contract without changing runtime
+code or touching hardware. The selected scenario is
+pi5-generated-root-manifest-command-input-v1: after the same Pi 5 boot retains
+'source=firmware-initramfs reason=valid-artifact', the proof must wait for a
+generated-root proof 'ready command=N' marker plus a visible 'talos> ' prompt,
+save the post-prompt serial cursor, write exactly
+'cat /generated/manifest.txt' through '/serial/write', and observe from the
+saved cursor through '/serial/observe'.
+
+The expected shell-visible output is
+'Talos generated-root external artifact A'. Acceptance also requires retained
+command text, generated-root proof dispatch with 'status=handled' and
+'responses=1', and either 'ready-for-next prompt=true' or a final PASS marker
+after the response. Existing Pi 5 serial-write and command-loop proofs remain
+control-surface evidence only; they do not prove generated-root command input.
+The selected dependency-gated follow-up is
+phase10-pi5-generated-root-command-input-proof-core-20260617.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11/12
