@@ -1,0 +1,61 @@
+{
+  "task_id": "phase10-pi5-serial-command0-post-write-observe-helper-core-20260617",
+  "classification": "command0-post-write-observe-helper-core-local-static",
+  "accepted": true,
+  "guard": "command0-post-write-observe-guard-v1",
+  "selected_next_task": "phase10-pi5-serial-command0-post-write-observe-pi5-proof-20260617",
+  "changed_helper_files": [
+    "scripts/rpi5-command0-post-write-observe-proof-review.sh"
+  ],
+  "pi5_proof_requirements": {
+    "candidate_identity": {
+      "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+      "expected_fetch": "da591740/kernel_2712.img",
+      "expected_kernel_2712_size": 208984
+    },
+    "pre_write_cursor_and_observe": "save the fresh command0 prompt/pre-write cursor, write rootinfo append_newline=true, then use POST /serial/observe from that cursor",
+    "selected_kernel_tftp": "same-power-cycle TFTP delta must retain selected da591740/kernel_2712.img fetches with 208984 bytes and stable same-cursor re-query before restore",
+    "final_identity_and_restore": "final pre-restore identity must still expose kernel_2712.img at 208984 bytes and restore proof must be ok before hardwareTestLock release"
+  },
+  "fixture_summary": {
+    "positive_fixture": "pass",
+    "negative_write_only": "fail",
+    "negative_empty_observe": "fail",
+    "negative_stale_pre_write": "fail",
+    "negative_unordered_observe": "fail",
+    "negative_stale_later_readiness": "fail",
+    "negative_source_response_only": "fail"
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Added a cursor-bound post-write observe validator for command0 write-delivery evidence."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The helper requires ordered rootinfo or command0 line evidence, dispatch command=0 status=handled, responses=1, and ready command=1 after the saved cursor."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Local fixtures reject write-only, empty observe, stale pre-write, unordered, stale later-readiness, and source-response-only evidence shapes."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Pi 5 hardware proof remains dependency-gated on the selected follow-up task."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No Rust source, docs/src files, lab state, boot archive, or hardware state needed to change for this helper/core task."
+    }
+  ],
+  "rejected_claims": [
+    "command0 write-delivery success",
+    "command0 source-response retention success",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

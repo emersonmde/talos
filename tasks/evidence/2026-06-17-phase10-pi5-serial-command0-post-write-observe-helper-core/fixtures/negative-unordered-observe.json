@@ -1,0 +1,30 @@
+{
+  "label": "command0-post-write-observe",
+  "guard": "command0-post-write-observe-guard-v1",
+  "readiness": {
+    "fresh_after_prompt": true,
+    "text": "talos: generated-root source=firmware-initramfs reason=valid-artifact\nrpi5-generated-root-boot-transport-proof: ready command=0\ntalos> "
+  },
+  "pre_write_boundary": {
+    "cursor": 1000,
+    "fresh_after_prompt": true,
+    "text": "\n"
+  },
+  "serial_write": {
+    "ok": true,
+    "text": "rootinfo",
+    "append_newline": true,
+    "bytes": 9
+  },
+  "serial_observe": {
+    "cursor": 1000,
+    "text": "rpi5-generated-root-boot-transport-proof: dispatch command=0 status=handled responses=1\ntalos> rootinfo\nrpi5-generated-root-boot-transport-proof: ready command=1",
+    "responses": [
+      {
+        "ok": true,
+        "encoding": "utf-8",
+        "truncated": false
+      }
+    ]
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "validation": "command0-post-write-observe-helper-core-local-fixtures",
+  "positive": {
+    "fixture": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/fixtures/positive-command0-post-write-observe.json",
+    "expected": "pass",
+    "observed": "pass",
+    "output": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/positive-output.json"
+  },
+  "negatives": [
+    {
+      "fixture": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/fixtures/negative-write-only.json",
+      "expected": "fail",
+      "observed": "fail",
+      "stdout": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/negative-write-only-output.json",
+      "stderr": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/negative-write-only-stderr.txt"
+    },
+    {
+      "fixture": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/fixtures/negative-empty-observe.json",
+      "expected": "fail",
+      "observed": "fail",
+      "stdout": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/negative-empty-observe-output.json",
+      "stderr": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/negative-empty-observe-stderr.txt"
+    },
+    {
+      "fixture": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/fixtures/negative-stale-pre-write.json",
+      "expected": "fail",
+      "observed": "fail",
+      "stdout": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/negative-stale-pre-write-output.json",
+      "stderr": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/negative-stale-pre-write-stderr.txt"
+    },
+    {
+      "fixture": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/fixtures/negative-unordered-observe.json",
+      "expected": "fail",
+      "observed": "fail",
+      "stdout": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/negative-unordered-observe-output.json",
+      "stderr": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/negative-unordered-observe-stderr.txt"
+    },
+    {
+      "fixture": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/fixtures/negative-stale-later-readiness.json",
+      "expected": "fail",
+      "observed": "fail",
+      "stdout": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/negative-stale-later-readiness-output.json",
+      "stderr": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/negative-stale-later-readiness-stderr.txt"
+    },
+    {
+      "fixture": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/fixtures/negative-source-response-only.json",
+      "expected": "fail",
+      "observed": "fail",
+      "stdout": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/negative-source-response-only-output.json",
+      "stderr": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/negative-source-response-only-stderr.txt"
+    }
+  ],
+  "gate_result": "pass"
+}

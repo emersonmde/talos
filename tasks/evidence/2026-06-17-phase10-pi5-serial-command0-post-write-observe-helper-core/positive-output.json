@@ -1,0 +1,102 @@
+{
+  "review": "rpi5-command0-post-write-observe-helper-core-v1",
+  "selected_command_contract": {
+    "guard": "command0-post-write-observe-guard-v1",
+    "scenario": "cursor-bound-post-write-observe-command0-v1",
+    "command_index": 0,
+    "readiness": {
+      "required_fragments": [
+        "source=firmware-initramfs",
+        "reason=valid-artifact",
+        "ready command=0",
+        "talos>"
+      ],
+      "rejected_fragments": [
+        "dispatch command=0",
+        "ready command=1"
+      ]
+    },
+    "pre_write_boundary": {
+      "required": true,
+      "cursor": "saved immediately after the visible command=0 prompt or immediately before the rootinfo write",
+      "must_not_contain": [
+        "rootinfo",
+        "line command=0",
+        "dispatch command=0",
+        "responses=1",
+        "ready command=1"
+      ]
+    },
+    "serial_write": {
+      "endpoint": "POST /serial/write",
+      "text": "rootinfo",
+      "append_newline": true,
+      "required_bytes": 9
+    },
+    "serial_observe": {
+      "endpoint": "POST /serial/observe",
+      "cursor": "saved pre-write cursor",
+      "required_ordered_fragments": [
+        "rootinfo or line command=0 hex=726f6f74696e666f or line command=0 hex=72 6f 6f 74 69 6e 66 6f",
+        "dispatch command=0 status=handled",
+        "responses=1",
+        "ready command=1"
+      ]
+    },
+    "pi5_proof_requirements": {
+      "candidate_identity": {
+        "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+        "expected_fetch": "da591740/kernel_2712.img",
+        "expected_kernel_2712_size": 208984
+      },
+      "pre_write_cursor_and_observe": [
+        "record the fresh readiness cursor before the rootinfo write",
+        "write rootinfo with append_newline=true",
+        "capture post-write serial with POST /serial/observe from the saved cursor"
+      ],
+      "selected_kernel_tftp": [
+        "GET /tftp/logs delta must include selected da591740/kernel_2712.img fetches",
+        "all selected-kernel TFTP fetch byte counts must equal 208984",
+        "same-cursor re-query must keep the selected-kernel delta stable before restore"
+      ],
+      "final_identity_and_restore": [
+        "final pre-restore lab API identity still reports effective_kernel=kernel_2712.img and selected tree staged",
+        "final pre-restore selected fetch bytes remain 208984",
+        "post-run restore proof is present and ok before hardwareTestLock release"
+      ]
+    },
+    "terminal_classifications": {
+      "accepted": "command0-post-write-observe-accepted",
+      "blocked": "command0-post-write-observe-blocked",
+      "inconclusive": "command0-post-write-observe-inconclusive-triage-required"
+    },
+    "evidence_validator": {
+      "optional_argument": "post-write-observe-evidence.json",
+      "status": "pass",
+      "accepts": [
+        "ordered command 0 rootinfo or line marker after saved cursor",
+        "dispatch command=0 status=handled after command text",
+        "responses=1 before ready command=1",
+        "utf-8 non-truncated observe responses when response metadata is present"
+      ],
+      "rejects": [
+        "/serial/write byte acceptance alone",
+        "empty post-write observe windows",
+        "stale pre-write output that already contains command0 output",
+        "unordered command0 line/dispatch/responses/ready output",
+        "stale later-command readiness such as ready command=2 before command0 completion",
+        "source-response-only evidence without command0 line/rootinfo and dispatch ordering"
+      ]
+    }
+  },
+  "rejected_claims": [
+    "command0 source-response retention success",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ],
+  "selected_next_task": "phase10-pi5-serial-command0-post-write-observe-pi5-proof-20260617"
+}

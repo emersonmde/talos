@@ -1,0 +1,20 @@
+{
+  "task_id": "phase10-pi5-serial-command0-post-write-observe-helper-core-20260617",
+  "accepted_contract": "tasks/2026-06-17-phase10-pi5-serial-command0-post-write-observe-contract.md",
+  "helper": "scripts/rpi5-command0-post-write-observe-proof-review.sh",
+  "helper_contract_output": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/helper-contract-output.json",
+  "positive_fixture": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/fixtures/positive-command0-post-write-observe.json",
+  "positive_output": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/positive-output.json",
+  "negative_fixtures": [
+    "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/fixtures/negative-write-only.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/fixtures/negative-empty-observe.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/fixtures/negative-stale-pre-write.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/fixtures/negative-unordered-observe.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/fixtures/negative-stale-later-readiness.json",
+    "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/fixtures/negative-source-response-only.json"
+  ],
+  "fixture_results": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/fixture-results.json",
+  "classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core/classification.json",
+  "task_record": "tasks/2026-06-17-phase10-pi5-serial-command0-post-write-observe-helper-core.md",
+  "selected_next_task": "phase10-pi5-serial-command0-post-write-observe-pi5-proof-20260617"
+}
