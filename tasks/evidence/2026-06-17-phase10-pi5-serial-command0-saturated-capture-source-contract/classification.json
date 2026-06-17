@@ -1,0 +1,90 @@
+{
+  "task_id": "phase10-pi5-serial-command0-saturated-capture-source-contract-20260617",
+  "status": "accepted",
+  "classification": "command0-saturated-capture-source-contract-guard-core-selected",
+  "selected_next_task": "phase10-pi5-serial-command0-saturated-capture-guard-core-20260617",
+  "planning_needed": false,
+  "command0_write_delivery_accepted": false,
+  "command0_source_response_retention_selected": false,
+  "generated_root_command_input_accepted": false,
+  "first_failing_invariant": "command0 write-delivery remains unaccepted because cursor-bound /serial/observe started from saturated cursor 4194304 and retained zero readiness/post-write bytes after /serial/write accepted 9 bytes for rootinfo",
+  "retained_accepted_precondition": "selected-kernel/TFTP agreement for 208984-byte da591740/kernel_2712.img plus final identity and restore proof remains accepted",
+  "approaches_compared": [
+    {
+      "name": "endpoint-capture-repair",
+      "disposition": "deferred",
+      "reason": "Clean long-term observability repair, but it requires lab-service/operator changes outside this Talos repo task before feature progress can continue."
+    },
+    {
+      "name": "command-indexed-saturated-direct-read-fallback",
+      "disposition": "selected",
+      "reason": "Existing lab-controller/repository contract supports deadline-loop-direct-read-after-saturated-cursor when the saved cursor is at the retention cap, provided command0 evidence is bounded by same-boot readiness, pre-write freshness, selected-kernel/TFTP agreement, final identity, and restore proof."
+    },
+    {
+      "name": "explicit-pause",
+      "disposition": "not-selected",
+      "reason": "A distinct local/static guard can be implemented without hardware or lab mutation; pause remains the fallback if the guard-core task cannot encode the accepted contract."
+    }
+  ],
+  "selected_contract": {
+    "name": "command0-saturated-capture-guard-v1",
+    "capture_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "saturation_cursor": 4194304,
+    "requirements": [
+      "selected-kernel/TFTP agreement for the same 208984-byte da591740/kernel_2712.img candidate",
+      "same-boot generated-root readiness with source=firmware-initramfs reason=valid-artifact ready command=0 and visible talos> prompt",
+      "immediate pre-write freshness read with no rootinfo, line command=0, dispatch command=0, responses=1, ready command=1, command=2, command=3, or generated-root source-response output",
+      "POST /serial/write accepts rootinfo with append_newline=true and 9 bytes",
+      "bounded post-write direct /serial/read deadline loop is labeled deadline-loop-direct-read-after-saturated-cursor",
+      "ordered post-write command0 evidence retains rootinfo or line command=0, dispatch command=0 status=handled, responses=1, and ready command=1",
+      "final pre-restore identity and post-run restore proof are present"
+    ],
+    "rejections": [
+      "empty saturated observe windows",
+      "/serial/write byte acceptance alone",
+      "stale pre-write output",
+      "stale later-command-only output",
+      "unordered command0 fragments",
+      "source-response-only evidence"
+    ]
+  },
+  "findings": [
+    {
+      "finding": "first failing invariant needed restatement without shrinking the command0 write-delivery feature boundary",
+      "disposition": "fixed",
+      "evidence": "The task record preserves command0 rootinfo write delivery as the feature boundary and keeps source-response retention dependency-gated."
+    },
+    {
+      "finding": "endpoint/capture repair versus local fallback needed comparison",
+      "disposition": "fixed",
+      "evidence": "The task record compares endpoint/capture repair, command-indexed saturated direct-read fallback, and explicit pause."
+    },
+    {
+      "finding": "local/static guard can encode a distinct saturated-cursor contract",
+      "disposition": "fixed",
+      "evidence": "The selected contract requires deadline-loop-direct-read-after-saturated-cursor and rejects empty observe, write-only, stale pre-write, stale later-command-only, unordered, and source-response-only evidence."
+    },
+    {
+      "finding": "helper implementation and hardware proof",
+      "disposition": "deferred",
+      "evidence": "The selected guard-core task owns helper implementation; the queued Pi 5 proof remains dependency-gated behind accepted core evidence."
+    },
+    {
+      "finding": "command0 write-delivery success and generated-root command-input success",
+      "disposition": "rejected",
+      "evidence": "This source/static task performs no hardware run and accepts no command behavior."
+    }
+  ],
+  "rejected_claims": [
+    "command0 write-delivery success",
+    "command0 source-response retention success",
+    "generated-root command-input success",
+    "hardware publication or power-cycle",
+    "lab mutation",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}
