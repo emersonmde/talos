@@ -1,0 +1,92 @@
+{
+  "task_id": "phase10-pi5-serial-capture-readiness-guard-core-20260617",
+  "task_status": "accepted",
+  "classification": "serial-capture-readiness-guard-core-local-static",
+  "evidence_level": [
+    "static/source inspection",
+    "shell syntax check",
+    "local/static proof-helper review",
+    "task-owned positive and negative fixtures",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "implemented_guard": {
+    "name": "serial-capture-readiness-guard-v1",
+    "helper": "scripts/rpi5-generated-root-command-input-direct-read-proof-review.sh",
+    "preserves": "command0-source-response-retention-guard-v2",
+    "scope": "local/static discriminator for command0 readiness/capture quality before any hardware retry"
+  },
+  "accepted_evidence": {
+    "positive_fixture": "tasks/evidence/2026-06-17-phase10-pi5-serial-capture-readiness-guard-core/serial-capture-readiness-positive.json",
+    "positive_review": "tasks/evidence/2026-06-17-phase10-pi5-serial-capture-readiness-guard-core/serial-capture-readiness-positive-review.json",
+    "negative_results": "tasks/evidence/2026-06-17-phase10-pi5-serial-capture-readiness-guard-core/serial-capture-readiness-negative-results.json"
+  },
+  "negative_controls": [
+    {
+      "name": "early-firmware-only",
+      "disposition": "fixed",
+      "result": "rejected"
+    },
+    {
+      "name": "stale-later-readiness",
+      "disposition": "fixed",
+      "result": "rejected"
+    },
+    {
+      "name": "dispatch-only",
+      "disposition": "fixed",
+      "result": "rejected"
+    },
+    {
+      "name": "tail-only-source-response",
+      "disposition": "fixed",
+      "result": "rejected"
+    }
+  ],
+  "findings": [
+    {
+      "finding": "serial readiness/capture was not separately guarded from command0 source-response retention",
+      "disposition": "fixed",
+      "evidence": "helper emits and enforces serial-capture-readiness-guard-v1 before the retained source-response guard"
+    },
+    {
+      "finding": "early firmware/RP1-only capture could be retained by the prior proof shape",
+      "disposition": "fixed",
+      "evidence": "early-firmware-only negative control is rejected"
+    },
+    {
+      "finding": "stale later-command readiness with input-error/ready command=3 could confuse the proof frontier",
+      "disposition": "fixed",
+      "evidence": "stale-later-readiness negative control is rejected"
+    },
+    {
+      "finding": "dispatch-only and tail-only command0 evidence remain insufficient",
+      "disposition": "fixed",
+      "evidence": "dispatch-only and tail-only-source-response negative controls are rejected"
+    },
+    {
+      "finding": "Pi 5 hardware proof",
+      "disposition": "deferred",
+      "evidence": "selected_next_task is phase10-pi5-serial-capture-readiness-pi5-proof-20260617"
+    },
+    {
+      "finding": "kernel command-loop or lab-service change",
+      "disposition": "not-an-issue",
+      "evidence": "local/static helper evidence was sufficient for the selected discriminator"
+    }
+  ],
+  "selected_next_task": "phase10-pi5-serial-capture-readiness-pi5-proof-20260617",
+  "accepted_capability": null,
+  "rejected_claims": [
+    "Pi 5 hardware success",
+    "generated-root command-input success",
+    "command0 source-response retention hardware success",
+    "persistence",
+    "writable storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

@@ -1,0 +1,174 @@
+{
+  "review": "rpi5-generated-root-command-input-direct-read-harness-core-v3",
+  "archive": {
+    "path": "target/talos-rpi5-generated-root-command-input-proof-core-20260617.tar.gz",
+    "sha256": "8f6a4d0d3436308a5f3b51e4f113b75d1acbf807a7b7af2d66453806c586cf0c",
+    "kernel_2712_sha256": "c37b34ebc955a7ce11cd0660bc18424ebcec4550de23ae1e6b0b9ad7c867e4bd",
+    "kernel_2712_size": 208984,
+    "generated_root_artifact_sha256": "0341f5393502f54489acb1951633bf2773fb846a82bde89b3e4a2e82000724c6",
+    "generated_root_artifact_size": 662,
+    "root_and_serial_prefixed_artifact_match": true
+  },
+  "selected_command_contract": {
+    "scenario": "direct-read-after-saturated-cursor-command-input-v1",
+    "proof_label": "rpi5-generated-root-boot-transport-proof",
+    "classification": "pi5-generated-root-boot-transport-complete",
+    "readiness": {
+      "endpoint": "POST /serial/read",
+      "required_fragments": [
+        "source=firmware-initramfs",
+        "reason=valid-artifact",
+        "rpi5-generated-root-boot-transport-proof: ready command=0",
+        "talos> "
+      ]
+    },
+    "command_sequence": [
+      {
+        "command_index": 0,
+        "purpose": "source-gate prelude required before the manifest command",
+        "pre_write_freshness_read": {
+          "endpoint": "POST /serial/read",
+          "required": true,
+          "must_not_contain": [
+            "rootinfo",
+            "dispatch command=0",
+            "Talos generated-root external artifact A"
+          ]
+        },
+        "serial_write": {
+          "endpoint": "POST /serial/write",
+          "text": "rootinfo",
+          "append_newline": true
+        },
+        "direct_read_window": {
+          "endpoint": "POST /serial/read",
+          "required_response_fragments": [
+            "rootinfo or line command=0 hex=726f6f74696e666f",
+            "source=firmware-initramfs",
+            "reason=valid-artifact",
+            "dispatch command=0 status=handled",
+            "responses=1",
+            "rpi5-generated-root-boot-transport-proof: ready command=1"
+          ]
+        }
+      },
+      {
+        "command_index": 1,
+        "purpose": "selected generated-root manifest command-input acceptance hinge",
+        "pre_write_freshness_read": {
+          "endpoint": "POST /serial/read",
+          "required": true,
+          "must_not_contain": [
+            "cat /generated/manifest.txt",
+            "line command=1 hex=636174202f67656e6572617465642f6d616e69666573742e747874",
+            "Talos generated-root external artifact A",
+            "dispatch command=1"
+          ]
+        },
+        "serial_write": {
+          "endpoint": "POST /serial/write",
+          "text": "cat /generated/manifest.txt",
+          "append_newline": true
+        },
+        "direct_read_window": {
+          "endpoint": "POST /serial/read",
+          "required_response_fragments": [
+            "cat /generated/manifest.txt or line command=1 hex=636174202f67656e6572617465642f6d616e69666573742e747874",
+            "Talos generated-root external artifact A",
+            "dispatch command=1 status=handled",
+            "responses=1",
+            "ready command=2 or ready-for-next prompt=true or final PASS"
+          ]
+        }
+      }
+    ],
+    "hardware_identity_requirements": [
+      "candidate archive hash and selected tree identity",
+      "stable same-power-cycle TFTP delta before restore",
+      "final pre-restore identity matching the selected tree",
+      "post-run restore proof"
+    ],
+    "evidence_validator": {
+      "guard": "serial-capture-readiness-guard-v1 + command0-source-response-retention-guard-v2",
+      "optional_argument": "direct-read-evidence.json",
+      "status": "pass",
+      "rejects": [
+        "prompt-only evidence without command text and response output",
+        "/serial/write-only evidence without a following direct-read window",
+        "stale pre-write direct-read windows that already contain the command response",
+        "missing dispatch status=handled responses=1 evidence",
+        "tail-only command 0 output that starts after the generated-root source response",
+        "dispatch-only command 0 metadata without retained generated-root source text",
+        "early-firmware-only serial capture before generated-root readiness",
+        "stale later-command readiness retained as command 0 readiness",
+        "missing firmware-initramfs valid-artifact source gate",
+        "missing TFTP/final-identity/restore proof fields"
+      ]
+    },
+    "serial_capture_readiness": {
+      "guard": "serial-capture-readiness-guard-v1",
+      "required_fragments": [
+        "talos: generated-root source=firmware-initramfs",
+        "reason=valid-artifact",
+        "rpi5-generated-root-boot-transport-proof: ready command=0",
+        "talos> "
+      ],
+      "required_boundaries": [
+        "readiness.fresh_after_prompt=true when recorded",
+        "command 0 pre-write read is fresh_after_prompt=true",
+        "command 0 pre-write read has not already retained command 0 line/source/dispatch/response or ready command=1"
+      ],
+      "rejected_evidence_shapes": [
+        "early firmware/RP1-only capture without generated-root readiness",
+        "stale later-command readiness such as ready command=3 or input-error timeout",
+        "dispatch-only command 0 metadata without retained generated-root source text",
+        "tail-only command 0 source response missing the source prefix or command 0 line",
+        "prompt-only or /serial/write-only command evidence"
+      ]
+    },
+    "command0_source_response_retention": {
+      "required_ordered_fragments": [
+        "rootinfo or line command=0 hex=726f6f74696e666f",
+        "talos: generated-root source=firmware-initramfs",
+        "reason=valid-artifact",
+        "dispatch command=0 status=handled",
+        "responses=1",
+        "rpi5-generated-root-boot-transport-proof: ready command=1"
+      ],
+      "accepted_evidence_shapes": [
+        "full direct_read_proof.commands[0].direct_read transaction",
+        "task-owned command0-direct-read summary with retained_text and utf-8 non-truncated responses"
+      ],
+      "rejected_evidence_shapes": [
+        "retained command 0 line plus dispatch/ready but missing generated-root source text",
+        "retained generated-root source tail without command 0 line and source prefix",
+        "ready command=1 without dispatch command=0 status=handled responses=1",
+        "dispatch command=0 status=handled responses=1 without retained source=firmware-initramfs reason=valid-artifact"
+      ]
+    },
+    "expected_output": "Talos generated-root external artifact A",
+    "expected_output_source_gate": "accepted only when same-boot direct-read output also proves source=firmware-initramfs reason=valid-artifact",
+    "kernel_contains_expected_output": false
+  },
+  "static_checks": {
+    "candidate_archive_review": "pass",
+    "initramfs_root_and_serial_prefixed_artifacts": "pass",
+    "artifact_contains_manifest_command_and_expected_output": "pass",
+    "kernel_contains_prompt_dispatch_ready_and_pass_markers": "pass",
+    "kernel_contains_firmware_initramfs_valid_artifact_markers": "pass"
+  },
+  "rejected_claims": [
+    "Pi 5 command-input success before serialized hardware proof",
+    "direct-read output without command-indexed pre-write freshness",
+    "/serial/write byte acceptance alone proves command input",
+    "prompt visibility alone proves generated-root command input",
+    "persistence",
+    "writable filesystem",
+    "SD/USB/block storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ],
+  "selected_next_task": "phase10-pi5-serial-capture-readiness-pi5-proof-20260617"
+}

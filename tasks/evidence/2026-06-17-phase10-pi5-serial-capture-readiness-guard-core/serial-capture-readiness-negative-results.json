@@ -1,0 +1,28 @@
+{
+  "negative_results": [
+    {
+      "name": "early-firmware-only",
+      "fixture": "tasks/evidence/2026-06-17-phase10-pi5-serial-capture-readiness-guard-core/early-firmware-only-negative.json",
+      "output": "tasks/evidence/2026-06-17-phase10-pi5-serial-capture-readiness-guard-core/early-firmware-only-negative-review.json",
+      "status": "rejected"
+    },
+    {
+      "name": "stale-later-readiness",
+      "fixture": "tasks/evidence/2026-06-17-phase10-pi5-serial-capture-readiness-guard-core/stale-later-readiness-negative.json",
+      "output": "tasks/evidence/2026-06-17-phase10-pi5-serial-capture-readiness-guard-core/stale-later-readiness-negative-review.json",
+      "status": "rejected"
+    },
+    {
+      "name": "dispatch-only",
+      "fixture": "tasks/evidence/2026-06-17-phase10-pi5-serial-capture-readiness-guard-core/dispatch-only-negative.json",
+      "output": "tasks/evidence/2026-06-17-phase10-pi5-serial-capture-readiness-guard-core/dispatch-only-negative-review.json",
+      "status": "rejected"
+    },
+    {
+      "name": "tail-only-source-response",
+      "fixture": "tasks/evidence/2026-06-17-phase10-pi5-serial-capture-readiness-guard-core/tail-only-source-response-negative.json",
+      "output": "tasks/evidence/2026-06-17-phase10-pi5-serial-capture-readiness-guard-core/tail-only-source-response-negative-review.json",
+      "status": "rejected"
+    }
+  ]
+}

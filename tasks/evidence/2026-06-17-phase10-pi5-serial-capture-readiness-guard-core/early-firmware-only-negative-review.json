@@ -1,0 +1,6 @@
+{
+  "status": "rejected",
+  "guard": "serial-capture-readiness-guard-v1 + command0-source-response-retention-guard-v2",
+  "fixture": "tasks/evidence/2026-06-17-phase10-pi5-serial-capture-readiness-guard-core/early-firmware-only-negative.json",
+  "reason": "helper exited non-zero for early-firmware-only negative control"
+}

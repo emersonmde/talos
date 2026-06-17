@@ -516,6 +516,20 @@ capture, stale later-command readiness, dispatch-only metadata,
 prompt/write-only evidence, and tail-only source response. A readiness/capture
 pass alone does not accept generated-root command-input success.
 
+phase10-pi5-serial-capture-readiness-guard-core-20260617 accepts
+serial-capture-readiness-guard-v1 with classification
+serial-capture-readiness-guard-core-local-static. The proof-review helper now
+checks same-boot firmware-initramfs valid-artifact ready command=0 evidence, a
+fresh command 0 pre-write boundary, and the retained
+command0-source-response-retention-guard-v2 transaction before a hardware retry
+can evaluate command 0 source-response retention. Task-owned fixtures prove the
+positive evaluable window and reject early-firmware-only capture, stale
+later-command readiness, dispatch-only command 0 metadata, and tail-only source
+response. The selected hardware follow-up is
+phase10-pi5-serial-capture-readiness-pi5-proof-20260617; no hardware success,
+generated-root command-input success, storage, networking, SSH, Phase 11/12
+expansion, or phase transition is accepted by this local/static guard.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11/12
