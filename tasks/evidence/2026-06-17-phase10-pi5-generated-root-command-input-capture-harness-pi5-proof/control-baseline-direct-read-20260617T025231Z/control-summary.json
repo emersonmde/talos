@@ -1,0 +1,12 @@
+{
+  "run": "control-baseline-direct-read",
+  "checks": {
+    "serial_bytes": 4687,
+    "firmware_network": true,
+    "talos_kernel_main": false,
+    "talos_prompt": false,
+    "tftp_events": 13,
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "classification": "baseline-direct-read-control-retained"
+}

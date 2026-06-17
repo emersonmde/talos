@@ -1,0 +1,25 @@
+{
+  "task_id": "phase10-pi5-generated-root-command-input-capture-harness-pi5-proof-20260617",
+  "classification": "command-input-observe-cursor-saturated",
+  "evidence_level": [
+    "lab-controller API",
+    "same-power-cycle TFTP",
+    "serial hardware boot/output",
+    "serial observe saturation check",
+    "direct-read diagnostic",
+    "known-good baseline direct-read control",
+    "restore proof",
+    "task-owned JSON evidence"
+  ],
+  "files": {
+    "selected_run": "candidate-observe-saturated-valid-tftp-20260617T025118Z/classification.json",
+    "selected_archive": "candidate-observe-saturated-valid-tftp-20260617T025118Z/archive.json",
+    "selected_post_publish_status": "candidate-observe-saturated-valid-tftp-20260617T025118Z/post-publish-status.json",
+    "selected_serial_observe": "candidate-observe-saturated-valid-tftp-20260617T025118Z/serial/serial-observe-from-saved-cursor.json",
+    "selected_serial_direct_read": "candidate-observe-saturated-valid-tftp-20260617T025118Z/serial/serial-read-diagnostic-summary.json",
+    "selected_tftp_delta": "candidate-observe-saturated-valid-tftp-20260617T025118Z/tftp/tftp-delta-stable-pre-restore.json",
+    "selected_final_pre_restore_status": "candidate-observe-saturated-valid-tftp-20260617T025118Z/final-pre-restore-status.json",
+    "selected_restore": "candidate-observe-saturated-valid-tftp-20260617T025118Z/restore/post-restore-status.json",
+    "baseline_control": "control-baseline-direct-read-20260617T025231Z/control-summary.json"
+  }
+}

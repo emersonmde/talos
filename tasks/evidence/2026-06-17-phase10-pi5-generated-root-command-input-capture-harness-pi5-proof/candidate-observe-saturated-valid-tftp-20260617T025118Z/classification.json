@@ -1,0 +1,44 @@
+{
+  "task_id": "phase10-pi5-generated-root-command-input-capture-harness-pi5-proof-20260617",
+  "run": "candidate-observe-saturated-valid-tftp-20260617T025118Z",
+  "status": "blocked",
+  "archive": {
+    "path": "target/talos-rpi5-generated-root-command-input-proof-core-20260617.tar.gz",
+    "sha256": "8f6a4d0d3436308a5f3b51e4f113b75d1acbf807a7b7af2d66453806c586cf0c",
+    "bytes": 411787
+  },
+  "snapshot": "pre-genroot-capture-valid-20260617T025119Z",
+  "observe_contract": {
+    "cursor_start": 4194304,
+    "cursor_end": 4194304,
+    "bytes": 0,
+    "text": "",
+    "saturated": true
+  },
+  "direct_read_diagnostic": {
+    "bytes": 12771,
+    "source_firmware_initramfs_valid_artifact": true,
+    "ready_command_0": true,
+    "visible_prompt": true,
+    "expected_output": false
+  },
+  "checks": {
+    "observe_cursor_saturated": true,
+    "observe_retained_text": false,
+    "tftp_expected_kernel_fetch": true,
+    "tftp_expected_initramfs_fetch": true,
+    "restore_ok": true
+  },
+  "terminal_classification": "command-input-observe-cursor-saturated",
+  "blocker": "The saved post-prompt/cursor-based serial contract cannot be evaluated because the retained serial cursor is at the 4194304-byte saturation boundary and /serial/observe from that cursor returned zero bytes. Direct /serial/read is retained only as diagnostic evidence and cannot replace command-indexed /serial/observe proof for command-input acceptance.",
+  "rejected_claims": [
+    "generated-root command-input acceptance",
+    "persistence",
+    "writable filesystem",
+    "SD/USB/block storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}
