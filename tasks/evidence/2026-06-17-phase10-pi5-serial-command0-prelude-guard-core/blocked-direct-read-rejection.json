@@ -1,0 +1,10 @@
+{
+  "review": "command0-write-to-next-ready-guard-v1-negative-control",
+  "source_evidence": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-pi5-proof/candidate-direct-read-20260617T043803Z/direct-read-evidence.json",
+  "archive": "target/talos-rpi5-generated-root-command-input-proof-core-20260617.tar.gz",
+  "command": "scripts/rpi5-generated-root-command-input-direct-read-proof-review.sh target/talos-rpi5-generated-root-command-input-proof-core-20260617.tar.gz tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-pi5-proof/candidate-direct-read-20260617T043803Z/direct-read-evidence.json",
+  "status": "fail",
+  "expected": "fail",
+  "first_failing_invariant": "selected direct-read evidence lacks command 0 rootinfo text or command=0 line record, talos: generated-root source=firmware-initramfs reason=valid-artifact response, and dispatch command=0 status=handled responses=1 before ready command=1",
+  "disposition": "fixed"
+}

@@ -13,7 +13,9 @@ SERIAL_PREFIX="da591740"
 PROOF_LABEL="rpi5-generated-root-boot-transport-proof"
 CLASSIFICATION="pi5-generated-root-boot-transport-complete"
 PRELUDE_COMMAND="rootinfo"
+PRELUDE_COMMAND_LINE_HEX="line command=0 hex=726f6f74696e666f"
 COMMAND="cat /generated/manifest.txt"
+COMMAND_LINE_HEX="line command=1 hex=636174202f67656e6572617465642f6d616e69666573742e747874"
 COMMAND_PATH="/generated/manifest.txt"
 EXPECTED_OUTPUT="Talos generated-root external artifact A"
 
@@ -80,12 +82,17 @@ evidence_validation_status="not-requested"
 if [ -n "$EVIDENCE_JSON" ]; then
     jq -e \
         --arg prelude_command "$PRELUDE_COMMAND" \
+        --arg prelude_command_line_hex "$PRELUDE_COMMAND_LINE_HEX" \
         --arg command "$COMMAND" \
+        --arg command_line_hex "$COMMAND_LINE_HEX" \
         --arg expected_output "$EXPECTED_OUTPUT" \
         '
         def text_of($x): ($x.text // $x.retained_text // "");
         def has($needle): contains($needle);
         def cmd($idx): .direct_read_proof.commands[] | select(.command_index == $idx);
+        def first_index($text; $needles):
+          reduce $needles[] as $needle
+            (null; if . == null then ($text | index($needle)) else . end);
         def boot_ok:
           .direct_read_proof.boot.source == "firmware-initramfs"
           and .direct_read_proof.boot.reason == "valid-artifact"
@@ -95,8 +102,8 @@ if [ -n "$EVIDENCE_JSON" ]; then
           and .direct_read_proof.boot.restore_ok == true;
         def readiness_ok:
           (text_of(.direct_read_proof.readiness) | has("source=firmware-initramfs") and has("reason=valid-artifact") and has("ready command=0") and has("talos>"));
-        def fresh_before($idx; $command_text):
-          (text_of((cmd($idx).pre_write_read // {})) | (has($command_text) or has("dispatch command=\($idx)") or has($expected_output)) | not)
+        def fresh_before($idx; $command_text; $line_text):
+          (text_of((cmd($idx).pre_write_read // {})) | (has($command_text) or has($line_text) or has("dispatch command=\($idx)") or has($expected_output)) | not)
           and ((cmd($idx).pre_write_read.fresh_after_prompt // false) == true);
         def write_ok($idx; $command_text):
           cmd($idx).serial_write.ok == true
@@ -104,22 +111,50 @@ if [ -n "$EVIDENCE_JSON" ]; then
           and cmd($idx).serial_write.append_newline == true;
         def direct_read_text($idx): text_of(cmd($idx).direct_read);
         def command0_ok:
-          fresh_before(0; $prelude_command)
+          fresh_before(0; $prelude_command; $prelude_command_line_hex)
           and write_ok(0; $prelude_command)
-          and (direct_read_text(0) | has($prelude_command)
-            and has("source=firmware-initramfs")
-            and has("reason=valid-artifact")
-            and has("dispatch command=0 status=handled")
-            and has("responses=1")
-            and has("ready command=1"));
+          and (
+            direct_read_text(0) as $text
+            | first_index($text; [$prelude_command, $prelude_command_line_hex]) as $line_pos
+            | ($text | index("talos: generated-root source=firmware-initramfs")) as $source_pos
+            | ($text | index("reason=valid-artifact")) as $reason_pos
+            | ($text | index("dispatch command=0 status=handled")) as $dispatch_pos
+            | ($text | index("responses=1")) as $responses_pos
+            | ($text | index("ready command=1")) as $ready_pos
+            | ($text | index("dispatch command=1 status=input-error")) as $next_timeout_pos
+            | $line_pos != null
+              and $source_pos != null
+              and $reason_pos != null
+              and $dispatch_pos != null
+              and $responses_pos != null
+              and $ready_pos != null
+              and $line_pos < $source_pos
+              and $source_pos <= $reason_pos
+              and $reason_pos < $dispatch_pos
+              and $dispatch_pos <= $responses_pos
+              and $responses_pos < $ready_pos
+              and ($next_timeout_pos == null or $ready_pos < $next_timeout_pos)
+          );
         def command1_ok:
-          fresh_before(1; $command)
+          fresh_before(1; $command; $command_line_hex)
           and write_ok(1; $command)
-          and (direct_read_text(1) | has($command)
-            and has($expected_output)
-            and has("dispatch command=1 status=handled")
-            and has("responses=1")
-            and (has("ready command=2") or has("ready-for-next prompt=true") or has("PASS")));
+          and (
+            direct_read_text(1) as $text
+            | first_index($text; [$command, $command_line_hex]) as $line_pos
+            | ($text | index($expected_output)) as $output_pos
+            | ($text | index("dispatch command=1 status=handled")) as $dispatch_pos
+            | ($text | index("responses=1")) as $responses_pos
+            | first_index($text; ["ready command=2", "ready-for-next prompt=true", "PASS"]) as $done_pos
+            | $line_pos != null
+              and $output_pos != null
+              and $dispatch_pos != null
+              and $responses_pos != null
+              and $done_pos != null
+              and $line_pos < $output_pos
+              and $output_pos < $dispatch_pos
+              and $dispatch_pos <= $responses_pos
+              and $responses_pos < $done_pos
+          );
         boot_ok and readiness_ok and command0_ok and command1_ok
         ' "$EVIDENCE_JSON" >/dev/null
     evidence_validation_status="pass"
@@ -135,7 +170,9 @@ jq -n \
     --arg proof_label "$PROOF_LABEL" \
     --arg classification "$CLASSIFICATION" \
     --arg prelude_command "$PRELUDE_COMMAND" \
+    --arg prelude_command_line_hex "$PRELUDE_COMMAND_LINE_HEX" \
     --arg command "$COMMAND" \
+    --arg command_line_hex "$COMMAND_LINE_HEX" \
     --arg expected_output "$EXPECTED_OUTPUT" \
     --arg evidence_validation_status "$evidence_validation_status" \
     --argjson kernel_contains_expected_output "$kernel_contains_expected_output" \
@@ -184,7 +221,7 @@ jq -n \
             direct_read_window: {
               endpoint: "POST /serial/read",
               required_response_fragments: [
-                $prelude_command,
+                ($prelude_command + " or " + $prelude_command_line_hex),
                 "source=firmware-initramfs",
                 "reason=valid-artifact",
                 "dispatch command=0 status=handled",
@@ -201,6 +238,7 @@ jq -n \
               required: true,
               must_not_contain: [
                 $command,
+                $command_line_hex,
                 $expected_output,
                 "dispatch command=1"
               ]
@@ -213,7 +251,7 @@ jq -n \
             direct_read_window: {
               endpoint: "POST /serial/read",
               required_response_fragments: [
-                $command,
+                ($command + " or " + $command_line_hex),
                 $expected_output,
                 "dispatch command=1 status=handled",
                 "responses=1",
@@ -229,6 +267,7 @@ jq -n \
           "post-run restore proof"
         ],
         evidence_validator: {
+          guard: "command0-write-to-next-ready-guard-v1",
           optional_argument: "direct-read-evidence.json",
           status: $evidence_validation_status,
           rejects: [
@@ -264,5 +303,5 @@ jq -n \
         "Phase 11/12 expansion",
         "phase transition"
       ],
-      selected_next_task: "phase10-pi5-generated-root-command-input-direct-read-pi5-proof-20260617"
+      selected_next_task: "phase10-pi5-serial-command0-prelude-pi5-proof-20260617"
     }'

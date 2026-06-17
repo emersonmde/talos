@@ -419,6 +419,17 @@ before accepting any command=1 timeout or later-command evidence. Same-shaped
 direct-read timing retries, prompt-only evidence, and /serial/write-only
 evidence remain rejected.
 
+phase10-pi5-serial-command0-prelude-guard-core-20260617 accepts the
+local/static guard-core helper contract. The helper now validates command 0 as
+an ordered transaction, accepting either literal rootinfo text or the target
+proof's line command=0 hex=726f6f74696e666f record before the
+generated-root source response, dispatch command=0 status=handled responses=1,
+and ready command=1. The task-owned positive fixture passes the helper and the
+retained blocked direct-read proof remains rejected. The selected hardware
+follow-up is phase10-pi5-serial-command0-prelude-pi5-proof-20260617; no Pi 5
+hardware run or generated-root command-input success is accepted by the
+guard-core task.
+
 ## Deferred
 
 Writable persistence, SD/USB/block drivers, networking, SSH, and Phase 11/12

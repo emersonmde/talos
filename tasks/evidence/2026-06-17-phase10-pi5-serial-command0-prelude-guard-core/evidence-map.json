@@ -1,0 +1,56 @@
+{
+  "task_id": "phase10-pi5-serial-command0-prelude-guard-core-20260617",
+  "classification": "serial-command0-prelude-guard-core-accepted-hardware-proof-selected",
+  "task_status": "accepted",
+  "selected_next_task": "phase10-pi5-serial-command0-prelude-pi5-proof-20260617",
+  "evidence_level": [
+    "static/source/task evidence inspection",
+    "shell syntax check",
+    "task-owned local/static validator output",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "files": {
+    "source_contract_task": "tasks/2026-06-17-phase10-pi5-serial-command0-prelude-source-contract.md",
+    "task_record": "tasks/2026-06-17-phase10-pi5-serial-command0-prelude-guard-core.md",
+    "updated_helper": "scripts/rpi5-generated-root-command-input-direct-read-proof-review.sh",
+    "positive_fixture": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-prelude-guard-core/local-static-valid-direct-read-evidence.json",
+    "positive_review_output": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-prelude-guard-core/local-static-valid-review.json",
+    "negative_control": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-prelude-guard-core/blocked-direct-read-rejection.json",
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-prelude-guard-core/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-prelude-guard-core/evidence-map.json",
+    "blocked_direct_read_evidence": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-pi5-proof/candidate-direct-read-20260617T043803Z/direct-read-evidence.json",
+    "generated_root_contract_doc": "docs/src/project/phase10-pi5-generated-root-boot-transport-contract.md",
+    "roadmap": "docs/src/roadmap.md"
+  },
+  "commands": [
+    {
+      "label": "shell syntax",
+      "command": "sh -n scripts/rpi5-generated-root-command-input-direct-read-proof-review.sh",
+      "result": "pass"
+    },
+    {
+      "label": "positive local/static validator",
+      "command": "scripts/rpi5-generated-root-command-input-direct-read-proof-review.sh target/talos-rpi5-generated-root-command-input-proof-core-20260617.tar.gz tasks/evidence/2026-06-17-phase10-pi5-serial-command0-prelude-guard-core/local-static-valid-direct-read-evidence.json",
+      "result": "pass",
+      "output": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-prelude-guard-core/local-static-valid-review.json"
+    },
+    {
+      "label": "blocked direct-read negative control",
+      "command": "scripts/rpi5-generated-root-command-input-direct-read-proof-review.sh target/talos-rpi5-generated-root-command-input-proof-core-20260617.tar.gz tasks/evidence/2026-06-17-phase10-pi5-generated-root-command-input-direct-read-pi5-proof/candidate-direct-read-20260617T043803Z/direct-read-evidence.json",
+      "result": "fail",
+      "expected": "fail",
+      "output": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-prelude-guard-core/blocked-direct-read-rejection.json"
+    }
+  ],
+  "validation": {
+    "sh_n": "pass",
+    "local_static_validator_positive_fixture": "pass",
+    "local_static_validator_negative_control": "pass",
+    "jq_empty_task_owned_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  }
+}

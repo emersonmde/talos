@@ -2495,6 +2495,21 @@ The post-review correction chain is:
     direct-read timing retries, prompt-only evidence, /serial/write-only
     evidence, persistence, storage-driver work, networking, SSH, Phase 11/12
     expansion, and phase transition remain rejected.
+134. Pi 5 serial command 0 prelude guard core: accepted in
+    'phase10-pi5-serial-command0-prelude-guard-core-20260617' with
+    classification
+    'serial-command0-prelude-guard-core-accepted-hardware-proof-selected'. The
+    local/static helper now validates command 0 as an ordered transaction:
+    command 0 line evidence, generated-root source response, dispatch command=0
+    status=handled responses=1, and ready command=1 must appear in order before
+    later command=1 timeout evidence can be considered. Line-hex proof records
+    are accepted as equivalent command text for the target wrapper. Task-owned
+    positive and negative local/static evidence passed; the retained blocked
+    direct-read proof is still rejected. The selected follow-up is
+    'phase10-pi5-serial-command0-prelude-pi5-proof-20260617'. Pi 5 hardware,
+    generated-root command-input success, persistence, storage-driver work,
+    networking, SSH, Phase 11/12 expansion, and phase transition remain
+    unaccepted.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
