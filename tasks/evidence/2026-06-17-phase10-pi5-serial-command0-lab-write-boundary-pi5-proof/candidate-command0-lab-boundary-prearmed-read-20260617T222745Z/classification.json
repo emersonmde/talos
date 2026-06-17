@@ -1,0 +1,45 @@
+{
+  "task_id": "phase10-pi5-serial-command0-lab-write-boundary-pi5-proof-20260617",
+  "run_label": "candidate-command0-lab-boundary-prearmed-read-20260617T222745Z",
+  "classification": "command0-lab-write-boundary-precondition-blocked",
+  "selected_next_task": "phase10-pi5-serial-command0-lab-write-boundary-closeout-20260617",
+  "planning_needed": false,
+  "archive": {
+    "sha256": "8f6a4d0d3436308a5f3b51e4f113b75d1acbf807a7b7af2d66453806c586cf0c",
+    "kernel_2712_sha256": "c37b34ebc955a7ce11cd0660bc18424ebcec4550de23ae1e6b0b9ad7c867e4bd",
+    "kernel_2712_size": 208984
+  },
+  "gates": {
+    "post_publish_identity_ok": true,
+    "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+    "effective_kernel": "kernel_2712.img",
+    "tftp_stable": true,
+    "tftp_expected_fetch_count": 2,
+    "tftp_expected_fetch_byte_match_count": 0,
+    "readiness_marker_ok": true,
+    "pre_write_freshness_ok": true,
+    "serial_write_ok": true,
+    "serial_write_bytes": 9,
+    "prearmed_read_bytes": 614,
+    "prearmed_read_has_rootinfo": true,
+    "prearmed_read_has_line0": true,
+    "prearmed_read_has_dispatch0": true,
+    "prearmed_read_has_responses1": true,
+    "prearmed_read_has_ready1": true,
+    "prearmed_read_ordered_command0": true,
+    "secondary_observe_bytes": 0,
+    "final_pre_restore_identity_ok": false,
+    "restore_ok": true,
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "first_failing_invariant": "selected-kernel-tftp-precondition-missing",
+  "rejected_claims": [
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

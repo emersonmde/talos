@@ -7932,6 +7932,17 @@ Selected first slice:
   Source-response retention, generated-root command-input success, storage,
   networking, SSH, Phase 11/12 expansion, and phase transition remain
   unaccepted.
+- 'phase10-pi5-serial-command0-lab-write-boundary-pi5-proof-20260617'
+  accepts the prearmed live-read Pi 5 proof with classification
+  command0-lab-write-boundary-precondition-blocked. The serial discriminator
+  retained rootinfo reaching command0 and ordered command0 dispatch/response
+  output, but command0 input delivery remains unaccepted because the
+  selected-kernel/TFTP precondition regressed: TFTP served two 104136-byte
+  baseline da591740/kernel_2712.img entries and final pre-restore identity was
+  baseline despite post-publish API selected-tree evidence for the 208984-byte
+  candidate. The selected follow-up is the lab-boundary closeout to reconcile
+  this evidence without accepting source-response retention or generated-root
+  command-input success.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The
