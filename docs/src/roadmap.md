@@ -3344,6 +3344,20 @@ The post-review correction chain is:
     networking, SSH, Phase 11/12 expansion, phase transition, and same-shaped
     retry acceptance remain rejected.
 
+185. Pi 5 command0 post-write capture-retention closeout: accepted in
+    'phase10-pi5-command0-post-write-capture-retention-closeout-20260618'
+    with classification
+    'command0-post-write-capture-retention-closeout-command0-delivery-blocked-planning-needed'.
+    The closeout reconciles the accepted post-write capture-retention proof:
+    selected-kernel/TFTP identity, two selected 208984-byte serves,
+    immediate/final selected identity, and restore proof passed, but a fresh
+    command=0 write boundary was not retained before stale pre-write output or
+    timeout consumed command0. Command0 input delivery remains unaccepted.
+    selected_next_task is null and planningNeeded=true; source-response
+    retention v3, generated-root command-input success, storage, networking,
+    SSH, Phase 11/12 expansion, phase transition, and another same-shaped
+    command0 retry remain gated on supervisor planning.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
@@ -8274,6 +8288,19 @@ Selected first slice:
   command-input success, storage, networking, SSH, Phase 11/12 expansion, phase
   transition, and another same-shaped command0 retry require supervisor
   planning.
+- 'phase10-pi5-command0-post-write-capture-retention-pi5-proof-20260618'
+  accepts the serialized Pi 5 post-write capture-retention proof as blocked.
+  Selected-kernel/TFTP identity, two selected 208984-byte serves,
+  immediate/final selected identity, and restore proof passed, but stale
+  pre-write output or timeout consumed command0 before a fresh rootinfo write
+  boundary could be retained. The selected follow-up is
+  phase10-pi5-command0-post-write-capture-retention-closeout-20260618.
+- 'phase10-pi5-command0-post-write-capture-retention-closeout-20260618'
+  accepts the closeout with command0 input delivery still unaccepted.
+  selected_next_task is null and planningNeeded=true; source-response retention
+  v3, generated-root command-input success, storage, networking, SSH, Phase
+  11/12 expansion, phase transition, and another same-shaped command0 retry
+  require supervisor planning.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The
