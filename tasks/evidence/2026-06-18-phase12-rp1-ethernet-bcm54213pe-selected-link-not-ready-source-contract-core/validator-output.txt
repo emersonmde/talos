@@ -1,0 +1,12 @@
+Command: cargo fmt --all -- --check
+Result: pass
+
+Command: cargo -Zjson-target-spec test --quiet rp1_ethernet_bcm54213pe_master_mode_source_contract
+Result: pass
+
+Command: cargo -Zjson-target-spec test --quiet
+Environment: PATH included /opt/strider/openclaw/current/workspace/tools/qemu-9.2.0-install/bin
+Result: pass, 534 no_std tests passed through QEMU
+
+Command: jq empty tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-source-contract-core/classification.json tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-source-contract-core/evidence-map.json
+Result: pass

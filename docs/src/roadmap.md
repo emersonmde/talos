@@ -12540,6 +12540,20 @@ I/O, networking, SSH, Phase 12.2, phase transition, and same-shaped
 timeout/status/restart/poll/capture retries remain rejected from this
 selection.
 
+phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-source-contract-core-20260618
+accepts bcm54213pe-mii-ctrl1000-master-mode-source-contract-core-local-static.
+The source/core task records a deterministic candidate/control surface for the
+selected discriminator: PHY1 MII_CTRL1000 0x09, MAN read frame 0x60a60000,
+write prefix 0x50a60000, CTL1000_AS_MASTER 0x0800, CTL1000_ENABLE_MASTER
+0x1000, accepted pre-value 0x0200, expected write value 0x1a00, and expected
+write frame 0x50a61a00. The paired no-MDIO/no-Ethernet control withholds target
+construction. The next gated task is
+phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof-20260618;
+that proof must retain hardwareTestLock, selected-tree/TFTP/serial/final
+identity, restore, paired control, and post-hardware review evidence. Link-ready,
+autoneg-complete, packet I/O, networking, SSH, Phase 12.2, phase transition, and
+same-shaped retry claims remain rejected.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

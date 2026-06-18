@@ -1,0 +1,88 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-source-contract-core-20260618",
+  "status": "accepted",
+  "classification": "bcm54213pe-mii-ctrl1000-master-mode-source-contract-core-local-static",
+  "evidence_level": [
+    "static/source/task evidence inspection",
+    "focused Rust unit tests",
+    "full Rust unit tests through QEMU",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "selected_discriminator": "bcm54213pe-phy1-mii-ctrl1000-master-mode-gate-source-contract",
+  "selected_next_task": "phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof-20260618",
+  "source_contract": {
+    "contract_id": "phase12-rp1-ethernet-bcm54213pe-mii-ctrl1000-master-mode-source-contract-v1",
+    "selection_task_id": "phase12-rp1-ethernet-bcm54213pe-link-not-ready-discriminator-selection-20260618",
+    "selection_commit": "a18e51bf4b44680ff9071b01c238f12d1c37872c",
+    "source_owners": [
+      "linux-rpi-6.12 Broadcom PHY driver bcm54xx_config_init -> bcm54213pe_config_init -> bcm54210e_config_init",
+      "PHY_BRCM_EN_MASTER_MODE gate",
+      "PHY1 MII_CTRL1000 CTL1000_AS_MASTER and CTL1000_ENABLE_MASTER write path"
+    ],
+    "candidate_surface": {
+      "boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_candidate",
+      "phy_address": 1,
+      "register": "PHY1 MII_CTRL1000 0x09",
+      "read_frame": "0x60a60000",
+      "write_frame_prefix": "0x50a60000",
+      "ctl1000_as_master": "0x0800",
+      "ctl1000_enable_master": "0x1000",
+      "write_mask": "0x1800",
+      "accepted_pre_ctrl1000": "0x0200",
+      "expected_write_value": "0x1a00",
+      "expected_write_frame": "0x50a61a00",
+      "requires_post_write_readback": true,
+      "requires_restore_or_rollback_plan": true
+    },
+    "control_surface": {
+      "boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_no_write_control",
+      "classification": "no-mdio-no-ethernet-bcm54213pe-mii-ctrl1000-master-mode-control",
+      "constructs_mdio_target": false,
+      "constructs_man_frames": false,
+      "constructs_macb_target": false,
+      "constructs_gpio32_or_phy_target": false
+    }
+  },
+  "terminal_classifications": [
+    "bcm54213pe-mii-ctrl1000-master-mode-source-contract-core-local-static",
+    "bcm54213pe-mii-ctrl1000-master-mode-source-contract-paused",
+    "bcm54213pe-mii-ctrl1000-master-mode-source-contract-blocked",
+    "no-mdio-no-ethernet-bcm54213pe-mii-ctrl1000-master-mode-control"
+  ],
+  "future_hardware_classifications": [
+    "mii-ctrl1000-master-mode-write-readback-visible",
+    "mii-ctrl1000-master-mode-precondition-blocker",
+    "mii-ctrl1000-master-mode-readback-mismatch",
+    "mii-ctrl1000-master-mode-capture-blocker",
+    "no-mdio-no-ethernet-bcm54213pe-mii-ctrl1000-master-mode-control"
+  ],
+  "rejected_claims": [
+    "link-ready",
+    "autoneg-complete",
+    "ethernet-driver-readiness",
+    "same-shaped status/restart/poll/capture retry",
+    "gpio32-eth-rst-n-reset-ownership",
+    "interrupt-ownership",
+    "apd-eee-lifecycle-ownership",
+    "mac-phylink-ownership",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "validation": {
+    "static_source_task_evidence_review": "pass",
+    "cargo_fmt_check": "pass",
+    "focused_rust_test": "pass",
+    "full_rust_test_with_qemu_path": "pass",
+    "jq_task_owned_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "no_hardware_or_runtime_actions_performed": true
+}

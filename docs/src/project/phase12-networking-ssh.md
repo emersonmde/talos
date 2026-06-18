@@ -2394,3 +2394,19 @@ safely selected. GPIO32 / ETH_RST_N reset, interrupts, APD/EEE/lifecycle,
 MAC/phylink, packet I/O, networking, sockets, SSH, Phase 12.2, phase
 transition, and same-shaped timeout/status/restart/poll/capture retries remain
 rejected from this selection.
+
+phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-source-contract-core-20260618
+accepts bcm54213pe-mii-ctrl1000-master-mode-source-contract-core-local-static.
+The local/static contract now records the selected MII_CTRL1000 master-mode gate
+candidate/control surface: PHY1 MII_CTRL1000 0x09 pre-read, MAN read frame
+0x60a60000, write prefix 0x50a60000, CTL1000_AS_MASTER 0x0800,
+CTL1000_ENABLE_MASTER 0x1000, accepted pre-value 0x0200, expected write value
+0x1a00, and expected write frame 0x50a61a00. The paired control withholds MDIO,
+MAN, MACB, GPIO32/PHY, interrupt, packet, networking, and SSH target facts. The
+next mechanically gated task is
+phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof-20260618,
+which must provide hardwareTestLock, selected-tree/TFTP/serial/final-identity,
+restore, paired control, and post-hardware review evidence before any runtime
+claim can be accepted. Link-ready, autoneg-complete, packet I/O, networking,
+SSH, Phase 12.2, phase transition, and same-shaped retry claims remain
+rejected.

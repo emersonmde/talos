@@ -1,0 +1,48 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-source-contract-core-20260618",
+  "classification_json": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-source-contract-core/classification.json",
+  "task_record": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-source-contract-core.md",
+  "code": [
+    {
+      "path": "src/rp1_ethernet.rs",
+      "purpose": "Static BCM54213PE MII_CTRL1000 master-mode source-contract evidence, validator, and focused tests."
+    }
+  ],
+  "validator_output": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-source-contract-core/validator-output.txt",
+  "accepted_selection": {
+    "task_record": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-link-not-ready-discriminator-selection.md",
+    "classification_json": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-link-not-ready-discriminator-selection/classification.json",
+    "commit": "a18e51bf4b44680ff9071b01c238f12d1c37872c"
+  },
+  "retained_source_evidence": [
+    {
+      "path": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract/source/linux-rpi-6.12-broadcom-bcm54213pe-config-contract-excerpt.txt",
+      "sha256": "c745a529512ef69185ba7f2712079e66b5d9efbdb963eb194ec91291fc297aa6"
+    },
+    {
+      "path": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract/source/linux-rpi-6.12-brcmphy-register-contract-excerpt.txt",
+      "sha256": "b4a5d4d3272d53f0898179307e66ae50947fe94b25b72193868e7118a8d7adf6"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/source/linux-rpi-6.12-mii-register-readonly-preflight-excerpt.txt",
+      "sha256": "4d2651ed1c2f4f9ae70d6439bdcd704d0f589bef154f553e14f5554027221662"
+    }
+  ],
+  "docs": [
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "selected_next_task": "phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof-20260618",
+  "forbidden_actions_absent": [
+    "Pi 5 hardware run",
+    "hardwareTestLock acquisition",
+    "boot archive publication",
+    "lab mutation",
+    "runtime PHY register write",
+    "packet I/O",
+    "networking",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ]
+}

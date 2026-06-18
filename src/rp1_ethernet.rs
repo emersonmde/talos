@@ -9173,6 +9173,128 @@ pub const RP1_ETHERNET_BCM54213PE_TX_SELECTED_READ_DISCRIMINATOR_SOURCE_EVIDENCE
     "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-pi5-proof/capture-summary.json",
 ];
 
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_SOURCE_CONTRACT_CORE_TASK_ID: &str =
+    "phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-source-contract-core-20260618";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_PI5_PROOF_TASK_ID: &str =
+    "phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof-20260618";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_CONTRACT_ID: &str =
+    "phase12-rp1-ethernet-bcm54213pe-mii-ctrl1000-master-mode-source-contract-v1";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_SELECTION_TASK_ID: &str =
+    "phase12-rp1-ethernet-bcm54213pe-link-not-ready-discriminator-selection-20260618";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_SELECTION_COMMIT: &str =
+    "a18e51bf4b44680ff9071b01c238f12d1c37872c";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_CONFIG_INIT_SOURCE_TASK_ID: &str =
+    "phase12-rp1-ethernet-bcm54213pe-config-init-source-contract-20260615";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_CANDIDATE_BOOT_SCENARIO: &str =
+    "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_candidate";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_CONTROL_BOOT_SCENARIO: &str =
+    "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_no_write_control";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_BOOT_SCENARIOS: &[&str] = &[
+    RP1_ETHERNET_BCM54213PE_MASTER_MODE_CANDIDATE_BOOT_SCENARIO,
+    RP1_ETHERNET_BCM54213PE_MASTER_MODE_CONTROL_BOOT_SCENARIO,
+];
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_SELECTED_DISCRIMINATOR: &str =
+    "bcm54213pe-phy1-mii-ctrl1000-master-mode-gate-source-contract";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_CANDIDATE_CLASSIFICATION: &str =
+    "bcm54213pe-mii-ctrl1000-master-mode-source-contract-core-local-static";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_PAUSED_CLASSIFICATION: &str =
+    "bcm54213pe-mii-ctrl1000-master-mode-source-contract-paused";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_BLOCKED_CLASSIFICATION: &str =
+    "bcm54213pe-mii-ctrl1000-master-mode-source-contract-blocked";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_CONTROL_CLASSIFICATION: &str =
+    "no-mdio-no-ethernet-bcm54213pe-mii-ctrl1000-master-mode-control";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_SOURCE_OWNERS: &[&str] = &[
+    "linux-rpi-6.12 Broadcom PHY driver bcm54xx_config_init -> bcm54213pe_config_init -> bcm54210e_config_init",
+    "PHY_BRCM_EN_MASTER_MODE gate",
+    "PHY1 MII_CTRL1000 CTL1000_AS_MASTER and CTL1000_ENABLE_MASTER write path",
+];
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_SELECTED_REGISTER: &str = "PHY1 MII_CTRL1000 0x09";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_PHY_ADDRESS: u32 = 1;
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_MII_CTRL1000_REGISTER: u32 = 0x09;
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_READ_FRAME: u32 = 0x60a6_0000;
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_WRITE_FRAME_PREFIX: u32 = 0x50a6_0000;
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_CTL1000_AS_MASTER: u16 = 0x0800;
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_CTL1000_ENABLE_MASTER: u16 = 0x1000;
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_WRITE_MASK: u16 =
+    RP1_ETHERNET_BCM54213PE_MASTER_MODE_CTL1000_AS_MASTER
+        | RP1_ETHERNET_BCM54213PE_MASTER_MODE_CTL1000_ENABLE_MASTER;
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_ACCEPTED_PRE_CTRL1000: u16 = 0x0200;
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_EXPECTED_WRITE_VALUE: u16 =
+    RP1_ETHERNET_BCM54213PE_MASTER_MODE_ACCEPTED_PRE_CTRL1000
+        | RP1_ETHERNET_BCM54213PE_MASTER_MODE_WRITE_MASK;
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_EXPECTED_WRITE_FRAME: u32 =
+    RP1_ETHERNET_BCM54213PE_MASTER_MODE_WRITE_FRAME_PREFIX
+        | RP1_ETHERNET_BCM54213PE_MASTER_MODE_EXPECTED_WRITE_VALUE as u32;
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_ALLOWED_OPERATIONS: &[&str] = &[
+    "local/static source-contract work",
+    "candidate contract pre-reads PHY1 MII_CTRL1000",
+    "candidate contract models exactly one PHY1 MII_CTRL1000 read/modify/write intent setting CTL1000_AS_MASTER and CTL1000_ENABLE_MASTER",
+    "candidate contract requires post-write readback for the selected mask before any link-ready classification can be considered",
+    "candidate contract records restore or rollback expectations for any later hardware proof",
+    "paired control withholds MDIO, MAN, MACB, GPIO32, PHY, interrupt, packet, networking, and SSH target construction",
+];
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_FORBIDDEN_OPERATIONS: &[&str] = &[
+    "Pi 5 hardware run during source-contract core",
+    "hardwareTestLock acquisition during source-contract core",
+    "runtime PHY register write during source-contract core",
+    "same-shaped BMCR/BMSR/ANAR/ANLPAR/MII_CTRL1000/MII_STAT1000/MACB_NSR polling retry",
+    "BMCR restart retry",
+    "RGMII delay write retry",
+    "GPIO32 event clear or ETH_RST_N reset action",
+    "interrupt acknowledgement or configuration",
+    "APD, EEE, LED, WOL, suspend, or resume lifecycle write",
+    "MACB or phylink configuration",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2 work",
+    "phase transition",
+];
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_TERMINAL_CLASSIFICATIONS: &[&str] = &[
+    RP1_ETHERNET_BCM54213PE_MASTER_MODE_CANDIDATE_CLASSIFICATION,
+    RP1_ETHERNET_BCM54213PE_MASTER_MODE_PAUSED_CLASSIFICATION,
+    RP1_ETHERNET_BCM54213PE_MASTER_MODE_BLOCKED_CLASSIFICATION,
+    RP1_ETHERNET_BCM54213PE_MASTER_MODE_CONTROL_CLASSIFICATION,
+];
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_FUTURE_HARDWARE_CLASSIFICATIONS: &[&str] = &[
+    "mii-ctrl1000-master-mode-write-readback-visible",
+    "mii-ctrl1000-master-mode-precondition-blocker",
+    "mii-ctrl1000-master-mode-readback-mismatch",
+    "mii-ctrl1000-master-mode-capture-blocker",
+    RP1_ETHERNET_BCM54213PE_MASTER_MODE_CONTROL_CLASSIFICATION,
+];
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_REJECTED_CLAIMS: &[&str] = &[
+    "link-ready",
+    "autoneg-complete",
+    "ethernet-driver-readiness",
+    "same-shaped status/restart/poll/capture retry",
+    "GPIO32/ETH_RST_N reset ownership",
+    "interrupt ownership",
+    "APD/EEE/lifecycle ownership",
+    "MAC/phylink ownership",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition",
+];
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_RETAINED_RISKS: &[&str] = &[
+    "The source contract encodes future MII_CTRL1000 master-mode write intent only; it does not perform or prove hardware behavior.",
+    "A later Pi 5 proof must serialize hardwareTestLock, selected-tree/TFTP/serial/final-identity/restore evidence, paired control, and post-hardware review.",
+    "GPIO32/ETH_RST_N reset ownership, interrupt ownership, APD/EEE/lifecycle, MAC/phylink, packet I/O, networking, sockets, SSH, and Phase 12.2 remain unaccepted.",
+];
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_SOURCE_EVIDENCE: &[&str] = &[
+    "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-link-not-ready-discriminator-selection.md",
+    "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-link-not-ready-discriminator-selection/classification.json",
+    "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-link-not-ready-discriminator-selection/evidence-map.json",
+    "tasks/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract.md",
+    "tasks/evidence/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract/source/linux-rpi-6.12-broadcom-bcm54213pe-config-contract-excerpt.txt",
+    "tasks/evidence/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract/source/linux-rpi-6.12-brcmphy-register-contract-excerpt.txt",
+    "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/source/linux-rpi-6.12-mii-register-readonly-preflight-excerpt.txt",
+];
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct Rp1EthernetPhy1GigabitPreflightRawVector {
     pub ctrl1000: u16,
@@ -10744,6 +10866,346 @@ pub fn validate_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_core_evid
         return Err(
             Rp1EthernetBcm54213peTxSelectedReadDiscriminatorCoreError::MissingSourceEvidence,
         );
+    }
+    Ok(())
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetBcm54213peMasterModeSourceContractCoreEvidence {
+    pub core_task_id: &'static str,
+    pub pi5_proof_task_id: &'static str,
+    pub contract_id: &'static str,
+    pub selection_task_id: &'static str,
+    pub selection_commit: &'static str,
+    pub config_init_source_task_id: &'static str,
+    pub candidate_boot_scenario: &'static str,
+    pub control_boot_scenario: &'static str,
+    pub boot_scenarios: &'static [&'static str],
+    pub selected_discriminator: &'static str,
+    pub source_owners: &'static [&'static str],
+    pub selected_register: &'static str,
+    pub phy_address: u32,
+    pub mii_ctrl1000_register: u32,
+    pub read_frame: u32,
+    pub write_frame_prefix: u32,
+    pub ctl1000_as_master: u16,
+    pub ctl1000_enable_master: u16,
+    pub write_mask: u16,
+    pub accepted_pre_ctrl1000: u16,
+    pub expected_write_value: u16,
+    pub expected_write_frame: u32,
+    pub allowed_operations: &'static [&'static str],
+    pub forbidden_operations: &'static [&'static str],
+    pub terminal_classifications: &'static [&'static str],
+    pub future_hardware_classifications: &'static [&'static str],
+    pub candidate_contracts_pre_read: bool,
+    pub candidate_contracts_exact_mii_ctrl1000_write: bool,
+    pub candidate_contracts_post_write_readback: bool,
+    pub candidate_requires_restore_or_rollback_plan: bool,
+    pub candidate_constructs_mdio_target: bool,
+    pub candidate_constructs_man_frames: bool,
+    pub control_constructs_mdio_target: bool,
+    pub control_constructs_man_frames: bool,
+    pub control_constructs_macb_target: bool,
+    pub control_constructs_gpio32_or_phy_target: bool,
+    pub permits_runtime_hardware_action_in_core: bool,
+    pub permits_same_shaped_status_restart_poll_retry: bool,
+    pub permits_bmcr_restart_retry: bool,
+    pub permits_rgmii_delay_retry: bool,
+    pub permits_gpio32_reset_action: bool,
+    pub permits_interrupt_ownership: bool,
+    pub permits_apd_eee_lifecycle_ownership: bool,
+    pub permits_mac_or_phylink_configuration: bool,
+    pub permits_link_ready_acceptance: bool,
+    pub permits_packet_io: bool,
+    pub permits_networking: bool,
+    pub permits_ssh: bool,
+    pub permits_phase_12_2: bool,
+    pub permits_phase_transition: bool,
+    pub source_contract_classification: &'static str,
+    pub control_classification: &'static str,
+    pub rejected_claims: &'static [&'static str],
+    pub retained_risks: &'static [&'static str],
+    pub source_evidence: &'static [&'static str],
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Rp1EthernetBcm54213peMasterModeSourceContractCoreError {
+    ScenarioMismatch,
+    SelectionMismatch,
+    SourceOwnerMismatch,
+    SelectedSurfaceMismatch,
+    OperationBoundaryMismatch,
+    CandidateMissingContractedWriteShape,
+    CandidateMissingRestorePlan,
+    CandidateMissingTargetFacts,
+    ControlCarriesTargetFacts,
+    RuntimeHardwareActionClaim,
+    SameShapedRetryClaim,
+    BmcrRestartRetryClaim,
+    RgmiiDelayRetryClaim,
+    Gpio32ResetActionClaim,
+    InterruptOwnershipClaim,
+    ApdEeeLifecycleOwnershipClaim,
+    MacOrPhylinkConfigurationClaim,
+    LinkReadyAcceptanceClaim,
+    PacketIoClaim,
+    NetworkingClaim,
+    SshClaim,
+    Phase122Claim,
+    PhaseTransitionClaim,
+    ClassificationMismatch,
+    RejectedClaimsMismatch,
+    RetainedRisksMismatch,
+    MissingSourceEvidence,
+}
+
+impl Rp1EthernetBcm54213peMasterModeSourceContractCoreError {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::ScenarioMismatch => "scenario-mismatch",
+            Self::SelectionMismatch => "selection-mismatch",
+            Self::SourceOwnerMismatch => "source-owner-mismatch",
+            Self::SelectedSurfaceMismatch => "selected-surface-mismatch",
+            Self::OperationBoundaryMismatch => "operation-boundary-mismatch",
+            Self::CandidateMissingContractedWriteShape => {
+                "candidate-missing-contracted-write-shape"
+            }
+            Self::CandidateMissingRestorePlan => "candidate-missing-restore-plan",
+            Self::CandidateMissingTargetFacts => "candidate-missing-target-facts",
+            Self::ControlCarriesTargetFacts => "control-carries-target-facts",
+            Self::RuntimeHardwareActionClaim => "runtime-hardware-action-claim",
+            Self::SameShapedRetryClaim => "same-shaped-retry-claim",
+            Self::BmcrRestartRetryClaim => "bmcr-restart-retry-claim",
+            Self::RgmiiDelayRetryClaim => "rgmii-delay-retry-claim",
+            Self::Gpio32ResetActionClaim => "gpio32-reset-action-claim",
+            Self::InterruptOwnershipClaim => "interrupt-ownership-claim",
+            Self::ApdEeeLifecycleOwnershipClaim => "apd-eee-lifecycle-ownership-claim",
+            Self::MacOrPhylinkConfigurationClaim => "mac-or-phylink-configuration-claim",
+            Self::LinkReadyAcceptanceClaim => "link-ready-acceptance-claim",
+            Self::PacketIoClaim => "packet-io-claim",
+            Self::NetworkingClaim => "networking-claim",
+            Self::SshClaim => "ssh-claim",
+            Self::Phase122Claim => "phase-12-2-claim",
+            Self::PhaseTransitionClaim => "phase-transition-claim",
+            Self::ClassificationMismatch => "classification-mismatch",
+            Self::RejectedClaimsMismatch => "rejected-claims-mismatch",
+            Self::RetainedRisksMismatch => "retained-risks-mismatch",
+            Self::MissingSourceEvidence => "missing-source-evidence",
+        }
+    }
+}
+
+pub const fn rp1_ethernet_bcm54213pe_master_mode_source_contract_core_evidence()
+-> Rp1EthernetBcm54213peMasterModeSourceContractCoreEvidence {
+    Rp1EthernetBcm54213peMasterModeSourceContractCoreEvidence {
+        core_task_id: RP1_ETHERNET_BCM54213PE_MASTER_MODE_SOURCE_CONTRACT_CORE_TASK_ID,
+        pi5_proof_task_id: RP1_ETHERNET_BCM54213PE_MASTER_MODE_PI5_PROOF_TASK_ID,
+        contract_id: RP1_ETHERNET_BCM54213PE_MASTER_MODE_CONTRACT_ID,
+        selection_task_id: RP1_ETHERNET_BCM54213PE_MASTER_MODE_SELECTION_TASK_ID,
+        selection_commit: RP1_ETHERNET_BCM54213PE_MASTER_MODE_SELECTION_COMMIT,
+        config_init_source_task_id: RP1_ETHERNET_BCM54213PE_MASTER_MODE_CONFIG_INIT_SOURCE_TASK_ID,
+        candidate_boot_scenario: RP1_ETHERNET_BCM54213PE_MASTER_MODE_CANDIDATE_BOOT_SCENARIO,
+        control_boot_scenario: RP1_ETHERNET_BCM54213PE_MASTER_MODE_CONTROL_BOOT_SCENARIO,
+        boot_scenarios: RP1_ETHERNET_BCM54213PE_MASTER_MODE_BOOT_SCENARIOS,
+        selected_discriminator: RP1_ETHERNET_BCM54213PE_MASTER_MODE_SELECTED_DISCRIMINATOR,
+        source_owners: RP1_ETHERNET_BCM54213PE_MASTER_MODE_SOURCE_OWNERS,
+        selected_register: RP1_ETHERNET_BCM54213PE_MASTER_MODE_SELECTED_REGISTER,
+        phy_address: RP1_ETHERNET_BCM54213PE_MASTER_MODE_PHY_ADDRESS,
+        mii_ctrl1000_register: RP1_ETHERNET_BCM54213PE_MASTER_MODE_MII_CTRL1000_REGISTER,
+        read_frame: RP1_ETHERNET_BCM54213PE_MASTER_MODE_READ_FRAME,
+        write_frame_prefix: RP1_ETHERNET_BCM54213PE_MASTER_MODE_WRITE_FRAME_PREFIX,
+        ctl1000_as_master: RP1_ETHERNET_BCM54213PE_MASTER_MODE_CTL1000_AS_MASTER,
+        ctl1000_enable_master: RP1_ETHERNET_BCM54213PE_MASTER_MODE_CTL1000_ENABLE_MASTER,
+        write_mask: RP1_ETHERNET_BCM54213PE_MASTER_MODE_WRITE_MASK,
+        accepted_pre_ctrl1000: RP1_ETHERNET_BCM54213PE_MASTER_MODE_ACCEPTED_PRE_CTRL1000,
+        expected_write_value: RP1_ETHERNET_BCM54213PE_MASTER_MODE_EXPECTED_WRITE_VALUE,
+        expected_write_frame: RP1_ETHERNET_BCM54213PE_MASTER_MODE_EXPECTED_WRITE_FRAME,
+        allowed_operations: RP1_ETHERNET_BCM54213PE_MASTER_MODE_ALLOWED_OPERATIONS,
+        forbidden_operations: RP1_ETHERNET_BCM54213PE_MASTER_MODE_FORBIDDEN_OPERATIONS,
+        terminal_classifications: RP1_ETHERNET_BCM54213PE_MASTER_MODE_TERMINAL_CLASSIFICATIONS,
+        future_hardware_classifications:
+            RP1_ETHERNET_BCM54213PE_MASTER_MODE_FUTURE_HARDWARE_CLASSIFICATIONS,
+        candidate_contracts_pre_read: true,
+        candidate_contracts_exact_mii_ctrl1000_write: true,
+        candidate_contracts_post_write_readback: true,
+        candidate_requires_restore_or_rollback_plan: true,
+        candidate_constructs_mdio_target: true,
+        candidate_constructs_man_frames: true,
+        control_constructs_mdio_target: false,
+        control_constructs_man_frames: false,
+        control_constructs_macb_target: false,
+        control_constructs_gpio32_or_phy_target: false,
+        permits_runtime_hardware_action_in_core: false,
+        permits_same_shaped_status_restart_poll_retry: false,
+        permits_bmcr_restart_retry: false,
+        permits_rgmii_delay_retry: false,
+        permits_gpio32_reset_action: false,
+        permits_interrupt_ownership: false,
+        permits_apd_eee_lifecycle_ownership: false,
+        permits_mac_or_phylink_configuration: false,
+        permits_link_ready_acceptance: false,
+        permits_packet_io: false,
+        permits_networking: false,
+        permits_ssh: false,
+        permits_phase_12_2: false,
+        permits_phase_transition: false,
+        source_contract_classification:
+            RP1_ETHERNET_BCM54213PE_MASTER_MODE_CANDIDATE_CLASSIFICATION,
+        control_classification: RP1_ETHERNET_BCM54213PE_MASTER_MODE_CONTROL_CLASSIFICATION,
+        rejected_claims: RP1_ETHERNET_BCM54213PE_MASTER_MODE_REJECTED_CLAIMS,
+        retained_risks: RP1_ETHERNET_BCM54213PE_MASTER_MODE_RETAINED_RISKS,
+        source_evidence: RP1_ETHERNET_BCM54213PE_MASTER_MODE_SOURCE_EVIDENCE,
+    }
+}
+
+pub fn validate_rp1_ethernet_bcm54213pe_master_mode_source_contract_core_evidence(
+    evidence: Rp1EthernetBcm54213peMasterModeSourceContractCoreEvidence,
+) -> Result<(), Rp1EthernetBcm54213peMasterModeSourceContractCoreError> {
+    if evidence.candidate_boot_scenario
+        != RP1_ETHERNET_BCM54213PE_MASTER_MODE_CANDIDATE_BOOT_SCENARIO
+        || evidence.control_boot_scenario
+            != RP1_ETHERNET_BCM54213PE_MASTER_MODE_CONTROL_BOOT_SCENARIO
+        || evidence.boot_scenarios != RP1_ETHERNET_BCM54213PE_MASTER_MODE_BOOT_SCENARIOS
+    {
+        return Err(Rp1EthernetBcm54213peMasterModeSourceContractCoreError::ScenarioMismatch);
+    }
+    if evidence.selection_task_id != RP1_ETHERNET_BCM54213PE_MASTER_MODE_SELECTION_TASK_ID
+        || evidence.selection_commit != RP1_ETHERNET_BCM54213PE_MASTER_MODE_SELECTION_COMMIT
+        || evidence.config_init_source_task_id
+            != RP1_ETHERNET_BCM54213PE_MASTER_MODE_CONFIG_INIT_SOURCE_TASK_ID
+        || evidence.selected_discriminator
+            != RP1_ETHERNET_BCM54213PE_MASTER_MODE_SELECTED_DISCRIMINATOR
+    {
+        return Err(Rp1EthernetBcm54213peMasterModeSourceContractCoreError::SelectionMismatch);
+    }
+    if evidence.source_owners != RP1_ETHERNET_BCM54213PE_MASTER_MODE_SOURCE_OWNERS {
+        return Err(Rp1EthernetBcm54213peMasterModeSourceContractCoreError::SourceOwnerMismatch);
+    }
+    if evidence.selected_register != RP1_ETHERNET_BCM54213PE_MASTER_MODE_SELECTED_REGISTER
+        || evidence.phy_address != RP1_ETHERNET_BCM54213PE_MASTER_MODE_PHY_ADDRESS
+        || evidence.mii_ctrl1000_register
+            != RP1_ETHERNET_BCM54213PE_MASTER_MODE_MII_CTRL1000_REGISTER
+        || evidence.read_frame != RP1_ETHERNET_BCM54213PE_MASTER_MODE_READ_FRAME
+        || evidence.write_frame_prefix != RP1_ETHERNET_BCM54213PE_MASTER_MODE_WRITE_FRAME_PREFIX
+        || evidence.ctl1000_as_master != RP1_ETHERNET_BCM54213PE_MASTER_MODE_CTL1000_AS_MASTER
+        || evidence.ctl1000_enable_master
+            != RP1_ETHERNET_BCM54213PE_MASTER_MODE_CTL1000_ENABLE_MASTER
+        || evidence.write_mask != RP1_ETHERNET_BCM54213PE_MASTER_MODE_WRITE_MASK
+        || evidence.accepted_pre_ctrl1000
+            != RP1_ETHERNET_BCM54213PE_MASTER_MODE_ACCEPTED_PRE_CTRL1000
+        || evidence.expected_write_value != RP1_ETHERNET_BCM54213PE_MASTER_MODE_EXPECTED_WRITE_VALUE
+        || evidence.expected_write_frame != RP1_ETHERNET_BCM54213PE_MASTER_MODE_EXPECTED_WRITE_FRAME
+    {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeSourceContractCoreError::SelectedSurfaceMismatch,
+        );
+    }
+    if evidence.allowed_operations != RP1_ETHERNET_BCM54213PE_MASTER_MODE_ALLOWED_OPERATIONS
+        || evidence.forbidden_operations != RP1_ETHERNET_BCM54213PE_MASTER_MODE_FORBIDDEN_OPERATIONS
+        || evidence.future_hardware_classifications
+            != RP1_ETHERNET_BCM54213PE_MASTER_MODE_FUTURE_HARDWARE_CLASSIFICATIONS
+    {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeSourceContractCoreError::OperationBoundaryMismatch,
+        );
+    }
+    if !evidence.candidate_contracts_pre_read
+        || !evidence.candidate_contracts_exact_mii_ctrl1000_write
+        || !evidence.candidate_contracts_post_write_readback
+    {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeSourceContractCoreError::CandidateMissingContractedWriteShape,
+        );
+    }
+    if !evidence.candidate_requires_restore_or_rollback_plan {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeSourceContractCoreError::CandidateMissingRestorePlan,
+        );
+    }
+    if !evidence.candidate_constructs_mdio_target || !evidence.candidate_constructs_man_frames {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeSourceContractCoreError::CandidateMissingTargetFacts,
+        );
+    }
+    if evidence.control_constructs_mdio_target
+        || evidence.control_constructs_man_frames
+        || evidence.control_constructs_macb_target
+        || evidence.control_constructs_gpio32_or_phy_target
+    {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeSourceContractCoreError::ControlCarriesTargetFacts,
+        );
+    }
+    if evidence.permits_runtime_hardware_action_in_core {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeSourceContractCoreError::RuntimeHardwareActionClaim,
+        );
+    }
+    if evidence.permits_same_shaped_status_restart_poll_retry {
+        return Err(Rp1EthernetBcm54213peMasterModeSourceContractCoreError::SameShapedRetryClaim);
+    }
+    if evidence.permits_bmcr_restart_retry {
+        return Err(Rp1EthernetBcm54213peMasterModeSourceContractCoreError::BmcrRestartRetryClaim);
+    }
+    if evidence.permits_rgmii_delay_retry {
+        return Err(Rp1EthernetBcm54213peMasterModeSourceContractCoreError::RgmiiDelayRetryClaim);
+    }
+    if evidence.permits_gpio32_reset_action {
+        return Err(Rp1EthernetBcm54213peMasterModeSourceContractCoreError::Gpio32ResetActionClaim);
+    }
+    if evidence.permits_interrupt_ownership {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeSourceContractCoreError::InterruptOwnershipClaim,
+        );
+    }
+    if evidence.permits_apd_eee_lifecycle_ownership {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeSourceContractCoreError::ApdEeeLifecycleOwnershipClaim,
+        );
+    }
+    if evidence.permits_mac_or_phylink_configuration {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeSourceContractCoreError::MacOrPhylinkConfigurationClaim,
+        );
+    }
+    if evidence.permits_link_ready_acceptance {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeSourceContractCoreError::LinkReadyAcceptanceClaim,
+        );
+    }
+    if evidence.permits_packet_io {
+        return Err(Rp1EthernetBcm54213peMasterModeSourceContractCoreError::PacketIoClaim);
+    }
+    if evidence.permits_networking {
+        return Err(Rp1EthernetBcm54213peMasterModeSourceContractCoreError::NetworkingClaim);
+    }
+    if evidence.permits_ssh {
+        return Err(Rp1EthernetBcm54213peMasterModeSourceContractCoreError::SshClaim);
+    }
+    if evidence.permits_phase_12_2 {
+        return Err(Rp1EthernetBcm54213peMasterModeSourceContractCoreError::Phase122Claim);
+    }
+    if evidence.permits_phase_transition {
+        return Err(Rp1EthernetBcm54213peMasterModeSourceContractCoreError::PhaseTransitionClaim);
+    }
+    if evidence.source_contract_classification
+        != RP1_ETHERNET_BCM54213PE_MASTER_MODE_CANDIDATE_CLASSIFICATION
+        || evidence.control_classification
+            != RP1_ETHERNET_BCM54213PE_MASTER_MODE_CONTROL_CLASSIFICATION
+        || evidence.terminal_classifications
+            != RP1_ETHERNET_BCM54213PE_MASTER_MODE_TERMINAL_CLASSIFICATIONS
+    {
+        return Err(Rp1EthernetBcm54213peMasterModeSourceContractCoreError::ClassificationMismatch);
+    }
+    if evidence.rejected_claims != RP1_ETHERNET_BCM54213PE_MASTER_MODE_REJECTED_CLAIMS {
+        return Err(Rp1EthernetBcm54213peMasterModeSourceContractCoreError::RejectedClaimsMismatch);
+    }
+    if evidence.retained_risks != RP1_ETHERNET_BCM54213PE_MASTER_MODE_RETAINED_RISKS {
+        return Err(Rp1EthernetBcm54213peMasterModeSourceContractCoreError::RetainedRisksMismatch);
+    }
+    if evidence.source_evidence.is_empty() {
+        return Err(Rp1EthernetBcm54213peMasterModeSourceContractCoreError::MissingSourceEvidence);
     }
     Ok(())
 }
@@ -17792,6 +18254,160 @@ mod tests {
         );
         assert_eq!(
             Rp1EthernetBcm54213peTxSelectedReadDiscriminatorCoreError::PhaseTransitionClaim.name(),
+            "phase-transition-claim"
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_bcm54213pe_master_mode_source_contract_shapes_candidate_and_control() {
+        let evidence = rp1_ethernet_bcm54213pe_master_mode_source_contract_core_evidence();
+
+        assert_eq!(
+            evidence.core_task_id,
+            RP1_ETHERNET_BCM54213PE_MASTER_MODE_SOURCE_CONTRACT_CORE_TASK_ID
+        );
+        assert_eq!(
+            evidence.pi5_proof_task_id,
+            "phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof-20260618"
+        );
+        assert_eq!(
+            evidence.selection_commit,
+            "a18e51bf4b44680ff9071b01c238f12d1c37872c"
+        );
+        assert_eq!(
+            evidence.candidate_boot_scenario,
+            "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_candidate"
+        );
+        assert_eq!(
+            evidence.control_boot_scenario,
+            "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_no_write_control"
+        );
+        assert_eq!(
+            evidence.selected_discriminator,
+            "bcm54213pe-phy1-mii-ctrl1000-master-mode-gate-source-contract"
+        );
+        assert_eq!(evidence.phy_address, 1);
+        assert_eq!(evidence.mii_ctrl1000_register, 0x09);
+        assert_eq!(evidence.read_frame, 0x60a6_0000);
+        assert_eq!(evidence.write_frame_prefix, 0x50a6_0000);
+        assert_eq!(evidence.ctl1000_as_master, 0x0800);
+        assert_eq!(evidence.ctl1000_enable_master, 0x1000);
+        assert_eq!(evidence.write_mask, 0x1800);
+        assert_eq!(evidence.accepted_pre_ctrl1000, 0x0200);
+        assert_eq!(evidence.expected_write_value, 0x1a00);
+        assert_eq!(evidence.expected_write_frame, 0x50a6_1a00);
+        assert!(evidence.candidate_contracts_pre_read);
+        assert!(evidence.candidate_contracts_exact_mii_ctrl1000_write);
+        assert!(evidence.candidate_contracts_post_write_readback);
+        assert!(evidence.candidate_requires_restore_or_rollback_plan);
+        assert!(evidence.candidate_constructs_mdio_target);
+        assert!(evidence.candidate_constructs_man_frames);
+        assert!(!evidence.control_constructs_mdio_target);
+        assert!(!evidence.control_constructs_man_frames);
+        assert!(!evidence.control_constructs_macb_target);
+        assert!(!evidence.control_constructs_gpio32_or_phy_target);
+        assert!(!evidence.permits_runtime_hardware_action_in_core);
+        assert!(!evidence.permits_same_shaped_status_restart_poll_retry);
+        assert!(!evidence.permits_bmcr_restart_retry);
+        assert!(!evidence.permits_rgmii_delay_retry);
+        assert!(!evidence.permits_gpio32_reset_action);
+        assert!(!evidence.permits_interrupt_ownership);
+        assert!(!evidence.permits_apd_eee_lifecycle_ownership);
+        assert!(!evidence.permits_mac_or_phylink_configuration);
+        assert!(!evidence.permits_link_ready_acceptance);
+        assert!(!evidence.permits_packet_io);
+        assert!(!evidence.permits_networking);
+        assert!(!evidence.permits_ssh);
+        assert!(!evidence.permits_phase_12_2);
+        assert!(!evidence.permits_phase_transition);
+        assert_eq!(
+            evidence.terminal_classifications,
+            &[
+                "bcm54213pe-mii-ctrl1000-master-mode-source-contract-core-local-static",
+                "bcm54213pe-mii-ctrl1000-master-mode-source-contract-paused",
+                "bcm54213pe-mii-ctrl1000-master-mode-source-contract-blocked",
+                "no-mdio-no-ethernet-bcm54213pe-mii-ctrl1000-master-mode-control",
+            ]
+        );
+        assert_eq!(
+            evidence.future_hardware_classifications,
+            &[
+                "mii-ctrl1000-master-mode-write-readback-visible",
+                "mii-ctrl1000-master-mode-precondition-blocker",
+                "mii-ctrl1000-master-mode-readback-mismatch",
+                "mii-ctrl1000-master-mode-capture-blocker",
+                "no-mdio-no-ethernet-bcm54213pe-mii-ctrl1000-master-mode-control",
+            ]
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_master_mode_source_contract_core_evidence(evidence),
+            Ok(())
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_bcm54213pe_master_mode_source_contract_rejects_drift() {
+        let evidence = rp1_ethernet_bcm54213pe_master_mode_source_contract_core_evidence();
+
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_master_mode_source_contract_core_evidence(
+                Rp1EthernetBcm54213peMasterModeSourceContractCoreEvidence {
+                    expected_write_value: 0x0200,
+                    expected_write_frame: 0x50a6_0200,
+                    ..evidence
+                }
+            ),
+            Err(Rp1EthernetBcm54213peMasterModeSourceContractCoreError::SelectedSurfaceMismatch)
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_master_mode_source_contract_core_evidence(
+                Rp1EthernetBcm54213peMasterModeSourceContractCoreEvidence {
+                    candidate_contracts_exact_mii_ctrl1000_write: false,
+                    ..evidence
+                }
+            ),
+            Err(
+                Rp1EthernetBcm54213peMasterModeSourceContractCoreError::CandidateMissingContractedWriteShape
+            )
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_master_mode_source_contract_core_evidence(
+                Rp1EthernetBcm54213peMasterModeSourceContractCoreEvidence {
+                    control_constructs_mdio_target: true,
+                    ..evidence
+                }
+            ),
+            Err(Rp1EthernetBcm54213peMasterModeSourceContractCoreError::ControlCarriesTargetFacts)
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_master_mode_source_contract_core_evidence(
+                Rp1EthernetBcm54213peMasterModeSourceContractCoreEvidence {
+                    permits_runtime_hardware_action_in_core: true,
+                    ..evidence
+                }
+            ),
+            Err(Rp1EthernetBcm54213peMasterModeSourceContractCoreError::RuntimeHardwareActionClaim)
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_master_mode_source_contract_core_evidence(
+                Rp1EthernetBcm54213peMasterModeSourceContractCoreEvidence {
+                    permits_same_shaped_status_restart_poll_retry: true,
+                    ..evidence
+                }
+            ),
+            Err(Rp1EthernetBcm54213peMasterModeSourceContractCoreError::SameShapedRetryClaim)
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_master_mode_source_contract_core_evidence(
+                Rp1EthernetBcm54213peMasterModeSourceContractCoreEvidence {
+                    permits_networking: true,
+                    ..evidence
+                }
+            ),
+            Err(Rp1EthernetBcm54213peMasterModeSourceContractCoreError::NetworkingClaim)
+        );
+        assert_eq!(
+            Rp1EthernetBcm54213peMasterModeSourceContractCoreError::PhaseTransitionClaim.name(),
             "phase-transition-claim"
         );
     }
