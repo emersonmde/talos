@@ -1,0 +1,49 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-source-checkpoint-20260618",
+  "classification": "bcm54213pe-post-master-mode-autoneg-no-distinct-source-backed-discriminator-pause",
+  "evidence": [
+    {
+      "level": "static/task evidence review",
+      "path": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-closeout.md",
+      "result": "Accepted input closeout records master-mode plus autoneg timeout/link-not-ready and selected_next_task=null."
+    },
+    {
+      "level": "task-owned JSON evidence",
+      "path": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof/classification.json",
+      "result": "Terminal BMSR link, BMSR autoneg-complete, and MACB_NSR_LINK are false."
+    },
+    {
+      "level": "static/source evidence review",
+      "path": "tasks/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract.md",
+      "result": "Retained BCM54213PE source families reviewed: config_init, RGMII delay, APD, EEE, interrupts, suspend/resume, and read_status/aneg."
+    },
+    {
+      "level": "static/source evidence review",
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-post-txorder-link-not-ready-source-checkpoint.md",
+      "result": "Prior RGMII delay/TX-order branch already closed as timeout/link-not-ready."
+    },
+    {
+      "level": "rg/source inspection notes",
+      "path": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-source-checkpoint/source-inspection.json",
+      "result": "Candidate families classified and no selected discriminator retained."
+    },
+    {
+      "level": "task-owned JSON evidence",
+      "path": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-source-checkpoint/classification.json",
+      "result": "selected_discriminator=null, selected_next_task=null, planningNeeded=true."
+    },
+    {
+      "level": "docs",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "result": "Phase 12.1 visible source checkpoint pause recorded."
+    },
+    {
+      "level": "docs",
+      "path": "docs/src/roadmap.md",
+      "result": "Roadmap checkpoint entry recorded."
+    }
+  ],
+  "selected_next_task": null,
+  "selected_discriminator": null,
+  "planningNeeded": true
+}

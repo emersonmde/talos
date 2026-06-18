@@ -3575,6 +3575,20 @@ The post-review correction chain is:
     further Phase 12.1 hardware action, packet I/O, networking, SSH, Phase
     12.2, or phase-transition work.
 
+201. Phase 12 BCM54213PE post-master-mode autoneg source checkpoint: accepted
+    in
+    'phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-source-checkpoint-20260618'
+    with classification
+    'bcm54213pe-post-master-mode-autoneg-no-distinct-source-backed-discriminator-pause'.
+    The checkpoint preserves the same timeout/link-not-ready frontier and
+    selects no follow-up discriminator. GPIO32 reset remains blocked by
+    persistent-or-firmware-owned event state; same-shaped status/autoneg/
+    convergence retries and packet-readiness remain rejected; APD, EEE,
+    interrupt ISR/IMR/ECR, lifecycle, and MAC/phylink work require new
+    supervisor-planned scope. selected_discriminator and selected_next_task
+    are null, planningNeeded=true, and no hardware, packet I/O, networking,
+    SSH, Phase 12.2, or phase-transition work is mechanically unblocked.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed

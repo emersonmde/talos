@@ -2480,3 +2480,18 @@ The link-ready packet-readiness checkpoint is not mechanically unblocked.
 selected_next_task is null, planningNeeded=true, and supervisor planning is
 required before any future Phase 12.1 hardware action, packet I/O, networking,
 SSH, Phase 12.2, or phase transition.
+
+phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-source-checkpoint-20260618
+accepts
+bcm54213pe-post-master-mode-autoneg-no-distinct-source-backed-discriminator-pause.
+The source checkpoint preserves the same hardware frontier and classifies the
+remaining candidate families without selecting a follow-up: GPIO32 /
+ETH_RST_N reset ownership remains blocked by persistent-or-firmware-owned
+event state; same-shaped status/autoneg/convergence retries and link-ready
+packet-readiness are rejected; prior RGMII delay/TX-order work is already
+closed as timeout/link-not-ready; APD, EEE, interrupt ISR/IMR/ECR,
+suspend/resume lifecycle, and MAC/phylink work are deferred pending new
+supervisor-planned source scope. selected_discriminator and selected_next_task
+are null, planningNeeded=true, and no hardware, GPIO32/PHY reset,
+interrupt/APD/EEE/lifecycle, MAC/phylink, packet I/O, networking, SSH, Phase
+12.2, or phase-transition work is mechanically unblocked.

@@ -1,0 +1,124 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-source-checkpoint-20260618",
+  "status": "accepted",
+  "classification": "bcm54213pe-post-master-mode-autoneg-no-distinct-source-backed-discriminator-pause",
+  "evidence_level": [
+    "static/source/task evidence review",
+    "rg/source inspection notes",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_input_frontier": {
+    "closeout": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-closeout-20260618",
+      "commit": "47f5385e1c9ef36e6748eda7db1c9132605d011b",
+      "classification": "bcm54213pe-master-mode-autoneg-frontier-paused-link-not-ready-planning-required"
+    },
+    "hardware_proof": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof-20260618",
+      "commit": "ba99173bd1e94503a0e4900bfc9b482ae354ebac",
+      "classification": "bcm54213pe-master-mode-autoneg-timeout-link-not-ready",
+      "terminal_facts": {
+        "mii_ctrl1000_pre_read": "0x0200",
+        "mii_ctrl1000_write_value": "0x1a00",
+        "mii_ctrl1000_readback": "0x1a00",
+        "bmcr_restart_write_count": "0x1",
+        "bmsr_link_status": false,
+        "bmsr_autoneg_complete": false,
+        "anlpar": "0x0000",
+        "mii_stat1000": "0x0000",
+        "macb_nsr_link": false,
+        "link_ready_terminal": false
+      }
+    }
+  },
+  "selected_discriminator": null,
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planning_reason": "No mechanically ready, source-backed, qualitatively distinct feature discriminator remains in this task after accepted MII_CTRL1000 master-mode write/readback plus one BMCR autoneg restart still ended link-not-ready.",
+  "generic_selected_discriminator_core_unblocked": false,
+  "link_ready_packet_readiness_checkpoint_unblocked": false,
+  "hardware_authorized_by_this_task": false,
+  "candidate_dispositions": [
+    {
+      "candidate": "MII_CTRL1000 master-mode plus BMCR autoneg",
+      "disposition": "fixed",
+      "reason": "Accepted input frontier; hardware-visible write/readback plus one restart still ended link-not-ready."
+    },
+    {
+      "candidate": "GPIO32 / ETH_RST_N reset ownership",
+      "disposition": "blocked",
+      "reason": "Accepted persistent-or-firmware-owned GPIO32 event-state blocker still controls reset risk."
+    },
+    {
+      "candidate": "same-shaped status, autoneg, convergence, or capture retry",
+      "disposition": "rejected",
+      "reason": "Would repeat accepted timeout/link-not-ready evidence."
+    },
+    {
+      "candidate": "Broadcom RGMII delay / TX-order",
+      "disposition": "rejected",
+      "reason": "Already exercised and closed as timeout/link-not-ready before the master-mode branch."
+    },
+    {
+      "candidate": "APD/powerdown",
+      "disposition": "deferred",
+      "reason": "Source-backed PHY lifecycle/shadow write surface needing a separate ownership and restore contract."
+    },
+    {
+      "candidate": "EEE / Clause 45 MMD",
+      "disposition": "deferred",
+      "reason": "Source-backed MMD configuration surface, not a direct accepted link discriminator from this task."
+    },
+    {
+      "candidate": "interrupt ISR/IMR/ECR",
+      "disposition": "deferred",
+      "reason": "ISR reads may acknowledge pending interrupts and IMR/ECR writes require interrupt ownership."
+    },
+    {
+      "candidate": "suspend/resume, BMCR powerdown, soft reset, LED, WOL, PTP lifecycle",
+      "disposition": "deferred",
+      "reason": "Broad lifecycle path requiring supervisor-planned scope."
+    },
+    {
+      "candidate": "MAC/phylink",
+      "disposition": "deferred",
+      "reason": "Crosses into MAC configuration and driver readiness while link readiness remains unaccepted."
+    },
+    {
+      "candidate": "link-ready packet-readiness checkpoint",
+      "disposition": "rejected",
+      "reason": "Dependency gate remains unsatisfied because BMSR link, BMSR autoneg-complete, and MACB_NSR_LINK are false."
+    }
+  ],
+  "accepted_claims": [
+    "MII_CTRL1000 master-mode write/readback visible",
+    "one BMCR autoneg restart write visible",
+    "terminal timeout/link-not-ready evidence retained"
+  ],
+  "rejected_claims": [
+    "link-ready",
+    "autoneg-complete",
+    "packet-readiness",
+    "ethernet-driver-readiness",
+    "gpio32-phy-reset-ownership",
+    "interrupt-ownership",
+    "APD/EEE/lifecycle ownership",
+    "MAC/phylink ownership",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "validation": {
+    "static_source_task_evidence_review": "pass",
+    "rg_source_inspection_notes": "pass",
+    "jq_task_owned_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  }
+}

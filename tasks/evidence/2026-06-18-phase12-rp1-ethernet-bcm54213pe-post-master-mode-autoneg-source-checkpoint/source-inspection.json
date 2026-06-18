@@ -1,0 +1,52 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-source-checkpoint-20260618",
+  "inspection_level": "rg/source inspection notes",
+  "commands": [
+    "rg -n \"master-mode|post-master|GPIO32|EEE|APD|interrupt|BCM54213PE|link-ready|autoneg\" tasks docs/src/project/phase12-networking-ssh.md docs/src/roadmap.md -g '*.md' -g '*.json'",
+    "rg -n \"BCM54213|bcm54213|MII_CTRL1000|CTRL1000|autoneg|EEE|APD|interrupt|GPIO32|MACB_NSR|BMSR|BMCR|ANAR|ANLPAR|shadow|AUX|MMD\" . -g '*.rs' -g '*.sh' -g '*.md' -g '*.json'",
+    "rg -n \"bcm_phy_read_shadow|bcm54xx_auxctl_read|MII_BCM54XX_SHD|MII_BCM54XX_AUX|BCM54XX_SHD_APD|SCR3|EEE|MII_BCM54XX_ISR|MII_BCM54XX_IMR|MII_BCM54XX_ECR\" tasks/evidence docs/src tasks -g '*.txt' -g '*.md' -g '*.json'",
+    "rg -n \"MII_BCM54XX|BCM54XX|SHD|APD|EEE|AUXCTL|MMD|ISR|IMR|ECR|MII_CTRL1000|MII_STAT1000|MII_BMCR|MII_BMSR|MII_ADVERTISE|MII_LPA\" src scripts -g '*.rs' -g '*.sh'"
+  ],
+  "retained_sources": [
+    {
+      "path": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract/source/linux-rpi-6.12-broadcom-bcm54213pe-config-contract-excerpt.txt",
+      "sha256": "c745a529512ef69185ba7f2712079e66b5d9efbdb963eb194ec91291fc297aa6",
+      "notes": [
+        "BCM54213PE config_init routes through bcm54210e_config_init and bcm54xx_config_clock_delay.",
+        "PHY_BRCM_EN_MASTER_MODE gates the MII_CTRL1000 master-mode write path already exercised by the accepted input frontier.",
+        "RGMII delay, APD/powerdown, interrupt, LED, and lifecycle paths are source-backed but broader than this checkpoint."
+      ]
+    },
+    {
+      "path": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract/source/linux-rpi-6.12-brcmphy-register-contract-excerpt.txt",
+      "sha256": "b4a5d4d3272d53f0898179307e66ae50947fe94b25b72193868e7118a8d7adf6",
+      "notes": [
+        "MII_BCM54XX_ISR, MII_BCM54XX_ECR, MII_BCM54XX_IMR, MII_BCM54XX_AUX_CTL, MII_BCM54XX_SHD, APD, and EEE constants retained.",
+        "These surfaces require side-effect or write/restore classification before hardware."
+      ]
+    },
+    {
+      "path": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract/source/linux-rpi-6.12-bcm-phy-lib-contract-excerpt.txt",
+      "notes": [
+        "bcm_phy_ack_intr reads MII_BCM54XX_ISR to clear pending interrupts.",
+        "bcm_phy_config_intr writes ECR/IMR state and is interrupt ownership, not direct link readiness."
+      ]
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-rgmii-delay-tx-order-pi5-proof/classification.json",
+      "notes": [
+        "Prior RGMII delay/TX-order proof already reached corrected delay state plus one BMCR restart and bounded convergence, still ending link-not-ready."
+      ]
+    }
+  ],
+  "inspection_summary": {
+    "master_mode_autoneg": "accepted input frontier only; no link-ready or autoneg-complete accepted",
+    "gpio32": "blocked by persistent-or-firmware-owned event state",
+    "same_shaped_retries": "rejected",
+    "rgmii_delay_tx_order": "rejected because already closed as timeout/link-not-ready",
+    "apd_eee_lifecycle": "deferred pending new explicit ownership and restore contract",
+    "interrupts": "deferred because ISR may acknowledge and IMR/ECR writes require interrupt ownership",
+    "mac_phylink": "deferred because it crosses into MAC configuration and driver readiness",
+    "packet_networking_ssh_phase12_2": "rejected until link-ready and lower-level ownership are accepted"
+  }
+}
