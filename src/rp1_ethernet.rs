@@ -9295,6 +9295,105 @@ pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_SOURCE_EVIDENCE: &[&str] = &[
     "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/source/linux-rpi-6.12-mii-register-readonly-preflight-excerpt.txt",
 ];
 
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_SOURCE_CONTRACT_CORE_TASK_ID: &str =
+    "phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-source-contract-core-20260618";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_PI5_PROOF_TASK_ID: &str =
+    "phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof-20260618";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_CONTRACT_ID: &str =
+    "phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-source-contract-v1";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_CLOSEOUT_TASK_ID: &str =
+    "phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-closeout-20260618";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_CLOSEOUT_COMMIT: &str =
+    "e01744a814987c725ebd6158de5fa570c229403a";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_ACCEPTED_PROOF_TASK_ID: &str =
+    "phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof-20260618";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_ACCEPTED_PROOF_COMMIT: &str =
+    "7f029dc3fbb38032e396cc01b438ab999ace8ecd";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_CANDIDATE_BOOT_SCENARIO: &str =
+    "rpi5_rp1_ethernet_bcm54213pe_master_mode_autoneg_candidate";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_CONTROL_BOOT_SCENARIO: &str =
+    "rpi5_rp1_ethernet_bcm54213pe_master_mode_autoneg_no_mdio_control";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_BOOT_SCENARIOS: &[&str] = &[
+    RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_CANDIDATE_BOOT_SCENARIO,
+    RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_CONTROL_BOOT_SCENARIO,
+];
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_SELECTED_DISCRIMINATOR: &str =
+    "bcm54213pe-phy1-mii-ctrl1000-master-mode-plus-bmcr-autoneg-restart";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_CANDIDATE_CLASSIFICATION: &str =
+    "bcm54213pe-master-mode-autoneg-source-contract-core-local-static";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_CONTROL_CLASSIFICATION: &str =
+    "no-mdio-no-ethernet-bcm54213pe-master-mode-autoneg-control";
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_SELECTED_REGISTERS: &[&str] = &[
+    "pre-MII_CTRL1000:0x09",
+    "write-MII_CTRL1000:0x09",
+    "readback-MII_CTRL1000:0x09",
+    "restart-BMCR:0x00",
+    "poll-BMCR:0x00",
+    "poll-BMSR-first:0x01",
+    "poll-BMSR-second:0x01",
+    "poll-ANAR:0x04",
+    "poll-ANLPAR:0x05",
+    "poll-MII_CTRL1000:0x09",
+    "poll-MII_STAT1000:0x0a",
+    "poll-passive-MACB_NSR_LINK",
+];
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_SELECTED_WRITE_SURFACES: &[&str] = &[
+    "MII_CTRL1000 read/modify/write/readback setting CTL1000_AS_MASTER 0x0800 and CTL1000_ENABLE_MASTER 0x1000",
+    "one BMCR autoneg enable plus restart write frame 0x50821200 only after selected MII_CTRL1000 readback matches 0x1a00",
+];
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_OPERATION_ORDER: &[&str] = &[
+    "candidate/control emits contract marker and capture nonce",
+    "candidate checks accepted MACB NCR.MPE precondition before MDIO writes",
+    "candidate pre-reads PHY1 MII_CTRL1000 and derives expected write value 0x1a00 from accepted pre-read 0x0200 plus mask 0x1800",
+    "candidate performs exactly one PHY1 MII_CTRL1000 write frame 0x50a61a00 and requires readback 0x1a00 before any restart",
+    "candidate performs exactly one accepted PHY1 BMCR autoneg enable plus restart write frame 0x50821200 after MII_CTRL1000 readback",
+    "candidate runs the accepted bounded eight-sample convergence poll with BMCR, double-sampled BMSR, ANAR, ANLPAR, MII_CTRL1000, MII_STAT1000, and passive MACB_NSR_LINK context",
+    "control emits the same report/rejection shape without MDIO, MAN, MACB, GPIO32, PHY, interrupt, packet, networking, or SSH target construction",
+    "local/static core does not accept hardware success, link readiness, packet I/O, networking, SSH, Phase 12.2, or a phase transition",
+];
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_TERMINAL_CLASSIFICATIONS: &[&str] = &[
+    "bcm54213pe-master-mode-autoneg-link-ready",
+    "bcm54213pe-master-mode-autoneg-timeout-link-not-ready",
+    "bcm54213pe-master-mode-autoneg-precondition-blocker",
+    "bcm54213pe-master-mode-autoneg-master-mode-readback-mismatch",
+    "bcm54213pe-master-mode-autoneg-bmcr-restart-blocker",
+    "bcm54213pe-master-mode-autoneg-capture-blocker",
+    RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_CONTROL_CLASSIFICATION,
+];
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_REJECTED_CLAIMS: &[&str] = &[
+    "same-shaped status-only polling retry",
+    "bare BMCR autoneg restart retry without accepted MII_CTRL1000 write/readback prerequisite",
+    "marker/capture-only retry",
+    "RGMII delay retry",
+    "GPIO32/ETH_RST_N reset ownership",
+    "interrupt ownership",
+    "APD/EEE/lifecycle ownership",
+    "MAC/phylink ownership",
+    "link-ready acceptance from local/static evidence",
+    "autoneg-complete acceptance from local/static evidence",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition",
+];
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_RETAINED_RISKS: &[&str] = &[
+    "The source contract sequences an accepted MII_CTRL1000 master-mode write/readback before BMCR autoneg restart; it does not perform or prove hardware behavior.",
+    "Link-ready and autoneg-complete may only be accepted by the later Pi 5 proof when directly observed through BMSR/autoneg and MACB_NSR evidence.",
+    "GPIO32/ETH_RST_N reset ownership, interrupts, DMA, packet I/O, networking, sockets, SSH, and Phase 12.2 remain unaccepted.",
+];
+pub const RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_SOURCE_EVIDENCE: &[&str] = &[
+    "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-closeout.md",
+    "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-closeout/classification.json",
+    "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof.md",
+    "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/classification.json",
+    "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/hardware-run-summary.json",
+    "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-source-contract-core.md",
+    "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-bmcr-autoneg-restart-core.md",
+    "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-autoneg-convergence-core.md",
+];
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct Rp1EthernetPhy1GigabitPreflightRawVector {
     pub ctrl1000: u16,
@@ -11206,6 +11305,406 @@ pub fn validate_rp1_ethernet_bcm54213pe_master_mode_source_contract_core_evidenc
     }
     if evidence.source_evidence.is_empty() {
         return Err(Rp1EthernetBcm54213peMasterModeSourceContractCoreError::MissingSourceEvidence);
+    }
+    Ok(())
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreEvidence {
+    pub core_task_id: &'static str,
+    pub pi5_proof_task_id: &'static str,
+    pub contract_id: &'static str,
+    pub closeout_task_id: &'static str,
+    pub closeout_commit: &'static str,
+    pub accepted_master_mode_proof_task_id: &'static str,
+    pub accepted_master_mode_proof_commit: &'static str,
+    pub candidate_boot_scenario: &'static str,
+    pub control_boot_scenario: &'static str,
+    pub boot_scenarios: &'static [&'static str],
+    pub selected_discriminator: &'static str,
+    pub selected_registers: &'static [&'static str],
+    pub selected_write_surfaces: &'static [&'static str],
+    pub operation_order: &'static [&'static str],
+    pub phy_address: u32,
+    pub mii_ctrl1000_register: u32,
+    pub ctrl1000_read_frame: u32,
+    pub ctrl1000_write_frame: u32,
+    pub ctrl1000_write_mask: u16,
+    pub accepted_pre_ctrl1000: u16,
+    pub expected_ctrl1000_write_value: u16,
+    pub expected_ctrl1000_readback: u16,
+    pub bmcr_register: u32,
+    pub bmcr_write_frame: u32,
+    pub bmcr_write_value: u16,
+    pub poll_count: u32,
+    pub poll_delay_spins: u32,
+    pub terminal_classifications: &'static [&'static str],
+    pub candidate_constructs_mdio_target: bool,
+    pub candidate_constructs_man_frames: bool,
+    pub candidate_constructs_passive_macb_nsr_context: bool,
+    pub candidate_requires_ctrl1000_readback_before_bmcr_restart: bool,
+    pub candidate_runs_bounded_convergence_sampling: bool,
+    pub control_constructs_mdio_target: bool,
+    pub control_constructs_man_frames: bool,
+    pub control_constructs_macb_target: bool,
+    pub control_constructs_gpio32_or_phy_target: bool,
+    pub permits_mii_ctrl1000_master_mode_write: bool,
+    pub permits_exactly_one_bmcr_restart_after_ctrl1000_readback: bool,
+    pub permits_same_shaped_status_only_retry: bool,
+    pub permits_bare_bmcr_restart_retry: bool,
+    pub permits_marker_capture_only_retry: bool,
+    pub permits_rgmii_delay_retry: bool,
+    pub permits_gpio32_reset_action: bool,
+    pub permits_interrupt_ownership: bool,
+    pub permits_apd_eee_lifecycle_ownership: bool,
+    pub permits_mac_or_phylink_configuration: bool,
+    pub permits_link_ready_acceptance_in_core: bool,
+    pub permits_autoneg_complete_acceptance_in_core: bool,
+    pub permits_packet_io: bool,
+    pub permits_networking: bool,
+    pub permits_ssh: bool,
+    pub permits_phase_12_2: bool,
+    pub permits_phase_transition: bool,
+    pub source_contract_classification: &'static str,
+    pub control_classification: &'static str,
+    pub rejected_claims: &'static [&'static str],
+    pub retained_risks: &'static [&'static str],
+    pub source_evidence: &'static [&'static str],
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError {
+    ScenarioMismatch,
+    SourceFrontierMismatch,
+    SelectedSurfaceMismatch,
+    OperationOrderMismatch,
+    CandidateMissingMdioTargetFacts,
+    CandidateMissingPassiveMacbNsrContext,
+    CandidateMissingSequencedMasterModeWrite,
+    CandidateMissingReadbackBeforeRestart,
+    CandidateMissingBoundedConvergenceSampling,
+    ControlCarriesTargetFacts,
+    SameShapedStatusOnlyRetryClaim,
+    BareBmcrRestartRetryClaim,
+    MarkerCaptureOnlyRetryClaim,
+    RgmiiDelayRetryClaim,
+    Gpio32ResetActionClaim,
+    InterruptOwnershipClaim,
+    ApdEeeLifecycleOwnershipClaim,
+    MacOrPhylinkConfigurationClaim,
+    LinkReadyAcceptanceClaim,
+    AutonegCompleteAcceptanceClaim,
+    PacketIoClaim,
+    NetworkingClaim,
+    SshClaim,
+    Phase122Claim,
+    PhaseTransitionClaim,
+    ClassificationMismatch,
+    RejectedClaimsMismatch,
+    RetainedRisksMismatch,
+    MissingSourceEvidence,
+}
+
+impl Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError {
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::ScenarioMismatch => "scenario-mismatch",
+            Self::SourceFrontierMismatch => "source-frontier-mismatch",
+            Self::SelectedSurfaceMismatch => "selected-surface-mismatch",
+            Self::OperationOrderMismatch => "operation-order-mismatch",
+            Self::CandidateMissingMdioTargetFacts => "candidate-missing-mdio-target-facts",
+            Self::CandidateMissingPassiveMacbNsrContext => {
+                "candidate-missing-passive-macb-nsr-context"
+            }
+            Self::CandidateMissingSequencedMasterModeWrite => {
+                "candidate-missing-sequenced-master-mode-write"
+            }
+            Self::CandidateMissingReadbackBeforeRestart => {
+                "candidate-missing-readback-before-restart"
+            }
+            Self::CandidateMissingBoundedConvergenceSampling => {
+                "candidate-missing-bounded-convergence-sampling"
+            }
+            Self::ControlCarriesTargetFacts => "control-carries-target-facts",
+            Self::SameShapedStatusOnlyRetryClaim => "same-shaped-status-only-retry-claim",
+            Self::BareBmcrRestartRetryClaim => "bare-bmcr-restart-retry-claim",
+            Self::MarkerCaptureOnlyRetryClaim => "marker-capture-only-retry-claim",
+            Self::RgmiiDelayRetryClaim => "rgmii-delay-retry-claim",
+            Self::Gpio32ResetActionClaim => "gpio32-reset-action-claim",
+            Self::InterruptOwnershipClaim => "interrupt-ownership-claim",
+            Self::ApdEeeLifecycleOwnershipClaim => "apd-eee-lifecycle-ownership-claim",
+            Self::MacOrPhylinkConfigurationClaim => "mac-or-phylink-configuration-claim",
+            Self::LinkReadyAcceptanceClaim => "link-ready-acceptance-claim",
+            Self::AutonegCompleteAcceptanceClaim => "autoneg-complete-acceptance-claim",
+            Self::PacketIoClaim => "packet-io-claim",
+            Self::NetworkingClaim => "networking-claim",
+            Self::SshClaim => "ssh-claim",
+            Self::Phase122Claim => "phase-12-2-claim",
+            Self::PhaseTransitionClaim => "phase-transition-claim",
+            Self::ClassificationMismatch => "classification-mismatch",
+            Self::RejectedClaimsMismatch => "rejected-claims-mismatch",
+            Self::RetainedRisksMismatch => "retained-risks-mismatch",
+            Self::MissingSourceEvidence => "missing-source-evidence",
+        }
+    }
+}
+
+pub const fn rp1_ethernet_bcm54213pe_master_mode_autoneg_source_contract_core_evidence()
+-> Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreEvidence {
+    Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreEvidence {
+        core_task_id: RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_SOURCE_CONTRACT_CORE_TASK_ID,
+        pi5_proof_task_id: RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_PI5_PROOF_TASK_ID,
+        contract_id: RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_CONTRACT_ID,
+        closeout_task_id: RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_CLOSEOUT_TASK_ID,
+        closeout_commit: RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_CLOSEOUT_COMMIT,
+        accepted_master_mode_proof_task_id:
+            RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_ACCEPTED_PROOF_TASK_ID,
+        accepted_master_mode_proof_commit:
+            RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_ACCEPTED_PROOF_COMMIT,
+        candidate_boot_scenario:
+            RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_CANDIDATE_BOOT_SCENARIO,
+        control_boot_scenario: RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_CONTROL_BOOT_SCENARIO,
+        boot_scenarios: RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_BOOT_SCENARIOS,
+        selected_discriminator: RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_SELECTED_DISCRIMINATOR,
+        selected_registers: RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_SELECTED_REGISTERS,
+        selected_write_surfaces:
+            RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_SELECTED_WRITE_SURFACES,
+        operation_order: RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_OPERATION_ORDER,
+        phy_address: RP1_ETHERNET_BCM54213PE_MASTER_MODE_PHY_ADDRESS,
+        mii_ctrl1000_register: RP1_ETHERNET_BCM54213PE_MASTER_MODE_MII_CTRL1000_REGISTER,
+        ctrl1000_read_frame: RP1_ETHERNET_BCM54213PE_MASTER_MODE_READ_FRAME,
+        ctrl1000_write_frame: RP1_ETHERNET_BCM54213PE_MASTER_MODE_EXPECTED_WRITE_FRAME,
+        ctrl1000_write_mask: RP1_ETHERNET_BCM54213PE_MASTER_MODE_WRITE_MASK,
+        accepted_pre_ctrl1000: RP1_ETHERNET_BCM54213PE_MASTER_MODE_ACCEPTED_PRE_CTRL1000,
+        expected_ctrl1000_write_value: RP1_ETHERNET_BCM54213PE_MASTER_MODE_EXPECTED_WRITE_VALUE,
+        expected_ctrl1000_readback: RP1_ETHERNET_BCM54213PE_MASTER_MODE_EXPECTED_WRITE_VALUE,
+        bmcr_register: 0x00,
+        bmcr_write_frame: RP1_ETHERNET_BCM54213PE_BMCR_AUTONEG_RESTART_BMCR_WRITE_FRAME,
+        bmcr_write_value: RP1_ETHERNET_BCM54213PE_BMCR_AUTONEG_RESTART_WRITE_VALUE,
+        poll_count: RP1_ETHERNET_BCM54213PE_AUTONEG_CONVERGENCE_POLL_COUNT,
+        poll_delay_spins: RP1_ETHERNET_BCM54213PE_AUTONEG_CONVERGENCE_POLL_DELAY_SPINS,
+        terminal_classifications:
+            RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_TERMINAL_CLASSIFICATIONS,
+        candidate_constructs_mdio_target: true,
+        candidate_constructs_man_frames: true,
+        candidate_constructs_passive_macb_nsr_context: true,
+        candidate_requires_ctrl1000_readback_before_bmcr_restart: true,
+        candidate_runs_bounded_convergence_sampling: true,
+        control_constructs_mdio_target: false,
+        control_constructs_man_frames: false,
+        control_constructs_macb_target: false,
+        control_constructs_gpio32_or_phy_target: false,
+        permits_mii_ctrl1000_master_mode_write: true,
+        permits_exactly_one_bmcr_restart_after_ctrl1000_readback: true,
+        permits_same_shaped_status_only_retry: false,
+        permits_bare_bmcr_restart_retry: false,
+        permits_marker_capture_only_retry: false,
+        permits_rgmii_delay_retry: false,
+        permits_gpio32_reset_action: false,
+        permits_interrupt_ownership: false,
+        permits_apd_eee_lifecycle_ownership: false,
+        permits_mac_or_phylink_configuration: false,
+        permits_link_ready_acceptance_in_core: false,
+        permits_autoneg_complete_acceptance_in_core: false,
+        permits_packet_io: false,
+        permits_networking: false,
+        permits_ssh: false,
+        permits_phase_12_2: false,
+        permits_phase_transition: false,
+        source_contract_classification:
+            RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_CANDIDATE_CLASSIFICATION,
+        control_classification: RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_CONTROL_CLASSIFICATION,
+        rejected_claims: RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_REJECTED_CLAIMS,
+        retained_risks: RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_RETAINED_RISKS,
+        source_evidence: RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_SOURCE_EVIDENCE,
+    }
+}
+
+pub fn validate_rp1_ethernet_bcm54213pe_master_mode_autoneg_source_contract_core_evidence(
+    evidence: Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreEvidence,
+) -> Result<(), Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError> {
+    if evidence.candidate_boot_scenario
+        != RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_CANDIDATE_BOOT_SCENARIO
+        || evidence.control_boot_scenario
+            != RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_CONTROL_BOOT_SCENARIO
+        || evidence.boot_scenarios != RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_BOOT_SCENARIOS
+    {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::ScenarioMismatch,
+        );
+    }
+    if evidence.closeout_task_id != RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_CLOSEOUT_TASK_ID
+        || evidence.closeout_commit != RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_CLOSEOUT_COMMIT
+        || evidence.accepted_master_mode_proof_task_id
+            != RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_ACCEPTED_PROOF_TASK_ID
+        || evidence.accepted_master_mode_proof_commit
+            != RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_ACCEPTED_PROOF_COMMIT
+        || evidence.selected_discriminator
+            != RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_SELECTED_DISCRIMINATOR
+    {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::SourceFrontierMismatch,
+        );
+    }
+    if evidence.selected_registers != RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_SELECTED_REGISTERS
+        || evidence.selected_write_surfaces
+            != RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_SELECTED_WRITE_SURFACES
+        || evidence.phy_address != RP1_ETHERNET_BCM54213PE_MASTER_MODE_PHY_ADDRESS
+        || evidence.mii_ctrl1000_register
+            != RP1_ETHERNET_BCM54213PE_MASTER_MODE_MII_CTRL1000_REGISTER
+        || evidence.ctrl1000_read_frame != RP1_ETHERNET_BCM54213PE_MASTER_MODE_READ_FRAME
+        || evidence.ctrl1000_write_frame != RP1_ETHERNET_BCM54213PE_MASTER_MODE_EXPECTED_WRITE_FRAME
+        || evidence.ctrl1000_write_mask != RP1_ETHERNET_BCM54213PE_MASTER_MODE_WRITE_MASK
+        || evidence.accepted_pre_ctrl1000
+            != RP1_ETHERNET_BCM54213PE_MASTER_MODE_ACCEPTED_PRE_CTRL1000
+        || evidence.expected_ctrl1000_write_value
+            != RP1_ETHERNET_BCM54213PE_MASTER_MODE_EXPECTED_WRITE_VALUE
+        || evidence.expected_ctrl1000_readback
+            != RP1_ETHERNET_BCM54213PE_MASTER_MODE_EXPECTED_WRITE_VALUE
+        || evidence.bmcr_register != 0
+        || evidence.bmcr_write_frame
+            != RP1_ETHERNET_BCM54213PE_BMCR_AUTONEG_RESTART_BMCR_WRITE_FRAME
+        || evidence.bmcr_write_value != RP1_ETHERNET_BCM54213PE_BMCR_AUTONEG_RESTART_WRITE_VALUE
+        || evidence.poll_count != RP1_ETHERNET_BCM54213PE_AUTONEG_CONVERGENCE_POLL_COUNT
+        || evidence.poll_delay_spins != RP1_ETHERNET_BCM54213PE_AUTONEG_CONVERGENCE_POLL_DELAY_SPINS
+    {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::SelectedSurfaceMismatch,
+        );
+    }
+    if evidence.operation_order != RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_OPERATION_ORDER {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::OperationOrderMismatch,
+        );
+    }
+    if !evidence.candidate_constructs_mdio_target || !evidence.candidate_constructs_man_frames {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::CandidateMissingMdioTargetFacts,
+        );
+    }
+    if !evidence.candidate_constructs_passive_macb_nsr_context {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::CandidateMissingPassiveMacbNsrContext,
+        );
+    }
+    if !evidence.permits_mii_ctrl1000_master_mode_write {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::CandidateMissingSequencedMasterModeWrite,
+        );
+    }
+    if !evidence.candidate_requires_ctrl1000_readback_before_bmcr_restart
+        || !evidence.permits_exactly_one_bmcr_restart_after_ctrl1000_readback
+    {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::CandidateMissingReadbackBeforeRestart,
+        );
+    }
+    if !evidence.candidate_runs_bounded_convergence_sampling {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::CandidateMissingBoundedConvergenceSampling,
+        );
+    }
+    if evidence.control_constructs_mdio_target
+        || evidence.control_constructs_man_frames
+        || evidence.control_constructs_macb_target
+        || evidence.control_constructs_gpio32_or_phy_target
+    {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::ControlCarriesTargetFacts,
+        );
+    }
+    if evidence.permits_same_shaped_status_only_retry {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::SameShapedStatusOnlyRetryClaim,
+        );
+    }
+    if evidence.permits_bare_bmcr_restart_retry {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::BareBmcrRestartRetryClaim,
+        );
+    }
+    if evidence.permits_marker_capture_only_retry {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::MarkerCaptureOnlyRetryClaim,
+        );
+    }
+    if evidence.permits_rgmii_delay_retry {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::RgmiiDelayRetryClaim,
+        );
+    }
+    if evidence.permits_gpio32_reset_action {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::Gpio32ResetActionClaim,
+        );
+    }
+    if evidence.permits_interrupt_ownership {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::InterruptOwnershipClaim,
+        );
+    }
+    if evidence.permits_apd_eee_lifecycle_ownership {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::ApdEeeLifecycleOwnershipClaim,
+        );
+    }
+    if evidence.permits_mac_or_phylink_configuration {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::MacOrPhylinkConfigurationClaim,
+        );
+    }
+    if evidence.permits_link_ready_acceptance_in_core {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::LinkReadyAcceptanceClaim,
+        );
+    }
+    if evidence.permits_autoneg_complete_acceptance_in_core {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::AutonegCompleteAcceptanceClaim,
+        );
+    }
+    if evidence.permits_packet_io {
+        return Err(Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::PacketIoClaim);
+    }
+    if evidence.permits_networking {
+        return Err(Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::NetworkingClaim);
+    }
+    if evidence.permits_ssh {
+        return Err(Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::SshClaim);
+    }
+    if evidence.permits_phase_12_2 {
+        return Err(Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::Phase122Claim);
+    }
+    if evidence.permits_phase_transition {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::PhaseTransitionClaim,
+        );
+    }
+    if evidence.source_contract_classification
+        != RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_CANDIDATE_CLASSIFICATION
+        || evidence.control_classification
+            != RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_CONTROL_CLASSIFICATION
+        || evidence.terminal_classifications
+            != RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_TERMINAL_CLASSIFICATIONS
+    {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::ClassificationMismatch,
+        );
+    }
+    if evidence.rejected_claims != RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_REJECTED_CLAIMS {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::RejectedClaimsMismatch,
+        );
+    }
+    if evidence.retained_risks != RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_RETAINED_RISKS {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::RetainedRisksMismatch,
+        );
+    }
+    if evidence.source_evidence.is_empty() {
+        return Err(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::MissingSourceEvidence,
+        );
     }
     Ok(())
 }
@@ -18408,6 +18907,229 @@ mod tests {
         );
         assert_eq!(
             Rp1EthernetBcm54213peMasterModeSourceContractCoreError::PhaseTransitionClaim.name(),
+            "phase-transition-claim"
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_bcm54213pe_master_mode_autoneg_source_contract_shapes_candidate_and_control() {
+        let evidence = rp1_ethernet_bcm54213pe_master_mode_autoneg_source_contract_core_evidence();
+
+        assert_eq!(
+            evidence.core_task_id,
+            RP1_ETHERNET_BCM54213PE_MASTER_MODE_AUTONEG_SOURCE_CONTRACT_CORE_TASK_ID
+        );
+        assert_eq!(
+            evidence.pi5_proof_task_id,
+            "phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof-20260618"
+        );
+        assert_eq!(
+            evidence.closeout_commit,
+            "e01744a814987c725ebd6158de5fa570c229403a"
+        );
+        assert_eq!(
+            evidence.accepted_master_mode_proof_commit,
+            "7f029dc3fbb38032e396cc01b438ab999ace8ecd"
+        );
+        assert_eq!(
+            evidence.candidate_boot_scenario,
+            "rpi5_rp1_ethernet_bcm54213pe_master_mode_autoneg_candidate"
+        );
+        assert_eq!(
+            evidence.control_boot_scenario,
+            "rpi5_rp1_ethernet_bcm54213pe_master_mode_autoneg_no_mdio_control"
+        );
+        assert_eq!(
+            evidence.selected_discriminator,
+            "bcm54213pe-phy1-mii-ctrl1000-master-mode-plus-bmcr-autoneg-restart"
+        );
+        assert_eq!(evidence.phy_address, 1);
+        assert_eq!(evidence.mii_ctrl1000_register, 0x09);
+        assert_eq!(evidence.ctrl1000_read_frame, 0x60a6_0000);
+        assert_eq!(evidence.ctrl1000_write_frame, 0x50a6_1a00);
+        assert_eq!(evidence.ctrl1000_write_mask, 0x1800);
+        assert_eq!(evidence.accepted_pre_ctrl1000, 0x0200);
+        assert_eq!(evidence.expected_ctrl1000_write_value, 0x1a00);
+        assert_eq!(evidence.expected_ctrl1000_readback, 0x1a00);
+        assert_eq!(evidence.bmcr_register, 0x00);
+        assert_eq!(evidence.bmcr_write_frame, 0x5082_1200);
+        assert_eq!(evidence.bmcr_write_value, 0x1200);
+        assert_eq!(evidence.poll_count, 8);
+        assert_eq!(evidence.poll_delay_spins, 200_000);
+        assert!(evidence.candidate_constructs_mdio_target);
+        assert!(evidence.candidate_constructs_man_frames);
+        assert!(evidence.candidate_constructs_passive_macb_nsr_context);
+        assert!(evidence.candidate_requires_ctrl1000_readback_before_bmcr_restart);
+        assert!(evidence.candidate_runs_bounded_convergence_sampling);
+        assert!(!evidence.control_constructs_mdio_target);
+        assert!(!evidence.control_constructs_man_frames);
+        assert!(!evidence.control_constructs_macb_target);
+        assert!(!evidence.control_constructs_gpio32_or_phy_target);
+        assert!(evidence.permits_mii_ctrl1000_master_mode_write);
+        assert!(evidence.permits_exactly_one_bmcr_restart_after_ctrl1000_readback);
+        assert!(!evidence.permits_same_shaped_status_only_retry);
+        assert!(!evidence.permits_bare_bmcr_restart_retry);
+        assert!(!evidence.permits_marker_capture_only_retry);
+        assert!(!evidence.permits_rgmii_delay_retry);
+        assert!(!evidence.permits_gpio32_reset_action);
+        assert!(!evidence.permits_interrupt_ownership);
+        assert!(!evidence.permits_apd_eee_lifecycle_ownership);
+        assert!(!evidence.permits_mac_or_phylink_configuration);
+        assert!(!evidence.permits_link_ready_acceptance_in_core);
+        assert!(!evidence.permits_autoneg_complete_acceptance_in_core);
+        assert!(!evidence.permits_packet_io);
+        assert!(!evidence.permits_networking);
+        assert!(!evidence.permits_ssh);
+        assert!(!evidence.permits_phase_12_2);
+        assert!(!evidence.permits_phase_transition);
+        assert_eq!(
+            evidence.terminal_classifications,
+            &[
+                "bcm54213pe-master-mode-autoneg-link-ready",
+                "bcm54213pe-master-mode-autoneg-timeout-link-not-ready",
+                "bcm54213pe-master-mode-autoneg-precondition-blocker",
+                "bcm54213pe-master-mode-autoneg-master-mode-readback-mismatch",
+                "bcm54213pe-master-mode-autoneg-bmcr-restart-blocker",
+                "bcm54213pe-master-mode-autoneg-capture-blocker",
+                "no-mdio-no-ethernet-bcm54213pe-master-mode-autoneg-control",
+            ]
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_master_mode_autoneg_source_contract_core_evidence(
+                evidence
+            ),
+            Ok(())
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_bcm54213pe_master_mode_autoneg_source_contract_rejects_drift() {
+        let evidence = rp1_ethernet_bcm54213pe_master_mode_autoneg_source_contract_core_evidence();
+
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_master_mode_autoneg_source_contract_core_evidence(
+                Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreEvidence {
+                    ctrl1000_write_frame: 0x50a6_0200,
+                    expected_ctrl1000_write_value: 0x0200,
+                    expected_ctrl1000_readback: 0x0200,
+                    ..evidence
+                }
+            ),
+            Err(
+                Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::SelectedSurfaceMismatch
+            )
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_master_mode_autoneg_source_contract_core_evidence(
+                Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreEvidence {
+                    permits_mii_ctrl1000_master_mode_write: false,
+                    ..evidence
+                }
+            ),
+            Err(
+                Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::CandidateMissingSequencedMasterModeWrite
+            )
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_master_mode_autoneg_source_contract_core_evidence(
+                Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreEvidence {
+                    candidate_requires_ctrl1000_readback_before_bmcr_restart: false,
+                    ..evidence
+                }
+            ),
+            Err(
+                Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::CandidateMissingReadbackBeforeRestart
+            )
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_master_mode_autoneg_source_contract_core_evidence(
+                Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreEvidence {
+                    candidate_runs_bounded_convergence_sampling: false,
+                    ..evidence
+                }
+            ),
+            Err(
+                Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::CandidateMissingBoundedConvergenceSampling
+            )
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_master_mode_autoneg_source_contract_core_evidence(
+                Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreEvidence {
+                    control_constructs_mdio_target: true,
+                    ..evidence
+                }
+            ),
+            Err(
+                Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::ControlCarriesTargetFacts
+            )
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_master_mode_autoneg_source_contract_core_evidence(
+                Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreEvidence {
+                    permits_same_shaped_status_only_retry: true,
+                    ..evidence
+                }
+            ),
+            Err(
+                Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::SameShapedStatusOnlyRetryClaim
+            )
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_master_mode_autoneg_source_contract_core_evidence(
+                Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreEvidence {
+                    permits_bare_bmcr_restart_retry: true,
+                    ..evidence
+                }
+            ),
+            Err(
+                Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::BareBmcrRestartRetryClaim
+            )
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_master_mode_autoneg_source_contract_core_evidence(
+                Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreEvidence {
+                    permits_marker_capture_only_retry: true,
+                    ..evidence
+                }
+            ),
+            Err(
+                Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::MarkerCaptureOnlyRetryClaim
+            )
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_master_mode_autoneg_source_contract_core_evidence(
+                Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreEvidence {
+                    permits_link_ready_acceptance_in_core: true,
+                    ..evidence
+                }
+            ),
+            Err(
+                Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::LinkReadyAcceptanceClaim
+            )
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_master_mode_autoneg_source_contract_core_evidence(
+                Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreEvidence {
+                    permits_autoneg_complete_acceptance_in_core: true,
+                    ..evidence
+                }
+            ),
+            Err(
+                Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::AutonegCompleteAcceptanceClaim
+            )
+        );
+        assert_eq!(
+            validate_rp1_ethernet_bcm54213pe_master_mode_autoneg_source_contract_core_evidence(
+                Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreEvidence {
+                    permits_networking: true,
+                    ..evidence
+                }
+            ),
+            Err(Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::NetworkingClaim)
+        );
+        assert_eq!(
+            Rp1EthernetBcm54213peMasterModeAutonegSourceContractCoreError::PhaseTransitionClaim
+                .name(),
             "phase-transition-claim"
         );
     }

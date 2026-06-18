@@ -2433,3 +2433,20 @@ visible, but no next Ethernet task is mechanically unblocked. selected_next_task
 is null, planningNeeded=true, and supervisor planning is required before any
 future Phase 12.1 hardware action, packet I/O, networking, SSH, Phase 12.2, or
 phase transition.
+
+phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-source-contract-core-20260618
+accepts bcm54213pe-master-mode-autoneg-source-contract-core-local-static. The
+source/static contract is a distinct boundary from same-shaped status polling and
+bare BMCR restart retries because the future candidate must first repeat the
+accepted PHY1 MII_CTRL1000 master-mode read/modify/write/readback sequence
+(pre-read 0x0200, write/readback 0x1a00) and only then issue one BMCR autoneg
+enable plus restart frame 0x50821200 followed by bounded BMCR, double-sampled
+BMSR, ANAR, ANLPAR, MII_CTRL1000, MII_STAT1000, and passive MACB_NSR_LINK
+sampling. The paired control constructs no MDIO, MAN, MACB, GPIO32/PHY,
+interrupt, packet, networking, or SSH target facts. The selected next task is
+phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof-20260618, which
+must retain selected-tree/TFTP/serial/final-identity/restore evidence before any
+link-ready or autoneg-complete claim can be accepted. Packet I/O, networking,
+sockets, SSH, Phase 12.2, phase transition, GPIO32 reset, interrupts,
+APD/EEE/lifecycle, MAC/phylink, marker-only retry, same-shaped status-only retry,
+and bare BMCR restart retry remain rejected.

@@ -1,0 +1,56 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-source-contract-core-20260618",
+  "classification": "bcm54213pe-master-mode-autoneg-source-contract-core-local-static",
+  "paths": {
+    "task_record": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-source-contract-core.md",
+    "classification": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-source-contract-core/classification.json",
+    "validator_output": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-source-contract-core/validator-output.txt",
+    "source_code": "src/rp1_ethernet.rs",
+    "phase12_doc": "docs/src/project/phase12-networking-ssh.md",
+    "roadmap": "docs/src/roadmap.md",
+    "accepted_closeout": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-closeout.md",
+    "accepted_pi5_proof": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof.md"
+  },
+  "validation_commands": [
+    {
+      "level": "fmt/lint",
+      "command": "cargo fmt --all -- --check",
+      "status": "pass"
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet rp1_ethernet_bcm54213pe_master_mode_autoneg_source_contract",
+      "status": "pass"
+    },
+    {
+      "level": "full Rust unit tests through QEMU/substitute",
+      "command": "cargo -Zjson-target-spec test --quiet",
+      "status": "pass"
+    },
+    {
+      "level": "JSON evidence validation",
+      "command": "jq empty tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-source-contract-core/*.json",
+      "status": "pass"
+    },
+    {
+      "level": "diff check",
+      "command": "git diff --check",
+      "status": "pass"
+    },
+    {
+      "level": "docs build",
+      "command": "mdbook build",
+      "status": "pass"
+    },
+    {
+      "level": "cached diff check",
+      "command": "git diff --cached --check",
+      "status": "pass"
+    }
+  ],
+  "selected_next_task": "phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof-20260618",
+  "planning_needed": false,
+  "hardware_lock_required_now": false,
+  "hardware_lock_required_for_selected_next_task": true,
+  "rejected_overclaims_preserved": true
+}

@@ -1,0 +1,79 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-source-contract-core-20260618",
+  "status": "accepted",
+  "classification": "bcm54213pe-master-mode-autoneg-source-contract-core-local-static",
+  "evidence_level": [
+    "static/source/task evidence inspection",
+    "focused Rust unit tests",
+    "full Rust unit tests through QEMU",
+    "JSON evidence validation",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_input_frontier": {
+    "closeout_task_id": "phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-closeout-20260618",
+    "closeout_commit": "e01744a814987c725ebd6158de5fa570c229403a",
+    "hardware_proof_task_id": "phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof-20260618",
+    "hardware_proof_commit": "7f029dc3fbb38032e396cc01b438ab999ace8ecd",
+    "accepted_runtime_fact": "PHY1 MII_CTRL1000 pre-read 0x0200, write value 0x1a00, readback 0x1a00"
+  },
+  "selected_discriminator": "bcm54213pe-phy1-mii-ctrl1000-master-mode-plus-bmcr-autoneg-restart",
+  "selected_next_task": "phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof-20260618",
+  "planning_needed": false,
+  "candidate_surface": {
+    "candidate_boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_master_mode_autoneg_candidate",
+    "phy_address": 1,
+    "mii_ctrl1000_register": "0x09",
+    "ctrl1000_read_frame": "0x60a60000",
+    "ctrl1000_write_frame": "0x50a61a00",
+    "ctrl1000_expected_readback": "0x1a00",
+    "bmcr_restart_write_frame": "0x50821200",
+    "bounded_poll_count": 8,
+    "bounded_poll_delay_spins": 200000,
+    "poll_context": [
+      "BMCR",
+      "BMSR double sample",
+      "ANAR",
+      "ANLPAR",
+      "MII_CTRL1000",
+      "MII_STAT1000",
+      "passive MACB_NSR_LINK"
+    ]
+  },
+  "control_surface": {
+    "control_boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_master_mode_autoneg_no_mdio_control",
+    "constructs_mdio_target": false,
+    "constructs_man_frames": false,
+    "constructs_macb_target": false,
+    "constructs_gpio32_or_phy_target": false
+  },
+  "allowed_terminal_classifications": [
+    "bcm54213pe-master-mode-autoneg-link-ready",
+    "bcm54213pe-master-mode-autoneg-timeout-link-not-ready",
+    "bcm54213pe-master-mode-autoneg-precondition-blocker",
+    "bcm54213pe-master-mode-autoneg-master-mode-readback-mismatch",
+    "bcm54213pe-master-mode-autoneg-bmcr-restart-blocker",
+    "bcm54213pe-master-mode-autoneg-capture-blocker",
+    "no-mdio-no-ethernet-bcm54213pe-master-mode-autoneg-control"
+  ],
+  "rejected_claims": [
+    "same-shaped status-only polling retry",
+    "bare BMCR autoneg restart retry without accepted MII_CTRL1000 write/readback prerequisite",
+    "marker/capture-only retry",
+    "GPIO32 reset",
+    "interrupt ownership",
+    "APD/EEE/lifecycle ownership",
+    "MAC/phylink ownership",
+    "link-ready from local/static evidence",
+    "autoneg-complete from local/static evidence",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ],
+  "hardware_performed": false,
+  "lab_mutation_performed": false,
+  "boot_publication_performed": false
+}

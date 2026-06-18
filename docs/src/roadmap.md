@@ -3549,6 +3549,20 @@ The post-review correction chain is:
     Phase 12.1 hardware action, packet I/O, networking, SSH, Phase 12.2, or
     phase-transition work.
 
+199. Phase 12 BCM54213PE master-mode autoneg source-contract core: accepted in
+    'phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-source-contract-core-20260618'
+    with classification
+    'bcm54213pe-master-mode-autoneg-source-contract-core-local-static'. This
+    source/static boundary is distinct from rejected same-shaped status polling
+    and bare BMCR restart retries: the candidate must first perform the accepted
+    PHY1 MII_CTRL1000 master-mode write/readback sequence, then one BMCR autoneg
+    restart, then bounded convergence sampling. The selected next task is only
+    the serialized Pi 5 proof
+    'phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof-20260618'.
+    Link-ready and autoneg-complete remain rejected until directly observed by
+    that hardware proof; packet I/O, networking, SSH, Phase 12.2, and phase
+    transition remain rejected.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
@@ -12611,6 +12625,18 @@ read/modify/write/readback boundary: NCR remained 0x10, MII_CTRL1000 pre-read
 link readiness, autoneg completion, packet I/O, networking, sockets, SSH, Phase
 12.2, or phase transition. The next gated task is
 phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-closeout-20260618.
+
+phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-source-contract-core-20260618
+accepts bcm54213pe-master-mode-autoneg-source-contract-core-local-static. This
+local/static contract sequences the accepted PHY1 MII_CTRL1000 master-mode
+write/readback prerequisite before exactly one BMCR autoneg restart and bounded
+BMCR/BMSR/ANAR/ANLPAR/MII_CTRL1000/MII_STAT1000/passive-MACB_NSR sampling. The
+selected next task is
+phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof-20260618. Link-ready,
+autoneg-complete, packet I/O, networking, sockets, SSH, Phase 12.2, phase
+transition, GPIO32 reset, interrupts, APD/EEE/lifecycle, MAC/phylink,
+same-shaped status-only retry, marker-only retry, and bare BMCR restart retry
+remain rejected.
 
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
