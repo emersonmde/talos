@@ -1,0 +1,19 @@
+{
+  "task_id": "phase10-pi5-command0-final-identity-regression-closeout-20260618",
+  "evidence_root": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-closeout",
+  "files": {
+    "task_record": "tasks/2026-06-18-phase10-pi5-command0-final-identity-regression-closeout.md",
+    "classification": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-closeout/classification.json",
+    "accepted_discriminator_core": "tasks/2026-06-18-phase10-pi5-command0-final-identity-regression-discriminator-core.md",
+    "accepted_pi5_proof": "tasks/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof.md",
+    "proof_classification": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof/candidate-final-identity-regression-20260618T012900Z/classification.json",
+    "proof_evidence_map": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof/candidate-final-identity-regression-20260618T012900Z/evidence-map.json",
+    "proof_tftp_delta": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof/candidate-final-identity-regression-20260618T012900Z/tftp/tftp-delta-stable-pre-command.json",
+    "proof_prearmed_serial_read": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof/candidate-final-identity-regression-20260618T012900Z/serial/command0-prearmed-read.json",
+    "proof_immediate_post_command_identity": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof/candidate-final-identity-regression-20260618T012900Z/immediate-post-command-status.json",
+    "proof_final_pre_restore_identity": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof/candidate-final-identity-regression-20260618T012900Z/final-pre-restore-status.json",
+    "proof_restore_status": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof/candidate-final-identity-regression-20260618T012900Z/restore/post-restore-status.json"
+  },
+  "selected_next_task": null,
+  "planning_needed": true
+}
