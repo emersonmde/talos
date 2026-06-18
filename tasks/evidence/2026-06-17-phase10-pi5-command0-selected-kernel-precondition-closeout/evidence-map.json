@@ -1,0 +1,31 @@
+{
+  "task_id": "phase10-pi5-command0-selected-kernel-precondition-closeout-20260617",
+  "classification": "selected-kernel-precondition-closeout-command0-lab-boundary-retry-selected",
+  "precondition_status": "accepted",
+  "selected_next_task": "phase10-pi5-serial-command0-lab-boundary-after-precondition-recovery-pi5-proof-20260617",
+  "planning_needed": false,
+  "inputs": {
+    "discriminator_core_task": "tasks/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-discriminator-core.md",
+    "discriminator_core_classification": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-discriminator-core/classification.json",
+    "discriminator_core_evidence_map": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-discriminator-core/evidence-map.json",
+    "pi5_proof_task": "tasks/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-pi5-proof.md",
+    "pi5_proof_classification": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-pi5-proof/classification.json",
+    "pi5_proof_evidence_map": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-pi5-proof/evidence-map.json",
+    "accepted_pi5_run": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-pi5-proof/candidate-selected-kernel-precondition-20260617T235548Z",
+    "accepted_pi5_run_summary": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-pi5-proof/candidate-selected-kernel-precondition-20260617T235548Z/run-summary.json",
+    "accepted_pi5_run_classification": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-pi5-proof/candidate-selected-kernel-precondition-20260617T235548Z/classification.json",
+    "accepted_pi5_run_tftp_delta": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-pi5-proof/candidate-selected-kernel-precondition-20260617T235548Z/capture/tftp-delta-stable-pre-restore.json",
+    "accepted_pi5_run_final_identity": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-pi5-proof/candidate-selected-kernel-precondition-20260617T235548Z/capture/final-pre-restore-boot-files.json",
+    "accepted_pi5_run_restore": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-pi5-proof/candidate-selected-kernel-precondition-20260617T235548Z/capture/restore-snapshot.json"
+  },
+  "commits": {
+    "discriminator_core": "e5f28f8dd4e95434d609d20d00129ae867e02336",
+    "pi5_proof": "0c132bda6eda8773c8e884b208d7fd752f7da472"
+  },
+  "outputs": {
+    "closeout_task": "tasks/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-closeout.md",
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-closeout/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-closeout/evidence-map.json",
+    "roadmap": "docs/src/roadmap.md"
+  }
+}

@@ -3185,6 +3185,21 @@ The post-review correction chain is:
     Command0 input delivery acceptance, source-response retention,
     generated-root command-input success, storage, networking, SSH, Phase 11/12
     expansion, and phase transition remain rejected.
+176. Pi 5 command0 selected-kernel precondition closeout: accepted in
+    'phase10-pi5-command0-selected-kernel-precondition-closeout-20260617'
+    with classification
+    'selected-kernel-precondition-closeout-command0-lab-boundary-retry-selected'.
+    The closeout reconciles the accepted local/static discriminator core and
+    serialized Pi 5 proof: selected post-publish identity, two
+    same-power-cycle 208984-byte da591740/kernel_2712.img TFTP serves, final
+    selected identity, and baseline restore satisfy
+    selected-kernel-tftp-precondition-lab-boundary-v1. The selected follow-up
+    is the dependency-gated command0 lab-boundary retry after precondition
+    recovery
+    'phase10-pi5-serial-command0-lab-boundary-after-precondition-recovery-pi5-proof-20260617'.
+    Command0 input delivery acceptance, source-response retention,
+    generated-root command-input success, storage, networking, SSH, Phase 11/12
+    expansion, and phase transition remain rejected.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -8013,6 +8028,16 @@ Selected first slice:
   identity evidence recurs. The positive prearmed serial command0 delivery
   shape remains useful non-accepting evidence. The selected follow-up is
   phase10-pi5-command0-selected-kernel-precondition-discriminator-core-20260617.
+- 'phase10-pi5-command0-selected-kernel-precondition-closeout-20260617'
+  accepts the selected-kernel/TFTP precondition closeout with classification
+  selected-kernel-precondition-closeout-command0-lab-boundary-retry-selected.
+  The accepted precondition evidence retains selected post-publish identity,
+  same-power-cycle selected TFTP bytes, final selected identity, and baseline
+  restore. The selected follow-up is the dependency-gated command0 lab-boundary
+  retry after precondition recovery; command0 input delivery,
+  source-response retention, generated-root command-input success, storage,
+  networking, SSH, Phase 11/12 expansion, and phase transition remain
+  unaccepted.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The
