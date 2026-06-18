@@ -1,0 +1,77 @@
+{
+  "task_id": "phase10-pi5-serial-command0-lab-boundary-after-precondition-recovery-closeout-20260617",
+  "classification": "command0-lab-boundary-after-precondition-closed-final-identity-regressed-planning-needed",
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "The after-precondition recovery Pi 5 proof retained selected-kernel/TFTP precondition evidence and ordered prearmed serial command0 delivery evidence, but final pre-restore lab identity regressed to the baseline tree before explicit restore. Supervisor planning is required before another follow-up or before using the serial evidence to unblock source-response retention v3.",
+  "closeout": {
+    "command0_input_delivery_accepted": false,
+    "source_response_retention_v3_selected": false,
+    "generated_root_command_input_success_accepted": false,
+    "first_failing_invariant": "final-pre-restore-identity-regressed-after-command0",
+    "selected_kernel_tftp_precondition_passed": true,
+    "ordered_command0_serial_delivery_passed": true,
+    "final_pre_restore_identity_passed": false
+  },
+  "evidence_summary": {
+    "accepted_precondition_closeout": "tasks/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-closeout.md",
+    "accepted_lab_boundary_core": "tasks/2026-06-17-phase10-pi5-serial-command0-lab-write-boundary-discriminator-core.md",
+    "accepted_proof": "tasks/2026-06-17-phase10-pi5-serial-command0-lab-boundary-after-precondition-recovery-pi5-proof.md",
+    "proof_classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-lab-boundary-after-precondition-recovery-pi5-proof/candidate-rerun-command0-after-precondition-prearmed-read-20260618T002703Z/classification.json",
+    "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+    "expected_kernel_size": 208984,
+    "observed_pre_command_tftp_kernel_sizes": [
+      208984,
+      208984
+    ],
+    "final_pre_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "final_pre_restore_kernel_size": 104136,
+    "serial_write_ok": true,
+    "serial_write_bytes": 9,
+    "prearmed_read_ordered_command0": true,
+    "prearmed_read_bytes": 614
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Reconciled accepted selected-kernel/TFTP precondition evidence with the after-precondition-recovery lab-boundary proof."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Preserved ordered prearmed command0 delivery evidence as useful non-accepting evidence."
+    },
+    {
+      "disposition": "blocked",
+      "finding": "Command0 input delivery remains unaccepted because final pre-restore identity regressed to the baseline tree after command0 and before explicit restore."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Source-response retention v3 remains dependency-gated until command0 input delivery is accepted by an explicit future task."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No hardware lock, boot publication, lab mutation, source change, or proof-helper change was required for this static closeout."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "No source-response retention, generated-root command-input success, storage, networking, SSH, Phase 11/12 expansion, or phase transition is accepted."
+    }
+  ],
+  "validation": {
+    "task_evidence_consistency_review": "pass",
+    "jq_empty_task_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "rejected_claims": [
+    "source-response-retention",
+    "generated-root-command-input-success",
+    "storage",
+    "networking",
+    "ssh",
+    "phase-11-expansion",
+    "phase-12-expansion",
+    "phase-transition"
+  ]
+}
