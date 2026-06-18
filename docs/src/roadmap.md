@@ -8083,6 +8083,20 @@ Selected first slice:
   command0 input delivery, source-response retention, generated-root
   command-input success, storage, networking, SSH, Phase 11/12 expansion, and
   phase transition remain unaccepted.
+- 'phase10-pi5-command0-final-identity-regression-pi5-proof-20260618'
+  accepts the serialized Pi 5 final-identity regression proof with
+  classification command0-final-identity-command0-delivery-blocked. The run
+  retained selected post-publish identity, stable same-power-cycle selected
+  TFTP serves, immediate post-command selected identity, final pre-restore
+  selected identity, and baseline restore proof. The prior final-pre-restore
+  baseline regression did not reproduce; instead, command0 input delivery
+  remains unaccepted because the saturated-cursor readiness capture waited long
+  enough for input timeouts to advance the command loop, and the rootinfo write
+  reached command=4 rather than command=0. The selected follow-up is
+  phase10-pi5-command0-final-identity-regression-closeout-20260618;
+  source-response retention, generated-root command-input success, storage,
+  networking, SSH, Phase 11/12 expansion, and phase transition remain
+  unaccepted.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The

@@ -1,0 +1,24 @@
+{
+  "task_id": "phase10-pi5-command0-final-identity-regression-pi5-proof-20260618",
+  "run_label": "candidate-final-identity-regression-20260618T012900Z",
+  "evidence_root": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof/candidate-final-identity-regression-20260618T012900Z",
+  "files": {
+    "classification": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof/candidate-final-identity-regression-20260618T012900Z/classification.json",
+    "proof_evidence": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof/candidate-final-identity-regression-20260618T012900Z/final-identity-regression-proof-evidence.json",
+    "discriminator_result": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof/candidate-final-identity-regression-20260618T012900Z/discriminator-result.json",
+    "archive_static_review": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof/candidate-final-identity-regression-20260618T012900Z/archive-static-review.json",
+    "post_publish_status": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof/candidate-final-identity-regression-20260618T012900Z/post-publish-status.json",
+    "tftp_delta": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof/candidate-final-identity-regression-20260618T012900Z/tftp/tftp-delta-stable-pre-command.json",
+    "readiness_summary": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof/candidate-final-identity-regression-20260618T012900Z/serial/readiness-summary.json",
+    "pre_write_read": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof/candidate-final-identity-regression-20260618T012900Z/serial/command0-pre-write-read.json",
+    "serial_write": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof/candidate-final-identity-regression-20260618T012900Z/serial/command0-write.json",
+    "prearmed_read": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof/candidate-final-identity-regression-20260618T012900Z/serial/command0-prearmed-read.json",
+    "immediate_post_command_status": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof/candidate-final-identity-regression-20260618T012900Z/immediate-post-command-status.json",
+    "final_pre_restore_status": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof/candidate-final-identity-regression-20260618T012900Z/final-pre-restore-status.json",
+    "restore": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof/candidate-final-identity-regression-20260618T012900Z/restore/restore-snapshot.json",
+    "post_restore_status": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof/candidate-final-identity-regression-20260618T012900Z/restore/post-restore-status.json",
+    "control_decision": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof/candidate-final-identity-regression-20260618T012900Z/control-decision.json",
+    "discriminator_recheck": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof/candidate-final-identity-regression-20260618T012900Z/discriminator-recheck-summary.json"
+  },
+  "selected_next_task": "phase10-pi5-command0-final-identity-regression-closeout-20260618"
+}

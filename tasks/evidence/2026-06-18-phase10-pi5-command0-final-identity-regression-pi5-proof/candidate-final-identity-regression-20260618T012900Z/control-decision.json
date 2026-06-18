@@ -1,0 +1,6 @@
+{
+  "decision": "known-good-control-not-run",
+  "reason": "candidate run produced terminal blocked classification from selected-kernel/TFTP pass, stable immediate/final selected identity, restore proof, and missing ordered command0 delivery; it was not classified capture/staging inconclusive",
+  "before_candidate_data": "candidate identity, fresh serial cursor, and TFTP cursor were captured before power; control would be required only for inconclusive capture/staging evidence",
+  "selected_next_task": "phase10-pi5-command0-final-identity-regression-closeout-20260618"
+}
