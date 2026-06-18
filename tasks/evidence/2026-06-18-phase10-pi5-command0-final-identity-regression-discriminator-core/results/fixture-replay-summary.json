@@ -1,0 +1,41 @@
+{
+  "task_id": "phase10-pi5-command0-final-identity-regression-discriminator-core-20260618",
+  "checker": "scripts/rpi5-command0-final-identity-regression-discriminator.sh",
+  "classification": "command0-final-identity-regression-discriminator-core-local-static",
+  "fixture_count": 5,
+  "positive_accepts": 1,
+  "negative_rejects": 4,
+  "cases": [
+    {
+      "fixture": "negative-command0-delivery-missing.json",
+      "accepted": false,
+      "first_failing_invariant": "ordered command0 serial delivery missing or mismatched",
+      "selected_next_task": null
+    },
+    {
+      "fixture": "negative-immediate-post-command-baseline.json",
+      "accepted": false,
+      "first_failing_invariant": "immediate post-command selected identity missing or mismatched",
+      "selected_next_task": null
+    },
+    {
+      "fixture": "negative-restore-before-immediate-sample.json",
+      "accepted": false,
+      "first_failing_invariant": "missing immediate post-command identity sample before restore/cleanup",
+      "selected_next_task": null
+    },
+    {
+      "fixture": "negative-retained-regression-missing-immediate-identity.json",
+      "accepted": false,
+      "first_failing_invariant": "missing immediate post-command identity sample before restore/cleanup",
+      "selected_next_task": null
+    },
+    {
+      "fixture": "positive-final-identity-stable.json",
+      "accepted": true,
+      "first_failing_invariant": null,
+      "selected_next_task": "phase10-pi5-command0-final-identity-regression-pi5-proof-20260618"
+    }
+  ],
+  "selected_next_task": "phase10-pi5-command0-final-identity-regression-pi5-proof-20260618"
+}

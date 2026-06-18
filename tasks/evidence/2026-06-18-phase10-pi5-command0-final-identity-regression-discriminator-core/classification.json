@@ -1,0 +1,36 @@
+{
+  "task_id": "phase10-pi5-command0-final-identity-regression-discriminator-core-20260618",
+  "classification": "command0-final-identity-regression-discriminator-core-local-static",
+  "accepted": true,
+  "selected_discriminator": "command0-final-identity-regression-v1",
+  "first_principles_invariant": "selected candidate identity must remain selected from post-publish through immediate post-command0 status until explicit restore",
+  "first_failing_invariant_from_retained_proof": "final-pre-restore-identity-regressed-after-command0",
+  "evidence_gap": "no immediate post-command0 lab identity sample exists between ordered command0 serial delivery and final pre-restore baseline identity",
+  "helper": "scripts/rpi5-command0-final-identity-regression-discriminator.sh",
+  "fixture_replay_summary": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-discriminator-core/results/fixture-replay-summary.json",
+  "retained_regression_replay": {
+    "fixture": "tasks/evidence/2026-06-18-phase10-pi5-command0-final-identity-regression-discriminator-core/fixtures/negative-retained-regression-missing-immediate-identity.json",
+    "accepted": false,
+    "first_failing_invariant": "missing immediate post-command identity sample before restore/cleanup"
+  },
+  "allowed_terminal_classifications": [
+    "command0-final-identity-stable-input-delivery-accepted",
+    "command0-final-identity-regressed-after-command0",
+    "command0-final-identity-missing-immediate-post-command-sample",
+    "command0-final-identity-command0-delivery-blocked",
+    "command0-final-identity-precondition-blocked",
+    "command0-final-identity-inconclusive-triage-required"
+  ],
+  "selected_next_task": "phase10-pi5-command0-final-identity-regression-pi5-proof-20260618",
+  "planningNeeded": false,
+  "rejected_claims": [
+    "command0 input delivery acceptance",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

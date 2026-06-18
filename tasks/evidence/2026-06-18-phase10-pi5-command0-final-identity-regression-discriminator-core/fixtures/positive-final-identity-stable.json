@@ -1,0 +1,65 @@
+{
+  "selected_discriminator": "command0-final-identity-regression-v1",
+  "candidate_identity": {
+    "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_kernel_2712_size": 208984
+  },
+  "pre_command": {
+    "post_publish_identity_ok": true,
+    "selected_kernel_tftp_precondition_ok": true,
+    "tftp_stable": true,
+    "tftp_expected_fetch_count": 2,
+    "tftp_expected_fetch_byte_match_count": 2
+  },
+  "command0": {
+    "serial_write_ok": true,
+    "serial_write_bytes": 9,
+    "prearmed_read_ordered_command0": true,
+    "prearmed_read_has_rootinfo": true,
+    "prearmed_read_has_dispatch0": true,
+    "prearmed_read_has_responses1": true,
+    "prearmed_read_has_ready1": true
+  },
+  "identity_samples": {
+    "post_publish": {
+      "captured": true,
+      "before_restore": true,
+      "before_cleanup": true,
+      "tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+      "effective_kernel": "kernel_2712.img",
+      "expected_fetch_bytes": 208984
+    },
+    "immediate_post_command": {
+      "captured": true,
+      "before_restore": true,
+      "before_cleanup": true,
+      "tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+      "effective_kernel": "kernel_2712.img",
+      "expected_fetch_bytes": 208984
+    },
+    "final_pre_restore": {
+      "captured": true,
+      "before_restore": true,
+      "tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+      "effective_kernel": "kernel_2712.img",
+      "expected_fetch_bytes": 208984
+    }
+  },
+  "evidence_order": [
+    "post-publish-identity",
+    "tftp-delta-pre-command",
+    "serial-readiness",
+    "pre-write-read",
+    "serial-write",
+    "prearmed-read",
+    "immediate-post-command-identity",
+    "final-pre-restore-identity",
+    "restore-request",
+    "post-restore-identity"
+  ],
+  "restore": {
+    "ok": true,
+    "after_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  }
+}

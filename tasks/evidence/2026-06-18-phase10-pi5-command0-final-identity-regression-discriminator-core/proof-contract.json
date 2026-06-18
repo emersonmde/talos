@@ -1,0 +1,56 @@
+{
+  "contract": "command0-final-identity-regression-v1",
+  "selected_next_task": "phase10-pi5-command0-final-identity-regression-pi5-proof-20260618",
+  "candidate_identity": {
+    "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_kernel_2712_size": 208984,
+    "kernel_2712_sha256": "c37b34ebc955a7ce11cd0660bc18424ebcec4550de23ae1e6b0b9ad7c867e4bd"
+  },
+  "first_principles_invariant": "The selected candidate identity must remain selected from post-publish through immediate post-command0 status and final pre-restore status until an explicit restore occurs.",
+  "evidence_gap": "The accepted after-precondition proof sampled post-publish selected identity and final pre-restore identity, but it did not sample lab identity immediately after ordered command0 delivery and before any restore or cleanup side effect.",
+  "required_order": [
+    "post-publish-identity",
+    "tftp-delta-pre-command",
+    "serial-readiness",
+    "pre-write-read",
+    "serial-write",
+    "prearmed-read",
+    "immediate-post-command-identity",
+    "final-pre-restore-identity",
+    "restore-request",
+    "post-restore-identity"
+  ],
+  "acceptance_requires": [
+    "selected-kernel/TFTP precondition passes before command0 evaluation",
+    "ordered prearmed command0 serial delivery passes",
+    "immediate post-command0 lab identity is captured before restore or cleanup and still matches the selected tree and 208984-byte kernel_2712.img",
+    "final pre-restore lab identity still matches the selected tree and 208984-byte kernel_2712.img",
+    "restore proof returns to the baseline tree before hardwareTestLock release"
+  ],
+  "allowed_terminal_classifications": {
+    "accepted": "command0-final-identity-stable-input-delivery-accepted",
+    "identity_regressed": "command0-final-identity-regressed-after-command0",
+    "missing_immediate_sample": "command0-final-identity-missing-immediate-post-command-sample",
+    "command0_blocked": "command0-final-identity-command0-delivery-blocked",
+    "precondition_blocked": "command0-final-identity-precondition-blocked",
+    "inconclusive": "command0-final-identity-inconclusive-triage-required"
+  },
+  "inconclusive_run_triage": [
+    "candidate identity via lab API before power",
+    "fresh serial cursor before power",
+    "TFTP delta tied to selected candidate",
+    "known-good/control when the candidate run is inconclusive",
+    "candidate rerun before code changes"
+  ],
+  "rejected_claims": [
+    "command0 input delivery acceptance from the core task",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}
