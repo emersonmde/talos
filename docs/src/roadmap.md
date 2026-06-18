@@ -8452,6 +8452,13 @@ Selected first slice:
   next bounded closeout. Generated-root command-input success, storage,
   networking, SSH, Phase 11/12 expansion, and phase transition remain
   unaccepted until explicit follow-up acceptance.
+- 'phase10-pi5-generated-root-command-input-success-closeout-20260618'
+  accepts Pi 5 generated-root command-input success by joining selected
+  firmware-initramfs generated-root consumption, accepted command0 input
+  delivery, and same-command0 source=firmware-initramfs reason=valid-artifact
+  response retention. selected_next_task is null and planningNeeded=true;
+  persistence, writable storage, storage drivers, networking, SSH, Phase 11/12
+  expansion, and phase transition remain unaccepted.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The
@@ -8477,18 +8484,19 @@ Acceptance criteria:
   a source-backed blocker: firmware initramfs range overlap with early memory
   setup. The later reservation-by-early-memory-plan-exclusion slice implements
   the fix and accepts Pi 5 firmware-initramfs generated-root consumption with
-  serialized hardware proof. The later command-input follow-ups remain paused:
-  /serial/observe first saturated at the retention boundary, and the direct-read
-  proof then failed command 0 because the post-write window did not retain
-  rootinfo, source evidence, or handled dispatch. Writable persistence,
-  SD/USB/block storage, networking, SSH, and phase transition remain deferred
-  and require explicit follow-up tasks.
+  serialized hardware proof. Later command-input follow-ups accept command0
+  delivery and same-command0 source/reason retention, so Pi 5 generated-root
+  command-input success is accepted by
+  phase10-pi5-generated-root-command-input-success-closeout-20260618. Writable
+  persistence, SD/USB/block storage, networking, SSH, and phase transition
+  remain deferred and require explicit follow-up tasks.
 - Documentation explains the chosen local storage path and remaining risks.
   Current status: accepted by the Milestone 10.3 closeout as a local/QEMU
   generated-root transport checkpoint. Later reservation work accepts Pi 5
-  firmware-initramfs generated-root consumption; command-input success for that
-  proof scenario remains explicitly paused at the direct-read command 0
-  prelude blocker, and true writable or block-backed storage remains deferred.
+  firmware-initramfs generated-root consumption, and later command0 delivery
+  plus tail-stable source-response retention work accepts command-input success
+  for that proof scenario. True writable or block-backed storage remains
+  deferred.
 
 ## Phase 11: RP1, PCIe, DMA, and Hardware Substrate
 

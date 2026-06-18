@@ -1,0 +1,22 @@
+{
+  "task_id": "phase10-pi5-generated-root-command-input-success-closeout-20260618",
+  "evidence_root": "tasks/evidence/2026-06-18-phase10-pi5-generated-root-command-input-success-closeout",
+  "files": {
+    "task_record": "tasks/2026-06-18-phase10-pi5-generated-root-command-input-success-closeout.md",
+    "classification": "tasks/evidence/2026-06-18-phase10-pi5-generated-root-command-input-success-closeout/classification.json",
+    "generated_root_consumption_closeout": "tasks/2026-06-17-phase10-pi5-generated-root-milestone-10-3-closeout.md",
+    "generated_root_consumption_classification": "tasks/evidence/2026-06-17-phase10-pi5-generated-root-milestone-10-3-closeout/classification.json",
+    "command0_input_delivery_closeout": "tasks/2026-06-18-phase10-pi5-command0-timeout-stable-command-index-closeout.md",
+    "command0_input_delivery_classification": "tasks/evidence/2026-06-18-phase10-pi5-command0-timeout-stable-command-index-closeout/classification.json",
+    "command0_input_delivery_evidence_map": "tasks/evidence/2026-06-18-phase10-pi5-command0-timeout-stable-command-index-closeout/evidence-map.json",
+    "source_response_retention_closeout": "tasks/2026-06-18-phase10-pi5-rootinfo-tail-stable-source-response-closeout.md",
+    "source_response_retention_classification": "tasks/evidence/2026-06-18-phase10-pi5-rootinfo-tail-stable-source-response-closeout/classification.json",
+    "source_response_retention_evidence_map": "tasks/evidence/2026-06-18-phase10-pi5-rootinfo-tail-stable-source-response-closeout/evidence-map.json",
+    "same_command0_source_response_summary": "tasks/evidence/2026-06-18-phase10-pi5-rootinfo-tail-stable-source-response-pi5-proof/candidate-tail-stable-source-response-prearmed-20260618T090004Z/serial/post-command-summary.json",
+    "source_response_proof_classification": "tasks/evidence/2026-06-18-phase10-pi5-rootinfo-tail-stable-source-response-pi5-proof/candidate-tail-stable-source-response-prearmed-20260618T090004Z/classification.json",
+    "source_response_proof_tftp_delta": "tasks/evidence/2026-06-18-phase10-pi5-rootinfo-tail-stable-source-response-pi5-proof/candidate-tail-stable-source-response-prearmed-20260618T090004Z/tftp/tftp-delta-after-command.json",
+    "source_response_proof_restore_status": "tasks/evidence/2026-06-18-phase10-pi5-rootinfo-tail-stable-source-response-pi5-proof/candidate-tail-stable-source-response-prearmed-20260618T090004Z/restore/post-restore-status.json"
+  },
+  "selected_next_task": null,
+  "planning_needed": true
+}
