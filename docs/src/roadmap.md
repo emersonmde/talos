@@ -12715,6 +12715,24 @@ planningNeeded=true, and supervisor planning is required before further Phase
 12.1 hardware, packet I/O, networking, SSH, Phase 12.2, or phase-transition
 work.
 
+phase12-rp1-ethernet-bcm54213pe-low-power-lifecycle-pause-closeout-20260618
+accepts
+bcm54213pe-low-power-lifecycle-frontier-paused-no-distinct-discriminator.
+The closeout records the low-power/lifecycle checkpoint as the latest paused
+Phase 12.1 Ethernet frontier. The only accepted hardware-visible BCM54213PE
+behavior in this chain remains MII_CTRL1000 master-mode write/readback plus one
+BMCR autoneg restart; BMSR link, BMSR autoneg-complete, ANLPAR,
+MII_STAT1000, and MACB_NSR_LINK remain not ready. APD/EEE/WOL/IDDQ,
+suspend/resume, BMCR powerdown, soft-reset, interrupt, config_init, and
+MAC/phylink findings are preserved as deferred or rejected.
+selected_discriminator and selected_next_task are null, planningNeeded=true, and
+the next strategy checkpoint is
+phase12-rp1-ethernet-strategy-decision-checkpoint-after-low-power-lifecycle-20260618.
+Hardware, GPIO32/PHY reset action, APD/EEE/lifecycle ownership, interrupt
+ownership, MAC/phylink, packet I/O, networking, sockets, SSH, Phase 12.2, phase
+transition, and same-shaped status/autoneg retry work remain rejected pending an
+explicit supervisor/human strategy selection.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

@@ -2522,3 +2522,22 @@ frontier. selected_discriminator and selected_next_task are null,
 planningNeeded=true, and no hardware, GPIO32/PHY reset, APD/EEE/lifecycle,
 interrupt, MAC/phylink, packet I/O, networking, SSH, Phase 12.2, or
 phase-transition work is mechanically unblocked.
+
+phase12-rp1-ethernet-bcm54213pe-low-power-lifecycle-pause-closeout-20260618
+accepts
+bcm54213pe-low-power-lifecycle-frontier-paused-no-distinct-discriminator.
+The closeout freezes the current Phase 12.1 Ethernet frontier after the
+low-power/lifecycle checkpoint: MII_CTRL1000 master-mode write/readback and one
+BMCR autoneg restart remain the only accepted hardware-visible BCM54213PE
+behavior, while BMSR link, BMSR autoneg-complete, ANLPAR, MII_STAT1000, and
+MACB_NSR_LINK remain not ready. The accepted checkpoint's APD/EEE/WOL/IDDQ,
+suspend/resume, BMCR powerdown, soft-reset, interrupt, config_init, and
+MAC/phylink findings are preserved as deferred or rejected rather than reopened
+as implementation work. selected_discriminator and selected_next_task remain
+null, planningNeeded=true, and the next strategy checkpoint is
+phase12-rp1-ethernet-strategy-decision-checkpoint-after-low-power-lifecycle-20260618.
+Hardware, GPIO32/PHY reset action, APD/EEE/lifecycle ownership, interrupt
+ownership, MAC/phylink, packet I/O, networking, sockets, SSH, Phase 12.2, phase
+transition, and same-shaped status/autoneg retry work remain explicitly
+rejected until an explicit supervisor/human strategy selection changes the
+frontier.

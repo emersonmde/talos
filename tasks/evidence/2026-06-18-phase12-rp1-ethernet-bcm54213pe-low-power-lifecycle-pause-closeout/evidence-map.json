@@ -1,0 +1,65 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-low-power-lifecycle-pause-closeout-20260618",
+  "classification": "bcm54213pe-low-power-lifecycle-frontier-paused-no-distinct-discriminator",
+  "inputs": [
+    {
+      "path": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-low-power-lifecycle-source-checkpoint.md",
+      "role": "accepted low-power/lifecycle source checkpoint"
+    },
+    {
+      "path": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-low-power-lifecycle-source-checkpoint/classification.json",
+      "role": "selected_discriminator=null, selected_next_task=null, and candidate dispositions"
+    },
+    {
+      "path": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-low-power-lifecycle-source-checkpoint/source-inspection.json",
+      "role": "source inspection and side-effect classifications"
+    },
+    {
+      "path": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-pause-closeout.md",
+      "role": "accepted post-master-mode/autoneg paused frontier"
+    },
+    {
+      "path": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof.md",
+      "role": "accepted hardware-visible master-mode/autoneg proof and terminal link-not-ready facts"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-low-power-lifecycle-pause-closeout.md",
+      "role": "pause closeout task record"
+    },
+    {
+      "path": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-low-power-lifecycle-pause-closeout/classification.json",
+      "role": "pause closeout classification"
+    },
+    {
+      "path": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-low-power-lifecycle-pause-closeout/evidence-map.json",
+      "role": "pause closeout evidence map"
+    },
+    {
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "role": "visible Phase 12 frontier update"
+    },
+    {
+      "path": "docs/src/roadmap.md",
+      "role": "visible roadmap frontier update"
+    }
+  ],
+  "no_actions_performed": [
+    "runtime implementation",
+    "Pi 5 hardware run",
+    "boot archive publication",
+    "lab mutation",
+    "hardwareTestLock acquisition",
+    "GPIO32/PHY reset action",
+    "APD/EEE/lifecycle write",
+    "interrupt mask/unmask/acknowledgement action",
+    "MAC/phylink work",
+    "packet I/O",
+    "networking",
+    "SSH",
+    "Phase 12.2",
+    "phase transition",
+    "same-shaped status/autoneg retry"
+  ]
+}

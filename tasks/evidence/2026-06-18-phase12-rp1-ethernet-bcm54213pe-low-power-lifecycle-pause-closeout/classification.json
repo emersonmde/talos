@@ -1,0 +1,170 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-low-power-lifecycle-pause-closeout-20260618",
+  "status": "accepted",
+  "classification": "bcm54213pe-low-power-lifecycle-frontier-paused-no-distinct-discriminator",
+  "evidence_level": [
+    "static/task/evidence consistency review",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_input_frontier": {
+    "low_power_lifecycle_source_checkpoint": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-low-power-lifecycle-source-checkpoint-20260618",
+      "commit": "12aeb8635e14d85204ae191cfb6d15311f5a5495",
+      "classification": "bcm54213pe-low-power-lifecycle-no-distinct-source-backed-discriminator-pause",
+      "selected_discriminator": null,
+      "selected_next_task": null,
+      "planningNeeded": true
+    },
+    "post_master_mode_autoneg_pause_closeout": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-pause-closeout-20260618",
+      "commit": "460176f45f725ab8662f15b721b8ecf6bf97d381",
+      "classification": "bcm54213pe-post-master-mode-autoneg-frontier-paused-no-distinct-discriminator"
+    },
+    "terminal_link_state": {
+      "mii_ctrl1000_readback": "0x1a00",
+      "bmcr_after_restart": "0x1000",
+      "bmsr_link_status": false,
+      "bmsr_autoneg_complete": false,
+      "anlpar": "0x0000",
+      "mii_stat1000": "0x0000",
+      "macb_nsr_link": false
+    }
+  },
+  "selected_discriminator": null,
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "next_strategy_checkpoint": "phase12-rp1-ethernet-strategy-decision-checkpoint-after-low-power-lifecycle-20260618",
+  "planning_reason": "The accepted low-power/lifecycle source checkpoint selected no BCM54213PE discriminator that is both source-backed and qualitatively distinct without requiring new lifecycle, interrupt, MAC/phylink, restore, or packet-readiness ownership, or repeating accepted status/autoneg polling.",
+  "strategy_checkpoint_required": true,
+  "hardware_authorized_by_this_task": false,
+  "candidate_dispositions_preserved": [
+    {
+      "candidate": "accepted post-master-mode/autoneg frontier",
+      "disposition": "fixed",
+      "side_effect": "already accepted hardware-visible write/readback plus bounded polling"
+    },
+    {
+      "candidate": "APD / auto power-down shadow writes",
+      "disposition": "deferred",
+      "side_effect": "write/restore"
+    },
+    {
+      "candidate": "EEE / Clause 45 MMD feature and advertisement writes",
+      "disposition": "deferred",
+      "side_effect": "write/restore"
+    },
+    {
+      "candidate": "MII_BCM54XX_ISR interrupt status read",
+      "disposition": "rejected",
+      "side_effect": "read-with-side-effect"
+    },
+    {
+      "candidate": "MII_BCM54XX_IMR/ECR interrupt mask/control",
+      "disposition": "deferred",
+      "side_effect": "write/restore"
+    },
+    {
+      "candidate": "bcm_phy_handle_interrupt context",
+      "disposition": "rejected",
+      "side_effect": "read-with-side-effect"
+    },
+    {
+      "candidate": "WOL interrupt status and wake IRQ",
+      "disposition": "deferred",
+      "side_effect": "read-with-side-effect/write/restore"
+    },
+    {
+      "candidate": "IDDQ suspend",
+      "disposition": "deferred",
+      "side_effect": "write/restore"
+    },
+    {
+      "candidate": "BMCR_PDOWN suspend write",
+      "disposition": "rejected",
+      "side_effect": "write/restore"
+    },
+    {
+      "candidate": "resume: clear PDOWN, wait, optional soft reset, rerun config_init",
+      "disposition": "deferred",
+      "side_effect": "write/restore"
+    },
+    {
+      "candidate": "config_init side-effect ordering",
+      "disposition": "not-an-issue",
+      "side_effect": "write/restore"
+    },
+    {
+      "candidate": "MAC/phylink-adjacent handoff",
+      "disposition": "deferred",
+      "side_effect": "blocked"
+    },
+    {
+      "candidate": "same-shaped BMCR/BMSR/ANAR/ANLPAR/MII_CTRL1000/MII_STAT1000/MACB_NSR polling",
+      "disposition": "rejected",
+      "side_effect": "pure read"
+    }
+  ],
+  "accepted_claims": [
+    "The low-power/lifecycle source checkpoint is closed as an explicit paused Phase 12.1 frontier.",
+    "MII_CTRL1000 master-mode write/readback and one BMCR autoneg restart remain the only accepted hardware-visible BCM54213PE behavior in this chain.",
+    "BMSR link, BMSR autoneg-complete, ANLPAR, MII_STAT1000, and MACB_NSR_LINK remain not ready.",
+    "planningNeeded=true is required before future Phase 12.1 Ethernet work."
+  ],
+  "rejected_claims": [
+    "link-ready",
+    "autoneg-complete",
+    "packet-readiness",
+    "GPIO32/PHY reset action",
+    "interrupt ownership",
+    "APD/EEE/lifecycle ownership",
+    "BMCR powerdown recovery ownership",
+    "MAC/phylink ownership",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition",
+    "same-shaped status/autoneg/convergence retry",
+    "marker-only capture retry"
+  ],
+  "findings": [
+    {
+      "finding": "accepted low-power/lifecycle source checkpoint closed into paused frontier",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "visible Phase 12 and roadmap docs record the pause closeout",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "APD/EEE/WOL/IDDQ/suspend/resume/BMCR powerdown and soft-reset paths require lifecycle ownership and restore policy",
+      "disposition": "deferred"
+    },
+    {
+      "finding": "interrupt status/handler paths are read-with-side-effect or interrupt state-machine ownership",
+      "disposition": "rejected"
+    },
+    {
+      "finding": "MAC/phylink remains broader scope",
+      "disposition": "deferred"
+    },
+    {
+      "finding": "same-shaped polling remains unselected",
+      "disposition": "rejected"
+    },
+    {
+      "finding": "hardware/networking/SSH/Phase 12.2 remain gated",
+      "disposition": "rejected"
+    }
+  ],
+  "validation": {
+    "static_task_evidence_consistency_review": "pass",
+    "jq_task_owned_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  }
+}
