@@ -3222,6 +3222,25 @@ The post-review correction chain is:
     networking, SSH, Phase 11/12 expansion, and phase transition remain
     rejected.
 
+178. Pi 5 command0 readiness timeout-boundary discriminator core: accepted in
+    'phase10-pi5-command0-readiness-timeout-boundary-discriminator-core-20260618'
+    with classification
+    'command0-readiness-timeout-boundary-discriminator-core-local-static'. The
+    local/static helper
+    'scripts/rpi5-command0-readiness-timeout-boundary-discriminator.sh'
+    implements command0-readiness-timeout-boundary-v1: rootinfo must be written
+    and observed at command=0 from a fresh readiness boundary before timeout
+    advancement to command=1 or later. Task-owned fixtures accept only ordered
+    command0 rootinfo/dispatch/responses=1/ready command=1 evidence after the
+    saved boundary and reject stale pre-write output, command=1 timeout
+    advancement, command=4 timeout advancement, and the retained final-identity
+    proof shape as readiness-wait-timeout-advanced-to-command4. The selected
+    follow-up is the serialized Pi 5 proof
+    'phase10-pi5-command0-readiness-timeout-boundary-pi5-proof-20260618'.
+    Command0 input delivery, source-response retention, generated-root
+    command-input success, storage, networking, SSH, Phase 11/12 expansion, and
+    phase transition remain rejected.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed

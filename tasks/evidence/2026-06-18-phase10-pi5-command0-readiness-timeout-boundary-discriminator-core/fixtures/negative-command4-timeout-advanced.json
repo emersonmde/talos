@@ -1,0 +1,22 @@
+{
+  "selected_discriminator": "command0-readiness-timeout-boundary-v1",
+  "readiness": {
+    "fresh_after_prompt": true,
+    "text": "talos: generated-root source=firmware-initramfs reason=valid-artifact\nrpi5-generated-root-boot-transport-proof: ready command=0\ntalos> talos: input-error timeout\nrpi5-generated-root-boot-transport-proof: line command=0 hex=\nrpi5-generated-root-boot-transport-proof: dispatch command=0 status=input-error responses=1\nrpi5-generated-root-boot-transport-proof: ready command=1\ntalos> talos: input-error timeout\nrpi5-generated-root-boot-transport-proof: line command=1 hex=\nrpi5-generated-root-boot-transport-proof: dispatch command=1 status=input-error responses=1\nrpi5-generated-root-boot-transport-proof: ready command=2\ntalos> talos: input-error timeout\nrpi5-generated-root-boot-transport-proof: line command=2 hex=\nrpi5-generated-root-boot-transport-proof: dispatch command=2 status=input-error responses=1\nrpi5-generated-root-boot-transport-proof: ready command=3\ntalos> "
+  },
+  "pre_write_boundary": {
+    "fresh_after_prompt": true,
+    "cursor": 4194304,
+    "text": ""
+  },
+  "serial_write": {
+    "ok": true,
+    "text": "rootinfo",
+    "append_newline": true,
+    "bytes": 9
+  },
+  "post_write": {
+    "cursor": 4194304,
+    "text": "rootinfo\r\r\ntalos: generated-root source=firmware-initramfs reason=valid-artifact\nrpi5-generated-root-boot-transport-proof: line command=4 hex=72 6f 6f 74 69 6e 66 6f\nrpi5-generated-root-boot-transport-proof: dispatch command=4 status=handled responses=1 raw-bytes=9 truncated=false controls=0\ntalos> \nrpi5-generated-root-boot-transport-proof: ready-for-next prompt=true\nrpi5-generated-root-boot-transport-proof: FAIL\n"
+  }
+}

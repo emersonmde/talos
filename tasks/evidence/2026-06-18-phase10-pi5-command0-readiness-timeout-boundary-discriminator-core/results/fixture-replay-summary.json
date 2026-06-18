@@ -1,0 +1,62 @@
+{
+  "task_id": "phase10-pi5-command0-readiness-timeout-boundary-discriminator-core-20260618",
+  "checker": "scripts/rpi5-command0-readiness-timeout-boundary-discriminator.sh",
+  "classification": "command0-readiness-timeout-boundary-discriminator-core-local-static",
+  "selected_discriminator": "command0-readiness-timeout-boundary-v1",
+  "invariant": "rootinfo must be written and observed at command=0 from a fresh readiness boundary before timeout advancement to command=1 or later",
+  "fixtures": [
+    {
+      "result_file": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-discriminator-core/results/negative-command1-timeout-advanced.out.json",
+      "accepted": false,
+      "classification": "command0-readiness-timeout-boundary-discriminator-rejected",
+      "selected_discriminator": "command0-readiness-timeout-boundary-v1",
+      "first_failing_invariant": "readiness-wait-timeout-advanced-to-command1",
+      "selected_next_task": null
+    },
+    {
+      "result_file": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-discriminator-core/results/negative-command4-timeout-advanced.out.json",
+      "accepted": false,
+      "classification": "command0-readiness-timeout-boundary-discriminator-rejected",
+      "selected_discriminator": "command0-readiness-timeout-boundary-v1",
+      "first_failing_invariant": "readiness-wait-timeout-advanced-to-command4",
+      "selected_next_task": null
+    },
+    {
+      "result_file": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-discriminator-core/results/negative-retained-final-identity-command4.out.json",
+      "accepted": false,
+      "classification": "command0-readiness-timeout-boundary-discriminator-rejected",
+      "selected_discriminator": "command0-readiness-timeout-boundary-v1",
+      "first_failing_invariant": "readiness-wait-timeout-advanced-to-command4",
+      "selected_next_task": null
+    },
+    {
+      "result_file": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-discriminator-core/results/negative-stale-prewrite.out.json",
+      "accepted": false,
+      "classification": "command0-readiness-timeout-boundary-discriminator-rejected",
+      "selected_discriminator": "command0-readiness-timeout-boundary-v1",
+      "first_failing_invariant": "stale retained output before rootinfo write",
+      "selected_next_task": null
+    },
+    {
+      "result_file": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-discriminator-core/results/positive-command0-boundary.out.json",
+      "accepted": true,
+      "classification": "command0-readiness-timeout-boundary-discriminator-accepted",
+      "selected_discriminator": "command0-readiness-timeout-boundary-v1",
+      "first_failing_invariant": null,
+      "selected_next_task": "phase10-pi5-command0-readiness-timeout-boundary-pi5-proof-20260618"
+    }
+  ],
+  "selected_next_task": "phase10-pi5-command0-readiness-timeout-boundary-pi5-proof-20260618",
+  "rejected_claims": [
+    "command0 input delivery acceptance",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ],
+  "accepted_count": 1,
+  "rejected_count": 4
+}

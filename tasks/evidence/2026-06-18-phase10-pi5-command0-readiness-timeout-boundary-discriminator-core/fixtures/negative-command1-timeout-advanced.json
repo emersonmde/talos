@@ -1,0 +1,22 @@
+{
+  "selected_discriminator": "command0-readiness-timeout-boundary-v1",
+  "readiness": {
+    "fresh_after_prompt": true,
+    "text": "talos: generated-root source=firmware-initramfs reason=valid-artifact\nrpi5-generated-root-boot-transport-proof: ready command=0\ntalos> "
+  },
+  "pre_write_boundary": {
+    "fresh_after_prompt": true,
+    "cursor": 2345,
+    "text": ""
+  },
+  "serial_write": {
+    "ok": true,
+    "text": "rootinfo",
+    "append_newline": true,
+    "bytes": 9
+  },
+  "post_write": {
+    "cursor": 2345,
+    "text": "talos: input-error timeout\nrpi5-generated-root-boot-transport-proof: line command=1 hex=\nrpi5-generated-root-boot-transport-proof: dispatch command=1 status=input-error responses=1 raw-bytes=0 truncated=false controls=0\nrpi5-generated-root-boot-transport-proof: ready command=2\ntalos> "
+  }
+}

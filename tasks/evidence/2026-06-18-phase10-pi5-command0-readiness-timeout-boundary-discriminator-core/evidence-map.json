@@ -1,0 +1,20 @@
+{
+  "task_id": "phase10-pi5-command0-readiness-timeout-boundary-discriminator-core-20260618",
+  "evidence": {
+    "script": "scripts/rpi5-command0-readiness-timeout-boundary-discriminator.sh",
+    "task_record": "tasks/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-discriminator-core.md",
+    "proof_contract": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-discriminator-core/proof-contract.json",
+    "classification": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-discriminator-core/classification.json",
+    "fixture_replay_summary": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-discriminator-core/results/fixture-replay-summary.json",
+    "retained_final_identity_fixture": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-discriminator-core/fixtures/negative-retained-final-identity-command4.json",
+    "retained_final_identity_output": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-discriminator-core/results/negative-retained-final-identity-command4.out.json",
+    "final_identity_proof_task": "tasks/2026-06-18-phase10-pi5-command0-final-identity-regression-pi5-proof.md",
+    "final_identity_closeout_task": "tasks/2026-06-18-phase10-pi5-command0-final-identity-regression-closeout.md"
+  },
+  "validation_levels": [
+    "static source/task/evidence inspection",
+    "bash -n shell proof-helper script",
+    "positive and negative local discriminator fixtures",
+    "jq task-owned JSON evidence"
+  ]
+}

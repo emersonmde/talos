@@ -1,0 +1,10 @@
+{
+  "task_id": "phase10-pi5-command0-readiness-timeout-boundary-discriminator-core-20260618",
+  "classification": "command0-readiness-timeout-boundary-discriminator-core-local-static",
+  "selected_next_task": "phase10-pi5-command0-readiness-timeout-boundary-pi5-proof-20260618",
+  "accepted": true,
+  "command0_input_delivery_accepted": false,
+  "source_response_retention_selected": false,
+  "generated_root_command_input_success_accepted": false,
+  "first_principles_invariant": "rootinfo must be written and observed at command=0 from a fresh readiness boundary before timeout advancement to command=1 or later"
+}

@@ -1,0 +1,25 @@
+{
+  "task_id": "phase10-pi5-command0-readiness-timeout-boundary-discriminator-core-20260618",
+  "classification": "command0-readiness-timeout-boundary-discriminator-core-local-static",
+  "selected_discriminator": "command0-readiness-timeout-boundary-v1",
+  "invariant": "rootinfo must be written and observed at command=0 from a fresh readiness boundary before timeout advancement to command=1 or later",
+  "terminal_classifications": {
+    "accepted": "command0-readiness-timeout-boundary-accepted",
+    "blocked": "command0-readiness-timeout-boundary-blocked",
+    "inconclusive": "command0-readiness-timeout-boundary-inconclusive-triage-required"
+  },
+  "accepted_shape": [
+    "same-boot firmware-initramfs valid-artifact ready command=0",
+    "fresh pre-write boundary with no rootinfo, command0 dispatch, responses=1, ready command=1, or command=1+ timeout output",
+    "serial_write text=rootinfo append_newline=true bytes=9",
+    "post-write evidence ordered as rootinfo/line command=0, dispatch command=0 status=handled, responses=1, ready command=1",
+    "no line/dispatch command=1 or later in the command0 evidence window"
+  ],
+  "rejected_shapes": [
+    "stale retained output",
+    "command=1-or-later timeout-advanced output",
+    "retained final-identity proof command=4 shape",
+    "write-only or unordered command0 evidence"
+  ],
+  "selected_next_task": "phase10-pi5-command0-readiness-timeout-boundary-pi5-proof-20260618"
+}
