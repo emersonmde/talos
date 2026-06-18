@@ -1,0 +1,20 @@
+{
+  "task_id": "phase10-pi5-command0-timeout-stable-command-index-pi5-proof-20260618",
+  "run_label": "candidate-timeout-stable-command-index-20260618T072652Z",
+  "evidence_root": "tasks/evidence/2026-06-18-phase10-pi5-command0-timeout-stable-command-index-pi5-proof/candidate-timeout-stable-command-index-20260618T072652Z",
+  "files": {
+    "classification": "tasks/evidence/2026-06-18-phase10-pi5-command0-timeout-stable-command-index-pi5-proof/candidate-timeout-stable-command-index-20260618T072652Z/classification.json",
+    "archive_static_review": "tasks/evidence/2026-06-18-phase10-pi5-command0-timeout-stable-command-index-pi5-proof/candidate-timeout-stable-command-index-20260618T072652Z/archive-static-review.txt",
+    "generated_root_candidate_review": "tasks/evidence/2026-06-18-phase10-pi5-command0-timeout-stable-command-index-pi5-proof/candidate-timeout-stable-command-index-20260618T072652Z/generated-root-candidate-review.txt",
+    "post_publish_status": "tasks/evidence/2026-06-18-phase10-pi5-command0-timeout-stable-command-index-pi5-proof/candidate-timeout-stable-command-index-20260618T072652Z/post-publish-status.json",
+    "tftp_delta": "tasks/evidence/2026-06-18-phase10-pi5-command0-timeout-stable-command-index-pi5-proof/candidate-timeout-stable-command-index-20260618T072652Z/tftp/tftp-delta-after-command.json",
+    "readiness_summary": "tasks/evidence/2026-06-18-phase10-pi5-command0-timeout-stable-command-index-pi5-proof/candidate-timeout-stable-command-index-20260618T072652Z/serial/readiness-summary.json",
+    "serial_write": "tasks/evidence/2026-06-18-phase10-pi5-command0-timeout-stable-command-index-pi5-proof/candidate-timeout-stable-command-index-20260618T072652Z/serial/command0-write.json",
+    "post_command_summary": "tasks/evidence/2026-06-18-phase10-pi5-command0-timeout-stable-command-index-pi5-proof/candidate-timeout-stable-command-index-20260618T072652Z/serial/post-command-summary.json",
+    "immediate_post_command_status": "tasks/evidence/2026-06-18-phase10-pi5-command0-timeout-stable-command-index-pi5-proof/candidate-timeout-stable-command-index-20260618T072652Z/immediate-post-command-status.json",
+    "final_pre_restore_status": "tasks/evidence/2026-06-18-phase10-pi5-command0-timeout-stable-command-index-pi5-proof/candidate-timeout-stable-command-index-20260618T072652Z/final-pre-restore-status.json",
+    "restore": "tasks/evidence/2026-06-18-phase10-pi5-command0-timeout-stable-command-index-pi5-proof/candidate-timeout-stable-command-index-20260618T072652Z/restore/restore-snapshot.json",
+    "post_restore_status": "tasks/evidence/2026-06-18-phase10-pi5-command0-timeout-stable-command-index-pi5-proof/candidate-timeout-stable-command-index-20260618T072652Z/restore/post-restore-status.json"
+  },
+  "selected_next_task": "phase10-pi5-command0-timeout-stable-command-index-closeout-20260618"
+}

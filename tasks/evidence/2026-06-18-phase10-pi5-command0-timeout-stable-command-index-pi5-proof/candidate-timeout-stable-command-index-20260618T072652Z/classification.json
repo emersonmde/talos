@@ -1,0 +1,53 @@
+{
+  "task_id": "phase10-pi5-command0-timeout-stable-command-index-pi5-proof-20260618",
+  "run_label": "candidate-timeout-stable-command-index-20260618T072652Z",
+  "classification": "command0-timeout-stable-command-index-pi5-proof-accepted",
+  "terminal": "accepted",
+  "accepted": true,
+  "command0_input_delivery_accepted": true,
+  "first_failing_invariant": null,
+  "selected_next_task": "phase10-pi5-command0-timeout-stable-command-index-closeout-20260618",
+  "archive": {
+    "sha256": "9a6d10b8e1edc776521f56b0d00d9186c9a5e0d446bd2ac4e85f7e63f772f32f",
+    "bytes": 412870,
+    "kernel_2712_sha256": "54c8afabc50bc1e356d75f9ee6e809b949f5d215a801a8b703e3255669fe31ee",
+    "kernel_2712_size": 208984
+  },
+  "gates": {
+    "selected_kernel_tftp_precondition_ok": true,
+    "timeout_hold_ready": true,
+    "serial_write_ok": true,
+    "ordered_command0_delivery": true,
+    "immediate_final_selected_identity_ok": true,
+    "restore_ok": true,
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "tftp_kernel_events": [
+    {
+      "bytes": 208984,
+      "client_ip": "10.42.1.4",
+      "client_mac": "88:a2:9e:ae:c8:7f",
+      "filename": "da591740/kernel_2712.img",
+      "line": "Jun 18 07:27:26 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "status": "served"
+    },
+    {
+      "bytes": 208984,
+      "client_ip": "10.42.1.4",
+      "client_mac": "88:a2:9e:ae:c8:7f",
+      "filename": "da591740/kernel_2712.img",
+      "line": "Jun 18 07:27:27 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "status": "served"
+    }
+  ],
+  "rejected_claims": [
+    "source-response retention",
+    "generated-root command-input success beyond command0 delivery",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ],
+  "evidence_root": "tasks/evidence/2026-06-18-phase10-pi5-command0-timeout-stable-command-index-pi5-proof/candidate-timeout-stable-command-index-20260618T072652Z"
+}

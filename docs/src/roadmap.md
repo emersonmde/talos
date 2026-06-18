@@ -3358,6 +3358,37 @@ The post-review correction chain is:
     SSH, Phase 11/12 expansion, phase transition, and another same-shaped
     command0 retry remain gated on supervisor planning.
 
+186. Pi 5 command0 timeout-stable command-index core: accepted in
+    'phase10-pi5-command0-timeout-stable-command-index-core-20260618'
+    with classification 'command0-timeout-stable-command-index-core-local-source'.
+    The Pi 5 command-loop proof now treats an empty no-data timeout at
+    command=0 as a bounded hold instead of terminally advancing the proof
+    command index. The hold emits
+    'timeout-hold command=0 ... pending=true source=timeout-stable-command-index',
+    keeps command0 pending, and exhausts after four holds rather than hanging
+    silently. Normal completed command input still dispatches and advances
+    exactly once. The selected follow-up is
+    'phase10-pi5-command0-timeout-stable-command-index-pi5-proof-20260618'.
+    Command0 input delivery, source-response retention, generated-root
+    command-input success, storage, networking, SSH, Phase 11/12 expansion, and
+    phase transition remain rejected by the local/source task.
+
+187. Pi 5 command0 timeout-stable command-index proof: accepted in
+    'phase10-pi5-command0-timeout-stable-command-index-pi5-proof-20260618'
+    with classification 'command0-timeout-stable-command-index-pi5-proof-accepted'.
+    The serialized hardware proof retained selected post-publish identity for
+    the 208984-byte kernel_2712.img, two same-power-cycle 208984-byte
+    da591740/kernel_2712.img TFTP serves, firmware-initramfs valid-artifact
+    readiness, the timeout-hold command=0 marker, accepted 9-byte rootinfo
+    serial write, ordered command0 line/dispatch/responses=1 evidence, and
+    ready command=1 before any advancement beyond command1. Immediate/final
+    selected identity and baseline restore proof also passed. Command0 input
+    delivery is accepted for this boundary. The selected follow-up is
+    'phase10-pi5-command0-timeout-stable-command-index-closeout-20260618'.
+    Source-response retention, generated-root command-input success beyond
+    command0 delivery, storage, networking, SSH, Phase 11/12 expansion, and
+    phase transition remain rejected.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
