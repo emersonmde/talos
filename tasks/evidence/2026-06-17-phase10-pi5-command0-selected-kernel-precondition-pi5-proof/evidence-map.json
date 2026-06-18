@@ -1,0 +1,34 @@
+{
+  "task_id": "phase10-pi5-command0-selected-kernel-precondition-pi5-proof-20260617",
+  "classification": "selected-kernel-precondition-pi5-proof-accepted",
+  "selected_next_task": "phase10-pi5-command0-selected-kernel-precondition-closeout-20260617",
+  "inputs": {
+    "accepted_discriminator_core": "tasks/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-discriminator-core.md",
+    "accepted_discriminator_classification": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-discriminator-core/classification.json",
+    "candidate_archive": "target/talos-rpi5-generated-root-command-input-proof-core-20260617.tar.gz"
+  },
+  "outputs": {
+    "task_record": "tasks/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-pi5-proof.md",
+    "task_classification": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-pi5-proof/classification.json",
+    "task_evidence_map": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-pi5-proof/evidence-map.json",
+    "accepted_run_dir": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-pi5-proof/candidate-selected-kernel-precondition-20260617T235548Z",
+    "accepted_run_summary": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-pi5-proof/candidate-selected-kernel-precondition-20260617T235548Z/run-summary.json",
+    "accepted_run_classification": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-pi5-proof/candidate-selected-kernel-precondition-20260617T235548Z/classification.json",
+    "accepted_run_evidence_map": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-pi5-proof/candidate-selected-kernel-precondition-20260617T235548Z/evidence-map.json",
+    "precondition_proof_evidence": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-pi5-proof/candidate-selected-kernel-precondition-20260617T235548Z/precondition-proof-evidence.json",
+    "tftp_delta": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-pi5-proof/candidate-selected-kernel-precondition-20260617T235548Z/capture/tftp-delta-stable-pre-restore.json",
+    "post_publish_boot_files": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-pi5-proof/candidate-selected-kernel-precondition-20260617T235548Z/capture/post-publish-boot-files.json",
+    "final_pre_restore_boot_files": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-pi5-proof/candidate-selected-kernel-precondition-20260617T235548Z/capture/final-pre-restore-boot-files.json",
+    "restore": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-pi5-proof/candidate-selected-kernel-precondition-20260617T235548Z/capture/restore-snapshot.json"
+  },
+  "rejected_claims": [
+    "command0 input delivery acceptance",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

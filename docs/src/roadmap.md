@@ -3170,6 +3170,21 @@ The post-review correction chain is:
     Command0 input delivery acceptance, source-response retention,
     generated-root command-input success, storage, networking, SSH, Phase 11/12
     expansion, and phase transition remain rejected.
+175. Pi 5 command0 selected-kernel precondition proof: accepted in
+    'phase10-pi5-command0-selected-kernel-precondition-pi5-proof-20260617'
+    with classification 'selected-kernel-precondition-pi5-proof-accepted'. The
+    serialized no-command-write Pi 5 proof retained selected post-publish
+    identity for the generated-root command-input candidate, a stable
+    same-power-cycle TFTP delta with two 208984-byte
+    da591740/kernel_2712.img serves, final pre-restore selected identity, and
+    restore to the 104136-byte baseline tree. The task-owned discriminator
+    accepted the evidence under
+    selected-kernel-tftp-precondition-lab-boundary-v1. The selected follow-up
+    is
+    'phase10-pi5-command0-selected-kernel-precondition-closeout-20260617'.
+    Command0 input delivery acceptance, source-response retention,
+    generated-root command-input success, storage, networking, SSH, Phase 11/12
+    expansion, and phase transition remain rejected.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted

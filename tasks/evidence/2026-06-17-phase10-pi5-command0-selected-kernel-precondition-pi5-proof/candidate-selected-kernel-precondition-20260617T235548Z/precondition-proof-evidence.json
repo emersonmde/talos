@@ -1,0 +1,67 @@
+{
+  "label": "candidate-selected-kernel-precondition-20260617T235548Z",
+  "selected_discriminator": "selected-kernel-tftp-precondition-lab-boundary-v1",
+  "no_command_write": true,
+  "command_write_present": false,
+  "durable_unblocker_claim": false,
+  "archive": {
+    "path": "target/talos-rpi5-generated-root-command-input-proof-core-20260617.tar.gz",
+    "sha256": "8f6a4d0d3436308a5f3b51e4f113b75d1acbf807a7b7af2d66453806c586cf0c",
+    "kernel_2712_sha256": "c37b34ebc955a7ce11cd0660bc18424ebcec4550de23ae1e6b0b9ad7c867e4bd",
+    "kernel_2712_size": 208984
+  },
+  "selected_kernel_precondition": {
+    "selected_discriminator": "selected-kernel-tftp-precondition-lab-boundary-v1",
+    "no_command_write": true,
+    "command_write_present": false,
+    "durable_unblocker_claim": false,
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_kernel_2712_size": 208984,
+    "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+    "post_publish_identity": {
+      "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+      "selected_tree": true,
+      "effective_kernel": "kernel_2712.img",
+      "effective_kernel_matches": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 208984,
+      "expected_fetch_bytes_match": true
+    },
+    "tftp": {
+      "cursor_start": 4604055,
+      "cursor_end": 4605495,
+      "stable": true,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        208984,
+        208984
+      ]
+    },
+    "final_pre_restore_identity": {
+      "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+      "selected_tree": true,
+      "effective_kernel": "kernel_2712.img",
+      "effective_kernel_matches": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 208984,
+      "expected_fetch_bytes_match": true
+    },
+    "restore": {
+      "snapshot_name": "pre-command0-selected-precondition-235548",
+      "ok": true,
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "post_restore_kernel_2712_bytes": 104136
+    }
+  },
+  "rejected_claims": [
+    "command0 input delivery acceptance",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

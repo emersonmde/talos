@@ -1,0 +1,147 @@
+{
+  "task_id": "phase10-pi5-command0-selected-kernel-precondition-pi5-proof-20260617",
+  "status": "accepted",
+  "classification": "selected-kernel-precondition-pi5-proof-accepted",
+  "evidence_level": "serialized Pi 5 hardware proof under hardwareTestLock, lab-controller API, fresh serial cursor, stable same-power-cycle TFTP delta, final pre-restore identity, restore proof, task-owned discriminator/classifier, task-owned JSON evidence, docs build, and diff checks",
+  "selected_discriminator": "selected-kernel-tftp-precondition-lab-boundary-v1",
+  "helper": "scripts/rpi5-selected-kernel-precondition-discriminator.sh",
+  "accepted_run": "candidate-selected-kernel-precondition-20260617T235548Z",
+  "accepted_run_dir": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-pi5-proof/candidate-selected-kernel-precondition-20260617T235548Z",
+  "selected_next_task": "phase10-pi5-command0-selected-kernel-precondition-closeout-20260617",
+  "run_summary": {
+    "label": "candidate-selected-kernel-precondition-20260617T235548Z",
+    "evidence_dir": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-pi5-proof/candidate-selected-kernel-precondition-20260617T235548Z",
+    "accepted": true,
+    "classification": "selected-kernel-precondition-discriminator-accepted",
+    "first_failing_invariant": null,
+    "selected_next_task": "phase10-pi5-command0-selected-kernel-precondition-closeout-20260617",
+    "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 208984,
+    "final_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+    "restored_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "tftp_cursor_start": 4604055,
+    "tftp_cursor_end": 4605495,
+    "tftp_expected_fetch_count": 2,
+    "tftp_expected_fetch_byte_match_count": 2,
+    "tftp_events": [
+      {
+        "bytes": 208984,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "Jun 17 23:56:13 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      },
+      {
+        "bytes": 208984,
+        "client_ip": "10.42.1.4",
+        "client_mac": "88:a2:9e:ae:c8:7f",
+        "filename": "da591740/kernel_2712.img",
+        "line": "Jun 17 23:56:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+        "status": "served"
+      }
+    ],
+    "restore_ok": true
+  },
+  "discriminator_output": {
+    "task_id": "phase10-pi5-command0-selected-kernel-precondition-discriminator-core-20260617",
+    "checker": "rpi5-selected-kernel-precondition-discriminator-v1",
+    "accepted": true,
+    "classification": "selected-kernel-precondition-discriminator-accepted",
+    "selected_discriminator": "selected-kernel-tftp-precondition-lab-boundary-v1",
+    "first_failing_invariant": null,
+    "contract": {
+      "selected_discriminator": "selected-kernel-tftp-precondition-lab-boundary-v1",
+      "durable_unblocker_claim": false,
+      "no_command_write": true,
+      "command_write_present": false,
+      "expected_fetch": "da591740/kernel_2712.img",
+      "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+      "expected_kernel_2712_size": 208984,
+      "post_publish_identity": {
+        "selected_tree": true,
+        "effective_kernel": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes_match": true
+      },
+      "tftp": {
+        "cursor_start": 4604055,
+        "cursor_end": 4605495,
+        "stable": true,
+        "expected_fetch_count": 2,
+        "expected_fetch_byte_match_count": 2,
+        "expected_fetch_bytes_seen": [
+          208984,
+          208984
+        ]
+      },
+      "final_pre_restore_identity": {
+        "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+        "selected_tree": true,
+        "effective_kernel": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes_match": true
+      },
+      "restore": {
+        "ok": true
+      }
+    },
+    "selected_next_task": "phase10-pi5-command0-selected-kernel-precondition-pi5-proof-20260617",
+    "rejected_claims": [
+      "command0 input delivery acceptance",
+      "source-response retention",
+      "generated-root command-input success",
+      "storage",
+      "networking",
+      "SSH",
+      "Phase 11/12 expansion",
+      "phase transition"
+    ]
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Serialized no-command-write Pi 5 proof retained selected post-publish identity for the generated-root command-input candidate."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Same-power-cycle TFTP delta retained two da591740/kernel_2712.img serves, both matching the selected 208984-byte kernel."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Final pre-restore identity stayed on the selected tree and restore returned the lab to the 104136-byte baseline tree."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Task-owned discriminator accepted the retained evidence under selected-kernel-tftp-precondition-lab-boundary-v1."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "No command0 input delivery acceptance, source-response retention, generated-root command-input success, storage, networking, SSH, Phase 11/12 expansion, or phase transition is accepted from this proof."
+    }
+  ],
+  "validation": {
+    "serialized_pi5_hardware_proof_under_hardwareTestLock": "pass",
+    "candidate_identity_via_lab_api_before_power": "pass",
+    "fresh_serial_cursor_before_power": "pass",
+    "tftp_delta_tied_to_selected_candidate": "pass",
+    "final_pre_restore_boot_identity": "pass",
+    "post_run_baseline_restore_proof": "pass",
+    "task_owned_classifier": "pass",
+    "jq_empty_task_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "rejected_claims": [
+    "command0 input delivery acceptance",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

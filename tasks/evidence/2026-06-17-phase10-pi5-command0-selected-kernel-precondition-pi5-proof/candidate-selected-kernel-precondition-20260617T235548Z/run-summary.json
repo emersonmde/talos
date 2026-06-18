@@ -1,0 +1,36 @@
+{
+  "label": "candidate-selected-kernel-precondition-20260617T235548Z",
+  "evidence_dir": "tasks/evidence/2026-06-17-phase10-pi5-command0-selected-kernel-precondition-pi5-proof/candidate-selected-kernel-precondition-20260617T235548Z",
+  "accepted": true,
+  "classification": "selected-kernel-precondition-discriminator-accepted",
+  "first_failing_invariant": null,
+  "selected_next_task": "phase10-pi5-command0-selected-kernel-precondition-closeout-20260617",
+  "selected_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+  "expected_fetch": "da591740/kernel_2712.img",
+  "expected_fetch_bytes": 208984,
+  "final_tree_hash": "06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212",
+  "restored_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "tftp_cursor_start": 4604055,
+  "tftp_cursor_end": 4605495,
+  "tftp_expected_fetch_count": 2,
+  "tftp_expected_fetch_byte_match_count": 2,
+  "tftp_events": [
+    {
+      "bytes": 208984,
+      "client_ip": "10.42.1.4",
+      "client_mac": "88:a2:9e:ae:c8:7f",
+      "filename": "da591740/kernel_2712.img",
+      "line": "Jun 17 23:56:13 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "status": "served"
+    },
+    {
+      "bytes": 208984,
+      "client_ip": "10.42.1.4",
+      "client_mac": "88:a2:9e:ae:c8:7f",
+      "filename": "da591740/kernel_2712.img",
+      "line": "Jun 17 23:56:14 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "status": "served"
+    }
+  ],
+  "restore_ok": true
+}
