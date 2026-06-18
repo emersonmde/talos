@@ -1,0 +1,25 @@
+{
+  "task_id": "phase10-pi5-command0-post-write-capture-retention-source-contract-20260618",
+  "evidence_root": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-source-contract",
+  "files": {
+    "task_record": "tasks/2026-06-18-phase10-pi5-command0-post-write-capture-retention-source-contract.md",
+    "classification": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-source-contract/classification.json",
+    "accepted_live_write_window_closeout": "tasks/2026-06-18-phase10-pi5-command0-live-write-window-closeout.md",
+    "accepted_live_write_window_closeout_classification": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-closeout/classification.json",
+    "accepted_live_write_window_closeout_evidence_map": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-closeout/evidence-map.json",
+    "accepted_live_write_window_proof_task": "tasks/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof.md",
+    "accepted_live_write_window_proof_classification": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-direct-read-rerun-20260618T042226Z/classification.json",
+    "accepted_live_write_window_proof_evidence_map": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-direct-read-rerun-20260618T042226Z/evidence-map.json",
+    "accepted_live_write_window_boundary": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-direct-read-rerun-20260618T042226Z/serial/live-write-window.json",
+    "accepted_live_write_window_serial_write": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-direct-read-rerun-20260618T042226Z/serial/command0-write.json",
+    "accepted_live_write_window_post_write_read": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-direct-read-rerun-20260618T042226Z/serial/command0-post-write-read.with-cursor.json",
+    "live_write_window_discriminator": "scripts/rpi5-command0-live-write-window-discriminator.sh",
+    "legacy_post_write_observe_helper": "scripts/rpi5-command0-post-write-observe-proof-review.sh",
+    "serial_window_helper": "scripts/rpi5-observe-serial-window.sh",
+    "lab_controller_serial_contract": "docs/src/project/lab-controller.md",
+    "pi5_command_loop_source": "src/target/rpi5.rs",
+    "descriptor_command_loop_source": "src/local_command_loop.rs"
+  },
+  "selected_next_task": "phase10-pi5-command0-post-write-capture-retention-helper-core-20260618",
+  "planning_needed": false
+}
