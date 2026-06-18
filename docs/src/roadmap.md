@@ -3589,6 +3589,19 @@ The post-review correction chain is:
     are null, planningNeeded=true, and no hardware, packet I/O, networking,
     SSH, Phase 12.2, or phase-transition work is mechanically unblocked.
 
+202. Phase 12 BCM54213PE post-master-mode autoneg pause closeout: accepted in
+    'phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-pause-closeout-20260618'
+    with classification
+    'bcm54213pe-post-master-mode-autoneg-frontier-paused-no-distinct-discriminator'.
+    The closeout freezes the Phase 12.1 frontier after the accepted source
+    checkpoint. MII_CTRL1000 master-mode write/readback and one BMCR autoneg
+    restart remain the only accepted hardware-visible behavior, while BMSR
+    link, BMSR autoneg-complete, and MACB_NSR_LINK remain false.
+    selected_discriminator and selected_next_task are null, planningNeeded=true,
+    and supervisor/human strategy planning is required before any
+    selected-discriminator core, hardware proof, packet I/O, networking, SSH,
+    Phase 12.2, or phase-transition work.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed

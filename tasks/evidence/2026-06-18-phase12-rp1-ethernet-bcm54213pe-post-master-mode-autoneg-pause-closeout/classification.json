@@ -1,0 +1,97 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-pause-closeout-20260618",
+  "status": "accepted",
+  "classification": "bcm54213pe-post-master-mode-autoneg-frontier-paused-no-distinct-discriminator",
+  "evidence_level": [
+    "static/task/docs/evidence inspection",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_input_frontier": {
+    "source_checkpoint": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-source-checkpoint-20260618",
+      "commit": "cf0f018c99d9de7772dfaff3f5cca1fa0fafd58e",
+      "classification": "bcm54213pe-post-master-mode-autoneg-no-distinct-source-backed-discriminator-pause",
+      "selected_discriminator": null,
+      "selected_next_task": null,
+      "planningNeeded": true
+    },
+    "master_mode_autoneg_proof": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof-20260618",
+      "commit": "ba99173bd1e94503a0e4900bfc9b482ae354ebac",
+      "classification": "bcm54213pe-master-mode-autoneg-timeout-link-not-ready",
+      "terminal_facts": {
+        "mii_ctrl1000_pre_read": "0x0200",
+        "mii_ctrl1000_write_value": "0x1a00",
+        "mii_ctrl1000_readback": "0x1a00",
+        "bmcr_restart_write_count": "0x1",
+        "bmsr_link_status": false,
+        "bmsr_autoneg_complete": false,
+        "anlpar": "0x0000",
+        "mii_stat1000": "0x0000",
+        "macb_nsr_link": false,
+        "link_ready_terminal": false
+      }
+    },
+    "master_mode_autoneg_closeout": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-closeout-20260618",
+      "commit": "47f5385e1c9ef36e6748eda7db1c9132605d011b",
+      "classification": "bcm54213pe-master-mode-autoneg-frontier-paused-link-not-ready-planning-required"
+    }
+  },
+  "selected_discriminator": null,
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planning_reason": "The accepted post-master-mode autoneg source checkpoint found no mechanically ready, source-backed, qualitatively distinct discriminator after MII_CTRL1000 master-mode write/readback plus one BMCR autoneg restart still ended link-not-ready.",
+  "strategy_checkpoint_required": true,
+  "rejected_claims": [
+    "link-ready",
+    "autoneg-complete",
+    "packet-readiness",
+    "gpio32-phy-reset-action",
+    "interrupt-ownership",
+    "APD/EEE/lifecycle ownership",
+    "MAC/phylink ownership",
+    "same-shaped retry",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "findings": [
+    {
+      "finding": "accepted source/core/proof/checkpoint evidence closed into paused frontier",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "visible Phase 12 and roadmap docs record the pause closeout",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "GPIO32 / ETH_RST_N reset ownership remains blocked",
+      "disposition": "blocked"
+    },
+    {
+      "finding": "same-shaped status/autoneg/convergence retry remains unselected",
+      "disposition": "rejected"
+    },
+    {
+      "finding": "link-ready packet-readiness remains dependency-gated",
+      "disposition": "rejected"
+    },
+    {
+      "finding": "APD, EEE, interrupt, lifecycle, and MAC/phylink need new scope",
+      "disposition": "deferred"
+    }
+  ],
+  "validation": {
+    "static_task_docs_evidence_inspection": "pass",
+    "jq_task_owned_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  }
+}

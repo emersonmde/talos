@@ -1,0 +1,63 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-pause-closeout-20260618",
+  "classification": "bcm54213pe-post-master-mode-autoneg-frontier-paused-no-distinct-discriminator",
+  "inputs": [
+    {
+      "path": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-source-checkpoint.md",
+      "role": "accepted source checkpoint"
+    },
+    {
+      "path": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-source-checkpoint/classification.json",
+      "role": "selected_discriminator=null and selected_next_task=null evidence"
+    },
+    {
+      "path": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof.md",
+      "role": "accepted hardware proof with timeout/link-not-ready facts"
+    },
+    {
+      "path": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof/hardware-run-summary.json",
+      "role": "terminal BMSR and MACB_NSR_LINK hardware summary"
+    },
+    {
+      "path": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-closeout.md",
+      "role": "accepted frontier closeout"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-pause-closeout.md",
+      "role": "pause closeout task record"
+    },
+    {
+      "path": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-pause-closeout/classification.json",
+      "role": "pause closeout classification"
+    },
+    {
+      "path": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-pause-closeout/evidence-map.json",
+      "role": "pause closeout evidence map"
+    },
+    {
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "role": "visible Phase 12 frontier update"
+    },
+    {
+      "path": "docs/src/roadmap.md",
+      "role": "visible roadmap frontier update"
+    }
+  ],
+  "no_actions_performed": [
+    "runtime implementation",
+    "Pi 5 hardware run",
+    "boot archive publication",
+    "lab mutation",
+    "hardwareTestLock acquisition",
+    "GPIO32/PHY reset action",
+    "interrupt/APD/EEE/lifecycle work",
+    "MAC/phylink work",
+    "packet I/O",
+    "networking",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ]
+}

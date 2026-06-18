@@ -2495,3 +2495,15 @@ supervisor-planned source scope. selected_discriminator and selected_next_task
 are null, planningNeeded=true, and no hardware, GPIO32/PHY reset,
 interrupt/APD/EEE/lifecycle, MAC/phylink, packet I/O, networking, SSH, Phase
 12.2, or phase-transition work is mechanically unblocked.
+
+phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-pause-closeout-20260618
+accepts
+bcm54213pe-post-master-mode-autoneg-frontier-paused-no-distinct-discriminator.
+The closeout freezes this Phase 12.1 frontier after the accepted source
+checkpoint: MII_CTRL1000 master-mode write/readback and one BMCR autoneg restart
+remain the only accepted hardware-visible behavior, while BMSR link, BMSR
+autoneg-complete, and MACB_NSR_LINK remain false. selected_discriminator and
+selected_next_task remain null, planningNeeded=true, and supervisor/human
+strategy planning is required before any selected-discriminator core, hardware
+proof, GPIO32/PHY reset action, interrupt/APD/EEE/lifecycle work, MAC/phylink,
+packet I/O, networking, SSH, Phase 12.2, or phase-transition work.
