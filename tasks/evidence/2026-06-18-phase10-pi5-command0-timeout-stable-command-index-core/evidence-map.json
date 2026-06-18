@@ -1,0 +1,52 @@
+{
+  "task_id": "phase10-pi5-command0-timeout-stable-command-index-core-20260618",
+  "classification": "command0-timeout-stable-command-index-core-local-source",
+  "source_files_changed": [
+    "src/local_command_loop.rs",
+    "src/target/rpi5.rs"
+  ],
+  "task_record": "tasks/2026-06-18-phase10-pi5-command0-timeout-stable-command-index-core.md",
+  "classification_json": "tasks/evidence/2026-06-18-phase10-pi5-command0-timeout-stable-command-index-core/classification.json",
+  "validation_gates": [
+    {
+      "level": "fmt/lint",
+      "command": "cargo fmt --all -- --check",
+      "result": "pass after rustfmt"
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet",
+      "result": "pass"
+    },
+    {
+      "level": "QEMU/substitute",
+      "command": "scripts/qemu-local-serial-command-loop-smoke.sh",
+      "result": "pass"
+    },
+    {
+      "level": "task-owned JSON evidence",
+      "command": "jq empty tasks/evidence/2026-06-18-phase10-pi5-command0-timeout-stable-command-index-core/*.json",
+      "result": "pass"
+    },
+    {
+      "level": "diff check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "docs",
+      "command": "mdbook build",
+      "result": "pass"
+    },
+    {
+      "level": "staged diff check",
+      "command": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "next_task": "phase10-pi5-command0-timeout-stable-command-index-pi5-proof-20260618",
+  "hardware": {
+    "ran_pi5_hardware": false,
+    "hardwareTestLock_acquired": false
+  }
+}

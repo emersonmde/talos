@@ -1,0 +1,44 @@
+{
+  "task_id": "phase10-pi5-command0-timeout-stable-command-index-core-20260618",
+  "status": "accepted",
+  "classification": "command0-timeout-stable-command-index-core-local-source",
+  "selected_next_task": "phase10-pi5-command0-timeout-stable-command-index-pi5-proof-20260618",
+  "accepted_claims": [
+    "empty no-data timeout at command0 is held instead of terminally advancing the Pi 5 proof command index",
+    "command0 timeout hold emits proof-visible timeout-hold markers",
+    "command0 timeout hold is bounded by an explicit exhaustion path",
+    "normal completed command input still dispatches and advances once"
+  ],
+  "rejected_claims": [
+    "command0 input delivery accepted",
+    "source-response retention accepted",
+    "generated-root command-input success accepted",
+    "storage accepted",
+    "networking accepted",
+    "SSH accepted",
+    "Phase 11 or Phase 12 expansion",
+    "phase transition"
+  ],
+  "timeout_hold_contract": {
+    "command": 0,
+    "hold_limit": 4,
+    "held_shape": {
+      "line_len": 0,
+      "raw_bytes": 0,
+      "status": "input-error",
+      "tty_outcome": "timeout"
+    },
+    "hold_marker": "timeout-hold command=0",
+    "exhaustion_marker": "timeout-hold-exhausted command=0",
+    "source": "timeout-stable-command-index"
+  },
+  "validation": {
+    "cargo_fmt_check": "pass after rustfmt",
+    "cargo_test": "pass",
+    "qemu_local_serial_command_loop_smoke": "pass",
+    "jq_task_owned_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  }
+}

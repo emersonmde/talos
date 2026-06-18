@@ -3155,6 +3155,12 @@ impl LocalCommandCycleResult {
     pub const fn controls_truncated(&self) -> bool {
         self.controls_truncated
     }
+
+    pub fn is_no_data_timeout(&self) -> bool {
+        self.line_len == 0
+            && self.raw_bytes == 0
+            && self.status == LocalCommandStatus::InputError(PollingTtyRxOutcome::Timeout)
+    }
 }
 
 pub fn write_local_command_prompt(
@@ -7883,6 +7889,20 @@ talos: descriptor-backed-output=true\n"
 
     #[test_case]
     fn local_command_loop_reports_input_and_response_failures() {
+        let mut no_data_input = ScriptedInput::new([0; 32], 0);
+        let mut no_data_sink = CaptureSink::new();
+        let no_data =
+            run_one_serial_command_with_limit(&mut no_data_input, &mut no_data_sink, 2).unwrap();
+
+        assert!(no_data.is_no_data_timeout());
+        assert_eq!(
+            no_data.status(),
+            LocalCommandStatus::InputError(PollingTtyRxOutcome::Timeout)
+        );
+        assert_eq!(no_data.line(), b"");
+        assert_eq!(no_data.raw_bytes(), 0);
+        assert_eq!(no_data_sink.as_str(), "talos> talos: input-error timeout\n");
+
         let mut truncated_bytes = [b'a'; CANONICAL_LINE_CAPACITY + 2];
         truncated_bytes[CANONICAL_LINE_CAPACITY + 1] = b'\r';
         let mut truncated_input = ScriptedInput::new(truncated_bytes, truncated_bytes.len());

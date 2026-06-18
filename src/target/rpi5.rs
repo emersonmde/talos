@@ -7454,6 +7454,7 @@ fn settle_for_serial_capture() {
 pub fn run_local_serial_command_loop_proof() -> bool {
     write_early_static("TALOS: command loop proof entered\n");
     let command_count = local_command_pi5_proof_command_count();
+    const COMMAND0_TIMEOUT_HOLD_LIMIT: usize = 4;
 
     crate::println!(
         "{}: start command-count={} backend=runtime-console0/bcm2712-uart10-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins={} descriptor-backed-input=true descriptor-backed-output=true",
@@ -7490,8 +7491,10 @@ pub fn run_local_serial_command_loop_proof() -> bool {
         };
     write_early_static("TALOS: command loop io ready\n");
     let mut passed = true;
+    let mut command_index = 0usize;
+    let mut command0_timeout_holds = 0usize;
 
-    for command_index in 0..command_count {
+    while command_index < command_count {
         crate::println!(
             "{}: ready command={}",
             local_command_pi5_proof_label(),
@@ -7513,9 +7516,36 @@ pub fn run_local_serial_command_loop_proof() -> bool {
                         error
                     );
                     passed = false;
+                    command_index += 1;
                     continue;
                 }
             };
+
+        if command_index == 0 && result.is_no_data_timeout() {
+            command0_timeout_holds += 1;
+            crate::println!(
+                "{}: timeout-hold command=0 holds={} limit={} status={} raw-bytes={} pending=true source=timeout-stable-command-index",
+                local_command_pi5_proof_label(),
+                command0_timeout_holds,
+                COMMAND0_TIMEOUT_HOLD_LIMIT,
+                result.status_name(),
+                result.raw_bytes()
+            );
+            wait_uart10_empty_early_phase();
+
+            if command0_timeout_holds >= COMMAND0_TIMEOUT_HOLD_LIMIT {
+                crate::println!(
+                    "{}: timeout-hold-exhausted command=0 holds={} classification={}{}",
+                    local_command_pi5_proof_label(),
+                    command0_timeout_holds,
+                    local_command_pi5_proof_classification(),
+                    "-incomplete"
+                );
+                passed = false;
+                break;
+            }
+            continue;
+        }
 
         crate::println!();
         crate::print!(
@@ -7712,6 +7742,7 @@ pub fn run_local_serial_command_loop_proof() -> bool {
             passed = false;
         }
         wait_uart10_empty_early_phase();
+        command_index += 1;
     }
 
     let ready_for_next = crate::local_command_loop::write_local_command_prompt(&mut io).is_ok();
