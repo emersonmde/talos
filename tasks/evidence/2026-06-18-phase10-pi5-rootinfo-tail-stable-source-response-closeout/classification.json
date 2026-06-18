@@ -1,0 +1,33 @@
+{
+  "task_id": "phase10-pi5-rootinfo-tail-stable-source-response-closeout-20260618",
+  "classification": "command0-tail-stable-source-response-closeout-source-response-retention-accepted",
+  "terminal": "accepted",
+  "command0_input_delivery_accepted": true,
+  "source_response_retention_accepted": true,
+  "generated_root_command_input_success_accepted": false,
+  "phase_transition_accepted": false,
+  "first_failing_invariant": null,
+  "selected_next_task": "phase10-pi5-generated-root-command-input-success-closeout-20260618",
+  "planning_needed": false,
+  "core_task": "tasks/2026-06-18-phase10-pi5-rootinfo-tail-stable-source-response-core.md",
+  "command0_input_delivery_closeout": "tasks/2026-06-18-phase10-pi5-command0-timeout-stable-command-index-closeout.md",
+  "proof_task": "tasks/2026-06-18-phase10-pi5-rootinfo-tail-stable-source-response-pi5-proof.md",
+  "proof_classification": "tasks/evidence/2026-06-18-phase10-pi5-rootinfo-tail-stable-source-response-pi5-proof/candidate-tail-stable-source-response-prearmed-20260618T090004Z/classification.json",
+  "proof_evidence_map": "tasks/evidence/2026-06-18-phase10-pi5-rootinfo-tail-stable-source-response-pi5-proof/candidate-tail-stable-source-response-prearmed-20260618T090004Z/evidence-map.json",
+  "proof_post_command_summary": "tasks/evidence/2026-06-18-phase10-pi5-rootinfo-tail-stable-source-response-pi5-proof/candidate-tail-stable-source-response-prearmed-20260618T090004Z/serial/post-command-summary.json",
+  "accepted_claims": [
+    "source-response retention for same command0 rootinfo response",
+    "source=firmware-initramfs and reason=valid-artifact retained for command0",
+    "accepted command0 input-delivery lineage remains the prerequisite boundary",
+    "selected Pi 5 generated-root kernel identity and stable TFTP evidence were retained",
+    "baseline restore proof was retained before hardwareTestLock release"
+  ],
+  "rejected_claims": [
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

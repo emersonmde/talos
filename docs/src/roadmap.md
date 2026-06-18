@@ -3444,6 +3444,23 @@ The post-review correction chain is:
     Generated-root command-input success, storage, networking, SSH, Phase 11/12
     expansion, and phase transition remain rejected.
 
+191. Pi 5 rootinfo tail-stable source-response closeout: accepted in
+    'phase10-pi5-rootinfo-tail-stable-source-response-closeout-20260618'
+    with classification
+    'command0-tail-stable-source-response-closeout-source-response-retention-accepted'.
+    The closeout reconciles the accepted rootinfo tail-stable source change,
+    the accepted command0 input-delivery lineage, and the accepted Pi 5
+    prearmed-read proof. Source-response retention is accepted because
+    source=firmware-initramfs and reason=valid-artifact were retained in the
+    same selected command0 rootinfo response with line command=0, dispatch
+    command=0 status=handled responses=1, ready command=1, selected
+    208984-byte TFTP identity, final selected identity, and baseline restore
+    proof. The selected follow-up is
+    'phase10-pi5-generated-root-command-input-success-closeout-20260618'.
+    Generated-root command-input success, storage, networking, SSH, Phase 11/12
+    expansion, and phase transition remain rejected until that explicit
+    follow-up closeout accepts them.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
@@ -8422,6 +8439,19 @@ Selected first slice:
   response. selected_next_task is null and planningNeeded=true; generated-root
   command-input success, storage, networking, SSH, Phase 11/12 expansion, and
   phase transition remain unaccepted.
+- 'phase10-pi5-rootinfo-tail-stable-source-response-core-20260618' accepts the
+  source-level rootinfo response change that moves source/reason to a
+  tail-stable position while preserving the generated-root selection source.
+- 'phase10-pi5-rootinfo-tail-stable-source-response-pi5-proof-20260618'
+  accepts the serialized Pi 5 proof that the tail-stable rootinfo response
+  retains source=firmware-initramfs reason=valid-artifact for the same command0
+  response boundary after accepted command0 input delivery.
+- 'phase10-pi5-rootinfo-tail-stable-source-response-closeout-20260618'
+  accepts source-response retention and selects
+  phase10-pi5-generated-root-command-input-success-closeout-20260618 as the
+  next bounded closeout. Generated-root command-input success, storage,
+  networking, SSH, Phase 11/12 expansion, and phase transition remain
+  unaccepted until explicit follow-up acceptance.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The
