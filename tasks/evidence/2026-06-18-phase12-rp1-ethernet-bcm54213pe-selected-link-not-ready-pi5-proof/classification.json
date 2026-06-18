@@ -1,0 +1,56 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof-20260618",
+  "classification": "mii-ctrl1000-master-mode-write-readback-visible",
+  "status": "accepted",
+  "evidence_level": [
+    "static archive/image review",
+    "lab-controller API selected-tree evidence",
+    "same-power-cycle TFTP byte evidence",
+    "serial hardware boot/output",
+    "serial freshness guard v1",
+    "restore proof",
+    "JSON evidence validation",
+    "docs build",
+    "diff checks"
+  ],
+  "control_classification": "no-mdio-no-ethernet-bcm54213pe-mii-ctrl1000-master-mode-control",
+  "candidate_classification": "mii-ctrl1000-master-mode-write-readback-visible",
+  "selected_discriminator": "bcm54213pe-phy1-mii-ctrl1000-master-mode-gate-source-contract",
+  "accepted_observations": {
+    "ncr_before": "0x10",
+    "ncr_after": "0x10",
+    "ctrl1000_read_frame": "0x60a60000",
+    "ctrl1000_write_frame_prefix": "0x50a60000",
+    "ctrl1000_write_mask": "0x1800",
+    "ctrl1000_pre_raw": "0x0200",
+    "ctrl1000_write_value": "0x1a00",
+    "ctrl1000_readback_raw": "0x1a00",
+    "ctrl1000_pre_read_completed": true,
+    "ctrl1000_write_completed": true,
+    "ctrl1000_readback_completed": true,
+    "runtime_mdio_transaction": true,
+    "macb_read_performed": true,
+    "macb_write_performed": false,
+    "phy_reset_or_gpio32_action": false
+  },
+  "rejected_claims": [
+    "link-ready",
+    "autoneg-complete",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition",
+    "gpio32-reset-action",
+    "interrupt-ownership",
+    "apd-eee-lifecycle",
+    "mac-phylink-configuration",
+    "same-shaped-status-restart-poll-retry"
+  ],
+  "notes": [
+    "The first candidate run is retained as an inconclusive capture/staging failure because TFTP served baseline 104136-byte images and final identity restored early.",
+    "The candidate rerun is decisive: selected-tree identity, TFTP byte serves, serial nonce freshness, final pre-restore identity, and restore proof all matched the task contract.",
+    "The accepted result proves only the MII_CTRL1000 master-mode write/readback visibility boundary; it does not prove link readiness or authorize Phase 12.2."
+  ]
+}

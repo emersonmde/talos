@@ -523,6 +523,16 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[],
     },
     BootScenario {
+        value: "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_candidate",
+        implied_values: &[],
+        asm_defines: &[],
+    },
+    BootScenario {
+        value: "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_no_write_control",
+        implied_values: &[],
+        asm_defines: &[],
+    },
+    BootScenario {
         value: "rpi5_rp1_ethernet_bcm54213pe_boot_transport_sentinel_candidate",
         implied_values: &[],
         asm_defines: &[],

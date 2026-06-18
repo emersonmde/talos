@@ -1,0 +1,82 @@
+{
+  "contract_id": "phase12-rp1-ethernet-serial-freshness-contract-v1",
+  "contract_version": "cursor-nonce-post-power-freshness-v1",
+  "run_label": "bcm54213pe-master-mode-candidate-20260618T1348Z",
+  "serial_freshness_proven": false,
+  "classification": "serial-freshness-guard-v1-rejected",
+  "rejection_reasons": [
+    "saturated-direct-read-without-nonce-proof",
+    "stale-backlog"
+  ],
+  "freshness_fields": {
+    "pre_power_peek_cursor": 4194304,
+    "pre_power_retained_bytes": 65536,
+    "pre_power_marker_occurrences": 0,
+    "pre_power_nonce_occurrences": 16,
+    "serial_drain_attempts": 1,
+    "serial_drain_terminal_state": "empty-read-before-power",
+    "serial_drain_empty_before_power": true,
+    "serial_drain_final_cursor": 4194304,
+    "post_power_observe_cursor_start": 4194304,
+    "post_power_observe_cursor_end": 4194304,
+    "serial_capture_mode": "read",
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "start_cursor_saturated": true,
+    "observed_byte_range_or_response_bytes": 70009,
+    "required_marker": "TALOS: rp1-ethernet-bcm54213pe-mii-ctrl1000-master-mode-candidate capture-nonce=master-mode-20260618T1330Z",
+    "marker_occurrences_after_saved_cursor": 20,
+    "run_unique_nonce": "master-mode-20260618T1330Z",
+    "nonce_occurrences_after_saved_cursor": 20,
+    "cursor_nonce_fresh": false,
+    "serial_freshness_ok": true
+  },
+  "proof_join": {
+    "selected_tree_identity": {
+      "tree_hash": "100a19305595ca6f1efa581572db3d7468afe25f087156401b47d5e94b42cc46",
+      "effective_kernel": "kernel_2712.img",
+      "expected_kernel_path": "da591740/kernel_2712.img",
+      "expected_kernel_bytes": 50928
+    },
+    "tftp": {
+      "cursor_file": 4635379,
+      "cursor_start": 4635379,
+      "cursor_end": 4636730,
+      "stable": true,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        50928,
+        50928
+      ]
+    },
+    "final_pre_restore_identity": {
+      "tree_hash": "100a19305595ca6f1efa581572db3d7468afe25f087156401b47d5e94b42cc46",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 50928
+    },
+    "restore_proof": {
+      "snapshot_name": "bcm54213pe-master-mode-pre-20260618T1348Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "claim_boundary": {
+    "accepted_if_ready": "serial freshness and capture-chain identity only",
+    "rejected_runtime_claims": [
+      "BCM54213PE register values",
+      "link readiness",
+      "Ethernet readiness",
+      "GPIO32 or PHY reset ownership",
+      "BMCR or autoneg writes",
+      "Broadcom shadow/MMD/AUX access",
+      "interrupt ownership",
+      "packet I/O",
+      "networking",
+      "SSH",
+      "Phase 12.2",
+      "phase transition"
+    ]
+  },
+  "rule": "missing or mismatched pre-power peek absence, post-power cursor/nonce proof, selected-tree/TFTP identity, final identity, or restore evidence rejects serial freshness"
+}

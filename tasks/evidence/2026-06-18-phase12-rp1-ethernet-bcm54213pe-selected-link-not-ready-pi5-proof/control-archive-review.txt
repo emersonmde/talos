@@ -1,0 +1,8 @@
+control_archive=tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/control-archive.tar.gz
+control_archive_sha256=02600dad15c244076be0b058867fc847c5c2a40c2ba54addf8fd39a415d24b3c
+kernel_2712_sha256=ea3bfc0365ba5c4014eb57017f7e29a80dd07e7290fda4ddae4c3ac700958de3
+kernel_2712_size=49944
+header_image_size=49944
+text_offset=0
+flags=12
+forbidden_bcm54213pe_mii_ctrl1000_master_mode_control_runtime_strings_absent=true

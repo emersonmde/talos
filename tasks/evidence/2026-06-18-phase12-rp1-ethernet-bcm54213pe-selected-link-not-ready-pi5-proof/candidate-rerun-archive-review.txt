@@ -1,0 +1,8 @@
+candidate_archive=tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/candidate-rerun-archive.tar.gz
+candidate_archive_sha256=a727356c5b003bcf0d9534c65e978cc3e623fa5afb47eeb48585d69a4db5e2a2
+kernel_2712_sha256=9bbda0e66693c5d7a90f708d162c8787306262a19c3315b7f14561a6255dcc6e
+kernel_2712_size=50936
+header_image_size=50936
+text_offset=0
+flags=12
+forbidden_bcm54213pe_mii_ctrl1000_master_mode_candidate_runtime_strings_absent=true

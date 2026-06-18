@@ -12819,6 +12819,7 @@ fn clean_cache_range_to_poc(start: usize, len: usize) {
         talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_autoneg_convergence_candidate",
         talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_rgmii_delay_candidate",
         talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_candidate",
+        talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_candidate",
         talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
         talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_read",
         talos_boot_scenario = "rpi5_rp1_bridge_config_preflight_read",
@@ -12856,7 +12857,8 @@ fn read_rp1_reg_u32(addr: usize) -> u32 {
         talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_bmcr_autoneg_restart_candidate",
         talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_autoneg_convergence_candidate",
         talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_rgmii_delay_candidate",
-        talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_candidate"
+        talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_candidate",
+        talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_candidate"
     )
 ))]
 fn write_rp1_reg_u32_ordered(addr: usize, value: u32) {
@@ -19203,6 +19205,259 @@ pub fn run_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_no_mdio_contro
     }
 }
 
+#[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_candidate")]
+pub fn run_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_candidate() -> ! {
+    const NCR: usize = 0x1c_0010_0000;
+    const NSR: usize = 0x1c_0010_0008;
+    const MAN: usize = 0x1c_0010_0034;
+    const NCR_MPE: u32 = 1 << 4;
+    const NSR_IDLE: u32 = 1 << 2;
+    const READ_FRAME: u32 = crate::rp1_ethernet::RP1_ETHERNET_BCM54213PE_MASTER_MODE_READ_FRAME;
+    const WRITE_FRAME_PREFIX: u32 =
+        crate::rp1_ethernet::RP1_ETHERNET_BCM54213PE_MASTER_MODE_WRITE_FRAME_PREFIX;
+    const ACCEPTED_PRE_CTRL1000: u16 =
+        crate::rp1_ethernet::RP1_ETHERNET_BCM54213PE_MASTER_MODE_ACCEPTED_PRE_CTRL1000;
+    const EXPECTED_WRITE_VALUE: u16 =
+        crate::rp1_ethernet::RP1_ETHERNET_BCM54213PE_MASTER_MODE_EXPECTED_WRITE_VALUE;
+    const WRITE_MASK: u16 = crate::rp1_ethernet::RP1_ETHERNET_BCM54213PE_MASTER_MODE_WRITE_MASK;
+
+    write_early_static("rpi5-rp1-ethernet-bcm54213pe-mii-ctrl1000-master-mode-candidate: start\n");
+    write_early_static(
+        "rpi5-rp1-ethernet-bcm54213pe-mii-ctrl1000-master-mode-candidate: before-ctrl1000-read-modify-write-readback\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    let ncr_before = read_rp1_reg_u32(NCR);
+    let mut ctrl1000_pre_raw = 0u16;
+    let mut ctrl1000_write_value = 0u16;
+    let mut ctrl1000_readback_raw = 0u16;
+    let mut ctrl1000_pre_read_completed = false;
+    let mut ctrl1000_write_completed = false;
+    let mut ctrl1000_readback_completed = false;
+    let mut mdio_man_transactions_performed = false;
+
+    let classification = if ncr_before & NCR_MPE == 0 {
+        "mii-ctrl1000-master-mode-precondition-blocker"
+    } else if let Some(pre_value) = read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
+        NSR, MAN, NSR_IDLE, READ_FRAME,
+    ) {
+        mdio_man_transactions_performed = true;
+        ctrl1000_pre_raw = pre_value;
+        ctrl1000_pre_read_completed = true;
+        if pre_value != ACCEPTED_PRE_CTRL1000 {
+            "mii-ctrl1000-master-mode-precondition-blocker"
+        } else {
+            ctrl1000_write_value = pre_value | WRITE_MASK;
+            if write_rp1_ethernet_bcm54213pe_rgmii_delay_phy1_register(
+                NSR,
+                MAN,
+                NSR_IDLE,
+                WRITE_FRAME_PREFIX,
+                ctrl1000_write_value,
+            ) {
+                ctrl1000_write_completed = true;
+                if let Some(readback) =
+                    read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
+                        NSR, MAN, NSR_IDLE, READ_FRAME,
+                    )
+                {
+                    ctrl1000_readback_raw = readback;
+                    ctrl1000_readback_completed = true;
+                    if readback == EXPECTED_WRITE_VALUE && (readback & WRITE_MASK) == WRITE_MASK {
+                        "mii-ctrl1000-master-mode-write-readback-visible"
+                    } else {
+                        "mii-ctrl1000-master-mode-readback-mismatch"
+                    }
+                } else {
+                    "mii-ctrl1000-master-mode-capture-blocker"
+                }
+            } else {
+                "mii-ctrl1000-master-mode-capture-blocker"
+            }
+        }
+    } else {
+        "mii-ctrl1000-master-mode-capture-blocker"
+    };
+
+    let ncr_after = read_rp1_reg_u32(NCR);
+
+    loop {
+        write_early_static("TALOS: rp1-ethernet-bcm54213pe-mii-ctrl1000-master-mode-candidate");
+        write_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_capture_nonce();
+        write_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_common("candidate");
+        write_early_static(" target=phy1-mii-ctrl1000-master-mode-read-modify-write");
+        write_early_static(" controller=rp1_eth compatible=raspberrypi,rp1-gem,cdns,macb");
+        write_early_static(" phy-model=Broadcom-BCM54213PE physid1=0x600d physid2=0x84a2");
+        write_early_static(" phy-handle=phy1 phy-node=ethernet-phy@1 phy-address=1");
+        write_early_static(" ncr-observed-target=");
+        write_early_hex_u64(NCR as u64);
+        write_early_static(" nsr-observed-target=");
+        write_early_hex_u64(NSR as u64);
+        write_early_static(" man-observed-target=");
+        write_early_hex_u64(MAN as u64);
+        write_early_static(" ncr-before=");
+        write_early_hex_u64(ncr_before as u64);
+        write_early_static(" ncr-after=");
+        write_early_hex_u64(ncr_after as u64);
+        write_early_static(" ctrl1000-read-frame=0x60a60000");
+        write_early_static(" ctrl1000-write-frame-prefix=0x50a60000");
+        write_early_static(" ctrl1000-write-mask=0x1800 accepted-pre-ctrl1000=0x0200");
+        write_early_static(" expected-write-value=0x1a00 expected-write-frame=0x50a61a00");
+        write_early_static(" ctrl1000-pre-raw=");
+        write_early_hex_u64(ctrl1000_pre_raw as u64);
+        write_early_static(" ctrl1000-write-value=");
+        write_early_hex_u64(ctrl1000_write_value as u64);
+        write_early_static(" ctrl1000-readback-raw=");
+        write_early_hex_u64(ctrl1000_readback_raw as u64);
+        write_early_static(" ctrl1000-pre-read-completed=");
+        write_bool(ctrl1000_pre_read_completed);
+        write_early_static(" ctrl1000-write-completed=");
+        write_bool(ctrl1000_write_completed);
+        write_early_static(" ctrl1000-readback-completed=");
+        write_bool(ctrl1000_readback_completed);
+        write_early_static(" selected-registers=MII_CTRL1000:read-modify-write-readback");
+        write_early_static(
+            " stage-boundaries=pre-mdio-marker,ncr-mpe-precondition,ctrl1000-pre-read,ctrl1000-write,ctrl1000-readback,stop-before-link-ready-or-packet-work",
+        );
+        write_early_static(" mdio-man-transactions-performed=");
+        write_bool(mdio_man_transactions_performed);
+        write_early_static(" macb-read-performed=true macb-write-performed=false");
+        write_early_static(" phy-reset-or-gpio32-action=false");
+        write_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_rejections(
+            mdio_man_transactions_performed,
+            ctrl1000_write_completed,
+            ctrl1000_readback_completed,
+        );
+        write_early_static(" classification=");
+        write_early_static(classification);
+        write_early_static("\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_no_write_control"
+)]
+pub fn run_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_no_write_control() -> ! {
+    write_early_static("rpi5-rp1-ethernet-bcm54213pe-mii-ctrl1000-master-mode-control: start\n");
+    write_early_static(
+        "rpi5-rp1-ethernet-bcm54213pe-mii-ctrl1000-master-mode-control: no-mdio-no-macb-no-gpio32-no-phy-target-construction\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: rp1-ethernet-bcm54213pe-mii-ctrl1000-master-mode-control");
+        write_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_capture_nonce();
+        write_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_common(
+            "no-mdio-no-ethernet-control",
+        );
+        write_early_static(" target=none controller=none compatible=none");
+        write_early_static(" phy-model=none physid1=withheld physid2=withheld");
+        write_early_static(" phy-handle=none phy-node=none phy-address=none");
+        write_early_static(" ncr-observed-target=not-constructed");
+        write_early_static(" nsr-observed-target=not-constructed");
+        write_early_static(" man-observed-target=not-constructed");
+        write_early_static(" ctrl1000-read-frame=withheld");
+        write_early_static(" ctrl1000-write-frame-prefix=withheld");
+        write_early_static(" ctrl1000-write-mask=withheld accepted-pre-ctrl1000=withheld");
+        write_early_static(" expected-write-value=withheld expected-write-frame=withheld");
+        write_early_static(" ctrl1000-pre-raw=withheld");
+        write_early_static(" ctrl1000-write-value=withheld");
+        write_early_static(" ctrl1000-readback-raw=withheld");
+        write_early_static(" ctrl1000-pre-read-completed=false");
+        write_early_static(" ctrl1000-write-completed=false");
+        write_early_static(" ctrl1000-readback-completed=false");
+        write_early_static(" selected-registers=withheld stage-boundaries=withheld");
+        write_early_static(" mdio-man-transactions-performed=false");
+        write_early_static(" macb-read-performed=false macb-write-performed=false");
+        write_early_static(" phy-reset-or-gpio32-action=false");
+        write_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_rejections(false, false, false);
+        write_early_static(
+            " classification=no-mdio-no-ethernet-bcm54213pe-mii-ctrl1000-master-mode-control\n",
+        );
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_no_write_control"
+))]
+fn write_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_common(report_kind: &str) {
+    write_early_static(
+        " bcm54213pe-mii-ctrl1000-master-mode-contract-id=phase12-rp1-ethernet-bcm54213pe-mii-ctrl1000-master-mode-source-contract-v1",
+    );
+    write_early_static(
+        " task-id=phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof-20260618",
+    );
+    write_early_static(
+        " source-core-task-id=phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-source-contract-core-20260618",
+    );
+    write_early_static(" source-core-commit=1f78a3cd68590cccf32b4848c1b9dbe60991d7a7");
+    write_early_static(
+        " selection-task-id=phase12-rp1-ethernet-bcm54213pe-link-not-ready-discriminator-selection-20260618",
+    );
+    write_early_static(" selection-commit=a18e51bf4b44680ff9071b01c238f12d1c37872c");
+    write_early_static(
+        " selected-discriminator=bcm54213pe-phy1-mii-ctrl1000-master-mode-gate-source-contract",
+    );
+    write_early_static(" report-kind=");
+    write_early_static(report_kind);
+    write_early_static(
+        " hardware-proof-boundary-classification=bcm54213pe-mii-ctrl1000-master-mode-pi5-proof-runtime",
+    );
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_no_write_control"
+))]
+fn write_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_capture_nonce() {
+    if let Some(nonce) = option_env!("TALOS_CAPTURE_NONCE") {
+        if !nonce.is_empty() {
+            write_early_static(" capture-nonce=");
+            write_early_static(nonce);
+        }
+    }
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_no_write_control"
+))]
+fn write_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_rejections(
+    runtime_mdio_transaction: bool,
+    ctrl1000_write_completed: bool,
+    ctrl1000_readback_completed: bool,
+) {
+    write_early_static(
+        " allowed-hardware-classifications=mii-ctrl1000-master-mode-write-readback-visible,mii-ctrl1000-master-mode-precondition-blocker,mii-ctrl1000-master-mode-readback-mismatch,mii-ctrl1000-master-mode-capture-blocker,no-mdio-no-ethernet-bcm54213pe-mii-ctrl1000-master-mode-control",
+    );
+    write_early_static(
+        " rejected-runtime-hardware-claims=same-shaped-status-restart-poll-retry,bmcr-restart,rgmii-delay-retry,extra-phy-writes,gpio32-reset-action,interrupt-ownership,apd-eee-lifecycle,mac-phylink-configuration,link-ready-acceptance,autoneg-complete-acceptance,packet-io,networking,sockets,ssh,phase-12-2,phase-transition",
+    );
+    write_early_static(
+        " retained-risks=mii-ctrl1000-master-mode-write-readback-does-not-prove-link-readiness,hardware-proof-must-retain-identity-tftp-serial-restore,gpio32-interrupt-dma-packet-network-ssh-phase-12-2-remain-unaccepted",
+    );
+    write_early_static(" claims-runtime-mdio-transaction=");
+    write_bool(runtime_mdio_transaction);
+    write_early_static(" claims-ctrl1000-write-completed=");
+    write_bool(ctrl1000_write_completed);
+    write_early_static(" claims-ctrl1000-readback-completed=");
+    write_bool(ctrl1000_readback_completed);
+    write_early_static(
+        " claims-same-shaped-status-restart-poll-retry=false claims-bmcr-restart=false",
+    );
+    write_early_static(" claims-rgmii-delay-retry=false claims-extra-phy-writes=false");
+    write_early_static(" claims-gpio32-reset-action=false claims-interrupt-ownership=false");
+    write_early_static(" claims-apd-eee-lifecycle=false claims-mac-phylink-configuration=false");
+    write_early_static(
+        " claims-link-ready-acceptance=false claims-autoneg-complete-acceptance=false",
+    );
+    write_early_static(" claims-packet-io=false claims-networking=false claims-sockets=false");
+    write_early_static(" claims-ssh=false claims-phase-12-2=false claims-phase-transition=false");
+}
+
 #[cfg(any(
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_no_mdio_control"
@@ -20646,7 +20901,8 @@ fn poll_rp1_ethernet_mdio_phy_id_after_mpe_idle(nsr: usize, idle_bit: u32) -> bo
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_bmcr_autoneg_restart_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_autoneg_convergence_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_rgmii_delay_candidate",
-    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_candidate"
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_candidate"
 ))]
 fn poll_rp1_ethernet_mdio_register_vector_idle(nsr: usize, idle_bit: u32) -> bool {
     let mut remaining = 1_000_000u32;
@@ -20688,7 +20944,8 @@ fn poll_rp1_ethernet_post_physical_link_status_idle(nsr: usize, idle_bit: u32) -
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_bmcr_autoneg_restart_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_autoneg_convergence_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_rgmii_delay_candidate",
-    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_candidate"
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_candidate"
 ))]
 fn poll_rp1_ethernet_bcm54213pe_readonly_preflight_idle(nsr: usize, idle_bit: u32) -> bool {
     poll_rp1_ethernet_mdio_register_vector_idle(nsr, idle_bit)
@@ -21354,7 +21611,8 @@ fn read_rp1_ethernet_post_physical_link_status_phy1_register(
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_bmcr_autoneg_restart_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_autoneg_convergence_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_rgmii_delay_candidate",
-    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_candidate"
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_candidate"
 ))]
 fn read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
     nsr: usize,
@@ -21374,7 +21632,8 @@ fn read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
 
 #[cfg(any(
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_rgmii_delay_candidate",
-    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_candidate"
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_candidate"
 ))]
 fn write_rp1_ethernet_bcm54213pe_rgmii_delay_phy1_register(
     nsr: usize,
@@ -24611,6 +24870,8 @@ fn gpio14_ownership_preflight_classification(
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_rgmii_delay_no_mdio_control",
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_no_mdio_control",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_no_write_control",
     talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_control",
     talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",

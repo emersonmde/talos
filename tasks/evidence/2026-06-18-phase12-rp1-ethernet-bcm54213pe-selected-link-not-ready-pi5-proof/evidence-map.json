@@ -1,0 +1,49 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof-20260618",
+  "classification": "mii-ctrl1000-master-mode-write-readback-visible",
+  "source_core_task": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-source-contract-core.md",
+  "task_record": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof.md",
+  "classification_json": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/classification.json",
+  "hardware_summary": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/hardware-run-summary.json",
+  "archives": {
+    "control": {
+      "archive": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/control-archive.tar.gz",
+      "review": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/control-archive-review.txt",
+      "tree_hash": "e146eb0344de4dc575752c8e3601a4ab333b3b97a637b4ac36d72dc1cbeb7b78",
+      "kernel_2712_bytes": 49944
+    },
+    "candidate_initial_inconclusive": {
+      "archive": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/candidate-archive.tar.gz",
+      "review": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/candidate-archive-review.txt",
+      "tree_hash": "100a19305595ca6f1efa581572db3d7468afe25f087156401b47d5e94b42cc46",
+      "kernel_2712_bytes": 50928,
+      "classification": "capture-staging-blocked"
+    },
+    "candidate_rerun_decisive": {
+      "archive": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/candidate-rerun-archive.tar.gz",
+      "review": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/candidate-rerun-archive-review.txt",
+      "tree_hash": "515684b45744c6c89847652c1b34d643a850094d4da3101207fa3b4462d00784",
+      "kernel_2712_bytes": 50936,
+      "classification": "mii-ctrl1000-master-mode-write-readback-visible"
+    }
+  },
+  "hardware_runs": {
+    "control": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/control-run/",
+    "candidate_initial_inconclusive": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/candidate-run/",
+    "candidate_rerun_decisive": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/candidate-rerun/"
+  },
+  "decisive_candidate_evidence": {
+    "capture_invariant_summary": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/candidate-rerun/capture-invariant-summary.json",
+    "serial_observe_window": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/candidate-rerun/serial-observe-window.json",
+    "serial_freshness_guard": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/candidate-rerun/serial-freshness-guard.json",
+    "tftp_delta": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/candidate-rerun/tftp-delta-stable-pre-restore.json",
+    "final_pre_restore_identity": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/candidate-rerun/final-pre-restore-boot-files.json",
+    "restore": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/candidate-rerun/restore-snapshot.json"
+  },
+  "final_restore_proof": {
+    "snapshot": "bcm54213pe-master-mode-pre-20260618T1348Z",
+    "evidence": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/final-post-rerun-restore-boot-files.json",
+    "restored_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "kernel_2712_bytes": 104136
+  }
+}

@@ -12554,6 +12554,20 @@ identity, restore, paired control, and post-hardware review evidence. Link-ready
 autoneg-complete, packet I/O, networking, SSH, Phase 12.2, phase transition, and
 same-shaped retry claims remain rejected.
 
+phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof-20260618
+accepts mii-ctrl1000-master-mode-write-readback-visible. Serialized Pi 5
+evidence retained the paired no-MDIO/no-Ethernet control, selected-tree/TFTP
+identity, serial nonce freshness, final pre-restore identity, and restore proof.
+The initial candidate run was rejected as capture-staging-blocked before
+classification because the selected candidate identity did not survive through
+TFTP/final identity. After the required inconclusive-run triage and candidate
+rerun, the decisive candidate proved only the selected MII_CTRL1000
+read/modify/write/readback boundary: NCR remained 0x10, MII_CTRL1000 pre-read
+0x0200, write value 0x1a00, and readback 0x1a00. The proof does not accept
+link readiness, autoneg completion, packet I/O, networking, sockets, SSH, Phase
+12.2, or phase transition. The next gated task is
+phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-closeout-20260618.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.
