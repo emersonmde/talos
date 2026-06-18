@@ -3461,6 +3461,38 @@ The post-review correction chain is:
     expansion, and phase transition remain rejected until that explicit
     follow-up closeout accepts them.
 
+192. Pi 5 generated-root command-input success closeout: accepted in
+    'phase10-pi5-generated-root-command-input-success-closeout-20260618'
+    with classification
+    'pi5-generated-root-command-input-success-accepted-planning-needed'. The
+    closeout joins selected Pi 5 generated-root consumption, accepted command0
+    input delivery, and same-command0 source=firmware-initramfs
+    reason=valid-artifact response retention. Pi 5 generated-root command-input
+    success is accepted at that selected firmware-initramfs generated-root proof
+    boundary only. Persistence, writable storage, storage drivers, networking,
+    SSH, Phase 11/12 expansion, and phase transition remain unaccepted. The
+    follow-up resumption checkpoint is
+    'phase10-to-phase12-post-generated-root-command-input-resumption-checkpoint-20260618',
+    which reconciles roadmap status before any Phase 12 source checkpoint is
+    promoted.
+
+193. Phase 10 to Phase 12 post-generated-root command-input resumption
+    checkpoint: accepted in
+    'phase10-to-phase12-post-generated-root-command-input-resumption-checkpoint-20260618'
+    with classification
+    'post-generated-root-command-input-resumption-checkpoint-accepted-phase12-link-not-ready-source-checkpoint-selected'.
+    This checkpoint records that generated-root command-input success is closed
+    while the current Phase 12 networking frontier remains the accepted
+    BCM54213PE timeout/link-not-ready pause from
+    'phase12-rp1-ethernet-bcm54213pe-link-not-ready-frontier-pause-closeout-20260616'.
+    No link-ready or autoneg-complete frontier has been accepted, so packet I/O,
+    networking, sockets, SSH, Phase 12.2, and phase transition remain
+    unaccepted. The selected next bounded task is
+    'phase12-rp1-ethernet-post-generated-root-link-not-ready-resumption-source-checkpoint-20260618',
+    a source/evidence checkpoint for whether a concrete feature-relevant
+    link-not-ready discriminator exists after the generated-root command-input
+    blocker is closed.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed

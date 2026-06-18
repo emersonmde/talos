@@ -1,0 +1,14 @@
+{
+  "task_id": "phase10-to-phase12-post-generated-root-command-input-resumption-checkpoint-20260618",
+  "evidence_root": "tasks/evidence/2026-06-18-phase10-to-phase12-post-generated-root-command-input-resumption-checkpoint",
+  "files": {
+    "task_record": "tasks/2026-06-18-phase10-to-phase12-post-generated-root-command-input-resumption-checkpoint.md",
+    "classification": "tasks/evidence/2026-06-18-phase10-to-phase12-post-generated-root-command-input-resumption-checkpoint/classification.json",
+    "generated_root_command_input_success_closeout": "tasks/2026-06-18-phase10-pi5-generated-root-command-input-success-closeout.md",
+    "generated_root_command_input_success_classification": "tasks/evidence/2026-06-18-phase10-pi5-generated-root-command-input-success-closeout/classification.json",
+    "phase12_link_not_ready_pause_closeout": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-link-not-ready-frontier-pause-closeout.md",
+    "phase12_link_not_ready_pause_classification": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-link-not-ready-frontier-pause-closeout/classification.json"
+  },
+  "selected_next_task": "phase12-rp1-ethernet-post-generated-root-link-not-ready-resumption-source-checkpoint-20260618",
+  "planning_needed": false
+}
