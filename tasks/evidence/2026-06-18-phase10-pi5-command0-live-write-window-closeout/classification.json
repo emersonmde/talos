@@ -1,0 +1,39 @@
+{
+  "task_id": "phase10-pi5-command0-live-write-window-closeout-20260618",
+  "classification": "command0-live-write-window-closeout-command0-delivery-blocked-planning-needed",
+  "accepted": true,
+  "command0_input_delivery_accepted": false,
+  "source_response_retention_v3_selected": false,
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "Command0 input delivery remains unaccepted after the accepted live write-window Pi 5 proof: selected-kernel/TFTP, fresh live command=0 boundary, immediate rootinfo write, stable selected identity, and restore proof passed, but ordered post-write rootinfo/dispatch command=0 status=handled/responses=1/ready command=1 evidence was not retained. Supervisor planning is required before source-response retention, another same-shaped command0 retry, a new discriminator, generated-root command-input success, storage, networking, SSH, Phase 11/12 expansion, or phase transition.",
+  "accepted_proof": {
+    "task_id": "phase10-pi5-command0-live-write-window-pi5-proof-20260618",
+    "classification": "command0-live-write-window-blocked",
+    "commit": "340e2a3d30b12c3d48f01257a9a43f92dc92984d",
+    "classification_path": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-direct-read-rerun-20260618T042226Z/classification.json",
+    "evidence_map_path": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-direct-read-rerun-20260618T042226Z/evidence-map.json"
+  },
+  "gates": {
+    "selected_kernel_tftp_precondition_ok": true,
+    "readiness_boundary_fresh": true,
+    "live_write_window_ok": true,
+    "serial_write_ok": true,
+    "ordered_command0_delivery": false,
+    "immediate_post_command_selected_identity_ok": true,
+    "final_pre_restore_selected_identity_ok": true,
+    "restore_ok": true
+  },
+  "first_failing_invariant": "ordered command0 delivery missing or mismatched after immediate live write",
+  "rejected_claims": [
+    "command0 input delivery acceptance",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition",
+    "same-shaped command0 retry without supervisor planning"
+  ]
+}

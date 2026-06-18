@@ -1,0 +1,20 @@
+{
+  "task_id": "phase10-pi5-command0-live-write-window-closeout-20260618",
+  "evidence_root": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-closeout",
+  "files": {
+    "task_record": "tasks/2026-06-18-phase10-pi5-command0-live-write-window-closeout.md",
+    "classification": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-closeout/classification.json",
+    "accepted_proof_task": "tasks/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof.md",
+    "accepted_proof_classification": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-direct-read-rerun-20260618T042226Z/classification.json",
+    "accepted_proof_evidence_map": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-direct-read-rerun-20260618T042226Z/evidence-map.json",
+    "accepted_proof_live_write_window": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-direct-read-rerun-20260618T042226Z/serial/live-write-window.json",
+    "accepted_proof_serial_write": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-direct-read-rerun-20260618T042226Z/serial/command0-write-normalized.json",
+    "accepted_proof_post_write_read": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-direct-read-rerun-20260618T042226Z/serial/command0-post-write-read.with-cursor.json",
+    "accepted_proof_tftp_delta": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-direct-read-rerun-20260618T042226Z/tftp/tftp-delta-stable-pre-restore.json",
+    "accepted_proof_immediate_status": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-direct-read-rerun-20260618T042226Z/immediate-post-command-status.json",
+    "accepted_proof_final_status": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-direct-read-rerun-20260618T042226Z/final-pre-restore-status.json",
+    "accepted_proof_post_restore_status": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-direct-read-rerun-20260618T042226Z/restore/post-restore-status.json"
+  },
+  "selected_next_task": null,
+  "planning_needed": true
+}
