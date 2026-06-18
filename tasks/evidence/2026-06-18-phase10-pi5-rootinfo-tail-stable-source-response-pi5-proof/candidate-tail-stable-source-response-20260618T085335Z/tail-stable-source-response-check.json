@@ -1,0 +1,30 @@
+{
+  "task_id": "phase10-pi5-rootinfo-tail-stable-source-response-core-20260618",
+  "checker": "rpi5-command0-tail-stable-source-response-discriminator-v1",
+  "accepted": false,
+  "classification": "command0-tail-stable-source-response-blocked",
+  "selected_discriminator": "command0-tail-stable-source-response-v1",
+  "first_failing_invariant": "rootinfo serial write missing or mismatched",
+  "contract": {
+    "serial_write_ok": false,
+    "same_command0_source_response_retained": false,
+    "command0_text_bytes": 841
+  },
+  "accepted_evidence_shape": "same command0 response retaining source=firmware-initramfs reason=valid-artifact, rootinfo/line command=0, dispatch command=0 status=handled, responses=1, and ready command=1",
+  "rejected_evidence_shapes": [
+    "dispatch-only command0 metadata without source/reason",
+    "source/reason text without command0 line/rootinfo and dispatch ordering",
+    "later-command or stale command1/later source response",
+    "truncated or non-utf8 response summaries"
+  ],
+  "selected_next_task": null,
+  "rejected_claims": [
+    "source-response hardware acceptance",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

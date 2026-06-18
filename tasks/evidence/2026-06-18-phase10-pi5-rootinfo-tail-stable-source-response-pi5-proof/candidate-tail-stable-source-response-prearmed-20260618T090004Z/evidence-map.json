@@ -1,0 +1,16 @@
+{
+  "run_label": "candidate-tail-stable-source-response-prearmed-20260618T090004Z",
+  "evidence_root": "tasks/evidence/2026-06-18-phase10-pi5-rootinfo-tail-stable-source-response-pi5-proof/candidate-tail-stable-source-response-prearmed-20260618T090004Z",
+  "files": {
+    "pre_status": "tasks/evidence/2026-06-18-phase10-pi5-rootinfo-tail-stable-source-response-pi5-proof/candidate-tail-stable-source-response-prearmed-20260618T090004Z/pre-status.json",
+    "post_publish_status": "tasks/evidence/2026-06-18-phase10-pi5-rootinfo-tail-stable-source-response-pi5-proof/candidate-tail-stable-source-response-prearmed-20260618T090004Z/post-publish-status.json",
+    "readiness_summary": "tasks/evidence/2026-06-18-phase10-pi5-rootinfo-tail-stable-source-response-pi5-proof/candidate-tail-stable-source-response-prearmed-20260618T090004Z/serial/readiness-summary.json",
+    "serial_write": "tasks/evidence/2026-06-18-phase10-pi5-rootinfo-tail-stable-source-response-pi5-proof/candidate-tail-stable-source-response-prearmed-20260618T090004Z/serial/command0-write.json",
+    "prearmed_post_command_read": "tasks/evidence/2026-06-18-phase10-pi5-rootinfo-tail-stable-source-response-pi5-proof/candidate-tail-stable-source-response-prearmed-20260618T090004Z/serial/prearmed-post-command-read.json",
+    "post_command_summary": "tasks/evidence/2026-06-18-phase10-pi5-rootinfo-tail-stable-source-response-pi5-proof/candidate-tail-stable-source-response-prearmed-20260618T090004Z/serial/post-command-summary.json",
+    "tftp_delta": "tasks/evidence/2026-06-18-phase10-pi5-rootinfo-tail-stable-source-response-pi5-proof/candidate-tail-stable-source-response-prearmed-20260618T090004Z/tftp/tftp-delta-after-command.json",
+    "final_pre_restore_status": "tasks/evidence/2026-06-18-phase10-pi5-rootinfo-tail-stable-source-response-pi5-proof/candidate-tail-stable-source-response-prearmed-20260618T090004Z/final-pre-restore-status.json",
+    "restore_status": "tasks/evidence/2026-06-18-phase10-pi5-rootinfo-tail-stable-source-response-pi5-proof/candidate-tail-stable-source-response-prearmed-20260618T090004Z/restore/post-restore-status.json",
+    "classification": "tasks/evidence/2026-06-18-phase10-pi5-rootinfo-tail-stable-source-response-pi5-proof/candidate-tail-stable-source-response-prearmed-20260618T090004Z/classification.json"
+  }
+}

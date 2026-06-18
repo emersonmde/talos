@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "ZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogcmVhZHkgY29tbWFuZD0wDQp0YWxvcz4geDAwMDAwMDAwMDAwMDAyMDQgcGF0aD0vZ2VuZXJhdGVkL21hbmlmZXN0LnR4dCBleGVjLXBhdGg9L2dlbmVyYXRlZC9zdGF0dXM3DQoNCnJwaTUtZ2VuZXJhdGVkLXJvb3QtYm9vdC10cmFuc3BvcnQtcHJvb2Y6IGxpbmUgY29tbWFuZD0wIGhleD03MiA2ZiA2ZiA3NCA2OSA2ZSA2NiA2Zg0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogZGlzcGF0Y2ggY29tbWFuZD0wIHN0YXR1cz1oYW5kbGVkIHJlc3BvbnNlcz0xIHJhdy1ieXRlcz05IHRydW5jYXRlZD1mYWxzZSBjb250cm9scz0wDQpycGk1LWdlbmVyYXRlZC1yb290LWJvb3QtdHJhbnNwb3J0LXByb29mOiBlZGl0IGNvbW1hbmQ9MCBiYWNrc3BhY2VzPTAgZGVsZXRlcz0wDQpycGk1LWdlbmVyYXRlZC1yb290LWJvb3QtdHJhbnNwb3J0LXByb29mOiByZWFkeSBjb21tYW5kPTENCnRhbG9zPiA=",
+  "bytes": 500,
+  "cursor": 4194304,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "enerated-root-boot-transport-proof: ready command=0\r\ntalos> x0000000000000204 path=/generated/manifest.txt exec-path=/generated/status7\r\n\r\nrpi5-generated-root-boot-transport-proof: line command=0 hex=72 6f 6f 74 69 6e 66 6f\r\nrpi5-generated-root-boot-transport-proof: dispatch command=0 status=handled responses=1 raw-bytes=9 truncated=false controls=0\r\nrpi5-generated-root-boot-transport-proof: edit command=0 backspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=1\r\ntalos> "
+}

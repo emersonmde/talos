@@ -1,0 +1,52 @@
+{
+  "task_id": "phase10-pi5-rootinfo-tail-stable-source-response-pi5-proof-20260618",
+  "run_label": "candidate-tail-stable-source-response-prearmed-20260618T090004Z",
+  "classification": "command0-tail-stable-source-response-pi5-proof-accepted",
+  "terminal": "accepted",
+  "accepted": true,
+  "source_response_retention_accepted": true,
+  "first_failing_invariant": null,
+  "selected_next_task": "phase10-pi5-rootinfo-tail-stable-source-response-closeout-20260618",
+  "archive": {
+    "sha256": "8ea2ad8199e2c317d6452cd84a4993f7c459eebc8569f7f102420b44cb645518",
+    "bytes": 413038,
+    "kernel_2712_sha256": "ec880ee488c7e24d630f1946b72c3c41547582b1d5dbd2a239e3b25856e6101c",
+    "kernel_2712_size": 208984
+  },
+  "gates": {
+    "selected_generated_root_kernel_identity": true,
+    "selected_kernel_tftp_precondition_ok": true,
+    "final_pre_restore_selected_identity_ok": true,
+    "serial_write_ok": true,
+    "same_command0_source_response_retained": true,
+    "restore_ok": true,
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "tftp_kernel_events": [
+    {
+      "bytes": 208984,
+      "client_ip": "10.42.1.4",
+      "client_mac": "88:a2:9e:ae:c8:7f",
+      "filename": "da591740/kernel_2712.img",
+      "line": "Jun 18 09:00:28 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "status": "served"
+    },
+    {
+      "bytes": 208984,
+      "client_ip": "10.42.1.4",
+      "client_mac": "88:a2:9e:ae:c8:7f",
+      "filename": "da591740/kernel_2712.img",
+      "line": "Jun 18 09:00:29 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4",
+      "status": "served"
+    }
+  ],
+  "rejected_claims": [
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ],
+  "evidence_root": "tasks/evidence/2026-06-18-phase10-pi5-rootinfo-tail-stable-source-response-pi5-proof/candidate-tail-stable-source-response-prearmed-20260618T090004Z"
+}

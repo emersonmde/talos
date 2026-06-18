@@ -1,0 +1,57 @@
+{
+  "action": "serial post-command0 tail-stable source-response read",
+  "selected_discriminator": "command0-tail-stable-source-response-v1",
+  "text": "mand=0 backspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=1\r\ntalos> talos: input-error timeout\r\n\r\nrpi5-generated-root-boot-transport-proof: line command=1 hex=\r\nrpi5-generated-root-boot-transport-proof: dispatch command=1 status=input-error responses=1 raw-bytes=0 truncated=false controls=0\r\nrpi5-generated-root-boot-transport-proof: edit command=1 backspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=2\r\ntalos> talos: input-error timeout\r\n\r\nrpi5-generated-root-boot-transport-proof: line command=2 hex=\r\nrpi5-generated-root-boot-transport-proof: dispatch command=2 status=input-error responses=1 raw-bytes=0 truncated=false controls=0\r\nrpi5-generated-root-boot-transport-proof: edit command=2 backspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=3\r\ntalos> ",
+  "bytes": 841,
+  "responses": [
+    {
+      "action": "serial read",
+      "base64": "bWFuZD0wIGJhY2tzcGFjZXM9MCBkZWxldGVzPTANCnJwaTUtZ2VuZXJhdGVkLXJvb3QtYm9vdC10cmFuc3BvcnQtcHJvb2Y6IHJlYWR5IGNvbW1hbmQ9MQ0KdGFsb3M+IA==",
+      "bytes": 97,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "mand=0 backspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=1\r\ntalos> ",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "dGFsb3M6IGlucHV0LWVycm9yIHRpbWVvdXQNCg0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogbGluZSBjb21tYW5kPTEgaGV4PQ0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogZGlzcGF0Y2ggY29tbWFuZD0xIHN0YXR1cz1pbnB1dC1lcnJvciByZXNwb25zZXM9MSByYXctYnl0ZXM9MCB0cnVuY2F0ZWQ9ZmFsc2UgY29udHJvbHM9MA0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogZWRpdCBjb21tYW5kPTEgYmFja3NwYWNlcz0wIGRlbGV0ZXM9MA0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogcmVhZHkgY29tbWFuZD0yDQp0YWxvcz4g",
+      "bytes": 372,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "talos: input-error timeout\r\n\r\nrpi5-generated-root-boot-transport-proof: line command=1 hex=\r\nrpi5-generated-root-boot-transport-proof: dispatch command=1 status=input-error responses=1 raw-bytes=0 truncated=false controls=0\r\nrpi5-generated-root-boot-transport-proof: edit command=1 backspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=2\r\ntalos> ",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "dGFsb3M6IGlucHV0LWVycm9yIHRpbWVvdXQNCg0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogbGluZSBjb21tYW5kPTIgaGV4PQ0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogZGlzcGF0Y2ggY29tbWFuZD0yIHN0YXR1cz1pbnB1dC1lcnJvciByZXNwb25zZXM9MSByYXctYnl0ZXM9MCB0cnVuY2F0ZWQ9ZmFsc2UgY29udHJvbHM9MA0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogZWRpdCBjb21tYW5kPTIgYmFja3NwYWNlcz0wIGRlbGV0ZXM9MA0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogcmVhZHkgY29tbWFuZD0zDQp0YWxvcz4g",
+      "bytes": 372,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "talos: input-error timeout\r\n\r\nrpi5-generated-root-boot-transport-proof: line command=2 hex=\r\nrpi5-generated-root-boot-transport-proof: dispatch command=2 status=input-error responses=1 raw-bytes=0 truncated=false controls=0\r\nrpi5-generated-root-boot-transport-proof: edit command=2 backspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=3\r\ntalos> ",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    }
+  ],
+  "has_rootinfo": false,
+  "has_source": false,
+  "has_reason": false,
+  "has_line_command0": false,
+  "has_dispatch_command0_handled": false,
+  "has_responses_1": true,
+  "has_ready_command1": true,
+  "has_ready_command2": true,
+  "has_timeout_hold_exhausted": false
+}

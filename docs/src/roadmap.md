@@ -3425,6 +3425,25 @@ The post-review correction chain is:
     storage, networking, SSH, Phase 11/12 expansion, and phase transition
     remain rejected.
 
+190. Pi 5 rootinfo tail-stable source-response Pi 5 proof: accepted in
+    'phase10-pi5-rootinfo-tail-stable-source-response-pi5-proof-20260618'
+    with classification
+    'command0-tail-stable-source-response-pi5-proof-accepted'. The selected
+    generated-root archive retained a 208984-byte kernel_2712.img, stable
+    same-cursor da591740/kernel_2712.img TFTP serves at the selected size, and
+    final pre-restore selected identity. The first direct-read attempt is
+    retained as blocked diagnostic evidence because it started after the write
+    and only captured a post-command tail. The accepted rerun prearmed a direct
+    /serial/read before POST /serial/write rootinfo, retaining the same command0
+    response with rootinfo, source=firmware-initramfs, reason=valid-artifact,
+    line command=0, dispatch command=0 status=handled responses=1, and ready
+    command=1 with no command1/later advancement. Baseline restore returned the
+    tree to a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10
+    before hardwareTestLock release. The selected follow-up is
+    'phase10-pi5-rootinfo-tail-stable-source-response-closeout-20260618'.
+    Generated-root command-input success, storage, networking, SSH, Phase 11/12
+    expansion, and phase transition remain rejected.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed

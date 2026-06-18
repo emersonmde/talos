@@ -1,0 +1,46 @@
+{
+  "selected_discriminator": "command0-tail-stable-source-response-v1",
+  "serial_write": {
+    "action": "serial write",
+    "bytes": 9,
+    "ok": true,
+    "text": "rootinfo",
+    "append_newline": true
+  },
+  "command0": {
+    "action": "serial prearmed post-command0 tail-stable source-response read",
+    "selected_discriminator": "command0-tail-stable-source-response-v1",
+    "text": "rootinfo\r\r\ntalos: generated-root digest=0x7d68fdc80736b332 total-len=0x0000000000000296 file-len=0x0000000000000029 exec-len=0x0000000000000204 path=/generated/manifest.txt exec-path=/generated/status7 source=firmware-initramfs reason=valid-artifact\r\n\r\nrpi5-generated-root-boot-transport-proof: line command=0 hex=72 6f 6f 74 69 6e 66 6f\r\nrpi5-generated-root-boot-transport-proof: dispatch command=0 status=handled responses=1 raw-bytes=9 truncated=false controls=0\r\nrpi5-generated-root-boot-transport-proof: edit command=0 backspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=1\r\ntalos> ",
+    "bytes": 614,
+    "responses": [
+      {
+        "action": "serial read",
+        "base64": "cm9vdGluZm8NDQp0YWxvczogZ2VuZXJhdGVkLXJvb3QgZGlnZXN0PTB4N2Q2OGZkYzgwNzM2YjMzMiB0b3RhbC1sZW49MHgwMDAwMDAwMDAwMDAwMjk2IGZpbGUtbGVuPTB4MDAwMDAwMDAwMDAwMDAyOSBleGVjLWxlbj0weDAwMDAwMDAwMDAwMDAyMDQgcGF0aD0vZ2VuZXJhdGVkL21hbmlmZXN0LnR4dCBleGVjLXBhdGg9L2dlbmVyYXRlZC9zdGF0dXM3IHNvdXJjZT1maXJtd2FyZS1pbml0cmFtZnMgcmVhc29uPXZhbGlkLWFydGlmYWN0DQoNCnJwaTUtZ2VuZXJhdGVkLXJvb3QtYm9vdC10cmFuc3BvcnQtcHJvb2Y6IGxpbmUgY29tbWFuZD0wIGhleD03MiA2ZiA2ZiA3NCA2OSA2ZSA2NiA2Zg0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogZGlzcGF0Y2ggY29tbWFuZD0wIHN0YXR1cz1oYW5kbGVkIHJlc3BvbnNlcz0xIHJhdy1ieXRlcz05IHRydW5jYXRlZD1mYWxzZSBjb250cm9scz0wDQpycGk1LWdlbmVyYXRlZC1yb290LWJvb3QtdHJhbnNwb3J0LXByb29mOiBlZGl0IGNvbW1hbmQ9MCBiYWNrc3BhY2VzPTAgZGVsZXRlcz0wDQpycGk1LWdlbmVyYXRlZC1yb290LWJvb3QtdHJhbnNwb3J0LXByb29mOiByZWFkeSBjb21tYW5kPTENCnRhbG9zPiA=",
+        "bytes": 614,
+        "cursor": 4194304,
+        "encoding": "utf-8",
+        "ok": true,
+        "text": "rootinfo\r\r\ntalos: generated-root digest=0x7d68fdc80736b332 total-len=0x0000000000000296 file-len=0x0000000000000029 exec-len=0x0000000000000204 path=/generated/manifest.txt exec-path=/generated/status7 source=firmware-initramfs reason=valid-artifact\r\n\r\nrpi5-generated-root-boot-transport-proof: line command=0 hex=72 6f 6f 74 69 6e 66 6f\r\nrpi5-generated-root-boot-transport-proof: dispatch command=0 status=handled responses=1 raw-bytes=9 truncated=false controls=0\r\nrpi5-generated-root-boot-transport-proof: edit command=0 backspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=1\r\ntalos> ",
+        "truncated": false
+      }
+    ],
+    "write_request": {
+      "text": "rootinfo",
+      "append_newline": true
+    },
+    "serial_write": {
+      "action": "serial write",
+      "bytes": 9,
+      "ok": true
+    },
+    "has_rootinfo": true,
+    "has_source": true,
+    "has_reason": true,
+    "has_line_command0": true,
+    "has_dispatch_command0_handled": true,
+    "has_responses_1": true,
+    "has_ready_command1": true,
+    "has_ready_command2": false,
+    "has_timeout_hold_exhausted": false
+  }
+}

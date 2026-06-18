@@ -1,0 +1,8 @@
+rootinfo
+talos: generated-root digest=0x7d68fdc80736b332 total-len=0x0000000000000296 file-len=0x0000000000000029 exec-len=0x0000000000000204 path=/generated/manifest.txt exec-path=/generated/status7 source=firmware-initramfs reason=valid-artifact
+
+rpi5-generated-root-boot-transport-proof: line command=0 hex=72 6f 6f 74 69 6e 66 6f
+rpi5-generated-root-boot-transport-proof: dispatch command=0 status=handled responses=1 raw-bytes=9 truncated=false controls=0
+rpi5-generated-root-boot-transport-proof: edit command=0 backspaces=0 deletes=0
+rpi5-generated-root-boot-transport-proof: ready command=1
+talos> 

@@ -1,0 +1,31 @@
+candidate_archive=target/candidate-tail-stable-source-response-20260618T085335Z.tar.gz
+candidate_archive_sha256=8ea2ad8199e2c317d6452cd84a4993f7c459eebc8569f7f102420b44cb645518
+kernel_2712_sha256=ec880ee488c7e24d630f1946b72c3c41547582b1d5dbd2a239e3b25856e6101c
+kernel_2712_size=208984
+kernel8_matches_kernel_2712=true
+generated_root_artifact_sha256=0341f5393502f54489acb1951633bf2773fb846a82bde89b3e4a2e82000724c6
+generated_root_artifact_size=662
+serial_prefixed_artifact_matches_root=true
+initramfs_config_line=initramfs initramfs_2712 followkernel
+manifest:
+  bcm2712-rpi-5-b.dtb
+  cmdline.txt
+  config.txt
+  da591740
+  da591740/bcm2712-rpi-5-b.dtb
+  da591740/cmdline.txt
+  da591740/config.txt
+  da591740/initramfs_2712
+  da591740/kernel8.img
+  da591740/kernel_2712.img
+  da591740/overlays
+  da591740/overlays/bcm2712d0.dtbo
+  da591740/overlays/overlay_map.dtb
+  da591740/overlays/uart0-pi5.dtbo
+  initramfs_2712
+  kernel8.img
+  kernel_2712.img
+  overlays
+  overlays/bcm2712d0.dtbo
+  overlays/overlay_map.dtb
+  overlays/uart0-pi5.dtbo
