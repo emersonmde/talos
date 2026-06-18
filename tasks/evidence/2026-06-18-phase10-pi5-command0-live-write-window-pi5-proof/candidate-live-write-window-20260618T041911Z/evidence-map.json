@@ -1,0 +1,23 @@
+{
+  "task_id": "phase10-pi5-command0-live-write-window-pi5-proof-20260618",
+  "run_label": "candidate-live-write-window-20260618T041911Z",
+  "evidence_root": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-20260618T041911Z",
+  "files": {
+    "classification": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-20260618T041911Z/classification.json",
+    "discriminator_input": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-20260618T041911Z/live-write-window-discriminator-input.json",
+    "discriminator_result": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-20260618T041911Z/discriminator-result.json",
+    "archive_static_review": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-20260618T041911Z/archive-static-review.txt",
+    "generated_root_review": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-20260618T041911Z/generated-root-review.txt",
+    "post_publish_status": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-20260618T041911Z/post-publish-status.json",
+    "tftp_delta": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-20260618T041911Z/tftp/tftp-delta-stable-pre-restore.json",
+    "readiness_summary": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-20260618T041911Z/serial/readiness-summary.json",
+    "live_write_window": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-20260618T041911Z/serial/live-write-window.json",
+    "serial_write": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-20260618T041911Z/serial/command0-write.json",
+    "post_write_read": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-20260618T041911Z/serial/command0-post-write-read.with-cursor.json",
+    "immediate_post_command_status": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-20260618T041911Z/immediate-post-command-status.json",
+    "final_pre_restore_status": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-20260618T041911Z/final-pre-restore-status.json",
+    "restore": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-20260618T041911Z/restore/restore-snapshot.json",
+    "post_restore_status": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-pi5-proof/candidate-live-write-window-20260618T041911Z/restore/post-restore-status.json"
+  },
+  "selected_next_task": "phase10-pi5-command0-live-write-window-closeout-20260618"
+}

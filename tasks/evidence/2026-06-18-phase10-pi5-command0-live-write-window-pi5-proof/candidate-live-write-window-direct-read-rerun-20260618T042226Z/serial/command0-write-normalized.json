@@ -1,0 +1,7 @@
+{
+  "action": "serial write",
+  "bytes": 9,
+  "ok": true,
+  "text": "rootinfo",
+  "append_newline": true
+}

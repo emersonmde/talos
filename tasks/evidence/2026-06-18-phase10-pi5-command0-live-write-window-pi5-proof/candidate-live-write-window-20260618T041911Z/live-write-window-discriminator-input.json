@@ -1,0 +1,35 @@
+{
+  "selected_discriminator": "command0-live-write-window-v1",
+  "readiness": {
+    "start_cursor": 4194304,
+    "cursor": 4194304,
+    "fresh_after_prompt": false,
+    "text": ""
+  },
+  "live_write_window": {
+    "boundary_cursor": 4194304,
+    "boundary_was_live": true,
+    "write_issued_after_boundary": true,
+    "write_immediate_after_boundary": true,
+    "write_waited_for_timeout": false,
+    "pre_write_drain_attempts_after_boundary": 0,
+    "max_boundary_to_write_ms": 25
+  },
+  "serial_write": {
+    "action": "serial write",
+    "bytes": 9,
+    "ok": true
+  },
+  "post_write": {
+    "action": "serial observe",
+    "base64": "",
+    "bytes": 0,
+    "cursor_end": 4194304,
+    "cursor_start": 4194304,
+    "encoding": "utf-8",
+    "ok": true,
+    "text": "",
+    "truncated": false,
+    "cursor": 4194304
+  }
+}

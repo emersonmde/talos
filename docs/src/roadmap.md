@@ -3274,6 +3274,42 @@ The post-review correction chain is:
     storage, networking, SSH, Phase 11/12 expansion, and phase transition
     remain unaccepted.
 
+181. Pi 5 command0 live write-window core: accepted in
+    'phase10-pi5-command0-live-write-window-core-20260618' with
+    classification 'command0-live-write-window-core-local-static'. The
+    task-owned discriminator
+    'scripts/rpi5-command0-live-write-window-discriminator.sh' implements
+    command0-live-write-window-v1: retained output must show a fresh live
+    command=0 readiness boundary, the rootinfo write must be issued immediately
+    from that boundary without another pre-write drain or timeout wait, and
+    post-write output must retain ordered rootinfo, dispatch command=0
+    status=handled, responses=1, and ready command=1 before advancing past
+    command=1. Positive fixture replay accepts the ordered live window, while
+    stale, delayed, unordered, and retained readiness-timeout-boundary rerun
+    fixtures are rejected. The selected follow-up is the serialized Pi 5 proof
+    'phase10-pi5-command0-live-write-window-pi5-proof-20260618'.
+    Command0 input delivery, source-response retention, generated-root
+    command-input success, storage, networking, SSH, Phase 11/12 expansion, and
+    phase transition remain rejected.
+
+182. Pi 5 command0 live write-window proof: accepted in
+    'phase10-pi5-command0-live-write-window-pi5-proof-20260618' with
+    classification 'command0-live-write-window-blocked'. The first candidate
+    used the cursor-based observe path while the lab serial cursor was
+    saturated at 4194304 and is retained only as an inconclusive capture
+    attempt. The accepted direct-read rerun retained an empty pre-power serial
+    drain, selected post-publish identity, two stable 208984-byte
+    da591740/kernel_2712.img TFTP fetches, a fresh command=0 readiness
+    boundary, an immediate rootinfo write, immediate/final pre-restore selected
+    identity, and baseline restore proof. Post-write serial retained only two
+    bytes and no ordered rootinfo, dispatch command=0 status=handled,
+    responses=1, or ready command=1 evidence, so command0 input delivery
+    remains unaccepted. The selected follow-up is
+    'phase10-pi5-command0-live-write-window-closeout-20260618'.
+    Source-response retention, generated-root command-input success, storage,
+    networking, SSH, Phase 11/12 expansion, and phase transition remain
+    rejected.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed

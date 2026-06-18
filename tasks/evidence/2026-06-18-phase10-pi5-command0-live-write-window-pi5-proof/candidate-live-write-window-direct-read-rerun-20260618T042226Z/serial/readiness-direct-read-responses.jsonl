@@ -1,0 +1,390 @@
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "DQogIDEuMTAgUlBpOiBCT09UU1lTIHJlbGVhc2UgVkVSU0lPTjoyMjI2YTg1MyBEQVRFOiAyMDI1LzEyLzA4IFRJTUU6IDE5OjI5OjU0DQogIDEuMTAgQk9PVE1PREU6IDB4MDYgcGFydGl0aW9uIDAgYnVpbGQtdHMgQlVJTERfVElNRVNUQU1QPTE3NjUyMjIxOTQgc2VyaWFsIGRhNTkxNzQwIGJvYXJkcmV2IGQwNDE3MSBzdGMgMTEwNzAwMw0KICAxLjExIEFPTl9SRVNFVDogMDAwMDAwMDMgUE1fUlNUUyAwMDAwMTAwMA0KICAxLjEyIFBPV0VSX09GRl9PTl9IQUxUOiAwIFdBSVRfRk9SX1BPV0VSX0JVVFRPTiAwIHBvd2VyLW9uLXJlc2V0IDENCiAgMS4xMyBSUDFfQk9PVCBjaGlwIElEOiAweDIwMDAxOTI3DQogIDEuMTMgUENJRXgxOiBQV1IgMCBERVRfV0FLRSAwDQogIDEuMTMgcGFydCAwMDAwMDAwMCByZXNldF9pbmZvIDAwMDAwMDAwDQogIDEuMTMgUE1JQyByZXNldC1ldmVudCAwMDAwMDAwMCBydGMgNmEzMzcxZmYgYWxhcm0gMDAwMDAwMDAgZW5hYmxlZCAwDQogIA==",
+  "bytes": 496,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "\r\n  1.10 RPi: BOOTSYS release VERSION:2226a853 DATE: 2025/12/08 TIME: 19:29:54\r\n  1.10 BOOTMODE: 0x06 partition 0 build-ts BUILD_TIMESTAMP=1765222194 serial da591740 boardrev d04171 stc 1107003\r\n  1.11 AON_RESET: 00000003 PM_RSTS 00001000\r\n  1.12 POWER_OFF_ON_HALT: 0 WAIT_FOR_POWER_BUTTON 0 power-on-reset 1\r\n  1.13 RP1_BOOT chip ID: 0x20001927\r\n  1.13 PCIEx1: PWR 0 DET_WAKE 0\r\n  1.13 part 00000000 reset_info 00000000\r\n  1.13 PMIC reset-event 00000000 rtc 6a3371ff alarm 00000000 enabled 0\r\n  ",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "ICAxLjgzIFJQMSBGVzogbG9hZCAwDQogIDEuODQgUlAxX0JPT1QgY2hpcCBJRDogMHgyMDAwMTkyNw0K",
+  "bytes": 60,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "  1.83 RP1 FW: load 0\r\n  1.84 RP1_BOOT chip ID: 0x20001927\r\n",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "ICAzLjQxIE9UUCBib2FyZHJldiBkMDQxNzEgYm9vdHJvbSBhIGENCiAgMy40MSBDdXN0b21lciBrZXkgaGFzaCAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwDQogIDMuNDIgVkMtSlRBRyB1bmxvY2tlZA0KICAzLjQ0IFJQMV9CT09UIGNoaXAgSUQ6IDB4MjAwMDE5MjcNCg==",
+  "bytes": 193,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "  3.41 OTP boardrev d04171 bootrom a a\r\n  3.41 Customer key hash 0000000000000000000000000000000000000000000000000000000000000000\r\n  3.42 VC-JTAG unlocked\r\n  3.44 RP1_BOOT chip ID: 0x20001927\r\n",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "DQo=",
+  "bytes": 2,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "\r\n",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "ICA0",
+  "bytes": 3,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "  4",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "ICA0LjIzIFhIQ0ktU1RP",
+  "bytes": 15,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "  4.23 XHCI-STO",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "AAo=",
+  "bytes": 2,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "\u0000\n",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "ICA5LjIyIE5FVFdPUks6IDg4OmEyOjllOmFlOmM4OjdmIHdhaXQgZm9yIGxpbmsgVEZUUDogMC4wLjAuMA0K",
+  "bytes": 63,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "  9.22 NETWORK: 88:a2:9e:ae:c8:7f wait for link TFTP: 0.0.0.0\r\n",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "IDEyLjEyIExJTksgU1RBVFVTOiBzcGVlZDogMTAwMCBmdWxsIGR1cGxleA0KIDEyLjI2IExpbmsgcmVhZHkNCiAxMi4xMyBSWDogMCBJUDogMCBJUFY0OiAwIE1BQzogMCBVRFA6IDAgVURQIFJFQ1Y6IDAgSVBfQ1NVTV9FUlI6IDAgVURQX0NTVU1fRVJSOiAwDQo=",
+  "bytes": 149,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": " 12.12 LINK STATUS: speed: 1000 full duplex\r\n 12.26 Link ready\r\n 12.13 RX: 0 IP: 0 IPV4: 0 MAC: 0 UDP: 0 UDP RECV: 0 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0\r\n",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "IDIwLjM4IERIQ1Agc3JjOiA2MDoyMjozMjo3MTo2Mjo4NyAxMC40Mi4xLjENCiAyMC4zOSBZSV9BRERSIDEwLjQyLjEuNA0KIDIwLjQxIFNJX0FERFIgMTAuNDIuMS4zDQogMjAuMTQgT1BUSU9OUzotDQoJb3A6IDUzIGxlbjogICAxIERIQ1AgcmVjdiBPRkZFUiAoMikgZXhwZWN0IE9GRkVSIDIwLjE0IA0KCW9wOiA1NCBsZW46ICAgNCAxMC40Mi4xLjEgMjAuMTUgDQoJb3A6IDUxIGxlbjogICA0ICAyMC4xNSANCglvcDogNjcgbGVuOiAgMTEgIDIwLjE1IA0KCW9wOiA1OCBsZW46ICAgNCAgMjAuMTUgDQoJb3A6IDU5IGxlbjogICA0ICAyMC4xNiANCglvcDogIDEgbGVuOiAgIDQgMjU1LjI1NS4yNTUuMCAyMC4xNiANCglvcDogNjYgbGVuOiAgMTAgMTAuNDIuMS4zIDIwLjY4IFs2Nl06IDEwLjQyLjEuMw0KIDIwLjE3IA0KCW9wOiAgMyBsZW46ICAgNCAxMC40Mi4xLjEgMjAuMTcgDQo=",
+  "bytes": 446,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": " 20.38 DHCP src: 60:22:32:71:62:87 10.42.1.1\r\n 20.39 YI_ADDR 10.42.1.4\r\n 20.41 SI_ADDR 10.42.1.3\r\n 20.14 OPTIONS:-\r\n\top: 53 len:   1 DHCP recv OFFER (2) expect OFFER 20.14 \r\n\top: 54 len:   4 10.42.1.1 20.15 \r\n\top: 51 len:   4  20.15 \r\n\top: 67 len:  11  20.15 \r\n\top: 58 len:   4  20.15 \r\n\top: 59 len:   4  20.16 \r\n\top:  1 len:   4 255.255.255.0 20.16 \r\n\top: 66 len:  10 10.42.1.3 20.68 [66]: 10.42.1.3\r\n 20.17 \r\n\top:  3 len:   4 10.42.1.1 20.17 \r\n",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "OiAyIElQX0NTVU1fRVJSOiAwIFVEUF9DU1VNX0VSUjogMA0KIDIwLjI4IFRGVFBfR0VUOiA4NDphOTozODo2YTo3Nzo2MyAxMC40Mi4xLjMgZGE1OTE3NDAvY29uZmlnLnR4dAoNCiAyMC4yOSBSWDogMTkgSVA6IDAgSVBWNDogNSBNQUM6IDUgVURQOiA1IFVEUCBSRUNWOiAyIElQX0NTVU1fRVJSOiAwIFVEUF9DU1VNX0VSUjogMA0KIDIwLjMwIFJYOiAyMCBJUDogMCBJUFY0OiA2IE1BQzogNiBVRFA6IDYgVURQIFJFQ1Y6IDMgSVBfQ1NVTV9FUlI6IDAgVURQX0NTVU1fRVJSOiAwDQogMjAuMzAgVEZUUF9HRVQ6IDg0OmE5OjM4OjZhOjc3OjYzIDEwLjQyLjEuMyBkYTU5MTc0MC9jb25maWcudHh0Cg0KIDIwLjMxIFJYOiAyMCBJUDogMCBJUFY0OiA2IE1BQzogNiBVRFA6IDYgVURQIFJFQ1Y6IDMgSVBfQ1NVTV9FUlI6IDAgVURQX0NTVU1fRVJSOiAwDQogMjAuMzIgVEZUUDogY29tcGxldGUgMTU2DQogMjAuMzIgUlg6IDIyIElQOiAwIElQVjQ6IDggTUFDOiA4IFVEUDogOA==",
+  "bytes": 496,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": ": 2 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0\r\n 20.28 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740/config.txt\n\r\n 20.29 RX: 19 IP: 0 IPV4: 5 MAC: 5 UDP: 5 UDP RECV: 2 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0\r\n 20.30 RX: 20 IP: 0 IPV4: 6 MAC: 6 UDP: 6 UDP RECV: 3 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0\r\n 20.30 TFTP_GET: 84:a9:38:6a:77:63 10.42.1.3 da591740/config.txt\n\r\n 20.31 RX: 20 IP: 0 IPV4: 6 MAC: 6 UDP: 6 UDP RECV: 3 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0\r\n 20.32 TFTP: complete 156\r\n 20.32 RX: 22 IP: 0 IPV4: 8 MAC: 8 UDP: 8",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "NTkxNzQwLy9jb25maWcudHh0Cg0KIDIwLjQzIFJYOiAyMyBJUDogMCBJUFY0OiA5IE1BQzogOSBVRFA6IDkgVURQIFJFQ1Y6IDYgSVBfQ1NVTV9FUlI6IDAgVURQX0NTVU1fRVJSOiAwDQogMjAuNDQgVEZUUDogY29tcGxldGUgMTU2DQogMjAuNDQgUlg6IDI1IElQOiAwIElQVjQ6IDExIE1BQzogMTEgVURQOiAxMSBVRFAgUkVDVjogOCBJUF9DU1VNX0VSUjogMCBVRFBfQ1NVTV9FUlI6IDANCiAyMC41MyBSZWFkIGRhNTkxNzQwLy9jb25maWcudHh0IGJ5dGVzICAgICAgMTU2IGhuZCAweDANCiAyMC40NSBkYTU5MTc0MC8vY29uZmlnLnR4dCAweDNjZjcwMDAwIDUyYzE0YzQ1ZWNmYjM1MmMyZDlhOWY3NzA3ZGU5MWM2NTg3ODc1MGIwZGY1NzQ2MGRmNmU4MjFiMzk1NzQ5NTYNCg==",
+  "bytes": 385,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "591740//config.txt\n\r\n 20.43 RX: 23 IP: 0 IPV4: 9 MAC: 9 UDP: 9 UDP RECV: 6 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0\r\n 20.44 TFTP: complete 156\r\n 20.44 RX: 25 IP: 0 IPV4: 11 MAC: 11 UDP: 11 UDP RECV: 8 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0\r\n 20.53 Read da591740//config.txt bytes      156 hnd 0x0\r\n 20.45 da591740//config.txt 0x3cf70000 52c14c45ecfb352c2d9a9f7707de91c65878750b0df57460df6e821b39574956\r\n",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "IDIxLjgxIFBDSTEgcmVzZXQNCg==",
+  "bytes": 19,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": " 21.81 PCI1 reset\r\n",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "OTIgTUVTUzowMDowMDoyMS45Mjg1Njc6MDogU3RhcnRpbmcgT1MgMjE5MjggbXMNCiAyMS45MyBNRVNTOjAwOjAwOjIxLjkzNDE3NzowOiAwMDAwMDA0MDogLT4gMDAwMDA0ODANCiAyMS45MyBNRVNTOjAwOjAwOjIxLjkzNjAzMDowOiAwMDAwMDAzMDogLT4gMDAxMDAwODANCiAyMS45NCBNRVNTOjAwOjAwOjIxLjk0MDc0MjowOiAwMDAwMDAzNDogLT4gMDAxMDAwODANCiAyMS45NCBNRVNTOjAwOjAwOjIxLjk0NTQ1NTowOiAwMDAwMDAzODogLT4gMDAxMDAwODANCiAyMS45NSBNRVNTOjAwOjAwOjIxLjk1MDE2ODowOiAwMDAwMDAzYzogLT4gMDAxMDAwODANCg0KTk9USUNFOiAgQkwzMTogdjIuNihyZWxlYXNlKTp2Mi42LTI0MC1nZmM0NWJjNDkyDQpOT1RJQ0U6ICBCTDMxOiBCdWlsdCA6IDEyOjU1OjEzLCBEZWMgIDQgMjAyNA0KVEFMT1M6IHJ1c3RfZW50cnkNClRBTE9TOiBib290IGluZm8gcGFyc2VkDQpUQUxPUzogdGFyZ2V0IGluaXQNClRBTE9TOiBleGNlcHRpbw==",
+  "bytes": 496,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "92 MESS:00:00:21.928567:0: Starting OS 21928 ms\r\n 21.93 MESS:00:00:21.934177:0: 00000040: -> 00000480\r\n 21.93 MESS:00:00:21.936030:0: 00000030: -> 00100080\r\n 21.94 MESS:00:00:21.940742:0: 00000034: -> 00100080\r\n 21.94 MESS:00:00:21.945455:0: 00000038: -> 00100080\r\n 21.95 MESS:00:00:21.950168:0: 0000003c: -> 00100080\r\n\r\nNOTICE:  BL31: v2.6(release):v2.6-240-gfc45bc492\r\nNOTICE:  BL31: Built : 12:55:13, Dec  4 2024\r\nTALOS: rust_entry\r\nTALOS: boot info parsed\r\nTALOS: target init\r\nTALOS: exceptio",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "AAo=",
+  "bytes": 2,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "\u0000\n",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "cnlbMl06IGFkZHI9MHgwIHNpemU9MHgwIG5vX21hcD10cnVlIHJldXNhYmxlPWZhbHNlDQpUQUxPUzogZHRiIG1lbW9yeSBzY2FuIHN0YXJ0DQo=",
+  "bytes": 83,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "ry[2]: addr=0x0 size=0x0 no_map=true reusable=false\r\nTALOS: dtb memory scan start\r\n",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "VEFMT1M6IGR0YiBtZW1vcnkgc2NhbiBkb25lDQo=",
+  "bytes": 29,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "TALOS: dtb memory scan done\r\n",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "VEFMT1M6IG1lbW9yeSBwbGFuIHN0YXJ0DQp0YWxvczogbWVtb3J5IGxheW91dDoga2VybmVsPTB4MjAwMDAwLi4weDM3NDAwMCBoZWFwPTB4MjMzMDkwLi4weDMzMzA5MCBzdGFjaz0weDMzMzA5MC4uMHgzNzMwOTANCnRhbG9zOiBtZW1vcnkgbGF5b3V0OiBkdGI9MHgyZWZlYjYwMC4uMHgyZWZmZWZjMiBzaXplPTB4MTM5YzINCnRhbG9zOiBtZW1vcnkgdXNhYmxlOiBiYW5rPTAgc3RhcnQ9MHgyZjAwMDAwMCBlbmQ9MHgzZmMwMDAwMCBzaXplPTB4MTBjMDAwMDAgYWxpZ249MHgxMDAwIHBvbGljeT1sb3ctdGFpbA0KdGFsb3M6IHBhZ2UgZnJhbWVzIHNlZWQ6IHN0YXJ0PTB4MmYwMDAwMDAgZW5kPTB4M2ZjMDAwMDAgcGFnZXM9MHgxMGMwMCBwYWdlX3NpemU9MHgxMDAwIHNvdXJjZT1tZW1vcnktdXNhYmxlDQp0YWxvczogYm9vdHN0cmFwIHJlc2VydmU6IHN0YXJ0PTB4MmYwMDAwMDAgZW5kPTB4MmYwMTAwMDAgcGFnZXM9MHgxMCBwYWdlX3NpemU9MHgxMDAwIHJlYXNvbg==",
+  "bytes": 496,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "TALOS: memory plan start\r\ntalos: memory layout: kernel=0x200000..0x374000 heap=0x233090..0x333090 stack=0x333090..0x373090\r\ntalos: memory layout: dtb=0x2efeb600..0x2effefc2 size=0x139c2\r\ntalos: memory usable: bank=0 start=0x2f000000 end=0x3fc00000 size=0x10c00000 align=0x1000 policy=low-tail\r\ntalos: page frames seed: start=0x2f000000 end=0x3fc00000 pages=0x10c00 page_size=0x1000 source=memory-usable\r\ntalos: bootstrap reserve: start=0x2f000000 end=0x2f010000 pages=0x10 page_size=0x1000 reason",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "T1M6IGljYWNoZSBlbmFibGUgZG9uZQ0KdGFsb3M6IGluc3RydWN0aW9uIGNhY2hlIGVuYWJsZWQ6IGVsPTB4MiBzY3Rscj0weDMwYzUxODMxIGtpbmQ9ZWwyLXN0YWdlMS1pY2FjaGUtZW5hYmxlZA0KdGFsb3M6IGRhdGEgY2FjaGUgcGxhbjogZWw9MHgyIHNjdGxyX2JlZm9yZT0weDMwYzUxODMxIHNjdGxyX3NldD0weDQga2luZD1lbDItc3RhZ2UxLWRjYWNoZS1lbmFibGVkDQpUQUxPUzogZGNhY2hlIGVuYWJsZSBzdGFydA0KVEFMT1M6IGRjYWNoZSBlbmFibGUgZG9uZQ0KdGFsb3M6IGRhdGEgY2FjaGUgZW5hYmxlZDogZWw9MHgyIHNjdGxyPTB4MzBjNTE4MzUga2luZD1lbDItc3RhZ2UxLWRjYWNoZS1lbmFibGVkDQpUQUxPUzogY2FjaGUgdHJhbnNpdGlvbiBkb25lDQp0YWxvczogYm9vdHN0cmFwIGFsbG9jYXRvciBwbGFuOiBzdGFydD0weDJmMDEwMDAwIGVuZD0weDNmYzAwMDAwIGJ5dGVzPTB4MTBiZjAwMDAgcGFnZXM9MHgxMGJmMCBwYWdlX3NpemU9MHgxMDAwIA==",
+  "bytes": 496,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "OS: icache enable done\r\ntalos: instruction cache enabled: el=0x2 sctlr=0x30c51831 kind=el2-stage1-icache-enabled\r\ntalos: data cache plan: el=0x2 sctlr_before=0x30c51831 sctlr_set=0x4 kind=el2-stage1-dcache-enabled\r\nTALOS: dcache enable start\r\nTALOS: dcache enable done\r\ntalos: data cache enabled: el=0x2 sctlr=0x30c51835 kind=el2-stage1-dcache-enabled\r\nTALOS: cache transition done\r\ntalos: bootstrap allocator plan: start=0x2f010000 end=0x3fc00000 bytes=0x10bf0000 pages=0x10bf0 page_size=0x1000 ",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "ZXM9MHgxMGJmMCBwYWdlX3NpemU9MHgxMDAwIHNvdXJjZT1ib290c3RyYXAtcmVzZXJ2ZQ0KdGFsb3M6IGR0YiBtZW1vcnk6IGFkZHJlc3NfY2VsbHM9MiBzaXplX2NlbGxzPTIgY291bnQ9MyBzaG93bj0zIHRydW5jYXRlZD1mYWxzZQ0KdGFsb3M6IGR0YiBtZW1vcnlbMF06IGFkZHI9MHgwIHNpemU9MHgzZmMwMDAwMA0KdGFsb3M6IGR0YiBtZW1vcnlbMV06IGFkZHI9MHg0MDAwMDAwMCBzaXplPTB4YzAwMDAwMDANCnRhbG9zOiBkdGIgbWVtb3J5WzJdOiBhZGRyPTB4MTAwMDAwMDAwIHNpemU9MHgxMDAwMDAwMDANCnJwaTUtZ2VuZXJhdGVkLXJvb3QtYm9vdC10cmFuc3BvcnQ6IGZpcm13YXJlLWluaXRyYW1mcyBzdGFydD0weDAwMDAwMDAwMmVmZmYwMDAgZW5kPTB4MDAwMDAwMDAyZWZmZjI5NiBsZW49MHgwMDAwMDAwMDAwMDAwMjk2IHNvdXJjZT1maXJtd2FyZS1pbml0cmFtZnMgcmVhc29uPXZhbGlkLWFydGlmYWN0IGRpZ2VzdD0weDdkNjhmZGM4MDczNmIzMzIgdA==",
+  "bytes": 496,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "es=0x10bf0 page_size=0x1000 source=bootstrap-reserve\r\ntalos: dtb memory: address_cells=2 size_cells=2 count=3 shown=3 truncated=false\r\ntalos: dtb memory[0]: addr=0x0 size=0x3fc00000\r\ntalos: dtb memory[1]: addr=0x40000000 size=0xc0000000\r\ntalos: dtb memory[2]: addr=0x100000000 size=0x100000000\r\nrpi5-generated-root-boot-transport: firmware-initramfs start=0x000000002efff000 end=0x000000002efff296 len=0x0000000000000296 source=firmware-initramfs reason=valid-artifact digest=0x7d68fdc80736b332 t",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "ZC1zdGRpbi1zdGRvdXQtcmVkaXJlY3Rpb24rcGlwZWxpbmUtY29uc3VtZXItb3V0cHV0LXJlZGlyZWN0aW9uK3BpcGVsaW5lLXByb2R1Y2VyLWZpbGUtcmVkaXJlY3Rpb24tYXdheStiYWNrZ3JvdW5kLXZmcy1leGVjLWxpZmVjeWNsZStqb2JzLWFjY291bnRpbmctbGlzdCttdWx0aXBsZS1iYWNrZ3JvdW5kLXZmcy1leGVjLXJlY29yZHMrYmFja2dyb3VuZC1qb2JzLXN0YWxlLWVudHJ5LXBvbGljeStnZW5lcmF0ZWQtcm9vdC1tYW5pZmVzdC1yZWFkK2dlbmVyYXRlZC1yb290LWV4ZWN1dGFibGUtdmZzLWV4ZWMgZGVzY3JpcHRvci1iYWNrZWQtaW5wdXQ9dHJ1ZSBkZXNjcmlwdG9yLWJhY2tlZC1vdXRwdXQ9dHJ1ZQ0KVEFMT1M6IGNvbW1hbmQgbG9vcCBpbyByZWFkeQ0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogcmVhZHkgY29tbWFuZD0wDQp0YWxvcz4g",
+  "bytes": 447,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "d-stdin-stdout-redirection+pipeline-consumer-output-redirection+pipeline-producer-file-redirection-away+background-vfs-exec-lifecycle+jobs-accounting-list+multiple-background-vfs-exec-records+background-jobs-stale-entry-policy+generated-root-manifest-read+generated-root-executable-vfs-exec descriptor-backed-input=true descriptor-backed-output=true\r\nTALOS: command loop io ready\r\nrpi5-generated-root-boot-transport-proof: ready command=0\r\ntalos> ",
+  "truncated": false
+}

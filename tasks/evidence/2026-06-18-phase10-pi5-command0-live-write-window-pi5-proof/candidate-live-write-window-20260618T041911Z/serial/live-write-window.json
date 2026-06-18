@@ -1,0 +1,9 @@
+{
+  "boundary_cursor": 4194304,
+  "boundary_was_live": true,
+  "write_issued_after_boundary": true,
+  "write_immediate_after_boundary": true,
+  "write_waited_for_timeout": false,
+  "pre_write_drain_attempts_after_boundary": 0,
+  "max_boundary_to_write_ms": 25
+}
