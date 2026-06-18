@@ -1,0 +1,28 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-closeout-20260618",
+  "classification": "bcm54213pe-master-mode-autoneg-frontier-paused-link-not-ready-planning-required",
+  "task_record": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-closeout.md",
+  "classification_json": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-closeout/classification.json",
+  "input_tasks": {
+    "source_contract_core": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-source-contract-core.md",
+    "pi5_proof": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof.md"
+  },
+  "input_evidence": {
+    "source_contract_classification": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-source-contract-core/classification.json",
+    "source_contract_evidence_map": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-source-contract-core/evidence-map.json",
+    "pi5_proof_classification": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof/classification.json",
+    "pi5_proof_evidence_map": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof/evidence-map.json",
+    "pi5_proof_hardware_summary": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof/hardware-run-summary.json",
+    "candidate_capture_summary": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof/candidate-run/capture-invariant-summary.json",
+    "control_capture_summary": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof/control-run/capture-invariant-summary.json",
+    "candidate_tftp_delta": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof/candidate-run/tftp-delta-stable-pre-restore.json",
+    "candidate_final_identity": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof/candidate-run/final-pre-restore-boot-files.json",
+    "final_restore_proof": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof/final-post-restore-boot-files.json"
+  },
+  "docs_updated": [
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "selected_next_task": null,
+  "planningNeeded": true
+}

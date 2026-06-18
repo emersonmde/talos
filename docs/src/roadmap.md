@@ -3563,6 +3563,18 @@ The post-review correction chain is:
     that hardware proof; packet I/O, networking, SSH, Phase 12.2, and phase
     transition remain rejected.
 
+200. Phase 12 BCM54213PE master-mode autoneg closeout: accepted in
+    'phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-closeout-20260618'
+    with classification
+    'bcm54213pe-master-mode-autoneg-frontier-paused-link-not-ready-planning-required'.
+    The current Phase 12.1 frontier is hardware-visible MII_CTRL1000
+    master-mode write/readback plus one BMCR autoneg restart, followed by
+    timeout/link-not-ready terminal evidence. BMSR link, BMSR
+    autoneg-complete, and MACB_NSR_LINK remain false. selected_next_task is
+    null, planningNeeded=true, and supervisor planning is required before any
+    further Phase 12.1 hardware action, packet I/O, networking, SSH, Phase
+    12.2, or phase-transition work.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
@@ -12651,6 +12663,15 @@ link-not-ready rather than link-ready or Ethernet readiness. Packet I/O,
 networking, sockets, SSH, Phase 12.2, phase transition, GPIO32 reset,
 interrupts, APD/EEE/lifecycle, MAC/phylink, and more same-shaped status/autoneg
 polling remain rejected.
+
+phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-closeout-20260618
+accepts bcm54213pe-master-mode-autoneg-frontier-paused-link-not-ready-planning-required.
+The closeout preserves the accepted source/core and Pi 5 proof but records that
+link-ready packet-readiness is not mechanically unblocked: BMSR link, BMSR
+autoneg-complete, and MACB_NSR_LINK all remained false at the terminal sample.
+selected_next_task is null, planningNeeded=true, and supervisor planning is
+required before any further Phase 12.1 hardware action, packet I/O, networking,
+SSH, Phase 12.2, or phase transition.
 
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.

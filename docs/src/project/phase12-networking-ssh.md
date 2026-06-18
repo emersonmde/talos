@@ -2468,3 +2468,15 @@ timeout/link-not-ready classification; link-ready, autoneg-complete, GPIO32/PHY
 reset ownership, interrupts, APD/EEE/lifecycle, MAC/phylink, packet I/O,
 networking, sockets, SSH, Phase 12.2, phase transition, and more same-shaped
 status/autoneg polling remain rejected.
+
+phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-closeout-20260618
+accepts
+bcm54213pe-master-mode-autoneg-frontier-paused-link-not-ready-planning-required.
+The closeout reconciles the accepted source contract and Pi 5 proof into the
+current Phase 12.1 frontier: MII_CTRL1000 master-mode write/readback and one
+BMCR autoneg restart are hardware visible, but direct terminal evidence still
+shows BMSR link false, BMSR autoneg-complete false, and MACB_NSR_LINK false.
+The link-ready packet-readiness checkpoint is not mechanically unblocked.
+selected_next_task is null, planningNeeded=true, and supervisor planning is
+required before any future Phase 12.1 hardware action, packet I/O, networking,
+SSH, Phase 12.2, or phase transition.

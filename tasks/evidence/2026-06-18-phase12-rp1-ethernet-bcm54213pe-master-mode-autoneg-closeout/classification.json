@@ -1,0 +1,95 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-closeout-20260618",
+  "status": "accepted",
+  "classification": "bcm54213pe-master-mode-autoneg-frontier-paused-link-not-ready-planning-required",
+  "evidence_level": [
+    "static/task evidence review",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "input_classification": "bcm54213pe-master-mode-autoneg-timeout-link-not-ready",
+  "selected_discriminator": "bcm54213pe-phy1-mii-ctrl1000-master-mode-plus-bmcr-autoneg-restart",
+  "accepted_observations": {
+    "control_classification": "no-mdio-no-ethernet-bcm54213pe-master-mode-autoneg-control",
+    "candidate_tree_hash": "8b9eddafc3f0210f4be8c2c0f649286e0f92a17f65e0611952b618c89af03b7d",
+    "candidate_kernel_2712_bytes": 54072,
+    "candidate_expected_fetch_count": 2,
+    "candidate_expected_fetch_byte_match_count": 2,
+    "candidate_serial_nonce_occurrences": 14,
+    "candidate_serial_freshness_ok": true,
+    "ctrl1000_pre_raw": "0x0200",
+    "ctrl1000_write_value": "0x1a00",
+    "ctrl1000_readback_raw": "0x1a00",
+    "ctrl1000_pre_read_completed": true,
+    "ctrl1000_write_completed": true,
+    "ctrl1000_readback_completed": true,
+    "bmcr_write_value": "0x1200",
+    "bmcr_write_count": 1,
+    "poll_bmcr": "0x1000",
+    "poll_bmsr_first": "0x7949",
+    "poll_bmsr_second": "0x7949",
+    "poll_anar": "0x01e1",
+    "poll_anlpar": "0x0000",
+    "poll_ctrl1000": "0x1a00",
+    "poll_stat1000": "0x0000",
+    "passive_macb_nsr": "0x00000006",
+    "bmsr_link_status": false,
+    "bmsr_autoneg_complete": false,
+    "passive_macb_nsr_link": false,
+    "link_ready_terminal": false,
+    "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Selected BCM54213PE MII_CTRL1000 master-mode plus BMCR autoneg-restart proof is visible on Pi 5 with selected-tree, TFTP, serial freshness, final identity, and restore evidence."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Paired no-MDIO/no-Ethernet control evidence is retained."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The candidate executed MII_CTRL1000 pre-read/write/readback and exactly one BMCR autoneg restart before bounded convergence sampling."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Link-ready and autoneg-complete remain unaccepted."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "The link-ready packet-readiness checkpoint is not mechanically unblocked because terminal BMSR/autoneg and MACB_NSR link evidence stayed false."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "Packet I/O, networking, SSH, Phase 12.2, and phase transition are not mechanically unblocked."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "Same-shaped timeout/status/autoneg poll/capture retries remain non-progress without a new accepted discriminator."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No hardware lock or inconclusive-run triage was required for this static closeout."
+    }
+  ],
+  "rejected_claims": [
+    "link-ready",
+    "autoneg-complete",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition",
+    "gpio32-reset-action",
+    "interrupt-ownership",
+    "apd-eee-lifecycle",
+    "mac-phylink-configuration",
+    "same-shaped-status-autoneg-poll-retry"
+  ],
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "The selected BCM54213PE proof establishes MII_CTRL1000 master-mode write/readback plus one BMCR autoneg restart, but direct terminal evidence still shows BMSR link false, BMSR autoneg-complete false, and MACB_NSR_LINK false. Supervisor planning is required before further Phase 12.1 Ethernet work."
+}
