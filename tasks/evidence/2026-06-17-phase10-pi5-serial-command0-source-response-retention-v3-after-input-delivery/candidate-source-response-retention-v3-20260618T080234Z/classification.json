@@ -1,0 +1,43 @@
+{
+  "task_id": "phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery-20260617",
+  "classification": "command0-source-response-retention-v3-blocked",
+  "accepted": false,
+  "blocked": true,
+  "first_failing_invariant": "command0 response retention did not retain source=firmware-initramfs reason=valid-artifact for the same selected candidate boundary; the retained command0 response starts mid-source-response at path=/generated/manifest.txt exec-path=/generated/status7 before line/dispatch/ready",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "rejected_claims": [
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ],
+  "run_label": "candidate-source-response-retention-v3-20260618T080234Z",
+  "evidence_root": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery/candidate-source-response-retention-v3-20260618T080234Z",
+  "contract": {
+    "readiness_source_ok": true,
+    "serial_write_ok": true,
+    "command0_line_dispatch_ready_ok": true,
+    "command0_source_response_retained": false,
+    "selected_tftp_kernel_bytes": [
+      208984
+    ],
+    "selected_tftp_ok": true,
+    "final_pre_restore_selected_identity_ok": true,
+    "restore_ok": true
+  },
+  "evidence_files": {
+    "archive_static_review": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery/candidate-source-response-retention-v3-20260618T080234Z/archive-static-review.json",
+    "readiness_summary": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery/candidate-source-response-retention-v3-20260618T080234Z/serial/readiness-summary.json",
+    "command0_write": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery/candidate-source-response-retention-v3-20260618T080234Z/serial/command0-write.json",
+    "command0_direct_read_summary": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery/candidate-source-response-retention-v3-20260618T080234Z/serial/command0-direct-read-summary.json",
+    "command0_direct_read_text": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery/candidate-source-response-retention-v3-20260618T080234Z/serial/command0-direct-read-text.txt",
+    "source_response_review_exit": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery/candidate-source-response-retention-v3-20260618T080234Z/source-response-proof-review.exit",
+    "tftp_delta": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery/candidate-source-response-retention-v3-20260618T080234Z/tftp/tftp-delta-after-command.json",
+    "final_pre_restore_status": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery/candidate-source-response-retention-v3-20260618T080234Z/final-pre-restore-status.json",
+    "restore_status": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery/candidate-source-response-retention-v3-20260618T080234Z/restore/post-restore-status.json"
+  }
+}

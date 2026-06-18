@@ -1,0 +1,21 @@
+{
+  "task_id": "phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery-20260617",
+  "run_label": "candidate-source-response-retention-v3-20260618T080234Z",
+  "evidence_root": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery/candidate-source-response-retention-v3-20260618T080234Z",
+  "files": {
+    "classification": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery/candidate-source-response-retention-v3-20260618T080234Z/classification.json",
+    "archive_static_review": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery/candidate-source-response-retention-v3-20260618T080234Z/archive-static-review.json",
+    "post_publish_status": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery/candidate-source-response-retention-v3-20260618T080234Z/post-publish-status.json",
+    "readiness_summary": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery/candidate-source-response-retention-v3-20260618T080234Z/serial/readiness-summary.json",
+    "command0_write": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery/candidate-source-response-retention-v3-20260618T080234Z/serial/command0-write.json",
+    "command0_direct_read_summary": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery/candidate-source-response-retention-v3-20260618T080234Z/serial/command0-direct-read-summary.json",
+    "command0_direct_read_text": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery/candidate-source-response-retention-v3-20260618T080234Z/serial/command0-direct-read-text.txt",
+    "source_response_proof_review_exit": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery/candidate-source-response-retention-v3-20260618T080234Z/source-response-proof-review.exit",
+    "tftp_delta": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery/candidate-source-response-retention-v3-20260618T080234Z/tftp/tftp-delta-after-command.json",
+    "immediate_post_command_status": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery/candidate-source-response-retention-v3-20260618T080234Z/immediate-post-command-status.json",
+    "final_pre_restore_status": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery/candidate-source-response-retention-v3-20260618T080234Z/final-pre-restore-status.json",
+    "restore": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery/candidate-source-response-retention-v3-20260618T080234Z/restore/restore-snapshot.json",
+    "post_restore_status": "tasks/evidence/2026-06-17-phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery/candidate-source-response-retention-v3-20260618T080234Z/restore/post-restore-status.json"
+  },
+  "selected_next_task": null
+}

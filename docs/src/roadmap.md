@@ -3389,6 +3389,23 @@ The post-review correction chain is:
     command0 delivery, storage, networking, SSH, Phase 11/12 expansion, and
     phase transition remain rejected.
 
+188. Pi 5 serial command0 source-response retention v3 after input delivery:
+    accepted as a blocked proof in
+    'phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery-20260617'
+    with classification 'command0-source-response-retention-v3-blocked'. The
+    serialized hardware run preserved the accepted command0 input-delivery
+    boundary again: selected 208984-byte kernel_2712.img identity, stable
+    same-power-cycle TFTP serves, firmware-initramfs valid-artifact readiness,
+    9-byte rootinfo write, ordered command0 line/dispatch/responses=1 evidence,
+    ready command=1, final selected identity, and baseline restore proof. It
+    did not retain the required source-response fragments for the same command0
+    boundary: the retained command0 output starts mid-source-response at
+    'path=/generated/manifest.txt exec-path=/generated/status7' before line,
+    dispatch, and ready markers. Source-response retention, generated-root
+    command-input success, storage, networking, SSH, Phase 11/12 expansion, and
+    phase transition remain rejected; selected_next_task is null and
+    planningNeeded=true.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
@@ -8359,6 +8376,14 @@ Selected first slice:
   as the next bounded task. Source-response retention, generated-root
   command-input success, storage, networking, SSH, Phase 11/12 expansion, and
   phase transition remain unaccepted until explicit follow-up tasks prove them.
+- 'phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery-20260617'
+  accepts a blocked serialized Pi 5 proof. The run retained selected-kernel/TFTP
+  identity, firmware-initramfs readiness, the accepted rootinfo command0
+  delivery shape, final selected identity, and restore proof, but it did not
+  retain source=firmware-initramfs reason=valid-artifact for the same command0
+  response. selected_next_task is null and planningNeeded=true; generated-root
+  command-input success, storage, networking, SSH, Phase 11/12 expansion, and
+  phase transition remain unaccepted.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The
