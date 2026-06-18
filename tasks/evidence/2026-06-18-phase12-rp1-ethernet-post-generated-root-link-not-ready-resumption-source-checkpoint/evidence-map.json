@@ -1,0 +1,47 @@
+{
+  "task_id": "phase12-rp1-ethernet-post-generated-root-link-not-ready-resumption-source-checkpoint-20260618",
+  "classification": "post-generated-root-link-not-ready-no-distinct-discriminator-planning-needed",
+  "evidence": {
+    "resumption_checkpoint": {
+      "path": "tasks/2026-06-18-phase10-to-phase12-post-generated-root-command-input-resumption-checkpoint.md",
+      "classification_path": "tasks/evidence/2026-06-18-phase10-to-phase12-post-generated-root-command-input-resumption-checkpoint/classification.json",
+      "commit": "5fa28d67996977c397c487c7c1f559dfa8ba9381",
+      "finding": "Selected this source/evidence checkpoint after generated-root command-input success was accepted."
+    },
+    "generated_root_command_input_success": {
+      "path": "tasks/2026-06-18-phase10-pi5-generated-root-command-input-success-closeout.md",
+      "classification_path": "tasks/evidence/2026-06-18-phase10-pi5-generated-root-command-input-success-closeout/classification.json",
+      "commit": "c80ad1d6224752d9ab8e86266119534b0c881d8c",
+      "finding": "Accepted generated-root command-input success, but not storage, networking, SSH, or phase transition."
+    },
+    "phase12_link_not_ready_pause": {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-link-not-ready-frontier-pause-closeout.md",
+      "classification_path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-link-not-ready-frontier-pause-closeout/classification.json",
+      "finding": "Accepted Phase 12.1 frontier is paused timeout/link-not-ready, not link-ready/autoneg-complete."
+    },
+    "post_txorder_source_checkpoint": {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-post-txorder-link-not-ready-source-checkpoint.md",
+      "classification_path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-post-txorder-link-not-ready-source-checkpoint/classification.json",
+      "finding": "Previously found no mechanically ready, source-backed, qualitatively distinct link-not-ready discriminator."
+    },
+    "bcm54213pe_config_init_source": {
+      "path": "tasks/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract.md",
+      "finding": "Pins BCM54213PE helper paths and candidate surfaces while keeping writes and broader PHY lifecycle work unselected."
+    },
+    "bcm54213pe_readonly_preflight_source": {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract.md",
+      "finding": "Classifies pure reads, read-with-side-effect surfaces, selector-write-required surfaces, and write-adjacent risks."
+    },
+    "roadmap_update": {
+      "path": "docs/src/roadmap.md",
+      "finding": "Roadmap records the post-generated-root source checkpoint result and planning boundary."
+    }
+  },
+  "validation": {
+    "source_evidence_consistency_review": "pass",
+    "jq_empty_on_task_owned_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check_before_commit": "pass"
+  }
+}

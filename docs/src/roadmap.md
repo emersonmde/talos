@@ -3493,6 +3493,18 @@ The post-review correction chain is:
     link-not-ready discriminator exists after the generated-root command-input
     blocker is closed.
 
+194. Phase 12 post-generated-root link-not-ready source checkpoint: accepted in
+    'phase12-rp1-ethernet-post-generated-root-link-not-ready-resumption-source-checkpoint-20260618'
+    with classification
+    'post-generated-root-link-not-ready-no-distinct-discriminator-planning-needed'.
+    Generated-root command-input success closes the non-Ethernet detour but does
+    not alter the Ethernet evidence frontier. No mechanically ready,
+    source-backed, qualitatively distinct link-not-ready discriminator is
+    selected. selected_discriminator and selected_next_task are null,
+    planningNeeded=true, and supervisor planning is required before any generic
+    discriminator core, hardware proof, reset, interrupt, packet I/O,
+    networking, SSH, Phase 12.2, or phase-transition work.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
@@ -12483,6 +12495,22 @@ initramfs range before early memory setup could overwrite it. That selected
 Phase 10 slice has since accepted Pi 5 firmware-initramfs generated-root
 consumption, but it does not unblock Phase 12 packet I/O, networking, sockets,
 SSH, or phase transition work.
+
+phase12-rp1-ethernet-post-generated-root-link-not-ready-resumption-source-checkpoint-20260618
+accepts
+post-generated-root-link-not-ready-no-distinct-discriminator-planning-needed.
+The checkpoint resumes from accepted Pi 5 generated-root command-input success
+and reconciles the retained BCM54213PE timeout/link-not-ready pause. Closing the
+generated-root detour does not change the Ethernet terminal facts: link-ready
+and autoneg-complete remain unaccepted. No reviewed candidate is mechanically
+ready inside this task. GPIO32 / ETH_RST_N reset ownership remains deferred
+behind the accepted persistent-or-firmware-owned event-state blocker;
+MII_CTRL1000 master-mode writes remain deferred behind the unselected
+PHY_BRCM_EN_MASTER_MODE gate; interrupt, APD/EEE/lifecycle, MAC/phylink,
+packet, networking, sockets, SSH, Phase 12.2, and phase-transition work all
+need supervisor-planned scope. selected_discriminator and selected_next_task are
+null, planningNeeded is required, and the generic discriminator core remains
+dependency-gated.
 
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
