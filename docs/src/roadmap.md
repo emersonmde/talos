@@ -12512,6 +12512,19 @@ need supervisor-planned scope. selected_discriminator and selected_next_task are
 null, planningNeeded is required, and the generic discriminator core remains
 dependency-gated.
 
+phase12-rp1-ethernet-post-generated-root-link-not-ready-pause-closeout-20260618
+accepts post-generated-root-link-not-ready-frontier-paused-planning-required.
+The closeout preserves Phase 12.1 at the accepted BCM54213PE
+timeout/link-not-ready frontier after generated-root command-input success.
+The generic selected-link-not-ready discriminator core remains dependency-gated
+because selected_discriminator and selected_next_task are null. GPIO32 /
+ETH_RST_N reset ownership, MII_CTRL1000 master-mode writes, interrupt,
+APD/EEE/lifecycle, MAC/phylink, packet I/O, networking, sockets, SSH, Phase
+12.2, and phase-transition work all require future supervisor-planned scope.
+Same-shaped polling, bare BMCR restart retry, convergence wait tuning, and
+marker/capture-only retry remain rejected. planningNeeded remains true and no
+next worker task is selected from this pause closeout.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

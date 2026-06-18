@@ -2362,3 +2362,18 @@ non-Ethernet task is
 phase10-pi5-generated-root-firmware-initramfs-reservation-source-contract-20260616,
 which returns the program to the earlier Pi 5 generated-root boot transport
 blocker.
+
+phase12-rp1-ethernet-post-generated-root-link-not-ready-resumption-source-checkpoint-20260618
+accepts
+post-generated-root-link-not-ready-no-distinct-discriminator-planning-needed,
+and
+phase12-rp1-ethernet-post-generated-root-link-not-ready-pause-closeout-20260618
+accepts post-generated-root-link-not-ready-frontier-paused-planning-required.
+Pi 5 generated-root command-input success closes the non-Ethernet detour, but
+it does not change the retained BCM54213PE Ethernet terminal facts: link-ready
+and autoneg-complete remain unaccepted. The generic selected-link-not-ready
+discriminator core remains dependency-gated because selected_discriminator and
+selected_next_task are null. GPIO32 / ETH_RST_N reset ownership, MII_CTRL1000
+master-mode writes, interrupts, APD/EEE/lifecycle, MAC/phylink, packet I/O,
+networking, sockets, SSH, Phase 12.2, and phase transition all require future
+supervisor-planned scope.

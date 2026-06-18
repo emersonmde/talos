@@ -1,0 +1,94 @@
+{
+  "task_id": "phase12-rp1-ethernet-post-generated-root-link-not-ready-pause-closeout-20260618",
+  "status": "accepted",
+  "classification": "post-generated-root-link-not-ready-frontier-paused-planning-required",
+  "evidence_level": [
+    "static/task evidence review",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "input_frontier": {
+    "task_id": "phase12-rp1-ethernet-post-generated-root-link-not-ready-resumption-source-checkpoint-20260618",
+    "classification": "post-generated-root-link-not-ready-no-distinct-discriminator-planning-needed",
+    "selected_discriminator": null,
+    "selected_next_task": null,
+    "planning_needed": true
+  },
+  "retained_phase12_frontier": {
+    "task_id": "phase12-rp1-ethernet-bcm54213pe-link-not-ready-frontier-pause-closeout-20260616",
+    "classification": "bcm54213pe-link-not-ready-frontier-paused-return-to-generated-root-transport",
+    "terminal_runtime_fact": {
+      "link_ready": false,
+      "autoneg_complete": false,
+      "link_ready_terminal": false,
+      "packet_io": false,
+      "networking": false,
+      "ssh": false
+    }
+  },
+  "closeout_decision": {
+    "phase12_1_paused": true,
+    "selected_discriminator": null,
+    "selected_next_task": null,
+    "planning_needed": true,
+    "planning_reason": "Phase 12.1 has no mechanically ready, source-backed, qualitatively distinct link-not-ready discriminator after generated-root command-input success; supervisor planning must choose any future Ethernet feature boundary.",
+    "generic_discriminator_core_unblocked": false,
+    "hardware_authorized_by_this_task": false
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Phase 12.1 is explicitly paused after generated-root command-input success at the accepted BCM54213PE timeout/link-not-ready frontier."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Generated-root command-input success closes the non-Ethernet detour only; it does not satisfy Ethernet link-ready, autoneg-complete, packet, networking, SSH, Phase 12.2, or phase-transition acceptance."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Generic selected-link-not-ready discriminator tasks remain dependency-gated until a future accepted task supplies selected_discriminator and selected_next_task."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "GPIO32/ETH_RST_N reset ownership remains feature-relevant but controlled by accepted GPIO32 event-state blockers."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "MII_CTRL1000 master-mode writes remain behind the unselected PHY_BRCM_EN_MASTER_MODE gate."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Interrupt, APD, EEE, LED, WOL, expansion, suspend/resume, and MAC/phylink work need supervisor-planned scope."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "Same-shaped status polling, bare BMCR restart retry, convergence wait tuning, and marker/capture-only retry repeat accepted timeout/link-not-ready evidence."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "Packet I/O, networking, sockets, SSH, Phase 12.2, and phase transition remain blocked because no accepted proof establishes link-ready or autoneg-complete."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No source, helper, task, docs, or evidence file was removed."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No hardware lock, Pi 5 inconclusive-run triage, TFTP evidence, serial cursor, known-good control, or restore workflow was required for this static closeout."
+    }
+  ],
+  "forbidden_claims": [
+    "link-readiness",
+    "autoneg-complete",
+    "ethernet-driver-readiness",
+    "gpio32-phy-reset-ownership",
+    "interrupt-ownership",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ]
+}

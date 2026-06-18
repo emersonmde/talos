@@ -1,0 +1,37 @@
+{
+  "task_id": "phase12-rp1-ethernet-post-generated-root-link-not-ready-pause-closeout-20260618",
+  "classification": "post-generated-root-link-not-ready-frontier-paused-planning-required",
+  "evidence": {
+    "post_generated_root_resumption_checkpoint": {
+      "path": "tasks/2026-06-18-phase12-rp1-ethernet-post-generated-root-link-not-ready-resumption-source-checkpoint.md",
+      "classification_path": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-post-generated-root-link-not-ready-resumption-source-checkpoint/classification.json",
+      "commit": "89a9d9fc35e144aadfc602ab8921d8c897536aef",
+      "finding": "Accepted generated-root command-input success as closing the non-Ethernet detour while leaving selected_discriminator and selected_next_task null."
+    },
+    "phase12_link_not_ready_pause": {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-link-not-ready-frontier-pause-closeout.md",
+      "classification_path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-link-not-ready-frontier-pause-closeout/classification.json",
+      "finding": "Retained Phase 12.1 frontier is BCM54213PE timeout/link-not-ready, not link-ready or autoneg-complete."
+    },
+    "post_txorder_source_checkpoint": {
+      "path": "tasks/2026-06-16-phase12-rp1-ethernet-bcm54213pe-post-txorder-link-not-ready-source-checkpoint.md",
+      "classification_path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-post-txorder-link-not-ready-source-checkpoint/classification.json",
+      "finding": "Previously found no mechanically ready source-backed follow-up discriminator from the TX-order timeout/link-not-ready frontier."
+    },
+    "phase12_design_note": {
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "finding": "Records the retained paused Phase 12.1 boundary after generated-root command-input success."
+    },
+    "roadmap_update": {
+      "path": "docs/src/roadmap.md",
+      "finding": "Roadmap records the post-generated-root pause closeout and supervisor-planning boundary."
+    }
+  },
+  "validation": {
+    "static_task_evidence_review": "pass",
+    "jq_empty_on_task_owned_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check_before_commit": "pass"
+  }
+}
