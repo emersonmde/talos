@@ -1,0 +1,43 @@
+{
+  "task_id": "phase10-pi5-command0-readiness-timeout-boundary-closeout-20260618",
+  "classification": "command0-readiness-timeout-boundary-closeout-command0-delivery-blocked-planning-needed",
+  "accepted": true,
+  "command0_input_delivery_accepted": false,
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "command0 input delivery remains unaccepted because the accepted readiness-timeout-boundary Pi 5 proof did not retain a fresh command=0 write boundary; readiness output had already advanced through empty input timeouts to command=3 before the write and post-write evidence reached command=4 without ordered rootinfo, dispatch command=0 status=handled, responses=1, or ready command=1.",
+  "first_failing_invariant": "fresh command0 readiness boundary missing or stale before write",
+  "proof_classification": "command0-readiness-timeout-boundary-blocked",
+  "proof_gates": {
+    "selected_kernel_tftp_precondition_ok": true,
+    "tftp_expected_fetch_count": 2,
+    "readiness_boundary_fresh": false,
+    "pre_write_boundary_clean": false,
+    "serial_write_ok": true,
+    "ordered_command0_delivery": false,
+    "immediate_post_command_selected_identity_ok": true,
+    "final_pre_restore_selected_identity_ok": true,
+    "restore_ok": true
+  },
+  "closeout_decisions": {
+    "selected_kernel_tftp": "accepted for the retained rerun only",
+    "readiness_boundary": "blocked",
+    "command0_serial_delivery": "blocked",
+    "immediate_post_command_identity": "accepted for the retained rerun only",
+    "final_pre_restore_identity": "accepted for the retained rerun only",
+    "restore": "accepted",
+    "source_response_retention_v3": "not selected",
+    "generated_root_command_input_success": "not accepted",
+    "phase_transition": "not accepted"
+  },
+  "rejected_claims": [
+    "command0 input delivery acceptance",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}
