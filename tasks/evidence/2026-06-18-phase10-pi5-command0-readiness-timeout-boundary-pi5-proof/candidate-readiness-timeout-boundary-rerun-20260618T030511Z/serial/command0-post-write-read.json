@@ -1,0 +1,87 @@
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 2,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "\n ",
+  "truncated": false,
+  "retained_text": "\n ",
+  "responses": [
+    {
+      "action": "serial read",
+      "base64": "ACA=",
+      "bytes": 2,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "\u0000 ",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    }
+  ],
+  "talos_post_write_capture": {
+    "requested_timeout_seconds": 12,
+    "elapsed_seconds": 12,
+    "observe_attempts": 6,
+    "observe_contract": "deadline-loop-direct-read-after-command0-write",
+    "capture_mode": "read",
+    "has_rootinfo": false,
+    "has_line_command0": false,
+    "has_dispatch0": false,
+    "has_responses1": false,
+    "has_ready1": false,
+    "has_command1_or_later": false,
+    "classification": "ordered-command0-delivery-missing-or-timeout-advanced"
+  }
+}

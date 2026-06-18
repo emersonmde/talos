@@ -1,0 +1,19 @@
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 1121,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "\n \ntalos: input-error timeout\r\n\r\nrpi5-generated-root-boot-transport-proof: line command=0 hex=\r\nrpi5-generated-root-boot-transport-proof: dispatch command=0 status=input-error responses=1 raw-bytes=0 truncated=false controls=0\r\nrpi5-generated-root-boot-transport-proof: edit command=0 backspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=1\r\ntalos> \ntalos: input-error timeout\r\n\r\nrpi5-generated-root-boot-transport-proof: line command=1 hex=\r\nrpi5-generated-root-boot-transport-proof: dispatch command=1 status=input-error responses=1 raw-bytes=0 truncated=false controls=0\r\nrpi5-generated-root-boot-transport-proof: edit command=1 backspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=2\r\ntalos> \ntalos: input-error timeout\r\n\r\nrpi5-generated-root-boot-transport-proof: line command=2 hex=\r\nrpi5-generated-root-boot-transport-proof: dispatch command=2 status=input-error responses=1 raw-bytes=0 truncated=false controls=0\r\nrpi5-generated-root-boot-transport-proof: edit command=2 backspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=3\r\ntalos> ",
+  "truncated": false,
+  "fresh_after_prompt": false,
+  "talos_runtime_readiness": {
+    "elapsed_seconds": 61,
+    "observe_attempts": 28,
+    "valid_fresh_command0_boundary": false,
+    "has_ready0": false,
+    "has_prompt": true,
+    "has_timeout": true
+  }
+}

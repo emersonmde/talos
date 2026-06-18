@@ -1,0 +1,60 @@
+{
+  "action": "serial read",
+  "base64": "ACA=",
+  "bytes": 2,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "\u0000 ",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 0,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "",
+  "truncated": false
+}

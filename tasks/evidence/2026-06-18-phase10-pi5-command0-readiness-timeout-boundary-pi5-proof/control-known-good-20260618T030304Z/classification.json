@@ -1,0 +1,6 @@
+{
+  "classification": "known-good-control-tftp-observed",
+  "ok": true,
+  "tftp_events": 27,
+  "evidence_root": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-pi5-proof/control-known-good-20260618T030304Z"
+}

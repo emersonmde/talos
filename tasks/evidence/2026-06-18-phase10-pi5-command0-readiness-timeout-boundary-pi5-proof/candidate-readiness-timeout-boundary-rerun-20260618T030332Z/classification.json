@@ -1,0 +1,77 @@
+{
+  "task_id": "phase10-pi5-command0-readiness-timeout-boundary-pi5-proof-20260618",
+  "run_label": "candidate-readiness-timeout-boundary-rerun-20260618T030332Z",
+  "classification": "command0-readiness-timeout-boundary-blocked",
+  "accepted": false,
+  "command0_input_delivery_accepted": false,
+  "selected_next_task": "phase10-pi5-command0-readiness-timeout-boundary-closeout-20260618",
+  "planning_needed": false,
+  "archive": {
+    "sha256": "8f6a4d0d3436308a5f3b51e4f113b75d1acbf807a7b7af2d66453806c586cf0c",
+    "kernel_2712_sha256": "c37b34ebc955a7ce11cd0660bc18424ebcec4550de23ae1e6b0b9ad7c867e4bd",
+    "kernel_2712_size": 208984
+  },
+  "triage": {
+    "known_good_control": {
+      "classification": "known-good-control-tftp-observed",
+      "ok": true,
+      "tftp_events": 27,
+      "evidence_root": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-pi5-proof/control-known-good-20260618T030304Z"
+    }
+  },
+  "gates": {
+    "selected_kernel_tftp_precondition_ok": true,
+    "tftp_expected_fetch_count": 2,
+    "readiness_boundary_fresh": false,
+    "pre_write_boundary_clean": false,
+    "serial_write_ok": true,
+    "ordered_command0_delivery": false,
+    "immediate_post_command_selected_identity_ok": true,
+    "final_pre_restore_selected_identity_ok": true,
+    "restore_ok": true,
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "discriminator_result": {
+    "task_id": "phase10-pi5-command0-readiness-timeout-boundary-discriminator-core-20260618",
+    "checker": "rpi5-command0-readiness-timeout-boundary-discriminator-v1",
+    "accepted": false,
+    "classification": "command0-readiness-timeout-boundary-discriminator-rejected",
+    "selected_discriminator": "command0-readiness-timeout-boundary-v1",
+    "first_failing_invariant": "fresh command0 readiness boundary missing or stale",
+    "contract": {
+      "selected_discriminator": "command0-readiness-timeout-boundary-v1",
+      "readiness_text_bytes": 1121,
+      "pre_write_text_bytes": 1121,
+      "post_write_text_bytes": 63,
+      "readiness_fresh_command0_boundary": false,
+      "pre_write_boundary_clean": false,
+      "serial_write_ok": true,
+      "ordered_command0_delivery": false
+    },
+    "allowed_terminal_classifications": [
+      "command0-readiness-timeout-boundary-accepted",
+      "command0-readiness-timeout-boundary-blocked",
+      "command0-readiness-timeout-boundary-inconclusive-triage-required"
+    ],
+    "selected_next_task": null,
+    "rejected_claims": [
+      "command0 input delivery acceptance",
+      "source-response retention",
+      "generated-root command-input success",
+      "storage",
+      "networking",
+      "SSH",
+      "Phase 11/12 expansion",
+      "phase transition"
+    ]
+  },
+  "rejected_claims": [
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

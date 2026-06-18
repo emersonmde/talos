@@ -1,0 +1,23 @@
+{
+  "task_id": "phase10-pi5-command0-readiness-timeout-boundary-pi5-proof-20260618",
+  "run_label": "candidate-readiness-timeout-boundary-rerun-20260618T030332Z",
+  "evidence_root": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-pi5-proof/candidate-readiness-timeout-boundary-rerun-20260618T030332Z",
+  "control_evidence_root": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-pi5-proof/control-known-good-20260618T030304Z",
+  "files": {
+    "classification": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-pi5-proof/candidate-readiness-timeout-boundary-rerun-20260618T030332Z/classification.json",
+    "discriminator_input": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-pi5-proof/candidate-readiness-timeout-boundary-rerun-20260618T030332Z/readiness-timeout-boundary-discriminator-input.json",
+    "discriminator_result": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-pi5-proof/candidate-readiness-timeout-boundary-rerun-20260618T030332Z/discriminator-result.json",
+    "archive_static_review": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-pi5-proof/candidate-readiness-timeout-boundary-rerun-20260618T030332Z/archive-static-review.txt",
+    "post_publish_status": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-pi5-proof/candidate-readiness-timeout-boundary-rerun-20260618T030332Z/post-publish-status.json",
+    "tftp_delta": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-pi5-proof/candidate-readiness-timeout-boundary-rerun-20260618T030332Z/tftp/tftp-delta-stable-pre-command.json",
+    "readiness_summary": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-pi5-proof/candidate-readiness-timeout-boundary-rerun-20260618T030332Z/serial/readiness-summary.json",
+    "pre_write_boundary": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-pi5-proof/candidate-readiness-timeout-boundary-rerun-20260618T030332Z/serial/command0-pre-write-boundary.json",
+    "serial_write": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-pi5-proof/candidate-readiness-timeout-boundary-rerun-20260618T030332Z/serial/command0-write.json",
+    "post_write_read": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-pi5-proof/candidate-readiness-timeout-boundary-rerun-20260618T030332Z/serial/command0-post-write-read.json",
+    "immediate_post_command_status": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-pi5-proof/candidate-readiness-timeout-boundary-rerun-20260618T030332Z/immediate-post-command-status.json",
+    "final_pre_restore_status": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-pi5-proof/candidate-readiness-timeout-boundary-rerun-20260618T030332Z/final-pre-restore-status.json",
+    "restore": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-pi5-proof/candidate-readiness-timeout-boundary-rerun-20260618T030332Z/restore/restore-snapshot.json",
+    "post_restore_status": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-pi5-proof/candidate-readiness-timeout-boundary-rerun-20260618T030332Z/restore/post-restore-status.json"
+  },
+  "selected_next_task": "phase10-pi5-command0-readiness-timeout-boundary-closeout-20260618"
+}

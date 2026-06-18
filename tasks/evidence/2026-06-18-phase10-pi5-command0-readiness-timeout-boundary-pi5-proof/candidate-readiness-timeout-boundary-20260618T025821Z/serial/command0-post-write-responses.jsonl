@@ -1,0 +1,10 @@
+{
+  "action": "serial read",
+  "base64": "a3NwYWNlcz0wIGRlbGV0ZXM9MA0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogcmVhZHkgY29tbWFuZD0xDQp0YWxvcz4g",
+  "bytes": 87,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "kspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=1\r\ntalos> ",
+  "truncated": false
+}

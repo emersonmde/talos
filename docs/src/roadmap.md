@@ -3241,6 +3241,23 @@ The post-review correction chain is:
     command-input success, storage, networking, SSH, Phase 11/12 expansion, and
     phase transition remain rejected.
 
+179. Pi 5 command0 readiness timeout-boundary proof: accepted in
+    'phase10-pi5-command0-readiness-timeout-boundary-pi5-proof-20260618'
+    with classification 'command0-readiness-timeout-boundary-blocked'. The
+    first candidate retained selected immediate/final identity and restore
+    proof, but its TFTP precondition was inconclusive, so the task ran the
+    documented known-good control and a candidate rerun. The rerun retained
+    selected post-publish, immediate, and final pre-restore identity plus
+    stable selected 208984-byte kernel_2712.img TFTP fetches, but readiness
+    output had already advanced through empty input timeouts before a valid
+    command0 write boundary; post-write evidence reached command=4 without
+    ordered rootinfo, dispatch command=0 status=handled, responses=1, or ready
+    command=1 from the saved command=0 boundary. The selected follow-up is
+    'phase10-pi5-command0-readiness-timeout-boundary-closeout-20260618'.
+    Command0 input delivery, source-response retention, generated-root
+    command-input success, storage, networking, SSH, Phase 11/12 expansion, and
+    phase transition remain rejected.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
@@ -8126,6 +8143,20 @@ Selected first slice:
   and planningNeeded=true; source-response retention v3, generated-root
   command-input success, storage, networking, SSH, Phase 11/12 expansion, and
   phase transition remain unaccepted.
+- 'phase10-pi5-command0-readiness-timeout-boundary-discriminator-core-20260618'
+  accepts the local/static readiness timeout-boundary discriminator. It rejects
+  stale pre-write output, command=1-or-later timeout advancement, and the
+  retained final-identity command=4 shape as command0 delivery.
+- 'phase10-pi5-command0-readiness-timeout-boundary-pi5-proof-20260618'
+  accepts the serialized Pi 5 proof with classification
+  command0-readiness-timeout-boundary-blocked. After an inconclusive first
+  candidate TFTP precondition, a known-good control observed TFTP activity and
+  the candidate rerun retained selected TFTP/identity evidence. Command0 input
+  delivery remains unaccepted because the retained readiness boundary had
+  already advanced through empty input timeouts before a valid command0 write
+  point, and post-write evidence reached command=4 without ordered rootinfo or
+  dispatch command=0 status=handled. The selected follow-up is
+  phase10-pi5-command0-readiness-timeout-boundary-closeout-20260618.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The

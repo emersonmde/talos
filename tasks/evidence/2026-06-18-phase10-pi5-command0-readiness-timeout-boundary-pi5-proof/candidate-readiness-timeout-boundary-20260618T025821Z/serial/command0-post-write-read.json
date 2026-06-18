@@ -1,0 +1,37 @@
+{
+  "action": "serial read",
+  "base64": "a3NwYWNlcz0wIGRlbGV0ZXM9MA0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogcmVhZHkgY29tbWFuZD0xDQp0YWxvcz4g",
+  "bytes": 88,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "\nkspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=1\r\ntalos> ",
+  "truncated": false,
+  "retained_text": "\nkspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=1\r\ntalos> ",
+  "responses": [
+    {
+      "action": "serial read",
+      "base64": "a3NwYWNlcz0wIGRlbGV0ZXM9MA0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogcmVhZHkgY29tbWFuZD0xDQp0YWxvcz4g",
+      "bytes": 87,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "kspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=1\r\ntalos> ",
+      "truncated": false
+    }
+  ],
+  "talos_post_write_capture": {
+    "requested_timeout_seconds": 12,
+    "elapsed_seconds": 0,
+    "observe_attempts": 1,
+    "observe_contract": "deadline-loop-direct-read-after-command0-write",
+    "capture_mode": "read",
+    "has_rootinfo": false,
+    "has_line_command0": false,
+    "has_dispatch0": false,
+    "has_responses1": false,
+    "has_ready1": true,
+    "has_command1_or_later": false,
+    "classification": "ordered-command0-delivery-missing-or-timeout-advanced"
+  }
+}

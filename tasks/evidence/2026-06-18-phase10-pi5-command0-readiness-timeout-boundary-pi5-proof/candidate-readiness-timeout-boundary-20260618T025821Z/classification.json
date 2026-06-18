@@ -1,0 +1,69 @@
+{
+  "task_id": "phase10-pi5-command0-readiness-timeout-boundary-pi5-proof-20260618",
+  "run_label": "candidate-readiness-timeout-boundary-20260618T025821Z",
+  "classification": "command0-readiness-timeout-boundary-blocked",
+  "accepted": false,
+  "command0_input_delivery_accepted": false,
+  "selected_next_task": "phase10-pi5-command0-readiness-timeout-boundary-closeout-20260618",
+  "planning_needed": false,
+  "archive": {
+    "sha256": "8f6a4d0d3436308a5f3b51e4f113b75d1acbf807a7b7af2d66453806c586cf0c",
+    "kernel_2712_sha256": "c37b34ebc955a7ce11cd0660bc18424ebcec4550de23ae1e6b0b9ad7c867e4bd",
+    "kernel_2712_size": 208984
+  },
+  "gates": {
+    "selected_kernel_tftp_precondition_ok": false,
+    "tftp_expected_fetch_count": 0,
+    "readiness_boundary_fresh": true,
+    "pre_write_boundary_clean": true,
+    "serial_write_ok": true,
+    "ordered_command0_delivery": false,
+    "immediate_post_command_selected_identity_ok": true,
+    "final_pre_restore_selected_identity_ok": true,
+    "restore_ok": true,
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "discriminator_result": {
+    "task_id": "phase10-pi5-command0-readiness-timeout-boundary-discriminator-core-20260618",
+    "checker": "rpi5-command0-readiness-timeout-boundary-discriminator-v1",
+    "accepted": false,
+    "classification": "command0-readiness-timeout-boundary-discriminator-rejected",
+    "selected_discriminator": "command0-readiness-timeout-boundary-v1",
+    "first_failing_invariant": "ordered command0 delivery missing or mismatched",
+    "contract": {
+      "selected_discriminator": "command0-readiness-timeout-boundary-v1",
+      "readiness_text_bytes": 7303,
+      "pre_write_text_bytes": 7303,
+      "post_write_text_bytes": 88,
+      "readiness_fresh_command0_boundary": true,
+      "pre_write_boundary_clean": true,
+      "serial_write_ok": true,
+      "ordered_command0_delivery": false
+    },
+    "allowed_terminal_classifications": [
+      "command0-readiness-timeout-boundary-accepted",
+      "command0-readiness-timeout-boundary-blocked",
+      "command0-readiness-timeout-boundary-inconclusive-triage-required"
+    ],
+    "selected_next_task": null,
+    "rejected_claims": [
+      "command0 input delivery acceptance",
+      "source-response retention",
+      "generated-root command-input success",
+      "storage",
+      "networking",
+      "SSH",
+      "Phase 11/12 expansion",
+      "phase transition"
+    ]
+  },
+  "rejected_claims": [
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

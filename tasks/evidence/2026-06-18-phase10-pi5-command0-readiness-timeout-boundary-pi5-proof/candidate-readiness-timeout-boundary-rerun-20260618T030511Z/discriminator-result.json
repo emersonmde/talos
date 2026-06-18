@@ -1,0 +1,34 @@
+{
+  "task_id": "phase10-pi5-command0-readiness-timeout-boundary-discriminator-core-20260618",
+  "checker": "rpi5-command0-readiness-timeout-boundary-discriminator-v1",
+  "accepted": false,
+  "classification": "command0-readiness-timeout-boundary-discriminator-rejected",
+  "selected_discriminator": "command0-readiness-timeout-boundary-v1",
+  "first_failing_invariant": "ordered command0 delivery missing or mismatched",
+  "contract": {
+    "selected_discriminator": "command0-readiness-timeout-boundary-v1",
+    "readiness_text_bytes": 7361,
+    "pre_write_text_bytes": 7361,
+    "post_write_text_bytes": 2,
+    "readiness_fresh_command0_boundary": true,
+    "pre_write_boundary_clean": true,
+    "serial_write_ok": true,
+    "ordered_command0_delivery": false
+  },
+  "allowed_terminal_classifications": [
+    "command0-readiness-timeout-boundary-accepted",
+    "command0-readiness-timeout-boundary-blocked",
+    "command0-readiness-timeout-boundary-inconclusive-triage-required"
+  ],
+  "selected_next_task": null,
+  "rejected_claims": [
+    "command0 input delivery acceptance",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}
