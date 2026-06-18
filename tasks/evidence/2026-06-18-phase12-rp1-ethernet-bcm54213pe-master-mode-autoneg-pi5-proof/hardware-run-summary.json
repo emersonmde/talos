@@ -1,0 +1,296 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof-20260618",
+  "snapshot": "bcm54213pe-master-mode-autoneg-pre-20260618T1638Z",
+  "classification": "bcm54213pe-master-mode-autoneg-timeout-link-not-ready",
+  "control": {
+    "tree": "53ba60d5e1fcb6249e079938cc297f1bf5dd057dfa9af468afe46818795a6852",
+    "bytes": 50856,
+    "capture": {
+      "label": "bcm54213pe-master-mode-autoneg-control-20260618T1638Z",
+      "exits": {
+        "serial_observe_window": 0,
+        "tftp_delta_stable_pre_restore": 0
+      },
+      "preflight_identity": {
+        "expected_tree_hash": "53ba60d5e1fcb6249e079938cc297f1bf5dd057dfa9af468afe46818795a6852",
+        "observed_tree_hash": "53ba60d5e1fcb6249e079938cc297f1bf5dd057dfa9af468afe46818795a6852",
+        "expected_kernel": "kernel_2712.img",
+        "observed_effective_kernel": "kernel_2712.img",
+        "expected_fetch": "da591740/kernel_2712.img",
+        "expected_fetch_bytes": 50856,
+        "observed_fetch_bytes": 50856,
+        "selected_tree_identity_source": "/boot/files",
+        "root_endpoint": {
+          "endpoint": "GET /",
+          "curl_exit": 0,
+          "http_code": 404,
+          "body_bytes": 55,
+          "usable_for_selected_tree_identity": false,
+          "selected_tree_identity_source": "/boot/files",
+          "fallback_used": true,
+          "fallback_reason": "root-endpoint-http-non-2xx"
+        },
+        "tree_matches": true,
+        "effective_kernel_matches": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes_match": true,
+        "staging_publication_mismatch": false
+      },
+      "final_pre_restore_identity": {
+        "tree_hash": "53ba60d5e1fcb6249e079938cc297f1bf5dd057dfa9af468afe46818795a6852",
+        "effective_kernel": "kernel_2712.img",
+        "expected_tree_still_staged": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes_match": true
+      },
+      "serial_window": {
+        "requested_timeout_seconds": 90,
+        "elapsed_seconds": 34,
+        "settle_ms": 1000,
+        "max_bytes": 65536,
+        "observe_attempts": 7,
+        "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+        "capture_mode": "read",
+        "saturation_limit": 4194304,
+        "start_cursor_saturated": true,
+        "response_bytes": 61986,
+        "required_marker": "TALOS: rp1-ethernet-bcm54213pe-master-mode-autoneg-control capture-nonce=master-mode-autoneg-control-20260618T1620Z",
+        "kernel_marker": "TALOS: kernel_main",
+        "firmware_network_marker": "NETWORK",
+        "has_kernel_main": false,
+        "has_required_marker": true,
+        "has_firmware_network": true,
+        "firmware_network_occurrences": 2,
+        "required_marker_occurrences": 10,
+        "marker_nonce": "master-mode-autoneg-control-20260618T1620Z",
+        "nonce_token": "capture-nonce=master-mode-autoneg-control-20260618T1620Z",
+        "nonce_token_occurrences": 10,
+        "required_marker_excerpt": "alse classification=no-mdio-no-ethernet-bcm54213pe-master-mode-autoneg-control\r\nTALOS: rp1-ethernet-bcm54213pe-master-mode-autoneg-control capture-nonce=master-mode-autoneg-control-20260618T1620Z bcm54213pe-master-mode-autoneg-contract-id=phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-source-contract-v1 task-id=phase12-rp1-ethernet-bcm54213pe-maste"
+      },
+      "tftp_event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "proof_run_identity": {
+        "contract_version": "pi5-capture-transaction-v2",
+        "shared_run_label": "bcm54213pe-master-mode-autoneg-control-20260618T1638Z",
+        "selected_tree_hash": "53ba60d5e1fcb6249e079938cc297f1bf5dd057dfa9af468afe46818795a6852",
+        "effective_kernel": "kernel_2712.img",
+        "expected_fetch_path": "da591740/kernel_2712.img",
+        "expected_fetch_byte_count": 50856,
+        "serial": {
+          "pre_power_peek": {
+            "cursor": 4194304,
+            "bytes": 65536,
+            "required_marker_occurrences": 0,
+            "nonce_token_occurrences": 0
+          },
+          "pre_power_drain": {
+            "attempts": 16,
+            "attempt_limit": 16,
+            "read_timeout_seconds": 1,
+            "settle_ms": 100,
+            "max_bytes_per_read": 65536,
+            "total_bytes": 45009,
+            "final_cursor": 4194304,
+            "empty_before_power": false,
+            "discriminator": "bounded-drain-exhausted-before-power"
+          },
+          "cursor_start": 4194304,
+          "cursor_end": 4194304,
+          "window_bytes": 61986,
+          "response_bytes": 61986,
+          "capture_mode": "read",
+          "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+          "required_marker": "TALOS: rp1-ethernet-bcm54213pe-master-mode-autoneg-control capture-nonce=master-mode-autoneg-control-20260618T1620Z",
+          "freshness_contract": {
+            "contract_version": "cursor-nonce-post-power-freshness-v1",
+            "marker_nonce": "master-mode-autoneg-control-20260618T1620Z",
+            "nonce_token": "capture-nonce=master-mode-autoneg-control-20260618T1620Z",
+            "marker_occurrences_after_saved_cursor": 10,
+            "nonce_occurrences_after_saved_cursor": 10,
+            "post_power_capture_bound": true,
+            "cursor_nonce_fresh": true,
+            "serial_freshness_ok": true
+          }
+        },
+        "tftp": {
+          "cursor_start": 4638081,
+          "cursor_end": 4639432,
+          "stable": true,
+          "event_count": 13,
+          "expected_fetch_count": 2,
+          "expected_fetch_byte_match_count": 2
+        },
+        "final_pre_restore": {
+          "tree_hash": "53ba60d5e1fcb6249e079938cc297f1bf5dd057dfa9af468afe46818795a6852",
+          "effective_kernel": "kernel_2712.img",
+          "selected_tree_still_staged": true,
+          "expected_fetch_present": true,
+          "expected_fetch_bytes_match": true
+        },
+        "restore": {
+          "snapshot_name": "bcm54213pe-master-mode-autoneg-pre-20260618T1638Z",
+          "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+        }
+      }
+    }
+  },
+  "candidate": {
+    "tree": "8b9eddafc3f0210f4be8c2c0f649286e0f92a17f65e0611952b618c89af03b7d",
+    "bytes": 54072,
+    "capture": {
+      "label": "bcm54213pe-master-mode-autoneg-candidate-20260618T1655Z",
+      "exits": {
+        "serial_observe_window": 0,
+        "tftp_delta_stable_pre_restore": 0
+      },
+      "preflight_identity": {
+        "expected_tree_hash": "8b9eddafc3f0210f4be8c2c0f649286e0f92a17f65e0611952b618c89af03b7d",
+        "observed_tree_hash": "8b9eddafc3f0210f4be8c2c0f649286e0f92a17f65e0611952b618c89af03b7d",
+        "expected_kernel": "kernel_2712.img",
+        "observed_effective_kernel": "kernel_2712.img",
+        "expected_fetch": "da591740/kernel_2712.img",
+        "expected_fetch_bytes": 54072,
+        "observed_fetch_bytes": 54072,
+        "selected_tree_identity_source": "/boot/files",
+        "root_endpoint": {
+          "endpoint": "GET /",
+          "curl_exit": 0,
+          "http_code": 404,
+          "body_bytes": 55,
+          "usable_for_selected_tree_identity": false,
+          "selected_tree_identity_source": "/boot/files",
+          "fallback_used": true,
+          "fallback_reason": "root-endpoint-http-non-2xx"
+        },
+        "tree_matches": true,
+        "effective_kernel_matches": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes_match": true,
+        "staging_publication_mismatch": false
+      },
+      "final_pre_restore_identity": {
+        "tree_hash": "8b9eddafc3f0210f4be8c2c0f649286e0f92a17f65e0611952b618c89af03b7d",
+        "effective_kernel": "kernel_2712.img",
+        "expected_tree_still_staged": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes_match": true
+      },
+      "serial_window": {
+        "requested_timeout_seconds": 120,
+        "elapsed_seconds": 31,
+        "settle_ms": 1000,
+        "max_bytes": 65536,
+        "observe_attempts": 6,
+        "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+        "capture_mode": "read",
+        "saturation_limit": 4194304,
+        "start_cursor_saturated": true,
+        "response_bytes": 70009,
+        "required_marker": "TALOS: rp1-ethernet-bcm54213pe-master-mode-autoneg-candidate capture-nonce=master-mode-autoneg-candidate-20260618T1620Z",
+        "kernel_marker": "TALOS: kernel_main",
+        "firmware_network_marker": "NETWORK",
+        "has_kernel_main": false,
+        "has_required_marker": true,
+        "has_firmware_network": true,
+        "firmware_network_occurrences": 2,
+        "required_marker_occurrences": 14,
+        "marker_nonce": "master-mode-autoneg-candidate-20260618T1620Z",
+        "nonce_token": "capture-nonce=master-mode-autoneg-candidate-20260618T1620Z",
+        "nonce_token_occurrences": 14,
+        "required_marker_excerpt": "ion=false classification=bcm54213pe-master-mode-autoneg-timeout-link-not-ready\r\nTALOS: rp1-ethernet-bcm54213pe-master-mode-autoneg-candidate capture-nonce=master-mode-autoneg-candidate-20260618T1620Z bcm54213pe-master-mode-autoneg-contract-id=phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-source-contract-v1 task-id=phase12-rp1-ethernet-bcm54213pe-maste"
+      },
+      "tftp_event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "proof_run_identity": {
+        "contract_version": "pi5-capture-transaction-v2",
+        "shared_run_label": "bcm54213pe-master-mode-autoneg-candidate-20260618T1655Z",
+        "selected_tree_hash": "8b9eddafc3f0210f4be8c2c0f649286e0f92a17f65e0611952b618c89af03b7d",
+        "effective_kernel": "kernel_2712.img",
+        "expected_fetch_path": "da591740/kernel_2712.img",
+        "expected_fetch_byte_count": 54072,
+        "serial": {
+          "pre_power_peek": {
+            "cursor": 4194304,
+            "bytes": 65536,
+            "required_marker_occurrences": 0,
+            "nonce_token_occurrences": 0
+          },
+          "pre_power_drain": {
+            "attempts": 1,
+            "attempt_limit": 16,
+            "read_timeout_seconds": 1,
+            "settle_ms": 100,
+            "max_bytes_per_read": 65536,
+            "total_bytes": 0,
+            "final_cursor": 4194304,
+            "empty_before_power": true,
+            "discriminator": "empty-read-before-power"
+          },
+          "cursor_start": 4194304,
+          "cursor_end": 4194304,
+          "window_bytes": 70009,
+          "response_bytes": 70009,
+          "capture_mode": "read",
+          "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+          "required_marker": "TALOS: rp1-ethernet-bcm54213pe-master-mode-autoneg-candidate capture-nonce=master-mode-autoneg-candidate-20260618T1620Z",
+          "freshness_contract": {
+            "contract_version": "cursor-nonce-post-power-freshness-v1",
+            "marker_nonce": "master-mode-autoneg-candidate-20260618T1620Z",
+            "nonce_token": "capture-nonce=master-mode-autoneg-candidate-20260618T1620Z",
+            "marker_occurrences_after_saved_cursor": 14,
+            "nonce_occurrences_after_saved_cursor": 14,
+            "post_power_capture_bound": true,
+            "cursor_nonce_fresh": true,
+            "serial_freshness_ok": true
+          }
+        },
+        "tftp": {
+          "cursor_start": 4640783,
+          "cursor_end": 4642134,
+          "stable": true,
+          "event_count": 13,
+          "expected_fetch_count": 2,
+          "expected_fetch_byte_match_count": 2
+        },
+        "final_pre_restore": {
+          "tree_hash": "8b9eddafc3f0210f4be8c2c0f649286e0f92a17f65e0611952b618c89af03b7d",
+          "effective_kernel": "kernel_2712.img",
+          "selected_tree_still_staged": true,
+          "expected_fetch_present": true,
+          "expected_fetch_bytes_match": true
+        },
+        "restore": {
+          "snapshot_name": "bcm54213pe-master-mode-autoneg-pre-20260618T1638Z",
+          "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+        }
+      }
+    },
+    "terminal_registers": {
+      "ctrl1000_pre_raw": "0x0200",
+      "ctrl1000_write_value": "0x1a00",
+      "ctrl1000_readback_raw": "0x1a00",
+      "bmcr_write_value": "0x1200",
+      "bmcr_write_count": 1,
+      "poll_bmcr": "0x1000",
+      "poll_bmsr_first": "0x7949",
+      "poll_bmsr_second": "0x7949",
+      "poll_anar": "0x01e1",
+      "poll_anlpar": "0x0000",
+      "poll_ctrl1000": "0x1a00",
+      "poll_stat1000": "0x0000",
+      "passive_macb_nsr": "0x00000006",
+      "bmsr_link_status": false,
+      "bmsr_autoneg_complete": false,
+      "macb_nsr_link": false,
+      "link_ready_terminal": false
+    }
+  },
+  "final_restore": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "kernel_2712_bytes": 104136
+  },
+  "result": "MII_CTRL1000 master mode plus one BMCR autoneg restart executed; bounded sampling still ended timeout/link-not-ready."
+}

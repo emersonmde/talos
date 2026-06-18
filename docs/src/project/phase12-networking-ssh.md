@@ -2450,3 +2450,21 @@ link-ready or autoneg-complete claim can be accepted. Packet I/O, networking,
 sockets, SSH, Phase 12.2, phase transition, GPIO32 reset, interrupts,
 APD/EEE/lifecycle, MAC/phylink, marker-only retry, same-shaped status-only retry,
 and bare BMCR restart retry remain rejected.
+
+phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof-20260618
+accepts bcm54213pe-master-mode-autoneg-timeout-link-not-ready. The paired
+control retained the no-MDIO/no-Ethernet shape with selected-tree/TFTP/serial,
+final pre-restore identity, and restore evidence. The candidate retained
+selected tree 8b9eddafc3f0210f4be8c2c0f649286e0f92a17f65e0611952b618c89af03b7d,
+same-power-cycle 54072-byte TFTP serves, fresh serial nonce evidence, final
+pre-restore identity, and restore proof. It repeated the accepted MII_CTRL1000
+master-mode sequence with pre-read 0x0200, write value 0x1a00, and readback
+0x1a00, then issued exactly one BMCR autoneg enable/restart write 0x1200. The
+bounded terminal sample reported BMCR 0x1000, BMSR 0x7949/0x7949, ANAR 0x01e1,
+ANLPAR 0x0000, MII_CTRL1000 0x1a00, MII_STAT1000 0x0000, passive MACB_NSR
+0x00000006, BMSR link false, BMSR autoneg-complete false, and MACB_NSR_LINK
+false. This accepts only the master-mode plus BMCR-autoneg-restart execution and
+timeout/link-not-ready classification; link-ready, autoneg-complete, GPIO32/PHY
+reset ownership, interrupts, APD/EEE/lifecycle, MAC/phylink, packet I/O,
+networking, sockets, SSH, Phase 12.2, phase transition, and more same-shaped
+status/autoneg polling remain rejected.

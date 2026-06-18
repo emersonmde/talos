@@ -12638,6 +12638,20 @@ transition, GPIO32 reset, interrupts, APD/EEE/lifecycle, MAC/phylink,
 same-shaped status-only retry, marker-only retry, and bare BMCR restart retry
 remain rejected.
 
+phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof-20260618
+accepts bcm54213pe-master-mode-autoneg-timeout-link-not-ready. Serialized Pi 5
+evidence retained the paired no-MDIO/no-Ethernet control, selected-tree/TFTP
+identity, serial nonce freshness, final pre-restore identity, and restore proof.
+The candidate repeated the accepted MII_CTRL1000 master-mode sequence
+(pre-read 0x0200, write/readback 0x1a00), then issued exactly one BMCR autoneg
+enable/restart write 0x1200. The bounded terminal sample still reported BMSR
+link false, BMSR autoneg-complete false, ANLPAR 0x0000, MII_STAT1000 0x0000,
+and passive MACB_NSR_LINK false, so the accepted classification is timeout
+link-not-ready rather than link-ready or Ethernet readiness. Packet I/O,
+networking, sockets, SSH, Phase 12.2, phase transition, GPIO32 reset,
+interrupts, APD/EEE/lifecycle, MAC/phylink, and more same-shaped status/autoneg
+polling remain rejected.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

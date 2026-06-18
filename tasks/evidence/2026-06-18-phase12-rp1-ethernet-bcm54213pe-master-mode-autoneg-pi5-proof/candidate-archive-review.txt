@@ -1,0 +1,8 @@
+candidate_archive=tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof/candidate-archive.tar.gz
+candidate_archive_sha256=f2ed749870fd7ffc7e7d00d5a254fff6699de0827c9cfbeda1f015e5d419cd3b
+kernel_2712_sha256=27dc4a6a0ca1bb8c1c7aa276582b87fb6ae5365f4ba1fc46942a05cd4a0fa0ed
+kernel_2712_size=54072
+header_image_size=54072
+text_offset=0
+flags=12
+forbidden_bcm54213pe_master_mode_autoneg_candidate_runtime_strings_absent=true

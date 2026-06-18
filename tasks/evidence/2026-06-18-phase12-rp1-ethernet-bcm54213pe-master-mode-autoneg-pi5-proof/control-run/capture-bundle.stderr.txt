@@ -1,0 +1,1 @@
+jq: Bad JSON in --slurpfile serial tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof/control-run/serial-observe-window.json: Invalid numeric literal at line 37, column 67444

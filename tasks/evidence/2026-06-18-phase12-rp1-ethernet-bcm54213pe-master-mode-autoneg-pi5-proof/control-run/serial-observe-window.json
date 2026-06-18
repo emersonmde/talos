@@ -1,0 +1,39 @@
+{
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "bytes": 61986,
+  "text": "",
+  "text_omitted": true,
+  "text_omission_reason": "derived recovery from capture-bundle.stdout.json after original serial-observe-window.json was malformed by appended serial payload; raw malformed payload preserved as serial-observe-window.raw-invalid.txt",
+  "truncated": false,
+  "talos_serial_window": {
+    "requested_timeout_seconds": 90,
+    "elapsed_seconds": 34,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "observe_attempts": 7,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 61986,
+    "required_marker": "TALOS: rp1-ethernet-bcm54213pe-master-mode-autoneg-control capture-nonce=master-mode-autoneg-control-20260618T1620Z",
+    "kernel_marker": "TALOS: kernel_main",
+    "firmware_network_marker": "NETWORK",
+    "has_kernel_main": false,
+    "has_required_marker": true,
+    "has_firmware_network": true,
+    "firmware_network_occurrences": 2,
+    "required_marker_occurrences": 10,
+    "marker_nonce": "master-mode-autoneg-control-20260618T1620Z",
+    "nonce_token": "capture-nonce=master-mode-autoneg-control-20260618T1620Z",
+    "nonce_token_occurrences": 10,
+    "required_marker_excerpt": "alse classification=no-mdio-no-ethernet-bcm54213pe-master-mode-autoneg-control\r\nTALOS: rp1-ethernet-bcm54213pe-master-mode-autoneg-control capture-nonce=master-mode-autoneg-control-20260618T1620Z bcm54213pe-master-mode-autoneg-contract-id=phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-source-contract-v1 task-id=phase12-rp1-ethernet-bcm54213pe-maste"
+  },
+  "recovery": {
+    "recovered_from": "capture-bundle.stdout.json",
+    "raw_malformed_preserved_as": "serial-observe-window.raw-invalid.txt",
+    "truncated_pre_recovery_preserved_as": "serial-observe-window.truncated-before-recovery.json",
+    "recovery_classification": "serial-artifact-shape-recovered-from-valid-helper-summary"
+  }
+}
