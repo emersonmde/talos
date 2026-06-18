@@ -1,0 +1,14 @@
+{
+  "action": "serial read aggregate",
+  "ok": false,
+  "bytes": 0,
+  "cursor": null,
+  "encoding": "utf-8",
+  "truncated": false,
+  "capture_mode": "serial/read",
+  "direct_read_equivalent_when_saturated": true,
+  "capture_from_saved_boundary": false,
+  "skipped": true,
+  "text": "",
+  "responses": []
+}

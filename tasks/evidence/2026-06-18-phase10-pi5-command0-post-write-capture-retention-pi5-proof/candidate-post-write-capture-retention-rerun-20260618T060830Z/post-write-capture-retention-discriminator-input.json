@@ -1,0 +1,190 @@
+{
+  "selected_discriminator": "command0-post-write-capture-retention-v1",
+  "identity": {
+    "selected_kernel_tftp_ok": false,
+    "same_attempt_selected_identity": false,
+    "tftp_delta_selected": false
+  },
+  "readiness": {
+    "start_cursor": 4194304,
+    "cursor": 4194304,
+    "capture_mode": "serial/read",
+    "direct_read_after_empty_pre_power_drain": true,
+    "fresh_after_prompt": false,
+    "responses": [
+      {
+        "action": "serial read",
+        "base64": "DQogIDEuMTAgUlBpOiBCT09UU1lTIHJlbGVhc2UgVkVSU0lPTjoyMjI2YTg1MyBEQVRFOiAyMDI1LzEyLzA4IFRJTUU6IDE5OjI5OjU0DQogIDEuMTAgQk9PVE1PREU6IDB4MDYgcGFydGl0aW9uIDAgYnVpbGQtdHMgQlVJTERfVElNRVNUQU1QPTE3NjUyMjIxOTQgc2VyaWFsIGRhNTkxNzQwIGJvYXJkcmV2IGQwNDE3MSBzdGMgMTEwNjMxNQ0KICAxLjExIEFPTl9SRVNFVDogMDAwMDAwMDMgUE1fUlNUUyAwMDAwMTAwMA0KICAxLjEyIFBPV0VSX09GRl9PTl9IQUxUOiAwIFdBSVRfRk9SX1BPV0VSX0JVVFRPTiAwIHBvd2VyLW9uLXJlc2V0IDENCiAgMS4xMyBSUDFfQk9PVCBjaGlwIElEOiAweDIwMDAxOTI3DQogIDEuMTMgUENJRXgxOiBQV1IgMCBERVRfV0FLRSAwDQogIDEuMTMgcGFydCAwMDAwMDAwMCByZXNldF9pbmZvIDAwMDAwMDAwDQogIDEuMTMgUE1JQyByZXNldC1ldmVudCAwMDAwMDAwMCBydGMgNmEzMzhhZGIgYWxhcm0gMDAwMDAwMDAgZW5hYmxlZCAwDQogIDEuMTQgdVNEIHZvbHRhZ2UgMy4zVg0KICAxLjE1IFNEUkFNX0NPTkZJRzogMTQNCiAgMS4xNSBJbml0aWFsaXNpbmcgU0RSQU0gcmFuayAyIHRvdGFsLXNpemU6IDY0IEdiaXQgNDI2NyAoMHgxNCAweDE0KQ0KICAxLjE1IEREUiA0MjY3IDEgMCA2NCAxNTIgQkw6MQ0K",
+        "bytes": 648,
+        "cursor": 4194304,
+        "encoding": "utf-8",
+        "ok": true,
+        "text": "\r\n  1.10 RPi: BOOTSYS release VERSION:2226a853 DATE: 2025/12/08 TIME: 19:29:54\r\n  1.10 BOOTMODE: 0x06 partition 0 build-ts BUILD_TIMESTAMP=1765222194 serial da591740 boardrev d04171 stc 1106315\r\n  1.11 AON_RESET: 00000003 PM_RSTS 00001000\r\n  1.12 POWER_OFF_ON_HALT: 0 WAIT_FOR_POWER_BUTTON 0 power-on-reset 1\r\n  1.13 RP1_BOOT chip ID: 0x20001927\r\n  1.13 PCIEx1: PWR 0 DET_WAKE 0\r\n  1.13 part 00000000 reset_info 00000000\r\n  1.13 PMIC reset-event 00000000 rtc 6a338adb alarm 00000000 enabled 0\r\n  1.14 uSD voltage 3.3V\r\n  1.15 SDRAM_CONFIG: 14\r\n  1.15 Initialising SDRAM rank 2 total-size: 64 Gbit 4267 (0x14 0x14)\r\n  1.15 DDR 4267 1 0 64 152 BL:1\r\n",
+        "truncated": false
+      }
+    ],
+    "text": "\r\n  1.10 RPi: BOOTSYS release VERSION:2226a853 DATE: 2025/12/08 TIME: 19:29:54\r\n  1.10 BOOTMODE: 0x06 partition 0 build-ts BUILD_TIMESTAMP=1765222194 serial da591740 boardrev d04171 stc 1106315\r\n  1.11 AON_RESET: 00000003 PM_RSTS 00001000\r\n  1.12 POWER_OFF_ON_HALT: 0 WAIT_FOR_POWER_BUTTON 0 power-on-reset 1\r\n  1.13 RP1_BOOT chip ID: 0x20001927\r\n  1.13 PCIEx1: PWR 0 DET_WAKE 0\r\n  1.13 part 00000000 reset_info 00000000\r\n  1.13 PMIC reset-event 00000000 rtc 6a338adb alarm 00000000 enabled 0\r\n  1.14 uSD voltage 3.3V\r\n  1.15 SDRAM_CONFIG: 14\r\n  1.15 Initialising SDRAM rank 2 total-size: 64 Gbit 4267 (0x14 0x14)\r\n  1.15 DDR 4267 1 0 64 152 BL:1\r\n"
+  },
+  "live_write_window": {
+    "boundary_cursor": 4194304,
+    "boundary_was_live": true,
+    "write_issued_after_boundary": true,
+    "write_immediate_after_boundary": true,
+    "write_waited_for_timeout": false,
+    "pre_write_drain_attempts_after_boundary": 0,
+    "max_boundary_to_write_ms": 38,
+    "capture_mode": "serial/read"
+  },
+  "serial_write": {
+    "action": "serial write",
+    "bytes": 9,
+    "ok": true,
+    "text": "rootinfo",
+    "append_newline": true
+  },
+  "post_write": {
+    "action": "serial read aggregate",
+    "ok": true,
+    "bytes": 1297,
+    "cursor": 4194304,
+    "encoding": "utf-8",
+    "truncated": false,
+    "capture_mode": "serial/read",
+    "direct_read_equivalent_when_saturated": true,
+    "capture_from_saved_boundary": false,
+    "boundary_to_write_ms": 38,
+    "responses": [
+      {
+        "action": "serial read",
+        "base64": "ICAxLjgzIFJQMSBGVzogbG9hZCAwDQogIDEuODQgUlAxX0JPT1QgY2hpcCBJRDogMHgyMDAwMTkyNw0K",
+        "bytes": 60,
+        "cursor": 4194304,
+        "encoding": "utf-8",
+        "ok": true,
+        "text": "  1.83 RP1 FW: load 0\r\n  1.84 RP1_BOOT chip ID: 0x20001927\r\n",
+        "truncated": false
+      },
+      {
+        "action": "serial read",
+        "base64": "",
+        "bytes": 0,
+        "cursor": 4194304,
+        "encoding": "utf-8",
+        "ok": true,
+        "text": "",
+        "truncated": false
+      },
+      {
+        "action": "serial read",
+        "base64": "",
+        "bytes": 0,
+        "cursor": 4194304,
+        "encoding": "utf-8",
+        "ok": true,
+        "text": "",
+        "truncated": false
+      },
+      {
+        "action": "serial read",
+        "base64": "",
+        "bytes": 0,
+        "cursor": 4194304,
+        "encoding": "utf-8",
+        "ok": true,
+        "text": "",
+        "truncated": false
+      },
+      {
+        "action": "serial read",
+        "base64": "ICAyLjk4IFJQMSBGVzogbG9hZCAxDQo=",
+        "bytes": 23,
+        "cursor": 4194304,
+        "encoding": "utf-8",
+        "ok": true,
+        "text": "  2.98 RP1 FW: load 1\r\n",
+        "truncated": false
+      },
+      {
+        "action": "serial read",
+        "base64": "ICAzLjQxIE9UUCBib2FyZHJldiBkMDQxNzEgYm9vdHJvbSBhIGENCiAgMy40MSBDdXN0b21lciBrZXkgaGFzaCAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwDQogIDMuNDIgVkMtSlRBRyB1bmxvY2tlZA0KICAzLjQ0IFJQMV9CT09UIGNoaXAgSUQ6IDB4MjAwMDE5MjcNCg==",
+        "bytes": 193,
+        "cursor": 4194304,
+        "encoding": "utf-8",
+        "ok": true,
+        "text": "  3.41 OTP boardrev d04171 bootrom a a\r\n  3.41 Customer key hash 0000000000000000000000000000000000000000000000000000000000000000\r\n  3.42 VC-JTAG unlocked\r\n  3.44 RP1_BOOT chip ID: 0x20001927\r\n",
+        "truncated": false
+      },
+      {
+        "action": "serial read",
+        "base64": "DQogIDQuMDggUENJMiBpbml0DQogIDQuMDggUENJMiByZXNldA0KICA0LjEyIFBDSWUgc2NhbiAwMDAwMWRlNDowMDAwMDAwMQ0KICA0LjEyIFJQMV9DSElQX0lORk8gMjAwMDE5MjcNCg0KICA0LjEzIFJQaTogQk9PVExPQURFUiByZWxlYXNlIFZFUlNJT046MjIyNmE4NTMgREFURTogMjAyNS8xMi8wOCBUSU1FOiAxOToyOTo1NA0KICA0LjEzIEJPT1RNT0RFOiAweDA2IHBhcnRpdGlvbiAwIGJ1aWxkLXRzIEJVSUxEX1RJTUVTVEFNUD0xNzY1MjIyMTk0IHNlcmlhbCBkYTU5MTc0MCBib2FyZHJldiBkMDQxNzEgc3RjIDQxMzcwODENCiAgNC4xNyB1c2JfcGRfaW5pdCBzdGF0dXMgMA0KICA0LjIzIFhIQ0ktU1RPUA0KICA0LjIzIHhIQzAgdmVyOiAyNzIgSENTOiAwMzAwMDQ0MCAxNDAwMDBmMSAwN2ZmMDAwYSBIQ0M6IDAyNDBmZTZkDQogIDQuMjQgVVNCU1RTIDENCiAgNC4yNCB4SEMwIHZlcjogMjcyIEhDUzogMDMwMDA0NDAgMTQwMDAwZjEgMDdmZjAwMGEgSENDOiAwMjQwZmU2ZA0KICA0LjI1IHhIQzAgcG9ydHMgMyBzbG90cyA2NCBpbnRycyA0DQogIDQuMjYgWEhDSS1TVE9QDQogIDQuMjYgeEhDMSB2ZXI6IDI3MiBIQ1M6IDAzMDAwNDQwIDE0MDAwMGYxIDA3ZmYwMDBhIEhDQzogMDI0MGZlNmQNCiAgNC4yNiBVU0JTVFMgMQ0KICA0LjI2IHhIQzEgdmVyOiAyNzIgSENTOiAwMzAwMDQ0MCAxNDAwMDBmMSAwN2ZmMDAwYSBIQ0M6IDAyNDBmZTZkDQogIDQuMjcgeEhDMSBwb3J0cyAzIHNsb3RzIDY0IGludHJzIDQNCiAgNC4zMiBTRF9PQzogMA0KICA0LjIyIEJvb3QgbW9kZTogTkVUV09SSyAoMDIpIG9yZGVyIGYxDQo=",
+        "bytes": 809,
+        "cursor": 4194304,
+        "encoding": "utf-8",
+        "ok": true,
+        "text": "\r\n  4.08 PCI2 init\r\n  4.08 PCI2 reset\r\n  4.12 PCIe scan 00001de4:00000001\r\n  4.12 RP1_CHIP_INFO 20001927\r\n\r\n  4.13 RPi: BOOTLOADER release VERSION:2226a853 DATE: 2025/12/08 TIME: 19:29:54\r\n  4.13 BOOTMODE: 0x06 partition 0 build-ts BUILD_TIMESTAMP=1765222194 serial da591740 boardrev d04171 stc 4137081\r\n  4.17 usb_pd_init status 0\r\n  4.23 XHCI-STOP\r\n  4.23 xHC0 ver: 272 HCS: 03000440 140000f1 07ff000a HCC: 0240fe6d\r\n  4.24 USBSTS 1\r\n  4.24 xHC0 ver: 272 HCS: 03000440 140000f1 07ff000a HCC: 0240fe6d\r\n  4.25 xHC0 ports 3 slots 64 intrs 4\r\n  4.26 XHCI-STOP\r\n  4.26 xHC1 ver: 272 HCS: 03000440 140000f1 07ff000a HCC: 0240fe6d\r\n  4.26 USBSTS 1\r\n  4.26 xHC1 ver: 272 HCS: 03000440 140000f1 07ff000a HCC: 0240fe6d\r\n  4.27 xHC1 ports 3 slots 64 intrs 4\r\n  4.32 SD_OC: 0\r\n  4.22 Boot mode: NETWORK (02) order f1\r\n",
+        "truncated": false
+      },
+      {
+        "action": "serial read",
+        "base64": "",
+        "bytes": 0,
+        "cursor": 4194304,
+        "encoding": "utf-8",
+        "ok": true,
+        "text": "",
+        "truncated": false
+      },
+      {
+        "action": "serial read",
+        "base64": "",
+        "bytes": 0,
+        "cursor": 4194304,
+        "encoding": "utf-8",
+        "ok": true,
+        "text": "",
+        "truncated": false
+      },
+      {
+        "action": "serial read",
+        "base64": "ICA5LjIxIE5FVFdPUks6IDg4OmEyOjllOmFlOmM4OjdmIHdhaXQgZm9yIGxpbmsgVEZUUDogMC4wLjAuMA0K",
+        "bytes": 63,
+        "cursor": 4194304,
+        "encoding": "utf-8",
+        "ok": true,
+        "text": "  9.21 NETWORK: 88:a2:9e:ae:c8:7f wait for link TFTP: 0.0.0.0\r\n",
+        "truncated": false
+      },
+      {
+        "action": "serial read",
+        "base64": "",
+        "bytes": 0,
+        "cursor": 4194304,
+        "encoding": "utf-8",
+        "ok": true,
+        "text": "",
+        "truncated": false
+      },
+      {
+        "action": "serial read",
+        "base64": "IDExLjk0IExJTksgU1RBVFVTOiBzcGVlZDogMTAwMCBmdWxsIGR1cGxleA0KIDExLjQ4IExpbmsgcmVhZHkNCiAxMi4wMCBSWDogMCBJUDogMCBJUFY0OiAwIE1BQzogMCBVRFA6IDAgVURQIFJFQ1Y6IDAgSVBfQ1NVTV9FUlI6IDAgVURQX0NTVU1fRVJSOiAwDQo=",
+        "bytes": 149,
+        "cursor": 4194304,
+        "encoding": "utf-8",
+        "ok": true,
+        "text": " 11.94 LINK STATUS: speed: 1000 full duplex\r\n 11.48 Link ready\r\n 12.00 RX: 0 IP: 0 IPV4: 0 MAC: 0 UDP: 0 UDP RECV: 0 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0\r\n",
+        "truncated": false
+      }
+    ],
+    "text": "  1.83 RP1 FW: load 0\r\n  1.84 RP1_BOOT chip ID: 0x20001927\r\n  2.98 RP1 FW: load 1\r\n  3.41 OTP boardrev d04171 bootrom a a\r\n  3.41 Customer key hash 0000000000000000000000000000000000000000000000000000000000000000\r\n  3.42 VC-JTAG unlocked\r\n  3.44 RP1_BOOT chip ID: 0x20001927\r\n\r\n  4.08 PCI2 init\r\n  4.08 PCI2 reset\r\n  4.12 PCIe scan 00001de4:00000001\r\n  4.12 RP1_CHIP_INFO 20001927\r\n\r\n  4.13 RPi: BOOTLOADER release VERSION:2226a853 DATE: 2025/12/08 TIME: 19:29:54\r\n  4.13 BOOTMODE: 0x06 partition 0 build-ts BUILD_TIMESTAMP=1765222194 serial da591740 boardrev d04171 stc 4137081\r\n  4.17 usb_pd_init status 0\r\n  4.23 XHCI-STOP\r\n  4.23 xHC0 ver: 272 HCS: 03000440 140000f1 07ff000a HCC: 0240fe6d\r\n  4.24 USBSTS 1\r\n  4.24 xHC0 ver: 272 HCS: 03000440 140000f1 07ff000a HCC: 0240fe6d\r\n  4.25 xHC0 ports 3 slots 64 intrs 4\r\n  4.26 XHCI-STOP\r\n  4.26 xHC1 ver: 272 HCS: 03000440 140000f1 07ff000a HCC: 0240fe6d\r\n  4.26 USBSTS 1\r\n  4.26 xHC1 ver: 272 HCS: 03000440 140000f1 07ff000a HCC: 0240fe6d\r\n  4.27 xHC1 ports 3 slots 64 intrs 4\r\n  4.32 SD_OC: 0\r\n  4.22 Boot mode: NETWORK (02) order f1\r\n  9.21 NETWORK: 88:a2:9e:ae:c8:7f wait for link TFTP: 0.0.0.0\r\n 11.94 LINK STATUS: speed: 1000 full duplex\r\n 11.48 Link ready\r\n 12.00 RX: 0 IP: 0 IPV4: 0 MAC: 0 UDP: 0 UDP RECV: 0 IP_CSUM_ERR: 0 UDP_CSUM_ERR: 0\r\n"
+  },
+  "immediate_identity": {
+    "selected_identity_ok": true
+  },
+  "final_pre_restore_identity": {
+    "selected_identity_ok": true
+  },
+  "restore": {
+    "ok": true,
+    "baseline_restored": true
+  }
+}

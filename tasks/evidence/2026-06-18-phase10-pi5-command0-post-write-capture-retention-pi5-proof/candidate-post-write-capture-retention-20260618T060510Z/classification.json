@@ -1,0 +1,19 @@
+{
+  "task_id": "phase10-pi5-command0-post-write-capture-retention-pi5-proof-20260618",
+  "run_label": "candidate-post-write-capture-retention-20260618T060510Z",
+  "classification": "command0-post-write-capture-retention-blocked",
+  "terminal": "blocked",
+  "command0_input_delivery_accepted": false,
+  "first_failing_invariant": "stale pre-write output or timeout consumed command0 before write",
+  "selected_next_task": "phase10-pi5-command0-post-write-capture-retention-closeout-20260618",
+  "evidence_root": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-pi5-proof/candidate-post-write-capture-retention-20260618T060510Z",
+  "rejected_claims": [
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

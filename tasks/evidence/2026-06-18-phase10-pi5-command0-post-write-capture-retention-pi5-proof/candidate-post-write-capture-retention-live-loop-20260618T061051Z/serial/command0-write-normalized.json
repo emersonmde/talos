@@ -1,0 +1,9 @@
+{
+  "action": "serial write",
+  "ok": false,
+  "bytes": 0,
+  "text": "rootinfo",
+  "append_newline": true,
+  "skipped": true,
+  "stale_before_write": false
+}

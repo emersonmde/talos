@@ -1,0 +1,25 @@
+{
+  "action": "serial read aggregate",
+  "ok": true,
+  "bytes": 88,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "truncated": false,
+  "capture_mode": "serial/read",
+  "direct_read_equivalent_when_saturated": true,
+  "capture_from_saved_boundary": false,
+  "boundary_to_write_ms": 32,
+  "responses": [
+    {
+      "action": "serial read",
+      "base64": "Y2tzcGFjZXM9MCBkZWxldGVzPTANCnJwaTUtZ2VuZXJhdGVkLXJvb3QtYm9vdC10cmFuc3BvcnQtcHJvb2Y6IHJlYWR5IGNvbW1hbmQ9NA0KdGFsb3M+IA==",
+      "bytes": 88,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "ckspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=4\r\ntalos> ",
+      "truncated": false
+    }
+  ],
+  "text": "ckspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=4\r\ntalos> "
+}

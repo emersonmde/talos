@@ -1,0 +1,24 @@
+{
+  "task_id": "phase10-pi5-command0-post-write-capture-retention-pi5-proof-20260618",
+  "run_label": "candidate-post-write-capture-retention-rerun-20260618T060830Z",
+  "evidence_root": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-pi5-proof/candidate-post-write-capture-retention-rerun-20260618T060830Z",
+  "files": {
+    "classification": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-pi5-proof/candidate-post-write-capture-retention-rerun-20260618T060830Z/classification.json",
+    "discriminator_input": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-pi5-proof/candidate-post-write-capture-retention-rerun-20260618T060830Z/post-write-capture-retention-discriminator-input.json",
+    "discriminator_result": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-pi5-proof/candidate-post-write-capture-retention-rerun-20260618T060830Z/discriminator-result.json",
+    "archive_path": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-pi5-proof/candidate-post-write-capture-retention-rerun-20260618T060830Z/archive-path.txt",
+    "archive_sha256": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-pi5-proof/candidate-post-write-capture-retention-rerun-20260618T060830Z/archive.sha256",
+    "pre_status": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-pi5-proof/candidate-post-write-capture-retention-rerun-20260618T060830Z/pre-status.json",
+    "pre_power_drain": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-pi5-proof/candidate-post-write-capture-retention-rerun-20260618T060830Z/serial/pre-power-read-drain-summary.json",
+    "post_publish_status": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-pi5-proof/candidate-post-write-capture-retention-rerun-20260618T060830Z/post-publish-status.json",
+    "tftp_delta": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-pi5-proof/candidate-post-write-capture-retention-rerun-20260618T060830Z/tftp/tftp-delta-final-pre-restore.json",
+    "readiness_summary": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-pi5-proof/candidate-post-write-capture-retention-rerun-20260618T060830Z/serial/readiness-summary.json",
+    "serial_write": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-pi5-proof/candidate-post-write-capture-retention-rerun-20260618T060830Z/serial/command0-write-normalized.json",
+    "post_write_read_aggregate": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-pi5-proof/candidate-post-write-capture-retention-rerun-20260618T060830Z/serial/command0-post-write-read.aggregate.json",
+    "immediate_post_command_status": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-pi5-proof/candidate-post-write-capture-retention-rerun-20260618T060830Z/immediate-post-command-status.json",
+    "final_pre_restore_status": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-pi5-proof/candidate-post-write-capture-retention-rerun-20260618T060830Z/final-pre-restore-status.json",
+    "restore": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-pi5-proof/candidate-post-write-capture-retention-rerun-20260618T060830Z/restore/restore-snapshot.json",
+    "post_restore_status": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-pi5-proof/candidate-post-write-capture-retention-rerun-20260618T060830Z/restore/post-restore-status.json"
+  },
+  "selected_next_task": "phase10-pi5-command0-post-write-capture-retention-closeout-20260618"
+}

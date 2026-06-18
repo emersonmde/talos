@@ -1,0 +1,10 @@
+{
+  "action": "serial read",
+  "base64": "ICAzLjAxIFJQMSBGVzogbG9hZCAxDQo=",
+  "bytes": 23,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "  3.01 RP1 FW: load 1\r\n",
+  "truncated": false
+}

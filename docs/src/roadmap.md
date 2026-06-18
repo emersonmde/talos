@@ -3325,6 +3325,25 @@ The post-review correction chain is:
     phase transition, and another same-shaped command0 retry remain gated on
     supervisor planning.
 
+184. Pi 5 command0 post-write capture-retention proof: accepted in
+    'phase10-pi5-command0-post-write-capture-retention-pi5-proof-20260618'
+    with classification 'command0-post-write-capture-retention-blocked'. The
+    selected source contract and local/static helper required
+    command0-post-write-capture-retention-v1: selected-kernel/TFTP identity,
+    a fresh live command=0 boundary, immediate rootinfo write from that
+    boundary, ordered post-write rootinfo/dispatch command=0/responses=1/ready
+    command=1 evidence, immediate/final selected identity, and restore proof.
+    The terminal live-loop Pi 5 rerun retained selected identity, two
+    same-power-cycle 208984-byte da591740/kernel_2712.img serves,
+    immediate/final selected identity, and baseline restore proof, but stale
+    pre-write output or timeout consumed command0 before a fresh rootinfo write
+    boundary could be held. Command0 input delivery remains unaccepted. The
+    selected follow-up is
+    'phase10-pi5-command0-post-write-capture-retention-closeout-20260618'.
+    Source-response retention, generated-root command-input success, storage,
+    networking, SSH, Phase 11/12 expansion, phase transition, and same-shaped
+    retry acceptance remain rejected.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
