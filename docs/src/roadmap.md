@@ -8343,6 +8343,22 @@ Selected first slice:
   command0 input delivery, source-response retention, generated-root
   command-input success, storage, networking, SSH, Phase 11/12 expansion, and
   phase transition remain unaccepted.
+- 'phase10-pi5-command0-timeout-stable-command-index-pi5-proof-20260618'
+  accepts the serialized Pi 5 proof that command0 remains pending across empty
+  timeout/readiness churn. The retained hardware evidence includes two selected
+  208984-byte `da591740/kernel_2712.img` TFTP serves, a
+  `timeout-hold command=0 ... pending=true` marker before write, immediate
+  9-byte `rootinfo\n` write acceptance, ordered `line command=0` evidence,
+  `dispatch command=0 status=handled responses=1`, `ready command=1`,
+  stable selected identity through final pre-restore, and baseline restore
+  proof. The selected follow-up is
+  phase10-pi5-command0-timeout-stable-command-index-closeout-20260618.
+- 'phase10-pi5-command0-timeout-stable-command-index-closeout-20260618'
+  accepts command0 input delivery and selects
+  phase10-pi5-serial-command0-source-response-retention-v3-after-input-delivery-20260617
+  as the next bounded task. Source-response retention, generated-root
+  command-input success, storage, networking, SSH, Phase 11/12 expansion, and
+  phase transition remain unaccepted until explicit follow-up tasks prove them.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The
