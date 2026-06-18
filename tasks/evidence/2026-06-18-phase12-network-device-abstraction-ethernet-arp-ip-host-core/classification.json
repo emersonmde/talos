@@ -1,0 +1,100 @@
+{
+  "task_id": "phase12-network-device-abstraction-ethernet-arp-ip-host-core-20260618",
+  "status": "accepted",
+  "classification": "phase12-network-device-abstraction-ethernet-arp-ip-host-core-local-static",
+  "strategy": {
+    "id": "phase12-defer-link-hardware-start-host-network-abstraction-20260618",
+    "selected_by": "supervisor",
+    "selected_at": "2026-06-18T23:24:00Z"
+  },
+  "evidence_level": [
+    "source implementation",
+    "unit tests",
+    "docs build",
+    "diff checks"
+  ],
+  "implemented_source": [
+    "src/network.rs",
+    "src/main.rs"
+  ],
+  "accepted_behavior": {
+    "device_boundary": "NetworkDevice moves raw frames through caller-owned buffers and does not own protocol parsing.",
+    "parser_boundary": "ReceivedFrame, EthernetFrame, ArpPacket, and Ipv4Packet parse immutable byte slices without allocation or hardware access.",
+    "ethernet": [
+      "destination/source MAC parsing",
+      "EtherType parsing",
+      "payload slicing",
+      "truncated header rejection"
+    ],
+    "arp": [
+      "Ethernet/IPv4 request/reply shape parsing",
+      "unsupported hardware rejection",
+      "unsupported protocol rejection",
+      "hardware length rejection",
+      "protocol length rejection",
+      "truncated packet rejection"
+    ],
+    "ipv4": [
+      "version 4 parsing",
+      "IHL and options accounting",
+      "total length accounting",
+      "protocol/source/destination/payload extraction",
+      "truncated, wrong-version, invalid-IHL, invalid-total-length, and truncated-total-length rejection"
+    ]
+  },
+  "findings": [
+    {
+      "finding": "host-testable no_std network module added",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "device movement and protocol parsing ownership separated",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "Ethernet, ARP, and IPv4 positive and negative parser tests added",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "checksum, fragmentation, higher protocols, queues, dispatch, and stack dependency selection remain outside this task",
+      "disposition": "deferred"
+    },
+    {
+      "finding": "hardware readiness, live packet I/O, sockets, SSH, and hardware-driver readiness remain unaccepted",
+      "disposition": "rejected"
+    },
+    {
+      "finding": "no dead code or prior evidence removal was required",
+      "disposition": "removed"
+    },
+    {
+      "finding": "no hardware lock or Pi 5 inconclusive-run triage was required",
+      "disposition": "not-an-issue"
+    }
+  ],
+  "validation": {
+    "cargo_fmt_check": "pass",
+    "cargo_json_target_spec_test_quiet": "pass",
+    "focused_unit_tests": "pass",
+    "jq_task_owned_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "accepted_claims": [
+    "Phase 12.2 has a local no_std network device/protocol boundary.",
+    "Ethernet II, Ethernet/IPv4 ARP, and IPv4 parsing are unit-tested over byte slices.",
+    "Malformed and truncated parser inputs return deterministic errors."
+  ],
+  "rejected_claims": [
+    "hardware-link-ready",
+    "live-packet-io",
+    "dma-descriptor-ownership",
+    "rp1-ethernet-driver-readiness",
+    "sockets",
+    "ssh",
+    "phase-transition"
+  ],
+  "selected_next_task": "phase12-network-device-abstraction-host-core-closeout-20260618",
+  "hardware_authorized_by_this_task": false
+}

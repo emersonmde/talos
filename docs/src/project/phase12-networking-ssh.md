@@ -2541,3 +2541,25 @@ ownership, MAC/phylink, packet I/O, networking, sockets, SSH, Phase 12.2, phase
 transition, and same-shaped status/autoneg retry work remain explicitly
 rejected until an explicit supervisor/human strategy selection changes the
 frontier.
+
+## Phase 12.2 Host Network Abstraction Core
+
+phase12-network-device-abstraction-ethernet-arp-ip-host-core-20260618 accepts
+phase12-network-device-abstraction-ethernet-arp-ip-host-core-local-static. This
+is host/testable protocol-boundary progress after the explicit strategy choice
+to defer further BCM54213PE link-hardware probing. src/network.rs defines a
+no_std boundary where NetworkDevice implementors own raw frame movement and the
+protocol layer parses immutable byte slices.
+
+The accepted parser surface covers Ethernet II destination/source/EtherType
+splitting, Ethernet/IPv4 ARP request/reply shape parsing, and IPv4
+version/IHL/total-length/protocol/source/destination/payload parsing. Unit tests
+cover positive and negative Ethernet, ARP, and IPv4 cases, including truncated
+frames and malformed ARP/IPv4 headers.
+
+This task does not change the Phase 12.1 hardware frontier. MII_CTRL1000
+master-mode write/readback plus one BMCR autoneg restart remain the only
+accepted hardware-visible BCM54213PE behavior, while link-ready,
+autoneg-complete, packet-readiness, live packet I/O, DMA descriptor ownership,
+RP1 Ethernet driver readiness, sockets, SSH, and phase transition remain
+unaccepted.

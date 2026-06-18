@@ -233,6 +233,8 @@ mod live_translation_register_activation;
 mod local_command_loop;
 mod memory_map;
 mod mmio;
+#[cfg_attr(not(test), allow(dead_code))]
+mod network;
 mod pl011;
 #[cfg_attr(not(test), allow(dead_code))]
 mod posix;

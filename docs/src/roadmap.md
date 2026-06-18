@@ -3602,6 +3602,19 @@ The post-review correction chain is:
     selected-discriminator core, hardware proof, packet I/O, networking, SSH,
     Phase 12.2, or phase-transition work.
 
+203. Phase 12.2 host-testable network abstraction core: accepted in
+    'phase12-network-device-abstraction-ethernet-arp-ip-host-core-20260618'
+    with classification
+    'phase12-network-device-abstraction-ethernet-arp-ip-host-core-local-static'.
+    The accepted frontier is local source/test progress only: src/network.rs
+    separates raw device frame movement from protocol parsing and adds
+    deterministic no_std parsers for Ethernet II, Ethernet/IPv4 ARP, and IPv4.
+    Unit tests cover positive and malformed/truncated cases without hardware,
+    allocation, live packet I/O, sockets, SSH, or RP1 driver readiness. The
+    Phase 12.1 BCM54213PE link frontier remains unchanged: link-ready,
+    autoneg-complete, packet-readiness, live packet I/O, sockets, SSH,
+    hardware-driver readiness, and phase transition remain rejected.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
