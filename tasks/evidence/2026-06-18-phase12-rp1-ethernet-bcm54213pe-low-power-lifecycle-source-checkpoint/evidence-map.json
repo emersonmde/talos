@@ -1,0 +1,36 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-low-power-lifecycle-source-checkpoint-20260618",
+  "evidence": [
+    {
+      "label": "source-inspection",
+      "path": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-low-power-lifecycle-source-checkpoint/source-inspection.json",
+      "level": "static/source/task evidence inspection"
+    },
+    {
+      "label": "classification",
+      "path": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-low-power-lifecycle-source-checkpoint/classification.json",
+      "level": "task-owned JSON evidence"
+    },
+    {
+      "label": "accepted pause closeout",
+      "path": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-pause-closeout.md",
+      "level": "accepted task record"
+    },
+    {
+      "label": "retained BCM54213PE source excerpt",
+      "path": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract/source/linux-rpi-6.12-broadcom-bcm54213pe-config-contract-excerpt.txt",
+      "level": "retained source excerpt"
+    },
+    {
+      "label": "retained interrupt APD EEE excerpt",
+      "path": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory/source/linux-rpi-6.12-bcm-phy-lib-interrupt-apd-eee-excerpt.txt",
+      "level": "retained source excerpt"
+    }
+  ],
+  "validation": {
+    "jq_empty": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  }
+}

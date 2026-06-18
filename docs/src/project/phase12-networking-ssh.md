@@ -2507,3 +2507,18 @@ selected_next_task remain null, planningNeeded=true, and supervisor/human
 strategy planning is required before any selected-discriminator core, hardware
 proof, GPIO32/PHY reset action, interrupt/APD/EEE/lifecycle work, MAC/phylink,
 packet I/O, networking, SSH, Phase 12.2, or phase-transition work.
+
+phase12-rp1-ethernet-bcm54213pe-low-power-lifecycle-source-checkpoint-20260618
+accepts
+bcm54213pe-low-power-lifecycle-no-distinct-source-backed-discriminator-pause.
+This source/static checkpoint refines the previously deferred low-power,
+EEE, interrupt, WOL/IDDQ, suspend/resume, BMCR powerdown, soft-reset, and
+config_init/lifecycle source surfaces. It selects no next discriminator:
+APD, EEE, WOL/IDDQ, resume, and soft-reset paths are write/restore lifecycle
+ownership; ISR and WOL status reads have side effects; interrupt IMR/ECR paths
+need ownership and restore rules; MAC/phylink remains a broader boundary; and
+same-shaped status/autoneg polling repeats the accepted timeout/link-not-ready
+frontier. selected_discriminator and selected_next_task are null,
+planningNeeded=true, and no hardware, GPIO32/PHY reset, APD/EEE/lifecycle,
+interrupt, MAC/phylink, packet I/O, networking, SSH, Phase 12.2, or
+phase-transition work is mechanically unblocked.

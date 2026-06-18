@@ -12700,6 +12700,21 @@ selected_next_task is null, planningNeeded=true, and supervisor planning is
 required before any further Phase 12.1 hardware action, packet I/O, networking,
 SSH, Phase 12.2, or phase transition.
 
+phase12-rp1-ethernet-bcm54213pe-low-power-lifecycle-source-checkpoint-20260618
+accepts
+bcm54213pe-low-power-lifecycle-no-distinct-source-backed-discriminator-pause.
+The source checkpoint reconciles retained BCM54213PE low-power, EEE,
+interrupt, WOL/IDDQ, suspend/resume, BMCR powerdown, soft-reset, and config_init
+lifecycle source against the accepted post-master-mode/autoneg link-not-ready
+frontier. It selects no next discriminator: APD/EEE/lifecycle paths require
+write/restore ownership, ISR/WOL reads can consume pending state, IMR/ECR paths
+require interrupt ownership, MAC/phylink crosses a broader boundary, and
+same-shaped status/autoneg polling repeats accepted timeout/link-not-ready
+evidence. selected_discriminator and selected_next_task are null,
+planningNeeded=true, and supervisor planning is required before further Phase
+12.1 hardware, packet I/O, networking, SSH, Phase 12.2, or phase-transition
+work.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

@@ -1,0 +1,166 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-low-power-lifecycle-source-checkpoint-20260618",
+  "inspection_level": "static/source/task evidence inspection",
+  "commands": [
+    "rg -n \"BCM54213|bcm54213|APD|auto power|powerdown|EEE|MMD|WOL|IDDQ|suspend|resume|interrupt|IMR|ECR|BMCR|phylink|config_init|bcm54\" -S .",
+    "find tasks/evidence/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract tasks/evidence/2026-06-15-phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-source-contract-core tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-source-checkpoint -type f | sort",
+    "sed -n '1,240p' tasks/evidence/2026-06-15-phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory/source/linux-rpi-6.12-bcm-phy-lib-interrupt-apd-eee-excerpt.txt",
+    "sed -n '1,220p' tasks/evidence/2026-06-15-phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory/source/linux-rpi-6.12-brcmphy-id-rgmii-apd-excerpt.txt",
+    "sed -n '1,260p' tasks/evidence/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract/source/linux-rpi-6.12-broadcom-bcm54213pe-config-contract-excerpt.txt",
+    "sed -n '220,520p' tasks/evidence/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract/source/linux-rpi-6.12-broadcom-bcm54213pe-config-contract-excerpt.txt",
+    "jq '.' tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-source-checkpoint/source-inspection.json",
+    "jq '.' tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-source-checkpoint/classification.json"
+  ],
+  "accepted_input_frontier": {
+    "post_master_mode_pause_closeout": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-pause-closeout-20260618",
+      "commit": "460176f45f725ab8662f15b721b8ecf6bf97d381",
+      "classification": "bcm54213pe-post-master-mode-autoneg-frontier-paused-no-distinct-discriminator"
+    },
+    "post_master_mode_source_checkpoint": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-source-checkpoint-20260618",
+      "commit": "cf0f018c99d9de7772dfaff3f5cca1fa0fafd58e",
+      "selected_discriminator": null,
+      "selected_next_task": null,
+      "planningNeeded": true
+    },
+    "master_mode_autoneg_hardware_proof": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-pi5-proof-20260618",
+      "classification": "bcm54213pe-master-mode-autoneg-timeout-link-not-ready",
+      "terminal_facts": {
+        "mii_ctrl1000_pre_read": "0x0200",
+        "mii_ctrl1000_write_value": "0x1a00",
+        "mii_ctrl1000_readback": "0x1a00",
+        "bmcr_restart_write_value": "0x1200",
+        "bmsr": "0x7949/0x7949",
+        "bmsr_link_status": false,
+        "bmsr_autoneg_complete": false,
+        "anlpar": "0x0000",
+        "mii_stat1000": "0x0000",
+        "macb_nsr": "0x00000006",
+        "macb_nsr_link": false
+      }
+    }
+  },
+  "retained_sources": [
+    {
+      "path": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory/source/linux-rpi-6.12-bcm-phy-lib-interrupt-apd-eee-excerpt.txt",
+      "source_ref": "Raspberry Pi Linux rpi-6.12.y drivers/net/phy/bcm-phy-lib.c",
+      "observations": [
+        "bcm_phy_ack_intr reads MII_BCM54XX_ISR; the source comment identifies this as clearing pending interrupts.",
+        "bcm_phy_config_intr reads ECR, reads ISR via ack, and writes ECR to mask or unmask interrupt delivery.",
+        "bcm_phy_handle_interrupt reads ISR and IMR, masks inverted IMR bits, and triggers the PHY state machine when an unmasked source is present.",
+        "bcm_phy_enable_apd writes shadow SCR3 when dll_pwr_down is true, then writes the APD shadow after changing APD enable bits and single-link-pulse wake behavior.",
+        "bcm_phy_set_eee reads/writes Clause 45/MMD EEE control and advertisement registers."
+      ]
+    },
+    {
+      "path": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory/source/linux-rpi-6.12-brcmphy-id-rgmii-apd-excerpt.txt",
+      "source_ref": "Raspberry Pi Linux rpi-6.12.y include/linux/brcmphy.h",
+      "observations": [
+        "PHY_ID_BCM54213PE is 0x600d84a2.",
+        "PHY_BRCM_AUTO_PWRDWN_ENABLE, PHY_BRCM_EN_MASTER_MODE, and PHY_BRCM_IDDQ_SUSPEND are retained driver flags.",
+        "MII_BCM54XX_ISR, IMR, ECR, APD, SCR3, and EEE constants are retained source-backed register families."
+      ]
+    },
+    {
+      "path": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract/source/linux-rpi-6.12-broadcom-bcm54213pe-config-contract-excerpt.txt",
+      "source_ref": "Raspberry Pi Linux rpi-6.12.y drivers/net/phy/broadcom.c",
+      "observations": [
+        "BCM54213PE config_init dispatches through bcm54xx_config_init and bcm54213pe_config_init -> bcm54210e_config_init.",
+        "bcm54xx_config_init writes IMR, performs RGMII/LED/PTP/WOL-adjacent configuration, and reads WOL_INT_STATUS as an interrupt/wakeup side-effect surface.",
+        "The BCM54213PE driver table includes config_intr, handle_interrupt, suspend, and resume callbacks.",
+        "bcm54xx_suspend reads WOL_INT_STATUS, may enable wake IRQ, writes BMCR_PDOWN directly, then may set IDDQ.",
+        "bcm54xx_resume may disable wake IRQ, clear IDDQ, run genphy_resume to clear BMCR PDOWN, wait 40us, optionally soft-reset, then rerun bcm54xx_config_init."
+      ]
+    },
+    {
+      "path": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-source-checkpoint/source-inspection.json",
+      "observations": [
+        "Prior accepted checkpoint deferred APD, EEE, interrupt, lifecycle, and MAC/phylink pending explicit side-effect and restore scope.",
+        "This task refines that deferred set rather than selecting a runtime task."
+      ]
+    }
+  ],
+  "family_side_effect_classification": [
+    {
+      "family": "APD / auto power-down shadow configuration",
+      "side_effect": "write/restore",
+      "disposition": "deferred",
+      "reason": "Source-backed via bcm_phy_enable_apd, but the useful path changes SCR3/APD shadow bits and wake behavior. It is lifecycle/power policy, not a direct read-only link-not-ready discriminator."
+    },
+    {
+      "family": "EEE / Clause 45 MMD controls",
+      "side_effect": "write/restore",
+      "disposition": "deferred",
+      "reason": "Source-backed via bcm_phy_set_eee and genphy_config_eee_advert, but it changes EEE feature enable/advertisement state. It requires an ownership and restore contract before hardware."
+    },
+    {
+      "family": "Interrupt status ISR",
+      "side_effect": "read-with-side-effect",
+      "disposition": "rejected",
+      "reason": "bcm_phy_ack_intr documents that reading MII_BCM54XX_ISR clears pending interrupts. A one-off ISR read could consume evidence and is not an acceptable discriminator without interrupt ownership."
+    },
+    {
+      "family": "Interrupt mask/control IMR/ECR",
+      "side_effect": "write/restore",
+      "disposition": "deferred",
+      "reason": "Source-backed via bcm54xx_config_init and bcm_phy_config_intr, but it writes masks/control state and crosses into interrupt delivery ownership."
+    },
+    {
+      "family": "Interrupt handler context",
+      "side_effect": "read-with-side-effect and driver-state-machine side effect",
+      "disposition": "rejected",
+      "reason": "bcm_phy_handle_interrupt reads ISR/IMR and may trigger phy_trigger_machine. That is driver interrupt ownership, not a bounded link-not-ready feature discriminator."
+    },
+    {
+      "family": "WOL / wake interrupt status",
+      "side_effect": "read-with-side-effect",
+      "disposition": "deferred",
+      "reason": "bcm54xx_config_init and suspend read WOL_INT_STATUS and may emit wake events. It is wake/lifecycle state, not a direct packet-readiness path."
+    },
+    {
+      "family": "IDDQ low-power suspend",
+      "side_effect": "write/restore",
+      "disposition": "deferred",
+      "reason": "bcm54xx_iddq_set writes TOP_MISC IDDQ bits under PHY_BRCM_IDDQ_SUSPEND. This requires lifecycle ownership and paired restore before use."
+    },
+    {
+      "family": "BMCR powerdown",
+      "side_effect": "write/restore",
+      "disposition": "rejected",
+      "reason": "bcm54xx_suspend writes BMCR_PDOWN directly and warns against read/modify/write. It would intentionally power down the PHY, the opposite of a feature-led link-ready path."
+    },
+    {
+      "family": "BMCR powerdown exit and soft reset",
+      "side_effect": "write/restore",
+      "disposition": "deferred",
+      "reason": "bcm54xx_resume clears powerdown through genphy_resume, waits 40us, may soft reset, and reruns config_init. That is a full lifecycle sequence requiring explicit ownership and terminal classification."
+    },
+    {
+      "family": "config_init side-effect ordering",
+      "side_effect": "write/restore",
+      "disposition": "not-an-issue",
+      "reason": "The accepted frontier already exercised the narrow config_init-derived MII_CTRL1000 master-mode path and then one BMCR autoneg restart. Replaying broader config_init writes would repeat or broaden closed work."
+    },
+    {
+      "family": "MAC/phylink-adjacent ownership",
+      "side_effect": "blocked",
+      "disposition": "deferred",
+      "reason": "No source-backed low-power/lifecycle item here gives MAC or phylink ownership. Crossing into MAC/phylink would broaden beyond this PHY source checkpoint."
+    },
+    {
+      "family": "same-shaped status/autoneg/convergence polling",
+      "side_effect": "pure read",
+      "disposition": "rejected",
+      "reason": "Pure reads are available but already accepted as timeout/link-not-ready: BMSR link false, BMSR autoneg-complete false, ANLPAR 0x0000, MII_STAT1000 0x0000, and MACB_NSR_LINK false."
+    }
+  ],
+  "inspection_summary": {
+    "selected_discriminator": null,
+    "selected_next_task": null,
+    "planningNeeded": true,
+    "pause_rationale": "The remaining source-backed surfaces are either lifecycle/power/interrupt write ownership, interrupt or wake reads with side effects, MAC/phylink boundary work, or same-shaped link/autoneg polling already closed by accepted hardware evidence.",
+    "hardware_authorized": false
+  }
+}
