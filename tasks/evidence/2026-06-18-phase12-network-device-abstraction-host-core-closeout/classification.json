@@ -1,0 +1,109 @@
+{
+  "task_id": "phase12-network-device-abstraction-host-core-closeout-20260618",
+  "status": "accepted",
+  "classification": "phase12-network-device-abstraction-host-core-closeout-smoltcp-checkpoint-selected",
+  "evidence_level": [
+    "static/task/evidence consistency review",
+    "task-owned JSON evidence",
+    "diff checks"
+  ],
+  "input_task": {
+    "id": "phase12-network-device-abstraction-ethernet-arp-ip-host-core-20260618",
+    "classification": "phase12-network-device-abstraction-ethernet-arp-ip-host-core-local-static",
+    "commit": "454dfaf102a4ac0f80ef68615cbb7e66c0857cfa"
+  },
+  "accepted_behavior": {
+    "device_boundary": "NetworkDevice implementations move raw frames through caller-owned receive buffers and transmit caller-owned frame slices.",
+    "received_frame_boundary": "ReceivedFrame stores raw bytes separately from protocol interpretation.",
+    "ethernet": [
+      "Ethernet II destination/source MAC parsing",
+      "EtherType parsing",
+      "payload slicing",
+      "truncated Ethernet header rejection"
+    ],
+    "arp": [
+      "Ethernet/IPv4 ARP request/reply shape parsing",
+      "truncated ARP rejection",
+      "unsupported hardware/protocol rejection",
+      "invalid hardware/protocol length rejection"
+    ],
+    "ipv4": [
+      "version/IHL/total-length/protocol/source/destination/payload parsing",
+      "truncated packet rejection",
+      "wrong-version rejection",
+      "invalid IHL rejection",
+      "invalid or truncated total-length rejection"
+    ]
+  },
+  "remaining_gaps": [
+    "packet dispatch",
+    "IPv4 checksum validation",
+    "fragmentation policy",
+    "packet queues and reusable buffer ownership",
+    "ICMP",
+    "UDP",
+    "TCP",
+    "sockets",
+    "SSH",
+    "RP1 Ethernet NetworkDevice adapter",
+    "DMA descriptor ownership",
+    "interrupt integration",
+    "live packet I/O",
+    "smoltcp-vs-local stack selection"
+  ],
+  "findings": [
+    {
+      "finding": "host-core task closed as local no_std network device/protocol boundary",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "accepted parser behavior and rejected hardware/live networking claims are explicit",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "Milestone 12.2 gaps remain before driver, dispatch, stack, socket, or SSH claims",
+      "disposition": "deferred"
+    },
+    {
+      "finding": "stack dependency/path selection remains a source checkpoint, not implementation acceptance",
+      "disposition": "deferred"
+    },
+    {
+      "finding": "hardware, live packet I/O, sockets, SSH, hardware-driver readiness, and phase transition remain unaccepted",
+      "disposition": "rejected"
+    },
+    {
+      "finding": "no files or prior evidence were removed",
+      "disposition": "removed"
+    },
+    {
+      "finding": "no hardware lock or Pi 5 triage was required",
+      "disposition": "not-an-issue"
+    }
+  ],
+  "validation": {
+    "static_task_evidence_consistency_review": "pass",
+    "jq_task_owned_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "not-run-docs-src-unchanged",
+    "git_diff_cached_check": "pass"
+  },
+  "accepted_claims": [
+    "The Phase 12.2 host-core parser/device boundary is closed as local source/test progress.",
+    "Milestone 12.2 remaining gaps are explicit.",
+    "The next selected task is the queued local smoltcp-vs-local source checkpoint."
+  ],
+  "rejected_claims": [
+    "hardware-link-ready",
+    "live-packet-io",
+    "dma-descriptor-ownership",
+    "rp1-ethernet-driver-readiness",
+    "sockets",
+    "ssh",
+    "phase-transition",
+    "hardware-task-authorization"
+  ],
+  "selected_next_task": "phase12-network-device-abstraction-smoltcp-evaluation-source-checkpoint-20260618",
+  "planning_needed": false,
+  "hardware_authorized_by_this_task": false
+}
