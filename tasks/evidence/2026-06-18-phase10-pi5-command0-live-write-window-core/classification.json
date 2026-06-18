@@ -1,0 +1,10 @@
+{
+  "task_id": "phase10-pi5-command0-live-write-window-core-20260618",
+  "classification": "command0-live-write-window-core-local-static",
+  "selected_next_task": "phase10-pi5-command0-live-write-window-pi5-proof-20260618",
+  "accepted": true,
+  "command0_input_delivery_accepted": false,
+  "source_response_retention_selected": false,
+  "generated_root_command_input_success_accepted": false,
+  "first_principles_invariant": "rootinfo must be written immediately after a live fresh command=0 readiness boundary and observed as command=0 before timeout advancement"
+}

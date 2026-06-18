@@ -1,0 +1,22 @@
+{
+  "task_id": "phase10-pi5-command0-live-write-window-core-20260618",
+  "evidence_root": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-core",
+  "artifacts": {
+    "task_record": "tasks/2026-06-18-phase10-pi5-command0-live-write-window-core.md",
+    "helper": "scripts/rpi5-command0-live-write-window-discriminator.sh",
+    "proof_contract": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-core/proof-contract.json",
+    "classification": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-core/classification.json",
+    "positive_fixture": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-core/fixtures/positive-live-write-window.json",
+    "negative_stale_boundary_fixture": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-core/fixtures/negative-stale-boundary.json",
+    "negative_delayed_write_fixture": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-core/fixtures/negative-delayed-write.json",
+    "negative_unordered_delivery_fixture": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-core/fixtures/negative-unordered-delivery.json",
+    "retained_readiness_timeout_boundary_rerun_fixture": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-core/fixtures/negative-retained-readiness-timeout-boundary-rerun.json",
+    "fixture_replay_summary": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-core/results/fixture-replay-summary.json",
+    "retained_readiness_timeout_boundary_rerun_replay": "tasks/evidence/2026-06-18-phase10-pi5-command0-live-write-window-core/results/negative-retained-readiness-timeout-boundary-rerun.out.json",
+    "accepted_readiness_timeout_boundary_closeout": "tasks/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-closeout.md",
+    "accepted_readiness_timeout_boundary_proof": "tasks/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-pi5-proof.md",
+    "roadmap": "docs/src/roadmap.md"
+  },
+  "selected_next_task": "phase10-pi5-command0-live-write-window-pi5-proof-20260618",
+  "planning_needed": false
+}

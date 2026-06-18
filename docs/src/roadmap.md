@@ -8183,6 +8183,15 @@ Selected first slice:
   selected_next_task is null and planningNeeded=true; source-response
   retention v3, generated-root command-input success, storage, networking,
   SSH, Phase 11/12 expansion, and phase transition remain unaccepted.
+- 'phase10-pi5-command0-live-write-window-core-20260618' accepts the
+  local/static live write-window discriminator. It rejects retained output
+  already advanced past command=0 before rootinfo is written, delayed writes,
+  unordered delivery, and the retained readiness-timeout-boundary rerun. The
+  selected follow-up is
+  phase10-pi5-command0-live-write-window-pi5-proof-20260618; command0 input
+  delivery, source-response retention, generated-root command-input success,
+  storage, networking, SSH, Phase 11/12 expansion, and phase transition remain
+  unaccepted.
 - 'phase10-local-storage-milestone-closeout-20260605' accepts the Milestone
   10.3 checkpoint at the local/QEMU generated-root transport frontier and
   defers the Pi 5 hardware boundary on the retained source-backed blocker. The

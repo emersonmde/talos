@@ -1,0 +1,35 @@
+{
+  "task_id": "phase10-pi5-command0-live-write-window-core-20260618",
+  "checker": "rpi5-command0-live-write-window-discriminator-v1",
+  "accepted": true,
+  "classification": "command0-live-write-window-discriminator-accepted",
+  "selected_discriminator": "command0-live-write-window-v1",
+  "first_failing_invariant": null,
+  "contract": {
+    "selected_discriminator": "command0-live-write-window-v1",
+    "readiness_cursor": 1234,
+    "post_write_cursor": 1234,
+    "readiness_text_bytes": 135,
+    "post_write_text_bytes": 286,
+    "readiness_live_command0_boundary": true,
+    "live_write_window_ok": true,
+    "serial_write_ok": true,
+    "ordered_command0_delivery": true
+  },
+  "allowed_terminal_classifications": [
+    "command0-live-write-window-accepted",
+    "command0-live-write-window-blocked",
+    "command0-live-write-window-inconclusive-triage-required"
+  ],
+  "selected_next_task": "phase10-pi5-command0-live-write-window-pi5-proof-20260618",
+  "rejected_claims": [
+    "command0 input delivery acceptance",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

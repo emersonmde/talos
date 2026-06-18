@@ -1,0 +1,26 @@
+{
+  "task_id": "phase10-pi5-command0-live-write-window-core-20260618",
+  "classification": "command0-live-write-window-core-local-static",
+  "selected_discriminator": "command0-live-write-window-v1",
+  "invariant": "rootinfo must be written immediately after a live fresh command=0 readiness boundary and observed as command=0 before timeout advancement",
+  "terminal_classifications": {
+    "accepted": "command0-live-write-window-accepted",
+    "blocked": "command0-live-write-window-blocked",
+    "inconclusive": "command0-live-write-window-inconclusive-triage-required"
+  },
+  "accepted_shape": [
+    "same-boot firmware-initramfs valid-artifact ready command=0 with cursor retained",
+    "live_write_window records boundary_was_live=true, write_issued_after_boundary=true, write_immediate_after_boundary=true, write_waited_for_timeout=false, no pre-write drain after boundary, and max_boundary_to_write_ms <= 5000",
+    "post-write evidence uses the same boundary cursor",
+    "serial_write text=rootinfo append_newline=true bytes=9",
+    "post-write evidence is ordered as rootinfo or line command=0, dispatch command=0 status=handled, responses=1, ready command=1"
+  ],
+  "rejected_shapes": [
+    "retained output already advanced past command=0 before rootinfo is written",
+    "delayed write after a command0 boundary",
+    "post-write output advanced to command=2 or later before ordered command0 delivery",
+    "unordered command0 line/dispatch/responses/ready output",
+    "the retained readiness-timeout-boundary rerun"
+  ],
+  "selected_next_task": "phase10-pi5-command0-live-write-window-pi5-proof-20260618"
+}

@@ -1,0 +1,163 @@
+{
+  "task_id": "phase10-pi5-command0-readiness-timeout-boundary-pi5-proof-20260618",
+  "selected_discriminator": "command0-live-write-window-v1",
+  "readiness": {
+    "action": "serial read",
+    "base64": "dGFsb3M6IGlucHV0LWVycm9yIHRpbWVvdXQNCg0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogbGluZSBjb21tYW5kPTIgaGV4PQ0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogZGlzcGF0Y2ggY29tbWFuZD0yIHN0YXR1cz1pbnB1dC1lcnJvciByZXNwb25zZXM9MSByYXctYnl0ZXM9MCB0cnVuY2F0ZWQ9ZmFsc2UgY29udHJvbHM9MA0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogZWRpdCBjb21tYW5kPTIgYmFja3NwYWNlcz0wIGRlbGV0ZXM9MA0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogcmVhZHkgY29tbWFuZD0zDQp0YWxvcz4g",
+    "bytes": 1121,
+    "cursor": 4194304,
+    "encoding": "utf-8",
+    "ok": true,
+    "text": "\n \ntalos: input-error timeout\r\n\r\nrpi5-generated-root-boot-transport-proof: line command=0 hex=\r\nrpi5-generated-root-boot-transport-proof: dispatch command=0 status=input-error responses=1 raw-bytes=0 truncated=false controls=0\r\nrpi5-generated-root-boot-transport-proof: edit command=0 backspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=1\r\ntalos> \ntalos: input-error timeout\r\n\r\nrpi5-generated-root-boot-transport-proof: line command=1 hex=\r\nrpi5-generated-root-boot-transport-proof: dispatch command=1 status=input-error responses=1 raw-bytes=0 truncated=false controls=0\r\nrpi5-generated-root-boot-transport-proof: edit command=1 backspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=2\r\ntalos> \ntalos: input-error timeout\r\n\r\nrpi5-generated-root-boot-transport-proof: line command=2 hex=\r\nrpi5-generated-root-boot-transport-proof: dispatch command=2 status=input-error responses=1 raw-bytes=0 truncated=false controls=0\r\nrpi5-generated-root-boot-transport-proof: edit command=2 backspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=3\r\ntalos> ",
+    "truncated": false,
+    "fresh_after_prompt": false,
+    "talos_runtime_readiness": {
+      "requested_timeout_seconds": 45,
+      "elapsed_seconds": 46,
+      "observe_attempts": 22,
+      "observe_contract": "deadline-loop-direct-read-stop-at-command0-readiness",
+      "capture_mode": "read",
+      "required_success_marker": "rpi5-generated-root-boot-transport-proof: ready command=0",
+      "prompt_marker": "talos>",
+      "required_kernel_marker": "TALOS: kernel_main",
+      "has_kernel_main": false,
+      "has_required_success_marker": false,
+      "has_prompt_marker": true,
+      "valid_fresh_command0_boundary": false,
+      "classification": "readiness-boundary-missing-or-stale"
+    }
+  },
+  "pre_write_boundary": {
+    "action": "serial read",
+    "base64": "dGFsb3M6IGlucHV0LWVycm9yIHRpbWVvdXQNCg0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogbGluZSBjb21tYW5kPTIgaGV4PQ0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogZGlzcGF0Y2ggY29tbWFuZD0yIHN0YXR1cz1pbnB1dC1lcnJvciByZXNwb25zZXM9MSByYXctYnl0ZXM9MCB0cnVuY2F0ZWQ9ZmFsc2UgY29udHJvbHM9MA0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogZWRpdCBjb21tYW5kPTIgYmFja3NwYWNlcz0wIGRlbGV0ZXM9MA0KcnBpNS1nZW5lcmF0ZWQtcm9vdC1ib290LXRyYW5zcG9ydC1wcm9vZjogcmVhZHkgY29tbWFuZD0zDQp0YWxvcz4g",
+    "bytes": 1121,
+    "cursor": 4194304,
+    "encoding": "utf-8",
+    "ok": true,
+    "text": "\n \ntalos: input-error timeout\r\n\r\nrpi5-generated-root-boot-transport-proof: line command=0 hex=\r\nrpi5-generated-root-boot-transport-proof: dispatch command=0 status=input-error responses=1 raw-bytes=0 truncated=false controls=0\r\nrpi5-generated-root-boot-transport-proof: edit command=0 backspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=1\r\ntalos> \ntalos: input-error timeout\r\n\r\nrpi5-generated-root-boot-transport-proof: line command=1 hex=\r\nrpi5-generated-root-boot-transport-proof: dispatch command=1 status=input-error responses=1 raw-bytes=0 truncated=false controls=0\r\nrpi5-generated-root-boot-transport-proof: edit command=1 backspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=2\r\ntalos> \ntalos: input-error timeout\r\n\r\nrpi5-generated-root-boot-transport-proof: line command=2 hex=\r\nrpi5-generated-root-boot-transport-proof: dispatch command=2 status=input-error responses=1 raw-bytes=0 truncated=false controls=0\r\nrpi5-generated-root-boot-transport-proof: edit command=2 backspaces=0 deletes=0\r\nrpi5-generated-root-boot-transport-proof: ready command=3\r\ntalos> ",
+    "truncated": false,
+    "fresh_after_prompt": false,
+    "talos_runtime_readiness": {
+      "requested_timeout_seconds": 45,
+      "elapsed_seconds": 46,
+      "observe_attempts": 22,
+      "observe_contract": "deadline-loop-direct-read-stop-at-command0-readiness",
+      "capture_mode": "read",
+      "required_success_marker": "rpi5-generated-root-boot-transport-proof: ready command=0",
+      "prompt_marker": "talos>",
+      "required_kernel_marker": "TALOS: kernel_main",
+      "has_kernel_main": false,
+      "has_required_success_marker": false,
+      "has_prompt_marker": true,
+      "valid_fresh_command0_boundary": false,
+      "classification": "readiness-boundary-missing-or-stale"
+    }
+  },
+  "serial_write": {
+    "action": "serial write",
+    "bytes": 9,
+    "ok": true,
+    "text": "rootinfo",
+    "append_newline": true
+  },
+  "post_write": {
+    "action": "serial read",
+    "base64": "",
+    "bytes": 63,
+    "cursor": 4194304,
+    "encoding": "utf-8",
+    "ok": true,
+    "text": "\n-generated-root-boot-transport-proof: ready command=4\r\ntalos> ",
+    "truncated": false,
+    "retained_text": "\n-generated-root-boot-transport-proof: ready command=4\r\ntalos> ",
+    "responses": [
+      {
+        "action": "serial read",
+        "base64": "LWdlbmVyYXRlZC1yb290LWJvb3QtdHJhbnNwb3J0LXByb29mOiByZWFkeSBjb21tYW5kPTQNCnRhbG9zPiA=",
+        "bytes": 62,
+        "cursor": 4194304,
+        "encoding": "utf-8",
+        "ok": true,
+        "text": "-generated-root-boot-transport-proof: ready command=4\r\ntalos> ",
+        "truncated": false
+      },
+      {
+        "action": "serial read",
+        "base64": "",
+        "bytes": 0,
+        "cursor": 4194304,
+        "encoding": "utf-8",
+        "ok": true,
+        "text": "",
+        "truncated": false
+      },
+      {
+        "action": "serial read",
+        "base64": "",
+        "bytes": 0,
+        "cursor": 4194304,
+        "encoding": "utf-8",
+        "ok": true,
+        "text": "",
+        "truncated": false
+      },
+      {
+        "action": "serial read",
+        "base64": "",
+        "bytes": 0,
+        "cursor": 4194304,
+        "encoding": "utf-8",
+        "ok": true,
+        "text": "",
+        "truncated": false
+      },
+      {
+        "action": "serial read",
+        "base64": "",
+        "bytes": 0,
+        "cursor": 4194304,
+        "encoding": "utf-8",
+        "ok": true,
+        "text": "",
+        "truncated": false
+      },
+      {
+        "action": "serial read",
+        "base64": "",
+        "bytes": 0,
+        "cursor": 4194304,
+        "encoding": "utf-8",
+        "ok": true,
+        "text": "",
+        "truncated": false
+      }
+    ],
+    "talos_post_write_capture": {
+      "requested_timeout_seconds": 12,
+      "elapsed_seconds": 12,
+      "observe_attempts": 6,
+      "observe_contract": "deadline-loop-direct-read-after-command0-write",
+      "capture_mode": "read",
+      "has_rootinfo": false,
+      "has_line_command0": false,
+      "has_dispatch0": false,
+      "has_responses1": false,
+      "has_ready1": false,
+      "has_command1_or_later": false,
+      "classification": "ordered-command0-delivery-missing-or-timeout-advanced"
+    }
+  },
+  "live_write_window": {
+    "boundary_cursor": 4194304,
+    "boundary_was_live": false,
+    "write_issued_after_boundary": true,
+    "write_waited_for_timeout": true,
+    "pre_write_drain_attempts_after_boundary": 1,
+    "max_boundary_to_write_ms": 46000,
+    "write_immediate_after_boundary": false
+  },
+  "source_evidence": {
+    "task": "phase10-pi5-command0-readiness-timeout-boundary-pi5-proof-20260618",
+    "path": "tasks/evidence/2026-06-18-phase10-pi5-command0-readiness-timeout-boundary-pi5-proof/candidate-readiness-timeout-boundary-rerun-20260618T030332Z/readiness-timeout-boundary-discriminator-input.json"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "task_id": "phase10-pi5-command0-live-write-window-core-20260618",
+  "replay_statuses": [
+    {
+      "fixture": "negative-delayed-write",
+      "exit_status": 1
+    },
+    {
+      "fixture": "negative-retained-readiness-timeout-boundary-rerun",
+      "exit_status": 1
+    },
+    {
+      "fixture": "negative-stale-boundary",
+      "exit_status": 1
+    },
+    {
+      "fixture": "negative-unordered-delivery",
+      "exit_status": 1
+    },
+    {
+      "fixture": "positive-live-write-window",
+      "exit_status": 0
+    }
+  ],
+  "accepted_positive": true,
+  "rejected_negative_stale_boundary": true,
+  "rejected_negative_delayed_write": true,
+  "rejected_negative_unordered_delivery": true,
+  "rejected_retained_readiness_timeout_boundary_rerun": true,
+  "retained_first_failing_invariant": "retained output already advanced past the live command0 window before write",
+  "selected_next_task": "phase10-pi5-command0-live-write-window-pi5-proof-20260618"
+}

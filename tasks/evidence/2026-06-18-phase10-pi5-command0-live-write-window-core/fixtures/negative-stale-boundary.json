@@ -1,0 +1,27 @@
+{
+  "selected_discriminator": "command0-live-write-window-v1",
+  "readiness": {
+    "fresh_after_prompt": false,
+    "cursor": 4194304,
+    "text": "talos: input-error timeout\nrpi5-generated-root-boot-transport-proof: line command=0 hex=\nrpi5-generated-root-boot-transport-proof: dispatch command=0 status=input-error responses=1 raw-bytes=0 truncated=false controls=0\nrpi5-generated-root-boot-transport-proof: ready command=1\ntalos> "
+  },
+  "live_write_window": {
+    "boundary_cursor": 4194304,
+    "boundary_was_live": false,
+    "write_issued_after_boundary": true,
+    "write_immediate_after_boundary": false,
+    "write_waited_for_timeout": true,
+    "pre_write_drain_attempts_after_boundary": 1,
+    "max_boundary_to_write_ms": 45000
+  },
+  "serial_write": {
+    "ok": true,
+    "text": "rootinfo",
+    "append_newline": true,
+    "bytes": 9
+  },
+  "post_write": {
+    "cursor": 4194304,
+    "text": "rootinfo\nrpi5-generated-root-boot-transport-proof: line command=4 hex=72 6f 6f 74 69 6e 66 6f\nrpi5-generated-root-boot-transport-proof: dispatch command=4 status=handled responses=1 raw-bytes=9 truncated=false controls=0\nrpi5-generated-root-boot-transport-proof: ready-for-next prompt=true\nrpi5-generated-root-boot-transport-proof: FAIL\n"
+  }
+}
