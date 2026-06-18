@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "Y3Rpb24rc3RkZXJyLWFyYml0cmFyeS10bXAtb3V0cHV0LXJlZGlyZWN0aW9uK2NvbWJpbmVkLXN0ZGluLXN0ZG91dC1yZWRpcmVjdGlvbitwaXBlbGluZS1jb25zdW1lci1vdXRwdXQtcmVkaXJlY3Rpb24rcGlwZWxpbmUtcHJvZHVjZXItZmlsZS1yZWRpcmVjdGlvbi1hd2F5K2JhY2tncm91bmQtdmZzLWV4ZWMtbGlmZWN5Y2xlK2pvYnMtYWNjb3VudGluZy1saXN0K211bHRpcGxlLWJhY2tncm91bmQtdmZzLWV4ZWMtcmVjb3JkcytiYWNrZ3JvdW5kLWpvYnMtc3RhbGUtZW50cnktcG9saWN5K2dlbmVyYXRlZC1yb290LW1hbmlmZXN0LXJlYWQrZ2VuZXJhdGVkLXJvb3QtZXhlY3V0YWJsZS12ZnMtZXhlYyBkZXNjcmlwdG9yLWJhY2tlZC1pbnB1dD10cnVlIGRlc2NyaXB0b3ItYmFja2VkLW91dHB1dD10cnVlDQpUQUxPUzogY29tbWFuZCBsb29wIGlvIHJlYWR5DQpycGk1LWdlbmVyYXRlZC1yb290LWJvb3QtdHJhbnNwb3J0LXByb29mOiByZWFkeSBjb21tYW5kPTANCnRhbG9zPiA=",
+  "bytes": 500,
+  "cursor": 4194304,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "ction+stderr-arbitrary-tmp-output-redirection+combined-stdin-stdout-redirection+pipeline-consumer-output-redirection+pipeline-producer-file-redirection-away+background-vfs-exec-lifecycle+jobs-accounting-list+multiple-background-vfs-exec-records+background-jobs-stale-entry-policy+generated-root-manifest-read+generated-root-executable-vfs-exec descriptor-backed-input=true descriptor-backed-output=true\r\nTALOS: command loop io ready\r\nrpi5-generated-root-boot-transport-proof: ready command=0\r\ntalos> "
+}

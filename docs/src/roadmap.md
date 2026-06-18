@@ -3200,6 +3200,27 @@ The post-review correction chain is:
     Command0 input delivery acceptance, source-response retention,
     generated-root command-input success, storage, networking, SSH, Phase 11/12
     expansion, and phase transition remain rejected.
+177. Pi 5 command0 lab-boundary retry after selected-kernel precondition
+    recovery: accepted in
+    'phase10-pi5-serial-command0-lab-boundary-after-precondition-recovery-pi5-proof-20260617'
+    with classification
+    'command0-lab-boundary-after-precondition-final-identity-regressed'. The
+    rerun retained selected-kernel/TFTP precondition evidence before command0
+    evaluation: selected tree
+    06eb7fd758522c4da95317cb6c9b6fb515612e22bbea3e291a4c2b3d13952212,
+    effective kernel kernel_2712.img, and two same-power-cycle 208984-byte
+    da591740/kernel_2712.img serves. The prearmed live read also retained
+    rootinfo reaching command 0, dispatch command=0 status=handled,
+    responses=1, and ready command=1 after /serial/write accepted 9 bytes.
+    Command0 input delivery remains unaccepted because the required final
+    pre-restore identity gate reported the baseline tree
+    a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 before
+    explicit restore. The selected follow-up is the after-precondition recovery
+    closeout
+    'phase10-pi5-serial-command0-lab-boundary-after-precondition-recovery-closeout-20260617'.
+    Source-response retention, generated-root command-input success, storage,
+    networking, SSH, Phase 11/12 expansion, and phase transition remain
+    rejected.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
