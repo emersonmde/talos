@@ -1,0 +1,11 @@
+{
+  "task_id": "phase10-pi5-command0-post-write-capture-retention-helper-core-20260618",
+  "checker": "rpi5-command0-post-write-capture-retention-discriminator-v1",
+  "fixture_replay": {
+    "pass": 10,
+    "fail": 0
+  },
+  "accepted": true,
+  "classification": "command0-post-write-capture-retention-helper-core-local-static",
+  "selected_next_task": "phase10-pi5-command0-post-write-capture-retention-pi5-proof-20260618"
+}

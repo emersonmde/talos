@@ -1,0 +1,37 @@
+{
+  "task_id": "phase10-pi5-command0-post-write-capture-retention-helper-core-20260618",
+  "checker": "rpi5-command0-post-write-capture-retention-discriminator-v1",
+  "accepted": false,
+  "classification": "command0-post-write-capture-retention-blocked",
+  "selected_discriminator": "command0-post-write-capture-retention-v1",
+  "first_failing_invariant": "stale pre-write output or timeout consumed command0 before write",
+  "contract": {
+    "selected_identity_ok": true,
+    "readiness_cursor": 4194304,
+    "post_write_cursor": 4194304,
+    "readiness_live_command0_boundary": false,
+    "live_write_window_ok": true,
+    "serial_write_ok": true,
+    "post_capture_source_ok": true,
+    "post_write_text_bytes": 247,
+    "ordered_command0_delivery": true,
+    "immediate_selected_identity_ok": true,
+    "final_pre_restore_selected_identity_ok": true,
+    "restore_ok": true
+  },
+  "allowed_terminal_classifications": [
+    "command0-post-write-capture-retention-accepted",
+    "command0-post-write-capture-retention-blocked",
+    "command0-post-write-capture-retention-inconclusive-triage-required"
+  ],
+  "selected_next_task": null,
+  "rejected_claims": [
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

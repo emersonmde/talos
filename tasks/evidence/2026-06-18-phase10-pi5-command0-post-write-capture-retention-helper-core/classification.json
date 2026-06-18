@@ -1,0 +1,50 @@
+{
+  "task_id": "phase10-pi5-command0-post-write-capture-retention-helper-core-20260618",
+  "classification": "command0-post-write-capture-retention-helper-core-local-static",
+  "accepted": true,
+  "command0_input_delivery_accepted": false,
+  "source_response_retention_v3_selected": false,
+  "selected_next_task": "phase10-pi5-command0-post-write-capture-retention-pi5-proof-20260618",
+  "planning_needed": false,
+  "helper": "scripts/rpi5-command0-post-write-capture-retention-discriminator.sh",
+  "checker": "rpi5-command0-post-write-capture-retention-discriminator-v1",
+  "fixture_replay": {
+    "summary": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-helper-core/results/fixture-replay-summary.json",
+    "results": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-helper-core/results/fixture-replay-results.txt",
+    "pass": 10,
+    "fail": 0
+  },
+  "terminal_classifications": [
+    "command0-post-write-capture-retention-accepted",
+    "command0-post-write-capture-retention-blocked",
+    "command0-post-write-capture-retention-inconclusive-triage-required"
+  ],
+  "accepted_contract": [
+    "same-attempt selected-kernel/TFTP identity",
+    "fresh command=0 boundary with retained cursor and no pre-write command0 consumption",
+    "immediate rootinfo serial write tied to the saved fresh boundary",
+    "bounded post-write capture from the saved boundary cursor or direct-read equivalent when saturated",
+    "ordered rootinfo or line command=0, dispatch command=0 status=handled, responses=1, and ready command=1 before command advancement beyond 1",
+    "immediate selected identity, final pre-restore selected identity, and restore proof"
+  ],
+  "negative_fixture_coverage": [
+    "byte-ack-only rejection",
+    "empty/two-byte post-write capture rejection",
+    "stale pre-write output rejection",
+    "unordered output rejection",
+    "timeout or command advancement rejection",
+    "source-response-only rejection",
+    "missing selected identity inconclusive classification",
+    "missing restore proof inconclusive classification"
+  ],
+  "rejected_claims": [
+    "command0 input delivery acceptance",
+    "source-response retention",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

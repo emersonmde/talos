@@ -1,0 +1,44 @@
+{
+  "selected_discriminator": "command0-post-write-capture-retention-v1",
+  "selected_identity": {
+    "selected_kernel_tftp_ok": false,
+    "same_attempt_selected_identity": false,
+    "tftp_delta_selected": false
+  },
+  "readiness": {
+    "fresh_after_prompt": true,
+    "cursor": 4194304,
+    "text": "talos: generated-root source=firmware-initramfs reason=valid-artifact\nrpi5-generated-root-boot-transport-proof: ready command=0\ntalos> "
+  },
+  "live_write_window": {
+    "boundary_cursor": 4194304,
+    "boundary_was_live": true,
+    "write_issued_after_boundary": true,
+    "write_immediate_after_boundary": true,
+    "write_waited_for_timeout": false,
+    "pre_write_drain_attempts_after_boundary": 0,
+    "max_boundary_to_write_ms": 50
+  },
+  "serial_write": {
+    "ok": true,
+    "text": "rootinfo",
+    "append_newline": true,
+    "bytes": 9
+  },
+  "post_write": {
+    "cursor": 4194304,
+    "capture_mode": "serial/observe",
+    "capture_from_saved_boundary": true,
+    "text": "rootinfo\nrpi5-generated-root-boot-transport-proof: line command=0 hex=72 6f 6f 74 69 6e 66 6f\nrpi5-generated-root-boot-transport-proof: dispatch command=0 status=handled responses=1\nrpi5-generated-root-boot-transport-proof: ready command=1\ntalos> "
+  },
+  "immediate_identity": {
+    "selected_identity_ok": true
+  },
+  "final_pre_restore_identity": {
+    "selected_identity_ok": true
+  },
+  "restore": {
+    "ok": true,
+    "baseline_restored": true
+  }
+}

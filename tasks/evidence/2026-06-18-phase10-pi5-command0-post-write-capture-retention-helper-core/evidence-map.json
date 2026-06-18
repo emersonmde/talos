@@ -1,0 +1,26 @@
+{
+  "task_id": "phase10-pi5-command0-post-write-capture-retention-helper-core-20260618",
+  "evidence_level": "local/static helper implementation, shell syntax check, positive and negative fixture replay, task-owned JSON evidence, and diff checks",
+  "source_contract": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-source-contract/classification.json",
+  "helper": "scripts/rpi5-command0-post-write-capture-retention-discriminator.sh",
+  "proof_contract": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-helper-core/proof-contract.json",
+  "classification": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-helper-core/classification.json",
+  "fixture_results": {
+    "summary": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-helper-core/results/fixture-replay-summary.json",
+    "log": "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-helper-core/results/fixture-replay-results.txt",
+    "fixtures": [
+      "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-helper-core/fixtures/positive-saved-cursor-observe.json",
+      "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-helper-core/fixtures/positive-direct-read-equivalent.json",
+      "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-helper-core/fixtures/negative-byte-ack-only.json",
+      "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-helper-core/fixtures/negative-two-byte-post-write.json",
+      "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-helper-core/fixtures/negative-stale-pre-write-output.json",
+      "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-helper-core/fixtures/negative-unordered-output.json",
+      "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-helper-core/fixtures/negative-timeout-command-advancement.json",
+      "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-helper-core/fixtures/negative-source-response-only.json",
+      "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-helper-core/fixtures/negative-missing-selected-identity.json",
+      "tasks/evidence/2026-06-18-phase10-pi5-command0-post-write-capture-retention-helper-core/fixtures/negative-missing-restore-proof.json"
+    ]
+  },
+  "selected_next_task": "phase10-pi5-command0-post-write-capture-retention-pi5-proof-20260618",
+  "hardware": "not-run; helper-core is local/static only"
+}

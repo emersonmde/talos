@@ -1,0 +1,30 @@
+{
+  "task_id": "phase10-pi5-command0-post-write-capture-retention-helper-core-20260618",
+  "classification": "command0-post-write-capture-retention-helper-core-local-static",
+  "selected_discriminator": "command0-post-write-capture-retention-v1",
+  "invariant": "ordered command0 output must be retained from the same fresh command0 boundary after the immediate rootinfo write, with selected identity and restore proof retained",
+  "terminal_classifications": {
+    "accepted": "command0-post-write-capture-retention-accepted",
+    "blocked": "command0-post-write-capture-retention-blocked",
+    "inconclusive": "command0-post-write-capture-retention-inconclusive-triage-required"
+  },
+  "accepted_shape": [
+    "same-attempt selected-kernel/TFTP identity is retained before restore",
+    "fresh firmware-initramfs valid-artifact ready command=0 boundary is retained with a cursor and no pre-write command0 consumption",
+    "rootinfo write is immediate, live, append_newline=true, bytes=9, and tied to the saved command0 boundary cursor",
+    "post-write capture is either from the saved boundary cursor or a direct-read equivalent for a saturated cursor",
+    "post-write capture retains rootinfo or line command=0, dispatch command=0 status=handled, responses=1, and ready command=1 in order before command advancement beyond 1",
+    "immediate selected identity, final pre-restore selected identity, and post-run baseline restore proof are retained"
+  ],
+  "rejected_shapes": [
+    "serial write byte acknowledgement alone",
+    "empty or two-byte post-write capture",
+    "stale pre-write output that already consumed command0",
+    "unordered command0 output",
+    "timeout or command advancement before ordered command0 delivery",
+    "source-response-only evidence",
+    "missing selected-kernel/TFTP identity",
+    "missing restore proof"
+  ],
+  "selected_next_task": "phase10-pi5-command0-post-write-capture-retention-pi5-proof-20260618"
+}
