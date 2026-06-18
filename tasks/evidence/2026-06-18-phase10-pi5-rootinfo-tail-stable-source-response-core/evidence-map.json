@@ -1,0 +1,27 @@
+{
+  "task_id": "phase10-pi5-rootinfo-tail-stable-source-response-core-20260618",
+  "evidence_level": [
+    "static source inspection",
+    "QEMU/no_std unit tests",
+    "proof-helper fixture evidence",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "source_files": [
+    "src/local_command_loop.rs",
+    "scripts/rpi5-command0-tail-stable-source-response-discriminator.sh",
+    "scripts/rpi5-generated-root-command-input-direct-read-proof-review.sh",
+    "scripts/rpi5-generated-root-command-input-proof-review.sh"
+  ],
+  "validation": {
+    "cargo_fmt_check": "pass",
+    "cargo_json_target_spec_test_quiet": "pass after rerun with QEMU PATH; 532 no_std tests",
+    "proof_helper_positive_negative_fixtures": "pass",
+    "jq_empty_task_owned_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "selected_next_task": "phase10-pi5-rootinfo-tail-stable-source-response-pi5-proof-20260618"
+}

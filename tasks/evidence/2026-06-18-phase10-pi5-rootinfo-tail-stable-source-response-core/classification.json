@@ -1,0 +1,31 @@
+{
+  "task_id": "phase10-pi5-rootinfo-tail-stable-source-response-core-20260618",
+  "classification": "command0-tail-stable-source-response-core-local-source",
+  "accepted": true,
+  "selected_next_task": "phase10-pi5-rootinfo-tail-stable-source-response-pi5-proof-20260618",
+  "source_response_hardware_accepted": false,
+  "generated_root_command_input_success": false,
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "rootinfo source/reason fields now appear at the tail of the generated-root response line"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "same-command0 source-response discriminator rejects dispatch-only, source-only, later-command, stale, truncated, and non-UTF8 evidence"
+    },
+    {
+      "disposition": "deferred",
+      "finding": "serialized Pi 5 source-response acceptance remains for the selected hardware proof"
+    }
+  ],
+  "rejected_claims": [
+    "source-response hardware acceptance",
+    "generated-root command-input success",
+    "storage",
+    "networking",
+    "SSH",
+    "Phase 11/12 expansion",
+    "phase transition"
+  ]
+}

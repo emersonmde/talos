@@ -234,21 +234,24 @@ if [ -n "$EVIDENCE_JSON" ]; then
           and (
             direct_read_text(0) as $text
             | first_index($text; [$prelude_command, $prelude_command_line_hex]) as $line_pos
-            | ($text | index("talos: generated-root source=firmware-initramfs")) as $source_pos
+            | ($text | index("talos: generated-root")) as $rootinfo_response_pos
+            | ($text | index("source=firmware-initramfs")) as $source_pos
             | ($text | index("reason=valid-artifact")) as $reason_pos
             | ($text | index("dispatch command=0 status=handled")) as $dispatch_pos
             | ($text | index("responses=1")) as $responses_pos
             | ($text | index("ready command=1")) as $ready_pos
             | ($text | index("dispatch command=1 status=input-error")) as $next_timeout_pos
             | $line_pos != null
+              and $rootinfo_response_pos != null
               and $source_pos != null
               and $reason_pos != null
               and $dispatch_pos != null
               and $responses_pos != null
               and $ready_pos != null
-              and $line_pos < $source_pos
+              and $rootinfo_response_pos <= $source_pos
               and $source_pos <= $reason_pos
               and $reason_pos < $dispatch_pos
+              and $line_pos < $dispatch_pos
               and $dispatch_pos <= $responses_pos
               and $responses_pos < $ready_pos
               and ($next_timeout_pos == null or $ready_pos < $next_timeout_pos)
@@ -262,21 +265,24 @@ if [ -n "$EVIDENCE_JSON" ]; then
           and (
             text_of(.) as $text
             | first_index($text; [$prelude_command, $prelude_command_line_hex]) as $line_pos
-            | ($text | index("talos: generated-root source=firmware-initramfs")) as $source_pos
+            | ($text | index("talos: generated-root")) as $rootinfo_response_pos
+            | ($text | index("source=firmware-initramfs")) as $source_pos
             | ($text | index("reason=valid-artifact")) as $reason_pos
             | ($text | index("dispatch command=0 status=handled")) as $dispatch_pos
             | ($text | index("responses=1")) as $responses_pos
             | ($text | index("ready command=1")) as $ready_pos
             | ($text | index("dispatch command=1 status=input-error")) as $next_timeout_pos
             | $line_pos != null
+              and $rootinfo_response_pos != null
               and $source_pos != null
               and $reason_pos != null
               and $dispatch_pos != null
               and $responses_pos != null
               and $ready_pos != null
-              and $line_pos < $source_pos
+              and $rootinfo_response_pos <= $source_pos
               and $source_pos <= $reason_pos
               and $reason_pos < $dispatch_pos
+              and $line_pos < $dispatch_pos
               and $dispatch_pos <= $responses_pos
               and $responses_pos < $ready_pos
               and ($next_timeout_pos == null or $ready_pos < $next_timeout_pos)
@@ -457,7 +463,7 @@ jq -n \
         serial_capture_readiness: {
           guard: "serial-capture-readiness-guard-v1",
           required_fragments: [
-            "talos: generated-root source=firmware-initramfs",
+            "talos: generated-root ... source=firmware-initramfs",
             "reason=valid-artifact",
             "rpi5-generated-root-boot-transport-proof: ready command=0",
             "talos> "
@@ -529,7 +535,8 @@ jq -n \
         command0_source_response_retention: {
           required_ordered_fragments: [
             ($prelude_command + " or " + $prelude_command_line_hex),
-            "talos: generated-root source=firmware-initramfs",
+            "talos: generated-root",
+            "source=firmware-initramfs",
             "reason=valid-artifact",
             "dispatch command=0 status=handled",
             "responses=1",

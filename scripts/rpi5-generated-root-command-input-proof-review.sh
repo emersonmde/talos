@@ -121,7 +121,7 @@ jq -n \
               cursor: "saved command=0 post-prompt cursor",
               required_response_fragments: [
                 $prelude_command,
-                "talos: generated-root source=firmware-initramfs reason=valid-artifact",
+                "talos: generated-root ... source=firmware-initramfs reason=valid-artifact",
                 "dispatch command=0 status=handled",
                 "responses=1",
                 "rpi5-generated-root-boot-transport-proof: ready command=1"

@@ -4029,11 +4029,7 @@ fn write_generated_root_selection_line(
     response_lines: &mut usize,
 ) -> Result<(), LocalCommandCycleError> {
     let report = initramfs::generated_root_selection_report();
-    write_str_part(sink, "talos: generated-root source=")?;
-    write_str_part(sink, report.source)?;
-    write_str_part(sink, " reason=")?;
-    write_str_part(sink, report.reason)?;
-    write_str_part(sink, " digest=")?;
+    write_str_part(sink, "talos: generated-root digest=")?;
     write_hex_u64_part(sink, report.digest)?;
     write_str_part(sink, " total-len=")?;
     write_hex_usize_part(sink, report.total_len)?;
@@ -4045,6 +4041,10 @@ fn write_generated_root_selection_line(
     write_byte_path_part(sink, initramfs::GENERATED_ROOT_FILE_PATH)?;
     write_str_part(sink, " exec-path=")?;
     write_byte_path_part(sink, initramfs::GENERATED_ROOT_EXEC_PATH)?;
+    write_str_part(sink, " source=")?;
+    write_str_part(sink, report.source)?;
+    write_str_part(sink, " reason=")?;
+    write_str_part(sink, report.reason)?;
     finish_dynamic_line(sink, response_lines)
 }
 
@@ -5272,6 +5272,29 @@ generated\n"
             backend.as_str(),
             "talos> Talos generated-root manifest fixture\n"
         );
+    }
+
+    #[test_case]
+    fn local_command_loop_reports_generated_root_source_reason_in_tail_stable_position() {
+        initramfs::install_external_generated_root_fallback("tail-stable-unit-test");
+        let input = ScriptedInput::new(*b"rootinfo\r", 9);
+        let mut backend = CaptureSink::new();
+        let result = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            run_one_descriptor_backed_serial_command(&mut io).unwrap()
+        };
+        let output = backend.as_str();
+
+        assert_eq!(result.line(), b"rootinfo");
+        assert_eq!(result.status(), LocalCommandStatus::Handled);
+        assert_eq!(result.response_lines(), 1);
+        assert!(output.starts_with("talos> talos: generated-root digest=0x"));
+        assert!(output.contains(" path=/generated/manifest.txt exec-path=/generated/status7"));
+        assert!(output.ends_with(" source=compiled-fallback reason=tail-stable-unit-test\n"));
+        let path_pos = output.find(" path=").expect("path marker");
+        let source_pos = output.find(" source=").expect("source marker");
+        assert!(path_pos < source_pos);
     }
 
     #[test_case]
