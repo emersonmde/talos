@@ -12525,6 +12525,21 @@ Same-shaped polling, bare BMCR restart retry, convergence wait tuning, and
 marker/capture-only retry remain rejected. planningNeeded remains true and no
 next worker task is selected from this pause closeout.
 
+phase12-rp1-ethernet-bcm54213pe-link-not-ready-discriminator-selection-20260618
+accepts bcm54213pe-link-not-ready-master-mode-gate-source-contract-selected.
+The selected discriminator is
+bcm54213pe-phy1-mii-ctrl1000-master-mode-gate-source-contract, and the selected
+next task is
+phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-source-contract-core-20260618.
+This is a local/static source-contract boundary only: retained Linux source
+backs the BCM54213PE MII_CTRL1000 master-mode write path through
+PHY_BRCM_EN_MASTER_MODE, CTL1000_AS_MASTER, and CTL1000_ENABLE_MASTER, but no
+runtime PHY write or hardware proof is authorized until a follow-up contract is
+accepted. GPIO32 reset, interrupt/APD/EEE/lifecycle/MAC-phylink work, packet
+I/O, networking, SSH, Phase 12.2, phase transition, and same-shaped
+timeout/status/restart/poll/capture retries remain rejected from this
+selection.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

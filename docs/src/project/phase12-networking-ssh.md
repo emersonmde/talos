@@ -2377,3 +2377,20 @@ selected_next_task are null. GPIO32 / ETH_RST_N reset ownership, MII_CTRL1000
 master-mode writes, interrupts, APD/EEE/lifecycle, MAC/phylink, packet I/O,
 networking, sockets, SSH, Phase 12.2, and phase transition all require future
 supervisor-planned scope.
+
+phase12-rp1-ethernet-bcm54213pe-link-not-ready-discriminator-selection-20260618
+accepts bcm54213pe-link-not-ready-master-mode-gate-source-contract-selected.
+The selection reopens Phase 12.1 only for a local/static BCM54213PE source
+contract, not for hardware. The selected discriminator is
+bcm54213pe-phy1-mii-ctrl1000-master-mode-gate-source-contract, with selected
+next task
+phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-source-contract-core-20260618.
+Linux source backs the narrow candidate through bcm54xx_config_init ->
+bcm54213pe_config_init -> bcm54210e_config_init, where
+PHY_BRCM_EN_MASTER_MODE gates a PHY1 MII_CTRL1000 read/modify/write that sets
+CTL1000_AS_MASTER and CTL1000_ENABLE_MASTER. The next task must keep this as
+source/static contract work and may pause or block if the gate cannot be
+safely selected. GPIO32 / ETH_RST_N reset, interrupts, APD/EEE/lifecycle,
+MAC/phylink, packet I/O, networking, sockets, SSH, Phase 12.2, phase
+transition, and same-shaped timeout/status/restart/poll/capture retries remain
+rejected from this selection.

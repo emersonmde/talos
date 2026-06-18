@@ -1,0 +1,139 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-link-not-ready-discriminator-selection-20260618",
+  "status": "accepted",
+  "classification": "bcm54213pe-link-not-ready-master-mode-gate-source-contract-selected",
+  "evidence_level": [
+    "static/source/task evidence review",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_input_frontier": {
+    "post_generated_root_closeout": {
+      "task_id": "phase12-rp1-ethernet-post-generated-root-link-not-ready-pause-closeout-20260618",
+      "commit": "af8a22f91ac20bbbe653bc5b4361c54cc521014d",
+      "classification": "post-generated-root-link-not-ready-frontier-paused-planning-required"
+    },
+    "bcm54213pe_timeout_frontier": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-link-not-ready-frontier-pause-closeout-20260616",
+      "classification": "bcm54213pe-link-not-ready-frontier-paused-return-to-generated-root-transport",
+      "terminal_facts": {
+        "link_ready": false,
+        "autoneg_complete": false,
+        "packet_io_accepted": false
+      }
+    }
+  },
+  "selected_discriminator": "bcm54213pe-phy1-mii-ctrl1000-master-mode-gate-source-contract",
+  "selected_next_task": "phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-source-contract-core-20260618",
+  "planning_needed": false,
+  "source_owners": [
+    "linux-rpi-6.12 Broadcom PHY driver bcm54xx_config_init -> bcm54213pe_config_init -> bcm54210e_config_init",
+    "PHY_BRCM_EN_MASTER_MODE gate",
+    "PHY1 MII_CTRL1000 CTL1000_AS_MASTER and CTL1000_ENABLE_MASTER write path"
+  ],
+  "selected_contract": {
+    "allowed_next_task_operations": [
+      "local/static source-contract work",
+      "encode PHY1 MII_CTRL1000 master-mode gate candidate/control surfaces",
+      "name write intent, restore or rollback expectations, terminal classifications, and rejected claims",
+      "reject unselected GPIO32 reset, interrupt, APD/EEE/lifecycle, MAC/phylink, packet, networking, SSH, Phase 12.2, and phase-transition claims"
+    ],
+    "forbidden_by_selection": [
+      "hardwareTestLock acquisition",
+      "Pi 5 hardware run",
+      "boot archive publication",
+      "lab mutation",
+      "runtime PHY register write",
+      "GPIO32 or ETH_RST_N action",
+      "interrupt acknowledgement or configuration",
+      "APD/EEE/lifecycle write",
+      "MACB/phylink configuration",
+      "packet I/O",
+      "networking",
+      "sockets",
+      "SSH",
+      "Phase 12.2",
+      "phase transition"
+    ],
+    "expected_terminal_classifications": [
+      "bcm54213pe-mii-ctrl1000-master-mode-source-contract-core-local-static",
+      "bcm54213pe-mii-ctrl1000-master-mode-source-contract-paused",
+      "bcm54213pe-mii-ctrl1000-master-mode-source-contract-blocked",
+      "no-mdio-no-ethernet-bcm54213pe-mii-ctrl1000-master-mode-control"
+    ],
+    "distinctness": "MII_CTRL1000 master-mode gate is a retained BCM54213PE config_init write family adjacent to gigabit master/slave negotiation, not another passive status sample, BMCR restart, convergence wait tweak, or capture retry."
+  },
+  "candidate_dispositions": [
+    {
+      "candidate": "GPIO32/ETH_RST_N reset ownership",
+      "disposition": "blocked",
+      "reason": "accepted persistent-or-firmware-owned GPIO32 event-state blocker still controls reset risk"
+    },
+    {
+      "candidate": "MII_CTRL1000 master-mode gate",
+      "disposition": "fixed/selected",
+      "reason": "source-backed by BCM54210E/BCM54213PE config_init and selected only for local/static source-contract work"
+    },
+    {
+      "candidate": "interrupt ISR/IMR/ECR",
+      "disposition": "deferred",
+      "reason": "ISR reads may acknowledge interrupts and IMR/ECR writes are interrupt ownership"
+    },
+    {
+      "candidate": "APD/EEE/LED/WOL/suspend-resume lifecycle",
+      "disposition": "deferred",
+      "reason": "broader PHY lifecycle or power-management path requiring separate source contracts"
+    },
+    {
+      "candidate": "MAC/phylink",
+      "disposition": "deferred",
+      "reason": "crosses into MAC configuration and link management beyond this PHY source-contract selection"
+    },
+    {
+      "candidate": "same-shaped status/restart/poll/capture retry",
+      "disposition": "rejected",
+      "reason": "repeats accepted timeout/link-not-ready evidence"
+    },
+    {
+      "candidate": "packet I/O, networking, sockets, SSH, Phase 12.2, phase transition",
+      "disposition": "rejected",
+      "reason": "link-ready/autoneg-complete and lower-level ownership remain unaccepted"
+    }
+  ],
+  "new_public_source_excerpts": [],
+  "retained_source_checksums": [
+    {
+      "path": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract/source/linux-rpi-6.12-broadcom-bcm54213pe-config-contract-excerpt.txt",
+      "sha256": "c745a529512ef69185ba7f2712079e66b5d9efbdb963eb194ec91291fc297aa6"
+    },
+    {
+      "path": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract/source/linux-rpi-6.12-brcmphy-register-contract-excerpt.txt",
+      "sha256": "b4a5d4d3272d53f0898179307e66ae50947fe94b25b72193868e7118a8d7adf6"
+    },
+    {
+      "path": "tasks/evidence/2026-06-16-phase12-rp1-ethernet-bcm54213pe-readonly-preflight-source-contract/source/linux-rpi-6.12-mii-register-readonly-preflight-excerpt.txt",
+      "sha256": "4d2651ed1c2f4f9ae70d6439bdcd704d0f589bef154f553e14f5554027221662"
+    }
+  ],
+  "rejected_claims": [
+    "link-ready",
+    "autoneg-complete",
+    "ethernet-driver-readiness",
+    "gpio32-phy-reset-ownership",
+    "interrupt-ownership",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition"
+  ],
+  "validation": {
+    "static_source_task_evidence_review": "pass",
+    "jq_task_owned_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  }
+}
