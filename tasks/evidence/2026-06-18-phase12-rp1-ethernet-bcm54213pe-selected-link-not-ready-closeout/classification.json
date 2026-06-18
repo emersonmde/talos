@@ -1,0 +1,68 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-closeout-20260618",
+  "status": "accepted",
+  "classification": "bcm54213pe-master-mode-write-readback-frontier-paused-planning-required",
+  "evidence_level": [
+    "static/task evidence review",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "input_classification": "mii-ctrl1000-master-mode-write-readback-visible",
+  "selected_discriminator": "bcm54213pe-phy1-mii-ctrl1000-master-mode-gate-source-contract",
+  "accepted_observations": {
+    "ctrl1000_pre_raw": "0x0200",
+    "ctrl1000_write_value": "0x1a00",
+    "ctrl1000_readback_raw": "0x1a00",
+    "ctrl1000_pre_read_completed": true,
+    "ctrl1000_write_completed": true,
+    "ctrl1000_readback_completed": true,
+    "candidate_rerun_tree_hash": "515684b45744c6c89847652c1b34d643a850094d4da3101207fa3b4462d00784",
+    "candidate_rerun_kernel_2712_bytes": 50936,
+    "control_classification": "no-mdio-no-ethernet-bcm54213pe-mii-ctrl1000-master-mode-control"
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Selected BCM54213PE MII_CTRL1000 master-mode write/readback is visible on Pi 5 with selected-tree, TFTP, serial freshness, final identity, and restore evidence."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Paired no-MDIO/no-Ethernet control evidence is retained."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Link-ready and autoneg-complete remain unaccepted."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "Packet I/O, networking, SSH, Phase 12.2, and phase transition are not mechanically unblocked."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "Same-shaped timeout/status/restart/poll/capture retries remain non-progress without a new accepted discriminator."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No hardware lock or inconclusive-run triage was required for this static closeout."
+    }
+  ],
+  "rejected_claims": [
+    "link-ready",
+    "autoneg-complete",
+    "packet-io",
+    "networking",
+    "sockets",
+    "ssh",
+    "phase-12-2",
+    "phase-transition",
+    "gpio32-reset-action",
+    "interrupt-ownership",
+    "apd-eee-lifecycle",
+    "mac-phylink-configuration",
+    "same-shaped-status-restart-poll-retry"
+  ],
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "The selected BCM54213PE MII_CTRL1000 proof establishes a PHY configuration write/readback boundary but does not accept link-ready, autoneg-complete, packet I/O, networking, SSH, Phase 12.2, or any exact next discriminator. Supervisor planning is required before further Phase 12.1 Ethernet work."
+}

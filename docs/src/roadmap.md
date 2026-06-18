@@ -3505,6 +3505,50 @@ The post-review correction chain is:
     discriminator core, hardware proof, reset, interrupt, packet I/O,
     networking, SSH, Phase 12.2, or phase-transition work.
 
+195. Phase 12 BCM54213PE link-not-ready discriminator selection: accepted in
+    'phase12-rp1-ethernet-bcm54213pe-link-not-ready-discriminator-selection-20260618'
+    with classification
+    'bcm54213pe-link-not-ready-master-mode-gate-source-contract-selected'.
+    The selected discriminator is
+    'bcm54213pe-phy1-mii-ctrl1000-master-mode-gate-source-contract', grounded in
+    Linux Broadcom PHY source where PHY_BRCM_EN_MASTER_MODE gates a PHY1
+    MII_CTRL1000 master-mode read/modify/write. This selection authorizes only
+    the local/static source-contract core follow-up and rejects GPIO32/PHY reset,
+    interrupts, APD/EEE/lifecycle, MAC/phylink, packet I/O, networking, SSH,
+    Phase 12.2, phase transition, and same-shaped retries.
+
+196. Phase 12 selected BCM54213PE MII_CTRL1000 source-contract core: accepted in
+    'phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-source-contract-core-20260618'
+    with classification
+    'bcm54213pe-mii-ctrl1000-master-mode-source-contract-core-local-static'.
+    The core records the selected candidate/control report surface: PHY1
+    MII_CTRL1000 0x09 pre-read, MAN read frame 0x60a60000, write prefix
+    0x50a60000, CTL1000_AS_MASTER 0x0800, CTL1000_ENABLE_MASTER 0x1000,
+    accepted pre-value 0x0200, expected write value 0x1a00, and expected write
+    frame 0x50a61a00. The next task is only the serialized Pi 5 proof with
+    selected-tree/TFTP/serial/final-identity/restore evidence.
+
+197. Phase 12 selected BCM54213PE MII_CTRL1000 Pi 5 proof: accepted in
+    'phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof-20260618'
+    with classification 'mii-ctrl1000-master-mode-write-readback-visible'. The
+    decisive candidate rerun retained selected tree
+    515684b45744c6c89847652c1b34d643a850094d4da3101207fa3b4462d00784,
+    same-power-cycle 50936-byte TFTP serves, fresh serial nonce evidence, final
+    pre-restore identity, and restore proof. It observed PHY1 MII_CTRL1000
+    pre-read 0x0200, write value 0x1a00, and readback 0x1a00. The proof does
+    not accept link-ready, autoneg-complete, packet I/O, networking, SSH,
+    Phase 12.2, or phase transition.
+
+198. Phase 12 selected BCM54213PE link-not-ready closeout: accepted in
+    'phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-closeout-20260618'
+    with classification
+    'bcm54213pe-master-mode-write-readback-frontier-paused-planning-required'.
+    The current Phase 12.1 frontier is hardware-visible MII_CTRL1000
+    master-mode write/readback only. selected_next_task is null,
+    planningNeeded=true, and supervisor planning is required before any further
+    Phase 12.1 hardware action, packet I/O, networking, SSH, Phase 12.2, or
+    phase-transition work.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed

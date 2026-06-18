@@ -1,0 +1,28 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-closeout-20260618",
+  "classification": "bcm54213pe-master-mode-write-readback-frontier-paused-planning-required",
+  "task_record": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-closeout.md",
+  "classification_json": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-closeout/classification.json",
+  "input_tasks": {
+    "selection": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-link-not-ready-discriminator-selection.md",
+    "source_contract_core": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-source-contract-core.md",
+    "pi5_proof": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof.md"
+  },
+  "input_evidence": {
+    "source_contract_classification": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-source-contract-core/classification.json",
+    "pi5_proof_classification": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/classification.json",
+    "pi5_proof_evidence_map": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/evidence-map.json",
+    "pi5_proof_hardware_summary": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/hardware-run-summary.json",
+    "candidate_rerun_capture_summary": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/candidate-rerun/capture-invariant-summary.json",
+    "candidate_rerun_tftp_delta": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/candidate-rerun/tftp-delta-stable-pre-restore.json",
+    "candidate_rerun_serial_freshness": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/candidate-rerun/serial-freshness-guard.json",
+    "candidate_rerun_final_identity": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/candidate-rerun/final-pre-restore-boot-files.json",
+    "final_restore_proof": "tasks/evidence/2026-06-18-phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof/final-post-rerun-restore-boot-files.json"
+  },
+  "docs_updated": [
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "selected_next_task": null,
+  "planningNeeded": true
+}

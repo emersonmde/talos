@@ -2410,3 +2410,26 @@ restore, paired control, and post-hardware review evidence before any runtime
 claim can be accepted. Link-ready, autoneg-complete, packet I/O, networking,
 SSH, Phase 12.2, phase transition, and same-shaped retry claims remain
 rejected.
+
+phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-pi5-proof-20260618
+accepts mii-ctrl1000-master-mode-write-readback-visible. The decisive candidate
+rerun retained selected tree
+515684b45744c6c89847652c1b34d643a850094d4da3101207fa3b4462d00784,
+same-power-cycle 50936-byte TFTP serves, fresh serial nonce evidence, final
+pre-restore identity, and restore proof. It observed PHY1 MII_CTRL1000 pre-read
+0x0200, write value 0x1a00, and readback 0x1a00. The paired control retained
+the no-MDIO/no-Ethernet classification. This proves only the selected
+MII_CTRL1000 master-mode write/readback boundary; link-ready, autoneg-complete,
+GPIO32/PHY reset ownership, interrupts, APD/EEE/lifecycle, MAC/phylink, packet
+I/O, networking, sockets, SSH, Phase 12.2, phase transition, and same-shaped
+status/restart/poll/capture retries remain rejected.
+
+phase12-rp1-ethernet-bcm54213pe-selected-link-not-ready-closeout-20260618
+accepts
+bcm54213pe-master-mode-write-readback-frontier-paused-planning-required. The
+closeout reconciles the selected source/core and Pi 5 proof into the current
+Phase 12.1 frontier: MII_CTRL1000 master-mode write/readback is hardware
+visible, but no next Ethernet task is mechanically unblocked. selected_next_task
+is null, planningNeeded=true, and supervisor planning is required before any
+future Phase 12.1 hardware action, packet I/O, networking, SSH, Phase 12.2, or
+phase transition.
