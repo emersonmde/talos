@@ -12777,8 +12777,12 @@ Milestone 12.3: IP Stack
   boundary that receives into caller-owned storage, dispatches through the local
   packet-dispatch path, and transmits from caller-owned storage only when a
   reply is produced.
-- Implement driver adapters, packet queues, ARP cache, UDP/TCP, and socket
-  integration in later bounded tasks.
+- Local source/test progress is accepted for a fixed-capacity, allocation-free
+  ARP neighbor cache with deterministic lookup, insert/update, oldest-slot
+  replacement, zero-capacity no-state-change behavior, and sender learning from
+  valid Ethernet/IPv4 ARP requests and replies.
+- Implement driver adapters, packet queues, ARP-cache dispatch integration,
+  UDP/TCP, and socket integration in later bounded tasks.
 
 Acceptance criteria:
 

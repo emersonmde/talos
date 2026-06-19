@@ -234,6 +234,107 @@ impl ArpPacket {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct ArpNeighbor {
+    ipv4: [u8; 4],
+    mac: MacAddress,
+}
+
+impl ArpNeighbor {
+    pub(crate) const fn new(ipv4: [u8; 4], mac: MacAddress) -> Self {
+        Self { ipv4, mac }
+    }
+
+    pub(crate) const fn ipv4(self) -> [u8; 4] {
+        self.ipv4
+    }
+
+    pub(crate) const fn mac(self) -> MacAddress {
+        self.mac
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum ArpCacheUpdate {
+    Inserted,
+    Updated,
+    Replaced(ArpNeighbor),
+    NoCapacity,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct ArpCache<const CAPACITY: usize> {
+    entries: [Option<ArpNeighbor>; CAPACITY],
+    next_replacement: usize,
+}
+
+impl<const CAPACITY: usize> ArpCache<CAPACITY> {
+    pub(crate) const fn new() -> Self {
+        Self {
+            entries: [None; CAPACITY],
+            next_replacement: 0,
+        }
+    }
+
+    pub(crate) fn lookup(&self, ipv4: [u8; 4]) -> Option<MacAddress> {
+        self.entries
+            .iter()
+            .flatten()
+            .find(|neighbor| neighbor.ipv4() == ipv4)
+            .map(|neighbor| neighbor.mac())
+    }
+
+    pub(crate) fn insert_or_update(&mut self, ipv4: [u8; 4], mac: MacAddress) -> ArpCacheUpdate {
+        let neighbor = ArpNeighbor::new(ipv4, mac);
+
+        if let Some(entry) = self
+            .entries
+            .iter_mut()
+            .flatten()
+            .find(|entry| entry.ipv4() == ipv4)
+        {
+            *entry = neighbor;
+            return ArpCacheUpdate::Updated;
+        }
+
+        if let Some(entry) = self.entries.iter_mut().find(|entry| entry.is_none()) {
+            *entry = Some(neighbor);
+            return ArpCacheUpdate::Inserted;
+        }
+
+        if CAPACITY == 0 {
+            return ArpCacheUpdate::NoCapacity;
+        }
+
+        let replaced = self.entries[self.next_replacement].replace(neighbor);
+        self.next_replacement = (self.next_replacement + 1) % CAPACITY;
+
+        match replaced {
+            Some(replaced) => ArpCacheUpdate::Replaced(replaced),
+            None => ArpCacheUpdate::Inserted,
+        }
+    }
+
+    pub(crate) fn learn_ethernet_ipv4_arp(
+        &mut self,
+        frame_bytes: &[u8],
+    ) -> Result<ArpCacheUpdate, PacketError> {
+        let frame = EthernetFrame::parse(frame_bytes)?;
+        if frame.ether_type() != EtherType::Arp {
+            return Err(PacketError::UnsupportedEtherType);
+        }
+
+        let packet = ArpPacket::parse_ethernet_ipv4(frame.payload())?;
+        match packet.operation() {
+            ArpOperation::Request | ArpOperation::Reply => Ok(self.insert_or_update(
+                packet.sender_protocol_address(),
+                packet.sender_hardware_address(),
+            )),
+            ArpOperation::Other(_) => Err(PacketError::UnsupportedArpOperation),
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct Ipv4Packet<'a> {
     header_len: usize,
     total_len: usize,
@@ -742,6 +843,112 @@ mod tests {
     }
 
     #[test_case]
+    fn arp_cache_inserts_updates_misses_and_replaces_oldest_slots() {
+        let mut cache = ArpCache::<2>::new();
+        let mac_a = MacAddress::new([0x02, 0, 0, 0, 0, 10]);
+        let mac_b = MacAddress::new([0x02, 0, 0, 0, 0, 11]);
+        let mac_c = MacAddress::new([0x02, 0, 0, 0, 0, 12]);
+        let mac_d = MacAddress::new([0x02, 0, 0, 0, 0, 13]);
+
+        assert_eq!(cache.lookup([192, 0, 2, 10]), None);
+        assert_eq!(
+            cache.insert_or_update([192, 0, 2, 10], mac_a),
+            ArpCacheUpdate::Inserted
+        );
+        assert_eq!(cache.lookup([192, 0, 2, 10]), Some(mac_a));
+        assert_eq!(
+            cache.insert_or_update([192, 0, 2, 10], mac_b),
+            ArpCacheUpdate::Updated
+        );
+        assert_eq!(cache.lookup([192, 0, 2, 10]), Some(mac_b));
+
+        assert_eq!(
+            cache.insert_or_update([192, 0, 2, 11], mac_c),
+            ArpCacheUpdate::Inserted
+        );
+        assert_eq!(
+            cache.insert_or_update([192, 0, 2, 12], mac_d),
+            ArpCacheUpdate::Replaced(ArpNeighbor::new([192, 0, 2, 10], mac_b))
+        );
+        assert_eq!(cache.lookup([192, 0, 2, 10]), None);
+        assert_eq!(cache.lookup([192, 0, 2, 11]), Some(mac_c));
+        assert_eq!(cache.lookup([192, 0, 2, 12]), Some(mac_d));
+    }
+
+    #[test_case]
+    fn arp_cache_zero_capacity_reports_no_capacity_without_state() {
+        let mut cache = ArpCache::<0>::new();
+
+        assert_eq!(
+            cache.insert_or_update([192, 0, 2, 10], MacAddress::new([0x02, 0, 0, 0, 0, 10])),
+            ArpCacheUpdate::NoCapacity
+        );
+        assert_eq!(cache.lookup([192, 0, 2, 10]), None);
+    }
+
+    #[test_case]
+    fn arp_cache_learns_sender_from_valid_arp_requests_and_replies() {
+        let mut cache = ArpCache::<4>::new();
+
+        assert_eq!(
+            cache.learn_ethernet_ipv4_arp(&arp_request_frame()),
+            Ok(ArpCacheUpdate::Inserted)
+        );
+        assert_eq!(
+            cache.lookup([192, 0, 2, 10]),
+            Some(MacAddress::new([0x02, 0, 0, 0, 0, 1]))
+        );
+
+        assert_eq!(
+            cache.learn_ethernet_ipv4_arp(&arp_reply_frame()),
+            Ok(ArpCacheUpdate::Inserted)
+        );
+        assert_eq!(
+            cache.lookup([192, 0, 2, 20]),
+            Some(MacAddress::new([0x02, 0, 0, 0, 0, 20]))
+        );
+    }
+
+    #[test_case]
+    fn arp_cache_rejects_malformed_or_unsupported_learning_without_state_change() {
+        let mut cache = ArpCache::<2>::new();
+        let original_mac = MacAddress::new([0x02, 0, 0, 0, 0, 10]);
+        assert_eq!(
+            cache.insert_or_update([192, 0, 2, 10], original_mac),
+            ArpCacheUpdate::Inserted
+        );
+
+        let truncated = &arp_request_frame()[..ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN - 1];
+        assert_eq!(
+            cache.learn_ethernet_ipv4_arp(truncated),
+            Err(PacketError::Truncated)
+        );
+
+        let mut unsupported_operation = arp_request_frame();
+        write_be_u16(
+            &mut unsupported_operation[ETHERNET_HEADER_LEN..],
+            6,
+            ArpOperation::Other(99).raw(),
+        );
+        unsupported_operation[ETHERNET_HEADER_LEN + 8..ETHERNET_HEADER_LEN + 14]
+            .copy_from_slice(&[0x02, 0, 0, 0, 0, 99]);
+        assert_eq!(
+            cache.learn_ethernet_ipv4_arp(&unsupported_operation),
+            Err(PacketError::UnsupportedArpOperation)
+        );
+
+        let mut unsupported_ethertype = arp_request_frame();
+        write_be_u16(&mut unsupported_ethertype, 12, ETHERTYPE_IPV4);
+        assert_eq!(
+            cache.learn_ethernet_ipv4_arp(&unsupported_ethertype),
+            Err(PacketError::UnsupportedEtherType)
+        );
+
+        assert_eq!(cache.lookup([192, 0, 2, 10]), Some(original_mac));
+        assert_eq!(cache.lookup([192, 0, 2, 99]), None);
+    }
+
+    #[test_case]
     fn ipv4_parser_accepts_header_and_payload() {
         let frame = EthernetFrame::parse(ETHERNET_IPV4_FRAME).expect("parse ethernet frame");
         let packet = Ipv4Packet::parse(frame.payload()).expect("parse ipv4");
@@ -1217,6 +1424,25 @@ mod tests {
         frame[6..12].copy_from_slice(&[0x02, 0, 0, 0, 0, 1]);
         write_be_u16(&mut frame, 12, ETHERTYPE_ARP);
         frame[ETHERNET_HEADER_LEN..].copy_from_slice(ARP_REQUEST);
+        frame
+    }
+
+    fn arp_reply_frame() -> [u8; ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN] {
+        let mut frame = [0u8; ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN];
+        frame[..6].copy_from_slice(&[0x02, 0, 0, 0, 0, 1]);
+        frame[6..12].copy_from_slice(&[0x02, 0, 0, 0, 0, 20]);
+        write_be_u16(&mut frame, 12, ETHERTYPE_ARP);
+
+        let arp = &mut frame[ETHERNET_HEADER_LEN..];
+        write_be_u16(arp, 0, 1);
+        write_be_u16(arp, 2, ETHERTYPE_IPV4);
+        arp[4] = ETHERNET_ADDR_LEN as u8;
+        arp[5] = 4;
+        write_be_u16(arp, 6, ArpOperation::Reply.raw());
+        arp[8..14].copy_from_slice(&[0x02, 0, 0, 0, 0, 20]);
+        arp[14..18].copy_from_slice(&[192, 0, 2, 20]);
+        arp[18..24].copy_from_slice(&[0x02, 0, 0, 0, 0, 1]);
+        arp[24..28].copy_from_slice(&[192, 0, 2, 10]);
         frame
     }
 

@@ -1,0 +1,62 @@
+{
+  "task_id": "phase12-network-arp-cache-core-20260619",
+  "status": "accepted",
+  "classification": "phase12-network-arp-cache-core-accepted",
+  "evidence_level": [
+    "source implementation",
+    "no_std unit tests",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_behavior": {
+    "fixed_capacity_allocation_free_arp_cache": true,
+    "lookup_hit_and_miss": true,
+    "insert_new_neighbor": true,
+    "update_existing_neighbor": true,
+    "deterministic_full_table_replacement": "oldest-slot-round-robin",
+    "zero_capacity_no_state_change": true,
+    "learn_valid_arp_request_sender": true,
+    "learn_valid_arp_reply_sender": true,
+    "reject_malformed_or_unsupported_learning_without_state_change": true,
+    "dispatch_local_packet_changed": false,
+    "poll_local_network_device_changed": false
+  },
+  "validation": {
+    "cargo_fmt_check": "pass after formatting",
+    "cargo_test_quiet": {
+      "command": "PATH=/opt/strider/openclaw/current/workspace/tools/qemu-9.2.0-install/bin:$PATH cargo -Zjson-target-spec test --quiet",
+      "result": "pass",
+      "no_std_tests": 558,
+      "note": "The first full test attempt failed because qemu-system-aarch64 was not on PATH; rerun with the Talos tool path passed."
+    },
+    "jq_empty": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass before commit"
+  },
+  "rejected_claims": [
+    "pi5_hardware_run",
+    "boot_archive_publication",
+    "lab_mutation",
+    "hardwareTestLock_acquisition",
+    "live_packet_io",
+    "rp1_ethernet_adapter",
+    "dma_descriptors",
+    "interrupts",
+    "packet_capture",
+    "udp_tcp",
+    "dhcp",
+    "dns",
+    "routing",
+    "socket_api",
+    "smoltcp_adoption",
+    "ssh",
+    "driver_readiness",
+    "link_readiness",
+    "network_reachability",
+    "ping_on_lab",
+    "phase_transition"
+  ],
+  "selected_next_task": "phase12-network-arp-cache-closeout-20260619",
+  "planningNeeded": false
+}

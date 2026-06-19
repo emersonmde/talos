@@ -2597,3 +2597,20 @@ error, transmit error, and successful reply transmission without allocation.
 Driver adapters, packet queues, ARP cache, UDP/TCP, DHCP, DNS, routing, smoltcp
 integration, sockets, SSH, live packet I/O, RP1 Ethernet driver readiness, link
 readiness, and phase transition remain unaccepted.
+
+phase12-network-arp-cache-core-20260619 accepts
+phase12-network-arp-cache-core-accepted. src/network.rs now includes a
+fixed-capacity, allocation-free ArpCache boundary that stores IPv4-to-MAC
+neighbors inside caller/kernel-owned fixed storage. The accepted API covers
+lookup miss and hit, insertion, existing-entry update, zero-capacity
+no-state-change behavior, and deterministic oldest-slot round-robin replacement
+when the cache is full.
+
+The accepted ARP learning helper validates Ethernet II ARP frames and
+Ethernet/IPv4 ARP packet shape before recording sender protocol/hardware
+address facts from ARP requests and replies. Malformed, truncated, unsupported
+EtherType, and unsupported ARP operation inputs return PacketError without
+changing existing cache state. This cache-only slice does not wire neighbor
+state into dispatch_local_packet, outbound resolution, packet queues, driver
+adapters, live packet I/O, ping behavior, sockets, SSH, smoltcp adoption,
+network reachability, link readiness, or a phase transition.
