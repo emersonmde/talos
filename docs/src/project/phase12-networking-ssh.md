@@ -2688,3 +2688,21 @@ Phase 12.3 work such as outbound IPv4/ICMP request construction, ARP request
 emission, neighbor-discovery plumbing, packet queues, driver transmit, live
 packet I/O, sockets, SSH, ping/network reachability, hardware readiness, or
 phase transition.
+
+phase12-network-outbound-ipv4-icmp-echo-request-core-20260619 accepts
+phase12-network-outbound-ipv4-icmp-echo-request-core-accepted. src/network.rs
+now includes build_outbound_ipv4_icmp_echo_request, a pure host-only helper
+that builds a complete Ethernet II IPv4 ICMP echo request frame for an already
+resolved outbound neighbor into caller-owned storage.
+
+The accepted helper writes deterministic Ethernet destination/source MACs,
+IPv4 EtherType, IPv4 version/IHL/total length/TTL/protocol/source/destination
+and checksum fields, ICMP echo request type/code/identifier/sequence/payload
+and checksum fields, and returns the deterministic frame length. Unresolved
+neighbors, too-small output buffers, and oversized IPv4 payloads are rejected
+before partial frame construction is accepted as success. The helper composes
+with the cached outbound neighbor resolver, remains allocation-free, and does
+not mutate ARP cache state, access a driver, queue packets, transmit frames,
+emit ARP requests, adopt smoltcp, claim sockets/SSH, claim ping/network
+reachability behavior, claim RP1 Ethernet readiness, or change the Phase 12.1
+hardware frontier.

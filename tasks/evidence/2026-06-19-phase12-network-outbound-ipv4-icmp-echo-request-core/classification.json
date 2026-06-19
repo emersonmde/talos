@@ -1,0 +1,129 @@
+{
+  "task_id": "phase12-network-outbound-ipv4-icmp-echo-request-core-20260619",
+  "status": "accepted",
+  "classification": "phase12-network-outbound-ipv4-icmp-echo-request-core-accepted",
+  "accepted_at": "2026-06-19T10:20:00Z",
+  "evidence_level": [
+    "source implementation",
+    "no_std unit tests",
+    "docs build",
+    "task-owned JSON evidence",
+    "diff checks"
+  ],
+  "implemented": [
+    "build_outbound_ipv4_icmp_echo_request",
+    "host-only caller-buffered Ethernet II IPv4 ICMP echo request construction for an already resolved outbound neighbor",
+    "deterministic IPv4 header generation with checksum",
+    "deterministic ICMP echo request generation with checksum",
+    "OutboundFrameError::PayloadTooLarge for IPv4 total-length overflow",
+    "shared resolved-neighbor and Ethernet header helpers with the accepted outbound Ethernet frame builder",
+    "no_std tests for resolved success, cached-resolution composition, unresolved rejection, output-buffer pressure, and oversized payload rejection"
+  ],
+  "accepted_behavior": [
+    "resolved neighbor input writes destination MAC, source MAC, IPv4 EtherType, deterministic IPv4 header fields, deterministic ICMP echo request fields, exact payload bytes, valid checksums, and deterministic returned frame length",
+    "unresolved neighbor input returns OutboundFrameError::NeighborUnresolved without cache mutation, ARP request emission, driver access, queueing, or transmit behavior",
+    "too-small output buffers return OutboundFrameError::OutputBufferTooSmall before accepting a partial frame as progress",
+    "oversized payloads return OutboundFrameError::PayloadTooLarge before writing a wrapped IPv4 total length",
+    "resolve_outbound_neighbor composes with build_outbound_ipv4_icmp_echo_request through a cached ArpCache entry",
+    "existing local dispatch, cache-aware dispatch/poll, ArpCache, outbound neighbor-resolution, and outbound Ethernet frame-construction behavior remains covered by the full test suite"
+  ],
+  "validation": [
+    {
+      "gate": "cargo fmt --all",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test outbound_ipv4_icmp_echo_request --quiet",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test --quiet",
+      "result": "pass",
+      "note": "run with /opt/strider/openclaw/current/workspace/tools/qemu-9.2.0-install/bin on PATH"
+    },
+    {
+      "gate": "cargo fmt --all -- --check",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "gate": "jq empty",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "selected_next_task": "phase12-network-outbound-ipv4-icmp-echo-request-closeout-20260619",
+  "planningNeeded": false,
+  "hardware": {
+    "hardware_test_lock_acquired": false,
+    "pi5_hardware_run": false,
+    "lab_mutation": false,
+    "boot_archive_publication": false,
+    "live_packet_io": false
+  },
+  "rejected_claims": [
+    "ARP request emission",
+    "retry timers",
+    "packet queues",
+    "routing table",
+    "subnet or gateway logic",
+    "driver transmit scheduling",
+    "live packet I/O",
+    "ping behavior",
+    "packet capture",
+    "RP1 Ethernet driver readiness",
+    "DMA descriptor ownership",
+    "interrupt integration",
+    "link readiness",
+    "network reachability",
+    "socket API",
+    "SSH behavior",
+    "UDP/TCP",
+    "DHCP",
+    "DNS",
+    "smoltcp adoption",
+    "userspace networking API",
+    "Pi 5 hardware proof",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "host-only caller-buffered outbound IPv4/ICMP echo request construction helper now exists below packet queues, driver transmit, and live packet I/O"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "success output covers deterministic Ethernet, IPv4, and ICMP fields, identifier/sequence/payload preservation, returned frame length, and valid IPv4/ICMP checksums"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "unresolved-neighbor, too-small-output, and oversized-payload paths are deterministic and test-covered before any partial frame is accepted as progress"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "cached outbound neighbor resolver composes with request construction in a focused regression test without mutating ARP cache state"
+    },
+    {
+      "disposition": "deferred",
+      "finding": "ARP request emission, retry timers, packet queues, routing, driver transmit scheduling, live packet I/O, sockets, SSH, smoltcp integration, and Pi 5 packet movement evidence remain future work"
+    },
+    {
+      "disposition": "removed",
+      "finding": "no source files, dependencies, task evidence, or existing dispatch APIs were removed"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "no hardware lock, lab mutation, boot publication, or Pi 5 inconclusive-run triage was required for local source/test work"
+    }
+  ]
+}

@@ -12863,6 +12863,11 @@ Milestone 12.3: IP Stack
   ARP neighbor cache with deterministic lookup, insert/update, oldest-slot
   replacement, zero-capacity no-state-change behavior, and sender learning from
   valid Ethernet/IPv4 ARP requests and replies.
+- Local source/test progress is accepted for caller-buffered outbound
+  Ethernet/IPv4/ICMP echo request frame construction for an already resolved
+  neighbor, including deterministic IPv4 and ICMP checksum generation and
+  deterministic unresolved-neighbor, buffer-pressure, and oversized-payload
+  rejection.
 - Implement driver adapters, packet queues, ARP-cache dispatch integration,
   UDP/TCP, and socket integration in later bounded tasks.
 
