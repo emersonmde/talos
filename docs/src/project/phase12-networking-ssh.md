@@ -2638,3 +2638,19 @@ queued outbound-neighbor-resolution source checkpoint as the next bounded
 Phase 12.3 planning task. It does not authorize outbound neighbor-resolution
 implementation, packet queues, driver adapters, live packet I/O, sockets, SSH,
 network reachability, ping behavior, hardware readiness, or phase transition.
+
+phase12-network-outbound-neighbor-resolution-core-20260619 accepts
+phase12-network-outbound-neighbor-resolution-core-accepted. src/network.rs now
+includes OutboundNeighborResolution and resolve_outbound_neighbor, a pure
+host-only helper that reads immutable ArpCache state to return either the
+cached destination MAC for a known IPv4 neighbor or an unresolved result
+carrying the destination IPv4.
+
+The accepted boundary is cached-only and allocation-free. Updated cache entries
+are reflected by later resolution calls, zero-capacity caches remain
+deterministic misses, and cache-aware poll learning remains compatible with
+later resolution. ARP request emission, retry timers, packet queues, routing,
+subnet/gateway selection, outbound frame construction, driver transmit
+scheduling, live packet I/O, RP1 Ethernet driver readiness, smoltcp adoption,
+sockets, SSH, ping/network reachability behavior, and phase transition remain
+unaccepted.

@@ -335,6 +335,50 @@ impl<const CAPACITY: usize> ArpCache<CAPACITY> {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum OutboundNeighborResolution {
+    Resolved {
+        destination_ipv4: [u8; 4],
+        destination_mac: MacAddress,
+    },
+    Unresolved {
+        destination_ipv4: [u8; 4],
+    },
+}
+
+impl OutboundNeighborResolution {
+    pub(crate) const fn destination_ipv4(self) -> [u8; 4] {
+        match self {
+            Self::Resolved {
+                destination_ipv4, ..
+            }
+            | Self::Unresolved { destination_ipv4 } => destination_ipv4,
+        }
+    }
+
+    pub(crate) const fn destination_mac(self) -> Option<MacAddress> {
+        match self {
+            Self::Resolved {
+                destination_mac, ..
+            } => Some(destination_mac),
+            Self::Unresolved { .. } => None,
+        }
+    }
+}
+
+pub(crate) fn resolve_outbound_neighbor<const ARP_CAPACITY: usize>(
+    arp_cache: &ArpCache<ARP_CAPACITY>,
+    destination_ipv4: [u8; 4],
+) -> OutboundNeighborResolution {
+    match arp_cache.lookup(destination_ipv4) {
+        Some(destination_mac) => OutboundNeighborResolution::Resolved {
+            destination_ipv4,
+            destination_mac,
+        },
+        None => OutboundNeighborResolution::Unresolved { destination_ipv4 },
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct Ipv4Packet<'a> {
     header_len: usize,
     total_len: usize,
@@ -951,6 +995,83 @@ mod tests {
             ArpCacheUpdate::NoCapacity
         );
         assert_eq!(cache.lookup([192, 0, 2, 10]), None);
+    }
+
+    #[test_case]
+    fn outbound_neighbor_resolution_returns_cached_mac_for_known_destination() {
+        let mut cache = ArpCache::<2>::new();
+        let mac = MacAddress::new([0x02, 0, 0, 0, 0, 10]);
+        assert_eq!(
+            cache.insert_or_update([192, 0, 2, 10], mac),
+            ArpCacheUpdate::Inserted
+        );
+
+        let resolution = resolve_outbound_neighbor(&cache, [192, 0, 2, 10]);
+
+        assert_eq!(
+            resolution,
+            OutboundNeighborResolution::Resolved {
+                destination_ipv4: [192, 0, 2, 10],
+                destination_mac: mac,
+            }
+        );
+        assert_eq!(resolution.destination_ipv4(), [192, 0, 2, 10]);
+        assert_eq!(resolution.destination_mac(), Some(mac));
+    }
+
+    #[test_case]
+    fn outbound_neighbor_resolution_returns_destination_on_miss() {
+        let cache = ArpCache::<2>::new();
+
+        let resolution = resolve_outbound_neighbor(&cache, [192, 0, 2, 44]);
+
+        assert_eq!(
+            resolution,
+            OutboundNeighborResolution::Unresolved {
+                destination_ipv4: [192, 0, 2, 44],
+            }
+        );
+        assert_eq!(resolution.destination_ipv4(), [192, 0, 2, 44]);
+        assert_eq!(resolution.destination_mac(), None);
+    }
+
+    #[test_case]
+    fn outbound_neighbor_resolution_uses_updated_cache_entries() {
+        let mut cache = ArpCache::<2>::new();
+        let old_mac = MacAddress::new([0x02, 0, 0, 0, 0, 10]);
+        let new_mac = MacAddress::new([0x02, 0, 0, 0, 0, 11]);
+
+        assert_eq!(
+            cache.insert_or_update([192, 0, 2, 10], old_mac),
+            ArpCacheUpdate::Inserted
+        );
+        assert_eq!(
+            cache.insert_or_update([192, 0, 2, 10], new_mac),
+            ArpCacheUpdate::Updated
+        );
+
+        assert_eq!(
+            resolve_outbound_neighbor(&cache, [192, 0, 2, 10]).destination_mac(),
+            Some(new_mac)
+        );
+    }
+
+    #[test_case]
+    fn outbound_neighbor_resolution_zero_capacity_cache_is_deterministic_miss() {
+        let mut cache = ArpCache::<0>::new();
+        let mac = MacAddress::new([0x02, 0, 0, 0, 0, 10]);
+
+        assert_eq!(
+            cache.insert_or_update([192, 0, 2, 10], mac),
+            ArpCacheUpdate::NoCapacity
+        );
+
+        assert_eq!(
+            resolve_outbound_neighbor(&cache, [192, 0, 2, 10]),
+            OutboundNeighborResolution::Unresolved {
+                destination_ipv4: [192, 0, 2, 10],
+            }
+        );
     }
 
     #[test_case]
@@ -1610,6 +1731,10 @@ mod tests {
         );
         assert_eq!(
             cache.lookup([192, 0, 2, 10]),
+            Some(MacAddress::new([0x02, 0, 0, 0, 0, 1]))
+        );
+        assert_eq!(
+            resolve_outbound_neighbor(&cache, [192, 0, 2, 10]).destination_mac(),
             Some(MacAddress::new([0x02, 0, 0, 0, 0, 1]))
         );
         assert_eq!(

@@ -3642,6 +3642,21 @@ The post-review correction chain is:
     sockets, SSH, hardware-driver readiness, ping/network reachability
     behavior, link readiness, and phase transition remain rejected.
 
+206. Phase 12.3 outbound neighbor resolution core: accepted in
+    'phase12-network-outbound-neighbor-resolution-core-20260619' with
+    classification
+    'phase12-network-outbound-neighbor-resolution-core-accepted'. The accepted
+    frontier is host-only source/test progress: src/network.rs adds
+    OutboundNeighborResolution and resolve_outbound_neighbor, a pure cached-only
+    helper that returns the cached destination MAC for a known IPv4 neighbor or
+    a deterministic unresolved result carrying the destination IPv4. Tests cover
+    cached hit, unresolved miss, updated entry, zero-capacity miss, and
+    compatibility with cache-aware poll learning. ARP request emission, packet
+    queues, routing, outbound frame construction, driver transmit scheduling,
+    live packet I/O, sockets, SSH, hardware-driver readiness, ping/network
+    reachability behavior, link readiness, and phase transition remain
+    rejected.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed

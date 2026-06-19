@@ -1,0 +1,127 @@
+{
+  "task_id": "phase12-network-outbound-neighbor-resolution-core-20260619",
+  "status": "accepted",
+  "classification": "phase12-network-outbound-neighbor-resolution-core-accepted",
+  "accepted_at": "2026-06-19T07:22:00Z",
+  "evidence_level": [
+    "source implementation",
+    "no_std unit tests",
+    "build check",
+    "docs build",
+    "task-owned JSON evidence",
+    "diff checks"
+  ],
+  "implemented": [
+    "OutboundNeighborResolution",
+    "resolve_outbound_neighbor",
+    "host-only cached IPv4-to-MAC resolution through immutable ArpCache lookup",
+    "deterministic unresolved-neighbor result carrying the destination IPv4",
+    "no_std tests for cached hit, miss, updated entry, zero-capacity cache, and cache-aware poll compatibility"
+  ],
+  "accepted_behavior": [
+    "known destination IPv4 resolves to the cached destination MacAddress",
+    "cache miss returns an unresolved result carrying the destination IPv4",
+    "updated ArpCache entries are reflected by later resolver calls",
+    "zero-capacity ArpCache instances remain deterministic misses",
+    "cache-aware poll learning remains compatible with later cached resolution",
+    "existing local dispatch and cache-aware dispatch/poll behavior remains unchanged"
+  ],
+  "validation": [
+    {
+      "gate": "cargo fmt --check",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test network",
+      "result": "pass",
+      "summary": "570 talos no_std tests passed with QEMU_SYSTEM_AARCH64 available through PATH"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec check",
+      "result": "pass"
+    },
+    {
+      "gate": "targeted network tests",
+      "result": "pass",
+      "summary": "cached hit, unresolved miss, updated entry, zero-capacity miss, and cache-aware poll compatibility covered in src/network.rs"
+    },
+    {
+      "gate": "jq empty",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "selected_next_task": "phase12-network-outbound-neighbor-resolution-closeout-20260619",
+  "planningNeeded": false,
+  "hardware": {
+    "hardware_test_lock_acquired": false,
+    "pi5_hardware_run": false,
+    "lab_mutation": false,
+    "boot_archive_publication": false,
+    "live_packet_io": false
+  },
+  "rejected_claims": [
+    "ARP request emission",
+    "retry timers",
+    "packet queues",
+    "routing table",
+    "subnet or gateway logic",
+    "driver consultation",
+    "frame construction",
+    "transmit scheduling",
+    "live packet I/O",
+    "RP1 Ethernet driver readiness",
+    "DMA descriptor ownership",
+    "interrupt integration",
+    "packet capture",
+    "link readiness",
+    "network reachability",
+    "ping behavior",
+    "socket API",
+    "SSH behavior",
+    "UDP/TCP",
+    "DHCP",
+    "DNS",
+    "smoltcp adoption",
+    "userspace networking API",
+    "Pi 5 hardware proof",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "host-only cached outbound IPv4-to-MAC resolution helper now uses accepted ArpCache lookup semantics"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "unresolved-neighbor classification carries the target IPv4 without ARP request emission or driver consultation"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "cached hit, miss, updated entry, zero-capacity miss, and cache-aware poll compatibility are covered by no_std tests"
+    },
+    {
+      "disposition": "deferred",
+      "finding": "ARP request emission, retry timers, packet queues, routing, outbound frame construction, driver transmit scheduling, live packet I/O, sockets, SSH, smoltcp integration, and Pi 5 packet movement evidence remain future work"
+    },
+    {
+      "disposition": "removed",
+      "finding": "no source files, dependencies, task evidence, or existing dispatch APIs were removed"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "no hardware lock, lab mutation, boot publication, or Pi 5 inconclusive-run triage was required for local source/test work"
+    }
+  ]
+}
