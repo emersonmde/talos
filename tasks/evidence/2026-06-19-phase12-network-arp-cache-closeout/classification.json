@@ -1,0 +1,64 @@
+{
+  "task_id": "phase12-network-arp-cache-closeout-20260619",
+  "status": "accepted",
+  "classification": "phase12-network-arp-cache-closeout-accepted",
+  "evidence_level": [
+    "static source/task/evidence consistency review",
+    "task-owned JSON classification",
+    "diff checks"
+  ],
+  "reviewed_evidence": {
+    "source_checkpoint": "tasks/2026-06-19-phase12-network-arp-cache-source-checkpoint.md",
+    "core_task": "tasks/2026-06-19-phase12-network-arp-cache-core.md",
+    "core_classification": "tasks/evidence/2026-06-19-phase12-network-arp-cache-core/classification.json",
+    "source": "src/network.rs",
+    "project_doc": "docs/src/project/phase12-networking-ssh.md",
+    "roadmap": "docs/src/roadmap.md",
+    "core_commit": "616d8d85a1fb4f6415c7ebe77542756513df8671"
+  },
+  "accepted_core_frontier": {
+    "fixed_capacity_allocation_free_arp_cache": true,
+    "lookup_hit_and_miss": true,
+    "insert_update_and_replacement": true,
+    "zero_capacity_no_state_change": true,
+    "sender_learning_from_valid_ethernet_ipv4_arp_request_and_reply": true,
+    "malformed_or_unsupported_learning_rejected_without_state_change": true,
+    "dispatch_local_packet_changed": false,
+    "poll_local_network_device_changed": false
+  },
+  "closeout_decision": {
+    "selected_next_task": "phase12-network-arp-cache-dispatch-integration-source-checkpoint-20260619",
+    "planningNeeded": false,
+    "rationale": "Accepted ARP-cache core makes the queued dispatch-integration source checkpoint mechanically unblocked as the next smallest same-slice source/test checkpoint without hardware or live packet I/O."
+  },
+  "validation": {
+    "static_source_task_evidence_review": "pass",
+    "jq_empty": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "not run; docs/src files were not touched by this closeout",
+    "git_diff_cached_check": "pass before commit"
+  },
+  "rejected_claims": [
+    "pi5_hardware_run",
+    "boot_archive_publication",
+    "lab_mutation",
+    "hardwareTestLock_acquisition",
+    "live_packet_io",
+    "rp1_ethernet_adapter",
+    "dma_descriptors",
+    "interrupts",
+    "packet_capture",
+    "udp_tcp",
+    "dhcp",
+    "dns",
+    "routing",
+    "socket_api",
+    "smoltcp_adoption",
+    "ssh",
+    "driver_readiness",
+    "link_readiness",
+    "network_reachability",
+    "ping_on_lab",
+    "phase_transition"
+  ]
+}
