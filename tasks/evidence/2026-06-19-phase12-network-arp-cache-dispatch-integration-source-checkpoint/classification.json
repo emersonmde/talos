@@ -1,0 +1,125 @@
+{
+  "task_id": "phase12-network-arp-cache-dispatch-integration-source-checkpoint-20260619",
+  "status": "accepted",
+  "classification": "phase12-network-arp-cache-dispatch-integration-source-checkpoint-planning-needed",
+  "accepted_at": "2026-06-19T04:21:00Z",
+  "evidence_level": [
+    "static source/task evidence review",
+    "task-owned JSON evidence",
+    "diff checks"
+  ],
+  "reviewed_evidence": [
+    "tasks/2026-06-19-phase12-network-arp-cache-source-checkpoint.md",
+    "tasks/2026-06-19-phase12-network-arp-cache-core.md",
+    "tasks/evidence/2026-06-19-phase12-network-arp-cache-core/classification.json",
+    "tasks/2026-06-19-phase12-network-arp-cache-closeout.md",
+    "tasks/evidence/2026-06-19-phase12-network-arp-cache-closeout/classification.json",
+    "src/network.rs",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md",
+    "memory/talos-supervisor-state.json taskQueue"
+  ],
+  "accepted_input_frontier": [
+    "dispatch_local_packet can generate caller-buffered ARP replies and ICMP echo replies for configured local identity",
+    "poll_local_network_device receives one frame into caller-owned RX storage and transmits generated replies from caller-owned TX storage",
+    "ArpCache stores fixed-capacity allocation-free IPv4-to-MAC neighbors with deterministic lookup, insert, update, replacement, zero-capacity no-state-change behavior, and sender learning from valid Ethernet/IPv4 ARP packets",
+    "current dispatch and poll-step behavior remains cache-unaware and makes no live packet I/O, driver, socket, SSH, ping, network reachability, or phase-transition claim"
+  ],
+  "recommended_next_boundary": {
+    "summary": "cache-aware local packet dispatch or poll-step learning",
+    "operations": [
+      "accept a mutable ArpCache reference in a wrapper or variant around the accepted local dispatch or poll path",
+      "learn sender IPv4/MAC facts from validated Ethernet/IPv4 ARP request and reply frames",
+      "preserve existing cache-unaware dispatch_local_packet and poll_local_network_device behavior for callers without a cache",
+      "keep reply generation unchanged unless a future implementation task explicitly authorizes cache-backed policy changes",
+      "return deterministic results for learning success, learning rejection, no reply, dispatch rejection, and transmit failure"
+    ],
+    "test_strategy": "host unit tests for ARP request learning with reply transmission, ARP reply learning with no local reply, malformed or unsupported ARP rejection without cache mutation, unchanged ICMP echo reply behavior, unchanged no-frame behavior, and transmit-error behavior with cache state documented"
+  },
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planning_reason": "No explicit queued ARP-cache dispatch-integration implementation task exists after this checkpoint; the worker must not create a new task, broaden scope, infer a phase transition, or promote driver/socket/smoltcp/live-I/O/hardware work.",
+  "rejected_claims": [
+    "ARP-cache dispatch integration implementation accepted",
+    "outbound neighbor resolution",
+    "packet queue readiness",
+    "driver adapter readiness",
+    "RP1 Ethernet driver readiness",
+    "DMA descriptor ownership",
+    "interrupt integration",
+    "packet capture",
+    "live packet I/O",
+    "smoltcp adoption",
+    "UDP/TCP behavior",
+    "DHCP",
+    "DNS",
+    "routing",
+    "socket API",
+    "SSH",
+    "network reachability",
+    "ping response",
+    "hardware link readiness",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "checkpoint records the accepted local dispatch, poll-step, and ARP-cache frontiers"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "checkpoint names the next smallest ARP-cache integration source/test boundary as cache-aware local packet handling that learns from validated inbound ARP frames while preserving current reply behavior"
+    },
+    {
+      "disposition": "deferred",
+      "finding": "cache-aware dispatch or poll implementation, outbound neighbor resolution, packet queues, driver adapter integration, UDP/TCP, DHCP, DNS, routing, sockets, smoltcp, SSH, live packet I/O, and Pi 5 packet movement evidence remain future work"
+    },
+    {
+      "disposition": "removed",
+      "finding": "no source, docs, dependencies, or prior task evidence were removed"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "no cargo metadata or dependency feasibility check was required because no dependency or interface change was proposed or made"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "no hardware lock, lab mutation, boot publication, or Pi 5 inconclusive-run triage was required for static source/task evidence work"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "static/source/task evidence review",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo metadata or equivalent",
+      "result": "not-run",
+      "reason": "no dependency or interface changes were proposed or made"
+    },
+    {
+      "gate": "jq empty",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "mdbook build",
+      "result": "not-run",
+      "reason": "docs/src files were not changed"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "hardware": {
+    "hardware_test_lock_acquired": false,
+    "pi5_hardware_run": false,
+    "lab_mutation": false,
+    "boot_archive_publication": false,
+    "live_packet_io": false
+  }
+}
