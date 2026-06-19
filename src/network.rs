@@ -1430,6 +1430,15 @@ pub(crate) enum LocalPollStepResult {
     Replied(PacketDispatchResult),
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum PendingIcmpEchoPollResult {
+    NoPendingRequest,
+    NoFrame,
+    ReceiveBufferTooSmall,
+    ReceiveError(DeviceError),
+    PendingResult(PendingIcmpEchoResult),
+}
+
 pub(crate) fn poll_local_network_device<D: NetworkDevice>(
     device: &mut D,
     endpoint: LocalNetworkEndpoint,
@@ -1489,6 +1498,41 @@ pub(crate) fn poll_local_network_device_with_arp_cache<
         Ok(()) => LocalPollStepResult::Replied(reply),
         Err(error) => LocalPollStepResult::TransmitError(error),
     }
+}
+
+pub(crate) fn poll_pending_arp_reply_and_transmit_single_pending_ipv4_icmp_echo_request<
+    D: NetworkDevice,
+    const ARP_CAPACITY: usize,
+    const PAYLOAD_CAPACITY: usize,
+>(
+    device: &mut D,
+    arp_cache: &mut ArpCache<ARP_CAPACITY>,
+    pending: &mut SinglePendingIcmpEcho<PAYLOAD_CAPACITY>,
+    receive_buffer: &mut [u8],
+    transmit_buffer: &mut [u8],
+) -> PendingIcmpEchoPollResult {
+    if pending.pending().is_none() {
+        return PendingIcmpEchoPollResult::NoPendingRequest;
+    }
+
+    let received = match device.receive_frame(receive_buffer) {
+        Ok(frame) => frame,
+        Err(DeviceError::WouldBlock) => return PendingIcmpEchoPollResult::NoFrame,
+        Err(DeviceError::BufferTooSmall) => {
+            return PendingIcmpEchoPollResult::ReceiveBufferTooSmall;
+        }
+        Err(error) => return PendingIcmpEchoPollResult::ReceiveError(error),
+    };
+
+    PendingIcmpEchoPollResult::PendingResult(
+        learn_arp_reply_and_transmit_single_pending_ipv4_icmp_echo_request(
+            device,
+            arp_cache,
+            pending,
+            received,
+            transmit_buffer,
+        ),
+    )
 }
 
 pub(crate) fn dispatch_local_packet(
@@ -4253,6 +4297,7 @@ mod tests {
     struct PollDevice<'a> {
         frame: Option<&'a [u8]>,
         receive_error: Option<DeviceError>,
+        receive_attempts: usize,
         transmit_error: Option<DeviceError>,
         transmitted: [u8; 128],
         transmitted_len: usize,
@@ -4263,6 +4308,7 @@ mod tests {
             Self {
                 frame: Some(frame),
                 receive_error: None,
+                receive_attempts: 0,
                 transmit_error: None,
                 transmitted: [0; 128],
                 transmitted_len: 0,
@@ -4273,6 +4319,7 @@ mod tests {
             Self {
                 frame: None,
                 receive_error: Some(error),
+                receive_attempts: 0,
                 transmit_error: None,
                 transmitted: [0; 128],
                 transmitted_len: 0,
@@ -4283,6 +4330,7 @@ mod tests {
             Self {
                 frame: Some(frame),
                 receive_error: None,
+                receive_attempts: 0,
                 transmit_error: Some(error),
                 transmitted: [0; 128],
                 transmitted_len: 0,
@@ -4292,6 +4340,7 @@ mod tests {
 
     impl<'a> NetworkDevice for PollDevice<'a> {
         fn receive_frame<'b>(&mut self, buffer: &'b mut [u8]) -> Result<&'b [u8], DeviceError> {
+            self.receive_attempts += 1;
             if let Some(error) = self.receive_error {
                 return Err(error);
             }
@@ -4314,6 +4363,271 @@ mod tests {
             self.transmitted_len = frame.len();
             Ok(())
         }
+    }
+
+    #[test_case]
+    fn pending_arp_reply_poll_advances_gateway_pending_to_single_icmp_transmit() {
+        let cache = ArpCache::<0>::new();
+        let mut pending = SinglePendingIcmpEcho::<8>::new();
+        let mut queue_output = [0u8; 64];
+        let mut queue_device = OutboundTransmitDevice::new();
+        let policy = Ipv4EgressRoutePolicy::new([255, 255, 255, 0], Some([192, 0, 2, 254]));
+        let payload = [0x11, 0x22, 0x33];
+
+        assert_eq!(
+            transmit_or_queue_routed_single_pending_ipv4_icmp_echo_request(
+                &mut queue_device,
+                &cache,
+                &mut pending,
+                local_endpoint(),
+                policy,
+                [198, 51, 100, 7],
+                0x1234,
+                7,
+                61,
+                &payload,
+                &mut queue_output,
+            ),
+            PendingIcmpEchoResult::ArpRequestTransmittedAndPending {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            }
+        );
+
+        let gateway_mac = MacAddress::new([0x02, 0, 0, 0, 0, 254]);
+        let mut gateway_reply = arp_reply_frame();
+        gateway_reply[6..12].copy_from_slice(&gateway_mac.bytes());
+        gateway_reply[ETHERNET_HEADER_LEN + 8..ETHERNET_HEADER_LEN + 14]
+            .copy_from_slice(&gateway_mac.bytes());
+        gateway_reply[ETHERNET_HEADER_LEN + 14..ETHERNET_HEADER_LEN + 18]
+            .copy_from_slice(&[192, 0, 2, 254]);
+        let mut poll_device = PollDevice::with_frame(&gateway_reply);
+        let mut learned_cache = ArpCache::<4>::new();
+        let mut receive_buffer = [0u8; 64];
+        let mut transmit_buffer = [0u8; 128];
+        let expected_len =
+            ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + ICMP_ECHO_HEADER_LEN + payload.len();
+
+        let result = poll_pending_arp_reply_and_transmit_single_pending_ipv4_icmp_echo_request(
+            &mut poll_device,
+            &mut learned_cache,
+            &mut pending,
+            &mut receive_buffer,
+            &mut transmit_buffer,
+        );
+
+        assert_eq!(
+            result,
+            PendingIcmpEchoPollResult::PendingResult(
+                PendingIcmpEchoResult::IcmpEchoRequestTransmitted {
+                    frame_len: expected_len,
+                }
+            )
+        );
+        assert_eq!(poll_device.receive_attempts, 1);
+        assert_eq!(poll_device.transmitted_len, expected_len);
+        assert_eq!(pending.pending(), None);
+        assert_eq!(learned_cache.lookup([192, 0, 2, 254]), Some(gateway_mac));
+        assert_eq!(learned_cache.lookup([198, 51, 100, 7]), None);
+        let frame = EthernetFrame::parse(&poll_device.transmitted[..poll_device.transmitted_len])
+            .expect("icmp");
+        assert_eq!(frame.destination(), gateway_mac);
+        let ipv4 = Ipv4Packet::parse(frame.payload()).expect("ipv4");
+        assert_eq!(ipv4.destination(), [198, 51, 100, 7]);
+        assert_eq!(&ipv4.payload()[ICMP_ECHO_HEADER_LEN..], &payload);
+    }
+
+    #[test_case]
+    fn pending_arp_reply_poll_distinguishes_no_pending_no_frame_and_receive_errors() {
+        let mut cache = ArpCache::<0>::new();
+        let mut pending = SinglePendingIcmpEcho::<4>::new();
+        let mut receive_buffer = [0u8; 64];
+        let mut transmit_buffer = [0u8; 128];
+        let reply = arp_reply_frame();
+        let mut no_pending = PollDevice::with_frame(&reply);
+
+        assert_eq!(
+            poll_pending_arp_reply_and_transmit_single_pending_ipv4_icmp_echo_request(
+                &mut no_pending,
+                &mut cache,
+                &mut pending,
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            PendingIcmpEchoPollResult::NoPendingRequest
+        );
+        assert_eq!(no_pending.receive_attempts, 0);
+        assert_eq!(no_pending.transmitted_len, 0);
+
+        let mut queue_device = OutboundTransmitDevice::new();
+        assert_eq!(
+            transmit_or_queue_single_pending_ipv4_icmp_echo_request(
+                &mut queue_device,
+                &cache,
+                &mut pending,
+                local_endpoint(),
+                [192, 0, 2, 20],
+                1,
+                2,
+                64,
+                &[1, 2],
+                &mut transmit_buffer,
+            ),
+            PendingIcmpEchoResult::ArpRequestTransmittedAndPending {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            }
+        );
+
+        let mut no_frame = PollDevice::with_receive_error(DeviceError::WouldBlock);
+        assert_eq!(
+            poll_pending_arp_reply_and_transmit_single_pending_ipv4_icmp_echo_request(
+                &mut no_frame,
+                &mut cache,
+                &mut pending,
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            PendingIcmpEchoPollResult::NoFrame
+        );
+        assert_eq!(pending.pending_destination_ipv4(), Some([192, 0, 2, 20]));
+
+        let mut receive_pressure = PollDevice::with_frame(&reply);
+        let mut small_receive = [0u8; ETHERNET_HEADER_LEN - 1];
+        assert_eq!(
+            poll_pending_arp_reply_and_transmit_single_pending_ipv4_icmp_echo_request(
+                &mut receive_pressure,
+                &mut cache,
+                &mut pending,
+                &mut small_receive,
+                &mut transmit_buffer,
+            ),
+            PendingIcmpEchoPollResult::ReceiveBufferTooSmall
+        );
+        assert_eq!(pending.pending_destination_ipv4(), Some([192, 0, 2, 20]));
+
+        let mut receive_error = PollDevice::with_receive_error(DeviceError::Io);
+        assert_eq!(
+            poll_pending_arp_reply_and_transmit_single_pending_ipv4_icmp_echo_request(
+                &mut receive_error,
+                &mut cache,
+                &mut pending,
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            PendingIcmpEchoPollResult::ReceiveError(DeviceError::Io)
+        );
+        assert_eq!(pending.pending_destination_ipv4(), Some([192, 0, 2, 20]));
+    }
+
+    #[test_case]
+    fn pending_arp_reply_poll_preserves_pending_on_nonmatch_malformed_pressure_and_transmit_error()
+    {
+        let cache = ArpCache::<0>::new();
+        let mut pending = SinglePendingIcmpEcho::<4>::new();
+        let mut queue_output = [0u8; 64];
+        let mut queue_device = OutboundTransmitDevice::new();
+        assert_eq!(
+            transmit_or_queue_single_pending_ipv4_icmp_echo_request(
+                &mut queue_device,
+                &cache,
+                &mut pending,
+                local_endpoint(),
+                [192, 0, 2, 44],
+                1,
+                2,
+                64,
+                &[1, 2],
+                &mut queue_output,
+            ),
+            PendingIcmpEchoResult::ArpRequestTransmittedAndPending {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            }
+        );
+
+        let nonmatching_reply = arp_reply_frame();
+        let mut poll_device = PollDevice::with_frame(&nonmatching_reply);
+        let mut cache = ArpCache::<2>::new();
+        let mut receive_buffer = [0u8; 64];
+        let mut transmit_buffer = [0u8; 128];
+        assert_eq!(
+            poll_pending_arp_reply_and_transmit_single_pending_ipv4_icmp_echo_request(
+                &mut poll_device,
+                &mut cache,
+                &mut pending,
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            PendingIcmpEchoPollResult::PendingResult(PendingIcmpEchoResult::NonMatchingArp {
+                pending_destination_ipv4: [192, 0, 2, 44],
+                arp_sender_ipv4: [192, 0, 2, 20],
+            })
+        );
+        assert_eq!(pending.pending_destination_ipv4(), Some([192, 0, 2, 44]));
+        assert_eq!(poll_device.transmitted_len, 0);
+
+        let truncated = &arp_reply_frame()[..ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN - 1];
+        let mut malformed = PollDevice::with_frame(truncated);
+        assert_eq!(
+            poll_pending_arp_reply_and_transmit_single_pending_ipv4_icmp_echo_request(
+                &mut malformed,
+                &mut cache,
+                &mut pending,
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            PendingIcmpEchoPollResult::PendingResult(PendingIcmpEchoResult::ArpError(
+                PacketError::Truncated
+            ))
+        );
+        assert_eq!(pending.pending_destination_ipv4(), Some([192, 0, 2, 44]));
+
+        let matching_reply = {
+            let mut frame = arp_reply_frame();
+            frame[ETHERNET_HEADER_LEN + 14..ETHERNET_HEADER_LEN + 18]
+                .copy_from_slice(&[192, 0, 2, 44]);
+            frame
+        };
+        let mut output_pressure = PollDevice::with_frame(&matching_reply);
+        let mut small_transmit = [0xaa; ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN];
+        assert_eq!(
+            poll_pending_arp_reply_and_transmit_single_pending_ipv4_icmp_echo_request(
+                &mut output_pressure,
+                &mut cache,
+                &mut pending,
+                &mut receive_buffer,
+                &mut small_transmit,
+            ),
+            PendingIcmpEchoPollResult::PendingResult(PendingIcmpEchoResult::RequestError(
+                OutboundFrameError::OutputBufferTooSmall {
+                    required_len: ETHERNET_HEADER_LEN
+                        + IPV4_MIN_HEADER_LEN
+                        + ICMP_ECHO_HEADER_LEN
+                        + 2,
+                    available_len: small_transmit.len(),
+                }
+            ))
+        );
+        assert_eq!(pending.pending_destination_ipv4(), Some([192, 0, 2, 44]));
+
+        let mut transmit_error = PollDevice::with_transmit_error(&matching_reply, DeviceError::Io);
+        assert_eq!(
+            poll_pending_arp_reply_and_transmit_single_pending_ipv4_icmp_echo_request(
+                &mut transmit_error,
+                &mut cache,
+                &mut pending,
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            PendingIcmpEchoPollResult::PendingResult(PendingIcmpEchoResult::TransmitError {
+                request_kind: OutboundRequestKind::Ipv4IcmpEchoRequest,
+                frame_len: ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + ICMP_ECHO_HEADER_LEN + 2,
+                error: DeviceError::Io,
+            })
+        );
+        assert_eq!(pending.pending_destination_ipv4(), Some([192, 0, 2, 44]));
+        assert_eq!(
+            cache.lookup([192, 0, 2, 44]),
+            Some(MacAddress::new([0x02, 0, 0, 0, 0, 20]))
+        );
     }
 
     #[test_case]

@@ -3901,6 +3901,28 @@ The post-review correction chain is:
     'phase12-network-phase12-3-route-aware-outbound-frontier-closeout-20260619',
     a same-milestone checkpoint before any broader networking work.
 
+222. Phase 12.3 pending-aware ARP reply poll core: accepted in
+    'phase12-network-pending-aware-arp-reply-poll-core-20260619' with
+    classification 'phase12-network-pending-aware-arp-reply-poll-core-accepted'.
+    src/network.rs adds PendingIcmpEchoPollResult and
+    poll_pending_arp_reply_and_transmit_single_pending_ipv4_icmp_echo_request,
+    a host-only one-step receive boundary for stored pending ICMP echo
+    requests waiting on ARP. The helper returns NoPendingRequest before
+    receiving when no pending request exists, maps no-frame and receive errors
+    deterministically, learns a matching ARP reply for the stored next-hop
+    IPv4, emits exactly one Ethernet/IPv4/ICMP echo request through
+    NetworkDevice, and clears pending only after successful ICMP transmit.
+    Gateway-routed pending requests learn the gateway next hop while preserving
+    the final IPv4 destination in the emitted IPv4 packet. Unit tests cover
+    matching gateway ARP, no-pending, no-frame, receive pressure, receive
+    errors, nonmatching ARP, malformed ARP, output pressure, and transmit
+    errors. Live packet I/O, driver adapters, packet queues, autonomous
+    timers, sockets, shell ping, SSH, smoltcp adoption, reachability, hardware
+    work, lab mutation, boot publication, and phase transition remain rejected.
+    The selected next task is
+    'phase12-network-pending-aware-arp-reply-poll-closeout-20260619', bounded
+    to source/task/docs reconciliation.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
@@ -13134,11 +13156,14 @@ Milestone 12.3: IP Stack
   route-aware outbound frontier checkpoint now reconciles deterministic
   same-subnet/gateway route selection, outbound ARP/ICMP request selection,
   one route-aware pending ICMP request, matching next-hop ARP resolution, and
-  explicit ARP retry budget behavior as host/unit evidence. It sets
-  selected_next_task=null and planningNeeded=true because no later queued
-  Phase 12.3 task exists with complete objective dependencies, acceptance
-  criteria, validation gates, docs, and evidence requirements. Live packet
-  I/O, driver adapters, packet queues, autonomous timers, sockets, SSH,
+  explicit ARP retry budget behavior as host/unit evidence.
+- The pending-aware ARP reply poll core accepts the next host-only receive
+  boundary: one NetworkDevice receive can process a matching ARP reply for the
+  stored route-aware pending request, learn the next-hop neighbor, transmit
+  exactly one ICMP echo request through the trait, and clear pending only after
+  successful ICMP transmit. Gateway-routed pending requests still preserve
+  final destination and next-hop identity separately. Live packet I/O, driver
+  adapters, packet queues, autonomous timers, sockets, shell ping, SSH,
   reachability, hardware work, smoltcp adoption, and phase transition remain
   rejected.
 - The earlier ARP request emission closeout froze its host-only

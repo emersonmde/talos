@@ -2996,3 +2996,33 @@ transition remain rejected. selected_next_task is null and planningNeeded=true
 because no later queued task exists after this checkpoint with complete
 objective dependencies, acceptance criteria, validation gates, docs, and
 evidence requirements.
+
+Supervisor planning later selected
+phase12-network-pending-aware-arp-reply-poll-core-20260619 as the next bounded
+host-only Phase 12.3 continuation.
+
+phase12-network-pending-aware-arp-reply-poll-core-20260619 accepts
+phase12-network-pending-aware-arp-reply-poll-core-accepted. src/network.rs now
+includes PendingIcmpEchoPollResult and
+poll_pending_arp_reply_and_transmit_single_pending_ipv4_icmp_echo_request, a
+one-step host-only NetworkDevice receive boundary for stored pending ICMP echo
+requests waiting on ARP.
+
+The accepted helper returns NoPendingRequest before receiving when no pending
+request exists, maps no-frame and receive-error boundaries deterministically,
+and delegates a received frame to the accepted ARP-reply learn/transmit path.
+A matching ARP reply for the stored next-hop IPv4 learns that neighbor, emits
+exactly one Ethernet/IPv4/ICMP echo request through NetworkDevice, and clears
+pending only after successful ICMP transmit. Gateway-routed pending requests
+learn the gateway next-hop while preserving the final IPv4 destination in the
+emitted IPv4 packet.
+
+Nonmatching ARP replies, malformed ARP frames, no-frame, no-pending,
+receive-buffer pressure, receive errors, output-buffer pressure, and transmit
+errors have deterministic outcomes and preserve pending state except on
+successful ICMP transmit. Existing local ARP reply and inbound ICMP echo
+reply-to-request behavior remains covered. Live packet I/O, driver adapters,
+packet queues, autonomous polling/timers, sockets, shell ping, SSH, smoltcp
+adoption, reachability, hardware work, lab mutation, boot publication, and
+phase transition remain rejected. The selected next task is
+phase12-network-pending-aware-arp-reply-poll-closeout-20260619.
