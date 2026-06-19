@@ -3121,3 +3121,24 @@ or timeout scheduling, shell ping, sockets, SSH, smoltcp adoption,
 reachability, hardware work, lab mutation, boot publication, or phase
 transition. The selected next task is
 phase12-network-integrated-single-ping-transaction-closeout-20260619.
+
+phase12-network-integrated-single-ping-transaction-closeout-20260619 accepts
+phase12-network-integrated-single-ping-transaction-closeout-accepted. The
+closeout reconciles the integrated single-ping transaction source, unit tests,
+task record, docs, and commit evidence.
+
+The accepted boundary remains host/testable: one caller-owned, fake/trait-level
+NetworkDevice transaction can start a route-aware ICMP echo request, transmit
+immediately for a resolved next hop, or emit one ARP request and retain one
+pending route-aware request for an unresolved next hop. A caller-driven poll can
+learn a matching ARP reply, transmit exactly one ICMP echo request, clear
+pending, and record in-flight only after successful transmit. A matching echo
+reply completes and clears the in-flight transaction.
+
+The single pending and single in-flight state ownership is deterministic enough
+to select the next caller-driven retry/timeout slice. This closeout still does
+not accept live packet I/O, live driver adapters, packet queues, autonomous
+retry or timeout scheduling, shell ping, sockets, SSH, smoltcp adoption,
+reachability, hardware work, lab mutation, boot publication, or phase
+transition. The selected next task is
+phase12-network-single-ping-caller-driven-retry-timeout-core-20260619.

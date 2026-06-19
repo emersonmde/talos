@@ -3978,6 +3978,25 @@ The post-review correction chain is:
     publication, and phase transition remain rejected. selected_next_task is
     'phase12-network-integrated-single-ping-transaction-closeout-20260619'.
 
+226. Phase 12.3 integrated single-ping transaction closeout: accepted in
+    'phase12-network-integrated-single-ping-transaction-closeout-20260619'
+    with classification
+    'phase12-network-integrated-single-ping-transaction-closeout-accepted'. The
+    closeout reconciles the integrated transaction source, unit tests, task,
+    docs, and commit evidence. The accepted boundary remains host/testable: one
+    caller-owned, fake/trait-level NetworkDevice transaction can start a
+    route-aware ICMP echo request, transmit immediately for a resolved next hop,
+    or emit one ARP request and retain one pending route-aware request for an
+    unresolved next hop. Caller-driven polling can advance a matching ARP reply
+    into exactly one ICMP echo request transmit and in-flight record, and a
+    matching echo reply completes the transaction. The single pending and single
+    in-flight state ownership is deterministic enough to select the next
+    caller-driven retry/timeout slice. Live packet I/O, live driver adapters,
+    packet queues, autonomous retry or timeout scheduling, shell ping, sockets,
+    SSH, smoltcp adoption, reachability, hardware work, lab mutation, boot
+    publication, and phase transition remain rejected. selected_next_task is
+    'phase12-network-single-ping-caller-driven-retry-timeout-core-20260619'.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
