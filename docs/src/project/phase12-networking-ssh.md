@@ -3280,3 +3280,24 @@ retry, or phase transition. selected_next_task is null and planningNeeded=true
 because no later queued Phase 12.3 task exists with complete objective
 dependencies, acceptance criteria, validation gates, docs, and evidence
 requirements.
+
+phase12-network-phase12-3-host-only-stack-frontier-checkpoint-20260619 accepts
+phase12-network-phase12-3-host-only-stack-frontier-checkpoint-accepted.
+The checkpoint reconciles the accepted Phase 12.3 host-only stack frontier:
+local packet dispatch, ARP cache, outbound frame construction, route-aware
+single-ping transaction, caller-driven retry/timeout, retained
+QEMU/substitute smoke evidence, and SinglePingPacketService. The accepted
+boundary is one caller-driven service/pump over caller-owned receive/transmit
+buffers and fake/trait-level NetworkDevice behavior. It can start, pump,
+observe status, retry, and timeout one transaction, but it is not a live driver
+adapter, socket API, or user-visible command.
+
+Lab-network ping remains unaccepted because Phase 12.1 live link/packet
+hardware remains paused, and no live driver adapter or live packet I/O has
+been accepted. Shell ping, sockets, UDP/TCP, smoltcp, live driver adapters,
+live packet I/O, hardware reachability, autonomous timers, broad packet
+queues, lab mutation, boot publication, SSH, Phase 12.1 link-hardware retry,
+and phase transition remain rejected. The selected next task is
+phase12-network-userspace-ping-operation-contract-core-20260619, a bounded
+host-only userspace/descriptor-facing operation contract over the accepted
+SinglePingPacketService and NetworkDevice abstractions.

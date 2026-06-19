@@ -4086,6 +4086,25 @@ The post-review correction chain is:
     no later queued Phase 12.3 task exists with complete objective
     dependencies, acceptance criteria, validation gates, docs, and evidence
     requirements.
+232. Phase 12.3 host-only stack frontier checkpoint: accepted in
+    'phase12-network-phase12-3-host-only-stack-frontier-checkpoint-20260619'
+    with classification
+    'phase12-network-phase12-3-host-only-stack-frontier-checkpoint-accepted'.
+    The checkpoint reconciles the accepted host-only stack frontier through
+    local packet dispatch, ARP cache, outbound frame construction, route-aware
+    single-ping transaction, caller-driven retry/timeout, retained
+    QEMU/substitute smoke evidence, and SinglePingPacketService. The accepted
+    boundary remains one caller-driven service/pump over caller-owned
+    receive/transmit buffers and fake/trait-level NetworkDevice behavior. It
+    can start, pump, observe status, retry, and timeout one transaction, but
+    it is not a live driver adapter, socket API, or user-visible command.
+    Lab-network ping remains unaccepted because Phase 12.1 live link/packet
+    hardware remains paused and no live driver adapter or live packet I/O is
+    accepted. Shell ping, sockets, UDP/TCP, smoltcp, hardware reachability,
+    autonomous timers, broad packet queues, lab mutation, boot publication,
+    SSH, Phase 12.1 link-hardware retry, and phase transition remain rejected.
+    selected_next_task is
+    'phase12-network-userspace-ping-operation-contract-core-20260619'.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -13456,6 +13475,16 @@ Milestone 12.3: IP Stack
   record, and docs. The accepted frontier remains host-only and
   selected_next_task is null with planningNeeded=true because no later queued
   Phase 12.3 task has complete objective dependencies and gates.
+- The host-only stack frontier checkpoint reconciles the accepted Phase 12.3
+  packet-dispatch, ARP cache, outbound construction, route-aware transaction,
+  caller-driven retry/timeout, retained QEMU/substitute smoke, and
+  SinglePingPacketService evidence. The accepted boundary is one
+  caller-driven service/pump over caller-owned buffers and fake/trait-level
+  NetworkDevice behavior. Lab-network ping, live packet I/O, shell ping,
+  sockets, UDP/TCP, smoltcp, SSH, and phase transition remain rejected. The
+  next selected feature-led task is a bounded userspace/descriptor-facing
+  ping operation contract over the accepted service, not a fake kernel-backed
+  shell command.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
