@@ -3263,3 +3263,20 @@ I/O, hardware reachability, autonomous timers, broad packet queues, lab
 mutation, boot publication, SSH, Phase 12.1 link-hardware retry, or phase
 transition. The selected next task is
 phase12-network-single-transaction-packet-service-closeout-20260619.
+
+phase12-network-single-transaction-packet-service-closeout-20260619 accepts
+phase12-network-single-transaction-packet-service-closeout-accepted.
+The closeout reconciles the accepted SinglePingPacketService core,
+source/unit evidence, retained QEMU/substitute smoke evidence, task record,
+docs, and commit e673b08c0e8c8c3d8b25a9de4bf70ee22c40d81e.
+
+The accepted frontier remains host-only: one caller-driven packet service/pump
+owns exactly one SinglePingTransaction plus a bounded ARP cache while borrowing
+NetworkDevice and caller-owned receive/transmit buffers per operation. The
+evidence does not accept shell ping, sockets, UDP/TCP, smoltcp, live driver
+adapters, live packet I/O, hardware reachability, autonomous timers, broad
+packet queues, lab mutation, boot publication, SSH, Phase 12.1 link-hardware
+retry, or phase transition. selected_next_task is null and planningNeeded=true
+because no later queued Phase 12.3 task exists with complete objective
+dependencies, acceptance criteria, validation gates, docs, and evidence
+requirements.

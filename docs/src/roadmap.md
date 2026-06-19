@@ -4069,6 +4069,23 @@ The post-review correction chain is:
     publication, SSH, Phase 12.1 link-hardware retry, and phase transition
     remain rejected. selected_next_task is
     'phase12-network-single-transaction-packet-service-closeout-20260619'.
+231. Phase 12.3 single-transaction packet service closeout: accepted in
+    'phase12-network-single-transaction-packet-service-closeout-20260619' with
+    classification
+    'phase12-network-single-transaction-packet-service-closeout-accepted'.
+    The closeout reconciles the accepted SinglePingPacketService core,
+    source/unit evidence, retained QEMU/substitute smoke evidence, task record,
+    docs, and commit e673b08c0e8c8c3d8b25a9de4bf70ee22c40d81e. The accepted
+    frontier remains host-only: one caller-driven service/pump owns exactly one
+    SinglePingTransaction plus a bounded ARP cache while borrowing
+    NetworkDevice and caller-owned buffers per operation. Shell ping, sockets,
+    UDP/TCP, smoltcp, live driver adapters, live packet I/O, hardware
+    reachability, autonomous timers, broad packet queues, lab mutation, boot
+    publication, SSH, Phase 12.1 link-hardware retry, and phase transition
+    remain rejected. selected_next_task is null and planningNeeded=true because
+    no later queued Phase 12.3 task exists with complete objective
+    dependencies, acceptance criteria, validation gates, docs, and evidence
+    requirements.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -13434,6 +13451,11 @@ Milestone 12.3: IP Stack
   UDP/TCP, smoltcp, live driver adapters, live packet I/O, hardware
   reachability, autonomous timers, broad packet queues, lab mutation, boot
   publication, SSH, Phase 12.1 link-hardware retry, or phase transition.
+- The single-transaction packet service closeout reconciles the accepted core
+  commit, source/unit evidence, retained QEMU/substitute smoke evidence, task
+  record, and docs. The accepted frontier remains host-only and
+  selected_next_task is null with planningNeeded=true because no later queued
+  Phase 12.3 task has complete objective dependencies and gates.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
