@@ -2761,3 +2761,14 @@ deterministic errors. The selector does not mutate ARP cache state, call or
 wrap NetworkDevice, transmit frames, queue packets, schedule retries, claim
 live packet I/O, claim sockets/SSH, claim ping/network reachability behavior,
 claim RP1 Ethernet readiness, or change the Phase 12.1 hardware frontier.
+
+phase12-network-outbound-request-selection-closeout-20260619 accepts
+phase12-network-outbound-request-selection-closeout-accepted. The closeout
+preserves the host-only one-frame request-selection frontier and selects
+phase12-network-outbound-one-shot-device-transmit-core-20260619 as the next
+mechanically unblocked task. The selected follow-up is limited to a
+fake/trait-level one-shot NetworkDevice transmit wrapper over the accepted
+selector. Packet queues, retry timers, live driver transmit, live packet I/O,
+hardware work, sockets, SSH, smoltcp adoption, ping/network reachability
+behavior, RP1 Ethernet readiness, lab mutation, boot publication, and phase
+transition remain rejected.

@@ -3743,6 +3743,18 @@ The post-review correction chain is:
     ping/network reachability behavior, Pi 5 hardware work, lab mutation, boot
     publication, link-readiness work, and phase transition remain rejected.
 
+213. Phase 12.3 outbound request selection closeout: accepted in
+    'phase12-network-outbound-request-selection-closeout-20260619' with
+    classification
+    'phase12-network-outbound-request-selection-closeout-accepted'. The
+    closeout preserves the host-only one-frame selector boundary and selects
+    'phase12-network-outbound-one-shot-device-transmit-core-20260619' as the
+    next mechanically unblocked task. The selected follow-up remains limited
+    to a fake/trait-level one-shot NetworkDevice transmit wrapper; packet
+    queues, retry timers, live driver transmit, hardware, sockets, SSH,
+    smoltcp adoption, ping/network reachability behavior, lab mutation, boot
+    publication, and phase transition remain rejected.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
@@ -12917,11 +12929,20 @@ Milestone 12.3: IP Stack
 - Local source/test progress is accepted for caller-buffered Ethernet/IPv4 ARP
   request frame construction for a local endpoint and target IPv4, including
   deterministic broadcast/zero-target fields and buffer-pressure rejection.
-- The ARP request emission closeout freezes this host-only caller-buffered
-  outbound request frontier and selects no next implementation task; supervisor
-  planning is required before packet queues, driver transmit, live packet I/O,
-  sockets, SSH, smoltcp adoption, network reachability, hardware work, or a
-  phase transition.
+- Local source/test progress is accepted for immutable-cache outbound request
+  selection that builds either a resolved caller-buffered Ethernet/IPv4/ICMP
+  echo request or an unresolved caller-buffered Ethernet/IPv4 ARP request for
+  one requested ICMP echo. The request-selection closeout selects a
+  fake/trait-level one-shot transmit wrapper as the next bounded task while
+  continuing to reject live driver transmit, packet queues, retries,
+  reachability, hardware work, sockets, SSH, smoltcp adoption, and phase
+  transition.
+- The earlier ARP request emission closeout froze its host-only
+  caller-buffered ARP construction frontier and required supervisor planning
+  before the outbound request-selection task was added. That closeout did not
+  accept packet queues, driver transmit, live packet I/O, sockets, SSH,
+  smoltcp adoption, network reachability, hardware work, or a phase
+  transition.
 - Implement driver adapters, packet queues, retry timers, neighbor-discovery
   state, UDP/TCP, and socket integration in later bounded tasks.
 

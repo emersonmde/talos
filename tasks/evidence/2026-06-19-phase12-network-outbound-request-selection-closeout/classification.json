@@ -1,0 +1,60 @@
+{
+  "task_id": "phase12-network-outbound-request-selection-closeout-20260619",
+  "classification": "phase12-network-outbound-request-selection-closeout-accepted",
+  "accepted": true,
+  "accepted_boundary": "host-only request selection/construction of one outbound IPv4 ICMP echo request frame or unresolved-neighbor ARP request frame, with no transmit or reachability claim",
+  "reviewed_inputs": [
+    "src/network.rs",
+    "tasks/2026-06-19-phase12-network-outbound-request-selection-core.md",
+    "tasks/evidence/2026-06-19-phase12-network-outbound-request-selection-core/classification.json",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "core_commit": "ddfe5fc359dfa2a56921f27ff8c4fd2cef3ea027",
+  "selected_next_task": "phase12-network-outbound-one-shot-device-transmit-core-20260619",
+  "selection_reason": "The accepted selector is host-only and caller-buffered; the planned next task is explicitly limited to a fake/trait-level one-shot NetworkDevice transmit wrapper with no live driver, queue, retry, hardware, reachability, sockets, SSH, smoltcp, or phase-transition claim.",
+  "validation": [
+    {
+      "level": "static/source/task evidence review",
+      "result": "pass",
+      "note": "Reviewed request-selection source/tests, accepted task record, core classification evidence, Phase 12 docs, and roadmap."
+    },
+    {
+      "level": "JSON evidence validation",
+      "command": "jq empty tasks/evidence/2026-06-19-phase12-network-outbound-request-selection-closeout/classification.json",
+      "result": "pass"
+    },
+    {
+      "level": "diff whitespace check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "level": "staged diff whitespace check",
+      "command": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "rejected_claims": [
+    "packet queue",
+    "retry timer",
+    "routing or subnet/gateway selection",
+    "live driver transmit",
+    "live packet I/O",
+    "hardware run",
+    "boot publication",
+    "lab mutation",
+    "sockets",
+    "SSH",
+    "smoltcp adoption",
+    "ping/network reachability behavior",
+    "RP1 Ethernet readiness",
+    "phase transition"
+  ],
+  "next_action": "Promote phase12-network-outbound-one-shot-device-transmit-core-20260619 on a later worker wake if dependencies remain satisfied and git status is clean."
+}
