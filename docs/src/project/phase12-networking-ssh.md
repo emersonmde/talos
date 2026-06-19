@@ -2958,3 +2958,23 @@ NetworkDevice transmit. It does not accept packet queues, autonomous timers,
 live driver adapters, smoltcp adoption, UDP/TCP, sockets, hardware packet I/O,
 ping/network reachability behavior, SSH, Pi 5 hardware work, boot publication,
 lab mutation, or phase transition.
+
+phase12-network-single-pending-arp-retry-closeout-20260619 accepts
+phase12-network-single-pending-arp-retry-closeout-accepted. The closeout
+reconciles the explicit retry source, unit tests, task record, docs, and
+evidence with the accepted route-aware pending frontier.
+
+The accepted boundary remains host/testable and caller-driven. One stored
+pending ICMP echo request may re-emit exactly one ARP request for its stored
+next-hop IPv4 only when the caller invokes the retry helper and retry budget
+remains. Successful fake-device ARP retry transmit decrements budget and keeps
+the pending request for later matching ARP resolution. Budget exhaustion,
+no-pending, output-buffer pressure, and transmit-error behavior are
+deterministic and covered by unit tests.
+
+The closeout selects
+phase12-network-phase12-3-route-aware-outbound-frontier-closeout-20260619 as
+the next same-milestone checkpoint. It does not accept packet queues,
+autonomous timers, live driver adapters, smoltcp adoption, UDP/TCP, sockets,
+hardware packet I/O, ping/network reachability behavior, SSH, Pi 5 hardware
+work, boot publication, lab mutation, or phase transition.

@@ -3881,6 +3881,26 @@ The post-review correction chain is:
     'phase12-network-single-pending-arp-retry-closeout-20260619', bounded to
     source/task/docs reconciliation.
 
+221. Phase 12.3 single-pending ARP retry closeout: accepted in
+    'phase12-network-single-pending-arp-retry-closeout-20260619' with
+    classification 'phase12-network-single-pending-arp-retry-closeout-accepted'.
+    The closeout reconciles explicit caller-driven ARP retry behavior with
+    src/network.rs source, single_pending_arp_retry_* tests, retained
+    route-aware pending tests, task evidence, and Phase 12 docs. The accepted
+    boundary remains host/testable: one stored pending ICMP echo request may
+    re-emit exactly one ARP request for its stored next-hop IPv4 when the
+    caller invokes retry_single_pending_ipv4_icmp_echo_arp_request and retry
+    budget remains. Successful fake-device ARP retry transmit decrements the
+    budget and preserves the pending request for later matching ARP resolution;
+    budget exhaustion, no-pending, output-buffer pressure, and transmit-error
+    paths remain deterministic. Packet queues, autonomous retry timers,
+    scheduler integration, live driver transmit, live packet I/O, hardware
+    work, sockets, SSH, smoltcp adoption, ping/network reachability, lab
+    mutation, boot publication, and phase transition remain rejected. The
+    selected next task is
+    'phase12-network-phase12-3-route-aware-outbound-frontier-closeout-20260619',
+    a same-milestone checkpoint before any broader networking work.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed

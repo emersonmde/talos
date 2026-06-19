@@ -1,0 +1,77 @@
+{
+  "task_id": "phase12-network-single-pending-arp-retry-closeout-20260619",
+  "classification": "phase12-network-single-pending-arp-retry-closeout-accepted",
+  "accepted_boundary": "host-only explicit single-pending ARP retry reconciled with source, unit-test, docs, task, and evidence records",
+  "source_files": [
+    "src/network.rs",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md",
+    "tasks/2026-06-19-phase12-network-single-pending-arp-retry-core.md",
+    "tasks/2026-06-19-phase12-network-single-pending-arp-retry-closeout.md"
+  ],
+  "accepted_symbols": [
+    "PendingIcmpEchoResult::ArpRetryBudgetExhausted",
+    "PendingIcmpEchoRequest::new_with_next_hop_and_arp_retry_budget",
+    "PendingIcmpEchoRequest::arp_retries_remaining",
+    "transmit_or_queue_routed_single_pending_ipv4_icmp_echo_request_with_arp_retry_budget",
+    "retry_single_pending_ipv4_icmp_echo_arp_request"
+  ],
+  "reviewed_tests": [
+    "single_pending_arp_retry_reemits_stored_gateway_next_hop_and_decrements_budget",
+    "single_pending_arp_retry_reports_budget_exhaustion_without_clearing_pending",
+    "single_pending_arp_retry_reports_no_pending_buffer_pressure_and_transmit_error_boundaries",
+    "routed_single_pending_icmp_same_subnet_unresolved_arps_destination",
+    "routed_single_pending_icmp_gateway_route_arps_gateway_and_transmits_to_final_destination",
+    "routed_single_pending_icmp_preserves_gateway_pending_on_nonmatching_arp"
+  ],
+  "validation": [
+    {
+      "level": "static/source/task evidence review",
+      "command": "static inspection of src/network.rs, retry tests, retained route-aware pending tests, task records, Phase 12 docs, roadmap, and git commit a17b86e70bb596925e43fcb2ab2ec2eb28f2a797",
+      "result": "pass"
+    },
+    {
+      "level": "JSON evidence validation",
+      "command": "jq empty tasks/evidence/2026-06-19-phase12-network-single-pending-arp-retry-closeout/classification.json",
+      "result": "pass"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "level": "staged diff validation",
+      "command": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "rejected_claims": [
+    "autonomous retry timing",
+    "timer wheel",
+    "scheduler wakeup",
+    "multi-entry packet queue",
+    "dynamic route table",
+    "DHCP",
+    "DNS",
+    "live driver adapter",
+    "live packet I/O",
+    "packet capture",
+    "network reachability",
+    "ping behavior",
+    "sockets",
+    "SSH",
+    "smoltcp adoption",
+    "RP1 driver adapter readiness",
+    "Pi 5 hardware proof",
+    "boot publication",
+    "lab mutation",
+    "phase transition"
+  ],
+  "selected_next_task": "phase12-network-phase12-3-route-aware-outbound-frontier-closeout-20260619"
+}
