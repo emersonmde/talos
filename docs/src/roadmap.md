@@ -3774,6 +3774,20 @@ The post-review correction chain is:
     hardware work, lab mutation, boot publication, and phase transition remain
     rejected.
 
+215. Phase 12.3 outbound one-shot device transmit closeout: accepted in
+    'phase12-network-outbound-one-shot-device-transmit-closeout-20260619' with
+    classification
+    'phase12-network-outbound-one-shot-device-transmit-closeout-accepted'. The
+    closeout preserves the fake/trait-level one-shot transmit frontier and
+    selects 'phase12-network-phase12-3-host-frontier-closeout-20260619' as the
+    next mechanically unblocked task. The selected checkpoint is limited to
+    reconciling accepted host/testable Phase 12.3 receive dispatch, ARP cache
+    learning/resolution, outbound ICMP/ARP construction, request selection, and
+    one-shot trait-level transmit behavior. Packet queues, retry timers,
+    routing, live driver transmit, live packet I/O, hardware work, sockets,
+    SSH, smoltcp adoption, ping/network reachability behavior, lab mutation,
+    boot publication, and phase transition remain rejected.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
@@ -12955,6 +12969,13 @@ Milestone 12.3: IP Stack
   fake/trait-level one-shot transmit wrapper as the next bounded task while
   continuing to reject live driver transmit, packet queues, retries,
   reachability, hardware work, sockets, SSH, smoltcp adoption, and phase
+  transition.
+- Local source/test progress is accepted for fake/trait-level one-shot outbound
+  transmit that builds one selected outbound frame into caller-owned storage and
+  invokes NetworkDevice::transmit_frame exactly once through fake/mock tests.
+  The closeout selects the Phase 12.3 host frontier checkpoint while continuing
+  to reject packet queues, retries, routing, live driver transmit, live packet
+  I/O, reachability, hardware work, sockets, SSH, smoltcp adoption, and phase
   transition.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning

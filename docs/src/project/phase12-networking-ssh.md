@@ -2790,3 +2790,17 @@ Packet queues, retry timers, receive loops, live driver transmit, live packet
 I/O, hardware work, sockets, SSH, smoltcp adoption, ping/network reachability
 behavior, RP1 Ethernet readiness, lab mutation, boot publication, and phase
 transition remain rejected.
+
+phase12-network-outbound-one-shot-device-transmit-closeout-20260619 accepts
+phase12-network-outbound-one-shot-device-transmit-closeout-accepted. The
+closeout preserves the fake/trait-level one-shot transmit frontier and selects
+phase12-network-phase12-3-host-frontier-closeout-20260619 as the next
+mechanically unblocked task.
+
+The selected checkpoint is limited to reconciling accepted host/testable Phase
+12.3 receive dispatch, ARP cache learning/resolution, outbound ICMP/ARP
+construction, request selection, and one-shot trait-level transmit behavior.
+Packet queues, retry timers, routing, live driver transmit, live packet I/O,
+hardware work, sockets, SSH, smoltcp adoption, ping/network reachability
+behavior, RP1 Ethernet readiness, lab mutation, boot publication, and phase
+transition remain rejected.

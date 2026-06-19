@@ -1,0 +1,71 @@
+{
+  "task_id": "phase12-network-outbound-one-shot-device-transmit-closeout-20260619",
+  "classification": "phase12-network-outbound-one-shot-device-transmit-closeout-accepted",
+  "accepted": true,
+  "accepted_boundary": "host/mock fake/trait-level one-shot outbound transmit closeout",
+  "reviewed_inputs": [
+    "src/network.rs",
+    "tasks/2026-06-19-phase12-network-outbound-one-shot-device-transmit-core.md",
+    "tasks/evidence/2026-06-19-phase12-network-outbound-one-shot-device-transmit-core/classification.json",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "core_commit": "128c8ab1c9394aced68577ab909d4a26a7402fc7",
+  "accepted_behavior": [
+    "resolved neighbor builds one Ethernet/IPv4/ICMP echo request into caller-owned storage and calls NetworkDevice::transmit_frame exactly once",
+    "unresolved neighbor builds one Ethernet/IPv4 ARP request into caller-owned storage and calls NetworkDevice::transmit_frame exactly once",
+    "request selection or build failure returns before any transmit attempt",
+    "transmit failure reports request kind, frame length, and DeviceError after one fake-device transmit attempt"
+  ],
+  "selected_next_task": "phase12-network-phase12-3-host-frontier-closeout-20260619",
+  "selected_next_task_reason": "the queued checkpoint has explicit same-milestone scope, dependencies, gates, docs, and evidence requirements, and all selected Phase 12.3 host-only implementation tasks through one-shot outbound transmit are accepted or closed out",
+  "validation": [
+    {
+      "level": "static/source/task evidence review",
+      "command": "manual inspection of src/network.rs, core task record, core classification, docs, and roadmap",
+      "result": "pass"
+    },
+    {
+      "level": "JSON evidence validation",
+      "command": "jq empty tasks/evidence/2026-06-19-phase12-network-outbound-one-shot-device-transmit-closeout/classification.json",
+      "result": "pass"
+    },
+    {
+      "level": "diff whitespace check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "level": "staged diff whitespace check",
+      "command": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "rejected_claims": [
+    "packet queue",
+    "retry timer",
+    "neighbor-discovery state machine",
+    "routing",
+    "live driver transmit",
+    "live packet I/O",
+    "hardware packet I/O",
+    "RP1 driver adapter",
+    "DMA descriptor ownership",
+    "interrupt handling",
+    "sockets",
+    "SSH",
+    "smoltcp adoption",
+    "ping/network reachability behavior",
+    "RP1 Ethernet readiness",
+    "Pi 5 hardware proof",
+    "boot publication",
+    "lab mutation",
+    "phase transition"
+  ],
+  "next_action": "Promote phase12-network-phase12-3-host-frontier-closeout-20260619 on a later worker wake if dependencies remain satisfied and git status is clean."
+}
