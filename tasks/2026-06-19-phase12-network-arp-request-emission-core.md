@@ -71,9 +71,17 @@ storage is too small.
   - result: pass, 582 talos no_std tests passed in this harness.
 - unit tests/full suite: cargo -Zjson-target-spec test --quiet
   - result: pass, 582 talos no_std tests passed.
-- pending final gates before commit: cargo fmt --all -- --check, jq empty on
-  classification JSON, git diff --check, mdbook build, git diff --cached
-  --check.
+- fmt/lint/typecheck: cargo fmt --all -- --check
+  - result: pass.
+- JSON evidence validation:
+  jq empty tasks/evidence/2026-06-19-phase12-network-arp-request-emission-core/classification.json
+  - result: pass.
+- diff whitespace check: git diff --check
+  - result: pass.
+- docs build: /home/node/.cargo/bin/mdbook build
+  - result: pass.
+- staged diff whitespace check: git diff --cached --check
+  - result: pass before commit.
 
 ## Accepted Boundary
 
@@ -100,8 +108,7 @@ hardware frontier.
 
 ## Next Action
 
-Run the remaining final gates, commit the accepted implementation, and then
-promote phase12-network-arp-request-emission-closeout-20260619 on a later wake
+Promote phase12-network-arp-request-emission-closeout-20260619 on a later wake
 if dependencies remain satisfied. Do not jump directly to packet queues, retry
 timers, driver transmit, live packet I/O, sockets, SSH, ping/network
 reachability, hardware work, lab mutation, boot publication, or a phase

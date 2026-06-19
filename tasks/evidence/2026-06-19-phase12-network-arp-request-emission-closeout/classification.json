@@ -1,0 +1,67 @@
+{
+  "task_id": "phase12-network-arp-request-emission-closeout-20260619",
+  "classification": "phase12-network-arp-request-emission-closeout-accepted-planning-needed",
+  "accepted": true,
+  "accepted_boundary": "host-only caller-buffered Ethernet/IPv4 ARP request frame construction for a local endpoint and target IPv4",
+  "reviewed_evidence": [
+    "tasks/2026-06-19-phase12-network-arp-request-emission-core.md",
+    "tasks/evidence/2026-06-19-phase12-network-arp-request-emission-core/classification.json",
+    "src/network.rs",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md",
+    "commit 99b8a4cab3bb3794b29500758cf05ef6beb6b0d3"
+  ],
+  "evidence_fixes": [
+    "Updated the core task record and classification JSON to record the final fmt, JSON, diff, docs, and staged-diff gates run before the accepted implementation commit."
+  ],
+  "planning_needed": true,
+  "planning_reason": "No explicit queued follow-up task remains after phase12-network-arp-request-emission-closeout-20260619 with complete scope, nonGoals, dependencies, acceptanceCriteria, validationGates, docsRequired, and evidenceRequired.",
+  "selected_next_task": null,
+  "validation": [
+    {
+      "level": "static/source/task evidence review",
+      "command": "static/source/task evidence review",
+      "result": "pass"
+    },
+    {
+      "level": "JSON evidence validation",
+      "command": "jq empty tasks/evidence/2026-06-19-phase12-network-arp-request-emission-core/classification.json tasks/evidence/2026-06-19-phase12-network-arp-request-emission-closeout/classification.json",
+      "result": "pass"
+    },
+    {
+      "level": "diff whitespace check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "level": "staged diff whitespace check",
+      "command": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "rejected_claims": [
+    "neighbor-discovery state machine",
+    "ARP retry timer",
+    "packet queue",
+    "routing table",
+    "subnet or gateway selection",
+    "driver transmit",
+    "live packet I/O",
+    "sockets",
+    "SSH",
+    "smoltcp adoption",
+    "ping/network reachability behavior",
+    "RP1 Ethernet readiness",
+    "Pi 5 hardware readiness",
+    "boot publication",
+    "lab mutation",
+    "phase transition",
+    "selected follow-up implementation task"
+  ],
+  "next_action": "Supervisor planning is required before any further Phase 12.3 task."
+}

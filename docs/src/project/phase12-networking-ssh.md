@@ -2735,3 +2735,12 @@ IPv4, remains allocation-free, and does not mutate ARP cache state, consult a
 driver, transmit frames, queue packets, schedule retries, claim live packet
 I/O, claim sockets/SSH, claim ping/network reachability behavior, claim RP1
 Ethernet readiness, or change the Phase 12.1 hardware frontier.
+
+phase12-network-arp-request-emission-closeout-20260619 accepts
+phase12-network-arp-request-emission-closeout-accepted-planning-needed. The
+closeout preserves the exact host-only caller-buffered Ethernet/IPv4 ARP
+request construction frontier and selects no follow-up implementation task.
+Supervisor planning is required before packet queues, retry timers,
+neighbor-discovery state, driver transmit, live packet I/O, sockets, SSH,
+smoltcp adoption, ping/network reachability behavior, Pi 5 hardware work, boot
+publication, lab mutation, link-readiness work, or a phase transition.

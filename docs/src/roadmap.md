@@ -12900,6 +12900,11 @@ Milestone 12.3: IP Stack
 - Local source/test progress is accepted for caller-buffered Ethernet/IPv4 ARP
   request frame construction for a local endpoint and target IPv4, including
   deterministic broadcast/zero-target fields and buffer-pressure rejection.
+- The ARP request emission closeout freezes this host-only caller-buffered
+  outbound request frontier and selects no next implementation task; supervisor
+  planning is required before packet queues, driver transmit, live packet I/O,
+  sockets, SSH, smoltcp adoption, network reachability, hardware work, or a
+  phase transition.
 - Implement driver adapters, packet queues, retry timers, neighbor-discovery
   state, UDP/TCP, and socket integration in later bounded tasks.
 
