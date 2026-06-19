@@ -3630,6 +3630,18 @@ The post-review correction chain is:
     SSH, hardware-driver readiness, ping/network reachability behavior, and
     phase transition remain rejected.
 
+205. Phase 12.3 ARP-cache dispatch integration closeout: accepted in
+    'phase12-network-arp-cache-dispatch-integration-closeout-20260619' with
+    classification
+    'phase12-network-arp-cache-dispatch-integration-closeout-accepted'. The
+    closeout confirms the accepted host-only cache-aware dispatch/poll
+    boundary and selects
+    'phase12-network-outbound-neighbor-resolution-source-checkpoint-20260619'
+    as the next mechanically unblocked source checkpoint. Outbound
+    neighbor-resolution implementation, packet queues, live packet I/O,
+    sockets, SSH, hardware-driver readiness, ping/network reachability
+    behavior, link readiness, and phase transition remain rejected.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed

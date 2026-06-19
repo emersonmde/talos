@@ -2630,3 +2630,11 @@ Driver adapters, packet queues, outbound neighbor resolution, UDP/TCP, DHCP,
 DNS, routing, smoltcp integration, sockets, SSH, live packet I/O, RP1 Ethernet
 driver readiness, link readiness, ping/network reachability behavior, and phase
 transition remain unaccepted.
+
+phase12-network-arp-cache-dispatch-integration-closeout-20260619 accepts
+phase12-network-arp-cache-dispatch-integration-closeout-accepted. The closeout
+confirms the host-only cache-aware local dispatch/poll frontier and selects the
+queued outbound-neighbor-resolution source checkpoint as the next bounded
+Phase 12.3 planning task. It does not authorize outbound neighbor-resolution
+implementation, packet queues, driver adapters, live packet I/O, sockets, SSH,
+network reachability, ping behavior, hardware readiness, or phase transition.

@@ -1,0 +1,114 @@
+{
+  "task_id": "phase12-network-arp-cache-dispatch-integration-closeout-20260619",
+  "status": "accepted",
+  "classification": "phase12-network-arp-cache-dispatch-integration-closeout-accepted",
+  "accepted_at": "2026-06-19T05:45:00Z",
+  "evidence_level": [
+    "static source/task/evidence consistency review",
+    "task-owned JSON classification",
+    "docs build",
+    "diff checks"
+  ],
+  "reviewed_evidence": [
+    "tasks/2026-06-19-phase12-network-arp-cache-dispatch-integration-core.md",
+    "tasks/evidence/2026-06-19-phase12-network-arp-cache-dispatch-integration-core/classification.json",
+    "src/network.rs",
+    "tasks/2026-06-19-phase12-network-arp-cache-dispatch-integration-source-checkpoint.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md",
+    "commit cdf24728c8c0c64db7621d595696e3f02e6fb0ef"
+  ],
+  "accepted_behavior": [
+    "dispatch_local_packet_with_arp_cache learns valid Ethernet/IPv4 ARP sender facts before existing local dispatch behavior",
+    "poll_local_network_device_with_arp_cache learns valid Ethernet/IPv4 ARP sender facts before existing local poll/transmit result behavior",
+    "ARP requests can still generate the same local ARP reply as cache-unaware dispatch",
+    "ARP replies learn the neighbor and produce no local transmit",
+    "malformed or unsupported ARP does not mutate the cache",
+    "non-ARP ICMP echo output remains compatible with dispatch_local_packet",
+    "no-frame receive outcomes leave cache state unchanged",
+    "transmit errors keep ARP facts learned before reply transmission failed",
+    "cache-unaware dispatch_local_packet and poll_local_network_device remain available and covered"
+  ],
+  "selected_next_task": "phase12-network-outbound-neighbor-resolution-source-checkpoint-20260619",
+  "planningNeeded": false,
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Phase 12.3 now has accepted cache-aware local dispatch and poll entry points that learn ARP sender facts from validated inbound ARP request and reply frames"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "cache-unaware dispatch_local_packet and poll_local_network_device behavior remains source-compatible and covered by deterministic tests"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "core tests cover ARP request learning with reply transmission, ARP reply learning without transmit, malformed or unsupported ARP without cache mutation, unchanged ICMP echo output, no-frame cache behavior, and transmit-error cache behavior"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "no implementation correction was required during closeout because static/source/task evidence matched the accepted core claims"
+    },
+    {
+      "disposition": "deferred",
+      "finding": "outbound neighbor resolution, packet queues, driver adapters, UDP/TCP, DHCP, DNS, routing, sockets, SSH, smoltcp integration, live packet I/O, and Pi 5 packet movement evidence remain future bounded work"
+    },
+    {
+      "disposition": "removed",
+      "finding": "no source, docs, dependencies, prior task evidence, or accepted APIs were removed by this closeout"
+    },
+    {
+      "disposition": "rejected",
+      "finding": "outbound resolution implementation, packet queue readiness, live packet I/O, hardware-driver readiness, link readiness, ping/network reachability behavior, sockets, SSH, smoltcp adoption, and phase transition are not accepted by this closeout"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "static/source/task evidence review",
+      "result": "pass"
+    },
+    {
+      "gate": "jq empty",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "hardware": {
+    "hardware_test_lock_acquired": false,
+    "pi5_hardware_run": false,
+    "lab_mutation": false,
+    "boot_archive_publication": false,
+    "live_packet_io": false
+  },
+  "rejected_claims": [
+    "outbound neighbor-resolution implementation",
+    "packet queue readiness",
+    "driver adapter readiness",
+    "RP1 Ethernet driver readiness",
+    "DMA descriptor ownership",
+    "interrupt integration",
+    "packet capture",
+    "live packet I/O",
+    "smoltcp adoption",
+    "UDP/TCP behavior",
+    "DHCP",
+    "DNS",
+    "routing",
+    "socket API",
+    "SSH",
+    "network reachability",
+    "ping behavior",
+    "hardware link readiness",
+    "phase transition"
+  ]
+}
