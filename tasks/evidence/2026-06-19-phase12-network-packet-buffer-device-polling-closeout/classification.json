@@ -1,0 +1,125 @@
+{
+  "task_id": "phase12-network-packet-buffer-device-polling-closeout-20260619",
+  "status": "accepted",
+  "classification": "phase12-network-packet-buffer-device-polling-closeout-accepted",
+  "accepted_at": "2026-06-19T02:44:00Z",
+  "evidence_level": [
+    "static task/source/evidence consistency review",
+    "task-owned JSON evidence",
+    "diff checks"
+  ],
+  "reviewed_evidence": [
+    "tasks/2026-06-19-phase12-network-packet-buffer-device-polling-core.md",
+    "tasks/evidence/2026-06-19-phase12-network-packet-buffer-device-polling-core/classification.json",
+    "src/network.rs",
+    "tasks/2026-06-19-phase12-network-packet-buffer-device-polling-source-checkpoint.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "accepted_claims": [
+    "one-frame local polling over NetworkDevice receive/transmit",
+    "caller-owned RX storage for received frames",
+    "caller-owned TX storage for generated replies",
+    "dispatch through accepted dispatch_local_packet before transmit",
+    "transmit only after ARP or ICMP echo reply generation succeeds",
+    "deterministic LocalPollStepResult outcomes for no-frame, receive-buffer-too-small, receive-error, no-reply, dispatch-error, transmit-error, and successful reply transmission"
+  ],
+  "remaining_gaps": [
+    "live driver adapter",
+    "packet queue",
+    "ARP cache",
+    "static neighbor table",
+    "learned neighbor state",
+    "UDP/TCP",
+    "DHCP",
+    "DNS",
+    "routing",
+    "socket API",
+    "smoltcp adoption",
+    "SSH",
+    "live packet I/O",
+    "Pi 5 packet movement evidence",
+    "DMA descriptor ownership",
+    "interrupt integration",
+    "cache coherency contract"
+  ],
+  "rejected_claims": [
+    "live packet I/O",
+    "RP1 Ethernet driver readiness",
+    "DMA descriptor ownership",
+    "interrupt integration",
+    "driver adapter readiness",
+    "packet queue readiness",
+    "smoltcp adoption",
+    "socket API",
+    "TCP/UDP behavior",
+    "SSH",
+    "network reachability",
+    "ping response",
+    "hardware link readiness",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "closeout confirms accepted reusable local poll-step API over caller-owned RX/TX buffers"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "LocalPollStepResult preserves separate receive, dispatch, transmit, no-reply, and replied outcomes without panics or allocation"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "accepted fake-device tests cover ARP reply, ICMP echo reply, no-frame, receive-buffer pressure, receive error, no-reply, dispatch-error, and transmit-error cases"
+    },
+    {
+      "disposition": "deferred",
+      "finding": "ARP cache behavior, packet queues, live driver adapter integration, UDP/TCP, DHCP, DNS, routing, sockets, smoltcp, SSH, and Pi 5 packet movement evidence remain future work"
+    },
+    {
+      "disposition": "rejected",
+      "finding": "live packet I/O, hardware-driver readiness, link readiness, network reachability, sockets, SSH, smoltcp adoption, and phase transition are not accepted"
+    },
+    {
+      "disposition": "removed",
+      "finding": "no source, docs, dependencies, or prior task evidence were removed"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "no hardware lock, lab mutation, boot publication, or Pi 5 inconclusive-run triage was required for static closeout work"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "static/source/task evidence review",
+      "result": "pass"
+    },
+    {
+      "gate": "jq empty",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "mdbook build",
+      "result": "not-run",
+      "reason": "docs/src files were not changed by this closeout"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "hardware": {
+    "hardware_test_lock_acquired": false,
+    "pi5_hardware_run": false,
+    "lab_mutation": false,
+    "boot_archive_publication": false,
+    "live_packet_io": false,
+    "network_reachability_claimed": false
+  },
+  "selected_next_task": "phase12-network-arp-cache-source-checkpoint-20260619",
+  "planning_needed": false
+}
