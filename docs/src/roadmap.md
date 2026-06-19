@@ -4032,6 +4032,22 @@ The post-review correction chain is:
     reachability, autonomous timers, packet queues, lab mutation, boot
     publication, SSH, and phase transition remain rejected.
 
+229. Phase 12.3 single-ping transaction QEMU/substitute smoke closeout:
+    accepted in
+    'phase12-network-single-ping-transaction-qemu-smoke-closeout-20260619'
+    with classification
+    'phase12-network-single-ping-transaction-qemu-smoke-closeout-accepted'.
+    The closeout reconciles the retained smoke transcript with
+    SinglePingTransaction source/unit evidence, explicit caller-driven retry,
+    and explicit timeout. The accepted evidence level remains host-only
+    QEMU/substitute plus source/unit-test evidence over caller-owned buffers and
+    fake/trait-level NetworkDevice behavior. It is sufficient to plan the next
+    user-boundary strategy checkpoint, but shell ping, sockets, UDP/TCP,
+    smoltcp, live driver adapters, live packet I/O, hardware reachability,
+    autonomous timers, packet queues, lab mutation, boot publication, SSH, and
+    phase transition remain rejected. selected_next_task is
+    'phase12-network-host-ping-user-boundary-strategy-checkpoint-20260619'.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
@@ -13361,6 +13377,14 @@ Milestone 12.3: IP Stack
   UDP/TCP, smoltcp, live driver adapters, live packet I/O, hardware
   reachability, autonomous timers, packet queues, lab mutation, boot
   publication, SSH, or phase transition.
+- The single-ping transaction QEMU/substitute smoke closeout reconciles the
+  retained transcript with accepted source/unit evidence. The accepted
+  evidence level remains host-only QEMU/substitute plus source/unit-test
+  evidence over caller-owned buffers and fake/trait-level NetworkDevice
+  behavior, and it is sufficient to plan the next user-boundary strategy
+  checkpoint. Shell ping, sockets, UDP/TCP, smoltcp, live driver adapters, live
+  packet I/O, hardware reachability, autonomous timers, packet queues, lab
+  mutation, boot publication, SSH, and phase transition remain rejected.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

@@ -3204,3 +3204,17 @@ fake/trait-level NetworkDevice behavior only; it does not accept shell ping,
 sockets, UDP/TCP, smoltcp, live driver adapters, live packet I/O, hardware,
 reachability, autonomous timers, packet queues, lab mutation, boot
 publication, SSH, or phase transition.
+
+phase12-network-single-ping-transaction-qemu-smoke-closeout-20260619 accepts
+phase12-network-single-ping-transaction-qemu-smoke-closeout-accepted. The
+closeout reconciles the retained QEMU/substitute smoke transcript with the
+accepted source/unit evidence for SinglePingTransaction, explicit
+caller-driven retry, and explicit timeout.
+
+The accepted evidence level remains host-only QEMU/substitute plus source/unit
+tests over caller-owned buffers and fake/trait-level NetworkDevice behavior.
+It is sufficient to plan the next user-boundary strategy checkpoint, but it
+does not accept shell ping, sockets, UDP/TCP, smoltcp, live driver adapters,
+live packet I/O, hardware, reachability, autonomous timers, packet queues, lab
+mutation, boot publication, SSH, or phase transition. The selected next task is
+phase12-network-host-ping-user-boundary-strategy-checkpoint-20260619.
