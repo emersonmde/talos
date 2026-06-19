@@ -1,0 +1,89 @@
+{
+  "task_id": "phase12-network-outbound-one-shot-device-transmit-core-20260619",
+  "classification": "phase12-network-outbound-one-shot-device-transmit-core-accepted",
+  "accepted": true,
+  "accepted_boundary": "host-only fake/trait-level one-shot NetworkDevice transmit wrapper over accepted outbound request selection",
+  "source_changes": [
+    "src/network.rs"
+  ],
+  "docs_changes": [
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "task_records": [
+    "tasks/2026-06-19-phase12-network-outbound-one-shot-device-transmit-core.md"
+  ],
+  "behavior": {
+    "success": [
+      "resolved ArpCache destination builds Ethernet/IPv4/ICMP echo request and calls fake NetworkDevice::transmit_frame exactly once",
+      "unresolved ArpCache destination builds Ethernet/IPv4 ARP request and calls fake NetworkDevice::transmit_frame exactly once",
+      "successful outcomes distinguish ICMP echo request transmit from ARP request transmit",
+      "caller-owned output storage carries the transmitted frame bytes"
+    ],
+    "errors": [
+      "request selection/build error returns RequestError and performs no transmit attempt",
+      "transmit error returns TransmitError with request kind, frame length, and DeviceError after one attempted fake-device transmit"
+    ],
+    "composition": [
+      "uses select_outbound_ipv4_icmp_echo_request without duplicating packet writers",
+      "uses NetworkDevice trait only, with fake/mock tests and no live driver"
+    ]
+  },
+  "validation": [
+    {
+      "level": "fmt/lint/typecheck",
+      "command": "cargo fmt --all -- --check",
+      "result": "pass"
+    },
+    {
+      "level": "unit tests/full suite",
+      "command": "cargo -Zjson-target-spec test --quiet",
+      "result": "pass",
+      "note": "591 talos no_std tests passed"
+    },
+    {
+      "level": "JSON evidence validation",
+      "command": "jq empty tasks/evidence/2026-06-19-phase12-network-outbound-one-shot-device-transmit-core/classification.json",
+      "result": "pass"
+    },
+    {
+      "level": "diff whitespace check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "level": "staged diff whitespace check",
+      "command": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "rejected_claims": [
+    "receive loop",
+    "packet queue",
+    "retry timer",
+    "neighbor-discovery state machine",
+    "routing",
+    "subnet or gateway selection",
+    "asynchronous scheduling",
+    "live driver transmit",
+    "live packet I/O",
+    "RP1 driver adapter",
+    "DMA descriptor ownership",
+    "interrupt handling",
+    "sockets",
+    "SSH",
+    "smoltcp adoption",
+    "ping/network reachability behavior",
+    "RP1 Ethernet readiness",
+    "Pi 5 hardware proof",
+    "boot publication",
+    "lab mutation",
+    "phase transition"
+  ],
+  "next_action": "Promote phase12-network-outbound-one-shot-device-transmit-closeout-20260619 on a later worker wake if dependencies remain satisfied and git status is clean."
+}

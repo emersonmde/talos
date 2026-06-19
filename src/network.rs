@@ -87,6 +87,22 @@ impl OutboundRequestSelection {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum OutboundTransmitResult {
+    Ipv4IcmpEchoRequestTransmitted {
+        frame_len: usize,
+    },
+    ArpRequestTransmitted {
+        frame_len: usize,
+    },
+    RequestError(OutboundFrameError),
+    TransmitError {
+        request_kind: OutboundRequestKind,
+        frame_len: usize,
+        error: DeviceError,
+    },
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct MacAddress([u8; ETHERNET_ADDR_LEN]);
 
 impl MacAddress {
@@ -562,6 +578,52 @@ pub(crate) fn select_outbound_ipv4_icmp_echo_request<const ARP_CAPACITY: usize>(
         request_kind,
         frame_len,
     })
+}
+
+pub(crate) fn transmit_one_outbound_ipv4_icmp_echo_request<
+    D: NetworkDevice,
+    const ARP_CAPACITY: usize,
+>(
+    device: &mut D,
+    arp_cache: &ArpCache<ARP_CAPACITY>,
+    endpoint: LocalNetworkEndpoint,
+    destination_ipv4: [u8; 4],
+    identifier: u16,
+    sequence_number: u16,
+    ttl: u8,
+    payload: &[u8],
+    output: &mut [u8],
+) -> OutboundTransmitResult {
+    let selection = match select_outbound_ipv4_icmp_echo_request(
+        arp_cache,
+        endpoint,
+        destination_ipv4,
+        identifier,
+        sequence_number,
+        ttl,
+        payload,
+        output,
+    ) {
+        Ok(selection) => selection,
+        Err(error) => return OutboundTransmitResult::RequestError(error),
+    };
+
+    let frame_len = selection.frame_len();
+    match device.transmit_frame(&output[..frame_len]) {
+        Ok(()) => match selection.request_kind() {
+            OutboundRequestKind::Ipv4IcmpEchoRequest => {
+                OutboundTransmitResult::Ipv4IcmpEchoRequestTransmitted { frame_len }
+            }
+            OutboundRequestKind::ArpRequest => {
+                OutboundTransmitResult::ArpRequestTransmitted { frame_len }
+            }
+        },
+        Err(error) => OutboundTransmitResult::TransmitError {
+            request_kind: selection.request_kind(),
+            frame_len,
+            error,
+        },
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -1804,6 +1866,222 @@ mod tests {
         );
         assert_eq!(output, [0xaa; 64]);
         assert_eq!(cache.lookup([192, 0, 2, 10]), Some(destination_mac));
+    }
+
+    struct OutboundTransmitDevice {
+        transmit_error: Option<DeviceError>,
+        transmit_attempts: usize,
+        transmitted: [u8; 128],
+        transmitted_len: usize,
+    }
+
+    impl OutboundTransmitDevice {
+        const fn new() -> Self {
+            Self {
+                transmit_error: None,
+                transmit_attempts: 0,
+                transmitted: [0; 128],
+                transmitted_len: 0,
+            }
+        }
+
+        const fn with_transmit_error(error: DeviceError) -> Self {
+            Self {
+                transmit_error: Some(error),
+                transmit_attempts: 0,
+                transmitted: [0; 128],
+                transmitted_len: 0,
+            }
+        }
+    }
+
+    impl NetworkDevice for OutboundTransmitDevice {
+        fn receive_frame<'a>(&mut self, _buffer: &'a mut [u8]) -> Result<&'a [u8], DeviceError> {
+            Err(DeviceError::WouldBlock)
+        }
+
+        fn transmit_frame(&mut self, frame: &[u8]) -> Result<(), DeviceError> {
+            self.transmit_attempts += 1;
+            if let Some(error) = self.transmit_error {
+                return Err(error);
+            }
+
+            self.transmitted[..frame.len()].copy_from_slice(frame);
+            self.transmitted_len = frame.len();
+            Ok(())
+        }
+    }
+
+    #[test_case]
+    fn outbound_one_shot_transmits_icmp_request_once_for_resolved_neighbor() {
+        let endpoint = local_endpoint();
+        let destination_mac = MacAddress::new([0x02, 0, 0, 0, 0, 10]);
+        let mut cache = ArpCache::<2>::new();
+        assert_eq!(
+            cache.insert_or_update([192, 0, 2, 10], destination_mac),
+            ArpCacheUpdate::Inserted
+        );
+        let payload = [0x11, 0x22, 0x33];
+        let mut output = [0u8; 128];
+        let mut device = OutboundTransmitDevice::new();
+        let expected_len =
+            ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + ICMP_ECHO_HEADER_LEN + payload.len();
+
+        let result = transmit_one_outbound_ipv4_icmp_echo_request(
+            &mut device,
+            &cache,
+            endpoint,
+            [192, 0, 2, 10],
+            0x1234,
+            9,
+            63,
+            &payload,
+            &mut output,
+        );
+
+        assert_eq!(
+            result,
+            OutboundTransmitResult::Ipv4IcmpEchoRequestTransmitted {
+                frame_len: expected_len,
+            }
+        );
+        assert_eq!(device.transmit_attempts, 1);
+        assert_eq!(device.transmitted_len, expected_len);
+        assert_eq!(
+            &device.transmitted[..device.transmitted_len],
+            &output[..expected_len]
+        );
+        let frame =
+            EthernetFrame::parse(&device.transmitted[..device.transmitted_len]).expect("frame");
+        assert_eq!(frame.destination(), destination_mac);
+        assert_eq!(frame.source(), endpoint.mac());
+        assert_eq!(frame.ether_type(), EtherType::Ipv4);
+        let ipv4 = Ipv4Packet::parse(frame.payload()).expect("ipv4");
+        assert_eq!(ipv4.destination(), [192, 0, 2, 10]);
+        assert_eq!(frame.payload()[8], 63);
+        assert_eq!(&ipv4.payload()[ICMP_ECHO_HEADER_LEN..], &payload);
+    }
+
+    #[test_case]
+    fn outbound_one_shot_transmits_arp_request_once_for_unresolved_neighbor() {
+        let endpoint = local_endpoint();
+        let cached_mac = MacAddress::new([0x02, 0, 0, 0, 0, 55]);
+        let mut cache = ArpCache::<2>::new();
+        assert_eq!(
+            cache.insert_or_update([192, 0, 2, 55], cached_mac),
+            ArpCacheUpdate::Inserted
+        );
+        let mut output = [0u8; 64];
+        let mut device = OutboundTransmitDevice::new();
+
+        let result = transmit_one_outbound_ipv4_icmp_echo_request(
+            &mut device,
+            &cache,
+            endpoint,
+            [192, 0, 2, 44],
+            0x1234,
+            9,
+            63,
+            &[1, 2, 3],
+            &mut output,
+        );
+
+        assert_eq!(
+            result,
+            OutboundTransmitResult::ArpRequestTransmitted {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            }
+        );
+        assert_eq!(device.transmit_attempts, 1);
+        assert_eq!(
+            device.transmitted_len,
+            ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN
+        );
+        assert_eq!(
+            &device.transmitted[..device.transmitted_len],
+            &output[..device.transmitted_len]
+        );
+        let frame =
+            EthernetFrame::parse(&device.transmitted[..device.transmitted_len]).expect("frame");
+        assert_eq!(frame.destination(), MacAddress::new([0xff; 6]));
+        assert_eq!(frame.source(), endpoint.mac());
+        assert_eq!(frame.ether_type(), EtherType::Arp);
+        let arp = ArpPacket::parse_ethernet_ipv4(frame.payload()).expect("arp");
+        assert_eq!(arp.operation(), ArpOperation::Request);
+        assert_eq!(arp.target_protocol_address(), [192, 0, 2, 44]);
+        assert_eq!(cache.lookup([192, 0, 2, 55]), Some(cached_mac));
+        assert_eq!(cache.lookup([192, 0, 2, 44]), None);
+    }
+
+    #[test_case]
+    fn outbound_one_shot_does_not_transmit_when_request_building_fails() {
+        let destination_mac = MacAddress::new([0x02, 0, 0, 0, 0, 10]);
+        let mut cache = ArpCache::<2>::new();
+        assert_eq!(
+            cache.insert_or_update([192, 0, 2, 10], destination_mac),
+            ArpCacheUpdate::Inserted
+        );
+        let payload = [1, 2, 3, 4];
+        let required_len =
+            ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + ICMP_ECHO_HEADER_LEN + payload.len();
+        let mut output = [0xaa; ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN];
+        let mut device = OutboundTransmitDevice::new();
+
+        let result = transmit_one_outbound_ipv4_icmp_echo_request(
+            &mut device,
+            &cache,
+            local_endpoint(),
+            [192, 0, 2, 10],
+            1,
+            2,
+            64,
+            &payload,
+            &mut output,
+        );
+
+        assert_eq!(
+            result,
+            OutboundTransmitResult::RequestError(OutboundFrameError::OutputBufferTooSmall {
+                required_len,
+                available_len: output.len(),
+            })
+        );
+        assert_eq!(device.transmit_attempts, 0);
+        assert_eq!(device.transmitted_len, 0);
+        assert_eq!(output, [0xaa; ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN]);
+    }
+
+    #[test_case]
+    fn outbound_one_shot_reports_transmit_error_after_successful_build() {
+        let cache = ArpCache::<0>::new();
+        let mut output = [0u8; 64];
+        let mut device = OutboundTransmitDevice::with_transmit_error(DeviceError::Io);
+
+        let result = transmit_one_outbound_ipv4_icmp_echo_request(
+            &mut device,
+            &cache,
+            local_endpoint(),
+            [192, 0, 2, 44],
+            1,
+            2,
+            64,
+            &[1, 2, 3],
+            &mut output,
+        );
+
+        assert_eq!(
+            result,
+            OutboundTransmitResult::TransmitError {
+                request_kind: OutboundRequestKind::ArpRequest,
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+                error: DeviceError::Io,
+            }
+        );
+        assert_eq!(device.transmit_attempts, 1);
+        assert_eq!(device.transmitted_len, 0);
+        let frame = EthernetFrame::parse(&output[..ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN])
+            .expect("built frame remains in caller buffer");
+        assert_eq!(frame.ether_type(), EtherType::Arp);
     }
 
     #[test_case]

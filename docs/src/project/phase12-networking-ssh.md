@@ -2772,3 +2772,21 @@ selector. Packet queues, retry timers, live driver transmit, live packet I/O,
 hardware work, sockets, SSH, smoltcp adoption, ping/network reachability
 behavior, RP1 Ethernet readiness, lab mutation, boot publication, and phase
 transition remain rejected.
+
+phase12-network-outbound-one-shot-device-transmit-core-20260619 accepts
+phase12-network-outbound-one-shot-device-transmit-core-accepted. src/network.rs
+now includes OutboundTransmitResult and
+transmit_one_outbound_ipv4_icmp_echo_request, a fake/trait-level host helper
+that composes the accepted outbound request selector with
+NetworkDevice::transmit_frame.
+
+The helper builds one resolved Ethernet/IPv4/ICMP echo request or unresolved
+Ethernet/IPv4 ARP request into caller-owned storage and calls
+NetworkDevice::transmit_frame exactly once after successful construction. The
+result distinguishes ICMP echo request transmit, ARP request transmit,
+request-selection/build error with no transmit attempt, and transmit error with
+request kind/frame length. Tests use fake NetworkDevice implementations only.
+Packet queues, retry timers, receive loops, live driver transmit, live packet
+I/O, hardware work, sockets, SSH, smoltcp adoption, ping/network reachability
+behavior, RP1 Ethernet readiness, lab mutation, boot publication, and phase
+transition remain rejected.
