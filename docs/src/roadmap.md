@@ -13166,6 +13166,12 @@ Milestone 12.3: IP Stack
   adapters, packet queues, autonomous timers, sockets, shell ping, SSH,
   reachability, hardware work, smoltcp adoption, and phase transition remain
   rejected.
+- The pending-aware ARP reply poll closeout reconciles that accepted
+  source/test frontier and selects the queued single-inflight ICMP echo reply
+  observation core as the next bounded host-only Phase 12.3 task. ICMP echo
+  reply completion tracking, shell ping, packet queues, autonomous polling,
+  live packet I/O, sockets, SSH, reachability, hardware work, smoltcp adoption,
+  and phase transition remain rejected by the closeout itself.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

@@ -3026,3 +3026,25 @@ packet queues, autonomous polling/timers, sockets, shell ping, SSH, smoltcp
 adoption, reachability, hardware work, lab mutation, boot publication, and
 phase transition remain rejected. The selected next task is
 phase12-network-pending-aware-arp-reply-poll-closeout-20260619.
+
+phase12-network-pending-aware-arp-reply-poll-closeout-20260619 accepts
+phase12-network-pending-aware-arp-reply-poll-closeout-accepted. The closeout
+reconciles the accepted pending-aware ARP reply poll source, unit tests, task
+record, docs, and commit.
+
+The accepted boundary remains host/testable: one caller-driven NetworkDevice
+receive can process a matching ARP reply for the stored route-aware pending
+request, learn the next-hop neighbor, transmit exactly one ICMP echo request
+through the trait, and clear pending only after successful ICMP transmit.
+Gateway-routed pending requests still preserve final destination and next-hop
+identity separately. No-frame, no-pending, receive-buffer pressure, receive
+errors, nonmatching ARP, malformed ARP, output-buffer pressure, and transmit
+errors are deterministic and preserve pending state except on successful ICMP
+transmit.
+
+The closeout selects
+phase12-network-single-inflight-icmp-echo-reply-observation-core-20260619 as
+the next bounded host-only task. It does not accept ICMP echo reply completion
+tracking, shell ping, packet queues, autonomous polling/timers, live driver
+adapters, sockets, SSH, smoltcp adoption, reachability, hardware work, lab
+mutation, boot publication, or phase transition.

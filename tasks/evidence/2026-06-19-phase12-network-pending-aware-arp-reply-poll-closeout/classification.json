@@ -1,0 +1,75 @@
+{
+  "task_id": "phase12-network-pending-aware-arp-reply-poll-closeout-20260619",
+  "classification": "phase12-network-pending-aware-arp-reply-poll-closeout-accepted",
+  "accepted_boundary": "host-only pending-aware ARP reply poll reconciled with source, unit-test, docs, task, and commit records",
+  "source_files": [
+    "src/network.rs",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md",
+    "tasks/2026-06-19-phase12-network-pending-aware-arp-reply-poll-core.md",
+    "tasks/2026-06-19-phase12-network-pending-aware-arp-reply-poll-closeout.md"
+  ],
+  "accepted_symbols": [
+    "PendingIcmpEchoPollResult",
+    "poll_pending_arp_reply_and_transmit_single_pending_ipv4_icmp_echo_request",
+    "learn_arp_reply_and_transmit_single_pending_ipv4_icmp_echo_request",
+    "PendingIcmpEchoRequest::next_hop_ipv4"
+  ],
+  "reviewed_tests": [
+    "pending_arp_reply_poll_advances_gateway_pending_to_single_icmp_transmit",
+    "pending_arp_reply_poll_distinguishes_no_pending_no_frame_and_receive_errors",
+    "pending_arp_reply_poll_preserves_pending_on_nonmatch_malformed_pressure_and_transmit_error",
+    "poll_local_network_device_replies_to_arp_request",
+    "poll_local_network_device_replies_to_icmp_echo_request"
+  ],
+  "validation": [
+    {
+      "level": "static/source/task evidence review",
+      "command": "static inspection of src/network.rs, task records, Phase 12 docs, roadmap, and git commit 6aed60c46fbb627ee82ea7a9fafd63f6a7d9d3f4",
+      "result": "pass"
+    },
+    {
+      "level": "JSON evidence validation",
+      "command": "jq empty tasks/evidence/2026-06-19-phase12-network-pending-aware-arp-reply-poll-closeout/classification.json",
+      "result": "pass"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "level": "staged diff validation",
+      "command": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "rejected_claims": [
+    "ICMP echo reply completion tracking",
+    "shell ping command",
+    "retry timer",
+    "autonomous polling loop",
+    "multi-entry packet queue",
+    "dynamic route table",
+    "DHCP",
+    "DNS",
+    "live driver adapter",
+    "live packet I/O",
+    "packet capture",
+    "network reachability",
+    "sockets",
+    "SSH",
+    "smoltcp adoption",
+    "RP1 driver adapter readiness",
+    "Pi 5 hardware proof",
+    "boot publication",
+    "lab mutation",
+    "phase transition"
+  ],
+  "selected_next_task": "phase12-network-single-inflight-icmp-echo-reply-observation-core-20260619"
+}
