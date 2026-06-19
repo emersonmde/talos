@@ -2744,3 +2744,20 @@ Supervisor planning is required before packet queues, retry timers,
 neighbor-discovery state, driver transmit, live packet I/O, sockets, SSH,
 smoltcp adoption, ping/network reachability behavior, Pi 5 hardware work, boot
 publication, lab mutation, link-readiness work, or a phase transition.
+
+phase12-network-outbound-request-selection-core-20260619 accepts
+phase12-network-outbound-request-selection-core-accepted. src/network.rs now
+includes OutboundRequestKind, OutboundRequestSelection, and
+select_outbound_ipv4_icmp_echo_request, a pure host-only helper that selects
+one caller-buffered outbound request frame for a requested IPv4 ICMP echo.
+
+The accepted selector reads immutable ArpCache state through the accepted
+resolve_outbound_neighbor helper. A resolved destination builds an
+Ethernet/IPv4/ICMP echo request using the accepted ICMP request constructor; an
+unresolved destination builds an Ethernet/IPv4 ARP request using the accepted
+ARP request constructor. The result reports deterministic request kind and
+frame length. Buffer pressure and oversized resolved ICMP payloads remain
+deterministic errors. The selector does not mutate ARP cache state, call or
+wrap NetworkDevice, transmit frames, queue packets, schedule retries, claim
+live packet I/O, claim sockets/SSH, claim ping/network reachability behavior,
+claim RP1 Ethernet readiness, or change the Phase 12.1 hardware frontier.

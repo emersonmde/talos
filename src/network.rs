@@ -65,6 +65,28 @@ pub(crate) enum OutboundFrameError {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum OutboundRequestKind {
+    Ipv4IcmpEchoRequest,
+    ArpRequest,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct OutboundRequestSelection {
+    request_kind: OutboundRequestKind,
+    frame_len: usize,
+}
+
+impl OutboundRequestSelection {
+    pub(crate) const fn request_kind(self) -> OutboundRequestKind {
+        self.request_kind
+    }
+
+    pub(crate) const fn frame_len(self) -> usize {
+        self.frame_len
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct MacAddress([u8; ETHERNET_ADDR_LEN]);
 
 impl MacAddress {
@@ -504,6 +526,42 @@ pub(crate) fn build_outbound_ipv4_icmp_echo_request(
     write_be_u16(icmp, 2, icmp_checksum);
 
     Ok(frame_len)
+}
+
+pub(crate) fn select_outbound_ipv4_icmp_echo_request<const ARP_CAPACITY: usize>(
+    arp_cache: &ArpCache<ARP_CAPACITY>,
+    endpoint: LocalNetworkEndpoint,
+    destination_ipv4: [u8; 4],
+    identifier: u16,
+    sequence_number: u16,
+    ttl: u8,
+    payload: &[u8],
+    output: &mut [u8],
+) -> Result<OutboundRequestSelection, OutboundFrameError> {
+    let resolution = resolve_outbound_neighbor(arp_cache, destination_ipv4);
+    let (request_kind, frame_len) = match resolution {
+        OutboundNeighborResolution::Resolved { .. } => (
+            OutboundRequestKind::Ipv4IcmpEchoRequest,
+            build_outbound_ipv4_icmp_echo_request(
+                resolution,
+                endpoint,
+                identifier,
+                sequence_number,
+                ttl,
+                payload,
+                output,
+            )?,
+        ),
+        OutboundNeighborResolution::Unresolved { destination_ipv4 } => (
+            OutboundRequestKind::ArpRequest,
+            build_outbound_arp_request(endpoint, destination_ipv4, output)?,
+        ),
+    };
+
+    Ok(OutboundRequestSelection {
+        request_kind,
+        frame_len,
+    })
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -1561,6 +1619,191 @@ mod tests {
             })
         );
         assert_eq!(output, [0xaa; 64]);
+    }
+
+    #[test_case]
+    fn outbound_request_selection_builds_icmp_for_resolved_neighbor_without_cache_mutation() {
+        let endpoint = local_endpoint();
+        let destination_mac = MacAddress::new([0x02, 0, 0, 0, 0, 10]);
+        let mut cache = ArpCache::<2>::new();
+        assert_eq!(
+            cache.insert_or_update([192, 0, 2, 10], destination_mac),
+            ArpCacheUpdate::Inserted
+        );
+        let payload = [0xaa, 0xbb, 0xcc];
+        let mut output = [0u8; 128];
+
+        let selection = select_outbound_ipv4_icmp_echo_request(
+            &cache,
+            endpoint,
+            [192, 0, 2, 10],
+            0x1234,
+            9,
+            63,
+            &payload,
+            &mut output,
+        )
+        .expect("select resolved outbound request");
+
+        assert_eq!(
+            selection.request_kind(),
+            OutboundRequestKind::Ipv4IcmpEchoRequest
+        );
+        assert_eq!(
+            selection.frame_len(),
+            ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + ICMP_ECHO_HEADER_LEN + payload.len()
+        );
+        let frame =
+            EthernetFrame::parse(&output[..selection.frame_len()]).expect("parse selected frame");
+        assert_eq!(frame.destination(), destination_mac);
+        assert_eq!(frame.source(), endpoint.mac());
+        assert_eq!(frame.ether_type(), EtherType::Ipv4);
+
+        let ipv4 = Ipv4Packet::parse(frame.payload()).expect("parse selected ipv4");
+        assert_eq!(ipv4.destination(), [192, 0, 2, 10]);
+        assert_eq!(frame.payload()[8], 63);
+        let icmp = ipv4.payload();
+        assert_eq!(icmp[0], 8);
+        assert_eq!(read_be_u16(icmp, 4), 0x1234);
+        assert_eq!(read_be_u16(icmp, 6), 9);
+        assert_eq!(&icmp[ICMP_ECHO_HEADER_LEN..], &payload);
+        assert!(internet_checksum_is_valid(icmp));
+        assert_eq!(cache.lookup([192, 0, 2, 10]), Some(destination_mac));
+    }
+
+    #[test_case]
+    fn outbound_request_selection_builds_arp_for_unresolved_neighbor_without_cache_mutation() {
+        let endpoint = local_endpoint();
+        let cached_mac = MacAddress::new([0x02, 0, 0, 0, 0, 55]);
+        let mut cache = ArpCache::<2>::new();
+        assert_eq!(
+            cache.insert_or_update([192, 0, 2, 55], cached_mac),
+            ArpCacheUpdate::Inserted
+        );
+        let mut output = [0u8; 64];
+
+        let selection = select_outbound_ipv4_icmp_echo_request(
+            &cache,
+            endpoint,
+            [192, 0, 2, 44],
+            0x1234,
+            9,
+            63,
+            &[1, 2, 3],
+            &mut output,
+        )
+        .expect("select unresolved outbound request");
+
+        assert_eq!(selection.request_kind(), OutboundRequestKind::ArpRequest);
+        assert_eq!(
+            selection.frame_len(),
+            ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN
+        );
+        let frame =
+            EthernetFrame::parse(&output[..selection.frame_len()]).expect("parse selected arp");
+        assert_eq!(frame.destination(), MacAddress::new([0xff; 6]));
+        assert_eq!(frame.source(), endpoint.mac());
+        assert_eq!(frame.ether_type(), EtherType::Arp);
+        let arp = ArpPacket::parse_ethernet_ipv4(frame.payload()).expect("parse selected arp");
+        assert_eq!(arp.operation(), ArpOperation::Request);
+        assert_eq!(arp.sender_hardware_address(), endpoint.mac());
+        assert_eq!(arp.sender_protocol_address(), endpoint.ipv4());
+        assert_eq!(arp.target_hardware_address(), MacAddress::new([0; 6]));
+        assert_eq!(arp.target_protocol_address(), [192, 0, 2, 44]);
+        assert_eq!(cache.lookup([192, 0, 2, 55]), Some(cached_mac));
+        assert_eq!(cache.lookup([192, 0, 2, 44]), None);
+    }
+
+    #[test_case]
+    fn outbound_request_selection_rejects_resolved_buffer_pressure_without_partial_frame() {
+        let destination_mac = MacAddress::new([0x02, 0, 0, 0, 0, 10]);
+        let mut cache = ArpCache::<2>::new();
+        assert_eq!(
+            cache.insert_or_update([192, 0, 2, 10], destination_mac),
+            ArpCacheUpdate::Inserted
+        );
+        let payload = [1, 2, 3, 4];
+        let required_len =
+            ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + ICMP_ECHO_HEADER_LEN + payload.len();
+        let mut output = [0xaa; ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN];
+
+        assert_eq!(
+            select_outbound_ipv4_icmp_echo_request(
+                &cache,
+                local_endpoint(),
+                [192, 0, 2, 10],
+                1,
+                2,
+                64,
+                &payload,
+                &mut output,
+            ),
+            Err(OutboundFrameError::OutputBufferTooSmall {
+                required_len,
+                available_len: output.len(),
+            })
+        );
+        assert_eq!(output, [0xaa; ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN]);
+        assert_eq!(cache.lookup([192, 0, 2, 10]), Some(destination_mac));
+    }
+
+    #[test_case]
+    fn outbound_request_selection_rejects_unresolved_buffer_pressure_without_partial_frame() {
+        let cache = ArpCache::<2>::new();
+        let mut output = [0xaa; ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN - 1];
+
+        assert_eq!(
+            select_outbound_ipv4_icmp_echo_request(
+                &cache,
+                local_endpoint(),
+                [192, 0, 2, 44],
+                1,
+                2,
+                64,
+                &[1, 2, 3],
+                &mut output,
+            ),
+            Err(OutboundFrameError::OutputBufferTooSmall {
+                required_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+                available_len: output.len(),
+            })
+        );
+        assert_eq!(
+            output,
+            [0xaa; ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN - 1]
+        );
+        assert_eq!(cache.lookup([192, 0, 2, 44]), None);
+    }
+
+    #[test_case]
+    fn outbound_request_selection_rejects_resolved_payloads_too_large_for_ipv4() {
+        let destination_mac = MacAddress::new([0x02, 0, 0, 0, 0, 10]);
+        let mut cache = ArpCache::<2>::new();
+        assert_eq!(
+            cache.insert_or_update([192, 0, 2, 10], destination_mac),
+            ArpCacheUpdate::Inserted
+        );
+        let payload = [0u8; u16::MAX as usize - IPV4_MIN_HEADER_LEN - ICMP_ECHO_HEADER_LEN + 1];
+        let mut output = [0xaa; 64];
+
+        assert_eq!(
+            select_outbound_ipv4_icmp_echo_request(
+                &cache,
+                local_endpoint(),
+                [192, 0, 2, 10],
+                1,
+                2,
+                64,
+                &payload,
+                &mut output,
+            ),
+            Err(OutboundFrameError::PayloadTooLarge {
+                required_len: u16::MAX as usize + 1,
+                max_len: u16::MAX as usize,
+            })
+        );
+        assert_eq!(output, [0xaa; 64]);
+        assert_eq!(cache.lookup([192, 0, 2, 10]), Some(destination_mac));
     }
 
     #[test_case]

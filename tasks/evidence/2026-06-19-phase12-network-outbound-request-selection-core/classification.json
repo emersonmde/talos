@@ -1,0 +1,86 @@
+{
+  "task_id": "phase12-network-outbound-request-selection-core-20260619",
+  "classification": "phase12-network-outbound-request-selection-core-accepted",
+  "accepted": true,
+  "accepted_boundary": "host-only caller-buffered outbound request selection between resolved IPv4 ICMP echo request construction and unresolved-neighbor ARP request construction",
+  "source_changes": [
+    "src/network.rs"
+  ],
+  "docs_changes": [
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "task_records": [
+    "tasks/2026-06-19-phase12-network-outbound-request-selection-core.md"
+  ],
+  "behavior": {
+    "success": [
+      "resolved ArpCache destination selects Ethernet/IPv4/ICMP echo request construction",
+      "unresolved ArpCache destination selects Ethernet/IPv4 ARP request construction",
+      "deterministic OutboundRequestKind",
+      "deterministic frame length",
+      "immutable ArpCache input state"
+    ],
+    "errors": [
+      "resolved ICMP output buffer pressure returns OutputBufferTooSmall before partial success",
+      "unresolved ARP output buffer pressure returns OutputBufferTooSmall before partial success",
+      "resolved oversized IPv4/ICMP payload returns PayloadTooLarge before partial success"
+    ],
+    "composition": [
+      "uses resolve_outbound_neighbor, build_outbound_ipv4_icmp_echo_request, and build_outbound_arp_request without duplicating packet writers"
+    ]
+  },
+  "validation": [
+    {
+      "level": "fmt/lint/typecheck",
+      "command": "cargo fmt --all -- --check",
+      "result": "pass"
+    },
+    {
+      "level": "unit tests/full suite",
+      "command": "cargo -Zjson-target-spec test --quiet",
+      "result": "pass",
+      "note": "587 talos no_std tests passed"
+    },
+    {
+      "level": "JSON evidence validation",
+      "command": "jq empty tasks/evidence/2026-06-19-phase12-network-outbound-request-selection-core/classification.json",
+      "result": "pass"
+    },
+    {
+      "level": "diff whitespace check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "level": "staged diff whitespace check",
+      "command": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "rejected_claims": [
+    "packet queue",
+    "retry timer",
+    "neighbor-discovery state machine",
+    "routing",
+    "subnet or gateway selection",
+    "driver transmit",
+    "NetworkDevice transmit wrapper",
+    "live packet I/O",
+    "sockets",
+    "SSH",
+    "smoltcp adoption",
+    "ping/network reachability behavior",
+    "RP1 Ethernet readiness",
+    "Pi 5 hardware proof",
+    "boot publication",
+    "lab mutation",
+    "phase transition"
+  ],
+  "next_action": "Promote phase12-network-outbound-request-selection-closeout-20260619 on a later worker wake if dependencies remain satisfied and git status is clean."
+}

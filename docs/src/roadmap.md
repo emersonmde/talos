@@ -3726,6 +3726,23 @@ The post-review correction chain is:
     Pi 5 hardware work, lab mutation, boot publication, and phase transition
     remain rejected.
 
+212. Phase 12.3 outbound request selection core: accepted in
+    'phase12-network-outbound-request-selection-core-20260619' with
+    classification
+    'phase12-network-outbound-request-selection-core-accepted'. The accepted
+    src/network.rs frontier adds OutboundRequestKind,
+    OutboundRequestSelection, and select_outbound_ipv4_icmp_echo_request, a
+    pure caller-buffered helper that reads immutable ArpCache state and selects
+    either a resolved Ethernet/IPv4/ICMP echo request frame or an unresolved
+    Ethernet/IPv4 ARP request frame for one requested outbound ICMP echo.
+    Tests cover resolved ICMP selection, unresolved ARP selection, buffer
+    pressure for both selected paths, oversized resolved ICMP payloads, exact
+    kind/length results, and cache immutability. Packet queues, retry timers,
+    neighbor-discovery state, routing, driver transmit, NetworkDevice transmit
+    wrappers, live packet I/O, sockets, SSH, smoltcp adoption,
+    ping/network reachability behavior, Pi 5 hardware work, lab mutation, boot
+    publication, link-readiness work, and phase transition remain rejected.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
