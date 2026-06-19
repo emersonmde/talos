@@ -4105,6 +4105,24 @@ The post-review correction chain is:
     SSH, Phase 12.1 link-hardware retry, and phase transition remain rejected.
     selected_next_task is
     'phase12-network-userspace-ping-operation-contract-core-20260619'.
+233. Phase 12.3 userspace ping operation contract core: accepted in
+    'phase12-network-userspace-ping-operation-contract-core-20260619' with
+    classification
+    'phase12-network-userspace-ping-operation-contract-core-accepted'.
+    src/network.rs now exposes UserspacePingOperation, a host-only local
+    userspace/descriptor-facing operation contract over the accepted
+    SinglePingPacketService and NetworkDevice abstractions. It can start,
+    pump, observe idle/pending/in-flight/completed/timed-out status, retry
+    pending ARP explicitly, timeout pending or in-flight state, and map
+    boundary errors into the accepted POSIX error vocabulary. Unit evidence
+    covers unresolved ARP through echo-reply completion, duplicate/active
+    start, status observation, retry, retry exhaustion, timeout, and
+    receive/transmit IO error mapping. Shell ping, public sockets, UDP/TCP,
+    smoltcp, live driver adapters, live packet I/O, hardware reachability,
+    SSH, autonomous timers, broad queues, lab mutation, boot publication,
+    Phase 12.1 link-hardware retry, and phase transition remain rejected.
+    selected_next_task is
+    'phase12-network-userspace-ping-operation-contract-closeout-20260619'.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -13485,6 +13503,11 @@ Milestone 12.3: IP Stack
   next selected feature-led task is a bounded userspace/descriptor-facing
   ping operation contract over the accepted service, not a fake kernel-backed
   shell command.
+- The userspace ping operation contract core accepts UserspacePingOperation as
+  a host-only local operation boundary over SinglePingPacketService. It
+  exposes start/pump/status/retry/timeout outcomes and POSIX error mapping for
+  fake/trait-level NetworkDevice behavior without accepting shell ping, public
+  sockets, live packet I/O, hardware reachability, SSH, or phase transition.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

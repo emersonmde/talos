@@ -3301,3 +3301,23 @@ and phase transition remain rejected. The selected next task is
 phase12-network-userspace-ping-operation-contract-core-20260619, a bounded
 host-only userspace/descriptor-facing operation contract over the accepted
 SinglePingPacketService and NetworkDevice abstractions.
+
+phase12-network-userspace-ping-operation-contract-core-20260619 accepts
+phase12-network-userspace-ping-operation-contract-core-accepted.
+src/network.rs now exposes UserspacePingOperation, a host-only local
+userspace/descriptor-facing operation contract over the accepted
+SinglePingPacketService. The operation can start one ping-like transaction,
+pump caller-owned receive/transmit buffers through fake/trait-level
+NetworkDevice behavior, expose idle/pending/in-flight/completed/timed-out
+status, retry pending ARP explicitly, timeout pending or in-flight state, and
+map boundary errors into the accepted POSIX error vocabulary.
+
+Unit evidence covers unresolved ARP through echo-reply completion, terminal
+status observation, duplicate/active start, caller-driven retry, retry
+exhaustion, explicit timeout, and receive/transmit IO error mapping. The
+accepted boundary remains host-only and does not bind to an actual descriptor
+object, syscall ABI, shell command, public socket API, live driver adapter,
+live packet I/O, hardware reachability, UDP/TCP, smoltcp, SSH, autonomous
+timers, broad queues, lab mutation, boot publication, Phase 12.1
+link-hardware retry, or phase transition. The selected next task is
+phase12-network-userspace-ping-operation-contract-closeout-20260619.

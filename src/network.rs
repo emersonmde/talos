@@ -1276,6 +1276,368 @@ impl<const ARP_CAPACITY: usize, const PAYLOAD_CAPACITY: usize>
     }
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum UserspacePingOperationStatus {
+    Idle,
+    PendingArp {
+        destination_ipv4: [u8; 4],
+        next_hop_ipv4: [u8; 4],
+        arp_retries_remaining: usize,
+    },
+    Inflight {
+        destination_ipv4: [u8; 4],
+    },
+    Completed {
+        destination_ipv4: [u8; 4],
+        payload_len: usize,
+    },
+    TimedOut {
+        destination_ipv4: [u8; 4],
+    },
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum UserspacePingOperationStep {
+    StartedPendingArp { frame_len: usize },
+    StartedInflight { frame_len: usize },
+    NoFrame,
+    AdvancedToInflight { frame_len: usize },
+    RetryTransmitted { frame_len: usize },
+    Completed { payload_len: usize },
+    TimedOut { destination_ipv4: [u8; 4] },
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct UserspacePingOperation<const ARP_CAPACITY: usize, const PAYLOAD_CAPACITY: usize> {
+    service: SinglePingPacketService<ARP_CAPACITY, PAYLOAD_CAPACITY>,
+    terminal_status: Option<UserspacePingOperationStatus>,
+}
+
+impl<const ARP_CAPACITY: usize, const PAYLOAD_CAPACITY: usize>
+    UserspacePingOperation<ARP_CAPACITY, PAYLOAD_CAPACITY>
+{
+    pub(crate) const fn new() -> Self {
+        Self {
+            service: SinglePingPacketService::new(),
+            terminal_status: None,
+        }
+    }
+
+    pub(crate) const fn with_service(
+        service: SinglePingPacketService<ARP_CAPACITY, PAYLOAD_CAPACITY>,
+    ) -> Self {
+        Self {
+            service,
+            terminal_status: None,
+        }
+    }
+
+    pub(crate) const fn service(&self) -> &SinglePingPacketService<ARP_CAPACITY, PAYLOAD_CAPACITY> {
+        &self.service
+    }
+
+    pub(crate) fn status(&self) -> UserspacePingOperationStatus {
+        match self.service.status() {
+            SinglePingTransactionStatus::Idle => self
+                .terminal_status
+                .unwrap_or(UserspacePingOperationStatus::Idle),
+            SinglePingTransactionStatus::PendingArp {
+                destination_ipv4,
+                next_hop_ipv4,
+                arp_retries_remaining,
+            } => UserspacePingOperationStatus::PendingArp {
+                destination_ipv4,
+                next_hop_ipv4,
+                arp_retries_remaining,
+            },
+            SinglePingTransactionStatus::Inflight { destination_ipv4 } => {
+                UserspacePingOperationStatus::Inflight { destination_ipv4 }
+            }
+        }
+    }
+
+    pub(crate) fn start<D: NetworkDevice>(
+        &mut self,
+        device: &mut D,
+        endpoint: LocalNetworkEndpoint,
+        route_policy: Ipv4EgressRoutePolicy,
+        destination_ipv4: [u8; 4],
+        identifier: u16,
+        sequence_number: u16,
+        ttl: u8,
+        payload: &[u8],
+        transmit_buffer: &mut [u8],
+        arp_retry_budget: usize,
+    ) -> Result<UserspacePingOperationStep, crate::posix::PosixError> {
+        self.terminal_status = None;
+        match self.service.start_ping(
+            device,
+            endpoint,
+            route_policy,
+            destination_ipv4,
+            identifier,
+            sequence_number,
+            ttl,
+            payload,
+            transmit_buffer,
+            arp_retry_budget,
+        ) {
+            SinglePingTransactionStartResult::IcmpEchoRequestTransmitted { frame_len } => {
+                Ok(UserspacePingOperationStep::StartedInflight { frame_len })
+            }
+            SinglePingTransactionStartResult::ArpRequestTransmittedAndPending { frame_len } => {
+                Ok(UserspacePingOperationStep::StartedPendingArp { frame_len })
+            }
+            SinglePingTransactionStartResult::PendingResult(result) => {
+                userspace_step_from_pending_result(
+                    result,
+                    UserspacePendingSuccess::StartedPendingArp,
+                )
+            }
+            SinglePingTransactionStartResult::InflightResult(result) => {
+                userspace_step_from_inflight_result(result)
+            }
+        }
+    }
+
+    pub(crate) fn pump<D: NetworkDevice>(
+        &mut self,
+        device: &mut D,
+        receive_buffer: &mut [u8],
+        transmit_buffer: &mut [u8],
+    ) -> Result<UserspacePingOperationStep, crate::posix::PosixError> {
+        let before_status = self.status();
+        match self.service.pump(device, receive_buffer, transmit_buffer) {
+            SinglePingTransactionPollResult::NoTransaction => {
+                Err(crate::posix::PosixError::InvalidArgument)
+            }
+            SinglePingTransactionPollResult::PendingResult(result) => {
+                userspace_step_from_pending_poll_result(result)
+            }
+            SinglePingTransactionPollResult::InflightResult(result) => {
+                self.inflight_poll_step(before_status, result)
+            }
+        }
+    }
+
+    pub(crate) fn retry_arp<D: NetworkDevice>(
+        &mut self,
+        device: &mut D,
+        transmit_buffer: &mut [u8],
+    ) -> Result<UserspacePingOperationStep, crate::posix::PosixError> {
+        match self.service.retry_arp(device, transmit_buffer) {
+            SinglePingTransactionRetryResult::NoTransaction => {
+                Err(crate::posix::PosixError::InvalidArgument)
+            }
+            SinglePingTransactionRetryResult::PendingResult(result) => {
+                userspace_step_from_pending_result(
+                    result,
+                    UserspacePendingSuccess::RetryTransmitted,
+                )
+            }
+            SinglePingTransactionRetryResult::InflightResult(result) => {
+                userspace_step_from_inflight_result(result)
+            }
+        }
+    }
+
+    pub(crate) fn timeout(
+        &mut self,
+    ) -> Result<UserspacePingOperationStep, crate::posix::PosixError> {
+        match self.service.timeout() {
+            SinglePingTransactionTimeoutResult::NoTransaction => {
+                Err(crate::posix::PosixError::InvalidArgument)
+            }
+            SinglePingTransactionTimeoutResult::PendingTimedOut {
+                destination_ipv4, ..
+            }
+            | SinglePingTransactionTimeoutResult::InflightTimedOut { destination_ipv4 } => {
+                self.terminal_status =
+                    Some(UserspacePingOperationStatus::TimedOut { destination_ipv4 });
+                Ok(UserspacePingOperationStep::TimedOut { destination_ipv4 })
+            }
+        }
+    }
+
+    fn inflight_poll_step(
+        &mut self,
+        before_status: UserspacePingOperationStatus,
+        result: InflightIcmpEchoPollResult,
+    ) -> Result<UserspacePingOperationStep, crate::posix::PosixError> {
+        match result {
+            InflightIcmpEchoPollResult::ObservationResult(
+                InflightIcmpEchoResult::IcmpEchoReplyMatched { payload_len },
+            ) => {
+                self.terminal_status = Some(UserspacePingOperationStatus::Completed {
+                    destination_ipv4: terminal_destination_from_status(before_status),
+                    payload_len,
+                });
+                Ok(UserspacePingOperationStep::Completed { payload_len })
+            }
+            result => userspace_step_from_inflight_poll_result(result),
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum UserspacePendingSuccess {
+    StartedPendingArp,
+    RetryTransmitted,
+}
+
+fn terminal_destination_from_status(status: UserspacePingOperationStatus) -> [u8; 4] {
+    match status {
+        UserspacePingOperationStatus::Inflight { destination_ipv4 }
+        | UserspacePingOperationStatus::PendingArp {
+            destination_ipv4, ..
+        }
+        | UserspacePingOperationStatus::Completed {
+            destination_ipv4, ..
+        }
+        | UserspacePingOperationStatus::TimedOut { destination_ipv4 } => destination_ipv4,
+        UserspacePingOperationStatus::Idle => [0; 4],
+    }
+}
+
+fn userspace_step_from_pending_poll_result(
+    result: PendingIcmpEchoPollResult,
+) -> Result<UserspacePingOperationStep, crate::posix::PosixError> {
+    match result {
+        PendingIcmpEchoPollResult::NoPendingRequest => {
+            Err(crate::posix::PosixError::InvalidArgument)
+        }
+        PendingIcmpEchoPollResult::NoFrame => Ok(UserspacePingOperationStep::NoFrame),
+        PendingIcmpEchoPollResult::ReceiveBufferTooSmall => Err(crate::posix::PosixError::NoSpace),
+        PendingIcmpEchoPollResult::ReceiveError(error) => Err(posix_error_from_device_error(error)),
+        PendingIcmpEchoPollResult::PendingResult(result) => {
+            userspace_step_from_pending_result(result, UserspacePendingSuccess::StartedPendingArp)
+        }
+    }
+}
+
+fn userspace_step_from_inflight_poll_result(
+    result: InflightIcmpEchoPollResult,
+) -> Result<UserspacePingOperationStep, crate::posix::PosixError> {
+    match result {
+        InflightIcmpEchoPollResult::NoInflightRequest => {
+            Err(crate::posix::PosixError::InvalidArgument)
+        }
+        InflightIcmpEchoPollResult::NoFrame => Ok(UserspacePingOperationStep::NoFrame),
+        InflightIcmpEchoPollResult::ReceiveBufferTooSmall => Err(crate::posix::PosixError::NoSpace),
+        InflightIcmpEchoPollResult::ReceiveError(error) => {
+            Err(posix_error_from_device_error(error))
+        }
+        InflightIcmpEchoPollResult::ObservationResult(result) => {
+            userspace_step_from_inflight_result(result)
+        }
+    }
+}
+
+fn userspace_step_from_pending_result(
+    result: PendingIcmpEchoResult,
+    success: UserspacePendingSuccess,
+) -> Result<UserspacePingOperationStep, crate::posix::PosixError> {
+    match result {
+        PendingIcmpEchoResult::IcmpEchoRequestTransmitted { frame_len } => {
+            Ok(UserspacePingOperationStep::AdvancedToInflight { frame_len })
+        }
+        PendingIcmpEchoResult::ArpRequestTransmittedAndPending { frame_len } => match success {
+            UserspacePendingSuccess::StartedPendingArp => {
+                Ok(UserspacePingOperationStep::StartedPendingArp { frame_len })
+            }
+            UserspacePendingSuccess::RetryTransmitted => {
+                Ok(UserspacePingOperationStep::RetryTransmitted { frame_len })
+            }
+        },
+        PendingIcmpEchoResult::NoPendingRequest => Err(crate::posix::PosixError::InvalidArgument),
+        PendingIcmpEchoResult::PendingRequestAlreadyQueued { .. } => {
+            Err(crate::posix::PosixError::Busy)
+        }
+        PendingIcmpEchoResult::PendingPayloadTooLarge { .. } => {
+            Err(crate::posix::PosixError::Range)
+        }
+        PendingIcmpEchoResult::PendingNeighborUnresolved { .. }
+        | PendingIcmpEchoResult::ArpRetryBudgetExhausted { .. }
+        | PendingIcmpEchoResult::NonMatchingArp { .. } => Err(crate::posix::PosixError::Again),
+        PendingIcmpEchoResult::RouteError(error) => Err(posix_error_from_route_error(error)),
+        PendingIcmpEchoResult::RequestError(error) => Err(posix_error_from_frame_error(error)),
+        PendingIcmpEchoResult::ArpError(error) => Err(posix_error_from_packet_error(error)),
+        PendingIcmpEchoResult::TransmitError { error, .. } => {
+            Err(posix_error_from_device_error(error))
+        }
+    }
+}
+
+fn userspace_step_from_inflight_result(
+    result: InflightIcmpEchoResult,
+) -> Result<UserspacePingOperationStep, crate::posix::PosixError> {
+    match result {
+        InflightIcmpEchoResult::InflightRequestTracked => {
+            Ok(UserspacePingOperationStep::StartedInflight { frame_len: 0 })
+        }
+        InflightIcmpEchoResult::IcmpEchoReplyMatched { payload_len } => {
+            Ok(UserspacePingOperationStep::Completed { payload_len })
+        }
+        InflightIcmpEchoResult::NoInflightRequest => Err(crate::posix::PosixError::InvalidArgument),
+        InflightIcmpEchoResult::InflightRequestAlreadyTracked { .. } => {
+            Err(crate::posix::PosixError::Busy)
+        }
+        InflightIcmpEchoResult::InflightPayloadTooLarge { .. } => {
+            Err(crate::posix::PosixError::Range)
+        }
+        InflightIcmpEchoResult::NonMatchingIcmpEchoReply { .. } => {
+            Err(crate::posix::PosixError::Again)
+        }
+        InflightIcmpEchoResult::ReplyError(error) => Err(posix_error_from_packet_error(error)),
+    }
+}
+
+fn posix_error_from_device_error(error: DeviceError) -> crate::posix::PosixError {
+    match error {
+        DeviceError::WouldBlock => crate::posix::PosixError::Again,
+        DeviceError::BufferTooSmall => crate::posix::PosixError::NoSpace,
+        DeviceError::Io => crate::posix::PosixError::Io,
+    }
+}
+
+fn posix_error_from_route_error(error: OutboundRouteError) -> crate::posix::PosixError {
+    match error {
+        OutboundRouteError::NoRouteToDestination { .. } => crate::posix::PosixError::NoEntry,
+        OutboundRouteError::Frame(error) => posix_error_from_frame_error(error),
+    }
+}
+
+fn posix_error_from_frame_error(error: OutboundFrameError) -> crate::posix::PosixError {
+    match error {
+        OutboundFrameError::NeighborUnresolved { .. } => crate::posix::PosixError::Again,
+        OutboundFrameError::PayloadTooLarge { .. } => crate::posix::PosixError::Range,
+        OutboundFrameError::OutputBufferTooSmall { .. } => crate::posix::PosixError::NoSpace,
+    }
+}
+
+fn posix_error_from_packet_error(error: PacketError) -> crate::posix::PosixError {
+    match error {
+        PacketError::OutputBufferTooSmall => crate::posix::PosixError::NoSpace,
+        PacketError::UnsupportedEtherType
+        | PacketError::UnsupportedArpHardware
+        | PacketError::UnsupportedArpProtocol
+        | PacketError::UnsupportedArpOperation
+        | PacketError::UnsupportedIpv4Protocol
+        | PacketError::UnsupportedIpv4Options
+        | PacketError::UnsupportedIpv4Fragment => crate::posix::PosixError::NotSupported,
+        PacketError::NotForLocalHost => crate::posix::PosixError::Again,
+        PacketError::Truncated
+        | PacketError::InvalidArpHardwareLength
+        | PacketError::InvalidArpProtocolLength
+        | PacketError::InvalidIpv4Version
+        | PacketError::InvalidIpv4HeaderLength
+        | PacketError::InvalidIpv4TotalLength
+        | PacketError::InvalidIpv4Checksum
+        | PacketError::InvalidIcmpEcho
+        | PacketError::InvalidIcmpChecksum => crate::posix::PosixError::InvalidArgument,
+    }
+}
+
 pub(crate) fn record_single_inflight_ipv4_icmp_echo_request<const PAYLOAD_CAPACITY: usize>(
     inflight: &mut SingleInflightIcmpEcho<PAYLOAD_CAPACITY>,
     endpoint: LocalNetworkEndpoint,
@@ -6456,6 +6818,257 @@ mod tests {
             SinglePingTransactionPollResult::NoTransaction
         );
         assert_eq!(late_reply_device.receive_attempts, 0);
+    }
+
+    #[test_case]
+    fn userspace_ping_operation_completes_unresolved_arp_to_echo_reply() {
+        let endpoint = local_endpoint();
+        let destination = [192, 0, 2, 20];
+        let destination_mac = MacAddress::new([0x02, 0, 0, 0, 0, 20]);
+        let policy = Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None);
+        let payload = [1, 2, 3, 4];
+        let expected_icmp_len =
+            ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + ICMP_ECHO_HEADER_LEN + payload.len();
+        let mut operation = UserspacePingOperation::<2, 4>::new();
+        let mut transmit_buffer = [0u8; 128];
+        let mut receive_buffer = [0u8; 128];
+
+        assert_eq!(operation.status(), UserspacePingOperationStatus::Idle);
+        assert_eq!(
+            operation.start(
+                &mut OutboundTransmitDevice::new(),
+                endpoint,
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &payload,
+                &mut transmit_buffer,
+                1,
+            ),
+            Ok(UserspacePingOperationStep::StartedPendingArp {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            })
+        );
+        assert_eq!(
+            operation.status(),
+            UserspacePingOperationStatus::PendingArp {
+                destination_ipv4: destination,
+                next_hop_ipv4: destination,
+                arp_retries_remaining: 1,
+            }
+        );
+        assert_eq!(
+            operation.pump(
+                &mut PollDevice::with_receive_error(DeviceError::WouldBlock),
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            Ok(UserspacePingOperationStep::NoFrame)
+        );
+        assert_eq!(
+            operation.pump(
+                &mut PollDevice::with_frame(&arp_reply_frame()),
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            Ok(UserspacePingOperationStep::AdvancedToInflight {
+                frame_len: expected_icmp_len,
+            })
+        );
+        assert_eq!(
+            operation.service().arp_cache().lookup(destination),
+            Some(destination_mac)
+        );
+        assert_eq!(
+            operation.status(),
+            UserspacePingOperationStatus::Inflight {
+                destination_ipv4: destination,
+            }
+        );
+        assert_eq!(
+            operation.pump(
+                &mut PollDevice::with_frame(&icmp_echo_reply_frame()),
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            Ok(UserspacePingOperationStep::Completed {
+                payload_len: payload.len(),
+            })
+        );
+        assert_eq!(
+            operation.status(),
+            UserspacePingOperationStatus::Completed {
+                destination_ipv4: destination,
+                payload_len: payload.len(),
+            }
+        );
+    }
+
+    #[test_case]
+    fn userspace_ping_operation_maps_busy_retry_timeout_and_io_errors() {
+        let endpoint = local_endpoint();
+        let destination = [192, 0, 2, 20];
+        let policy = Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None);
+        let payload = [1, 2, 3, 4];
+        let mut operation = UserspacePingOperation::<2, 4>::new();
+        let mut transmit_buffer = [0u8; 128];
+        let mut receive_buffer = [0u8; 128];
+
+        assert_eq!(
+            operation.start(
+                &mut OutboundTransmitDevice::new(),
+                endpoint,
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &payload,
+                &mut transmit_buffer,
+                1,
+            ),
+            Ok(UserspacePingOperationStep::StartedPendingArp {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            })
+        );
+        assert_eq!(
+            operation.start(
+                &mut OutboundTransmitDevice::new(),
+                endpoint,
+                policy,
+                [192, 0, 2, 21],
+                0x1234,
+                8,
+                61,
+                &payload,
+                &mut transmit_buffer,
+                0,
+            ),
+            Err(crate::posix::PosixError::Busy)
+        );
+        assert_eq!(
+            operation.retry_arp(&mut OutboundTransmitDevice::new(), &mut transmit_buffer),
+            Ok(UserspacePingOperationStep::RetryTransmitted {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            })
+        );
+        assert_eq!(
+            operation.retry_arp(&mut OutboundTransmitDevice::new(), &mut transmit_buffer),
+            Err(crate::posix::PosixError::Again)
+        );
+        assert_eq!(
+            operation.timeout(),
+            Ok(UserspacePingOperationStep::TimedOut {
+                destination_ipv4: destination,
+            })
+        );
+        assert_eq!(
+            operation.status(),
+            UserspacePingOperationStatus::TimedOut {
+                destination_ipv4: destination,
+            }
+        );
+
+        let mut transmit_error_operation = UserspacePingOperation::<0, 4>::new();
+        assert_eq!(
+            transmit_error_operation.start(
+                &mut OutboundTransmitDevice::with_transmit_error(DeviceError::Io),
+                endpoint,
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &payload,
+                &mut transmit_buffer,
+                0,
+            ),
+            Err(crate::posix::PosixError::Io)
+        );
+        assert_eq!(
+            transmit_error_operation.status(),
+            UserspacePingOperationStatus::Idle
+        );
+
+        let mut receive_error_operation = UserspacePingOperation::<2, 4>::new();
+        assert_eq!(
+            receive_error_operation.start(
+                &mut OutboundTransmitDevice::new(),
+                endpoint,
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &payload,
+                &mut transmit_buffer,
+                1,
+            ),
+            Ok(UserspacePingOperationStep::StartedPendingArp {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            })
+        );
+        assert_eq!(
+            receive_error_operation.pump(
+                &mut PollDevice::with_receive_error(DeviceError::Io),
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            Err(crate::posix::PosixError::Io)
+        );
+
+        let mut cache = ArpCache::<2>::new();
+        assert_eq!(
+            cache.insert_or_update(destination, MacAddress::new([0x02, 0, 0, 0, 0, 20])),
+            ArpCacheUpdate::Inserted
+        );
+        let service = SinglePingPacketService::<2, 4>::with_arp_cache(cache);
+        let mut inflight_operation = UserspacePingOperation::with_service(service);
+        assert_eq!(
+            inflight_operation.start(
+                &mut OutboundTransmitDevice::new(),
+                endpoint,
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &payload,
+                &mut transmit_buffer,
+                0,
+            ),
+            Ok(UserspacePingOperationStep::StartedInflight {
+                frame_len: ETHERNET_HEADER_LEN
+                    + IPV4_MIN_HEADER_LEN
+                    + ICMP_ECHO_HEADER_LEN
+                    + payload.len(),
+            })
+        );
+        assert_eq!(
+            inflight_operation.start(
+                &mut OutboundTransmitDevice::new(),
+                endpoint,
+                policy,
+                [192, 0, 2, 21],
+                0x1234,
+                8,
+                61,
+                &payload,
+                &mut transmit_buffer,
+                0,
+            ),
+            Err(crate::posix::PosixError::Busy)
+        );
+        assert_eq!(
+            inflight_operation.pump(
+                &mut PollDevice::with_receive_error(DeviceError::Io),
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            Err(crate::posix::PosixError::Io)
+        );
     }
 
     #[test_case]
