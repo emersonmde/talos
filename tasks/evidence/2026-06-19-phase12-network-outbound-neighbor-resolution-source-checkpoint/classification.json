@@ -1,0 +1,140 @@
+{
+  "task_id": "phase12-network-outbound-neighbor-resolution-source-checkpoint-20260619",
+  "status": "accepted",
+  "classification": "phase12-network-outbound-neighbor-resolution-source-checkpoint-planning-needed",
+  "accepted_at": "2026-06-19T05:57:00Z",
+  "evidence_level": [
+    "static source/task evidence review",
+    "task-owned JSON evidence",
+    "diff checks"
+  ],
+  "reviewed_evidence": [
+    "tasks/2026-06-19-phase12-network-arp-cache-core.md",
+    "tasks/2026-06-19-phase12-network-arp-cache-dispatch-integration-source-checkpoint.md",
+    "tasks/2026-06-19-phase12-network-arp-cache-dispatch-integration-core.md",
+    "tasks/evidence/2026-06-19-phase12-network-arp-cache-dispatch-integration-core/classification.json",
+    "tasks/2026-06-19-phase12-network-arp-cache-dispatch-integration-closeout.md",
+    "tasks/evidence/2026-06-19-phase12-network-arp-cache-dispatch-integration-closeout/classification.json",
+    "src/network.rs",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md",
+    "memory/talos-supervisor-state.json taskQueue"
+  ],
+  "accepted_input_frontier": [
+    "ArpCache stores fixed-capacity allocation-free IPv4-to-MAC neighbors with deterministic lookup, insertion, update, replacement, and zero-capacity no-state-change behavior",
+    "valid Ethernet/IPv4 ARP requests and replies can teach sender IPv4/MAC facts through ArpCache",
+    "dispatch_local_packet_with_arp_cache learns inbound ARP sender facts before preserving existing local reply behavior",
+    "poll_local_network_device_with_arp_cache receives one caller-buffered frame, learns through the cache-aware dispatcher, and transmits only caller-buffered local replies",
+    "no accepted source path currently resolves an outbound destination IPv4 address into an Ethernet destination MAC for future transmit preparation"
+  ],
+  "recommended_next_boundary": {
+    "summary": "cached-only outbound IPv4 neighbor resolution",
+    "recommended_task_id": "phase12-network-outbound-neighbor-resolution-core-20260619",
+    "operations": [
+      "add a small outbound-neighbor result type for resolved cached MAC versus unresolved destination IPv4",
+      "add a no_std-compatible helper that resolves a direct local destination IPv4 address through an immutable ArpCache lookup",
+      "preserve all existing dispatch_local_packet, dispatch_local_packet_with_arp_cache, poll_local_network_device, and poll_local_network_device_with_arp_cache behavior",
+      "cover cached hit, unresolved miss, updated cache entry, zero-capacity cache, and compatibility with accepted cache-aware dispatch/poll tests"
+    ],
+    "excluded_operations": [
+      "ARP request emission",
+      "retry timers",
+      "packet queues",
+      "routing table",
+      "driver consultation",
+      "frame transmission",
+      "live packet I/O",
+      "smoltcp adoption",
+      "sockets",
+      "SSH",
+      "hardware readiness"
+    ]
+  },
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planning_reason": "No explicit queued outbound neighbor-resolution implementation task exists after this checkpoint; the worker must not create a new task, broaden scope, infer a phase transition, or promote packet-queue, driver, socket, smoltcp, live-I/O, or hardware work.",
+  "rejected_claims": [
+    "outbound neighbor-resolution implementation accepted",
+    "ARP request emission",
+    "retry timers",
+    "packet queue readiness",
+    "driver adapter readiness",
+    "RP1 Ethernet driver readiness",
+    "DMA descriptor ownership",
+    "interrupt integration",
+    "packet capture",
+    "live packet I/O",
+    "smoltcp adoption",
+    "UDP/TCP behavior",
+    "DHCP",
+    "DNS",
+    "routing",
+    "socket API",
+    "SSH",
+    "network reachability",
+    "ping response",
+    "hardware link readiness",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "checkpoint records the accepted ARP-cache, cache-aware dispatch, and cache-aware poll frontiers"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "checkpoint names the next smallest outbound neighbor-resolution boundary as a cached-only IPv4-to-MAC resolver with deterministic resolved and unresolved outcomes"
+    },
+    {
+      "disposition": "deferred",
+      "finding": "cached-only resolver implementation, ARP request emission, packet queues, driver adapter integration, UDP/TCP, DHCP, DNS, routing, sockets, smoltcp, SSH, live packet I/O, and Pi 5 packet movement evidence remain future work"
+    },
+    {
+      "disposition": "removed",
+      "finding": "no source, docs, dependencies, or prior task evidence were removed"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "no cargo metadata or dependency feasibility check was required because no dependency or interface change was proposed or made"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "no hardware lock, lab mutation, boot publication, or Pi 5 inconclusive-run triage was required for static source/task evidence work"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "static/source/task evidence review",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo metadata or equivalent",
+      "result": "not-run",
+      "reason": "no dependency or interface changes were proposed or made"
+    },
+    {
+      "gate": "jq empty",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "mdbook build",
+      "result": "not-run",
+      "reason": "docs/src files were not changed"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "hardware": {
+    "hardware_test_lock_acquired": false,
+    "pi5_hardware_run": false,
+    "lab_mutation": false,
+    "boot_archive_publication": false,
+    "live_packet_io": false
+  }
+}
