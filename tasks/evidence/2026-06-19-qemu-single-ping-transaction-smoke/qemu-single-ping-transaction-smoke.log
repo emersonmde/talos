@@ -3,7 +3,7 @@ qemu-single-ping-transaction-smoke: substitute=host-cargo-test
 qemu-single-ping-transaction-smoke: lifecycle=unresolved-arp-pending -> matching-arp-advances-to-icmp-transmit -> inflight-recorded -> matching-echo-reply-completes -> idle
 qemu-single-ping-transaction-smoke: retry-timeout-edge=caller-driven-arp-retry-budget-exhaustion-then-pending-timeout
 
-running 627 talos no_std tests
+running 629 talos no_std tests
 talos::allocator::tests::allocation_advances_with_alignment_and_updates_accounting ... ok
 talos::allocator::tests::direct_global_allocator_style_smoke_preserves_accounting ... ok
 talos::allocator::tests::fallible_allocation_reports_alignment_overflow_separately ... ok
@@ -329,6 +329,8 @@ talos::network::tests::single_pending_icmp_reports_malformed_arp_and_transmit_er
 talos::network::tests::single_pending_icmp_reports_no_pending_unresolved_and_nonmatching_arp_boundaries ... ok
 talos::network::tests::single_pending_icmp_reports_payload_and_output_pressure_without_state_change ... ok
 talos::network::tests::single_pending_icmp_unresolved_neighbor_transmits_arp_and_records_request ... ok
+talos::network::tests::single_ping_packet_service_owns_one_transaction_lifecycle ... ok
+talos::network::tests::single_ping_packet_service_preserves_state_across_edge_cases ... ok
 talos::posix::tests::absolute_dot_dot_clamps_above_root ... ok
 talos::posix::tests::component_count_limit_maps_to_enametoolong ... ok
 talos::posix::tests::component_longer_than_limit_maps_to_enametoolong ... ok
@@ -631,5 +633,5 @@ talos::tty::tests::line_discipline_records_deferred_control_event_names ... ok
 talos::tty::tests::line_discipline_reports_buffer_limit_without_implicit_timeout ... ok
 talos::tty::tests::polling_rx_diagnostic_reports_bounded_timeout_without_input ... ok
 talos::tty::tests::raw_mode_passes_bytes_without_canonical_translation_or_echo ... ok
-test result: ok. 627 passed
+test result: ok. 629 passed
 qemu-single-ping-transaction-smoke: PASS classification=host-substitute-single-ping-transaction-smoke-complete

@@ -4048,6 +4048,28 @@ The post-review correction chain is:
     phase transition remain rejected. selected_next_task is
     'phase12-network-host-ping-user-boundary-strategy-checkpoint-20260619'.
 
+230. Phase 12.3 single-transaction packet service core: accepted in
+    'phase12-network-single-transaction-packet-service-core-20260619' with
+    classification
+    'phase12-network-single-transaction-packet-service-core-accepted'.
+    src/network.rs now exposes SinglePingPacketService, a host-only
+    caller-driven service/pump that owns exactly one SinglePingTransaction and
+    a bounded ARP cache while borrowing NetworkDevice and caller-owned
+    receive/transmit buffers per operation. It can start one route-aware
+    ping-like transaction, retain pending ARP, advance a matching ARP reply to
+    exactly one ICMP echo transmit and in-flight record, complete on a matching
+    echo reply, report status, retry pending ARP, and explicitly timeout
+    pending or in-flight state. Unit evidence covers no-frame,
+    malformed/unsupported frame, nonmatching ARP/reply, receive-buffer
+    pressure, receive errors, transmit errors, retry exhaustion,
+    duplicate/active start, and late frames after timeout. This remains
+    host-only source/unit-test and QEMU/substitute evidence; shell ping,
+    sockets, UDP/TCP, smoltcp, live driver adapters, live packet I/O, hardware
+    reachability, autonomous timers, broad packet queues, lab mutation, boot
+    publication, SSH, Phase 12.1 link-hardware retry, and phase transition
+    remain rejected. selected_next_task is
+    'phase12-network-single-transaction-packet-service-closeout-20260619'.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
@@ -13398,6 +13420,20 @@ Milestone 12.3: IP Stack
   reachability, autonomous timers, broad packet queues, lab mutation, boot
   publication, SSH, Phase 12.1 link-hardware retry, and phase transition remain
   rejected.
+- The single-transaction packet service core accepts a host-only
+  caller-driven service/pump, SinglePingPacketService, that owns exactly one
+  SinglePingTransaction and bounded ARP cache while borrowing NetworkDevice and
+  caller-owned receive/transmit buffers per operation. It can start one
+  route-aware ping-like transaction, retain pending ARP, advance a matching ARP
+  reply to one ICMP echo transmit and in-flight record, complete on a matching
+  echo reply, report status, retry pending ARP, and explicitly timeout pending
+  or in-flight state. Source/unit evidence covers deterministic no-frame,
+  malformed/unsupported frame, nonmatching ARP/reply, receive-buffer pressure,
+  receive error, transmit error, retry exhaustion, duplicate/active start, and
+  late-frame-after-timeout edges. It still does not accept shell ping, sockets,
+  UDP/TCP, smoltcp, live driver adapters, live packet I/O, hardware
+  reachability, autonomous timers, broad packet queues, lab mutation, boot
+  publication, SSH, Phase 12.1 link-hardware retry, or phase transition.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

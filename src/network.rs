@@ -1187,6 +1187,95 @@ impl<const PAYLOAD_CAPACITY: usize> SinglePingTransaction<PAYLOAD_CAPACITY> {
     }
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SinglePingPacketService<const ARP_CAPACITY: usize, const PAYLOAD_CAPACITY: usize>
+{
+    arp_cache: ArpCache<ARP_CAPACITY>,
+    transaction: SinglePingTransaction<PAYLOAD_CAPACITY>,
+}
+
+impl<const ARP_CAPACITY: usize, const PAYLOAD_CAPACITY: usize>
+    SinglePingPacketService<ARP_CAPACITY, PAYLOAD_CAPACITY>
+{
+    pub(crate) const fn new() -> Self {
+        Self {
+            arp_cache: ArpCache::new(),
+            transaction: SinglePingTransaction::new(),
+        }
+    }
+
+    pub(crate) const fn with_arp_cache(arp_cache: ArpCache<ARP_CAPACITY>) -> Self {
+        Self {
+            arp_cache,
+            transaction: SinglePingTransaction::new(),
+        }
+    }
+
+    pub(crate) const fn arp_cache(&self) -> &ArpCache<ARP_CAPACITY> {
+        &self.arp_cache
+    }
+
+    pub(crate) fn status(&self) -> SinglePingTransactionStatus {
+        self.transaction.status()
+    }
+
+    pub(crate) fn start_ping<D: NetworkDevice>(
+        &mut self,
+        device: &mut D,
+        endpoint: LocalNetworkEndpoint,
+        route_policy: Ipv4EgressRoutePolicy,
+        destination_ipv4: [u8; 4],
+        identifier: u16,
+        sequence_number: u16,
+        ttl: u8,
+        payload: &[u8],
+        transmit_buffer: &mut [u8],
+        arp_retry_budget: usize,
+    ) -> SinglePingTransactionStartResult {
+        start_routed_single_ping_transaction_with_arp_retry_budget(
+            device,
+            &self.arp_cache,
+            &mut self.transaction,
+            endpoint,
+            route_policy,
+            destination_ipv4,
+            identifier,
+            sequence_number,
+            ttl,
+            payload,
+            transmit_buffer,
+            arp_retry_budget,
+        )
+    }
+
+    pub(crate) fn pump<D: NetworkDevice>(
+        &mut self,
+        device: &mut D,
+        receive_buffer: &mut [u8],
+        transmit_buffer: &mut [u8],
+    ) -> SinglePingTransactionPollResult {
+        poll_single_ping_transaction(
+            device,
+            &mut self.arp_cache,
+            &mut self.transaction,
+            receive_buffer,
+            transmit_buffer,
+        )
+    }
+
+    pub(crate) fn retry_arp<D: NetworkDevice>(
+        &mut self,
+        device: &mut D,
+        transmit_buffer: &mut [u8],
+    ) -> SinglePingTransactionRetryResult {
+        retry_single_ping_transaction_arp_request(device, &mut self.transaction, transmit_buffer)
+    }
+
+    pub(crate) fn timeout(&mut self) -> SinglePingTransactionTimeoutResult {
+        timeout_single_ping_transaction(&mut self.transaction)
+    }
+}
+
 pub(crate) fn record_single_inflight_ipv4_icmp_echo_request<const PAYLOAD_CAPACITY: usize>(
     inflight: &mut SingleInflightIcmpEcho<PAYLOAD_CAPACITY>,
     endpoint: LocalNetworkEndpoint,
@@ -5956,6 +6045,417 @@ mod tests {
             retry_transaction.status(),
             SinglePingTransactionStatus::Idle
         );
+    }
+
+    #[test_case]
+    fn single_ping_packet_service_owns_one_transaction_lifecycle() {
+        let endpoint = local_endpoint();
+        let destination = [192, 0, 2, 20];
+        let destination_mac = MacAddress::new([0x02, 0, 0, 0, 0, 20]);
+        let policy = Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None);
+        let payload = [1, 2, 3, 4];
+        let expected_icmp_len =
+            ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + ICMP_ECHO_HEADER_LEN + payload.len();
+        let mut service = SinglePingPacketService::<2, 4>::new();
+        let mut transmit_buffer = [0u8; 128];
+        let mut receive_buffer = [0u8; 128];
+        let mut start_device = OutboundTransmitDevice::new();
+
+        assert_eq!(service.status(), SinglePingTransactionStatus::Idle);
+        assert_eq!(
+            service.start_ping(
+                &mut start_device,
+                endpoint,
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &payload,
+                &mut transmit_buffer,
+                1,
+            ),
+            SinglePingTransactionStartResult::ArpRequestTransmittedAndPending {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            }
+        );
+        assert_eq!(
+            service.status(),
+            SinglePingTransactionStatus::PendingArp {
+                destination_ipv4: destination,
+                next_hop_ipv4: destination,
+                arp_retries_remaining: 1,
+            }
+        );
+
+        let mut no_frame_device = PollDevice::with_receive_error(DeviceError::WouldBlock);
+        assert_eq!(
+            service.pump(
+                &mut no_frame_device,
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            SinglePingTransactionPollResult::PendingResult(PendingIcmpEchoPollResult::NoFrame)
+        );
+        assert_eq!(
+            service.status(),
+            SinglePingTransactionStatus::PendingArp {
+                destination_ipv4: destination,
+                next_hop_ipv4: destination,
+                arp_retries_remaining: 1,
+            }
+        );
+
+        let arp_reply = arp_reply_frame();
+        let mut arp_reply_device = PollDevice::with_frame(&arp_reply);
+        assert_eq!(
+            service.pump(
+                &mut arp_reply_device,
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            SinglePingTransactionPollResult::PendingResult(
+                PendingIcmpEchoPollResult::PendingResult(
+                    PendingIcmpEchoResult::IcmpEchoRequestTransmitted {
+                        frame_len: expected_icmp_len,
+                    }
+                )
+            )
+        );
+        assert_eq!(
+            service.arp_cache().lookup(destination),
+            Some(destination_mac)
+        );
+        assert_eq!(
+            service.status(),
+            SinglePingTransactionStatus::Inflight {
+                destination_ipv4: destination,
+            }
+        );
+
+        let icmp_reply = icmp_echo_reply_frame();
+        let mut icmp_reply_device = PollDevice::with_frame(&icmp_reply);
+        assert_eq!(
+            service.pump(
+                &mut icmp_reply_device,
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            SinglePingTransactionPollResult::InflightResult(
+                InflightIcmpEchoPollResult::ObservationResult(
+                    InflightIcmpEchoResult::IcmpEchoReplyMatched {
+                        payload_len: payload.len(),
+                    }
+                )
+            )
+        );
+        assert_eq!(service.status(), SinglePingTransactionStatus::Idle);
+    }
+
+    #[test_case]
+    fn single_ping_packet_service_preserves_state_across_edge_cases() {
+        let endpoint = local_endpoint();
+        let destination = [192, 0, 2, 20];
+        let policy = Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None);
+        let payload = [1, 2, 3, 4];
+        let mut transmit_buffer = [0u8; 128];
+        let mut receive_buffer = [0u8; 128];
+
+        let mut small_payload_service = SinglePingPacketService::<0, 2>::new();
+        assert_eq!(
+            small_payload_service.start_ping(
+                &mut OutboundTransmitDevice::new(),
+                endpoint,
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &payload,
+                &mut transmit_buffer,
+                0,
+            ),
+            SinglePingTransactionStartResult::PendingResult(
+                PendingIcmpEchoResult::PendingPayloadTooLarge {
+                    required_len: payload.len(),
+                    max_len: 2,
+                }
+            )
+        );
+        assert_eq!(
+            small_payload_service.status(),
+            SinglePingTransactionStatus::Idle
+        );
+
+        let mut transmit_error_service = SinglePingPacketService::<0, 4>::new();
+        assert_eq!(
+            transmit_error_service.start_ping(
+                &mut OutboundTransmitDevice::with_transmit_error(DeviceError::Io),
+                endpoint,
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &payload,
+                &mut transmit_buffer,
+                0,
+            ),
+            SinglePingTransactionStartResult::PendingResult(PendingIcmpEchoResult::TransmitError {
+                request_kind: OutboundRequestKind::ArpRequest,
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+                error: DeviceError::Io,
+            })
+        );
+        assert_eq!(
+            transmit_error_service.status(),
+            SinglePingTransactionStatus::Idle
+        );
+
+        let mut pending_service = SinglePingPacketService::<2, 4>::new();
+        assert_eq!(
+            pending_service.start_ping(
+                &mut OutboundTransmitDevice::new(),
+                endpoint,
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &payload,
+                &mut transmit_buffer,
+                1,
+            ),
+            SinglePingTransactionStartResult::ArpRequestTransmittedAndPending {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            }
+        );
+        assert_eq!(
+            pending_service.start_ping(
+                &mut OutboundTransmitDevice::new(),
+                endpoint,
+                policy,
+                [192, 0, 2, 21],
+                0x1234,
+                8,
+                61,
+                &payload,
+                &mut transmit_buffer,
+                0,
+            ),
+            SinglePingTransactionStartResult::PendingResult(
+                PendingIcmpEchoResult::PendingRequestAlreadyQueued {
+                    destination_ipv4: destination,
+                }
+            )
+        );
+
+        let arp_reply = arp_reply_frame();
+        let mut tiny_receive = [0u8; ETHERNET_HEADER_LEN - 1];
+        assert_eq!(
+            pending_service.pump(
+                &mut PollDevice::with_frame(&arp_reply),
+                &mut tiny_receive,
+                &mut transmit_buffer,
+            ),
+            SinglePingTransactionPollResult::PendingResult(
+                PendingIcmpEchoPollResult::ReceiveBufferTooSmall
+            )
+        );
+        assert_eq!(
+            pending_service.pump(
+                &mut PollDevice::with_receive_error(DeviceError::Io),
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            SinglePingTransactionPollResult::PendingResult(
+                PendingIcmpEchoPollResult::ReceiveError(DeviceError::Io)
+            )
+        );
+        assert_eq!(
+            pending_service.pump(
+                &mut PollDevice::with_frame(ETHERNET_IPV4_FRAME),
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            SinglePingTransactionPollResult::PendingResult(
+                PendingIcmpEchoPollResult::PendingResult(PendingIcmpEchoResult::ArpError(
+                    PacketError::UnsupportedEtherType,
+                ))
+            )
+        );
+
+        let mut nonmatching_arp = arp_reply_frame();
+        nonmatching_arp[ETHERNET_HEADER_LEN + 14..ETHERNET_HEADER_LEN + 18]
+            .copy_from_slice(&[192, 0, 2, 99]);
+        assert_eq!(
+            pending_service.pump(
+                &mut PollDevice::with_frame(&nonmatching_arp),
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            SinglePingTransactionPollResult::PendingResult(
+                PendingIcmpEchoPollResult::PendingResult(PendingIcmpEchoResult::NonMatchingArp {
+                    pending_destination_ipv4: destination,
+                    arp_sender_ipv4: [192, 0, 2, 99],
+                })
+            )
+        );
+        assert_eq!(
+            pending_service.status(),
+            SinglePingTransactionStatus::PendingArp {
+                destination_ipv4: destination,
+                next_hop_ipv4: destination,
+                arp_retries_remaining: 1,
+            }
+        );
+
+        assert_eq!(
+            pending_service.pump(
+                &mut PollDevice::with_transmit_error(&arp_reply, DeviceError::Io),
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            SinglePingTransactionPollResult::PendingResult(
+                PendingIcmpEchoPollResult::PendingResult(PendingIcmpEchoResult::TransmitError {
+                    request_kind: OutboundRequestKind::Ipv4IcmpEchoRequest,
+                    frame_len: ETHERNET_HEADER_LEN
+                        + IPV4_MIN_HEADER_LEN
+                        + ICMP_ECHO_HEADER_LEN
+                        + payload.len(),
+                    error: DeviceError::Io,
+                })
+            )
+        );
+        assert_eq!(
+            pending_service.retry_arp(&mut OutboundTransmitDevice::new(), &mut transmit_buffer),
+            SinglePingTransactionRetryResult::PendingResult(
+                PendingIcmpEchoResult::ArpRequestTransmittedAndPending {
+                    frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+                }
+            )
+        );
+        assert_eq!(
+            pending_service.retry_arp(&mut OutboundTransmitDevice::new(), &mut transmit_buffer),
+            SinglePingTransactionRetryResult::PendingResult(
+                PendingIcmpEchoResult::ArpRetryBudgetExhausted {
+                    destination_ipv4: destination,
+                    next_hop_ipv4: destination,
+                }
+            )
+        );
+        assert_eq!(
+            pending_service.timeout(),
+            SinglePingTransactionTimeoutResult::PendingTimedOut {
+                destination_ipv4: destination,
+                next_hop_ipv4: destination,
+            }
+        );
+        let mut late_arp_device = PollDevice::with_frame(&arp_reply);
+        assert_eq!(
+            pending_service.pump(
+                &mut late_arp_device,
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            SinglePingTransactionPollResult::NoTransaction
+        );
+        assert_eq!(late_arp_device.receive_attempts, 0);
+
+        let mut cache = ArpCache::<2>::new();
+        assert_eq!(
+            cache.insert_or_update(destination, MacAddress::new([0x02, 0, 0, 0, 0, 20])),
+            ArpCacheUpdate::Inserted
+        );
+        let mut inflight_service = SinglePingPacketService::<2, 4>::with_arp_cache(cache);
+        assert_eq!(
+            inflight_service.start_ping(
+                &mut OutboundTransmitDevice::new(),
+                endpoint,
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &payload,
+                &mut transmit_buffer,
+                0,
+            ),
+            SinglePingTransactionStartResult::IcmpEchoRequestTransmitted {
+                frame_len: ETHERNET_HEADER_LEN
+                    + IPV4_MIN_HEADER_LEN
+                    + ICMP_ECHO_HEADER_LEN
+                    + payload.len(),
+            }
+        );
+        assert_eq!(
+            inflight_service.start_ping(
+                &mut OutboundTransmitDevice::new(),
+                endpoint,
+                policy,
+                [192, 0, 2, 21],
+                0x1234,
+                8,
+                61,
+                &payload,
+                &mut transmit_buffer,
+                0,
+            ),
+            SinglePingTransactionStartResult::InflightResult(
+                InflightIcmpEchoResult::InflightRequestAlreadyTracked {
+                    destination_ipv4: destination,
+                }
+            )
+        );
+        let mut unsupported_protocol_reply = icmp_echo_reply_frame();
+        unsupported_protocol_reply[ETHERNET_HEADER_LEN + 9] = 17;
+        rewrite_ipv4_checksum(&mut unsupported_protocol_reply);
+        assert_eq!(
+            inflight_service.pump(
+                &mut PollDevice::with_frame(&unsupported_protocol_reply),
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            SinglePingTransactionPollResult::InflightResult(
+                InflightIcmpEchoPollResult::ObservationResult(InflightIcmpEchoResult::ReplyError(
+                    PacketError::UnsupportedIpv4Protocol
+                ))
+            )
+        );
+
+        let mut nonmatching_reply = icmp_echo_reply_frame();
+        nonmatching_reply[..ETHERNET_ADDR_LEN].copy_from_slice(&[0x02, 0, 0, 0, 0, 98]);
+        assert_eq!(
+            inflight_service.pump(
+                &mut PollDevice::with_frame(&nonmatching_reply),
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            SinglePingTransactionPollResult::InflightResult(
+                InflightIcmpEchoPollResult::ObservationResult(
+                    InflightIcmpEchoResult::NonMatchingIcmpEchoReply {
+                        destination_ipv4: destination,
+                    }
+                )
+            )
+        );
+        assert_eq!(
+            inflight_service.timeout(),
+            SinglePingTransactionTimeoutResult::InflightTimedOut {
+                destination_ipv4: destination,
+            }
+        );
+        let late_reply = icmp_echo_reply_frame();
+        let mut late_reply_device = PollDevice::with_frame(&late_reply);
+        assert_eq!(
+            inflight_service.pump(
+                &mut late_reply_device,
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            SinglePingTransactionPollResult::NoTransaction
+        );
+        assert_eq!(late_reply_device.receive_attempts, 0);
     }
 
     #[test_case]

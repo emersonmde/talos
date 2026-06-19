@@ -3238,3 +3238,28 @@ selected_next_task is null and planningNeeded=true. Shell ping, sockets,
 UDP/TCP, smoltcp, live driver adapters, live packet I/O, hardware reachability,
 autonomous timers, broad packet queues, lab mutation, boot publication, SSH,
 Phase 12.1 link-hardware retry, and phase transition remain rejected.
+
+phase12-network-single-transaction-packet-service-core-20260619 accepts
+phase12-network-single-transaction-packet-service-core-accepted.
+src/network.rs now exposes SinglePingPacketService, a caller-driven host-only
+service/pump that owns exactly one SinglePingTransaction plus a bounded ARP
+cache while borrowing NetworkDevice and caller-owned receive/transmit buffers
+per operation.
+
+The accepted service API can start one route-aware ping-like transaction,
+retain unresolved pending ARP state, process a matching ARP reply into exactly
+one ICMP echo transmit and in-flight record, process a matching echo reply into
+completion, report idle/pending/in-flight status, retry pending ARP requests,
+and explicitly timeout pending or in-flight state. Unit evidence covers
+no-frame, malformed/unsupported frame, nonmatching ARP/reply,
+receive-buffer pressure, receive errors, transmit errors, retry exhaustion,
+duplicate/active start, and late frames after timeout without losing state
+except on accepted completion or explicit timeout.
+
+This remains host-only source/unit-test and QEMU/substitute evidence over
+caller-owned buffers and fake/trait-level NetworkDevice behavior. It does not
+accept shell ping, sockets, UDP/TCP, smoltcp, live driver adapters, live packet
+I/O, hardware reachability, autonomous timers, broad packet queues, lab
+mutation, boot publication, SSH, Phase 12.1 link-hardware retry, or phase
+transition. The selected next task is
+phase12-network-single-transaction-packet-service-closeout-20260619.
