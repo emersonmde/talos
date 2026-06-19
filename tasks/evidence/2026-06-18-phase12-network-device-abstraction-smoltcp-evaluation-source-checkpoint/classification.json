@@ -1,0 +1,117 @@
+{
+  "task_id": "phase12-network-device-abstraction-smoltcp-evaluation-source-checkpoint-20260618",
+  "status": "accepted",
+  "classification": "phase12-network-device-abstraction-smoltcp-deferred-local-minimal-protocol-next",
+  "accepted_at": "2026-06-19T00:03:06Z",
+  "evidence_level": [
+    "static/source/dependency review",
+    "cargo metadata",
+    "crates.io smoltcp metadata review",
+    "diff checks"
+  ],
+  "recommendation": {
+    "selected_path": "local-minimal-protocol-layer-first",
+    "smoltcp_selected": false,
+    "smoltcp_version_reviewed": "0.13.1",
+    "next_implementation_recommendation": "local packet dispatch plus IPv4 checksum and ICMP echo reply over caller-owned byte slices",
+    "planning_needed": true,
+    "selected_next_task": null
+  },
+  "reviewed_sources": [
+    "src/network.rs",
+    "Cargo.toml",
+    "Cargo.lock",
+    "tasks/2026-06-18-phase12-network-device-abstraction-ethernet-arp-ip-host-core.md",
+    "tasks/2026-06-18-phase12-network-device-abstraction-host-core-closeout.md"
+  ],
+  "dependency_evidence": {
+    "cargo_metadata_no_deps": "pass",
+    "talos_dependency_count": 0,
+    "smoltcp_crate": {
+      "version": "0.13.1",
+      "license": "0BSD",
+      "rust_version": "1.91",
+      "summary": "TCP/IP stack designed for bare-metal, real-time systems without a heap",
+      "default_feature_risks": [
+        "std",
+        "alloc",
+        "raw_socket",
+        "tuntap_interface",
+        "broad socket/protocol defaults"
+      ],
+      "no_std_implication": "would require explicit feature selection and an accepted device/queue/time/buffer integration contract before adoption"
+    }
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "smoltcp-vs-local stack decision is now recorded as a source checkpoint"
+    },
+    {
+      "disposition": "deferred",
+      "finding": "smoltcp dependency adoption is deferred until packet dispatch, checksum policy, queue/buffer ownership, and driver adapter boundaries are accepted"
+    },
+    {
+      "disposition": "deferred",
+      "finding": "TCP/UDP sockets and SSH remain downstream of live packet path acceptance"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "current local Ethernet/ARP/IPv4 parsers remain useful even if smoltcp is adopted later"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "no ADR is required because no expensive-to-reverse dependency is selected"
+    },
+    {
+      "disposition": "removed",
+      "finding": "no source, docs, dependency, or evidence files were removed"
+    }
+  ],
+  "accepted_claims": [
+    "local minimal packet-dispatch/ICMP path is the recommended next implementation direction",
+    "smoltcp remains a credible later candidate after driver/queue/buffer contracts are accepted",
+    "no third-party dependency was added"
+  ],
+  "rejected_claims": [
+    "smoltcp selected",
+    "live packet I/O",
+    "socket API",
+    "SSH",
+    "RP1 Ethernet driver readiness",
+    "hardware link readiness",
+    "phase transition"
+  ],
+  "validation": [
+    {
+      "gate": "static/source/dependency review",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo metadata --no-deps --format-version 1",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo search smoltcp --limit 1 and cargo info smoltcp -v",
+      "result": "pass"
+    },
+    {
+      "gate": "jq empty",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "hardware": {
+    "hardware_test_lock_acquired": false,
+    "pi5_hardware_run": false,
+    "lab_mutation": false,
+    "boot_archive_publication": false
+  }
+}
