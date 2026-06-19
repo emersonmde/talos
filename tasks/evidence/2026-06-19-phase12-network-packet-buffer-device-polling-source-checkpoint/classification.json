@@ -1,0 +1,119 @@
+{
+  "task_id": "phase12-network-packet-buffer-device-polling-source-checkpoint-20260619",
+  "status": "accepted",
+  "classification": "phase12-network-packet-buffer-device-polling-source-checkpoint-planning-needed",
+  "accepted_at": "2026-06-19T01:25:00Z",
+  "evidence_level": [
+    "static source/task evidence review",
+    "task-owned JSON evidence",
+    "diff checks"
+  ],
+  "reviewed_evidence": [
+    "tasks/2026-06-19-phase12-network-local-packet-dispatch-icmp-echo-core.md",
+    "tasks/2026-06-19-phase12-network-local-packet-dispatch-icmp-echo-closeout.md",
+    "tasks/evidence/2026-06-19-phase12-network-local-packet-dispatch-icmp-echo-closeout/classification.json",
+    "src/network.rs",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md",
+    "memory/talos-supervisor-state.json taskQueue"
+  ],
+  "accepted_input_frontier": [
+    "NetworkDevice separates raw receive/transmit frame movement from protocol parsing",
+    "ReceivedFrame keeps immutable received bytes and exposes Ethernet parsing without owning buffers",
+    "dispatch_local_packet accepts immutable Ethernet frames and caller-provided output buffers",
+    "accepted local dispatch can produce ARP replies and ICMP echo replies for configured local identity",
+    "malformed packets, unsupported protocols, nonlocal destinations, and too-small output buffers return deterministic errors"
+  ],
+  "recommended_next_boundary": {
+    "summary": "host-testable one-step packet buffer and device polling adapter",
+    "operations": [
+      "own or receive caller-provided fixed receive and transmit buffers",
+      "call NetworkDevice::receive_frame into the receive buffer",
+      "dispatch the received frame through dispatch_local_packet",
+      "call NetworkDevice::transmit_frame only when a reply is produced",
+      "return deterministic outcomes for no frame, receive buffer too small, no reply, dispatch error, transmit error, and successful reply transmission"
+    ],
+    "test_strategy": "host unit tests with a fake NetworkDevice and no hardware, allocation, DMA, interrupts, sockets, smoltcp, or live packet I/O"
+  },
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planning_reason": "No explicit queued packet-buffer/device-polling implementation task exists after this checkpoint; the worker must not create a new task or infer a phase transition.",
+  "rejected_claims": [
+    "reusable packet-buffer implementation accepted",
+    "reusable device polling loop accepted",
+    "RP1 Ethernet driver readiness",
+    "DMA descriptor ownership",
+    "interrupt integration",
+    "packet queue readiness",
+    "live packet I/O",
+    "smoltcp adoption",
+    "socket API",
+    "TCP/UDP behavior",
+    "SSH",
+    "network reachability",
+    "ping response",
+    "hardware link readiness",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "checkpoint records the accepted input frontier from NetworkDevice, ReceivedFrame, and dispatch_local_packet"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "checkpoint names the next smallest local source/test boundary as a one-step caller-owned packet buffer and device polling adapter"
+    },
+    {
+      "disposition": "deferred",
+      "finding": "reusable buffers, poll-step result types, fake device tests, driver adapter integration, ARP cache, UDP/TCP, sockets, smoltcp, SSH, and live packet I/O remain future work"
+    },
+    {
+      "disposition": "removed",
+      "finding": "no source, docs, dependencies, or prior task evidence were removed"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "no cargo metadata or dependency feasibility check was required because no dependency or interface change was made"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "no hardware lock, lab mutation, boot publication, or Pi 5 inconclusive-run triage was required for static source/task evidence work"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "static/source/task evidence review",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo metadata or equivalent",
+      "result": "not-run",
+      "reason": "no dependency or interface changes were proposed or made"
+    },
+    {
+      "gate": "jq empty",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "mdbook build",
+      "result": "not-run",
+      "reason": "docs/src files were not changed"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "hardware": {
+    "hardware_test_lock_acquired": false,
+    "pi5_hardware_run": false,
+    "lab_mutation": false,
+    "boot_archive_publication": false,
+    "live_packet_io": false
+  }
+}
