@@ -3072,3 +3072,16 @@ observation into outbound transmit helpers, shell ping, packet queues,
 autonomous polling/timers, live driver adapters, sockets, SSH, smoltcp
 adoption, reachability, hardware work, lab mutation, boot publication, or
 phase transition.
+
+phase12-network-single-inflight-icmp-echo-reply-observation-closeout-20260619
+accepts phase12-network-single-inflight-icmp-echo-reply-observation-closeout-accepted.
+The closeout reconciles the accepted core commit, source, unit tests, task
+record, docs, and rejected claims. The Phase 12.3 host-only boundary now
+includes deterministic completion of one recorded in-flight ICMP echo request
+by one matching received echo reply over caller-owned receive storage and a
+fake/trait-level NetworkDevice receive path. It remains explicitly not a live
+ping path: outbound transmit integration, shell ping, packet queues,
+autonomous polling/timers, live driver adapters, sockets, SSH, smoltcp
+adoption, reachability, hardware work, lab mutation, boot publication, and
+phase transition are still rejected. The selected next task is
+phase12-network-host-ping-transaction-frontier-closeout-20260619.

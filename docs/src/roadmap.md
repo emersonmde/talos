@@ -13202,6 +13202,16 @@ Milestone 12.3: IP Stack
   driver adapters, shell ping, packet queues, autonomous timers, sockets, SSH,
   reachability, hardware work, smoltcp adoption, and phase transition remain
   rejected.
+- The single-inflight ICMP echo reply observation closeout reconciles that
+  accepted core commit, source/tests, task record, docs, and rejected claims.
+  The host-only Phase 12.3 frontier now includes deterministic completion of one
+  recorded in-flight ICMP echo request by one matching received echo reply over
+  caller-owned receive storage and a fake/trait-level NetworkDevice receive
+  path. It selects the queued host-ping transaction frontier closeout as the
+  next checkpoint. Live packet I/O, driver adapters, shell ping, packet queues,
+  autonomous timers, sockets, SSH, reachability, hardware work, smoltcp
+  adoption, boot publication, lab mutation, and phase transition remain
+  rejected.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
