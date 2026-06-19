@@ -3861,6 +3861,26 @@ The post-review correction chain is:
     'phase12-network-routed-single-pending-icmp-after-arp-resolution-closeout-20260619',
     bounded to source/task/docs reconciliation.
 
+220. Phase 12.3 single-pending ARP retry core: accepted in
+    'phase12-network-single-pending-arp-retry-core-20260619' with
+    classification 'phase12-network-single-pending-arp-retry-core-accepted'.
+    src/network.rs adds an explicit caller-driven retry budget to the existing
+    PendingIcmpEchoRequest boundary plus
+    transmit_or_queue_routed_single_pending_ipv4_icmp_echo_request_with_arp_retry_budget
+    and retry_single_pending_ipv4_icmp_echo_arp_request. A stored unresolved
+    pending ICMP request can re-emit an ARP request for its stored next-hop
+    IPv4, including gateway-routed next hops, without recomputing routes or
+    mutating ARP cache state. Successful fake-device ARP retry transmit
+    decrements the stored budget and leaves the pending request available for
+    later matching ARP resolution. Budget exhaustion, output-buffer pressure,
+    transmit errors, and no-pending boundaries are deterministic and covered by
+    unit tests. Packet queues, autonomous retry timers, live driver transmit,
+    live packet I/O, hardware work, sockets, SSH, smoltcp adoption,
+    ping/network reachability, lab mutation, boot publication, and phase
+    transition remain rejected. The selected next task is
+    'phase12-network-single-pending-arp-retry-closeout-20260619', bounded to
+    source/task/docs reconciliation.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed

@@ -2938,3 +2938,23 @@ itself. Packet queues, autonomous timers, live driver adapters, smoltcp
 adoption, UDP/TCP, sockets, hardware packet I/O, ping/network reachability
 behavior, SSH, Pi 5 hardware work, boot publication, lab mutation, and phase
 transition remain rejected.
+
+phase12-network-single-pending-arp-retry-core-20260619 accepts
+phase12-network-single-pending-arp-retry-core-accepted. src/network.rs now
+includes explicit caller-driven ARP retry state for the existing single-pending
+ICMP request boundary.
+
+The accepted host-only retry path stores a deterministic retry budget in the
+pending request. A caller may explicitly ask to retry ARP for the stored
+next-hop IPv4; this covers gateway-routed pending requests because the final
+IPv4 destination and ARP next hop remain separate. Successful fake-device ARP
+retry transmit decrements the stored budget and leaves the pending ICMP request
+available for later matching ARP resolution. Budget exhaustion, output-buffer
+pressure, and transmit errors leave the pending request stored with documented
+state, and no-pending returns a deterministic no-pending result.
+
+This remains source/test evidence only over caller-owned buffers and fake
+NetworkDevice transmit. It does not accept packet queues, autonomous timers,
+live driver adapters, smoltcp adoption, UDP/TCP, sockets, hardware packet I/O,
+ping/network reachability behavior, SSH, Pi 5 hardware work, boot publication,
+lab mutation, or phase transition.
