@@ -2804,3 +2804,20 @@ Packet queues, retry timers, routing, live driver transmit, live packet I/O,
 hardware work, sockets, SSH, smoltcp adoption, ping/network reachability
 behavior, RP1 Ethernet readiness, lab mutation, boot publication, and phase
 transition remain rejected.
+
+phase12-network-phase12-3-host-frontier-closeout-20260619 accepts
+phase12-network-phase12-3-host-frontier-closeout-accepted-planning-needed. The
+checkpoint reconciles the host/testable Phase 12.3 frontier through local
+receive dispatch, ARP cache learning/resolution, caller-buffered outbound ICMP
+and ARP construction, immutable request selection, and fake/trait-level
+one-shot NetworkDevice transmit.
+
+This checkpoint accepts no live networking behavior. Packet queues, retry
+timers, neighbor-discovery state beyond immutable cache lookup/request
+emission, routing/subnet/gateway policy, live driver adapters, smoltcp
+adoption, UDP/TCP, sockets, hardware packet I/O, ping/network reachability
+behavior, SSH, Pi 5 hardware work, boot publication, lab mutation, and phase
+transition remain rejected. selected_next_task is null and planningNeeded=true
+because no later queued Phase 12.3 task has complete scope, non-goals,
+dependencies, acceptance criteria, validation gates, docs, and evidence
+requirements.

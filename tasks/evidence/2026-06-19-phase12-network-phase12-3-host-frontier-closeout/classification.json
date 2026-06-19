@@ -1,0 +1,95 @@
+{
+  "task_id": "phase12-network-phase12-3-host-frontier-closeout-20260619",
+  "classification": "phase12-network-phase12-3-host-frontier-closeout-accepted-planning-needed",
+  "accepted": true,
+  "accepted_boundary": "host/testable Phase 12.3 local packet dispatch, ARP cache learning/resolution, outbound ICMP/ARP frame construction, request selection, and fake/trait-level one-shot transmit",
+  "source_changes": [],
+  "docs_changes": [
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "task_records": [
+    "tasks/2026-06-19-phase12-network-phase12-3-host-frontier-closeout.md"
+  ],
+  "evidence_reviewed": [
+    "src/network.rs",
+    "tasks/2026-06-19-phase12-network-local-packet-dispatch-icmp-echo-core.md",
+    "tasks/2026-06-19-phase12-network-packet-buffer-device-polling-core.md",
+    "tasks/2026-06-19-phase12-network-arp-cache-core.md",
+    "tasks/2026-06-19-phase12-network-arp-cache-dispatch-integration-core.md",
+    "tasks/2026-06-19-phase12-network-outbound-neighbor-resolution-core.md",
+    "tasks/2026-06-19-phase12-network-outbound-frame-construction-core.md",
+    "tasks/2026-06-19-phase12-network-outbound-ipv4-icmp-echo-request-core.md",
+    "tasks/2026-06-19-phase12-network-arp-request-emission-core.md",
+    "tasks/2026-06-19-phase12-network-outbound-request-selection-core.md",
+    "tasks/2026-06-19-phase12-network-outbound-one-shot-device-transmit-core.md",
+    "tasks/2026-06-19-phase12-network-outbound-one-shot-device-transmit-closeout.md"
+  ],
+  "accepted_components": [
+    "local ARP and IPv4 ICMP echo request dispatch into caller-owned reply buffers",
+    "one-step NetworkDevice polling with caller-owned receive/transmit buffers",
+    "fixed-capacity allocation-free ARP cache and sender learning",
+    "cached-only outbound neighbor resolution from immutable ArpCache state",
+    "caller-buffered Ethernet II frame construction for resolved neighbors",
+    "caller-buffered Ethernet/IPv4/ICMP echo request construction for resolved neighbors",
+    "caller-buffered Ethernet/IPv4 ARP request construction for unresolved targets",
+    "immutable-cache outbound request selection between ICMP echo and ARP request frames",
+    "fake/trait-level one-shot NetworkDevice transmit after successful construction"
+  ],
+  "validation": [
+    {
+      "level": "static/source/task evidence review",
+      "command": "manual inspection of src/network.rs, task records, classification JSON, docs, and roadmap",
+      "result": "pass"
+    },
+    {
+      "level": "JSON evidence validation",
+      "command": "jq empty tasks/evidence/2026-06-19-phase12-network-phase12-3-host-frontier-closeout/classification.json",
+      "result": "pass"
+    },
+    {
+      "level": "diff whitespace check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "level": "staged diff whitespace check",
+      "command": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "rejected_claims": [
+    "packet queue",
+    "retry timer",
+    "neighbor-discovery state machine",
+    "routing",
+    "subnet or gateway selection",
+    "asynchronous scheduler integration",
+    "live driver transmit",
+    "live packet I/O",
+    "packet capture",
+    "ping/network reachability behavior",
+    "sockets",
+    "SSH",
+    "UDP/TCP",
+    "DHCP",
+    "DNS",
+    "smoltcp adoption",
+    "RP1 driver adapter readiness",
+    "DMA descriptor ownership",
+    "interrupt handling",
+    "RP1 Ethernet readiness",
+    "Pi 5 hardware proof",
+    "boot publication",
+    "lab mutation",
+    "phase transition"
+  ],
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "No later queued task in the current explicit Phase 12.3 host/testable slice has complete scope, non-goals, dependencies, acceptance criteria, validation gates, docs, and evidence requirements. Supervisor planning is required before packet queues, retry timers, neighbor-discovery state, routing, driver adapters, smoltcp, sockets, hardware packet I/O, ping/network reachability, SSH, or any phase transition."
+}

@@ -12977,6 +12977,12 @@ Milestone 12.3: IP Stack
   to reject packet queues, retries, routing, live driver transmit, live packet
   I/O, reachability, hardware work, sockets, SSH, smoltcp adoption, and phase
   transition.
+- The Phase 12.3 host frontier checkpoint reconciles the accepted local receive
+  dispatch, ARP cache learning/resolution, caller-buffered outbound ICMP/ARP
+  construction, immutable request selection, and fake/trait-level one-shot
+  transmit boundary. It accepts no live networking behavior and sets
+  planningNeeded=true because no later queued Phase 12.3 task has complete
+  execution criteria.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
