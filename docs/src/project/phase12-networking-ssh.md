@@ -2978,3 +2978,21 @@ the next same-milestone checkpoint. It does not accept packet queues,
 autonomous timers, live driver adapters, smoltcp adoption, UDP/TCP, sockets,
 hardware packet I/O, ping/network reachability behavior, SSH, Pi 5 hardware
 work, boot publication, lab mutation, or phase transition.
+
+phase12-network-phase12-3-route-aware-outbound-frontier-closeout-20260619
+accepts
+phase12-network-route-aware-outbound-frontier-closeout-accepted-planning-needed.
+The checkpoint reconciles the accepted host/testable route-aware outbound
+frontier: deterministic same-subnet versus gateway next-hop selection,
+caller-buffered outbound ARP/ICMP request selection, one route-aware pending
+ICMP echo request with separate final destination and ARP next-hop IPv4, and
+explicit caller-driven ARP retry over that stored next hop.
+
+No live networking behavior is accepted. Packet queues, autonomous retry
+timers, multi-entry neighbor-discovery state, live driver adapters, smoltcp
+adoption, UDP/TCP, sockets, hardware packet I/O, ping/network reachability
+behavior, SSH, Pi 5 hardware work, boot publication, lab mutation, and phase
+transition remain rejected. selected_next_task is null and planningNeeded=true
+because no later queued task exists after this checkpoint with complete
+objective dependencies, acceptance criteria, validation gates, docs, and
+evidence requirements.

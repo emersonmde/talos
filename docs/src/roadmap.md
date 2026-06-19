@@ -13129,6 +13129,18 @@ Milestone 12.3: IP Stack
   accepted by the closeout itself; packet queues, autonomous timers, live
   driver adapters, live packet I/O, sockets, SSH, reachability, hardware work,
   and phase transition remain rejected.
+- The explicit single-pending ARP retry core and closeout accept only
+  caller-driven retry over a stored route-aware pending ICMP request. The
+  route-aware outbound frontier checkpoint now reconciles deterministic
+  same-subnet/gateway route selection, outbound ARP/ICMP request selection,
+  one route-aware pending ICMP request, matching next-hop ARP resolution, and
+  explicit ARP retry budget behavior as host/unit evidence. It sets
+  selected_next_task=null and planningNeeded=true because no later queued
+  Phase 12.3 task exists with complete objective dependencies, acceptance
+  criteria, validation gates, docs, and evidence requirements. Live packet
+  I/O, driver adapters, packet queues, autonomous timers, sockets, SSH,
+  reachability, hardware work, smoltcp adoption, and phase transition remain
+  rejected.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

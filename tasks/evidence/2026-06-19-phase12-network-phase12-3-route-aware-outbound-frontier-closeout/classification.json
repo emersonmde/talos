@@ -1,0 +1,48 @@
+{
+  "task_id": "phase12-network-phase12-3-route-aware-outbound-frontier-closeout-20260619",
+  "classification": "phase12-network-route-aware-outbound-frontier-closeout-accepted-planning-needed",
+  "accepted_boundary": [
+    "host-testable local IPv4 egress route policy",
+    "caller-buffered route-aware outbound ARP or ICMP request selection",
+    "single pending ICMP echo request with separate final destination and ARP next-hop IPv4",
+    "matching next-hop ARP resolution can transmit the pending final-destination ICMP echo through fake NetworkDevice evidence",
+    "explicit caller-driven ARP retry over the stored next-hop IPv4 with deterministic retry budget behavior"
+  ],
+  "rejected_claims": [
+    "live driver adapter",
+    "live packet I/O",
+    "packet capture",
+    "ping behavior",
+    "network reachability",
+    "sockets",
+    "SSH",
+    "UDP/TCP",
+    "smoltcp adoption",
+    "DHCP",
+    "DNS",
+    "dynamic routing",
+    "autonomous timers",
+    "scheduler wakeups",
+    "packet queues",
+    "multi-entry neighbor-discovery queues",
+    "RP1 Ethernet readiness",
+    "DMA descriptor ownership",
+    "interrupt handling",
+    "Pi 5 hardware proof",
+    "boot publication",
+    "lab mutation",
+    "phase transition"
+  ],
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "No later queued task exists after this checkpoint with complete objective dependencies, acceptance criteria, validation gates, docs, and evidence requirements.",
+  "evidence_level": "static/source/task evidence review",
+  "reviewed_commits": [
+    "13f01884e",
+    "47ea5ad7",
+    "d9c0bab4",
+    "c8f8ec8b",
+    "a17b86e7",
+    "447c958b"
+  ]
+}
