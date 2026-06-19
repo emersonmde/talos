@@ -1,0 +1,118 @@
+{
+  "task_id": "phase12-network-outbound-neighbor-resolution-closeout-20260619",
+  "status": "accepted",
+  "classification": "phase12-network-outbound-neighbor-resolution-closeout-accepted",
+  "accepted_at": "2026-06-19T07:17:00Z",
+  "evidence_level": [
+    "static source/task/evidence consistency review",
+    "task-owned JSON classification",
+    "docs build",
+    "diff checks"
+  ],
+  "reviewed_evidence": [
+    "tasks/2026-06-19-phase12-network-outbound-neighbor-resolution-core.md",
+    "tasks/evidence/2026-06-19-phase12-network-outbound-neighbor-resolution-core/classification.json",
+    "src/network.rs",
+    "tasks/2026-06-19-phase12-network-outbound-neighbor-resolution-source-checkpoint.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md",
+    "commit 1eb3a7b11a33513478a9095a0ed61d7a49d18178"
+  ],
+  "accepted_behavior": [
+    "OutboundNeighborResolution distinguishes cached resolved destinations from unresolved destinations",
+    "resolve_outbound_neighbor reads immutable ArpCache state without allocation",
+    "known destination IPv4 resolves to the cached destination MacAddress",
+    "cache miss returns an unresolved result carrying the destination IPv4",
+    "updated ArpCache entries are reflected by later resolver calls",
+    "zero-capacity ArpCache instances remain deterministic misses",
+    "cache-aware poll learning remains compatible with later cached resolution"
+  ],
+  "selected_next_task": "phase12-network-outbound-frame-construction-source-checkpoint-20260619",
+  "planningNeeded": false,
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Phase 12.3 now has accepted cached-only outbound IPv4-to-MAC resolution through immutable ArpCache lookup semantics"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "unresolved-neighbor classification is deterministic and carries the target IPv4 without ARP request emission, packet queueing, or driver consultation"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "deterministic no_std tests cover cached hit, unresolved miss, updated entry, zero-capacity miss, and cache-aware poll compatibility"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "no implementation correction was required during closeout because static/source/task evidence matched the accepted core claims"
+    },
+    {
+      "disposition": "deferred",
+      "finding": "outbound frame construction, ARP request emission, retry timers, packet queues, routing, driver transmit scheduling, live packet I/O, sockets, SSH, smoltcp integration, and Pi 5 packet movement evidence remain future bounded work"
+    },
+    {
+      "disposition": "removed",
+      "finding": "no source, docs, dependencies, prior task evidence, or accepted APIs were removed by this closeout"
+    },
+    {
+      "disposition": "rejected",
+      "finding": "ARP request emission, packet queue readiness, live packet I/O, hardware-driver readiness, link readiness, ping/network reachability behavior, sockets, SSH, smoltcp adoption, and phase transition are not accepted by this closeout"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "static/source/task evidence review",
+      "result": "pass"
+    },
+    {
+      "gate": "jq empty",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "hardware": {
+    "hardware_test_lock_acquired": false,
+    "pi5_hardware_run": false,
+    "lab_mutation": false,
+    "boot_archive_publication": false,
+    "live_packet_io": false
+  },
+  "rejected_claims": [
+    "ARP request emission",
+    "retry timers",
+    "packet queues",
+    "routing table",
+    "subnet or gateway logic",
+    "driver consultation",
+    "frame construction",
+    "transmit scheduling",
+    "live packet I/O",
+    "RP1 Ethernet driver readiness",
+    "DMA descriptor ownership",
+    "interrupt integration",
+    "packet capture",
+    "link readiness",
+    "network reachability",
+    "ping behavior",
+    "socket API",
+    "SSH behavior",
+    "UDP/TCP",
+    "DHCP",
+    "DNS",
+    "smoltcp adoption",
+    "userspace networking API",
+    "Pi 5 hardware proof",
+    "phase transition"
+  ]
+}

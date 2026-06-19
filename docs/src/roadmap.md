@@ -3657,6 +3657,18 @@ The post-review correction chain is:
     reachability behavior, link readiness, and phase transition remain
     rejected.
 
+207. Phase 12.3 outbound neighbor resolution closeout: accepted in
+    'phase12-network-outbound-neighbor-resolution-closeout-20260619' with
+    classification
+    'phase12-network-outbound-neighbor-resolution-closeout-accepted'. The
+    closeout confirms the accepted host-only cached-resolution boundary and
+    selects
+    'phase12-network-outbound-frame-construction-source-checkpoint-20260619'
+    as the next mechanically unblocked source checkpoint. ARP request
+    emission, packet queues, driver transmit, live packet I/O, sockets, SSH,
+    hardware-driver readiness, ping/network reachability behavior, link
+    readiness, and phase transition remain rejected.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed

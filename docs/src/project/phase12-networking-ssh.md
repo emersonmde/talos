@@ -2654,3 +2654,11 @@ subnet/gateway selection, outbound frame construction, driver transmit
 scheduling, live packet I/O, RP1 Ethernet driver readiness, smoltcp adoption,
 sockets, SSH, ping/network reachability behavior, and phase transition remain
 unaccepted.
+
+phase12-network-outbound-neighbor-resolution-closeout-20260619 accepts
+phase12-network-outbound-neighbor-resolution-closeout-accepted. The closeout
+confirms the host-only cached-resolution frontier and selects the queued
+outbound-frame-construction source checkpoint as the next bounded Phase 12.3
+planning task. It does not authorize ARP request emission, packet queues,
+driver transmit, live packet I/O, sockets, SSH, network reachability, ping
+behavior, hardware readiness, or phase transition.
