@@ -1,0 +1,126 @@
+{
+  "task_id": "phase12-network-arp-cache-source-checkpoint-20260619",
+  "status": "accepted",
+  "classification": "phase12-network-arp-cache-source-checkpoint-planning-needed",
+  "accepted_at": "2026-06-19T02:58:00Z",
+  "evidence_level": [
+    "static source/task evidence review",
+    "task-owned JSON evidence",
+    "diff checks"
+  ],
+  "reviewed_evidence": [
+    "tasks/2026-06-19-phase12-network-local-packet-dispatch-icmp-echo-core.md",
+    "tasks/2026-06-19-phase12-network-local-packet-dispatch-icmp-echo-closeout.md",
+    "tasks/2026-06-19-phase12-network-packet-buffer-device-polling-core.md",
+    "tasks/2026-06-19-phase12-network-packet-buffer-device-polling-closeout.md",
+    "tasks/evidence/2026-06-19-phase12-network-packet-buffer-device-polling-closeout/classification.json",
+    "src/network.rs",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md",
+    "memory/talos-supervisor-state.json taskQueue"
+  ],
+  "accepted_input_frontier": [
+    "dispatch_local_packet can generate caller-buffered ARP replies and ICMP echo replies for configured local identity",
+    "ARP behavior is stateless and retains no IPv4-to-MAC mapping after dispatch",
+    "poll_local_network_device receives one frame into caller-owned RX storage, dispatches it, and transmits only generated replies from caller-owned TX storage",
+    "LocalPollStepResult preserves deterministic receive, dispatch, transmit, and reply outcomes",
+    "no driver adapter, packet queue, live packet I/O, ARP cache, UDP/TCP, socket, SSH, smoltcp, hardware link, or network reachability behavior is accepted"
+  ],
+  "recommended_next_boundary": {
+    "summary": "fixed-capacity allocation-free ARP neighbor table",
+    "operations": [
+      "store a small number of IPv4-to-MAC entries without heap allocation",
+      "insert or update an entry by IPv4 address",
+      "lookup an IPv4 address and return the known MAC address when present",
+      "use explicit full-table replacement behavior",
+      "learn sender IPv4/MAC from validated Ethernet/ARP packets without changing transmission semantics"
+    ],
+    "test_strategy": "host unit tests for insertion, update, lookup miss, full-table replacement, malformed ARP rejection, and learning from valid ARP packets with no hardware, allocation, DMA, interrupts, sockets, smoltcp, or live packet I/O"
+  },
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planning_reason": "No explicit queued ARP-cache implementation task exists after this checkpoint; the worker must not create a new task, broaden scope, infer a phase transition, or promote driver/socket/smoltcp/live-I/O/hardware work.",
+  "rejected_claims": [
+    "ARP-cache implementation accepted",
+    "dispatch integration with cached neighbors accepted",
+    "packet queue readiness",
+    "driver adapter readiness",
+    "RP1 Ethernet driver readiness",
+    "DMA descriptor ownership",
+    "interrupt integration",
+    "packet capture",
+    "live packet I/O",
+    "smoltcp adoption",
+    "UDP/TCP behavior",
+    "DHCP",
+    "DNS",
+    "routing",
+    "socket API",
+    "SSH",
+    "network reachability",
+    "ping response",
+    "hardware link readiness",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "checkpoint records the accepted local ARP/ICMP dispatch frontier and one-frame poll-step frontier"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "checkpoint names the next smallest ARP-cache source/test boundary as a fixed-capacity allocation-free neighbor table"
+    },
+    {
+      "disposition": "deferred",
+      "finding": "ARP-cache implementation, dispatch integration, packet queues, driver adapter integration, UDP/TCP, DHCP, DNS, routing, sockets, smoltcp, SSH, live packet I/O, and Pi 5 packet movement evidence remain future work"
+    },
+    {
+      "disposition": "removed",
+      "finding": "no source, docs, dependencies, or prior task evidence were removed"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "no cargo metadata or dependency feasibility check was required because no dependency or interface change was proposed or made"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "no hardware lock, lab mutation, boot publication, or Pi 5 inconclusive-run triage was required for static source/task evidence work"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "static/source/task evidence review",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo metadata or equivalent",
+      "result": "not-run",
+      "reason": "no dependency or interface changes were proposed or made"
+    },
+    {
+      "gate": "jq empty",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "mdbook build",
+      "result": "not-run",
+      "reason": "docs/src files were not changed"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "hardware": {
+    "hardware_test_lock_acquired": false,
+    "pi5_hardware_run": false,
+    "lab_mutation": false,
+    "boot_archive_publication": false,
+    "live_packet_io": false
+  }
+}
