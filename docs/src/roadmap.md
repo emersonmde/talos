@@ -3830,13 +3830,36 @@ The post-review correction chain is:
     'phase12-network-local-ipv4-egress-route-policy-closeout-accepted-planning-needed'.
     The closeout reconciles deterministic destination-vs-gateway next-hop
     selection and no-route handling with source, unit-test, task, docs, and
-    evidence records. It selects no next task and sets planningNeeded=true
-    because no later queued Phase 12.3 task has complete scope, non-goals,
-    dependencies, acceptance criteria, validation gates, docs, and evidence
-    requirements. Retry timing, packet queues, route-table expansion, live
-    packet I/O, hardware work, sockets, SSH, smoltcp adoption, ping/network
-    reachability, lab mutation, boot publication, and phase transition remain
-    rejected pending supervisor planning.
+    evidence records. Supervisor planning later selected
+    'phase12-network-routed-single-pending-icmp-after-arp-resolution-core-20260619'
+    as the next bounded host-only Phase 12.3 task. Retry timing, packet queues,
+    route-table expansion, live packet I/O, hardware work, sockets, SSH,
+    smoltcp adoption, ping/network reachability, lab mutation, boot
+    publication, and phase transition remain rejected except through the
+    explicit queued dependency chain.
+
+219. Phase 12.3 routed single-pending ICMP-after-ARP resolution core:
+    accepted in
+    'phase12-network-routed-single-pending-icmp-after-arp-resolution-core-20260619'
+    with classification
+    'phase12-network-routed-single-pending-icmp-after-arp-resolution-core-accepted'.
+    src/network.rs extends PendingIcmpEchoRequest with next_hop_ipv4 and adds
+    transmit_or_queue_routed_single_pending_ipv4_icmp_echo_request. The
+    accepted host-only path applies route_ipv4_egress before ARP lookup:
+    same-subnet unresolved destinations ARP for the destination, gateway-routed
+    unresolved destinations ARP for the gateway while retaining the final IPv4
+    destination, matching next-hop ARP resolution transmits the ICMP echo
+    request to the final destination using the resolved next-hop MAC, and
+    no-gateway off-subnet requests return NoRouteToDestination before output,
+    transmit, or pending-state mutation. Unit tests cover same-subnet ARP,
+    gateway ARP and final-destination transmit, no-route, nonmatching ARP, and
+    retained direct single-pending error paths. Packet queues, retry timers,
+    route-table expansion, live packet I/O, hardware work, sockets, SSH,
+    smoltcp adoption, ping/network reachability, lab mutation, boot
+    publication, and phase transition remain rejected. The selected next task
+    is
+    'phase12-network-routed-single-pending-icmp-after-arp-resolution-closeout-20260619',
+    bounded to source/task/docs reconciliation.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -13049,6 +13072,16 @@ Milestone 12.3: IP Stack
   escaping, and selects the queued local IPv4 egress route-policy core as the
   next bounded host-only Phase 12.3 task. It does not accept route
   implementation, packet queues, retries, live packet I/O, sockets, SSH,
+  reachability, hardware work, or a phase transition.
+- The local IPv4 egress route-policy core and closeout accept deterministic
+  host-only destination-vs-gateway next-hop selection and no-route behavior.
+  Supervisor planning then selected the route-aware single-pending ICMP slice.
+- The route-aware single-pending ICMP core accepts host/unit behavior that ARPs
+  for same-subnet destinations directly, ARPs for configured gateways on
+  off-subnet routes, preserves the final IPv4 destination separately from the
+  ARP next hop, and transmits the final-destination ICMP echo request after
+  matching next-hop ARP resolution through fake NetworkDevice transmit. It does
+  not accept retry timers, packet queues, live packet I/O, sockets, SSH,
   reachability, hardware work, or a phase transition.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning

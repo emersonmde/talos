@@ -2888,9 +2888,36 @@ test, task, docs, and evidence records. The Phase 12.3 host-only frontier now
 includes deterministic destination-vs-gateway next-hop selection and no-route
 handling for local IPv4 egress.
 
-No later queued Phase 12.3 continuation currently has complete objective task
-definition and dependencies, so selected_next_task is null and
-planningNeeded=true. Retry timing, packet queues, route-table expansion, live
-driver adapters, smoltcp adoption, UDP/TCP, sockets, hardware packet I/O,
+Supervisor planning later selected
+phase12-network-routed-single-pending-icmp-after-arp-resolution-core-20260619
+as the next bounded host-only Phase 12.3 task. Retry timing, packet queues,
+route-table expansion, live driver adapters, smoltcp adoption, UDP/TCP,
+sockets, hardware packet I/O, ping/network reachability behavior, SSH, Pi 5
+hardware work, boot publication, lab mutation, and phase transition remain
+rejected except through the explicit queued dependency chain.
+
+phase12-network-routed-single-pending-icmp-after-arp-resolution-core-20260619
+accepts
+phase12-network-routed-single-pending-icmp-after-arp-resolution-core-accepted.
+src/network.rs now carries both final destination IPv4 and ARP next-hop IPv4
+inside PendingIcmpEchoRequest and adds a route-aware single-pending ICMP entry
+point.
+
+The accepted host-only boundary applies route_ipv4_egress before pending ICMP
+ARP resolution. Same-subnet unresolved destinations emit ARP for the
+destination and store a pending request whose next hop is the destination.
+Gateway-routed unresolved destinations emit ARP for the configured gateway and
+store the final IPv4 destination separately from the gateway next hop. Matching
+ARP resolution for that next hop transmits an ICMP echo request to the final
+IPv4 destination using the resolved next-hop MAC and clears pending state after
+successful fake-device transmit. Off-subnet no-gateway requests report
+NoRouteToDestination before output mutation, device transmit, or pending-state
+mutation.
+
+The existing direct single-pending API remains available and stores direct
+requests with next_hop_ipv4 equal to destination_ipv4. This accepted boundary
+is source/test evidence only over caller-owned buffers and fake NetworkDevice
+transmit. Packet queues, retry timers, route-table expansion, live driver
+adapters, smoltcp adoption, UDP/TCP, sockets, hardware packet I/O,
 ping/network reachability behavior, SSH, Pi 5 hardware work, boot publication,
-lab mutation, and phase transition remain rejected pending supervisor planning.
+lab mutation, and phase transition remain rejected.
