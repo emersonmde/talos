@@ -3142,3 +3142,25 @@ retry or timeout scheduling, shell ping, sockets, SSH, smoltcp adoption,
 reachability, hardware work, lab mutation, boot publication, or phase
 transition. The selected next task is
 phase12-network-single-ping-caller-driven-retry-timeout-core-20260619.
+
+phase12-network-single-ping-caller-driven-retry-timeout-core-20260619 accepts
+phase12-network-single-ping-caller-driven-retry-timeout-core-accepted.
+src/network.rs now exposes caller-driven status, retry, and timeout controls
+for the integrated host-only single-ping transaction.
+
+The accepted boundary remains deterministic and allocation-free. A caller can
+inspect whether the transaction is idle, pending ARP, or in-flight; start an
+unresolved route with an explicit ARP retry budget; retry the stored route-aware
+pending ARP request while preserving final destination and next-hop identity;
+observe retry exhaustion or retry transmit errors without losing pending state;
+and timeout exactly one pending or in-flight transaction. Timed-out and
+completed transactions return to idle, and late frames after timeout are not
+consumed.
+
+This is host/unit-test evidence only over caller-owned buffers and
+fake/trait-level NetworkDevice behavior. It does not accept autonomous timers,
+scheduler wakeups, background polling, packet queues, multi-ping behavior,
+dynamic routing, shell ping, sockets, UDP/TCP, SSH, smoltcp adoption, live
+driver adapters, live packet I/O, reachability, hardware work, lab mutation,
+boot publication, or phase transition. The selected next task is
+phase12-network-single-ping-caller-driven-retry-timeout-closeout-20260619.

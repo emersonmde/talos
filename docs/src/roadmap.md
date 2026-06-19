@@ -3997,6 +3997,27 @@ The post-review correction chain is:
     publication, and phase transition remain rejected. selected_next_task is
     'phase12-network-single-ping-caller-driven-retry-timeout-core-20260619'.
 
+227. Phase 12.3 single-ping caller-driven retry/timeout core: accepted in
+    'phase12-network-single-ping-caller-driven-retry-timeout-core-20260619'
+    with classification
+    'phase12-network-single-ping-caller-driven-retry-timeout-core-accepted'.
+    The accepted host-only boundary adds status, retry, and timeout controls to
+    the integrated single-ping transaction. A caller can inspect idle,
+    pending-ARP, and in-flight states; start unresolved routes with an explicit
+    ARP retry budget; retry one stored route-aware pending ARP request while
+    preserving final destination and next-hop identity; observe retry
+    exhaustion or retry transmit errors without losing pending state; and
+    timeout exactly one pending or in-flight transaction. Timed-out and
+    completed transactions return to idle, and late frames after timeout are
+    not consumed. Evidence is source/unit-test evidence over caller-owned
+    buffers and fake/trait-level NetworkDevice behavior only. Autonomous
+    timers, scheduler wakeups, background polling, packet queues, multi-ping
+    behavior, dynamic routing, shell ping, sockets, UDP/TCP, SSH, smoltcp
+    adoption, live driver adapters, live packet I/O, reachability, hardware
+    work, lab mutation, boot publication, and phase transition remain rejected.
+    selected_next_task is
+    'phase12-network-single-ping-caller-driven-retry-timeout-closeout-20260619'.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
@@ -13278,6 +13299,30 @@ Milestone 12.3: IP Stack
   Automatic transmit-to-in-flight wiring, timeout/retry scheduling, packet
   queues, live driver adapters, shell ping, sockets, SSH, smoltcp adoption,
   hardware work, lab mutation, boot publication, reachability, and phase
+  transition remain rejected.
+- The integrated single-ping transaction core and closeout accept one
+  host-only transaction coordinator over caller-owned buffers and
+  fake/trait-level NetworkDevice behavior. The coordinator starts one
+  route-aware ICMP echo request, records in-flight only after successful
+  resolved-next-hop transmit, or emits one ARP request and keeps one pending
+  route-aware request for an unresolved next hop. Caller-driven polling can
+  consume a matching ARP reply, transmit exactly one ICMP echo request, clear
+  pending, and record in-flight only after successful transmit; a matching echo
+  reply completes the transaction. Live packet I/O, driver adapters, packet
+  queues, autonomous timers, shell ping, sockets, SSH, reachability, smoltcp
+  adoption, hardware work, lab mutation, boot publication, and phase transition
+  remain rejected.
+- The single-ping caller-driven retry/timeout core accepts deterministic
+  transaction status, pending-ARP retry, and timeout controls. A caller can
+  inspect idle, pending-ARP, and in-flight states; start unresolved routes with
+  an explicit ARP retry budget; retry the stored route-aware pending ARP
+  request while preserving final destination and next-hop identity; observe
+  retry exhaustion or retry transmit errors without losing pending state; and
+  timeout exactly one pending or in-flight transaction. Timed-out and completed
+  transactions return to idle. Autonomous timers, scheduler wakeups, background
+  polling, packet queues, multi-ping behavior, dynamic routing, shell ping,
+  sockets, UDP/TCP, SSH, smoltcp adoption, live driver adapters, live packet
+  I/O, reachability, hardware work, lab mutation, boot publication, and phase
   transition remain rejected.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
