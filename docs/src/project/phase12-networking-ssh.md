@@ -3218,3 +3218,23 @@ does not accept shell ping, sockets, UDP/TCP, smoltcp, live driver adapters,
 live packet I/O, hardware, reachability, autonomous timers, packet queues, lab
 mutation, boot publication, SSH, or phase transition. The selected next task is
 phase12-network-host-ping-user-boundary-strategy-checkpoint-20260619.
+
+phase12-network-host-ping-user-boundary-strategy-checkpoint-20260619 accepts
+phase12-network-host-ping-user-boundary-strategy-checkpoint-accepted-planning-needed.
+The checkpoint separates the accepted host-only single-ping evidence from a
+user-visible ping feature boundary. A fake or kernel-backed shell ping command
+is not feature progress unless it is backed by accepted userspace, descriptor,
+socket, and network-stack layers; existing command surfaces remain only
+regression/control surfaces.
+
+The next useful feature direction is a caller-driven single-transaction packet
+pump/service boundary over the accepted SinglePingTransaction and NetworkDevice
+contracts. That future boundary should own one transaction, consume received
+frames, produce transmit attempts through NetworkDevice, expose status, and
+accept explicit retry/timeout advancement without autonomous timers. No such
+follow-up task is already queued with complete objective dependencies,
+acceptance criteria, validation gates, docs, and evidence requirements, so
+selected_next_task is null and planningNeeded=true. Shell ping, sockets,
+UDP/TCP, smoltcp, live driver adapters, live packet I/O, hardware reachability,
+autonomous timers, broad packet queues, lab mutation, boot publication, SSH,
+Phase 12.1 link-hardware retry, and phase transition remain rejected.

@@ -13385,6 +13385,19 @@ Milestone 12.3: IP Stack
   checkpoint. Shell ping, sockets, UDP/TCP, smoltcp, live driver adapters, live
   packet I/O, hardware reachability, autonomous timers, packet queues, lab
   mutation, boot publication, SSH, and phase transition remain rejected.
+- The host ping user-boundary strategy checkpoint rejects fake/kernel-backed
+  shell ping expansion as feature progress unless it is backed by accepted
+  userspace, descriptor, socket, and network-stack layers. The next useful
+  feature direction is a caller-driven single-transaction packet pump/service
+  boundary over the accepted SinglePingTransaction and NetworkDevice contracts:
+  own one transaction, consume received frames, produce transmit attempts,
+  expose status, and accept explicit retry/timeout advancement without
+  autonomous timers. No follow-up task is already queued with complete
+  objective gates, so selected_next_task is null and planningNeeded=true.
+  Sockets, UDP/TCP, smoltcp, live driver adapters, live packet I/O, hardware
+  reachability, autonomous timers, broad packet queues, lab mutation, boot
+  publication, SSH, Phase 12.1 link-hardware retry, and phase transition remain
+  rejected.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
