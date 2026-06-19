@@ -1,0 +1,114 @@
+{
+  "task_id": "phase12-network-local-packet-dispatch-icmp-echo-core-20260619",
+  "status": "accepted",
+  "classification": "phase12-network-local-packet-dispatch-icmp-echo-core-accepted",
+  "accepted_at": "2026-06-19T01:00:00Z",
+  "evidence_level": [
+    "source implementation",
+    "no_std unit tests",
+    "docs build",
+    "diff checks"
+  ],
+  "recommendation_lineage": {
+    "source_checkpoint": "phase12-network-device-abstraction-smoltcp-evaluation-source-checkpoint-20260618",
+    "selected_path": "local-minimal-protocol-layer-first",
+    "smoltcp_selected": false
+  },
+  "accepted_claims": [
+    "local packet dispatch over immutable input frames and caller-provided output buffers",
+    "ARP request-to-local-IPv4 reply frame construction",
+    "IPv4 header checksum validation and generation for accepted local ICMP echo shapes",
+    "ICMP echo request validation and echo reply frame construction",
+    "deterministic errors for unsupported EtherTypes, non-ICMP protocols, unsupported IPv4 options/fragments, malformed checksums, nonlocal Ethernet/IP destinations, malformed ICMP echo input, and too-small output buffers"
+  ],
+  "rejected_claims": [
+    "live packet I/O",
+    "RP1 Ethernet driver readiness",
+    "DMA descriptor ownership",
+    "interrupt integration",
+    "smoltcp adoption",
+    "socket API",
+    "SSH",
+    "hardware link readiness",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "local ARP/IPv4/ICMP packet dispatcher and reply construction are implemented in src/network.rs"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "IPv4 and ICMP checksum validation/generation are covered by unit tests"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "unsupported protocols, malformed packets, nonlocal Ethernet/IP destinations, and small buffers return deterministic errors"
+    },
+    {
+      "disposition": "deferred",
+      "finding": "packet buffers, device polling, driver adapter, ARP cache, UDP/TCP, DHCP, DNS, routing, smoltcp integration, sockets, and SSH remain future tasks"
+    },
+    {
+      "disposition": "rejected",
+      "finding": "live packet I/O and hardware-driver readiness are not accepted"
+    },
+    {
+      "disposition": "removed",
+      "finding": "no dependencies, source files, or prior task evidence were removed"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "no hardware lock or Pi 5 triage was required for local source/test work"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "cargo fmt --all -- --check",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test --quiet",
+      "result": "pass"
+    },
+    {
+      "gate": "focused unit-test evidence",
+      "result": "pass",
+      "coverage": [
+        "packet dispatch",
+        "IPv4 checksum validation/generation",
+        "ARP reply",
+        "ICMP echo reply",
+        "malformed IPv4 and ICMP inputs",
+        "unsupported EtherType/protocol",
+        "unsupported options/fragments",
+        "nonlocal Ethernet/IP destination",
+        "buffer-too-small"
+      ]
+    },
+    {
+      "gate": "jq empty",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "mdbook build",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "hardware": {
+    "hardware_test_lock_acquired": false,
+    "pi5_hardware_run": false,
+    "lab_mutation": false,
+    "boot_archive_publication": false,
+    "live_packet_io": false
+  },
+  "selected_next_task": "phase12-network-local-packet-dispatch-icmp-echo-closeout-20260619"
+}

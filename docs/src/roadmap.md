@@ -12767,9 +12767,14 @@ Acceptance criteria:
 
 Milestone 12.3: IP Stack
 
-- Prefer smoltcp for no_std TCP/IP evaluation rather than hand-rolling TCP
-  unless a concrete Talos constraint rules it out.
-- Implement packet buffers, ARP, IPv4, ICMP, UDP/TCP, and socket integration.
+- Defer smoltcp adoption until Talos has accepted packet-dispatch,
+  buffer/device-polling, and driver-adapter boundaries concrete enough to make
+  the dependency contract stable.
+- Local source/test progress is accepted for packet dispatch, IPv4 checksum
+  validation/generation, ARP reply construction, and ICMP echo reply
+  construction over caller-owned byte slices.
+- Implement packet buffers, reusable device polling, ARP cache, UDP/TCP, and
+  socket integration in later bounded tasks.
 
 Acceptance criteria:
 

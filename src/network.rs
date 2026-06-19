@@ -9,9 +9,11 @@ pub(crate) const ETHERNET_HEADER_LEN: usize = 14;
 pub(crate) const ETHERNET_ADDR_LEN: usize = 6;
 pub(crate) const ARP_ETHERNET_IPV4_LEN: usize = 28;
 pub(crate) const IPV4_MIN_HEADER_LEN: usize = 20;
+pub(crate) const ICMP_ECHO_HEADER_LEN: usize = 8;
 
 pub(crate) const ETHERTYPE_IPV4: u16 = 0x0800;
 pub(crate) const ETHERTYPE_ARP: u16 = 0x0806;
+pub(crate) const IPV4_PROTOCOL_ICMP: u8 = 1;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum DeviceError {
@@ -32,9 +34,19 @@ pub(crate) enum PacketError {
     UnsupportedArpProtocol,
     InvalidArpHardwareLength,
     InvalidArpProtocolLength,
+    UnsupportedArpOperation,
     InvalidIpv4Version,
     InvalidIpv4HeaderLength,
     InvalidIpv4TotalLength,
+    UnsupportedEtherType,
+    UnsupportedIpv4Protocol,
+    UnsupportedIpv4Options,
+    UnsupportedIpv4Fragment,
+    InvalidIpv4Checksum,
+    InvalidIcmpEcho,
+    InvalidIcmpChecksum,
+    NotForLocalHost,
+    OutputBufferTooSmall,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -294,8 +306,228 @@ impl<'a> Ipv4Packet<'a> {
     }
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct LocalNetworkEndpoint {
+    mac: MacAddress,
+    ipv4: [u8; 4],
+}
+
+impl LocalNetworkEndpoint {
+    pub(crate) const fn new(mac: MacAddress, ipv4: [u8; 4]) -> Self {
+        Self { mac, ipv4 }
+    }
+
+    pub(crate) const fn mac(self) -> MacAddress {
+        self.mac
+    }
+
+    pub(crate) const fn ipv4(self) -> [u8; 4] {
+        self.ipv4
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum PacketReplyKind {
+    Arp,
+    IcmpEcho,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct PacketDispatchResult {
+    reply_kind: PacketReplyKind,
+    frame_len: usize,
+}
+
+impl PacketDispatchResult {
+    pub(crate) const fn reply_kind(self) -> PacketReplyKind {
+        self.reply_kind
+    }
+
+    pub(crate) const fn frame_len(self) -> usize {
+        self.frame_len
+    }
+}
+
+pub(crate) fn dispatch_local_packet(
+    frame_bytes: &[u8],
+    endpoint: LocalNetworkEndpoint,
+    output: &mut [u8],
+) -> Result<PacketDispatchResult, PacketError> {
+    let frame = EthernetFrame::parse(frame_bytes)?;
+
+    match frame.ether_type() {
+        EtherType::Arp => build_arp_reply(frame, endpoint, output),
+        EtherType::Ipv4 => build_icmp_echo_reply(frame, endpoint, output),
+        EtherType::Other(_) => Err(PacketError::UnsupportedEtherType),
+    }
+}
+
+fn build_arp_reply(
+    frame: EthernetFrame<'_>,
+    endpoint: LocalNetworkEndpoint,
+    output: &mut [u8],
+) -> Result<PacketDispatchResult, PacketError> {
+    let packet = ArpPacket::parse_ethernet_ipv4(frame.payload())?;
+
+    if packet.operation() != ArpOperation::Request {
+        return Err(PacketError::UnsupportedArpOperation);
+    }
+    if !mac_is_local_or_broadcast(frame.destination(), endpoint.mac()) {
+        return Err(PacketError::NotForLocalHost);
+    }
+    if packet.target_protocol_address() != endpoint.ipv4() {
+        return Err(PacketError::NotForLocalHost);
+    }
+
+    let reply_len = ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN;
+    if output.len() < reply_len {
+        return Err(PacketError::OutputBufferTooSmall);
+    }
+
+    output[..ETHERNET_ADDR_LEN].copy_from_slice(&frame.source().bytes());
+    output[ETHERNET_ADDR_LEN..ETHERNET_ADDR_LEN * 2].copy_from_slice(&endpoint.mac().bytes());
+    write_be_u16(output, 12, ETHERTYPE_ARP);
+
+    let arp = &mut output[ETHERNET_HEADER_LEN..reply_len];
+    write_be_u16(arp, 0, 1);
+    write_be_u16(arp, 2, ETHERTYPE_IPV4);
+    arp[4] = ETHERNET_ADDR_LEN as u8;
+    arp[5] = 4;
+    write_be_u16(arp, 6, ArpOperation::Reply.raw());
+    arp[8..14].copy_from_slice(&endpoint.mac().bytes());
+    arp[14..18].copy_from_slice(&endpoint.ipv4());
+    arp[18..24].copy_from_slice(&packet.sender_hardware_address().bytes());
+    arp[24..28].copy_from_slice(&packet.sender_protocol_address());
+
+    Ok(PacketDispatchResult {
+        reply_kind: PacketReplyKind::Arp,
+        frame_len: reply_len,
+    })
+}
+
+fn build_icmp_echo_reply(
+    frame: EthernetFrame<'_>,
+    endpoint: LocalNetworkEndpoint,
+    output: &mut [u8],
+) -> Result<PacketDispatchResult, PacketError> {
+    let ipv4_bytes = frame.payload();
+    let packet = Ipv4Packet::parse(ipv4_bytes)?;
+
+    if packet.header_len() != IPV4_MIN_HEADER_LEN {
+        return Err(PacketError::UnsupportedIpv4Options);
+    }
+    if ipv4_fragment_field(ipv4_bytes) != 0 {
+        return Err(PacketError::UnsupportedIpv4Fragment);
+    }
+    if !ipv4_header_checksum_is_valid(&ipv4_bytes[..packet.header_len()]) {
+        return Err(PacketError::InvalidIpv4Checksum);
+    }
+    if packet.protocol() != IPV4_PROTOCOL_ICMP {
+        return Err(PacketError::UnsupportedIpv4Protocol);
+    }
+    if frame.destination() != endpoint.mac() {
+        return Err(PacketError::NotForLocalHost);
+    }
+    if packet.destination() != endpoint.ipv4() {
+        return Err(PacketError::NotForLocalHost);
+    }
+
+    let icmp_request = packet.payload();
+    if icmp_request.len() < ICMP_ECHO_HEADER_LEN || icmp_request[0] != 8 || icmp_request[1] != 0 {
+        return Err(PacketError::InvalidIcmpEcho);
+    }
+    if !internet_checksum_is_valid(icmp_request) {
+        return Err(PacketError::InvalidIcmpChecksum);
+    }
+
+    let reply_len = ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + icmp_request.len();
+    if output.len() < reply_len {
+        return Err(PacketError::OutputBufferTooSmall);
+    }
+
+    output[..ETHERNET_ADDR_LEN].copy_from_slice(&frame.source().bytes());
+    output[ETHERNET_ADDR_LEN..ETHERNET_ADDR_LEN * 2].copy_from_slice(&endpoint.mac().bytes());
+    write_be_u16(output, 12, ETHERTYPE_IPV4);
+
+    let ipv4_reply = &mut output[ETHERNET_HEADER_LEN..ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN];
+    ipv4_reply[0] = 0x45;
+    ipv4_reply[1] = ipv4_bytes[1];
+    write_be_u16(
+        ipv4_reply,
+        2,
+        (IPV4_MIN_HEADER_LEN + icmp_request.len()) as u16,
+    );
+    ipv4_reply[4] = ipv4_bytes[4];
+    ipv4_reply[5] = ipv4_bytes[5];
+    write_be_u16(ipv4_reply, 6, 0);
+    ipv4_reply[8] = 64;
+    ipv4_reply[9] = IPV4_PROTOCOL_ICMP;
+    write_be_u16(ipv4_reply, 10, 0);
+    ipv4_reply[12..16].copy_from_slice(&endpoint.ipv4());
+    ipv4_reply[16..20].copy_from_slice(&packet.source());
+    let ipv4_checksum = internet_checksum(ipv4_reply);
+    write_be_u16(ipv4_reply, 10, ipv4_checksum);
+
+    let icmp_reply = &mut output[ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN..reply_len];
+    icmp_reply.copy_from_slice(icmp_request);
+    icmp_reply[0] = 0;
+    icmp_reply[1] = 0;
+    write_be_u16(icmp_reply, 2, 0);
+    let icmp_checksum = internet_checksum(icmp_reply);
+    write_be_u16(icmp_reply, 2, icmp_checksum);
+
+    Ok(PacketDispatchResult {
+        reply_kind: PacketReplyKind::IcmpEcho,
+        frame_len: reply_len,
+    })
+}
+
 fn read_be_u16(bytes: &[u8], offset: usize) -> u16 {
     u16::from_be_bytes([bytes[offset], bytes[offset + 1]])
+}
+
+fn write_be_u16(bytes: &mut [u8], offset: usize, value: u16) {
+    let raw = value.to_be_bytes();
+    bytes[offset] = raw[0];
+    bytes[offset + 1] = raw[1];
+}
+
+fn ipv4_fragment_field(bytes: &[u8]) -> u16 {
+    read_be_u16(bytes, 6) & 0x3fff
+}
+
+fn ipv4_header_checksum_is_valid(header: &[u8]) -> bool {
+    internet_checksum_is_valid(header)
+}
+
+fn internet_checksum_is_valid(bytes: &[u8]) -> bool {
+    ones_complement_sum(bytes) == 0xffff
+}
+
+fn internet_checksum(bytes: &[u8]) -> u16 {
+    !(ones_complement_sum(bytes))
+}
+
+fn mac_is_local_or_broadcast(candidate: MacAddress, local: MacAddress) -> bool {
+    candidate == local || candidate.bytes() == [0xff; ETHERNET_ADDR_LEN]
+}
+
+fn ones_complement_sum(bytes: &[u8]) -> u16 {
+    let mut sum = 0u32;
+    let mut index = 0;
+    while index + 1 < bytes.len() {
+        sum += read_be_u16(bytes, index) as u32;
+        index += 2;
+    }
+    if index < bytes.len() {
+        sum += (bytes[index] as u32) << 8;
+    }
+
+    while (sum >> 16) != 0 {
+        sum = (sum & 0xffff) + (sum >> 16);
+    }
+
+    sum as u16
 }
 
 fn mac_address_at(bytes: &[u8], offset: usize) -> MacAddress {
@@ -540,5 +772,247 @@ mod tests {
             Ipv4Packet::parse(&truncated_total),
             Err(PacketError::Truncated)
         );
+    }
+
+    #[test_case]
+    fn dispatch_builds_arp_reply_for_local_ipv4_identity() {
+        let endpoint =
+            LocalNetworkEndpoint::new(MacAddress::new([0x02, 0, 0, 0, 0, 99]), [192, 0, 2, 1]);
+        let request = arp_request_frame();
+        let mut output = [0u8; 64];
+
+        let result = dispatch_local_packet(&request, endpoint, &mut output).expect("dispatch arp");
+
+        assert_eq!(result.reply_kind(), PacketReplyKind::Arp);
+        assert_eq!(
+            result.frame_len(),
+            ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN
+        );
+        let reply = &output[..result.frame_len()];
+        assert_eq!(&reply[0..6], &[0x02, 0, 0, 0, 0, 1]);
+        assert_eq!(&reply[6..12], &[0x02, 0, 0, 0, 0, 99]);
+        assert_eq!(read_be_u16(reply, 12), ETHERTYPE_ARP);
+        assert_eq!(
+            read_be_u16(reply, ETHERNET_HEADER_LEN + 6),
+            ArpOperation::Reply.raw()
+        );
+        assert_eq!(
+            &reply[ETHERNET_HEADER_LEN + 8..ETHERNET_HEADER_LEN + 14],
+            &[0x02, 0, 0, 0, 0, 99]
+        );
+        assert_eq!(
+            &reply[ETHERNET_HEADER_LEN + 14..ETHERNET_HEADER_LEN + 18],
+            &[192, 0, 2, 1]
+        );
+        assert_eq!(
+            &reply[ETHERNET_HEADER_LEN + 18..ETHERNET_HEADER_LEN + 24],
+            &[0x02, 0, 0, 0, 0, 1]
+        );
+        assert_eq!(
+            &reply[ETHERNET_HEADER_LEN + 24..ETHERNET_HEADER_LEN + 28],
+            &[192, 0, 2, 10]
+        );
+    }
+
+    #[test_case]
+    fn dispatch_rejects_nonlocal_arp_and_small_arp_output_buffer() {
+        let endpoint =
+            LocalNetworkEndpoint::new(MacAddress::new([0x02, 0, 0, 0, 0, 99]), [192, 0, 2, 99]);
+        let request = arp_request_frame();
+        let mut output = [0u8; 64];
+
+        assert_eq!(
+            dispatch_local_packet(&request, endpoint, &mut output),
+            Err(PacketError::NotForLocalHost)
+        );
+
+        let endpoint =
+            LocalNetworkEndpoint::new(MacAddress::new([0x02, 0, 0, 0, 0, 99]), [192, 0, 2, 1]);
+        let mut wrong_mac = request;
+        wrong_mac[0..6].copy_from_slice(&[0x02, 0, 0, 0, 0, 88]);
+        assert_eq!(
+            dispatch_local_packet(&wrong_mac, endpoint, &mut output),
+            Err(PacketError::NotForLocalHost)
+        );
+
+        let mut small = [0u8; ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN - 1];
+        assert_eq!(
+            dispatch_local_packet(&request, endpoint, &mut small),
+            Err(PacketError::OutputBufferTooSmall)
+        );
+    }
+
+    #[test_case]
+    fn dispatch_builds_icmp_echo_reply_with_valid_ipv4_and_icmp_checksums() {
+        let endpoint =
+            LocalNetworkEndpoint::new(MacAddress::new([0x02, 0, 0, 0, 0, 99]), [192, 0, 2, 1]);
+        let request = icmp_echo_request_frame();
+        let mut output = [0u8; 128];
+
+        let result = dispatch_local_packet(&request, endpoint, &mut output).expect("dispatch icmp");
+
+        assert_eq!(result.reply_kind(), PacketReplyKind::IcmpEcho);
+        let reply = &output[..result.frame_len()];
+        assert_eq!(&reply[0..6], &[0x02, 0, 0, 0, 0, 1]);
+        assert_eq!(&reply[6..12], &[0x02, 0, 0, 0, 0, 99]);
+        assert_eq!(read_be_u16(reply, 12), ETHERTYPE_IPV4);
+
+        let ipv4 = &reply[ETHERNET_HEADER_LEN..ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN];
+        assert_eq!(read_be_u16(ipv4, 2), 32);
+        assert_eq!(ipv4[9], IPV4_PROTOCOL_ICMP);
+        assert_eq!(&ipv4[12..16], &[192, 0, 2, 1]);
+        assert_eq!(&ipv4[16..20], &[192, 0, 2, 10]);
+        assert!(ipv4_header_checksum_is_valid(ipv4));
+
+        let icmp = &reply[ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN..result.frame_len()];
+        assert_eq!(icmp[0], 0);
+        assert_eq!(icmp[1], 0);
+        assert_eq!(&icmp[4..], &[0x12, 0x34, 0, 7, 1, 2, 3, 4]);
+        assert!(internet_checksum_is_valid(icmp));
+    }
+
+    #[test_case]
+    fn dispatch_rejects_malformed_ipv4_icmp_protocols_and_fragments() {
+        let endpoint =
+            LocalNetworkEndpoint::new(MacAddress::new([0x02, 0, 0, 0, 0, 99]), [192, 0, 2, 1]);
+        let mut output = [0u8; 128];
+
+        let mut bad_ipv4_checksum = icmp_echo_request_frame();
+        bad_ipv4_checksum[ETHERNET_HEADER_LEN + 10] ^= 0x01;
+        assert_eq!(
+            dispatch_local_packet(&bad_ipv4_checksum, endpoint, &mut output),
+            Err(PacketError::InvalidIpv4Checksum)
+        );
+
+        let mut udp_like = icmp_echo_request_frame();
+        udp_like[ETHERNET_HEADER_LEN + 9] = 17;
+        rewrite_ipv4_checksum(&mut udp_like);
+        assert_eq!(
+            dispatch_local_packet(&udp_like, endpoint, &mut output),
+            Err(PacketError::UnsupportedIpv4Protocol)
+        );
+
+        let mut wrong_mac = icmp_echo_request_frame();
+        wrong_mac[0..6].copy_from_slice(&[0x02, 0, 0, 0, 0, 88]);
+        assert_eq!(
+            dispatch_local_packet(&wrong_mac, endpoint, &mut output),
+            Err(PacketError::NotForLocalHost)
+        );
+
+        let mut fragmented = icmp_echo_request_frame();
+        fragmented[ETHERNET_HEADER_LEN + 6] = 0x20;
+        rewrite_ipv4_checksum(&mut fragmented);
+        assert_eq!(
+            dispatch_local_packet(&fragmented, endpoint, &mut output),
+            Err(PacketError::UnsupportedIpv4Fragment)
+        );
+
+        let mut options = icmp_echo_request_with_options_frame();
+        assert_eq!(
+            dispatch_local_packet(&options, endpoint, &mut output),
+            Err(PacketError::UnsupportedIpv4Options)
+        );
+
+        options[ETHERNET_HEADER_LEN] = 0x45;
+        rewrite_ipv4_checksum(&mut options);
+        assert_eq!(
+            dispatch_local_packet(&options, endpoint, &mut output),
+            Err(PacketError::InvalidIcmpEcho)
+        );
+    }
+
+    #[test_case]
+    fn dispatch_rejects_bad_icmp_checksum_unsupported_ethertype_and_small_icmp_output() {
+        let endpoint =
+            LocalNetworkEndpoint::new(MacAddress::new([0x02, 0, 0, 0, 0, 99]), [192, 0, 2, 1]);
+        let mut output = [0u8; 128];
+
+        let mut bad_icmp = icmp_echo_request_frame();
+        bad_icmp[ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + 2] ^= 0x40;
+        assert_eq!(
+            dispatch_local_packet(&bad_icmp, endpoint, &mut output),
+            Err(PacketError::InvalidIcmpChecksum)
+        );
+
+        let mut unsupported = icmp_echo_request_frame();
+        write_be_u16(&mut unsupported, 12, 0x86dd);
+        assert_eq!(
+            dispatch_local_packet(&unsupported, endpoint, &mut output),
+            Err(PacketError::UnsupportedEtherType)
+        );
+
+        let request = icmp_echo_request_frame();
+        let mut small = [0u8; ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + ICMP_ECHO_HEADER_LEN - 1];
+        assert_eq!(
+            dispatch_local_packet(&request, endpoint, &mut small),
+            Err(PacketError::OutputBufferTooSmall)
+        );
+    }
+
+    fn arp_request_frame() -> [u8; ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN] {
+        let mut frame = [0u8; ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN];
+        frame[..6].copy_from_slice(&[0xff; 6]);
+        frame[6..12].copy_from_slice(&[0x02, 0, 0, 0, 0, 1]);
+        write_be_u16(&mut frame, 12, ETHERTYPE_ARP);
+        frame[ETHERNET_HEADER_LEN..].copy_from_slice(ARP_REQUEST);
+        frame
+    }
+
+    fn icmp_echo_request_frame() -> [u8; ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + 12] {
+        let mut frame = [0u8; ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + 12];
+        frame[..6].copy_from_slice(&[0x02, 0, 0, 0, 0, 99]);
+        frame[6..12].copy_from_slice(&[0x02, 0, 0, 0, 0, 1]);
+        write_be_u16(&mut frame, 12, ETHERTYPE_IPV4);
+
+        let ipv4 = &mut frame[ETHERNET_HEADER_LEN..ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN];
+        ipv4[0] = 0x45;
+        write_be_u16(ipv4, 2, (IPV4_MIN_HEADER_LEN + 12) as u16);
+        write_be_u16(ipv4, 4, 0x2222);
+        ipv4[8] = 64;
+        ipv4[9] = IPV4_PROTOCOL_ICMP;
+        ipv4[12..16].copy_from_slice(&[192, 0, 2, 10]);
+        ipv4[16..20].copy_from_slice(&[192, 0, 2, 1]);
+        let checksum = internet_checksum(ipv4);
+        write_be_u16(ipv4, 10, checksum);
+
+        let icmp = &mut frame[ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN..];
+        icmp[0] = 8;
+        icmp[4..].copy_from_slice(&[0x12, 0x34, 0, 7, 1, 2, 3, 4]);
+        let checksum = internet_checksum(icmp);
+        write_be_u16(icmp, 2, checksum);
+        frame
+    }
+
+    fn icmp_echo_request_with_options_frame() -> [u8; ETHERNET_HEADER_LEN + 24 + 8] {
+        let mut frame = [0u8; ETHERNET_HEADER_LEN + 24 + 8];
+        frame[..6].copy_from_slice(&[0x02, 0, 0, 0, 0, 99]);
+        frame[6..12].copy_from_slice(&[0x02, 0, 0, 0, 0, 1]);
+        write_be_u16(&mut frame, 12, ETHERTYPE_IPV4);
+
+        let ipv4 = &mut frame[ETHERNET_HEADER_LEN..ETHERNET_HEADER_LEN + 24];
+        ipv4[0] = 0x46;
+        write_be_u16(ipv4, 2, 32);
+        write_be_u16(ipv4, 4, 0x3333);
+        ipv4[8] = 64;
+        ipv4[9] = IPV4_PROTOCOL_ICMP;
+        ipv4[12..16].copy_from_slice(&[192, 0, 2, 10]);
+        ipv4[16..20].copy_from_slice(&[192, 0, 2, 1]);
+        ipv4[20..24].copy_from_slice(&[1, 2, 3, 4]);
+        let checksum = internet_checksum(ipv4);
+        write_be_u16(ipv4, 10, checksum);
+
+        let icmp = &mut frame[ETHERNET_HEADER_LEN + 24..];
+        icmp[0] = 8;
+        let checksum = internet_checksum(icmp);
+        write_be_u16(icmp, 2, checksum);
+        frame
+    }
+
+    fn rewrite_ipv4_checksum(frame: &mut [u8]) {
+        let header_len = ((frame[ETHERNET_HEADER_LEN] & 0x0f) as usize) * 4;
+        let ipv4 = &mut frame[ETHERNET_HEADER_LEN..ETHERNET_HEADER_LEN + header_len];
+        write_be_u16(ipv4, 10, 0);
+        let checksum = internet_checksum(ipv4);
+        write_be_u16(ipv4, 10, checksum);
     }
 }

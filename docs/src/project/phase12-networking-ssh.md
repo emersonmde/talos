@@ -2563,3 +2563,27 @@ accepted hardware-visible BCM54213PE behavior, while link-ready,
 autoneg-complete, packet-readiness, live packet I/O, DMA descriptor ownership,
 RP1 Ethernet driver readiness, sockets, SSH, and phase transition remain
 unaccepted.
+
+## Phase 12.3 Local Packet Dispatch and ICMP Echo
+
+phase12-network-local-packet-dispatch-icmp-echo-core-20260619 accepts
+phase12-network-local-packet-dispatch-icmp-echo-core-accepted. This is local
+source/test IP-stack progress following the smoltcp evaluation checkpoint; it
+does not add smoltcp, live packet I/O, sockets, SSH, or hardware-driver
+readiness.
+
+src/network.rs now includes dispatch_local_packet over immutable input frames
+and caller-provided output buffers. The accepted shapes are Ethernet/ARP
+requests targeting the configured local IPv4 identity with a local or broadcast
+Ethernet destination, and Ethernet/IPv4/ICMP echo requests targeting the
+configured local IPv4/MAC identity. Reply generation writes Ethernet/ARP
+replies and Ethernet/IPv4/ICMP echo replies into caller-owned buffers,
+including IPv4 and ICMP checksum generation.
+
+The accepted error boundary rejects unsupported EtherTypes, non-ICMP IPv4
+protocols, IPv4 options, IPv4 fragments, invalid IPv4 checksums, malformed ICMP
+echo input, invalid ICMP checksums, nonlocal Ethernet/IP destinations, and
+too-small output buffers deterministically. Reusable packet buffers, device polling, driver
+adapters, ARP cache, UDP/TCP, DHCP, DNS, routing, smoltcp integration, sockets,
+SSH, live packet I/O, RP1 Ethernet driver readiness, and phase transition
+remain unaccepted.
