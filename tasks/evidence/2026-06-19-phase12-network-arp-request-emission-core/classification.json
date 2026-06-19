@@ -1,0 +1,76 @@
+{
+  "task_id": "phase12-network-arp-request-emission-core-20260619",
+  "classification": "phase12-network-arp-request-emission-core-accepted",
+  "accepted": true,
+  "accepted_boundary": "host-only caller-buffered Ethernet/IPv4 ARP request frame construction for a local endpoint and target IPv4",
+  "source_changes": [
+    "src/network.rs"
+  ],
+  "docs_changes": [
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "task_records": [
+    "tasks/2026-06-19-phase12-network-arp-request-emission-core.md"
+  ],
+  "behavior": {
+    "success": [
+      "broadcast destination MAC",
+      "local source MAC",
+      "EtherType ARP",
+      "hardware type Ethernet",
+      "protocol type IPv4",
+      "hardware length 6",
+      "protocol length 4",
+      "operation request",
+      "endpoint sender MAC/IP",
+      "zero target MAC",
+      "caller-provided target IPv4",
+      "exact ARP request frame length"
+    ],
+    "errors": [
+      "too-small caller output returns OutputBufferTooSmall before partial construction"
+    ],
+    "composition": [
+      "target IPv4 composes with unresolved outbound neighbor resolution without ARP cache mutation"
+    ]
+  },
+  "validation": [
+    {
+      "level": "fmt",
+      "command": "cargo fmt --all",
+      "result": "pass"
+    },
+    {
+      "level": "unit tests/focused network filter",
+      "command": "cargo -Zjson-target-spec test arp_request --quiet",
+      "result": "pass",
+      "note": "582 talos no_std tests passed in this harness"
+    },
+    {
+      "level": "unit tests/full suite",
+      "command": "cargo -Zjson-target-spec test --quiet",
+      "result": "pass",
+      "note": "582 talos no_std tests passed"
+    }
+  ],
+  "rejected_claims": [
+    "ARP retry timer",
+    "neighbor-discovery state machine",
+    "packet queue",
+    "route lookup",
+    "subnet or gateway selection",
+    "driver transmit",
+    "live packet I/O",
+    "sockets",
+    "SSH",
+    "smoltcp adoption",
+    "ping/network reachability behavior",
+    "RP1 Ethernet readiness",
+    "Pi 5 hardware readiness",
+    "boot publication",
+    "lab mutation",
+    "phase transition"
+  ],
+  "next_action": "Promote phase12-network-arp-request-emission-closeout-20260619 only after this implementation is committed and dependencies remain satisfied."
+}

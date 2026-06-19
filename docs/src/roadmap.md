@@ -3711,6 +3711,21 @@ The post-review correction chain is:
     work, boot publication, lab mutation, link-readiness work, and phase
     transition remain rejected.
 
+211. Phase 12.3 ARP request emission core: accepted in
+    'phase12-network-arp-request-emission-core-20260619' with classification
+    'phase12-network-arp-request-emission-core-accepted'. The accepted
+    src/network.rs frontier adds build_outbound_arp_request, a pure
+    caller-buffered helper that writes a complete Ethernet/IPv4 ARP request
+    frame for a local endpoint and target IPv4. Tests cover deterministic
+    broadcast destination MAC, local source MAC, ARP EtherType, Ethernet/IPv4
+    ARP fields, sender MAC/IP, zero target MAC, target IPv4, exact frame
+    length, too-small output rejection before partial construction, and
+    composition with unresolved outbound neighbor resolution without ARP cache
+    mutation. Retry timers, neighbor-discovery state, packet queues, routing,
+    driver transmit, live packet I/O, sockets, SSH, ping/network reachability,
+    Pi 5 hardware work, lab mutation, boot publication, and phase transition
+    remain rejected.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
@@ -12882,8 +12897,11 @@ Milestone 12.3: IP Stack
   neighbor, including deterministic IPv4 and ICMP checksum generation and
   deterministic unresolved-neighbor, buffer-pressure, and oversized-payload
   rejection.
-- Implement driver adapters, packet queues, ARP-cache dispatch integration,
-  UDP/TCP, and socket integration in later bounded tasks.
+- Local source/test progress is accepted for caller-buffered Ethernet/IPv4 ARP
+  request frame construction for a local endpoint and target IPv4, including
+  deterministic broadcast/zero-target fields and buffer-pressure rejection.
+- Implement driver adapters, packet queues, retry timers, neighbor-discovery
+  state, UDP/TCP, and socket integration in later bounded tasks.
 
 Acceptance criteria:
 

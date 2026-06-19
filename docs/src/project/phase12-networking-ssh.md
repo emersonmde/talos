@@ -2718,3 +2718,20 @@ request implementation, retry timers, packet queues, driver transmit, live
 packet I/O, sockets, SSH, smoltcp adoption, ping/network reachability behavior,
 Pi 5 hardware work, boot publication, lab mutation, link-readiness work, or a
 phase transition.
+
+phase12-network-arp-request-emission-core-20260619 accepts
+phase12-network-arp-request-emission-core-accepted. src/network.rs now includes
+build_outbound_arp_request, a pure host-only helper that builds a complete
+Ethernet II ARP request frame for a local endpoint and target IPv4 into
+caller-owned storage.
+
+The accepted helper writes deterministic broadcast destination MAC, local
+source MAC, ARP EtherType, Ethernet/IPv4 hardware and protocol fields, ARP
+request operation, endpoint sender MAC/IP, zero target MAC, caller-provided
+target IPv4, and exact frame length. Too-small output buffers are rejected
+before partial frame construction is accepted as success. The helper composes
+with unresolved outbound neighbor resolution by using the unresolved target
+IPv4, remains allocation-free, and does not mutate ARP cache state, consult a
+driver, transmit frames, queue packets, schedule retries, claim live packet
+I/O, claim sockets/SSH, claim ping/network reachability behavior, claim RP1
+Ethernet readiness, or change the Phase 12.1 hardware frontier.

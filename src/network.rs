@@ -415,6 +415,40 @@ pub(crate) fn build_outbound_ethernet_frame(
     Ok(frame_len)
 }
 
+pub(crate) fn build_outbound_arp_request(
+    endpoint: LocalNetworkEndpoint,
+    target_ipv4: [u8; 4],
+    output: &mut [u8],
+) -> Result<usize, OutboundFrameError> {
+    let frame_len = ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN;
+    if output.len() < frame_len {
+        return Err(OutboundFrameError::OutputBufferTooSmall {
+            required_len: frame_len,
+            available_len: output.len(),
+        });
+    }
+
+    write_ethernet_header(
+        output,
+        MacAddress::new([0xff; ETHERNET_ADDR_LEN]),
+        endpoint.mac(),
+        EtherType::Arp,
+    );
+
+    let arp = &mut output[ETHERNET_HEADER_LEN..frame_len];
+    write_be_u16(arp, 0, 1);
+    write_be_u16(arp, 2, ETHERTYPE_IPV4);
+    arp[4] = ETHERNET_ADDR_LEN as u8;
+    arp[5] = 4;
+    write_be_u16(arp, 6, ArpOperation::Request.raw());
+    arp[8..14].copy_from_slice(&endpoint.mac().bytes());
+    arp[14..18].copy_from_slice(&endpoint.ipv4());
+    arp[18..24].copy_from_slice(&[0; ETHERNET_ADDR_LEN]);
+    arp[24..28].copy_from_slice(&target_ipv4);
+
+    Ok(frame_len)
+}
+
 pub(crate) fn build_outbound_ipv4_icmp_echo_request(
     resolution: OutboundNeighborResolution,
     endpoint: LocalNetworkEndpoint,
@@ -1292,6 +1326,72 @@ mod tests {
         assert_eq!(read_be_u16(&output, 12), 0x88b5);
         assert_eq!(&output[ETHERNET_HEADER_LEN..frame_len], &payload);
         assert_eq!(cache.lookup([192, 0, 2, 10]), Some(destination_mac));
+    }
+
+    #[test_case]
+    fn outbound_arp_request_builds_complete_broadcast_request_frame() {
+        let endpoint = local_endpoint();
+        let mut output = [0u8; 64];
+
+        let frame_len = build_outbound_arp_request(endpoint, [192, 0, 2, 44], &mut output)
+            .expect("build outbound arp request");
+
+        assert_eq!(frame_len, ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN);
+        let frame = EthernetFrame::parse(&output[..frame_len]).expect("parse outbound arp frame");
+        assert_eq!(frame.destination(), MacAddress::new([0xff; 6]));
+        assert_eq!(frame.source(), endpoint.mac());
+        assert_eq!(frame.ether_type(), EtherType::Arp);
+
+        let arp = ArpPacket::parse_ethernet_ipv4(frame.payload()).expect("parse outbound arp");
+        assert_eq!(arp.operation(), ArpOperation::Request);
+        assert_eq!(arp.sender_hardware_address(), endpoint.mac());
+        assert_eq!(arp.sender_protocol_address(), endpoint.ipv4());
+        assert_eq!(arp.target_hardware_address(), MacAddress::new([0; 6]));
+        assert_eq!(arp.target_protocol_address(), [192, 0, 2, 44]);
+    }
+
+    #[test_case]
+    fn outbound_arp_request_rejects_too_small_output_without_partial_frame() {
+        let mut output = [0xaa; ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN - 1];
+
+        assert_eq!(
+            build_outbound_arp_request(local_endpoint(), [192, 0, 2, 44], &mut output),
+            Err(OutboundFrameError::OutputBufferTooSmall {
+                required_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+                available_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN - 1,
+            })
+        );
+        assert_eq!(
+            output,
+            [0xaa; ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN - 1]
+        );
+    }
+
+    #[test_case]
+    fn outbound_arp_request_composes_with_unresolved_neighbor_resolution_without_cache_mutation() {
+        let cache = ArpCache::<2>::new();
+        let resolution = resolve_outbound_neighbor(&cache, [192, 0, 2, 44]);
+        let mut output = [0u8; 64];
+
+        let frame_len = build_outbound_arp_request(
+            local_endpoint(),
+            resolution.destination_ipv4(),
+            &mut output,
+        )
+        .expect("build outbound arp request for unresolved neighbor");
+
+        assert_eq!(frame_len, ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN);
+        assert_eq!(&output[0..6], &[0xff; 6]);
+        assert_eq!(read_be_u16(&output, 12), ETHERTYPE_ARP);
+        assert_eq!(
+            read_be_u16(&output[ETHERNET_HEADER_LEN..], 6),
+            ArpOperation::Request.raw()
+        );
+        assert_eq!(
+            &output[ETHERNET_HEADER_LEN + 24..ETHERNET_HEADER_LEN + 28],
+            &[192, 0, 2, 44]
+        );
+        assert_eq!(cache.lookup([192, 0, 2, 44]), None);
     }
 
     #[test_case]
