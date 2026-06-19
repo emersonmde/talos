@@ -3943,6 +3943,23 @@ The post-review correction chain is:
     'phase12-network-single-inflight-icmp-echo-reply-observation-closeout-20260619',
     bounded to source/task/docs reconciliation.
 
+224. Phase 12.3 host ping transaction frontier closeout: accepted in
+    'phase12-network-host-ping-transaction-frontier-closeout-20260619' with
+    classification
+    'phase12-network-host-ping-transaction-frontier-closeout-accepted'. The
+    checkpoint reconciles the host-only ping-like transaction frontier through
+    route-aware outbound selection, ARP request emission and matching ARP
+    reply learning, trait-level ICMP echo request transmit after ARP
+    resolution, and single-inflight ICMP echo reply observation. The accepted
+    evidence remains source/unit-test/task evidence over caller-owned buffers
+    and fake/trait-level NetworkDevice behavior; it is not a single integrated
+    user-visible ping path. Automatic transmit-to-in-flight wiring,
+    timeout/retry scheduling, packet queues, live driver adapters, shell ping,
+    sockets, SSH, smoltcp adoption, reachability, hardware work, lab mutation,
+    boot publication, and phase transition remain rejected. selected_next_task
+    is null and planningNeeded=true because no later queued task has complete
+    objective dependencies after this checkpoint.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
@@ -13212,6 +13229,19 @@ Milestone 12.3: IP Stack
   autonomous timers, sockets, SSH, reachability, hardware work, smoltcp
   adoption, boot publication, lab mutation, and phase transition remain
   rejected.
+- The host ping transaction frontier closeout reconciles the accepted
+  host-only ping-like transaction pieces: route-aware outbound selection, ARP
+  request emission, matching ARP reply learning, trait-level ICMP echo request
+  transmit after ARP resolution, and single-inflight ICMP echo reply
+  observation. The accepted evidence remains source/unit-test/task evidence
+  over caller-owned buffers and fake/trait-level NetworkDevice behavior, not a
+  user-visible ping command, socket API, live driver adapter, or reachability
+  proof. It sets selected_next_task=null and planningNeeded=true because no
+  later queued task has complete objective dependencies after this checkpoint.
+  Automatic transmit-to-in-flight wiring, timeout/retry scheduling, packet
+  queues, live driver adapters, shell ping, sockets, SSH, smoltcp adoption,
+  hardware work, lab mutation, boot publication, reachability, and phase
+  transition remain rejected.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

@@ -3085,3 +3085,20 @@ autonomous polling/timers, live driver adapters, sockets, SSH, smoltcp
 adoption, reachability, hardware work, lab mutation, boot publication, and
 phase transition are still rejected. The selected next task is
 phase12-network-host-ping-transaction-frontier-closeout-20260619.
+
+phase12-network-host-ping-transaction-frontier-closeout-20260619 accepts
+phase12-network-host-ping-transaction-frontier-closeout-accepted. The
+checkpoint reconciles the accepted host-only ping-like transaction frontier:
+route-aware outbound selection, ARP request emission and matching ARP reply
+learning, trait-level ICMP echo request transmit after ARP resolution, and
+single-inflight ICMP echo reply observation.
+
+The accepted boundary is still source/unit-test/task evidence over
+caller-owned buffers and fake/trait-level NetworkDevice behavior. It proves
+the pieces needed for one host-only ping-like transaction, but not a single
+integrated user-visible ping path. Automatic transmit-to-in-flight wiring,
+timeout/retry scheduling, packet queues, live driver adapters, shell ping,
+sockets, SSH, smoltcp adoption, reachability, hardware work, lab mutation,
+boot publication, and phase transition remain rejected. The selected next task
+is null and planningNeeded=true because no later queued task has complete
+objective dependencies after this checkpoint.
