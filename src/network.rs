@@ -103,6 +103,38 @@ pub(crate) enum OutboundTransmitResult {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum PendingIcmpEchoResult {
+    IcmpEchoRequestTransmitted {
+        frame_len: usize,
+    },
+    ArpRequestTransmittedAndPending {
+        frame_len: usize,
+    },
+    NoPendingRequest,
+    PendingRequestAlreadyQueued {
+        destination_ipv4: [u8; 4],
+    },
+    PendingPayloadTooLarge {
+        required_len: usize,
+        max_len: usize,
+    },
+    PendingNeighborUnresolved {
+        destination_ipv4: [u8; 4],
+    },
+    NonMatchingArp {
+        pending_destination_ipv4: [u8; 4],
+        arp_sender_ipv4: [u8; 4],
+    },
+    RequestError(OutboundFrameError),
+    ArpError(PacketError),
+    TransmitError {
+        request_kind: OutboundRequestKind,
+        frame_len: usize,
+        error: DeviceError,
+    },
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct MacAddress([u8; ETHERNET_ADDR_LEN]);
 
 impl MacAddress {
@@ -627,6 +659,283 @@ pub(crate) fn transmit_one_outbound_ipv4_icmp_echo_request<
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct PendingIcmpEchoRequest<const PAYLOAD_CAPACITY: usize> {
+    endpoint: LocalNetworkEndpoint,
+    destination_ipv4: [u8; 4],
+    identifier: u16,
+    sequence_number: u16,
+    ttl: u8,
+    payload: [u8; PAYLOAD_CAPACITY],
+    payload_len: usize,
+}
+
+impl<const PAYLOAD_CAPACITY: usize> PendingIcmpEchoRequest<PAYLOAD_CAPACITY> {
+    pub(crate) fn new(
+        endpoint: LocalNetworkEndpoint,
+        destination_ipv4: [u8; 4],
+        identifier: u16,
+        sequence_number: u16,
+        ttl: u8,
+        payload: &[u8],
+    ) -> Result<Self, PendingIcmpEchoResult> {
+        if payload.len() > PAYLOAD_CAPACITY {
+            return Err(PendingIcmpEchoResult::PendingPayloadTooLarge {
+                required_len: payload.len(),
+                max_len: PAYLOAD_CAPACITY,
+            });
+        }
+
+        let mut stored_payload = [0; PAYLOAD_CAPACITY];
+        stored_payload[..payload.len()].copy_from_slice(payload);
+
+        Ok(Self {
+            endpoint,
+            destination_ipv4,
+            identifier,
+            sequence_number,
+            ttl,
+            payload: stored_payload,
+            payload_len: payload.len(),
+        })
+    }
+
+    pub(crate) const fn endpoint(self) -> LocalNetworkEndpoint {
+        self.endpoint
+    }
+
+    pub(crate) const fn destination_ipv4(self) -> [u8; 4] {
+        self.destination_ipv4
+    }
+
+    pub(crate) const fn identifier(self) -> u16 {
+        self.identifier
+    }
+
+    pub(crate) const fn sequence_number(self) -> u16 {
+        self.sequence_number
+    }
+
+    pub(crate) const fn ttl(self) -> u8 {
+        self.ttl
+    }
+
+    pub(crate) fn payload(&self) -> &[u8] {
+        &self.payload[..self.payload_len]
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SinglePendingIcmpEcho<const PAYLOAD_CAPACITY: usize> {
+    pending: Option<PendingIcmpEchoRequest<PAYLOAD_CAPACITY>>,
+}
+
+impl<const PAYLOAD_CAPACITY: usize> SinglePendingIcmpEcho<PAYLOAD_CAPACITY> {
+    pub(crate) const fn new() -> Self {
+        Self { pending: None }
+    }
+
+    pub(crate) const fn pending(&self) -> Option<PendingIcmpEchoRequest<PAYLOAD_CAPACITY>> {
+        self.pending
+    }
+
+    pub(crate) const fn pending_destination_ipv4(&self) -> Option<[u8; 4]> {
+        match self.pending {
+            Some(request) => Some(request.destination_ipv4()),
+            None => None,
+        }
+    }
+
+    fn store(
+        &mut self,
+        request: PendingIcmpEchoRequest<PAYLOAD_CAPACITY>,
+    ) -> Result<(), PendingIcmpEchoResult> {
+        if let Some(existing) = self.pending {
+            return Err(PendingIcmpEchoResult::PendingRequestAlreadyQueued {
+                destination_ipv4: existing.destination_ipv4(),
+            });
+        }
+
+        self.pending = Some(request);
+        Ok(())
+    }
+
+    fn take(&mut self) -> Option<PendingIcmpEchoRequest<PAYLOAD_CAPACITY>> {
+        self.pending.take()
+    }
+
+    fn restore(&mut self, request: PendingIcmpEchoRequest<PAYLOAD_CAPACITY>) {
+        self.pending = Some(request);
+    }
+}
+
+pub(crate) fn transmit_or_queue_single_pending_ipv4_icmp_echo_request<
+    D: NetworkDevice,
+    const ARP_CAPACITY: usize,
+    const PAYLOAD_CAPACITY: usize,
+>(
+    device: &mut D,
+    arp_cache: &ArpCache<ARP_CAPACITY>,
+    pending: &mut SinglePendingIcmpEcho<PAYLOAD_CAPACITY>,
+    endpoint: LocalNetworkEndpoint,
+    destination_ipv4: [u8; 4],
+    identifier: u16,
+    sequence_number: u16,
+    ttl: u8,
+    payload: &[u8],
+    output: &mut [u8],
+) -> PendingIcmpEchoResult {
+    if let Some(existing_destination) = pending.pending_destination_ipv4() {
+        return PendingIcmpEchoResult::PendingRequestAlreadyQueued {
+            destination_ipv4: existing_destination,
+        };
+    }
+
+    match resolve_outbound_neighbor(arp_cache, destination_ipv4) {
+        OutboundNeighborResolution::Resolved { .. } => transmit_resolved_ipv4_icmp_echo_request(
+            device,
+            arp_cache,
+            endpoint,
+            destination_ipv4,
+            identifier,
+            sequence_number,
+            ttl,
+            payload,
+            output,
+        ),
+        OutboundNeighborResolution::Unresolved { destination_ipv4 } => {
+            let request = match PendingIcmpEchoRequest::new(
+                endpoint,
+                destination_ipv4,
+                identifier,
+                sequence_number,
+                ttl,
+                payload,
+            ) {
+                Ok(request) => request,
+                Err(error) => return error,
+            };
+
+            let frame_len = match build_outbound_arp_request(endpoint, destination_ipv4, output) {
+                Ok(frame_len) => frame_len,
+                Err(error) => return PendingIcmpEchoResult::RequestError(error),
+            };
+
+            match device.transmit_frame(&output[..frame_len]) {
+                Ok(()) => match pending.store(request) {
+                    Ok(()) => PendingIcmpEchoResult::ArpRequestTransmittedAndPending { frame_len },
+                    Err(error) => error,
+                },
+                Err(error) => PendingIcmpEchoResult::TransmitError {
+                    request_kind: OutboundRequestKind::ArpRequest,
+                    frame_len,
+                    error,
+                },
+            }
+        }
+    }
+}
+
+pub(crate) fn transmit_single_pending_ipv4_icmp_echo_request<
+    D: NetworkDevice,
+    const ARP_CAPACITY: usize,
+    const PAYLOAD_CAPACITY: usize,
+>(
+    device: &mut D,
+    arp_cache: &ArpCache<ARP_CAPACITY>,
+    pending: &mut SinglePendingIcmpEcho<PAYLOAD_CAPACITY>,
+    output: &mut [u8],
+) -> PendingIcmpEchoResult {
+    let request = match pending.take() {
+        Some(request) => request,
+        None => return PendingIcmpEchoResult::NoPendingRequest,
+    };
+
+    match resolve_outbound_neighbor(arp_cache, request.destination_ipv4()) {
+        OutboundNeighborResolution::Resolved { .. } => {
+            let result =
+                transmit_pending_request_with_resolution(device, request, arp_cache, output);
+            if !matches!(
+                result,
+                PendingIcmpEchoResult::IcmpEchoRequestTransmitted { .. }
+            ) {
+                pending.restore(request);
+            }
+            result
+        }
+        OutboundNeighborResolution::Unresolved { destination_ipv4 } => {
+            pending.restore(request);
+            PendingIcmpEchoResult::PendingNeighborUnresolved { destination_ipv4 }
+        }
+    }
+}
+
+pub(crate) fn learn_arp_reply_and_transmit_single_pending_ipv4_icmp_echo_request<
+    D: NetworkDevice,
+    const ARP_CAPACITY: usize,
+    const PAYLOAD_CAPACITY: usize,
+>(
+    device: &mut D,
+    arp_cache: &mut ArpCache<ARP_CAPACITY>,
+    pending: &mut SinglePendingIcmpEcho<PAYLOAD_CAPACITY>,
+    arp_reply_frame: &[u8],
+    output: &mut [u8],
+) -> PendingIcmpEchoResult {
+    let request = match pending.take() {
+        Some(request) => request,
+        None => return PendingIcmpEchoResult::NoPendingRequest,
+    };
+
+    let frame = match EthernetFrame::parse(arp_reply_frame) {
+        Ok(frame) => frame,
+        Err(error) => {
+            pending.restore(request);
+            return PendingIcmpEchoResult::ArpError(error);
+        }
+    };
+    if frame.ether_type() != EtherType::Arp {
+        pending.restore(request);
+        return PendingIcmpEchoResult::ArpError(PacketError::UnsupportedEtherType);
+    }
+
+    let arp = match ArpPacket::parse_ethernet_ipv4(frame.payload()) {
+        Ok(arp) => arp,
+        Err(error) => {
+            pending.restore(request);
+            return PendingIcmpEchoResult::ArpError(error);
+        }
+    };
+    if arp.operation() != ArpOperation::Reply {
+        pending.restore(request);
+        return PendingIcmpEchoResult::ArpError(PacketError::UnsupportedArpOperation);
+    }
+    if arp.sender_protocol_address() != request.destination_ipv4() {
+        let pending_destination_ipv4 = request.destination_ipv4();
+        let arp_sender_ipv4 = arp.sender_protocol_address();
+        pending.restore(request);
+        return PendingIcmpEchoResult::NonMatchingArp {
+            pending_destination_ipv4,
+            arp_sender_ipv4,
+        };
+    }
+
+    let _ =
+        arp_cache.insert_or_update(arp.sender_protocol_address(), arp.sender_hardware_address());
+    let resolution = OutboundNeighborResolution::Resolved {
+        destination_ipv4: request.destination_ipv4(),
+        destination_mac: arp.sender_hardware_address(),
+    };
+    let result =
+        transmit_pending_request_with_direct_resolution(device, request, resolution, output);
+    if !matches!(
+        result,
+        PendingIcmpEchoResult::IcmpEchoRequestTransmitted { .. }
+    ) {
+        pending.restore(request);
+    }
+    result
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct Ipv4Packet<'a> {
     header_len: usize,
     total_len: usize,
@@ -1011,6 +1320,96 @@ fn write_ethernet_header(
     output[..ETHERNET_ADDR_LEN].copy_from_slice(&destination_mac.bytes());
     output[ETHERNET_ADDR_LEN..ETHERNET_ADDR_LEN * 2].copy_from_slice(&source_mac.bytes());
     write_be_u16(output, 12, ether_type.raw());
+}
+
+fn transmit_resolved_ipv4_icmp_echo_request<D: NetworkDevice, const ARP_CAPACITY: usize>(
+    device: &mut D,
+    arp_cache: &ArpCache<ARP_CAPACITY>,
+    endpoint: LocalNetworkEndpoint,
+    destination_ipv4: [u8; 4],
+    identifier: u16,
+    sequence_number: u16,
+    ttl: u8,
+    payload: &[u8],
+    output: &mut [u8],
+) -> PendingIcmpEchoResult {
+    match transmit_one_outbound_ipv4_icmp_echo_request(
+        device,
+        arp_cache,
+        endpoint,
+        destination_ipv4,
+        identifier,
+        sequence_number,
+        ttl,
+        payload,
+        output,
+    ) {
+        OutboundTransmitResult::Ipv4IcmpEchoRequestTransmitted { frame_len } => {
+            PendingIcmpEchoResult::IcmpEchoRequestTransmitted { frame_len }
+        }
+        OutboundTransmitResult::ArpRequestTransmitted { frame_len } => {
+            PendingIcmpEchoResult::ArpRequestTransmittedAndPending { frame_len }
+        }
+        OutboundTransmitResult::RequestError(error) => PendingIcmpEchoResult::RequestError(error),
+        OutboundTransmitResult::TransmitError {
+            request_kind,
+            frame_len,
+            error,
+        } => PendingIcmpEchoResult::TransmitError {
+            request_kind,
+            frame_len,
+            error,
+        },
+    }
+}
+
+fn transmit_pending_request_with_resolution<
+    D: NetworkDevice,
+    const ARP_CAPACITY: usize,
+    const PAYLOAD_CAPACITY: usize,
+>(
+    device: &mut D,
+    request: PendingIcmpEchoRequest<PAYLOAD_CAPACITY>,
+    arp_cache: &ArpCache<ARP_CAPACITY>,
+    output: &mut [u8],
+) -> PendingIcmpEchoResult {
+    let resolution = resolve_outbound_neighbor(arp_cache, request.destination_ipv4());
+    transmit_pending_request_with_direct_resolution(device, request, resolution, output)
+}
+
+fn transmit_pending_request_with_direct_resolution<
+    D: NetworkDevice,
+    const PAYLOAD_CAPACITY: usize,
+>(
+    device: &mut D,
+    request: PendingIcmpEchoRequest<PAYLOAD_CAPACITY>,
+    resolution: OutboundNeighborResolution,
+    output: &mut [u8],
+) -> PendingIcmpEchoResult {
+    let frame_len = match build_outbound_ipv4_icmp_echo_request(
+        resolution,
+        request.endpoint(),
+        request.identifier(),
+        request.sequence_number(),
+        request.ttl(),
+        request.payload(),
+        output,
+    ) {
+        Ok(frame_len) => frame_len,
+        Err(OutboundFrameError::NeighborUnresolved { destination_ipv4 }) => {
+            return PendingIcmpEchoResult::PendingNeighborUnresolved { destination_ipv4 };
+        }
+        Err(error) => return PendingIcmpEchoResult::RequestError(error),
+    };
+
+    match device.transmit_frame(&output[..frame_len]) {
+        Ok(()) => PendingIcmpEchoResult::IcmpEchoRequestTransmitted { frame_len },
+        Err(error) => PendingIcmpEchoResult::TransmitError {
+            request_kind: OutboundRequestKind::Ipv4IcmpEchoRequest,
+            frame_len,
+            error,
+        },
+    }
 }
 
 fn ipv4_fragment_field(bytes: &[u8]) -> u16 {
@@ -2082,6 +2481,387 @@ mod tests {
         let frame = EthernetFrame::parse(&output[..ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN])
             .expect("built frame remains in caller buffer");
         assert_eq!(frame.ether_type(), EtherType::Arp);
+    }
+
+    #[test_case]
+    fn single_pending_icmp_unresolved_neighbor_transmits_arp_and_records_request() {
+        let cache = ArpCache::<2>::new();
+        let mut pending = SinglePendingIcmpEcho::<8>::new();
+        let mut output = [0u8; 64];
+        let mut device = OutboundTransmitDevice::new();
+        let payload = [0x11, 0x22, 0x33];
+
+        let result = transmit_or_queue_single_pending_ipv4_icmp_echo_request(
+            &mut device,
+            &cache,
+            &mut pending,
+            local_endpoint(),
+            [192, 0, 2, 20],
+            0x1234,
+            7,
+            61,
+            &payload,
+            &mut output,
+        );
+
+        assert_eq!(
+            result,
+            PendingIcmpEchoResult::ArpRequestTransmittedAndPending {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            }
+        );
+        assert_eq!(device.transmit_attempts, 1);
+        let request = pending.pending().expect("pending request stored");
+        assert_eq!(request.endpoint(), local_endpoint());
+        assert_eq!(request.destination_ipv4(), [192, 0, 2, 20]);
+        assert_eq!(request.identifier(), 0x1234);
+        assert_eq!(request.sequence_number(), 7);
+        assert_eq!(request.ttl(), 61);
+        assert_eq!(request.payload(), payload);
+
+        let frame =
+            EthernetFrame::parse(&device.transmitted[..device.transmitted_len]).expect("arp");
+        assert_eq!(frame.destination(), MacAddress::new([0xff; 6]));
+        assert_eq!(frame.source(), local_endpoint().mac());
+        assert_eq!(frame.ether_type(), EtherType::Arp);
+        let arp = ArpPacket::parse_ethernet_ipv4(frame.payload()).expect("arp packet");
+        assert_eq!(arp.operation(), ArpOperation::Request);
+        assert_eq!(arp.target_protocol_address(), [192, 0, 2, 20]);
+    }
+
+    #[test_case]
+    fn single_pending_icmp_matching_arp_reply_transmits_icmp_and_clears_pending() {
+        let mut cache = ArpCache::<2>::new();
+        let mut pending = SinglePendingIcmpEcho::<8>::new();
+        let mut arp_output = [0u8; 64];
+        let mut device = OutboundTransmitDevice::new();
+        let payload = [0x11, 0x22, 0x33];
+
+        assert_eq!(
+            transmit_or_queue_single_pending_ipv4_icmp_echo_request(
+                &mut device,
+                &cache,
+                &mut pending,
+                local_endpoint(),
+                [192, 0, 2, 20],
+                0x1234,
+                7,
+                61,
+                &payload,
+                &mut arp_output,
+            ),
+            PendingIcmpEchoResult::ArpRequestTransmittedAndPending {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            }
+        );
+
+        let mut icmp_output = [0u8; 128];
+        let result = learn_arp_reply_and_transmit_single_pending_ipv4_icmp_echo_request(
+            &mut device,
+            &mut cache,
+            &mut pending,
+            &arp_reply_frame(),
+            &mut icmp_output,
+        );
+
+        let expected_len =
+            ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + ICMP_ECHO_HEADER_LEN + payload.len();
+        assert_eq!(
+            result,
+            PendingIcmpEchoResult::IcmpEchoRequestTransmitted {
+                frame_len: expected_len,
+            }
+        );
+        assert_eq!(device.transmit_attempts, 2);
+        assert_eq!(pending.pending(), None);
+        assert_eq!(
+            cache.lookup([192, 0, 2, 20]),
+            Some(MacAddress::new([0x02, 0, 0, 0, 0, 20]))
+        );
+
+        let frame =
+            EthernetFrame::parse(&device.transmitted[..device.transmitted_len]).expect("icmp");
+        assert_eq!(frame.destination(), MacAddress::new([0x02, 0, 0, 0, 0, 20]));
+        assert_eq!(frame.source(), local_endpoint().mac());
+        assert_eq!(frame.ether_type(), EtherType::Ipv4);
+        let ipv4 = Ipv4Packet::parse(frame.payload()).expect("ipv4");
+        assert_eq!(ipv4.destination(), [192, 0, 2, 20]);
+        assert_eq!(frame.payload()[8], 61);
+        let icmp = ipv4.payload();
+        assert_eq!(read_be_u16(icmp, 4), 0x1234);
+        assert_eq!(read_be_u16(icmp, 6), 7);
+        assert_eq!(&icmp[ICMP_ECHO_HEADER_LEN..], &payload);
+        assert!(internet_checksum_is_valid(icmp));
+    }
+
+    #[test_case]
+    fn single_pending_icmp_can_advance_from_existing_cache_resolution() {
+        let mut cache = ArpCache::<2>::new();
+        let destination_mac = MacAddress::new([0x02, 0, 0, 0, 0, 20]);
+        assert_eq!(
+            cache.insert_or_update([192, 0, 2, 20], destination_mac),
+            ArpCacheUpdate::Inserted
+        );
+        let mut pending = SinglePendingIcmpEcho::<4>::new();
+        let mut output = [0u8; 128];
+        let mut device = OutboundTransmitDevice::new();
+        let payload = [1, 2, 3, 4];
+
+        let result = transmit_or_queue_single_pending_ipv4_icmp_echo_request(
+            &mut device,
+            &cache,
+            &mut pending,
+            local_endpoint(),
+            [192, 0, 2, 20],
+            0x1111,
+            1,
+            64,
+            &payload,
+            &mut output,
+        );
+
+        assert_eq!(
+            result,
+            PendingIcmpEchoResult::IcmpEchoRequestTransmitted {
+                frame_len: ETHERNET_HEADER_LEN
+                    + IPV4_MIN_HEADER_LEN
+                    + ICMP_ECHO_HEADER_LEN
+                    + payload.len(),
+            }
+        );
+        assert_eq!(pending.pending(), None);
+        assert_eq!(device.transmit_attempts, 1);
+        let frame =
+            EthernetFrame::parse(&device.transmitted[..device.transmitted_len]).expect("icmp");
+        assert_eq!(frame.destination(), destination_mac);
+    }
+
+    #[test_case]
+    fn single_pending_icmp_reports_backpressure_without_replacing_pending_request() {
+        let cache = ArpCache::<0>::new();
+        let mut pending = SinglePendingIcmpEcho::<4>::new();
+        let mut output = [0u8; 64];
+        let mut device = OutboundTransmitDevice::new();
+
+        assert_eq!(
+            transmit_or_queue_single_pending_ipv4_icmp_echo_request(
+                &mut device,
+                &cache,
+                &mut pending,
+                local_endpoint(),
+                [192, 0, 2, 20],
+                1,
+                2,
+                64,
+                &[1, 2],
+                &mut output,
+            ),
+            PendingIcmpEchoResult::ArpRequestTransmittedAndPending {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            }
+        );
+
+        assert_eq!(
+            transmit_or_queue_single_pending_ipv4_icmp_echo_request(
+                &mut device,
+                &cache,
+                &mut pending,
+                local_endpoint(),
+                [192, 0, 2, 44],
+                3,
+                4,
+                64,
+                &[3, 4],
+                &mut output,
+            ),
+            PendingIcmpEchoResult::PendingRequestAlreadyQueued {
+                destination_ipv4: [192, 0, 2, 20],
+            }
+        );
+        assert_eq!(device.transmit_attempts, 1);
+        assert_eq!(pending.pending_destination_ipv4(), Some([192, 0, 2, 20]));
+    }
+
+    #[test_case]
+    fn single_pending_icmp_reports_payload_and_output_pressure_without_state_change() {
+        let cache = ArpCache::<0>::new();
+        let mut pending = SinglePendingIcmpEcho::<2>::new();
+        let mut output = [0xaa; 64];
+        let mut device = OutboundTransmitDevice::new();
+
+        assert_eq!(
+            transmit_or_queue_single_pending_ipv4_icmp_echo_request(
+                &mut device,
+                &cache,
+                &mut pending,
+                local_endpoint(),
+                [192, 0, 2, 20],
+                1,
+                2,
+                64,
+                &[1, 2, 3],
+                &mut output,
+            ),
+            PendingIcmpEchoResult::PendingPayloadTooLarge {
+                required_len: 3,
+                max_len: 2,
+            }
+        );
+        assert_eq!(pending.pending(), None);
+        assert_eq!(device.transmit_attempts, 0);
+        assert_eq!(output, [0xaa; 64]);
+
+        let mut small_output = [0xaa; ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN - 1];
+        assert_eq!(
+            transmit_or_queue_single_pending_ipv4_icmp_echo_request(
+                &mut device,
+                &cache,
+                &mut pending,
+                local_endpoint(),
+                [192, 0, 2, 20],
+                1,
+                2,
+                64,
+                &[1, 2],
+                &mut small_output,
+            ),
+            PendingIcmpEchoResult::RequestError(OutboundFrameError::OutputBufferTooSmall {
+                required_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+                available_len: small_output.len(),
+            })
+        );
+        assert_eq!(pending.pending(), None);
+        assert_eq!(device.transmit_attempts, 0);
+        assert_eq!(
+            small_output,
+            [0xaa; ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN - 1]
+        );
+    }
+
+    #[test_case]
+    fn single_pending_icmp_reports_no_pending_unresolved_and_nonmatching_arp_boundaries() {
+        let cache = ArpCache::<0>::new();
+        let mut pending = SinglePendingIcmpEcho::<4>::new();
+        let mut output = [0u8; 128];
+        let mut device = OutboundTransmitDevice::new();
+
+        assert_eq!(
+            transmit_single_pending_ipv4_icmp_echo_request(
+                &mut device,
+                &cache,
+                &mut pending,
+                &mut output
+            ),
+            PendingIcmpEchoResult::NoPendingRequest
+        );
+
+        assert_eq!(
+            transmit_or_queue_single_pending_ipv4_icmp_echo_request(
+                &mut device,
+                &cache,
+                &mut pending,
+                local_endpoint(),
+                [192, 0, 2, 44],
+                1,
+                2,
+                64,
+                &[1, 2],
+                &mut output,
+            ),
+            PendingIcmpEchoResult::ArpRequestTransmittedAndPending {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            }
+        );
+        assert_eq!(
+            transmit_single_pending_ipv4_icmp_echo_request(
+                &mut device,
+                &cache,
+                &mut pending,
+                &mut output
+            ),
+            PendingIcmpEchoResult::PendingNeighborUnresolved {
+                destination_ipv4: [192, 0, 2, 44],
+            }
+        );
+
+        let mut nonmatching = arp_reply_frame();
+        nonmatching[ETHERNET_HEADER_LEN + 14..ETHERNET_HEADER_LEN + 18]
+            .copy_from_slice(&[192, 0, 2, 20]);
+        assert_eq!(
+            learn_arp_reply_and_transmit_single_pending_ipv4_icmp_echo_request(
+                &mut device,
+                &mut ArpCache::<2>::new(),
+                &mut pending,
+                &nonmatching,
+                &mut output,
+            ),
+            PendingIcmpEchoResult::NonMatchingArp {
+                pending_destination_ipv4: [192, 0, 2, 44],
+                arp_sender_ipv4: [192, 0, 2, 20],
+            }
+        );
+        assert_eq!(pending.pending_destination_ipv4(), Some([192, 0, 2, 44]));
+    }
+
+    #[test_case]
+    fn single_pending_icmp_reports_malformed_arp_and_transmit_errors_without_clearing_pending() {
+        let cache = ArpCache::<0>::new();
+        let mut pending = SinglePendingIcmpEcho::<4>::new();
+        let mut output = [0u8; 128];
+        let mut device = OutboundTransmitDevice::new();
+
+        assert_eq!(
+            transmit_or_queue_single_pending_ipv4_icmp_echo_request(
+                &mut device,
+                &cache,
+                &mut pending,
+                local_endpoint(),
+                [192, 0, 2, 20],
+                1,
+                2,
+                64,
+                &[1, 2],
+                &mut output,
+            ),
+            PendingIcmpEchoResult::ArpRequestTransmittedAndPending {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            }
+        );
+
+        let truncated = &arp_reply_frame()[..ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN - 1];
+        assert_eq!(
+            learn_arp_reply_and_transmit_single_pending_ipv4_icmp_echo_request(
+                &mut device,
+                &mut ArpCache::<2>::new(),
+                &mut pending,
+                truncated,
+                &mut output,
+            ),
+            PendingIcmpEchoResult::ArpError(PacketError::Truncated)
+        );
+        assert_eq!(pending.pending_destination_ipv4(), Some([192, 0, 2, 20]));
+
+        let mut failing_device = OutboundTransmitDevice::with_transmit_error(DeviceError::Io);
+        let mut cache = ArpCache::<2>::new();
+        assert_eq!(
+            learn_arp_reply_and_transmit_single_pending_ipv4_icmp_echo_request(
+                &mut failing_device,
+                &mut cache,
+                &mut pending,
+                &arp_reply_frame(),
+                &mut output,
+            ),
+            PendingIcmpEchoResult::TransmitError {
+                request_kind: OutboundRequestKind::Ipv4IcmpEchoRequest,
+                frame_len: ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + ICMP_ECHO_HEADER_LEN + 2,
+                error: DeviceError::Io,
+            }
+        );
+        assert_eq!(pending.pending_destination_ipv4(), Some([192, 0, 2, 20]));
+        assert_eq!(
+            cache.lookup([192, 0, 2, 20]),
+            Some(MacAddress::new([0x02, 0, 0, 0, 0, 20]))
+        );
     }
 
     #[test_case]

@@ -2821,3 +2821,25 @@ transition remain rejected. selected_next_task is null and planningNeeded=true
 because no later queued Phase 12.3 task has complete scope, non-goals,
 dependencies, acceptance criteria, validation gates, docs, and evidence
 requirements.
+
+phase12-network-single-pending-icmp-after-arp-resolution-core-20260619 accepts
+phase12-network-single-pending-icmp-after-arp-resolution-core-accepted.
+src/network.rs now includes an allocation-free SinglePendingIcmpEcho boundary
+for exactly one unresolved outbound IPv4 ICMP echo request.
+
+The accepted helper can emit one deterministic Ethernet/IPv4 ARP request for
+an unresolved destination and retain the endpoint, destination IPv4,
+identifier, sequence number, TTL, and payload bytes in fixed caller-selected
+storage after successful fake/trait-level transmit. A matching Ethernet/IPv4
+ARP reply, or an existing accepted ARP cache resolution, can advance that
+pending request into one deterministic Ethernet/IPv4/ICMP echo request transmit
+and clear pending state after successful transmit.
+
+The accepted boundary covers resolved-neighbor, no-pending,
+duplicate-pending/backpressure, payload pressure, output-buffer pressure,
+malformed ARP, nonmatching ARP, unresolved cache, and transmit-error behavior
+with local unit tests. It remains host/testable only. Packet queues, retry
+timers, multi-entry buffering, route/subnet/gateway policy, live driver
+adapters, smoltcp adoption, UDP/TCP, sockets, hardware packet I/O,
+ping/network reachability behavior, SSH, Pi 5 hardware work, boot publication,
+lab mutation, and phase transition remain rejected.

@@ -1,0 +1,58 @@
+{
+  "task_id": "phase12-network-single-pending-icmp-after-arp-resolution-core-20260619",
+  "classification": "phase12-network-single-pending-icmp-after-arp-resolution-core-accepted",
+  "accepted_boundary": "host-only allocation-free single-pending ARP-to-ICMP progression over caller-owned buffers and fake NetworkDevice transmit",
+  "accepted": [
+    "unresolved ICMP echo request emits one deterministic ARP request and records one pending request after successful fake-device transmit",
+    "matching ARP reply can resolve, learn, transmit the retained ICMP echo request, and clear pending state",
+    "existing ARP cache resolution can advance the pending/requested ICMP echo path",
+    "no-pending, duplicate-pending, payload pressure, output-buffer pressure, malformed ARP, nonmatching ARP, unresolved cache, and transmit-error paths are deterministic and unit-tested"
+  ],
+  "rejected": [
+    "packet queue",
+    "retry timer",
+    "multi-entry buffering",
+    "routing or gateway policy",
+    "live driver transmit",
+    "live packet I/O",
+    "smoltcp adoption",
+    "sockets",
+    "SSH",
+    "ping or network reachability",
+    "hardware readiness",
+    "phase transition"
+  ],
+  "validation": [
+    {
+      "level": "fmt/lint/typecheck",
+      "command": ". "$HOME/.cargo/env"; export TMPDIR=/opt/strider/openclaw/current/workspace/tmp; export PATH=/opt/strider/openclaw/current/workspace/tools/qemu-9.2.0-install/bin:$PATH; cargo fmt --all -- --check",
+      "result": "pass"
+    },
+    {
+      "level": "unit tests/full suite",
+      "command": ". "$HOME/.cargo/env"; export TMPDIR=/opt/strider/openclaw/current/workspace/tmp; export PATH=/opt/strider/openclaw/current/workspace/tools/qemu-9.2.0-install/bin:$PATH; cargo -Zjson-target-spec test --quiet",
+      "result": "pass"
+    },
+    {
+      "level": "JSON evidence validation",
+      "command": "jq empty tasks/evidence/2026-06-19-phase12-network-single-pending-icmp-after-arp-resolution-core/classification.json",
+      "result": "pass"
+    },
+    {
+      "level": "diff whitespace check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "level": "staged diff whitespace check",
+      "command": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "selected_next_task": "phase12-network-single-pending-icmp-after-arp-resolution-closeout-20260619"
+}

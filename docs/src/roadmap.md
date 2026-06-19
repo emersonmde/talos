@@ -12983,6 +12983,17 @@ Milestone 12.3: IP Stack
   transmit boundary. It accepts no live networking behavior and sets
   planningNeeded=true because no later queued Phase 12.3 task has complete
   execution criteria.
+- Local source/test progress is accepted for allocation-free single-pending
+  ICMP-after-ARP resolution. One unresolved outbound ICMP echo request can emit
+  a deterministic ARP request, retain endpoint/destination/identifier/sequence
+  number/TTL/payload data in fixed storage, and later transmit the exact ICMP
+  echo request after a matching ARP reply or accepted ARP cache resolution.
+  Tests cover resolved-neighbor, no-pending, duplicate-pending/backpressure,
+  payload pressure, output-buffer pressure, malformed ARP, nonmatching ARP,
+  unresolved cache, and transmit-error paths. Packet queues, retry timers,
+  multi-entry buffering, route policy, live packet I/O, sockets, SSH,
+  smoltcp adoption, ping/network reachability, hardware work, and phase
+  transition remain rejected.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
