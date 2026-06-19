@@ -3615,6 +3615,21 @@ The post-review correction chain is:
     autoneg-complete, packet-readiness, live packet I/O, sockets, SSH,
     hardware-driver readiness, and phase transition remain rejected.
 
+204. Phase 12.3 ARP-cache dispatch integration core: accepted in
+    'phase12-network-arp-cache-dispatch-integration-core-20260619' with
+    classification
+    'phase12-network-arp-cache-dispatch-integration-core-accepted'. The
+    accepted frontier is host-only source/test progress: src/network.rs adds
+    cache-aware wrappers around local packet dispatch and one-step device
+    polling that learn valid Ethernet/IPv4 ARP sender facts through a mutable
+    ArpCache while preserving existing cache-unaware APIs. Tests cover ARP
+    request learning with reply transmission, ARP reply learning without
+    transmit, malformed or unsupported ARP without mutation, unchanged ICMP
+    echo output, no-frame cache behavior, and transmit-error cache behavior.
+    Outbound neighbor resolution, packet queues, live packet I/O, sockets,
+    SSH, hardware-driver readiness, ping/network reachability behavior, and
+    phase transition remain rejected.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed

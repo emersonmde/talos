@@ -1,0 +1,116 @@
+{
+  "task_id": "phase12-network-arp-cache-dispatch-integration-core-20260619",
+  "status": "accepted",
+  "classification": "phase12-network-arp-cache-dispatch-integration-core-accepted",
+  "accepted_at": "2026-06-19T05:50:00Z",
+  "evidence_level": [
+    "source implementation",
+    "no_std unit tests",
+    "docs build",
+    "task-owned JSON evidence",
+    "diff checks"
+  ],
+  "implemented": [
+    "dispatch_local_packet_with_arp_cache",
+    "poll_local_network_device_with_arp_cache",
+    "host-only ARP sender learning before accepted local dispatch behavior",
+    "deterministic no_std tests for cache-aware local dispatch and poll behavior"
+  ],
+  "accepted_behavior": [
+    "valid ARP requests are learned before local ARP reply generation",
+    "valid ARP replies are learned and do not transmit a local reply",
+    "malformed or unsupported ARP frames do not mutate the cache",
+    "ICMP echo dispatch output is unchanged and does not mutate the ARP cache",
+    "no-frame receive outcomes leave cache state unchanged",
+    "transmit errors retain ARP sender facts learned before transmission failed",
+    "cache-unaware dispatch_local_packet and poll_local_network_device remain available and covered"
+  ],
+  "validation": [
+    {
+      "gate": "cargo fmt --all -- --check",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test --quiet",
+      "result": "pass",
+      "summary": "566 talos no_std tests passed"
+    },
+    {
+      "gate": "targeted network tests",
+      "result": "pass",
+      "summary": "cache-aware ARP request/reply learning, malformed no-mutation behavior, unchanged ICMP echo behavior, no-frame cache behavior, and transmit-error cache behavior covered in src/network.rs"
+    },
+    {
+      "gate": "jq empty",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "selected_next_task": "phase12-network-arp-cache-dispatch-integration-closeout-20260619",
+  "planningNeeded": false,
+  "hardware": {
+    "hardware_test_lock_acquired": false,
+    "pi5_hardware_run": false,
+    "lab_mutation": false,
+    "boot_archive_publication": false,
+    "live_packet_io": false
+  },
+  "rejected_claims": [
+    "outbound neighbor resolution",
+    "packet queue readiness",
+    "driver adapter readiness",
+    "RP1 Ethernet driver readiness",
+    "DMA descriptor ownership",
+    "interrupt integration",
+    "packet capture",
+    "live packet I/O",
+    "smoltcp adoption",
+    "UDP/TCP behavior",
+    "DHCP",
+    "DNS",
+    "routing",
+    "socket API",
+    "SSH",
+    "network reachability",
+    "ping behavior",
+    "hardware link readiness",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "host-only cache-aware local dispatch and poll entry points learn ARP sender facts from validated inbound ARP frames"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "cache-unaware dispatch_local_packet and poll_local_network_device remain source-compatible and behaviorally covered"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "ARP request learning, ARP reply learning without transmit, malformed or unsupported ARP no-mutation behavior, unchanged ICMP echo behavior, no-frame cache behavior, and transmit-error cache behavior are covered by no_std tests"
+    },
+    {
+      "disposition": "deferred",
+      "finding": "outbound neighbor resolution, packet queues, driver adapter integration, UDP/TCP, DHCP, DNS, routing, sockets, SSH, smoltcp integration, live packet I/O, and Pi 5 packet movement evidence remain future work"
+    },
+    {
+      "disposition": "removed",
+      "finding": "no source files, dependencies, or prior task evidence were removed"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "no hardware lock, lab mutation, boot publication, or Pi 5 inconclusive-run triage was required for local source/test work"
+    }
+  ]
+}

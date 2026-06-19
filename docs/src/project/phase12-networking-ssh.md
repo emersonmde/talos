@@ -2594,10 +2594,6 @@ ICMP echo reply generation succeeds. LocalPollStepResult distinguishes no
 frame, receive-buffer pressure, receive error, nonlocal no-reply, dispatch
 error, transmit error, and successful reply transmission without allocation.
 
-Driver adapters, packet queues, ARP cache, UDP/TCP, DHCP, DNS, routing, smoltcp
-integration, sockets, SSH, live packet I/O, RP1 Ethernet driver readiness, link
-readiness, and phase transition remain unaccepted.
-
 phase12-network-arp-cache-core-20260619 accepts
 phase12-network-arp-cache-core-accepted. src/network.rs now includes a
 fixed-capacity, allocation-free ArpCache boundary that stores IPv4-to-MAC
@@ -2614,3 +2610,23 @@ changing existing cache state. This cache-only slice does not wire neighbor
 state into dispatch_local_packet, outbound resolution, packet queues, driver
 adapters, live packet I/O, ping behavior, sockets, SSH, smoltcp adoption,
 network reachability, link readiness, or a phase transition.
+
+phase12-network-arp-cache-dispatch-integration-core-20260619 accepts
+phase12-network-arp-cache-dispatch-integration-core-accepted. src/network.rs
+now includes dispatch_local_packet_with_arp_cache and
+poll_local_network_device_with_arp_cache, compatibility-preserving wrappers
+that learn valid Ethernet/IPv4 ARP sender facts through a caller-provided
+ArpCache before using the existing local dispatch and poll behavior.
+
+The cache-aware path records sender IPv4/MAC facts from valid ARP requests and
+ARP replies. ARP requests can still produce the same local ARP reply as the
+cache-unaware dispatcher; ARP replies learn the neighbor and produce no
+transmit. Malformed or unsupported ARP does not mutate the cache, non-ARP ICMP
+echo behavior remains byte-for-byte compatible with dispatch_local_packet,
+no-frame leaves cache state unchanged, and transmit errors keep any ARP fact
+learned before reply transmission failed.
+
+Driver adapters, packet queues, outbound neighbor resolution, UDP/TCP, DHCP,
+DNS, routing, smoltcp integration, sockets, SSH, live packet I/O, RP1 Ethernet
+driver readiness, link readiness, ping/network reachability behavior, and phase
+transition remain unaccepted.

@@ -486,6 +486,41 @@ pub(crate) fn poll_local_network_device<D: NetworkDevice>(
     }
 }
 
+pub(crate) fn poll_local_network_device_with_arp_cache<
+    D: NetworkDevice,
+    const ARP_CAPACITY: usize,
+>(
+    device: &mut D,
+    endpoint: LocalNetworkEndpoint,
+    arp_cache: &mut ArpCache<ARP_CAPACITY>,
+    receive_buffer: &mut [u8],
+    transmit_buffer: &mut [u8],
+) -> LocalPollStepResult {
+    let received = match device.receive_frame(receive_buffer) {
+        Ok(frame) => frame,
+        Err(DeviceError::WouldBlock) => return LocalPollStepResult::NoFrame,
+        Err(DeviceError::BufferTooSmall) => return LocalPollStepResult::ReceiveBufferTooSmall,
+        Err(error) => return LocalPollStepResult::ReceiveError(error),
+    };
+
+    let reply = match dispatch_local_packet_with_arp_cache(
+        received,
+        endpoint,
+        arp_cache,
+        transmit_buffer,
+    ) {
+        Ok(reply) => reply,
+        Err(PacketError::NotForLocalHost) => return LocalPollStepResult::NoReply,
+        Err(error) => return LocalPollStepResult::DispatchError(error),
+    };
+
+    let frame_len = reply.frame_len();
+    match device.transmit_frame(&transmit_buffer[..frame_len]) {
+        Ok(()) => LocalPollStepResult::Replied(reply),
+        Err(error) => LocalPollStepResult::TransmitError(error),
+    }
+}
+
 pub(crate) fn dispatch_local_packet(
     frame_bytes: &[u8],
     endpoint: LocalNetworkEndpoint,
@@ -497,6 +532,38 @@ pub(crate) fn dispatch_local_packet(
         EtherType::Arp => build_arp_reply(frame, endpoint, output),
         EtherType::Ipv4 => build_icmp_echo_reply(frame, endpoint, output),
         EtherType::Other(_) => Err(PacketError::UnsupportedEtherType),
+    }
+}
+
+pub(crate) fn dispatch_local_packet_with_arp_cache<const ARP_CAPACITY: usize>(
+    frame_bytes: &[u8],
+    endpoint: LocalNetworkEndpoint,
+    arp_cache: &mut ArpCache<ARP_CAPACITY>,
+    output: &mut [u8],
+) -> Result<PacketDispatchResult, PacketError> {
+    learn_arp_sender_if_present(frame_bytes, arp_cache)?;
+    dispatch_local_packet(frame_bytes, endpoint, output)
+}
+
+fn learn_arp_sender_if_present<const ARP_CAPACITY: usize>(
+    frame_bytes: &[u8],
+    arp_cache: &mut ArpCache<ARP_CAPACITY>,
+) -> Result<(), PacketError> {
+    let frame = EthernetFrame::parse(frame_bytes)?;
+    if frame.ether_type() != EtherType::Arp {
+        return Ok(());
+    }
+
+    let packet = ArpPacket::parse_ethernet_ipv4(frame.payload())?;
+    match packet.operation() {
+        ArpOperation::Request | ArpOperation::Reply => {
+            let _ = arp_cache.insert_or_update(
+                packet.sender_protocol_address(),
+                packet.sender_hardware_address(),
+            );
+            Ok(())
+        }
+        ArpOperation::Other(_) => Err(PacketError::UnsupportedArpOperation),
     }
 }
 
@@ -1193,6 +1260,109 @@ mod tests {
         );
     }
 
+    #[test_case]
+    fn cache_aware_dispatch_learns_arp_request_and_preserves_reply_generation() {
+        let endpoint = local_endpoint();
+        let request = arp_request_frame();
+        let mut cache = ArpCache::<4>::new();
+        let mut output = [0u8; 64];
+
+        let result =
+            dispatch_local_packet_with_arp_cache(&request, endpoint, &mut cache, &mut output)
+                .expect("dispatch arp with cache");
+
+        assert_eq!(result.reply_kind(), PacketReplyKind::Arp);
+        assert_eq!(
+            cache.lookup([192, 0, 2, 10]),
+            Some(MacAddress::new([0x02, 0, 0, 0, 0, 1]))
+        );
+        assert_eq!(&output[..6], &[0x02, 0, 0, 0, 0, 1]);
+        assert_eq!(&output[6..12], &[0x02, 0, 0, 0, 0, 99]);
+    }
+
+    #[test_case]
+    fn cache_aware_dispatch_learns_arp_reply_without_generating_a_reply() {
+        let endpoint = local_endpoint();
+        let reply = arp_reply_frame();
+        let mut cache = ArpCache::<4>::new();
+        let mut output = [0u8; 64];
+
+        assert_eq!(
+            dispatch_local_packet_with_arp_cache(&reply, endpoint, &mut cache, &mut output),
+            Err(PacketError::UnsupportedArpOperation)
+        );
+        assert_eq!(
+            cache.lookup([192, 0, 2, 20]),
+            Some(MacAddress::new([0x02, 0, 0, 0, 0, 20]))
+        );
+    }
+
+    #[test_case]
+    fn cache_aware_dispatch_rejects_bad_arp_without_cache_mutation() {
+        let endpoint = local_endpoint();
+        let original_mac = MacAddress::new([0x02, 0, 0, 0, 0, 55]);
+        let mut cache = ArpCache::<2>::new();
+        assert_eq!(
+            cache.insert_or_update([192, 0, 2, 55], original_mac),
+            ArpCacheUpdate::Inserted
+        );
+        let mut output = [0u8; 64];
+
+        let truncated = &arp_request_frame()[..ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN - 1];
+        assert_eq!(
+            dispatch_local_packet_with_arp_cache(truncated, endpoint, &mut cache, &mut output),
+            Err(PacketError::Truncated)
+        );
+
+        let mut unsupported_operation = arp_request_frame();
+        write_be_u16(
+            &mut unsupported_operation[ETHERNET_HEADER_LEN..],
+            6,
+            ArpOperation::Other(99).raw(),
+        );
+        unsupported_operation[ETHERNET_HEADER_LEN + 8..ETHERNET_HEADER_LEN + 14]
+            .copy_from_slice(&[0x02, 0, 0, 0, 0, 99]);
+        assert_eq!(
+            dispatch_local_packet_with_arp_cache(
+                &unsupported_operation,
+                endpoint,
+                &mut cache,
+                &mut output
+            ),
+            Err(PacketError::UnsupportedArpOperation)
+        );
+
+        assert_eq!(cache.lookup([192, 0, 2, 55]), Some(original_mac));
+        assert_eq!(cache.lookup([192, 0, 2, 10]), None);
+        assert_eq!(cache.lookup([192, 0, 2, 99]), None);
+    }
+
+    #[test_case]
+    fn cache_aware_dispatch_preserves_icmp_echo_without_arp_learning() {
+        let endpoint = local_endpoint();
+        let request = icmp_echo_request_frame();
+        let mut cache = ArpCache::<4>::new();
+        let mut cache_unaware_output = [0u8; 128];
+        let mut cache_aware_output = [0u8; 128];
+
+        let cache_unaware =
+            dispatch_local_packet(&request, endpoint, &mut cache_unaware_output).expect("icmp");
+        let cache_aware = dispatch_local_packet_with_arp_cache(
+            &request,
+            endpoint,
+            &mut cache,
+            &mut cache_aware_output,
+        )
+        .expect("icmp with cache");
+
+        assert_eq!(cache_aware, cache_unaware);
+        assert_eq!(
+            &cache_aware_output[..cache_aware.frame_len()],
+            &cache_unaware_output[..cache_unaware.frame_len()]
+        );
+        assert_eq!(cache.lookup([192, 0, 2, 10]), None);
+    }
+
     struct PollDevice<'a> {
         frame: Option<&'a [u8]>,
         receive_error: Option<DeviceError>,
@@ -1412,6 +1582,119 @@ mod tests {
             LocalPollStepResult::TransmitError(DeviceError::Io)
         );
         assert_eq!(transmit_error.transmitted_len, 0);
+    }
+
+    #[test_case]
+    fn cache_aware_poll_transmits_arp_reply_and_learns_sender() {
+        let endpoint = local_endpoint();
+        let request = arp_request_frame();
+        let mut device = PollDevice::with_frame(&request);
+        let mut cache = ArpCache::<4>::new();
+        let mut receive_buffer = [0u8; 64];
+        let mut transmit_buffer = [0u8; 64];
+
+        let result = poll_local_network_device_with_arp_cache(
+            &mut device,
+            endpoint,
+            &mut cache,
+            &mut receive_buffer,
+            &mut transmit_buffer,
+        );
+
+        assert_eq!(
+            result,
+            LocalPollStepResult::Replied(PacketDispatchResult {
+                reply_kind: PacketReplyKind::Arp,
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            })
+        );
+        assert_eq!(
+            cache.lookup([192, 0, 2, 10]),
+            Some(MacAddress::new([0x02, 0, 0, 0, 0, 1]))
+        );
+        assert_eq!(
+            device.transmitted_len,
+            ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN
+        );
+    }
+
+    #[test_case]
+    fn cache_aware_poll_learns_arp_reply_without_transmit() {
+        let endpoint = local_endpoint();
+        let reply = arp_reply_frame();
+        let mut device = PollDevice::with_frame(&reply);
+        let mut cache = ArpCache::<4>::new();
+        let mut receive_buffer = [0u8; 64];
+        let mut transmit_buffer = [0u8; 64];
+
+        let result = poll_local_network_device_with_arp_cache(
+            &mut device,
+            endpoint,
+            &mut cache,
+            &mut receive_buffer,
+            &mut transmit_buffer,
+        );
+
+        assert_eq!(
+            result,
+            LocalPollStepResult::DispatchError(PacketError::UnsupportedArpOperation)
+        );
+        assert_eq!(
+            cache.lookup([192, 0, 2, 20]),
+            Some(MacAddress::new([0x02, 0, 0, 0, 0, 20]))
+        );
+        assert_eq!(device.transmitted_len, 0);
+    }
+
+    #[test_case]
+    fn cache_aware_poll_no_frame_leaves_cache_unchanged() {
+        let endpoint = local_endpoint();
+        let original_mac = MacAddress::new([0x02, 0, 0, 0, 0, 55]);
+        let mut device = PollDevice::with_receive_error(DeviceError::WouldBlock);
+        let mut cache = ArpCache::<4>::new();
+        assert_eq!(
+            cache.insert_or_update([192, 0, 2, 55], original_mac),
+            ArpCacheUpdate::Inserted
+        );
+        let mut receive_buffer = [0u8; 64];
+        let mut transmit_buffer = [0u8; 64];
+
+        let result = poll_local_network_device_with_arp_cache(
+            &mut device,
+            endpoint,
+            &mut cache,
+            &mut receive_buffer,
+            &mut transmit_buffer,
+        );
+
+        assert_eq!(result, LocalPollStepResult::NoFrame);
+        assert_eq!(cache.lookup([192, 0, 2, 55]), Some(original_mac));
+        assert_eq!(cache.lookup([192, 0, 2, 10]), None);
+    }
+
+    #[test_case]
+    fn cache_aware_poll_transmit_error_keeps_learned_sender() {
+        let endpoint = local_endpoint();
+        let request = arp_request_frame();
+        let mut device = PollDevice::with_transmit_error(&request, DeviceError::Io);
+        let mut cache = ArpCache::<4>::new();
+        let mut receive_buffer = [0u8; 64];
+        let mut transmit_buffer = [0u8; 64];
+
+        let result = poll_local_network_device_with_arp_cache(
+            &mut device,
+            endpoint,
+            &mut cache,
+            &mut receive_buffer,
+            &mut transmit_buffer,
+        );
+
+        assert_eq!(result, LocalPollStepResult::TransmitError(DeviceError::Io));
+        assert_eq!(
+            cache.lookup([192, 0, 2, 10]),
+            Some(MacAddress::new([0x02, 0, 0, 0, 0, 1]))
+        );
+        assert_eq!(device.transmitted_len, 0);
     }
 
     const fn local_endpoint() -> LocalNetworkEndpoint {
