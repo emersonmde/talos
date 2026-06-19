@@ -1,0 +1,154 @@
+{
+  "task_id": "phase12-network-arp-request-emission-source-checkpoint-20260619",
+  "status": "accepted",
+  "classification": "phase12-network-arp-request-emission-source-checkpoint-accepted-planning-needed",
+  "accepted_at": "2026-06-19T10:29:00Z",
+  "evidence_level": [
+    "static source/task evidence review",
+    "task-owned JSON classification",
+    "diff checks"
+  ],
+  "reviewed_evidence": [
+    "tasks/2026-06-19-phase12-network-local-packet-dispatch-icmp-echo-core.md",
+    "tasks/2026-06-19-phase12-network-packet-buffer-device-polling-core.md",
+    "tasks/2026-06-19-phase12-network-arp-cache-core.md",
+    "tasks/2026-06-19-phase12-network-arp-cache-dispatch-integration-core.md",
+    "tasks/2026-06-19-phase12-network-outbound-neighbor-resolution-core.md",
+    "tasks/2026-06-19-phase12-network-outbound-frame-construction-core.md",
+    "tasks/2026-06-19-phase12-network-outbound-ipv4-icmp-echo-request-core.md",
+    "tasks/2026-06-19-phase12-network-outbound-ipv4-icmp-echo-request-closeout.md",
+    "src/network.rs",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "source_frontier": [
+    "local ARP reply and ICMP echo reply construction into caller-owned buffers",
+    "NetworkDevice polling through caller-owned receive/transmit buffers",
+    "fixed-capacity allocation-free ArpCache learning and lookup",
+    "cache-aware dispatch/poll learning from valid Ethernet/IPv4 ARP sender facts",
+    "cached-only outbound neighbor resolution to resolved MAC or deterministic unresolved destination",
+    "caller-buffered Ethernet II frame construction for resolved outbound neighbors",
+    "caller-buffered Ethernet/IPv4/ICMP echo request construction for already resolved outbound neighbors",
+    "unresolved-neighbor inputs are rejected deterministically before ARP request emission, queueing, driver transmit, or live packet I/O"
+  ],
+  "recommended_next_boundary": {
+    "summary": "caller-buffered Ethernet/IPv4 ARP request frame construction",
+    "recommended_task_id": "phase12-network-arp-request-emission-core-20260619",
+    "operations": [
+      "add a pure no_std helper that builds one Ethernet II ARP request frame from a LocalNetworkEndpoint and target IPv4 address into caller-owned output storage",
+      "write broadcast destination MAC, local source MAC, EtherType ARP, Ethernet/IPv4 ARP request fields, sender MAC/IP from the local endpoint, zero target MAC, and caller-provided target IPv4",
+      "return deterministic frame length on success",
+      "return deterministic output-buffer-too-small error before accepting partial frame construction as progress",
+      "compose with resolve_outbound_neighbor unresolved results without mutating ArpCache state, consulting a driver, queueing packets, transmitting frames, or claiming reachability",
+      "cover ARP request fields, broadcast and zero target MACs, target IPv4 preservation, exact frame length, small-output rejection, and unresolved-resolution composition with no_std tests"
+    ],
+    "excluded_operations": [
+      "neighbor-discovery state machine",
+      "ARP retry timer",
+      "packet queues",
+      "routing table",
+      "subnet or gateway selection",
+      "driver consultation",
+      "driver transmit scheduling",
+      "live packet I/O",
+      "packet capture",
+      "smoltcp adoption",
+      "sockets",
+      "SSH",
+      "network reachability",
+      "ping behavior",
+      "Pi 5 hardware proof",
+      "phase transition"
+    ]
+  },
+  "recommended_task_id": "phase12-network-arp-request-emission-core-20260619",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "The checkpoint recommends a concrete bounded implementation task, but no explicit queued task exists with acceptanceCriteria, validationGates, docsRequired, evidenceRequired, scope, and nonGoals. Supervisor planning is required before implementation can be promoted.",
+  "validation": [
+    {
+      "gate": "static/source/task evidence review",
+      "result": "pass"
+    },
+    {
+      "gate": "jq empty",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "result": "not-run",
+      "reason": "docs/src files were not changed by this checkpoint"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "hardware": {
+    "hardware_test_lock_acquired": false,
+    "pi5_hardware_run": false,
+    "lab_mutation": false,
+    "boot_archive_publication": false,
+    "live_packet_io": false
+  },
+  "rejected_claims": [
+    "ARP request implementation accepted",
+    "neighbor-discovery state machine",
+    "ARP retry timer",
+    "packet queue readiness",
+    "routing table",
+    "subnet or gateway logic",
+    "driver consultation",
+    "driver transmit scheduling",
+    "packet capture",
+    "live packet I/O",
+    "socket API",
+    "SSH behavior",
+    "UDP/TCP",
+    "DHCP",
+    "DNS",
+    "smoltcp adoption",
+    "RP1 Ethernet driver readiness",
+    "hardware link readiness",
+    "network reachability",
+    "ping behavior",
+    "Pi 5 hardware proof",
+    "boot archive publication",
+    "lab mutation",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "checkpoint reconciles the accepted outbound request-construction frontier against the remaining unresolved-neighbor blocker"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "the next smallest objective ARP boundary is caller-buffered Ethernet IPv4 ARP request frame construction for a local endpoint and target IPv4"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "the recommended boundary preserves the host-only allocation-free no-hardware/no-live-I/O strategy and composes with accepted unresolved outbound neighbor resolution"
+    },
+    {
+      "disposition": "deferred",
+      "finding": "ARP request implementation, neighbor-discovery state, retry timers, packet queues, routing, driver transmit scheduling, live packet I/O, sockets, SSH, smoltcp integration, ping behavior, and Pi 5 packet movement evidence remain future work"
+    },
+    {
+      "disposition": "removed",
+      "finding": "no source files, docs, dependencies, or prior task evidence were removed"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "no cargo metadata or dependency feasibility check was required because no dependency or interface change was proposed or made"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "no hardware lock, lab mutation, boot publication, or Pi 5 inconclusive-run triage was required for static source/task evidence work"
+    }
+  ]
+}
