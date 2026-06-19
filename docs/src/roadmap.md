@@ -13324,6 +13324,20 @@ Milestone 12.3: IP Stack
   sockets, UDP/TCP, SSH, smoltcp adoption, live driver adapters, live packet
   I/O, reachability, hardware work, lab mutation, boot publication, and phase
   transition remain rejected.
+- The single-ping caller-driven retry/timeout closeout reconciles the accepted
+  integrated host-only single-ping lifecycle plus caller-driven status, retry,
+  and timeout evidence. The Phase 12.3 host-only frontier now covers one
+  deterministic fake/trait-level transaction with route-aware start,
+  unresolved pending ARP state, explicit pending-ARP retry budget/retry,
+  matching ARP advancement to one ICMP echo transmit, matching echo reply
+  completion, retry exhaustion/error reporting, idle/pending/in-flight status,
+  and explicit pending/in-flight timeout. selected_next_task is null and
+  planningNeeded=true because no later queued task has complete objective
+  dependencies after this checkpoint. Live packet I/O, live driver adapters,
+  autonomous timers, scheduler wakeups, packet queues, multi-ping behavior,
+  dynamic routing, shell ping, sockets, UDP/TCP, SSH, smoltcp adoption,
+  reachability, hardware work, lab mutation, boot publication, and phase
+  transition remain rejected.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

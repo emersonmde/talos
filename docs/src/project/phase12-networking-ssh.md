@@ -3164,3 +3164,24 @@ dynamic routing, shell ping, sockets, UDP/TCP, SSH, smoltcp adoption, live
 driver adapters, live packet I/O, reachability, hardware work, lab mutation,
 boot publication, or phase transition. The selected next task is
 phase12-network-single-ping-caller-driven-retry-timeout-closeout-20260619.
+
+phase12-network-single-ping-caller-driven-retry-timeout-closeout-20260619
+accepts
+phase12-network-single-ping-caller-driven-retry-timeout-closeout-accepted. The
+closeout reconciles the integrated host-only single-ping lifecycle plus
+caller-driven status, retry, and timeout source/test/task evidence.
+
+The accepted Phase 12.3 frontier now covers one deterministic fake/trait-level
+transaction that can start a route-aware ICMP echo request, retain unresolved
+pending ARP state, retry that pending ARP request while budget remains, advance
+a matching ARP reply to one ICMP echo transmit, complete on a matching echo
+reply, report retry exhaustion or retry transmit errors, expose idle/pending
+ARP/in-flight status, and explicitly timeout one pending or in-flight
+transaction.
+
+This closeout still does not accept live packet I/O, live driver adapters,
+autonomous timers, scheduler wakeups, packet queues, multi-ping behavior,
+dynamic routing, shell ping, sockets, UDP/TCP, SSH, smoltcp adoption,
+reachability, hardware work, lab mutation, boot publication, or phase
+transition. selected_next_task is null and planningNeeded=true because no later
+queued task has complete objective dependencies after this checkpoint.
