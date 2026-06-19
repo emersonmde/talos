@@ -3048,3 +3048,27 @@ the next bounded host-only task. It does not accept ICMP echo reply completion
 tracking, shell ping, packet queues, autonomous polling/timers, live driver
 adapters, sockets, SSH, smoltcp adoption, reachability, hardware work, lab
 mutation, boot publication, or phase transition.
+
+phase12-network-single-inflight-icmp-echo-reply-observation-core-20260619
+accepts phase12-network-single-inflight-icmp-echo-reply-observation-core-accepted.
+src/network.rs now includes SingleInflightIcmpEcho,
+InflightIcmpEchoRequest, InflightIcmpEchoPollResult, and host-only helpers to
+record one in-flight IPv4 ICMP echo request and observe a matching echo reply.
+
+The accepted observation boundary is deterministic and allocation-free. A
+reply completes the single in-flight request only when the inbound Ethernet
+IPv4 ICMP echo reply is addressed to the local endpoint, has source IPv4 equal
+to the stored destination, destination IPv4 equal to the local endpoint, valid
+IPv4 and ICMP checksums, echo-reply type/code, matching identifier and
+sequence number, and matching payload bytes. Nonmatching source, destination,
+identifier, sequence, or payload preserves the in-flight record. No-inflight,
+no-frame, receive-buffer pressure, receive errors, malformed/unsupported
+frames, bad checksums, duplicate in-flight records, and payload-capacity
+pressure have explicit host/unit outcomes.
+
+This remains source/test evidence only over caller-owned receive storage and a
+fake/trait-level NetworkDevice receive boundary. It does not wire reply
+observation into outbound transmit helpers, shell ping, packet queues,
+autonomous polling/timers, live driver adapters, sockets, SSH, smoltcp
+adoption, reachability, hardware work, lab mutation, boot publication, or
+phase transition.

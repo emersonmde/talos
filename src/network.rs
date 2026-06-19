@@ -196,6 +196,17 @@ pub(crate) enum PendingIcmpEchoResult {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum InflightIcmpEchoResult {
+    InflightRequestTracked,
+    IcmpEchoReplyMatched { payload_len: usize },
+    NoInflightRequest,
+    InflightRequestAlreadyTracked { destination_ipv4: [u8; 4] },
+    InflightPayloadTooLarge { required_len: usize, max_len: usize },
+    NonMatchingIcmpEchoReply { destination_ipv4: [u8; 4] },
+    ReplyError(PacketError),
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct MacAddress([u8; ETHERNET_ADDR_LEN]);
 
 impl MacAddress {
@@ -977,6 +988,134 @@ impl<const PAYLOAD_CAPACITY: usize> SinglePendingIcmpEcho<PAYLOAD_CAPACITY> {
     }
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct InflightIcmpEchoRequest<const PAYLOAD_CAPACITY: usize> {
+    endpoint: LocalNetworkEndpoint,
+    destination_ipv4: [u8; 4],
+    identifier: u16,
+    sequence_number: u16,
+    payload: [u8; PAYLOAD_CAPACITY],
+    payload_len: usize,
+}
+
+impl<const PAYLOAD_CAPACITY: usize> InflightIcmpEchoRequest<PAYLOAD_CAPACITY> {
+    pub(crate) fn new(
+        endpoint: LocalNetworkEndpoint,
+        destination_ipv4: [u8; 4],
+        identifier: u16,
+        sequence_number: u16,
+        payload: &[u8],
+    ) -> Result<Self, InflightIcmpEchoResult> {
+        if payload.len() > PAYLOAD_CAPACITY {
+            return Err(InflightIcmpEchoResult::InflightPayloadTooLarge {
+                required_len: payload.len(),
+                max_len: PAYLOAD_CAPACITY,
+            });
+        }
+
+        let mut stored_payload = [0; PAYLOAD_CAPACITY];
+        stored_payload[..payload.len()].copy_from_slice(payload);
+
+        Ok(Self {
+            endpoint,
+            destination_ipv4,
+            identifier,
+            sequence_number,
+            payload: stored_payload,
+            payload_len: payload.len(),
+        })
+    }
+
+    pub(crate) const fn endpoint(self) -> LocalNetworkEndpoint {
+        self.endpoint
+    }
+
+    pub(crate) const fn destination_ipv4(self) -> [u8; 4] {
+        self.destination_ipv4
+    }
+
+    pub(crate) const fn identifier(self) -> u16 {
+        self.identifier
+    }
+
+    pub(crate) const fn sequence_number(self) -> u16 {
+        self.sequence_number
+    }
+
+    pub(crate) fn payload(&self) -> &[u8] {
+        &self.payload[..self.payload_len]
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SingleInflightIcmpEcho<const PAYLOAD_CAPACITY: usize> {
+    inflight: Option<InflightIcmpEchoRequest<PAYLOAD_CAPACITY>>,
+}
+
+impl<const PAYLOAD_CAPACITY: usize> SingleInflightIcmpEcho<PAYLOAD_CAPACITY> {
+    pub(crate) const fn new() -> Self {
+        Self { inflight: None }
+    }
+
+    pub(crate) const fn inflight(&self) -> Option<InflightIcmpEchoRequest<PAYLOAD_CAPACITY>> {
+        self.inflight
+    }
+
+    pub(crate) const fn inflight_destination_ipv4(&self) -> Option<[u8; 4]> {
+        match self.inflight {
+            Some(request) => Some(request.destination_ipv4()),
+            None => None,
+        }
+    }
+
+    fn store(
+        &mut self,
+        request: InflightIcmpEchoRequest<PAYLOAD_CAPACITY>,
+    ) -> Result<(), InflightIcmpEchoResult> {
+        if let Some(existing) = self.inflight {
+            return Err(InflightIcmpEchoResult::InflightRequestAlreadyTracked {
+                destination_ipv4: existing.destination_ipv4(),
+            });
+        }
+
+        self.inflight = Some(request);
+        Ok(())
+    }
+
+    fn take(&mut self) -> Option<InflightIcmpEchoRequest<PAYLOAD_CAPACITY>> {
+        self.inflight.take()
+    }
+
+    fn restore(&mut self, request: InflightIcmpEchoRequest<PAYLOAD_CAPACITY>) {
+        self.inflight = Some(request);
+    }
+}
+
+pub(crate) fn record_single_inflight_ipv4_icmp_echo_request<const PAYLOAD_CAPACITY: usize>(
+    inflight: &mut SingleInflightIcmpEcho<PAYLOAD_CAPACITY>,
+    endpoint: LocalNetworkEndpoint,
+    destination_ipv4: [u8; 4],
+    identifier: u16,
+    sequence_number: u16,
+    payload: &[u8],
+) -> InflightIcmpEchoResult {
+    let request = match InflightIcmpEchoRequest::new(
+        endpoint,
+        destination_ipv4,
+        identifier,
+        sequence_number,
+        payload,
+    ) {
+        Ok(request) => request,
+        Err(error) => return error,
+    };
+
+    match inflight.store(request) {
+        Ok(()) => InflightIcmpEchoResult::InflightRequestTracked,
+        Err(error) => error,
+    }
+}
+
 pub(crate) fn transmit_or_queue_single_pending_ipv4_icmp_echo_request<
     D: NetworkDevice,
     const ARP_CAPACITY: usize,
@@ -1439,6 +1578,15 @@ pub(crate) enum PendingIcmpEchoPollResult {
     PendingResult(PendingIcmpEchoResult),
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum InflightIcmpEchoPollResult {
+    NoInflightRequest,
+    NoFrame,
+    ReceiveBufferTooSmall,
+    ReceiveError(DeviceError),
+    ObservationResult(InflightIcmpEchoResult),
+}
+
 pub(crate) fn poll_local_network_device<D: NetworkDevice>(
     device: &mut D,
     endpoint: LocalNetworkEndpoint,
@@ -1533,6 +1681,129 @@ pub(crate) fn poll_pending_arp_reply_and_transmit_single_pending_ipv4_icmp_echo_
             transmit_buffer,
         ),
     )
+}
+
+pub(crate) fn observe_single_inflight_ipv4_icmp_echo_reply<const PAYLOAD_CAPACITY: usize>(
+    inflight: &mut SingleInflightIcmpEcho<PAYLOAD_CAPACITY>,
+    reply_frame: &[u8],
+) -> InflightIcmpEchoResult {
+    let request = match inflight.take() {
+        Some(request) => request,
+        None => return InflightIcmpEchoResult::NoInflightRequest,
+    };
+
+    let result = match icmp_echo_reply_matches_inflight(reply_frame, &request) {
+        Ok(()) => InflightIcmpEchoResult::IcmpEchoReplyMatched {
+            payload_len: request.payload().len(),
+        },
+        Err(InflightIcmpEchoResult::NonMatchingIcmpEchoReply { .. }) => {
+            InflightIcmpEchoResult::NonMatchingIcmpEchoReply {
+                destination_ipv4: request.destination_ipv4(),
+            }
+        }
+        Err(error) => error,
+    };
+
+    if !matches!(result, InflightIcmpEchoResult::IcmpEchoReplyMatched { .. }) {
+        inflight.restore(request);
+    }
+
+    result
+}
+
+pub(crate) fn poll_single_inflight_ipv4_icmp_echo_reply<
+    D: NetworkDevice,
+    const PAYLOAD_CAPACITY: usize,
+>(
+    device: &mut D,
+    inflight: &mut SingleInflightIcmpEcho<PAYLOAD_CAPACITY>,
+    receive_buffer: &mut [u8],
+) -> InflightIcmpEchoPollResult {
+    if inflight.inflight().is_none() {
+        return InflightIcmpEchoPollResult::NoInflightRequest;
+    }
+
+    let received = match device.receive_frame(receive_buffer) {
+        Ok(frame) => frame,
+        Err(DeviceError::WouldBlock) => return InflightIcmpEchoPollResult::NoFrame,
+        Err(DeviceError::BufferTooSmall) => {
+            return InflightIcmpEchoPollResult::ReceiveBufferTooSmall;
+        }
+        Err(error) => return InflightIcmpEchoPollResult::ReceiveError(error),
+    };
+
+    InflightIcmpEchoPollResult::ObservationResult(observe_single_inflight_ipv4_icmp_echo_reply(
+        inflight, received,
+    ))
+}
+
+fn icmp_echo_reply_matches_inflight<const PAYLOAD_CAPACITY: usize>(
+    reply_frame: &[u8],
+    request: &InflightIcmpEchoRequest<PAYLOAD_CAPACITY>,
+) -> Result<(), InflightIcmpEchoResult> {
+    let frame = EthernetFrame::parse(reply_frame).map_err(InflightIcmpEchoResult::ReplyError)?;
+    if frame.ether_type() != EtherType::Ipv4 {
+        return Err(InflightIcmpEchoResult::ReplyError(
+            PacketError::UnsupportedEtherType,
+        ));
+    }
+    if frame.destination() != request.endpoint().mac() {
+        return Err(InflightIcmpEchoResult::NonMatchingIcmpEchoReply {
+            destination_ipv4: request.destination_ipv4(),
+        });
+    }
+
+    let ipv4_bytes = frame.payload();
+    let packet = Ipv4Packet::parse(ipv4_bytes).map_err(InflightIcmpEchoResult::ReplyError)?;
+    if packet.header_len() != IPV4_MIN_HEADER_LEN {
+        return Err(InflightIcmpEchoResult::ReplyError(
+            PacketError::UnsupportedIpv4Options,
+        ));
+    }
+    if ipv4_fragment_field(ipv4_bytes) != 0 {
+        return Err(InflightIcmpEchoResult::ReplyError(
+            PacketError::UnsupportedIpv4Fragment,
+        ));
+    }
+    if !ipv4_header_checksum_is_valid(&ipv4_bytes[..packet.header_len()]) {
+        return Err(InflightIcmpEchoResult::ReplyError(
+            PacketError::InvalidIpv4Checksum,
+        ));
+    }
+    if packet.protocol() != IPV4_PROTOCOL_ICMP {
+        return Err(InflightIcmpEchoResult::ReplyError(
+            PacketError::UnsupportedIpv4Protocol,
+        ));
+    }
+    if packet.source() != request.destination_ipv4()
+        || packet.destination() != request.endpoint().ipv4()
+    {
+        return Err(InflightIcmpEchoResult::NonMatchingIcmpEchoReply {
+            destination_ipv4: request.destination_ipv4(),
+        });
+    }
+
+    let icmp_reply = packet.payload();
+    if icmp_reply.len() < ICMP_ECHO_HEADER_LEN || icmp_reply[0] != 0 || icmp_reply[1] != 0 {
+        return Err(InflightIcmpEchoResult::ReplyError(
+            PacketError::InvalidIcmpEcho,
+        ));
+    }
+    if !internet_checksum_is_valid(icmp_reply) {
+        return Err(InflightIcmpEchoResult::ReplyError(
+            PacketError::InvalidIcmpChecksum,
+        ));
+    }
+    if read_be_u16(icmp_reply, 4) != request.identifier()
+        || read_be_u16(icmp_reply, 6) != request.sequence_number()
+        || &icmp_reply[ICMP_ECHO_HEADER_LEN..] != request.payload()
+    {
+        return Err(InflightIcmpEchoResult::NonMatchingIcmpEchoReply {
+            destination_ipv4: request.destination_ipv4(),
+        });
+    }
+
+    Ok(())
 }
 
 pub(crate) fn dispatch_local_packet(
@@ -4631,6 +4902,234 @@ mod tests {
     }
 
     #[test_case]
+    fn single_inflight_icmp_echo_reply_poll_matches_and_clears_request() {
+        let mut inflight = SingleInflightIcmpEcho::<8>::new();
+        let payload = [1, 2, 3, 4];
+        assert_eq!(
+            record_single_inflight_ipv4_icmp_echo_request(
+                &mut inflight,
+                local_endpoint(),
+                [192, 0, 2, 20],
+                0x1234,
+                7,
+                &payload,
+            ),
+            InflightIcmpEchoResult::InflightRequestTracked
+        );
+
+        let reply = icmp_echo_reply_frame();
+        let mut device = PollDevice::with_frame(&reply);
+        let mut receive_buffer = [0u8; 128];
+
+        assert_eq!(
+            poll_single_inflight_ipv4_icmp_echo_reply(
+                &mut device,
+                &mut inflight,
+                &mut receive_buffer,
+            ),
+            InflightIcmpEchoPollResult::ObservationResult(
+                InflightIcmpEchoResult::IcmpEchoReplyMatched {
+                    payload_len: payload.len(),
+                }
+            )
+        );
+        assert_eq!(device.receive_attempts, 1);
+        assert_eq!(device.transmitted_len, 0);
+        assert_eq!(inflight.inflight(), None);
+    }
+
+    #[test_case]
+    fn single_inflight_icmp_echo_reply_observation_rejects_nonmatching_reply_fields() {
+        let payload = [1, 2, 3, 4];
+        let expected_nonmatch = InflightIcmpEchoResult::NonMatchingIcmpEchoReply {
+            destination_ipv4: [192, 0, 2, 20],
+        };
+
+        let mut source_mismatch = icmp_echo_reply_frame();
+        source_mismatch[ETHERNET_HEADER_LEN + 12..ETHERNET_HEADER_LEN + 16]
+            .copy_from_slice(&[192, 0, 2, 21]);
+        rewrite_ipv4_checksum(&mut source_mismatch);
+        assert_inflight_observation_preserves_request(source_mismatch, expected_nonmatch);
+
+        let mut destination_mismatch = icmp_echo_reply_frame();
+        destination_mismatch[ETHERNET_HEADER_LEN + 16..ETHERNET_HEADER_LEN + 20]
+            .copy_from_slice(&[192, 0, 2, 99]);
+        rewrite_ipv4_checksum(&mut destination_mismatch);
+        assert_inflight_observation_preserves_request(destination_mismatch, expected_nonmatch);
+
+        let mut identifier_mismatch = icmp_echo_reply_frame();
+        identifier_mismatch[ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + 4] = 0xab;
+        rewrite_icmp_checksum(&mut identifier_mismatch);
+        assert_inflight_observation_preserves_request(identifier_mismatch, expected_nonmatch);
+
+        let mut sequence_mismatch = icmp_echo_reply_frame();
+        sequence_mismatch[ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + 7] = 0x08;
+        rewrite_icmp_checksum(&mut sequence_mismatch);
+        assert_inflight_observation_preserves_request(sequence_mismatch, expected_nonmatch);
+
+        let mut payload_mismatch = icmp_echo_reply_frame();
+        payload_mismatch[ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + ICMP_ECHO_HEADER_LEN + 3] =
+            0x99;
+        rewrite_icmp_checksum(&mut payload_mismatch);
+        assert_inflight_observation_preserves_request(payload_mismatch, expected_nonmatch);
+
+        let mut inflight = SingleInflightIcmpEcho::<4>::new();
+        assert_eq!(
+            record_single_inflight_ipv4_icmp_echo_request(
+                &mut inflight,
+                local_endpoint(),
+                [192, 0, 2, 20],
+                0x1234,
+                7,
+                &payload,
+            ),
+            InflightIcmpEchoResult::InflightRequestTracked
+        );
+        assert_eq!(
+            record_single_inflight_ipv4_icmp_echo_request(
+                &mut inflight,
+                local_endpoint(),
+                [192, 0, 2, 44],
+                0x1234,
+                7,
+                &payload,
+            ),
+            InflightIcmpEchoResult::InflightRequestAlreadyTracked {
+                destination_ipv4: [192, 0, 2, 20],
+            }
+        );
+    }
+
+    #[test_case]
+    fn single_inflight_icmp_echo_reply_poll_distinguishes_empty_and_receive_errors() {
+        let mut inflight = SingleInflightIcmpEcho::<4>::new();
+        let mut receive_buffer = [0u8; 128];
+        let reply = icmp_echo_reply_frame();
+        let mut no_inflight = PollDevice::with_frame(&reply);
+
+        assert_eq!(
+            poll_single_inflight_ipv4_icmp_echo_reply(
+                &mut no_inflight,
+                &mut inflight,
+                &mut receive_buffer,
+            ),
+            InflightIcmpEchoPollResult::NoInflightRequest
+        );
+        assert_eq!(no_inflight.receive_attempts, 0);
+
+        assert_eq!(
+            record_single_inflight_ipv4_icmp_echo_request(
+                &mut inflight,
+                local_endpoint(),
+                [192, 0, 2, 20],
+                0x1234,
+                7,
+                &[1, 2, 3, 4],
+            ),
+            InflightIcmpEchoResult::InflightRequestTracked
+        );
+
+        let mut no_frame = PollDevice::with_receive_error(DeviceError::WouldBlock);
+        assert_eq!(
+            poll_single_inflight_ipv4_icmp_echo_reply(
+                &mut no_frame,
+                &mut inflight,
+                &mut receive_buffer,
+            ),
+            InflightIcmpEchoPollResult::NoFrame
+        );
+        assert_eq!(inflight.inflight_destination_ipv4(), Some([192, 0, 2, 20]));
+
+        let mut small_rx = [0u8; ETHERNET_HEADER_LEN - 1];
+        let mut receive_pressure = PollDevice::with_frame(&reply);
+        assert_eq!(
+            poll_single_inflight_ipv4_icmp_echo_reply(
+                &mut receive_pressure,
+                &mut inflight,
+                &mut small_rx,
+            ),
+            InflightIcmpEchoPollResult::ReceiveBufferTooSmall
+        );
+        assert_eq!(inflight.inflight_destination_ipv4(), Some([192, 0, 2, 20]));
+
+        let mut receive_error = PollDevice::with_receive_error(DeviceError::Io);
+        assert_eq!(
+            poll_single_inflight_ipv4_icmp_echo_reply(
+                &mut receive_error,
+                &mut inflight,
+                &mut receive_buffer,
+            ),
+            InflightIcmpEchoPollResult::ReceiveError(DeviceError::Io)
+        );
+        assert_eq!(inflight.inflight_destination_ipv4(), Some([192, 0, 2, 20]));
+    }
+
+    #[test_case]
+    fn single_inflight_icmp_echo_reply_observation_reports_malformed_and_payload_pressure() {
+        let mut inflight = SingleInflightIcmpEcho::<2>::new();
+        assert_eq!(
+            record_single_inflight_ipv4_icmp_echo_request(
+                &mut inflight,
+                local_endpoint(),
+                [192, 0, 2, 20],
+                0x1234,
+                7,
+                &[1, 2, 3],
+            ),
+            InflightIcmpEchoResult::InflightPayloadTooLarge {
+                required_len: 3,
+                max_len: 2,
+            }
+        );
+        assert_eq!(inflight.inflight(), None);
+
+        let mut inflight = SingleInflightIcmpEcho::<4>::new();
+        assert_eq!(
+            record_single_inflight_ipv4_icmp_echo_request(
+                &mut inflight,
+                local_endpoint(),
+                [192, 0, 2, 20],
+                0x1234,
+                7,
+                &[1, 2, 3, 4],
+            ),
+            InflightIcmpEchoResult::InflightRequestTracked
+        );
+
+        assert_eq!(
+            observe_single_inflight_ipv4_icmp_echo_reply(
+                &mut inflight,
+                &icmp_echo_reply_frame()[..ETHERNET_HEADER_LEN - 1],
+            ),
+            InflightIcmpEchoResult::ReplyError(PacketError::Truncated)
+        );
+        assert_eq!(inflight.inflight_destination_ipv4(), Some([192, 0, 2, 20]));
+
+        let mut unsupported = icmp_echo_reply_frame();
+        write_be_u16(&mut unsupported, 12, 0x86dd);
+        assert_eq!(
+            observe_single_inflight_ipv4_icmp_echo_reply(&mut inflight, &unsupported),
+            InflightIcmpEchoResult::ReplyError(PacketError::UnsupportedEtherType)
+        );
+
+        let mut bad_icmp_checksum = icmp_echo_reply_frame();
+        bad_icmp_checksum[ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + 2] ^= 0xff;
+        assert_eq!(
+            observe_single_inflight_ipv4_icmp_echo_reply(&mut inflight, &bad_icmp_checksum),
+            InflightIcmpEchoResult::ReplyError(PacketError::InvalidIcmpChecksum)
+        );
+
+        let mut echo_request_not_reply = icmp_echo_reply_frame();
+        echo_request_not_reply[ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN] = 8;
+        rewrite_icmp_checksum(&mut echo_request_not_reply);
+        assert_eq!(
+            observe_single_inflight_ipv4_icmp_echo_reply(&mut inflight, &echo_request_not_reply),
+            InflightIcmpEchoResult::ReplyError(PacketError::InvalidIcmpEcho)
+        );
+        assert_eq!(inflight.inflight_destination_ipv4(), Some([192, 0, 2, 20]));
+    }
+
+    #[test_case]
     fn poll_step_transmits_arp_reply_from_caller_owned_buffers() {
         let endpoint = local_endpoint();
         let request = arp_request_frame();
@@ -4959,6 +5458,55 @@ mod tests {
         frame
     }
 
+    fn icmp_echo_reply_frame() -> [u8; ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + 12] {
+        let mut frame = [0u8; ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + 12];
+        frame[..6].copy_from_slice(&[0x02, 0, 0, 0, 0, 99]);
+        frame[6..12].copy_from_slice(&[0x02, 0, 0, 0, 0, 20]);
+        write_be_u16(&mut frame, 12, ETHERTYPE_IPV4);
+
+        let ipv4 = &mut frame[ETHERNET_HEADER_LEN..ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN];
+        ipv4[0] = 0x45;
+        write_be_u16(ipv4, 2, (IPV4_MIN_HEADER_LEN + 12) as u16);
+        write_be_u16(ipv4, 4, 0x4444);
+        ipv4[8] = 64;
+        ipv4[9] = IPV4_PROTOCOL_ICMP;
+        ipv4[12..16].copy_from_slice(&[192, 0, 2, 20]);
+        ipv4[16..20].copy_from_slice(&[192, 0, 2, 1]);
+        let checksum = internet_checksum(ipv4);
+        write_be_u16(ipv4, 10, checksum);
+
+        let icmp = &mut frame[ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN..];
+        icmp[0] = 0;
+        icmp[4..].copy_from_slice(&[0x12, 0x34, 0, 7, 1, 2, 3, 4]);
+        let checksum = internet_checksum(icmp);
+        write_be_u16(icmp, 2, checksum);
+        frame
+    }
+
+    fn assert_inflight_observation_preserves_request(
+        frame: [u8; ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + 12],
+        expected: InflightIcmpEchoResult,
+    ) {
+        let mut inflight = SingleInflightIcmpEcho::<4>::new();
+        assert_eq!(
+            record_single_inflight_ipv4_icmp_echo_request(
+                &mut inflight,
+                local_endpoint(),
+                [192, 0, 2, 20],
+                0x1234,
+                7,
+                &[1, 2, 3, 4],
+            ),
+            InflightIcmpEchoResult::InflightRequestTracked
+        );
+
+        assert_eq!(
+            observe_single_inflight_ipv4_icmp_echo_reply(&mut inflight, &frame),
+            expected
+        );
+        assert_eq!(inflight.inflight_destination_ipv4(), Some([192, 0, 2, 20]));
+    }
+
     fn icmp_echo_request_with_options_frame() -> [u8; ETHERNET_HEADER_LEN + 24 + 8] {
         let mut frame = [0u8; ETHERNET_HEADER_LEN + 24 + 8];
         frame[..6].copy_from_slice(&[0x02, 0, 0, 0, 0, 99]);
@@ -4990,5 +5538,16 @@ mod tests {
         write_be_u16(ipv4, 10, 0);
         let checksum = internet_checksum(ipv4);
         write_be_u16(ipv4, 10, checksum);
+    }
+
+    fn rewrite_icmp_checksum(frame: &mut [u8]) {
+        let header_len = ((frame[ETHERNET_HEADER_LEN] & 0x0f) as usize) * 4;
+        let total_len = read_be_u16(frame, ETHERNET_HEADER_LEN + 2) as usize;
+        let icmp_start = ETHERNET_HEADER_LEN + header_len;
+        let icmp_end = ETHERNET_HEADER_LEN + total_len;
+        let icmp = &mut frame[icmp_start..icmp_end];
+        write_be_u16(icmp, 2, 0);
+        let checksum = internet_checksum(icmp);
+        write_be_u16(icmp, 2, checksum);
     }
 }

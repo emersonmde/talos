@@ -3923,6 +3923,26 @@ The post-review correction chain is:
     'phase12-network-pending-aware-arp-reply-poll-closeout-20260619', bounded
     to source/task/docs reconciliation.
 
+223. Phase 12.3 single-inflight ICMP echo reply observation core: accepted in
+    'phase12-network-single-inflight-icmp-echo-reply-observation-core-20260619'
+    with classification
+    'phase12-network-single-inflight-icmp-echo-reply-observation-core-accepted'.
+    src/network.rs adds SingleInflightIcmpEcho, InflightIcmpEchoRequest,
+    InflightIcmpEchoPollResult, and host-only helpers to record one in-flight
+    IPv4 ICMP echo request and complete it only when a received Ethernet IPv4
+    ICMP echo reply matches local endpoint addressing, remote source IPv4,
+    identifier, sequence number, and payload bytes with valid checksums.
+    Unit tests cover match-and-clear behavior, source/destination/id/sequence/
+    payload mismatches that preserve the record, no-inflight, no-frame,
+    receive pressure, receive errors, malformed/unsupported frames, bad
+    checksums, duplicate in-flight records, and payload-capacity pressure. Live
+    packet I/O, driver adapters, packet queues, autonomous timers, shell ping,
+    sockets, SSH, smoltcp adoption, reachability, hardware work, lab mutation,
+    boot publication, and phase transition remain rejected. The selected next
+    task is
+    'phase12-network-single-inflight-icmp-echo-reply-observation-closeout-20260619',
+    bounded to source/task/docs reconciliation.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
@@ -13172,6 +13192,16 @@ Milestone 12.3: IP Stack
   reply completion tracking, shell ping, packet queues, autonomous polling,
   live packet I/O, sockets, SSH, reachability, hardware work, smoltcp adoption,
   and phase transition remain rejected by the closeout itself.
+- The single-inflight ICMP echo reply observation core accepts a host-only
+  receive boundary that records one in-flight IPv4 ICMP echo request and clears
+  it only after a received Ethernet/IPv4/ICMP echo reply matches local endpoint
+  addressing, remote source IPv4, identifier, sequence number, and payload
+  bytes with valid checksums. Mismatched replies, malformed or unsupported
+  frames, no-frame, receive pressure, receive errors, duplicate in-flight
+  records, and payload-capacity pressure are deterministic. Live packet I/O,
+  driver adapters, shell ping, packet queues, autonomous timers, sockets, SSH,
+  reachability, hardware work, smoltcp adoption, and phase transition remain
+  rejected.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
