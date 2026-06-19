@@ -1,0 +1,116 @@
+{
+  "task_id": "phase12-network-outbound-frame-construction-closeout-20260619",
+  "status": "accepted",
+  "classification": "phase12-network-outbound-frame-construction-closeout-accepted",
+  "accepted_at": "2026-06-19T08:48:00Z",
+  "evidence_level": [
+    "static source/task/evidence consistency review",
+    "task-owned JSON classification",
+    "docs build",
+    "diff checks"
+  ],
+  "reviewed_evidence": [
+    "tasks/2026-06-19-phase12-network-outbound-frame-construction-core.md",
+    "tasks/evidence/2026-06-19-phase12-network-outbound-frame-construction-core/classification.json",
+    "src/network.rs",
+    "tasks/2026-06-19-phase12-network-outbound-frame-construction-source-checkpoint.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md",
+    "commit f9661b41279d1fb5e34009ec14e6145e8bf1a35b"
+  ],
+  "accepted_behavior": [
+    "build_outbound_ethernet_frame builds an Ethernet II frame into caller-owned storage from an already resolved outbound neighbor",
+    "resolved neighbor input writes destination MAC, source MAC, caller-selected EtherType, exact payload bytes, and deterministic returned frame length",
+    "unresolved neighbor input returns OutboundFrameError::NeighborUnresolved carrying the destination IPv4 without queueing, ARP request emission, driver access, cache mutation, or transmit behavior",
+    "too-small output buffers return OutboundFrameError::OutputBufferTooSmall with required and available lengths before partial-frame acceptance",
+    "resolve_outbound_neighbor composes with build_outbound_ethernet_frame through a cached ArpCache entry"
+  ],
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "No later queued Phase 12.3 task exists with explicit scope, non-goals, acceptance criteria, validation gates, docs requirements, evidence requirements, and dependencies. Supervisor planning is required before choosing outbound IPv4/ICMP request construction, ARP request emission/neighbor discovery plumbing, driver transmit integration, or any other follow-up.",
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Phase 12.3 now has accepted caller-buffered Ethernet II frame construction from a resolved outbound neighbor into caller-owned storage"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "deterministic tests cover destination MAC, source MAC, EtherType, payload preservation, returned length, unresolved-neighbor rejection, too-small-output rejection, and resolver-to-frame composition"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "the implementation preserves the host-only/no-live-I/O boundary by avoiding driver access, transmit scheduling, cache mutation, packet queues, ARP request emission, allocation, and async behavior"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "no implementation correction was required during closeout because static/source/task evidence matched the accepted core claims"
+    },
+    {
+      "disposition": "deferred",
+      "finding": "ARP request emission, retry timers, packet queues, routing, outbound IPv4/ICMP request construction, driver transmit scheduling, live packet I/O, sockets, SSH, smoltcp integration, and Pi 5 packet movement evidence remain future bounded work"
+    },
+    {
+      "disposition": "removed",
+      "finding": "no source, docs, dependencies, prior task evidence, or accepted APIs were removed by this closeout"
+    },
+    {
+      "disposition": "rejected",
+      "finding": "live packet I/O, hardware-driver readiness, link readiness, ping/network reachability behavior, sockets, SSH, smoltcp adoption, and phase transition are not accepted by this closeout"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "static/source/task evidence review",
+      "result": "pass"
+    },
+    {
+      "gate": "jq empty",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "hardware": {
+    "hardware_test_lock_acquired": false,
+    "pi5_hardware_run": false,
+    "lab_mutation": false,
+    "boot_archive_publication": false,
+    "live_packet_io": false
+  },
+  "rejected_claims": [
+    "ARP request emission",
+    "retry timers",
+    "packet queues",
+    "routing table",
+    "subnet or gateway logic",
+    "outbound IPv4/ICMP request construction",
+    "driver transmit scheduling",
+    "live packet I/O",
+    "RP1 Ethernet driver readiness",
+    "DMA descriptor ownership",
+    "interrupt integration",
+    "packet capture",
+    "link readiness",
+    "network reachability",
+    "ping behavior",
+    "socket API",
+    "SSH behavior",
+    "UDP/TCP",
+    "DHCP",
+    "DNS",
+    "smoltcp adoption",
+    "userspace networking API",
+    "Pi 5 hardware proof",
+    "phase transition"
+  ]
+}

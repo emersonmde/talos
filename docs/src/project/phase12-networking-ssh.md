@@ -2678,3 +2678,13 @@ mutate ARP cache state, consult a driver, transmit frames, queue packets, emit
 ARP requests, construct IPv4/ICMP requests, adopt smoltcp, claim sockets/SSH,
 claim ping/network reachability behavior, claim RP1 Ethernet readiness, or
 change the Phase 12.1 hardware frontier.
+
+phase12-network-outbound-frame-construction-closeout-20260619 accepts
+phase12-network-outbound-frame-construction-closeout-accepted. The closeout
+confirms the host-only caller-buffered Ethernet II frame-construction frontier
+and selects no next worker task. selected_next_task is null,
+planningNeeded=true, and supervisor planning is required before any further
+Phase 12.3 work such as outbound IPv4/ICMP request construction, ARP request
+emission, neighbor-discovery plumbing, packet queues, driver transmit, live
+packet I/O, sockets, SSH, ping/network reachability, hardware readiness, or
+phase transition.

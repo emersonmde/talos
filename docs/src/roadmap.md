@@ -3683,6 +3683,20 @@ The post-review correction chain is:
     SSH, hardware-driver readiness, ping/network reachability behavior, link
     readiness, and phase transition remain rejected.
 
+209. Phase 12.3 outbound frame construction closeout: accepted in
+    'phase12-network-outbound-frame-construction-closeout-20260619' with
+    classification
+    'phase12-network-outbound-frame-construction-closeout-accepted'. The
+    closeout confirms the accepted host-only caller-buffered Ethernet II frame
+    construction frontier and selects no next worker task. selected_next_task
+    is null and planningNeeded=true because no later queued Phase 12.3 task has
+    explicit scope, non-goals, acceptance criteria, validation gates, docs
+    requirements, evidence requirements, and dependencies. Supervisor planning
+    is required before outbound IPv4/ICMP request construction, ARP request
+    emission, neighbor-discovery plumbing, packet queues, driver transmit, live
+    packet I/O, sockets, SSH, hardware-driver readiness, ping/network
+    reachability behavior, link readiness, or phase transition.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
