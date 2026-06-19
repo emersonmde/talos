@@ -65,6 +65,62 @@ pub(crate) enum OutboundFrameError {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum OutboundRouteError {
+    NoRouteToDestination { destination_ipv4: [u8; 4] },
+    Frame(OutboundFrameError),
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct Ipv4EgressRoutePolicy {
+    subnet_mask: [u8; 4],
+    gateway_ipv4: Option<[u8; 4]>,
+}
+
+impl Ipv4EgressRoutePolicy {
+    pub(crate) const fn new(subnet_mask: [u8; 4], gateway_ipv4: Option<[u8; 4]>) -> Self {
+        Self {
+            subnet_mask,
+            gateway_ipv4,
+        }
+    }
+
+    pub(crate) const fn subnet_mask(self) -> [u8; 4] {
+        self.subnet_mask
+    }
+
+    pub(crate) const fn gateway_ipv4(self) -> Option<[u8; 4]> {
+        self.gateway_ipv4
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum Ipv4EgressRouteKind {
+    SameSubnet,
+    Gateway,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct Ipv4EgressRouteDecision {
+    destination_ipv4: [u8; 4],
+    next_hop_ipv4: [u8; 4],
+    route_kind: Ipv4EgressRouteKind,
+}
+
+impl Ipv4EgressRouteDecision {
+    pub(crate) const fn destination_ipv4(self) -> [u8; 4] {
+        self.destination_ipv4
+    }
+
+    pub(crate) const fn next_hop_ipv4(self) -> [u8; 4] {
+        self.next_hop_ipv4
+    }
+
+    pub(crate) const fn route_kind(self) -> Ipv4EgressRouteKind {
+        self.route_kind
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum OutboundRequestKind {
     Ipv4IcmpEchoRequest,
     ArpRequest,
@@ -463,6 +519,29 @@ pub(crate) fn resolve_outbound_neighbor<const ARP_CAPACITY: usize>(
     }
 }
 
+pub(crate) fn route_ipv4_egress(
+    endpoint: LocalNetworkEndpoint,
+    policy: Ipv4EgressRoutePolicy,
+    destination_ipv4: [u8; 4],
+) -> Result<Ipv4EgressRouteDecision, OutboundRouteError> {
+    if ipv4_same_subnet(endpoint.ipv4(), destination_ipv4, policy.subnet_mask()) {
+        return Ok(Ipv4EgressRouteDecision {
+            destination_ipv4,
+            next_hop_ipv4: destination_ipv4,
+            route_kind: Ipv4EgressRouteKind::SameSubnet,
+        });
+    }
+
+    match policy.gateway_ipv4() {
+        Some(gateway_ipv4) => Ok(Ipv4EgressRouteDecision {
+            destination_ipv4,
+            next_hop_ipv4: gateway_ipv4,
+            route_kind: Ipv4EgressRouteKind::Gateway,
+        }),
+        None => Err(OutboundRouteError::NoRouteToDestination { destination_ipv4 }),
+    }
+}
+
 pub(crate) fn build_outbound_ethernet_frame(
     resolution: OutboundNeighborResolution,
     source_mac: MacAddress,
@@ -528,8 +607,29 @@ pub(crate) fn build_outbound_ipv4_icmp_echo_request(
     payload: &[u8],
     output: &mut [u8],
 ) -> Result<usize, OutboundFrameError> {
-    let destination_ipv4 = resolution.destination_ipv4();
-    let destination_mac = resolved_destination_mac(resolution)?;
+    build_outbound_routed_ipv4_icmp_echo_request(
+        resolution,
+        resolution.destination_ipv4(),
+        endpoint,
+        identifier,
+        sequence_number,
+        ttl,
+        payload,
+        output,
+    )
+}
+
+pub(crate) fn build_outbound_routed_ipv4_icmp_echo_request(
+    next_hop_resolution: OutboundNeighborResolution,
+    destination_ipv4: [u8; 4],
+    endpoint: LocalNetworkEndpoint,
+    identifier: u16,
+    sequence_number: u16,
+    ttl: u8,
+    payload: &[u8],
+    output: &mut [u8],
+) -> Result<usize, OutboundFrameError> {
+    let destination_mac = resolved_destination_mac(next_hop_resolution)?;
     let icmp_len = ICMP_ECHO_HEADER_LEN + payload.len();
     let ipv4_len = IPV4_MIN_HEADER_LEN + icmp_len;
     if ipv4_len > u16::MAX as usize {
@@ -603,6 +703,47 @@ pub(crate) fn select_outbound_ipv4_icmp_echo_request<const ARP_CAPACITY: usize>(
         OutboundNeighborResolution::Unresolved { destination_ipv4 } => (
             OutboundRequestKind::ArpRequest,
             build_outbound_arp_request(endpoint, destination_ipv4, output)?,
+        ),
+    };
+
+    Ok(OutboundRequestSelection {
+        request_kind,
+        frame_len,
+    })
+}
+
+pub(crate) fn select_routed_outbound_ipv4_icmp_echo_request<const ARP_CAPACITY: usize>(
+    arp_cache: &ArpCache<ARP_CAPACITY>,
+    endpoint: LocalNetworkEndpoint,
+    route_policy: Ipv4EgressRoutePolicy,
+    destination_ipv4: [u8; 4],
+    identifier: u16,
+    sequence_number: u16,
+    ttl: u8,
+    payload: &[u8],
+    output: &mut [u8],
+) -> Result<OutboundRequestSelection, OutboundRouteError> {
+    let route = route_ipv4_egress(endpoint, route_policy, destination_ipv4)?;
+    let next_hop_resolution = resolve_outbound_neighbor(arp_cache, route.next_hop_ipv4());
+    let (request_kind, frame_len) = match next_hop_resolution {
+        OutboundNeighborResolution::Resolved { .. } => (
+            OutboundRequestKind::Ipv4IcmpEchoRequest,
+            build_outbound_routed_ipv4_icmp_echo_request(
+                next_hop_resolution,
+                route.destination_ipv4(),
+                endpoint,
+                identifier,
+                sequence_number,
+                ttl,
+                payload,
+                output,
+            )
+            .map_err(OutboundRouteError::Frame)?,
+        ),
+        OutboundNeighborResolution::Unresolved { destination_ipv4 } => (
+            OutboundRequestKind::ArpRequest,
+            build_outbound_arp_request(endpoint, destination_ipv4, output)
+                .map_err(OutboundRouteError::Frame)?,
         ),
     };
 
@@ -1296,6 +1437,13 @@ fn write_be_u16(bytes: &mut [u8], offset: usize, value: u16) {
     let raw = value.to_be_bytes();
     bytes[offset] = raw[0];
     bytes[offset + 1] = raw[1];
+}
+
+fn ipv4_same_subnet(local_ipv4: [u8; 4], destination_ipv4: [u8; 4], subnet_mask: [u8; 4]) -> bool {
+    let local = u32::from_be_bytes(local_ipv4);
+    let destination = u32::from_be_bytes(destination_ipv4);
+    let mask = u32::from_be_bytes(subnet_mask);
+    (local & mask) == (destination & mask)
 }
 
 fn resolved_destination_mac(
@@ -2265,6 +2413,212 @@ mod tests {
         );
         assert_eq!(output, [0xaa; 64]);
         assert_eq!(cache.lookup([192, 0, 2, 10]), Some(destination_mac));
+    }
+
+    #[test_case]
+    fn ipv4_egress_route_policy_uses_destination_for_same_subnet_next_hop() {
+        let endpoint = local_endpoint();
+        let policy = Ipv4EgressRoutePolicy::new([255, 255, 255, 0], Some([192, 0, 2, 254]));
+
+        let route =
+            route_ipv4_egress(endpoint, policy, [192, 0, 2, 44]).expect("same-subnet route");
+
+        assert_eq!(route.destination_ipv4(), [192, 0, 2, 44]);
+        assert_eq!(route.next_hop_ipv4(), [192, 0, 2, 44]);
+        assert_eq!(route.route_kind(), Ipv4EgressRouteKind::SameSubnet);
+    }
+
+    #[test_case]
+    fn ipv4_egress_route_policy_uses_gateway_for_off_subnet_destination() {
+        let endpoint = local_endpoint();
+        let policy = Ipv4EgressRoutePolicy::new([255, 255, 255, 0], Some([192, 0, 2, 254]));
+
+        let route = route_ipv4_egress(endpoint, policy, [198, 51, 100, 7]).expect("gateway route");
+
+        assert_eq!(route.destination_ipv4(), [198, 51, 100, 7]);
+        assert_eq!(route.next_hop_ipv4(), [192, 0, 2, 254]);
+        assert_eq!(route.route_kind(), Ipv4EgressRouteKind::Gateway);
+    }
+
+    #[test_case]
+    fn ipv4_egress_route_policy_reports_no_route_without_gateway() {
+        let endpoint = local_endpoint();
+        let policy = Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None);
+
+        assert_eq!(
+            route_ipv4_egress(endpoint, policy, [198, 51, 100, 7]),
+            Err(OutboundRouteError::NoRouteToDestination {
+                destination_ipv4: [198, 51, 100, 7],
+            })
+        );
+    }
+
+    #[test_case]
+    fn ipv4_egress_route_policy_handles_zero_and_host_mask_boundaries() {
+        let endpoint = local_endpoint();
+        let zero_mask = Ipv4EgressRoutePolicy::new([0, 0, 0, 0], None);
+        let host_mask = Ipv4EgressRoutePolicy::new([255, 255, 255, 255], Some([192, 0, 2, 254]));
+
+        assert_eq!(
+            route_ipv4_egress(endpoint, zero_mask, [203, 0, 113, 9])
+                .expect("zero mask is direct")
+                .next_hop_ipv4(),
+            [203, 0, 113, 9]
+        );
+        assert_eq!(
+            route_ipv4_egress(endpoint, host_mask, endpoint.ipv4())
+                .expect("host route to local address")
+                .route_kind(),
+            Ipv4EgressRouteKind::SameSubnet
+        );
+        assert_eq!(
+            route_ipv4_egress(endpoint, host_mask, [192, 0, 2, 44])
+                .expect("host mask uses gateway for any other destination")
+                .next_hop_ipv4(),
+            [192, 0, 2, 254]
+        );
+    }
+
+    #[test_case]
+    fn routed_outbound_selection_resolves_gateway_mac_without_mutating_cache() {
+        let endpoint = local_endpoint();
+        let gateway_mac = MacAddress::new([0x02, 0, 0, 0, 0, 254]);
+        let destination_mac = MacAddress::new([0x02, 0, 0, 0, 0, 7]);
+        let mut cache = ArpCache::<4>::new();
+        assert_eq!(
+            cache.insert_or_update([192, 0, 2, 254], gateway_mac),
+            ArpCacheUpdate::Inserted
+        );
+        assert_eq!(
+            cache.insert_or_update([198, 51, 100, 99], destination_mac),
+            ArpCacheUpdate::Inserted
+        );
+        let policy = Ipv4EgressRoutePolicy::new([255, 255, 255, 0], Some([192, 0, 2, 254]));
+        let payload = [0x99, 0x88];
+        let mut output = [0u8; 128];
+
+        let selection = select_routed_outbound_ipv4_icmp_echo_request(
+            &cache,
+            endpoint,
+            policy,
+            [198, 51, 100, 7],
+            0x2222,
+            3,
+            62,
+            &payload,
+            &mut output,
+        )
+        .expect("select routed icmp");
+
+        assert_eq!(
+            selection.request_kind(),
+            OutboundRequestKind::Ipv4IcmpEchoRequest
+        );
+        let frame = EthernetFrame::parse(&output[..selection.frame_len()]).expect("routed frame");
+        assert_eq!(frame.destination(), gateway_mac);
+        assert_eq!(frame.source(), endpoint.mac());
+        let ipv4 = Ipv4Packet::parse(frame.payload()).expect("routed ipv4");
+        assert_eq!(ipv4.destination(), [198, 51, 100, 7]);
+        assert_eq!(frame.payload()[8], 62);
+        assert_eq!(&ipv4.payload()[ICMP_ECHO_HEADER_LEN..], &payload);
+        assert_eq!(cache.lookup([192, 0, 2, 254]), Some(gateway_mac));
+        assert_eq!(cache.lookup([198, 51, 100, 7]), None);
+        assert_eq!(cache.lookup([198, 51, 100, 99]), Some(destination_mac));
+    }
+
+    #[test_case]
+    fn routed_outbound_selection_arps_for_unresolved_gateway_next_hop() {
+        let endpoint = local_endpoint();
+        let cache = ArpCache::<2>::new();
+        let policy = Ipv4EgressRoutePolicy::new([255, 255, 255, 0], Some([192, 0, 2, 254]));
+        let mut output = [0u8; 64];
+
+        let selection = select_routed_outbound_ipv4_icmp_echo_request(
+            &cache,
+            endpoint,
+            policy,
+            [198, 51, 100, 7],
+            0x2222,
+            3,
+            62,
+            &[1, 2],
+            &mut output,
+        )
+        .expect("select gateway arp");
+
+        assert_eq!(selection.request_kind(), OutboundRequestKind::ArpRequest);
+        let frame = EthernetFrame::parse(&output[..selection.frame_len()]).expect("arp frame");
+        assert_eq!(frame.destination(), MacAddress::new([0xff; 6]));
+        assert_eq!(frame.ether_type(), EtherType::Arp);
+        let arp = ArpPacket::parse_ethernet_ipv4(frame.payload()).expect("arp");
+        assert_eq!(arp.target_protocol_address(), [192, 0, 2, 254]);
+        assert_eq!(cache.lookup([192, 0, 2, 254]), None);
+        assert_eq!(cache.lookup([198, 51, 100, 7]), None);
+    }
+
+    #[test_case]
+    fn routed_outbound_selection_reports_no_route_before_touching_output() {
+        let endpoint = local_endpoint();
+        let cache = ArpCache::<0>::new();
+        let policy = Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None);
+        let mut output = [0xaa; 64];
+
+        assert_eq!(
+            select_routed_outbound_ipv4_icmp_echo_request(
+                &cache,
+                endpoint,
+                policy,
+                [198, 51, 100, 7],
+                0x2222,
+                3,
+                62,
+                &[1, 2],
+                &mut output,
+            ),
+            Err(OutboundRouteError::NoRouteToDestination {
+                destination_ipv4: [198, 51, 100, 7],
+            })
+        );
+        assert_eq!(output, [0xaa; 64]);
+    }
+
+    #[test_case]
+    fn routed_outbound_selection_wraps_frame_errors_without_cache_mutation() {
+        let endpoint = local_endpoint();
+        let gateway_mac = MacAddress::new([0x02, 0, 0, 0, 0, 254]);
+        let mut cache = ArpCache::<2>::new();
+        assert_eq!(
+            cache.insert_or_update([192, 0, 2, 254], gateway_mac),
+            ArpCacheUpdate::Inserted
+        );
+        let policy = Ipv4EgressRoutePolicy::new([255, 255, 255, 0], Some([192, 0, 2, 254]));
+        let payload = [1, 2, 3, 4];
+        let required_len =
+            ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + ICMP_ECHO_HEADER_LEN + payload.len();
+        let mut output = [0xaa; ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN];
+
+        assert_eq!(
+            select_routed_outbound_ipv4_icmp_echo_request(
+                &cache,
+                endpoint,
+                policy,
+                [198, 51, 100, 7],
+                1,
+                2,
+                64,
+                &payload,
+                &mut output,
+            ),
+            Err(OutboundRouteError::Frame(
+                OutboundFrameError::OutputBufferTooSmall {
+                    required_len,
+                    available_len: output.len(),
+                },
+            ))
+        );
+        assert_eq!(output, [0xaa; ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN]);
+        assert_eq!(cache.lookup([192, 0, 2, 254]), Some(gateway_mac));
+        assert_eq!(cache.lookup([198, 51, 100, 7]), None);
     }
 
     struct OutboundTransmitDevice {

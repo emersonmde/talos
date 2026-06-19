@@ -1,0 +1,86 @@
+{
+  "task_id": "phase12-network-local-ipv4-egress-route-policy-core-20260619",
+  "classification": "phase12-network-local-ipv4-egress-route-policy-core-accepted",
+  "accepted_boundary": "host-only deterministic IPv4 egress route policy for same-subnet, gateway, and no-route decisions, plus routed outbound ICMP/ARP request selection over immutable ARP-cache lookup and caller-owned buffers",
+  "source_files": [
+    "src/network.rs",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md",
+    "tasks/2026-06-19-phase12-network-local-ipv4-egress-route-policy-core.md"
+  ],
+  "accepted_symbols": [
+    "OutboundRouteError",
+    "Ipv4EgressRoutePolicy",
+    "Ipv4EgressRouteKind",
+    "Ipv4EgressRouteDecision",
+    "route_ipv4_egress",
+    "build_outbound_routed_ipv4_icmp_echo_request",
+    "select_routed_outbound_ipv4_icmp_echo_request"
+  ],
+  "accepted_tests": [
+    "ipv4_egress_route_policy_uses_destination_for_same_subnet_next_hop",
+    "ipv4_egress_route_policy_uses_gateway_for_off_subnet_destination",
+    "ipv4_egress_route_policy_reports_no_route_without_gateway",
+    "ipv4_egress_route_policy_handles_zero_and_host_mask_boundaries",
+    "routed_outbound_selection_resolves_gateway_mac_without_mutating_cache",
+    "routed_outbound_selection_arps_for_unresolved_gateway_next_hop",
+    "routed_outbound_selection_reports_no_route_before_touching_output",
+    "routed_outbound_selection_wraps_frame_errors_without_cache_mutation"
+  ],
+  "validation": [
+    {
+      "level": "fmt/lint/typecheck",
+      "command": ". \"$HOME/.cargo/env\"; export TMPDIR=/opt/strider/openclaw/current/workspace/tmp; export PATH=/opt/strider/openclaw/current/workspace/tools/qemu-9.2.0-install/bin:$PATH; cargo fmt --all -- --check",
+      "result": "pass"
+    },
+    {
+      "level": "unit tests/full suite",
+      "command": ". \"$HOME/.cargo/env\"; export TMPDIR=/opt/strider/openclaw/current/workspace/tmp; export PATH=/opt/strider/openclaw/current/workspace/tools/qemu-9.2.0-install/bin:$PATH; cargo -Zjson-target-spec test --quiet",
+      "result": "pass",
+      "tests_passed": 606
+    },
+    {
+      "level": "JSON evidence validation",
+      "command": "jq empty tasks/evidence/2026-06-19-phase12-network-local-ipv4-egress-route-policy-core/classification.json",
+      "result": "pass"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "level": "staged diff validation",
+      "command": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "rejected_claims": [
+    "dynamic routing",
+    "DHCP",
+    "DNS",
+    "packet queues",
+    "retry timers",
+    "multi-entry neighbor-discovery queue",
+    "route table management",
+    "live driver transmit",
+    "live packet I/O",
+    "packet capture",
+    "network reachability",
+    "ping behavior",
+    "sockets",
+    "SSH",
+    "smoltcp adoption",
+    "RP1 driver adapter readiness",
+    "Pi 5 hardware proof",
+    "boot publication",
+    "lab mutation",
+    "phase transition"
+  ],
+  "selected_next_task": "phase12-network-local-ipv4-egress-route-policy-closeout-20260619"
+}

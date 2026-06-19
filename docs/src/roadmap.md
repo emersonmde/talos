@@ -3803,6 +3803,27 @@ The post-review correction chain is:
     hardware work, sockets, SSH, smoltcp adoption, ping/network reachability,
     lab mutation, boot publication, and phase transition remain rejected.
 
+217. Phase 12.3 local IPv4 egress route-policy core: accepted in
+    'phase12-network-local-ipv4-egress-route-policy-core-20260619' with
+    classification 'phase12-network-local-ipv4-egress-route-policy-core-accepted'.
+    src/network.rs adds Ipv4EgressRoutePolicy, Ipv4EgressRouteDecision,
+    route_ipv4_egress, and select_routed_outbound_ipv4_icmp_echo_request. The
+    accepted host-only route policy deterministically chooses the destination
+    as next hop for same-subnet egress, a configured gateway as next hop for
+    off-subnet egress, and no-route when off-subnet egress has no gateway. The
+    routed selector preserves the accepted immutable ARP-cache boundary: it
+    resolves or ARPs for the next-hop IPv4 while keeping the IPv4/ICMP packet
+    destination set to the final destination. Unit tests cover same-subnet,
+    gateway, missing-gateway/no-route, zero-mask and host-mask boundaries,
+    gateway MAC selection without ARP cache mutation, unresolved-gateway ARP
+    request selection, and frame-error wrapping. Dynamic routing, DHCP, DNS,
+    packet queues, retry timers, live packet I/O, hardware work, sockets, SSH,
+    smoltcp adoption, ping/network reachability, lab mutation, boot
+    publication, and phase transition remain rejected. The selected next task
+    is
+    'phase12-network-local-ipv4-egress-route-policy-closeout-20260619',
+    bounded to source/task/docs reconciliation.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed

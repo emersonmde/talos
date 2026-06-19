@@ -2858,3 +2858,25 @@ accept routing behavior. Packet queues, retry timers, multi-entry buffering,
 live driver adapters, smoltcp adoption, sockets, SSH, ping/network reachability
 behavior, hardware packet I/O, Pi 5 hardware work, lab mutation, boot
 publication, and phase transition remain rejected.
+
+phase12-network-local-ipv4-egress-route-policy-core-20260619 accepts
+phase12-network-local-ipv4-egress-route-policy-core-accepted. src/network.rs
+now includes a host-only Ipv4EgressRoutePolicy and route decision boundary for
+local IPv4 egress.
+
+The accepted policy chooses the destination IPv4 itself as the ARP next hop for
+same-subnet destinations, chooses a configured gateway IPv4 as the ARP next hop
+for off-subnet destinations, and reports a deterministic no-route result when
+an off-subnet destination has no gateway. A routed outbound ICMP selector can
+consume that decision without mutating ARP cache state: same-subnet routes
+preserve the existing direct behavior, gateway routes address the Ethernet
+frame to the gateway MAC while keeping the IPv4 packet destination as the final
+destination, and unresolved gateway routes emit an ARP request for the gateway
+IPv4 rather than the final destination.
+
+The accepted boundary is still local source/test behavior over caller-owned
+buffers and fake/trait-level packet construction only. Dynamic routing, DHCP,
+DNS, packet queues, retry timers, live driver adapters, smoltcp adoption,
+UDP/TCP, sockets, hardware packet I/O, ping/network reachability behavior,
+SSH, Pi 5 hardware work, boot publication, lab mutation, and phase transition
+remain rejected.
