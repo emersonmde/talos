@@ -1,0 +1,124 @@
+{
+  "task_id": "phase12-network-packet-buffer-device-polling-core-20260619",
+  "status": "accepted",
+  "classification": "phase12-network-packet-buffer-device-polling-core-accepted",
+  "accepted_at": "2026-06-19T02:49:00Z",
+  "evidence_level": [
+    "source implementation",
+    "no_std unit tests",
+    "docs build",
+    "diff checks"
+  ],
+  "recommendation_lineage": {
+    "source_checkpoint": "phase12-network-packet-buffer-device-polling-source-checkpoint-20260619",
+    "selected_boundary": "caller-owned-rx-tx-local-poll-step",
+    "hardware_selected": false,
+    "smoltcp_selected": false
+  },
+  "accepted_claims": [
+    "one-step local polling over NetworkDevice receive/transmit and caller-owned buffers",
+    "dispatch through accepted local packet-dispatch path before transmit",
+    "transmit only when ARP or ICMP echo reply generation succeeds",
+    "deterministic poll results for no-frame, receive-buffer-too-small, receive-error, no-reply, dispatch-error, transmit-error, and successful reply transmission"
+  ],
+  "poll_result_matrix": {
+    "NoFrame": "receive_frame returned DeviceError::WouldBlock",
+    "ReceiveBufferTooSmall": "receive_frame returned DeviceError::BufferTooSmall",
+    "ReceiveError": "receive_frame returned another DeviceError",
+    "NoReply": "dispatch_local_packet returned PacketError::NotForLocalHost",
+    "DispatchError": "dispatch_local_packet returned any other PacketError",
+    "TransmitError": "transmit_frame rejected a generated reply",
+    "Replied": "a generated reply was transmitted successfully"
+  },
+  "rejected_claims": [
+    "live packet I/O",
+    "RP1 Ethernet driver readiness",
+    "link readiness",
+    "DMA descriptor ownership",
+    "interrupt integration",
+    "packet queues",
+    "smoltcp adoption",
+    "socket API",
+    "SSH",
+    "hardware network reachability",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "poll_local_network_device bridges NetworkDevice receive/transmit with dispatch_local_packet over caller-owned buffers"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "LocalPollStepResult distinguishes no-frame, receive-buffer pressure, receive error, no-reply, dispatch error, transmit error, and successful reply transmission"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "fake-device tests cover ARP reply, ICMP echo reply, no-frame, receive-buffer pressure, receive error, no-reply, dispatch-error, and transmit-error cases"
+    },
+    {
+      "disposition": "deferred",
+      "finding": "driver adapter integration, packet queues, ARP cache, UDP/TCP, DHCP, DNS, routing, sockets, smoltcp, SSH, live packet I/O, and Pi 5 packet movement evidence remain future tasks"
+    },
+    {
+      "disposition": "rejected",
+      "finding": "hardware-driver readiness, link readiness, live packet I/O, sockets, SSH, and phase transition are not accepted"
+    },
+    {
+      "disposition": "removed",
+      "finding": "no dependencies, source files, or prior task evidence were removed"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "no hardware lock or Pi 5 triage was required for local source/test work"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "cargo fmt --all -- --check",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test --quiet",
+      "result": "pass"
+    },
+    {
+      "gate": "focused unit-test evidence",
+      "result": "pass",
+      "coverage": [
+        "ARP reply transmission",
+        "ICMP echo reply transmission",
+        "nonlocal no-reply behavior",
+        "dispatch-error behavior",
+        "receive-buffer pressure",
+        "no-frame",
+        "receive error",
+        "transmit error"
+      ]
+    },
+    {
+      "gate": "jq empty",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "hardware": {
+    "hardware_test_lock_acquired": false,
+    "pi5_hardware_run": false,
+    "lab_mutation": false,
+    "boot_archive_publication": false,
+    "live_packet_io": false
+  },
+  "selected_next_task": "phase12-network-packet-buffer-device-polling-closeout-20260619"
+}

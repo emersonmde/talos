@@ -348,6 +348,43 @@ impl PacketDispatchResult {
     }
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum LocalPollStepResult {
+    NoFrame,
+    ReceiveBufferTooSmall,
+    ReceiveError(DeviceError),
+    NoReply,
+    DispatchError(PacketError),
+    TransmitError(DeviceError),
+    Replied(PacketDispatchResult),
+}
+
+pub(crate) fn poll_local_network_device<D: NetworkDevice>(
+    device: &mut D,
+    endpoint: LocalNetworkEndpoint,
+    receive_buffer: &mut [u8],
+    transmit_buffer: &mut [u8],
+) -> LocalPollStepResult {
+    let received = match device.receive_frame(receive_buffer) {
+        Ok(frame) => frame,
+        Err(DeviceError::WouldBlock) => return LocalPollStepResult::NoFrame,
+        Err(DeviceError::BufferTooSmall) => return LocalPollStepResult::ReceiveBufferTooSmall,
+        Err(error) => return LocalPollStepResult::ReceiveError(error),
+    };
+
+    let reply = match dispatch_local_packet(received, endpoint, transmit_buffer) {
+        Ok(reply) => reply,
+        Err(PacketError::NotForLocalHost) => return LocalPollStepResult::NoReply,
+        Err(error) => return LocalPollStepResult::DispatchError(error),
+    };
+
+    let frame_len = reply.frame_len();
+    match device.transmit_frame(&transmit_buffer[..frame_len]) {
+        Ok(()) => LocalPollStepResult::Replied(reply),
+        Err(error) => LocalPollStepResult::TransmitError(error),
+    }
+}
+
 pub(crate) fn dispatch_local_packet(
     frame_bytes: &[u8],
     endpoint: LocalNetworkEndpoint,
@@ -947,6 +984,231 @@ mod tests {
             dispatch_local_packet(&request, endpoint, &mut small),
             Err(PacketError::OutputBufferTooSmall)
         );
+    }
+
+    struct PollDevice<'a> {
+        frame: Option<&'a [u8]>,
+        receive_error: Option<DeviceError>,
+        transmit_error: Option<DeviceError>,
+        transmitted: [u8; 128],
+        transmitted_len: usize,
+    }
+
+    impl<'a> PollDevice<'a> {
+        fn with_frame(frame: &'a [u8]) -> Self {
+            Self {
+                frame: Some(frame),
+                receive_error: None,
+                transmit_error: None,
+                transmitted: [0; 128],
+                transmitted_len: 0,
+            }
+        }
+
+        fn with_receive_error(error: DeviceError) -> Self {
+            Self {
+                frame: None,
+                receive_error: Some(error),
+                transmit_error: None,
+                transmitted: [0; 128],
+                transmitted_len: 0,
+            }
+        }
+
+        fn with_transmit_error(frame: &'a [u8], error: DeviceError) -> Self {
+            Self {
+                frame: Some(frame),
+                receive_error: None,
+                transmit_error: Some(error),
+                transmitted: [0; 128],
+                transmitted_len: 0,
+            }
+        }
+    }
+
+    impl<'a> NetworkDevice for PollDevice<'a> {
+        fn receive_frame<'b>(&mut self, buffer: &'b mut [u8]) -> Result<&'b [u8], DeviceError> {
+            if let Some(error) = self.receive_error {
+                return Err(error);
+            }
+
+            let frame = self.frame.expect("test poll device frame configured");
+            if buffer.len() < frame.len() {
+                return Err(DeviceError::BufferTooSmall);
+            }
+
+            buffer[..frame.len()].copy_from_slice(frame);
+            Ok(&buffer[..frame.len()])
+        }
+
+        fn transmit_frame(&mut self, frame: &[u8]) -> Result<(), DeviceError> {
+            if let Some(error) = self.transmit_error {
+                return Err(error);
+            }
+
+            self.transmitted[..frame.len()].copy_from_slice(frame);
+            self.transmitted_len = frame.len();
+            Ok(())
+        }
+    }
+
+    #[test_case]
+    fn poll_step_transmits_arp_reply_from_caller_owned_buffers() {
+        let endpoint = local_endpoint();
+        let request = arp_request_frame();
+        let mut device = PollDevice::with_frame(&request);
+        let mut receive_buffer = [0u8; 64];
+        let mut transmit_buffer = [0u8; 64];
+
+        let result = poll_local_network_device(
+            &mut device,
+            endpoint,
+            &mut receive_buffer,
+            &mut transmit_buffer,
+        );
+
+        assert_eq!(
+            result,
+            LocalPollStepResult::Replied(PacketDispatchResult {
+                reply_kind: PacketReplyKind::Arp,
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            })
+        );
+        assert_eq!(
+            device.transmitted_len,
+            ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN
+        );
+        assert_eq!(
+            &device.transmitted[..device.transmitted_len],
+            &transmit_buffer[..device.transmitted_len]
+        );
+        assert_eq!(&device.transmitted[0..6], &[0x02, 0, 0, 0, 0, 1]);
+        assert_eq!(&device.transmitted[6..12], &[0x02, 0, 0, 0, 0, 99]);
+    }
+
+    #[test_case]
+    fn poll_step_transmits_icmp_echo_reply_from_caller_owned_buffers() {
+        let endpoint = local_endpoint();
+        let request = icmp_echo_request_frame();
+        let mut device = PollDevice::with_frame(&request);
+        let mut receive_buffer = [0u8; 128];
+        let mut transmit_buffer = [0u8; 128];
+
+        let result = poll_local_network_device(
+            &mut device,
+            endpoint,
+            &mut receive_buffer,
+            &mut transmit_buffer,
+        );
+
+        assert_eq!(
+            result,
+            LocalPollStepResult::Replied(PacketDispatchResult {
+                reply_kind: PacketReplyKind::IcmpEcho,
+                frame_len: ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + 12,
+            })
+        );
+        let transmitted = &device.transmitted[..device.transmitted_len];
+        assert_eq!(read_be_u16(transmitted, 12), ETHERTYPE_IPV4);
+        let ipv4 = &transmitted[ETHERNET_HEADER_LEN..ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN];
+        assert!(ipv4_header_checksum_is_valid(ipv4));
+        let icmp = &transmitted[ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN..];
+        assert_eq!(icmp[0], 0);
+        assert!(internet_checksum_is_valid(icmp));
+    }
+
+    #[test_case]
+    fn poll_step_distinguishes_receive_boundaries() {
+        let endpoint = local_endpoint();
+        let mut receive_buffer = [0u8; 128];
+        let mut transmit_buffer = [0u8; 128];
+
+        let mut no_frame = PollDevice::with_receive_error(DeviceError::WouldBlock);
+        assert_eq!(
+            poll_local_network_device(
+                &mut no_frame,
+                endpoint,
+                &mut receive_buffer,
+                &mut transmit_buffer
+            ),
+            LocalPollStepResult::NoFrame
+        );
+
+        let request = icmp_echo_request_frame();
+        let mut small_rx = [0u8; ETHERNET_HEADER_LEN - 1];
+        let mut receive_pressure = PollDevice::with_frame(&request);
+        assert_eq!(
+            poll_local_network_device(
+                &mut receive_pressure,
+                endpoint,
+                &mut small_rx,
+                &mut transmit_buffer
+            ),
+            LocalPollStepResult::ReceiveBufferTooSmall
+        );
+
+        let mut receive_error = PollDevice::with_receive_error(DeviceError::Io);
+        assert_eq!(
+            poll_local_network_device(
+                &mut receive_error,
+                endpoint,
+                &mut receive_buffer,
+                &mut transmit_buffer
+            ),
+            LocalPollStepResult::ReceiveError(DeviceError::Io)
+        );
+    }
+
+    #[test_case]
+    fn poll_step_distinguishes_no_reply_dispatch_and_transmit_errors() {
+        let endpoint = local_endpoint();
+        let mut receive_buffer = [0u8; 128];
+        let mut transmit_buffer = [0u8; 128];
+
+        let mut nonlocal = icmp_echo_request_frame();
+        nonlocal[0..6].copy_from_slice(&[0x02, 0, 0, 0, 0, 88]);
+        let mut no_reply = PollDevice::with_frame(&nonlocal);
+        assert_eq!(
+            poll_local_network_device(
+                &mut no_reply,
+                endpoint,
+                &mut receive_buffer,
+                &mut transmit_buffer
+            ),
+            LocalPollStepResult::NoReply
+        );
+        assert_eq!(no_reply.transmitted_len, 0);
+
+        let mut unsupported = icmp_echo_request_frame();
+        write_be_u16(&mut unsupported, 12, 0x86dd);
+        let mut dispatch_error = PollDevice::with_frame(&unsupported);
+        assert_eq!(
+            poll_local_network_device(
+                &mut dispatch_error,
+                endpoint,
+                &mut receive_buffer,
+                &mut transmit_buffer
+            ),
+            LocalPollStepResult::DispatchError(PacketError::UnsupportedEtherType)
+        );
+        assert_eq!(dispatch_error.transmitted_len, 0);
+
+        let request = arp_request_frame();
+        let mut transmit_error = PollDevice::with_transmit_error(&request, DeviceError::Io);
+        assert_eq!(
+            poll_local_network_device(
+                &mut transmit_error,
+                endpoint,
+                &mut receive_buffer,
+                &mut transmit_buffer
+            ),
+            LocalPollStepResult::TransmitError(DeviceError::Io)
+        );
+        assert_eq!(transmit_error.transmitted_len, 0);
+    }
+
+    const fn local_endpoint() -> LocalNetworkEndpoint {
+        LocalNetworkEndpoint::new(MacAddress::new([0x02, 0, 0, 0, 0, 99]), [192, 0, 2, 1])
     }
 
     fn arp_request_frame() -> [u8; ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN] {

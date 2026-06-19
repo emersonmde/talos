@@ -2583,7 +2583,17 @@ including IPv4 and ICMP checksum generation.
 The accepted error boundary rejects unsupported EtherTypes, non-ICMP IPv4
 protocols, IPv4 options, IPv4 fragments, invalid IPv4 checksums, malformed ICMP
 echo input, invalid ICMP checksums, nonlocal Ethernet/IP destinations, and
-too-small output buffers deterministically. Reusable packet buffers, device polling, driver
-adapters, ARP cache, UDP/TCP, DHCP, DNS, routing, smoltcp integration, sockets,
-SSH, live packet I/O, RP1 Ethernet driver readiness, and phase transition
-remain unaccepted.
+too-small output buffers deterministically.
+
+phase12-network-packet-buffer-device-polling-core-20260619 accepts
+phase12-network-packet-buffer-device-polling-core-accepted. src/network.rs now
+includes poll_local_network_device, a one-step local polling boundary that
+receives into caller-owned storage through NetworkDevice, dispatches with
+dispatch_local_packet, and transmits from caller-owned storage only when ARP or
+ICMP echo reply generation succeeds. LocalPollStepResult distinguishes no
+frame, receive-buffer pressure, receive error, nonlocal no-reply, dispatch
+error, transmit error, and successful reply transmission without allocation.
+
+Driver adapters, packet queues, ARP cache, UDP/TCP, DHCP, DNS, routing, smoltcp
+integration, sockets, SSH, live packet I/O, RP1 Ethernet driver readiness, link
+readiness, and phase transition remain unaccepted.

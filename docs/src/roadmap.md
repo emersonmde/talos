@@ -12773,8 +12773,12 @@ Milestone 12.3: IP Stack
 - Local source/test progress is accepted for packet dispatch, IPv4 checksum
   validation/generation, ARP reply construction, and ICMP echo reply
   construction over caller-owned byte slices.
-- Implement packet buffers, reusable device polling, ARP cache, UDP/TCP, and
-  socket integration in later bounded tasks.
+- Local source/test progress is accepted for a one-step NetworkDevice poll
+  boundary that receives into caller-owned storage, dispatches through the local
+  packet-dispatch path, and transmits from caller-owned storage only when a
+  reply is produced.
+- Implement driver adapters, packet queues, ARP cache, UDP/TCP, and socket
+  integration in later bounded tasks.
 
 Acceptance criteria:
 
