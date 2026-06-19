@@ -2843,3 +2843,18 @@ timers, multi-entry buffering, route/subnet/gateway policy, live driver
 adapters, smoltcp adoption, UDP/TCP, sockets, hardware packet I/O,
 ping/network reachability behavior, SSH, Pi 5 hardware work, boot publication,
 lab mutation, and phase transition remain rejected.
+
+phase12-network-single-pending-icmp-after-arp-resolution-closeout-20260619
+accepts
+phase12-network-single-pending-icmp-after-arp-resolution-closeout-accepted.
+The closeout reconciles the host-only single-pending ARP-to-ICMP progression
+with source, task, test, docs, and evidence records. It also corrects the core
+classification JSON evidence so the recorded jq validation claim is true.
+
+The accepted boundary remains limited to one allocation-free pending outbound
+ICMP echo request behind ARP resolution. Route policy is selected as the next
+bounded host-only Phase 12.3 task, but this closeout does not implement or
+accept routing behavior. Packet queues, retry timers, multi-entry buffering,
+live driver adapters, smoltcp adoption, sockets, SSH, ping/network reachability
+behavior, hardware packet I/O, Pi 5 hardware work, lab mutation, boot
+publication, and phase transition remain rejected.

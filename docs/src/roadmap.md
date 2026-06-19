@@ -3788,6 +3788,21 @@ The post-review correction chain is:
     SSH, smoltcp adoption, ping/network reachability behavior, lab mutation,
     boot publication, and phase transition remain rejected.
 
+216. Phase 12.3 single-pending ICMP-after-ARP resolution closeout: accepted in
+    'phase12-network-single-pending-icmp-after-arp-resolution-closeout-20260619'
+    with classification
+    'phase12-network-single-pending-icmp-after-arp-resolution-closeout-accepted'.
+    The closeout reconciles the accepted host-only allocation-free
+    single-pending ARP-to-ICMP progression with source, unit-test, task, docs,
+    and evidence records. It also fixes the core classification JSON command
+    escaping so the recorded jq validation claim is true. The selected next
+    task is
+    'phase12-network-local-ipv4-egress-route-policy-core-20260619', bounded to
+    local host-only route-policy work. Packet queues, retry timers, multi-entry
+    buffering, routing implementation in this closeout, live packet I/O,
+    hardware work, sockets, SSH, smoltcp adoption, ping/network reachability,
+    lab mutation, boot publication, and phase transition remain rejected.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
@@ -12994,6 +13009,12 @@ Milestone 12.3: IP Stack
   multi-entry buffering, route policy, live packet I/O, sockets, SSH,
   smoltcp adoption, ping/network reachability, hardware work, and phase
   transition remain rejected.
+- The single-pending ICMP-after-ARP closeout reconciles the accepted
+  source/test/task evidence, fixes the core classification JSON command
+  escaping, and selects the queued local IPv4 egress route-policy core as the
+  next bounded host-only Phase 12.3 task. It does not accept route
+  implementation, packet queues, retries, live packet I/O, sockets, SSH,
+  reachability, hardware work, or a phase transition.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

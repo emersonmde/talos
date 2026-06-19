@@ -1,0 +1,56 @@
+{
+  "task_id": "phase12-network-single-pending-icmp-after-arp-resolution-closeout-20260619",
+  "classification": "phase12-network-single-pending-icmp-after-arp-resolution-closeout-accepted",
+  "accepted_boundary": "host-only allocation-free single-pending ARP-to-ICMP progression reconciled with source, task, test, docs, and evidence",
+  "accepted": [
+    "core implementation retains exactly one unresolved outbound ICMP echo request after deterministic ARP request transmit",
+    "matching ARP reply or accepted cache resolution can advance the retained request into one deterministic ICMP echo transmit and clear pending state after successful transmit",
+    "resolved-neighbor, no-pending, duplicate-pending/backpressure, payload pressure, output-buffer pressure, malformed ARP, nonmatching ARP, unresolved cache, and transmit-error paths are covered by local unit tests",
+    "route-policy core is the next mechanically selected host-only Phase 12.3 task"
+  ],
+  "rejected": [
+    "packet queue",
+    "retry timer",
+    "multi-entry buffering",
+    "routing implementation in this closeout",
+    "live driver transmit",
+    "live packet I/O",
+    "driver adapter",
+    "smoltcp adoption",
+    "sockets",
+    "SSH",
+    "ping or network reachability",
+    "hardware readiness",
+    "Pi 5 hardware run",
+    "lab mutation",
+    "boot publication",
+    "phase transition"
+  ],
+  "validation": [
+    {
+      "level": "static/source/task evidence review",
+      "result": "pass"
+    },
+    {
+      "level": "JSON evidence validation",
+      "command": "jq empty tasks/evidence/2026-06-19-phase12-network-single-pending-icmp-after-arp-resolution-core/classification.json tasks/evidence/2026-06-19-phase12-network-single-pending-icmp-after-arp-resolution-closeout/classification.json",
+      "result": "pass"
+    },
+    {
+      "level": "diff whitespace check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "docs build",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "level": "staged diff whitespace check",
+      "command": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "selected_next_task": "phase12-network-local-ipv4-egress-route-policy-core-20260619"
+}
