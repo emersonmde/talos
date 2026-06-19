@@ -2921,3 +2921,20 @@ transmit. Packet queues, retry timers, route-table expansion, live driver
 adapters, smoltcp adoption, UDP/TCP, sockets, hardware packet I/O,
 ping/network reachability behavior, SSH, Pi 5 hardware work, boot publication,
 lab mutation, and phase transition remain rejected.
+
+phase12-network-routed-single-pending-icmp-after-arp-resolution-closeout-20260619
+accepts
+phase12-network-routed-single-pending-icmp-after-arp-resolution-closeout-accepted.
+The closeout reconciles the accepted route-aware pending ICMP boundary with
+source, unit-test, task, docs, and evidence records. The accepted frontier is
+still host/testable: route-aware pending ICMP can ARP for same-subnet
+destinations or configured gateways, retain final destination and next-hop
+identity separately, and transmit only after matching next-hop ARP resolution
+through fake NetworkDevice evidence.
+
+The closeout selects the queued explicit single-pending ARP retry core as the
+next bounded Phase 12.3 host-only task. It does not accept retry behavior
+itself. Packet queues, autonomous timers, live driver adapters, smoltcp
+adoption, UDP/TCP, sockets, hardware packet I/O, ping/network reachability
+behavior, SSH, Pi 5 hardware work, boot publication, lab mutation, and phase
+transition remain rejected.

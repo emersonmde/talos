@@ -13083,6 +13083,12 @@ Milestone 12.3: IP Stack
   matching next-hop ARP resolution through fake NetworkDevice transmit. It does
   not accept retry timers, packet queues, live packet I/O, sockets, SSH,
   reachability, hardware work, or a phase transition.
+- The route-aware single-pending ICMP closeout reconciles that accepted
+  source/test frontier and selects the queued explicit single-pending ARP retry
+  core as the next bounded host-only Phase 12.3 task. Retry behavior is not
+  accepted by the closeout itself; packet queues, autonomous timers, live
+  driver adapters, live packet I/O, sockets, SSH, reachability, hardware work,
+  and phase transition remain rejected.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
