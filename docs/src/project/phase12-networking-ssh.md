@@ -2880,3 +2880,17 @@ DNS, packet queues, retry timers, live driver adapters, smoltcp adoption,
 UDP/TCP, sockets, hardware packet I/O, ping/network reachability behavior,
 SSH, Pi 5 hardware work, boot publication, lab mutation, and phase transition
 remain rejected.
+
+phase12-network-local-ipv4-egress-route-policy-closeout-20260619 accepts
+phase12-network-local-ipv4-egress-route-policy-closeout-accepted-planning-needed.
+The closeout reconciles the accepted route-policy behavior with source, unit
+test, task, docs, and evidence records. The Phase 12.3 host-only frontier now
+includes deterministic destination-vs-gateway next-hop selection and no-route
+handling for local IPv4 egress.
+
+No later queued Phase 12.3 continuation currently has complete objective task
+definition and dependencies, so selected_next_task is null and
+planningNeeded=true. Retry timing, packet queues, route-table expansion, live
+driver adapters, smoltcp adoption, UDP/TCP, sockets, hardware packet I/O,
+ping/network reachability behavior, SSH, Pi 5 hardware work, boot publication,
+lab mutation, and phase transition remain rejected pending supervisor planning.

@@ -3824,6 +3824,20 @@ The post-review correction chain is:
     'phase12-network-local-ipv4-egress-route-policy-closeout-20260619',
     bounded to source/task/docs reconciliation.
 
+218. Phase 12.3 local IPv4 egress route-policy closeout: accepted in
+    'phase12-network-local-ipv4-egress-route-policy-closeout-20260619' with
+    classification
+    'phase12-network-local-ipv4-egress-route-policy-closeout-accepted-planning-needed'.
+    The closeout reconciles deterministic destination-vs-gateway next-hop
+    selection and no-route handling with source, unit-test, task, docs, and
+    evidence records. It selects no next task and sets planningNeeded=true
+    because no later queued Phase 12.3 task has complete scope, non-goals,
+    dependencies, acceptance criteria, validation gates, docs, and evidence
+    requirements. Retry timing, packet queues, route-table expansion, live
+    packet I/O, hardware work, sockets, SSH, smoltcp adoption, ping/network
+    reachability, lab mutation, boot publication, and phase transition remain
+    rejected pending supervisor planning.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
