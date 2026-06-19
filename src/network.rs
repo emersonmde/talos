@@ -50,6 +50,17 @@ pub(crate) enum PacketError {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum OutboundFrameError {
+    NeighborUnresolved {
+        destination_ipv4: [u8; 4],
+    },
+    OutputBufferTooSmall {
+        required_len: usize,
+        available_len: usize,
+    },
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct MacAddress([u8; ETHERNET_ADDR_LEN]);
 
 impl MacAddress {
@@ -376,6 +387,37 @@ pub(crate) fn resolve_outbound_neighbor<const ARP_CAPACITY: usize>(
         },
         None => OutboundNeighborResolution::Unresolved { destination_ipv4 },
     }
+}
+
+pub(crate) fn build_outbound_ethernet_frame(
+    resolution: OutboundNeighborResolution,
+    source_mac: MacAddress,
+    ether_type: EtherType,
+    payload: &[u8],
+    output: &mut [u8],
+) -> Result<usize, OutboundFrameError> {
+    let destination_mac = match resolution {
+        OutboundNeighborResolution::Resolved {
+            destination_mac, ..
+        } => destination_mac,
+        OutboundNeighborResolution::Unresolved { destination_ipv4 } => {
+            return Err(OutboundFrameError::NeighborUnresolved { destination_ipv4 });
+        }
+    };
+    let frame_len = ETHERNET_HEADER_LEN + payload.len();
+    if output.len() < frame_len {
+        return Err(OutboundFrameError::OutputBufferTooSmall {
+            required_len: frame_len,
+            available_len: output.len(),
+        });
+    }
+
+    output[..ETHERNET_ADDR_LEN].copy_from_slice(&destination_mac.bytes());
+    output[ETHERNET_ADDR_LEN..ETHERNET_ADDR_LEN * 2].copy_from_slice(&source_mac.bytes());
+    write_be_u16(output, 12, ether_type.raw());
+    output[ETHERNET_HEADER_LEN..frame_len].copy_from_slice(payload);
+
+    Ok(frame_len)
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -1072,6 +1114,108 @@ mod tests {
                 destination_ipv4: [192, 0, 2, 10],
             }
         );
+    }
+
+    #[test_case]
+    fn outbound_frame_construction_writes_resolved_neighbor_frame() {
+        let destination_mac = MacAddress::new([0x02, 0, 0, 0, 0, 10]);
+        let source_mac = MacAddress::new([0x02, 0, 0, 0, 0, 99]);
+        let payload = [0xde, 0xad, 0xbe, 0xef];
+        let mut output = [0u8; 64];
+
+        let frame_len = build_outbound_ethernet_frame(
+            OutboundNeighborResolution::Resolved {
+                destination_ipv4: [192, 0, 2, 10],
+                destination_mac,
+            },
+            source_mac,
+            EtherType::Ipv4,
+            &payload,
+            &mut output,
+        )
+        .expect("build outbound frame");
+
+        assert_eq!(frame_len, ETHERNET_HEADER_LEN + payload.len());
+        let frame = EthernetFrame::parse(&output[..frame_len]).expect("parse outbound frame");
+        assert_eq!(frame.destination(), destination_mac);
+        assert_eq!(frame.source(), source_mac);
+        assert_eq!(frame.ether_type(), EtherType::Ipv4);
+        assert_eq!(frame.payload(), &payload);
+    }
+
+    #[test_case]
+    fn outbound_frame_construction_rejects_unresolved_neighbor_without_side_effects() {
+        let cache = ArpCache::<2>::new();
+        let resolution = resolve_outbound_neighbor(&cache, [192, 0, 2, 44]);
+        let mut output = [0xaa; 32];
+
+        assert_eq!(
+            build_outbound_ethernet_frame(
+                resolution,
+                MacAddress::new([0x02, 0, 0, 0, 0, 99]),
+                EtherType::Ipv4,
+                &[0xde, 0xad],
+                &mut output,
+            ),
+            Err(OutboundFrameError::NeighborUnresolved {
+                destination_ipv4: [192, 0, 2, 44],
+            })
+        );
+        assert_eq!(cache.lookup([192, 0, 2, 44]), None);
+        assert_eq!(output, [0xaa; 32]);
+    }
+
+    #[test_case]
+    fn outbound_frame_construction_rejects_too_small_output_without_partial_frame() {
+        let payload = [0xde, 0xad, 0xbe, 0xef];
+        let mut output = [0xaa; ETHERNET_HEADER_LEN + 3];
+
+        assert_eq!(
+            build_outbound_ethernet_frame(
+                OutboundNeighborResolution::Resolved {
+                    destination_ipv4: [192, 0, 2, 10],
+                    destination_mac: MacAddress::new([0x02, 0, 0, 0, 0, 10]),
+                },
+                MacAddress::new([0x02, 0, 0, 0, 0, 99]),
+                EtherType::Ipv4,
+                &payload,
+                &mut output,
+            ),
+            Err(OutboundFrameError::OutputBufferTooSmall {
+                required_len: ETHERNET_HEADER_LEN + payload.len(),
+                available_len: ETHERNET_HEADER_LEN + 3,
+            })
+        );
+        assert_eq!(output, [0xaa; ETHERNET_HEADER_LEN + 3]);
+    }
+
+    #[test_case]
+    fn outbound_frame_construction_composes_with_cached_neighbor_resolution() {
+        let mut cache = ArpCache::<2>::new();
+        let destination_mac = MacAddress::new([0x02, 0, 0, 0, 0, 10]);
+        assert_eq!(
+            cache.insert_or_update([192, 0, 2, 10], destination_mac),
+            ArpCacheUpdate::Inserted
+        );
+        let source_mac = local_endpoint().mac();
+        let payload = [1, 2, 3, 4, 5];
+        let mut output = [0u8; 64];
+
+        let frame_len = build_outbound_ethernet_frame(
+            resolve_outbound_neighbor(&cache, [192, 0, 2, 10]),
+            source_mac,
+            EtherType::Other(0x88b5),
+            &payload,
+            &mut output,
+        )
+        .expect("build cached outbound frame");
+
+        assert_eq!(frame_len, ETHERNET_HEADER_LEN + payload.len());
+        assert_eq!(&output[0..6], &destination_mac.bytes());
+        assert_eq!(&output[6..12], &source_mac.bytes());
+        assert_eq!(read_be_u16(&output, 12), 0x88b5);
+        assert_eq!(&output[ETHERNET_HEADER_LEN..frame_len], &payload);
+        assert_eq!(cache.lookup([192, 0, 2, 10]), Some(destination_mac));
     }
 
     #[test_case]

@@ -3669,6 +3669,20 @@ The post-review correction chain is:
     hardware-driver readiness, ping/network reachability behavior, link
     readiness, and phase transition remain rejected.
 
+208. Phase 12.3 outbound frame construction core: accepted in
+    'phase12-network-outbound-frame-construction-core-20260619' with
+    classification 'phase12-network-outbound-frame-construction-core-accepted'.
+    The accepted frontier is host-only source/test progress: src/network.rs
+    adds build_outbound_ethernet_frame and OutboundFrameError, a pure
+    caller-buffered Ethernet II frame construction helper for an already
+    resolved outbound neighbor. Tests cover resolved destination/source
+    MAC/EtherType/payload/length output, deterministic unresolved-neighbor
+    rejection, too-small output buffers without partial frame acceptance, and
+    composition with resolve_outbound_neighbor. ARP request emission, packet
+    queues, routing, driver transmit scheduling, live packet I/O, sockets,
+    SSH, hardware-driver readiness, ping/network reachability behavior, link
+    readiness, and phase transition remain rejected.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed

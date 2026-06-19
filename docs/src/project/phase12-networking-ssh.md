@@ -2662,3 +2662,19 @@ outbound-frame-construction source checkpoint as the next bounded Phase 12.3
 planning task. It does not authorize ARP request emission, packet queues,
 driver transmit, live packet I/O, sockets, SSH, network reachability, ping
 behavior, hardware readiness, or phase transition.
+
+phase12-network-outbound-frame-construction-core-20260619 accepts
+phase12-network-outbound-frame-construction-core-accepted. src/network.rs now
+includes build_outbound_ethernet_frame and OutboundFrameError, a pure
+host-only caller-buffered Ethernet II construction boundary for already
+resolved outbound neighbors.
+
+The accepted helper writes destination MAC, source MAC, EtherType, and exact
+payload bytes into caller-owned output storage and returns the deterministic
+frame length. Unresolved neighbors and too-small output buffers are rejected
+before any frame bytes are accepted as progress. The helper composes with the
+cached outbound neighbor resolver, remains allocation-free, and does not
+mutate ARP cache state, consult a driver, transmit frames, queue packets, emit
+ARP requests, construct IPv4/ICMP requests, adopt smoltcp, claim sockets/SSH,
+claim ping/network reachability behavior, claim RP1 Ethernet readiness, or
+change the Phase 12.1 hardware frontier.

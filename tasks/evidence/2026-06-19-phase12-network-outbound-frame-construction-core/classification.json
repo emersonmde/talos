@@ -1,0 +1,132 @@
+{
+  "task_id": "phase12-network-outbound-frame-construction-core-20260619",
+  "status": "accepted",
+  "classification": "phase12-network-outbound-frame-construction-core-accepted",
+  "accepted_at": "2026-06-19T08:35:27Z",
+  "evidence_level": [
+    "source implementation",
+    "no_std unit tests",
+    "build check",
+    "docs build",
+    "task-owned JSON evidence",
+    "diff checks"
+  ],
+  "implemented": [
+    "OutboundFrameError",
+    "build_outbound_ethernet_frame",
+    "host-only caller-buffered Ethernet II frame construction from an already resolved outbound neighbor",
+    "deterministic unresolved-neighbor error carrying the destination IPv4",
+    "deterministic too-small-output error carrying required and available lengths",
+    "no_std tests for resolved frame construction, unresolved rejection, output-buffer pressure, and cached resolver composition"
+  ],
+  "accepted_behavior": [
+    "resolved neighbor input writes destination MAC, source MAC, EtherType, exact payload bytes, and deterministic returned frame length",
+    "unresolved neighbor input returns OutboundFrameError::NeighborUnresolved without queueing, ARP request emission, driver access, cache mutation, or transmit behavior",
+    "too-small output buffers return OutboundFrameError::OutputBufferTooSmall before accepting a partial frame as progress",
+    "resolve_outbound_neighbor composes with build_outbound_ethernet_frame through a cached ArpCache entry",
+    "existing local dispatch, cache-aware dispatch/poll, ArpCache, and outbound neighbor-resolution behavior remains unchanged"
+  ],
+  "validation": [
+    {
+      "gate": "cargo fmt --all",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test outbound_frame_construction --quiet",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo fmt --all -- --check",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec test --quiet",
+      "result": "pass"
+    },
+    {
+      "gate": "cargo -Zjson-target-spec check --quiet",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "gate": "jq empty",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "selected_next_task": "phase12-network-outbound-frame-construction-closeout-20260619",
+  "planningNeeded": false,
+  "hardware": {
+    "hardware_test_lock_acquired": false,
+    "pi5_hardware_run": false,
+    "lab_mutation": false,
+    "boot_archive_publication": false,
+    "live_packet_io": false
+  },
+  "rejected_claims": [
+    "ARP request emission",
+    "retry timers",
+    "packet queues",
+    "routing table",
+    "subnet or gateway logic",
+    "driver transmit scheduling",
+    "live packet I/O",
+    "IPv4/ICMP outbound request construction",
+    "RP1 Ethernet driver readiness",
+    "DMA descriptor ownership",
+    "interrupt integration",
+    "packet capture",
+    "link readiness",
+    "network reachability",
+    "ping behavior",
+    "socket API",
+    "SSH behavior",
+    "UDP/TCP",
+    "DHCP",
+    "DNS",
+    "smoltcp adoption",
+    "userspace networking API",
+    "Pi 5 hardware proof",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "host-only caller-buffered Ethernet II frame construction helper now exists below driver transmit/live I/O"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "resolved-neighbor output covers deterministic destination MAC, source MAC, EtherType, payload bytes, and returned frame length"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "unresolved-neighbor and too-small-output paths are deterministic and test-covered without cache mutation, driver access, transmit behavior, packet queueing, or ARP request emission"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "cached outbound neighbor resolver composes with frame construction in a focused regression test"
+    },
+    {
+      "disposition": "deferred",
+      "finding": "ARP request emission, retry timers, packet queues, routing, outbound IPv4/ICMP request construction, driver transmit scheduling, live packet I/O, sockets, SSH, smoltcp integration, and Pi 5 packet movement evidence remain future work"
+    },
+    {
+      "disposition": "removed",
+      "finding": "no source files, dependencies, task evidence, or existing dispatch APIs were removed"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "no hardware lock, lab mutation, boot publication, or Pi 5 inconclusive-run triage was required for local source/test work"
+    }
+  ]
+}
