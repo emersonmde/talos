@@ -1,0 +1,113 @@
+{
+  "task_id": "phase12-network-local-packet-dispatch-icmp-echo-closeout-20260619",
+  "status": "accepted",
+  "classification": "phase12-network-local-packet-dispatch-icmp-echo-closeout-accepted",
+  "accepted_at": "2026-06-19T01:10:00Z",
+  "evidence_level": [
+    "static task/source/evidence consistency review",
+    "task-owned JSON evidence",
+    "diff checks"
+  ],
+  "reviewed_evidence": [
+    "tasks/2026-06-19-phase12-network-local-packet-dispatch-icmp-echo-core.md",
+    "tasks/evidence/2026-06-19-phase12-network-local-packet-dispatch-icmp-echo-core/classification.json",
+    "src/network.rs",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "accepted_claims": [
+    "local packet dispatch over immutable Ethernet frame input and caller-provided output buffers",
+    "Ethernet/ARP request-to-local-IPv4 reply construction",
+    "Ethernet/IPv4/ICMP echo request-to-local-IPv4 reply construction",
+    "IPv4 header checksum validation and generation for accepted minimum-header ICMP echo shapes",
+    "ICMP echo checksum validation and generation",
+    "deterministic PacketError results for unsupported EtherTypes, non-ICMP IPv4 protocols, unsupported IPv4 options/fragments, invalid checksums, malformed ICMP echo input, nonlocal Ethernet/IP destinations, and too-small output buffers"
+  ],
+  "remaining_gaps": [
+    "reusable packet-buffer ownership",
+    "device polling loop",
+    "driver adapter boundary",
+    "RP1 MAC/GEM adapter",
+    "DMA descriptor ownership",
+    "interrupt path",
+    "packet queue",
+    "ARP cache",
+    "UDP/TCP",
+    "DHCP",
+    "DNS",
+    "routing",
+    "socket API",
+    "smoltcp adoption",
+    "SSH",
+    "live packet I/O",
+    "Pi 5 packet movement evidence"
+  ],
+  "rejected_claims": [
+    "live packet I/O",
+    "RP1 Ethernet driver readiness",
+    "DMA descriptor ownership",
+    "interrupt integration",
+    "device polling readiness",
+    "smoltcp adoption",
+    "socket API",
+    "TCP/UDP behavior",
+    "SSH",
+    "network reachability",
+    "ping response",
+    "hardware link readiness",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "closeout confirms accepted local packet dispatch, ARP reply construction, IPv4 checksum validation/generation, ICMP echo validation, and ICMP echo reply construction"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "accepted behavior is scoped to deterministic local source/test packet shapes and does not include hardware or live networking"
+    },
+    {
+      "disposition": "deferred",
+      "finding": "packet buffers, device polling, driver adapter shape, ARP cache, UDP/TCP, DHCP, DNS, routing, sockets, smoltcp, SSH, and live packet I/O remain future work"
+    },
+    {
+      "disposition": "removed",
+      "finding": "no source, docs, dependencies, or prior task evidence were removed"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "no hardware lock, lab mutation, boot publication, or Pi 5 inconclusive-run triage was required for static closeout work"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "static/task/evidence consistency review",
+      "result": "pass"
+    },
+    {
+      "gate": "jq empty",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "mdbook build",
+      "result": "not-run",
+      "reason": "docs/src files were not changed by this closeout"
+    },
+    {
+      "gate": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "hardware": {
+    "hardware_test_lock_acquired": false,
+    "pi5_hardware_run": false,
+    "lab_mutation": false,
+    "boot_archive_publication": false,
+    "live_packet_io": false
+  },
+  "selected_next_task": "phase12-network-packet-buffer-device-polling-source-checkpoint-20260619"
+}
