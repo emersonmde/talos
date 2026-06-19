@@ -5780,6 +5780,185 @@ mod tests {
     }
 
     #[test_case]
+    fn qemu_substitute_single_ping_transaction_smoke_covers_lifecycle_and_retry_timeout() {
+        let endpoint = local_endpoint();
+        let destination = [192, 0, 2, 20];
+        let destination_mac = MacAddress::new([0x02, 0, 0, 0, 0, 20]);
+        let policy = Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None);
+        let payload = [1, 2, 3, 4];
+        let expected_icmp_len =
+            ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + ICMP_ECHO_HEADER_LEN + payload.len();
+        let mut cache = ArpCache::<2>::new();
+        let mut transaction = SinglePingTransaction::<4>::new();
+        let mut output = [0u8; 128];
+        let mut receive_buffer = [0u8; 128];
+        let mut start_device = OutboundTransmitDevice::new();
+
+        assert_eq!(
+            start_routed_single_ping_transaction_with_arp_retry_budget(
+                &mut start_device,
+                &cache,
+                &mut transaction,
+                endpoint,
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &payload,
+                &mut output,
+                1,
+            ),
+            SinglePingTransactionStartResult::ArpRequestTransmittedAndPending {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            }
+        );
+        assert_eq!(start_device.transmit_attempts, 1);
+        assert_eq!(
+            transaction.status(),
+            SinglePingTransactionStatus::PendingArp {
+                destination_ipv4: destination,
+                next_hop_ipv4: destination,
+                arp_retries_remaining: 1,
+            }
+        );
+        let arp_frame =
+            EthernetFrame::parse(&start_device.transmitted[..start_device.transmitted_len])
+                .expect("arp request frame");
+        assert_eq!(arp_frame.ether_type(), EtherType::Arp);
+        let arp_request =
+            ArpPacket::parse_ethernet_ipv4(arp_frame.payload()).expect("arp request packet");
+        assert_eq!(arp_request.target_protocol_address(), destination);
+
+        let arp_reply = arp_reply_frame();
+        let mut arp_reply_device = PollDevice::with_frame(&arp_reply);
+        assert_eq!(
+            poll_single_ping_transaction(
+                &mut arp_reply_device,
+                &mut cache,
+                &mut transaction,
+                &mut receive_buffer,
+                &mut output,
+            ),
+            SinglePingTransactionPollResult::PendingResult(
+                PendingIcmpEchoPollResult::PendingResult(
+                    PendingIcmpEchoResult::IcmpEchoRequestTransmitted {
+                        frame_len: expected_icmp_len,
+                    }
+                )
+            )
+        );
+        assert_eq!(transaction.pending(), None);
+        assert_eq!(
+            transaction.status(),
+            SinglePingTransactionStatus::Inflight {
+                destination_ipv4: destination,
+            }
+        );
+        assert_eq!(cache.lookup(destination), Some(destination_mac));
+        let icmp_frame =
+            EthernetFrame::parse(&arp_reply_device.transmitted[..arp_reply_device.transmitted_len])
+                .expect("icmp request frame");
+        assert_eq!(icmp_frame.destination(), destination_mac);
+        assert_eq!(icmp_frame.ether_type(), EtherType::Ipv4);
+        let ipv4 = Ipv4Packet::parse(icmp_frame.payload()).expect("ipv4 request");
+        assert_eq!(ipv4.destination(), destination);
+        assert_eq!(ipv4.protocol(), IPV4_PROTOCOL_ICMP);
+
+        let icmp_reply = icmp_echo_reply_frame();
+        let mut icmp_reply_device = PollDevice::with_frame(&icmp_reply);
+        assert_eq!(
+            poll_single_ping_transaction(
+                &mut icmp_reply_device,
+                &mut cache,
+                &mut transaction,
+                &mut receive_buffer,
+                &mut output,
+            ),
+            SinglePingTransactionPollResult::InflightResult(
+                InflightIcmpEchoPollResult::ObservationResult(
+                    InflightIcmpEchoResult::IcmpEchoReplyMatched {
+                        payload_len: payload.len(),
+                    }
+                )
+            )
+        );
+        assert_eq!(transaction.status(), SinglePingTransactionStatus::Idle);
+
+        let retry_destination = [198, 51, 100, 7];
+        let gateway = [192, 0, 2, 254];
+        let gateway_policy = Ipv4EgressRoutePolicy::new([255, 255, 255, 0], Some(gateway));
+        let mut retry_transaction = SinglePingTransaction::<4>::new();
+        let mut retry_device = OutboundTransmitDevice::new();
+        assert_eq!(
+            start_routed_single_ping_transaction_with_arp_retry_budget(
+                &mut retry_device,
+                &ArpCache::<0>::new(),
+                &mut retry_transaction,
+                endpoint,
+                gateway_policy,
+                retry_destination,
+                0x5678,
+                9,
+                60,
+                &payload,
+                &mut output,
+                1,
+            ),
+            SinglePingTransactionStartResult::ArpRequestTransmittedAndPending {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            }
+        );
+        assert_eq!(
+            retry_single_ping_transaction_arp_request(
+                &mut retry_device,
+                &mut retry_transaction,
+                &mut output,
+            ),
+            SinglePingTransactionRetryResult::PendingResult(
+                PendingIcmpEchoResult::ArpRequestTransmittedAndPending {
+                    frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+                }
+            )
+        );
+        assert_eq!(retry_device.transmit_attempts, 2);
+        assert_eq!(
+            retry_single_ping_transaction_arp_request(
+                &mut retry_device,
+                &mut retry_transaction,
+                &mut output,
+            ),
+            SinglePingTransactionRetryResult::PendingResult(
+                PendingIcmpEchoResult::ArpRetryBudgetExhausted {
+                    destination_ipv4: retry_destination,
+                    next_hop_ipv4: gateway,
+                }
+            )
+        );
+        assert_eq!(
+            timeout_single_ping_transaction(&mut retry_transaction),
+            SinglePingTransactionTimeoutResult::PendingTimedOut {
+                destination_ipv4: retry_destination,
+                next_hop_ipv4: gateway,
+            }
+        );
+        assert_eq!(
+            poll_single_ping_transaction(
+                &mut PollDevice::with_frame(&arp_reply),
+                &mut ArpCache::<2>::new(),
+                &mut retry_transaction,
+                &mut receive_buffer,
+                &mut output,
+            ),
+            SinglePingTransactionPollResult::NoTransaction
+        );
+        assert_eq!(
+            retry_transaction.status(),
+            SinglePingTransactionStatus::Idle
+        );
+    }
+
+    #[test_case]
     fn pending_arp_reply_poll_advances_gateway_pending_to_single_icmp_transmit() {
         let cache = ArpCache::<0>::new();
         let mut pending = SinglePendingIcmpEcho::<8>::new();

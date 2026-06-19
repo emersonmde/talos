@@ -4017,6 +4017,20 @@ The post-review correction chain is:
     work, lab mutation, boot publication, and phase transition remain rejected.
     selected_next_task is
     'phase12-network-single-ping-caller-driven-retry-timeout-closeout-20260619'.
+228. Phase 12.3 single-ping transaction QEMU/substitute smoke core: accepted in
+    'phase12-network-single-ping-transaction-qemu-smoke-core-20260619' with
+    classification
+    'phase12-network-single-ping-transaction-qemu-smoke-core-accepted'. The
+    retained host substitute transcript demonstrates the integrated
+    single-ping lifecycle through fake/trait-level NetworkDevice behavior:
+    unresolved ARP pending, matching ARP advancement to ICMP transmit,
+    in-flight recording, matching echo reply completion, and final idle
+    status. It also covers caller-driven ARP retry budget exhaustion followed
+    by explicit pending timeout. Evidence remains QEMU/substitute and
+    unit-test evidence over caller-owned buffers only; shell ping, sockets,
+    UDP/TCP, smoltcp, live driver adapters, live packet I/O, hardware,
+    reachability, autonomous timers, packet queues, lab mutation, boot
+    publication, SSH, and phase transition remain rejected.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -13338,6 +13352,15 @@ Milestone 12.3: IP Stack
   dynamic routing, shell ping, sockets, UDP/TCP, SSH, smoltcp adoption,
   reachability, hardware work, lab mutation, boot publication, and phase
   transition remain rejected.
+- The single-ping transaction QEMU/substitute smoke core retains a host
+  substitute transcript for the integrated lifecycle over fake/trait-level
+  NetworkDevice behavior: unresolved ARP pending, matching ARP advancement to
+  ICMP transmit, in-flight recording, matching echo reply completion, final
+  idle status, and caller-driven ARP retry budget exhaustion followed by
+  explicit timeout. This evidence does not accept shell ping, sockets,
+  UDP/TCP, smoltcp, live driver adapters, live packet I/O, hardware
+  reachability, autonomous timers, packet queues, lab mutation, boot
+  publication, SSH, or phase transition.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

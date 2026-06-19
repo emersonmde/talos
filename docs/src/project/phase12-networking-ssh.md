@@ -3185,3 +3185,22 @@ dynamic routing, shell ping, sockets, UDP/TCP, SSH, smoltcp adoption,
 reachability, hardware work, lab mutation, boot publication, or phase
 transition. selected_next_task is null and planningNeeded=true because no later
 queued task has complete objective dependencies after this checkpoint.
+
+phase12-network-single-ping-transaction-qemu-smoke-core-20260619 accepts
+phase12-network-single-ping-transaction-qemu-smoke-core-accepted.
+src/network.rs now includes a named QEMU/substitute single-ping transaction
+smoke test, and scripts/qemu-single-ping-transaction-smoke.sh retains the
+host substitute transcript under
+tasks/evidence/2026-06-19-qemu-single-ping-transaction-smoke/.
+
+The accepted evidence frontier now includes a durable transcript for the
+host-only single-ping transaction lifecycle: unresolved ARP starts pending,
+a matching ARP reply advances the transaction to one ICMP echo transmit and
+in-flight record, a matching echo reply completes the transaction, and status
+returns to idle. The same smoke also covers caller-driven ARP retry budget
+exhaustion followed by an explicit pending timeout. This remains
+QEMU/substitute and unit-test evidence over caller-owned buffers and
+fake/trait-level NetworkDevice behavior only; it does not accept shell ping,
+sockets, UDP/TCP, smoltcp, live driver adapters, live packet I/O, hardware,
+reachability, autonomous timers, packet queues, lab mutation, boot
+publication, SSH, or phase transition.
