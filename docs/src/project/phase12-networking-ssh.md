@@ -3102,3 +3102,22 @@ sockets, SSH, smoltcp adoption, reachability, hardware work, lab mutation,
 boot publication, and phase transition remain rejected. The selected next task
 is null and planningNeeded=true because no later queued task has complete
 objective dependencies after this checkpoint.
+
+phase12-network-integrated-single-ping-transaction-core-20260619 accepts
+phase12-network-integrated-single-ping-transaction-core-accepted. The accepted
+host-only boundary now includes one integrated single-ping transaction
+coordinator over caller-owned buffers and fake/trait-level NetworkDevice
+behavior. A caller can start one route-aware ICMP echo request; the coordinator
+either transmits it immediately for a resolved next hop and records one
+in-flight request after successful transmit, or emits one ARP request for an
+unresolved next hop and retains one pending route-aware request. A later
+caller-driven poll can consume a matching ARP reply, transmit exactly one ICMP
+echo request, clear pending, and record in-flight only after successful
+transmit. A matching echo reply completes and clears the in-flight transaction.
+
+The accepted evidence is still host/unit-test evidence only. It does not
+accept live packet I/O, live driver adapters, packet queues, autonomous retry
+or timeout scheduling, shell ping, sockets, SSH, smoltcp adoption,
+reachability, hardware work, lab mutation, boot publication, or phase
+transition. The selected next task is
+phase12-network-integrated-single-ping-transaction-closeout-20260619.

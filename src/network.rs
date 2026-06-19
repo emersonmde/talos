@@ -207,6 +207,21 @@ pub(crate) enum InflightIcmpEchoResult {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SinglePingTransactionStartResult {
+    IcmpEchoRequestTransmitted { frame_len: usize },
+    ArpRequestTransmittedAndPending { frame_len: usize },
+    PendingResult(PendingIcmpEchoResult),
+    InflightResult(InflightIcmpEchoResult),
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SinglePingTransactionPollResult {
+    NoTransaction,
+    PendingResult(PendingIcmpEchoPollResult),
+    InflightResult(InflightIcmpEchoPollResult),
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct MacAddress([u8; ETHERNET_ADDR_LEN]);
 
 impl MacAddress {
@@ -1091,6 +1106,37 @@ impl<const PAYLOAD_CAPACITY: usize> SingleInflightIcmpEcho<PAYLOAD_CAPACITY> {
     }
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SinglePingTransaction<const PAYLOAD_CAPACITY: usize> {
+    pending: SinglePendingIcmpEcho<PAYLOAD_CAPACITY>,
+    inflight: SingleInflightIcmpEcho<PAYLOAD_CAPACITY>,
+}
+
+impl<const PAYLOAD_CAPACITY: usize> SinglePingTransaction<PAYLOAD_CAPACITY> {
+    pub(crate) const fn new() -> Self {
+        Self {
+            pending: SinglePendingIcmpEcho::new(),
+            inflight: SingleInflightIcmpEcho::new(),
+        }
+    }
+
+    pub(crate) const fn pending(&self) -> Option<PendingIcmpEchoRequest<PAYLOAD_CAPACITY>> {
+        self.pending.pending()
+    }
+
+    pub(crate) const fn inflight(&self) -> Option<InflightIcmpEchoRequest<PAYLOAD_CAPACITY>> {
+        self.inflight.inflight()
+    }
+
+    pub(crate) const fn pending_destination_ipv4(&self) -> Option<[u8; 4]> {
+        self.pending.pending_destination_ipv4()
+    }
+
+    pub(crate) const fn inflight_destination_ipv4(&self) -> Option<[u8; 4]> {
+        self.inflight.inflight_destination_ipv4()
+    }
+}
+
 pub(crate) fn record_single_inflight_ipv4_icmp_echo_request<const PAYLOAD_CAPACITY: usize>(
     inflight: &mut SingleInflightIcmpEcho<PAYLOAD_CAPACITY>,
     endpoint: LocalNetworkEndpoint,
@@ -1737,6 +1783,152 @@ pub(crate) fn poll_single_inflight_ipv4_icmp_echo_reply<
     ))
 }
 
+pub(crate) fn start_routed_single_ping_transaction<
+    D: NetworkDevice,
+    const ARP_CAPACITY: usize,
+    const PAYLOAD_CAPACITY: usize,
+>(
+    device: &mut D,
+    arp_cache: &ArpCache<ARP_CAPACITY>,
+    transaction: &mut SinglePingTransaction<PAYLOAD_CAPACITY>,
+    endpoint: LocalNetworkEndpoint,
+    route_policy: Ipv4EgressRoutePolicy,
+    destination_ipv4: [u8; 4],
+    identifier: u16,
+    sequence_number: u16,
+    ttl: u8,
+    payload: &[u8],
+    output: &mut [u8],
+) -> SinglePingTransactionStartResult {
+    if let Some(destination_ipv4) = transaction.inflight_destination_ipv4() {
+        return SinglePingTransactionStartResult::InflightResult(
+            InflightIcmpEchoResult::InflightRequestAlreadyTracked { destination_ipv4 },
+        );
+    }
+
+    if let Some(destination_ipv4) = transaction.pending_destination_ipv4() {
+        return SinglePingTransactionStartResult::PendingResult(
+            PendingIcmpEchoResult::PendingRequestAlreadyQueued { destination_ipv4 },
+        );
+    }
+
+    let route = match route_ipv4_egress(endpoint, route_policy, destination_ipv4) {
+        Ok(route) => route,
+        Err(error) => {
+            return SinglePingTransactionStartResult::PendingResult(
+                PendingIcmpEchoResult::RouteError(error),
+            );
+        }
+    };
+
+    match resolve_outbound_neighbor(arp_cache, route.next_hop_ipv4()) {
+        OutboundNeighborResolution::Resolved { .. } => {
+            start_resolved_routed_single_ping_transaction(
+                device,
+                arp_cache,
+                transaction,
+                endpoint,
+                route,
+                identifier,
+                sequence_number,
+                ttl,
+                payload,
+                output,
+            )
+        }
+        OutboundNeighborResolution::Unresolved { .. } => {
+            let result = transmit_or_queue_routed_single_pending_ipv4_icmp_echo_request(
+                device,
+                arp_cache,
+                &mut transaction.pending,
+                endpoint,
+                route_policy,
+                destination_ipv4,
+                identifier,
+                sequence_number,
+                ttl,
+                payload,
+                output,
+            );
+            match result {
+                PendingIcmpEchoResult::ArpRequestTransmittedAndPending { frame_len } => {
+                    SinglePingTransactionStartResult::ArpRequestTransmittedAndPending { frame_len }
+                }
+                result => SinglePingTransactionStartResult::PendingResult(result),
+            }
+        }
+    }
+}
+
+pub(crate) fn poll_single_ping_transaction<
+    D: NetworkDevice,
+    const ARP_CAPACITY: usize,
+    const PAYLOAD_CAPACITY: usize,
+>(
+    device: &mut D,
+    arp_cache: &mut ArpCache<ARP_CAPACITY>,
+    transaction: &mut SinglePingTransaction<PAYLOAD_CAPACITY>,
+    receive_buffer: &mut [u8],
+    transmit_buffer: &mut [u8],
+) -> SinglePingTransactionPollResult {
+    if let Some(request) = transaction.pending() {
+        if transaction.inflight().is_some() {
+            return SinglePingTransactionPollResult::InflightResult(
+                InflightIcmpEchoPollResult::ObservationResult(
+                    InflightIcmpEchoResult::InflightRequestAlreadyTracked {
+                        destination_ipv4: request.destination_ipv4(),
+                    },
+                ),
+            );
+        }
+
+        let result = poll_pending_arp_reply_and_transmit_single_pending_ipv4_icmp_echo_request(
+            device,
+            arp_cache,
+            &mut transaction.pending,
+            receive_buffer,
+            transmit_buffer,
+        );
+        if let PendingIcmpEchoPollResult::PendingResult(
+            PendingIcmpEchoResult::IcmpEchoRequestTransmitted { .. },
+        ) = result
+        {
+            let inflight_request = match InflightIcmpEchoRequest::new(
+                request.endpoint(),
+                request.destination_ipv4(),
+                request.identifier(),
+                request.sequence_number(),
+                request.payload(),
+            ) {
+                Ok(request) => request,
+                Err(error) => {
+                    return SinglePingTransactionPollResult::InflightResult(
+                        InflightIcmpEchoPollResult::ObservationResult(error),
+                    );
+                }
+            };
+            if let Err(error) = transaction.inflight.store(inflight_request) {
+                return SinglePingTransactionPollResult::InflightResult(
+                    InflightIcmpEchoPollResult::ObservationResult(error),
+                );
+            }
+        }
+        return SinglePingTransactionPollResult::PendingResult(result);
+    }
+
+    if transaction.inflight().is_some() {
+        return SinglePingTransactionPollResult::InflightResult(
+            poll_single_inflight_ipv4_icmp_echo_reply(
+                device,
+                &mut transaction.inflight,
+                receive_buffer,
+            ),
+        );
+    }
+
+    SinglePingTransactionPollResult::NoTransaction
+}
+
 fn icmp_echo_reply_matches_inflight<const PAYLOAD_CAPACITY: usize>(
     reply_frame: &[u8],
     request: &InflightIcmpEchoRequest<PAYLOAD_CAPACITY>,
@@ -2091,6 +2283,72 @@ fn transmit_resolved_routed_ipv4_icmp_echo_request<D: NetworkDevice, const ARP_C
             frame_len,
             error,
         },
+    }
+}
+
+fn start_resolved_routed_single_ping_transaction<
+    D: NetworkDevice,
+    const ARP_CAPACITY: usize,
+    const PAYLOAD_CAPACITY: usize,
+>(
+    device: &mut D,
+    arp_cache: &ArpCache<ARP_CAPACITY>,
+    transaction: &mut SinglePingTransaction<PAYLOAD_CAPACITY>,
+    endpoint: LocalNetworkEndpoint,
+    route: Ipv4EgressRouteDecision,
+    identifier: u16,
+    sequence_number: u16,
+    ttl: u8,
+    payload: &[u8],
+    output: &mut [u8],
+) -> SinglePingTransactionStartResult {
+    let request = match InflightIcmpEchoRequest::new(
+        endpoint,
+        route.destination_ipv4(),
+        identifier,
+        sequence_number,
+        payload,
+    ) {
+        Ok(request) => request,
+        Err(error) => return SinglePingTransactionStartResult::InflightResult(error),
+    };
+
+    let resolution = resolve_outbound_neighbor(arp_cache, route.next_hop_ipv4());
+    let frame_len = match build_outbound_routed_ipv4_icmp_echo_request(
+        resolution,
+        route.destination_ipv4(),
+        endpoint,
+        identifier,
+        sequence_number,
+        ttl,
+        payload,
+        output,
+    ) {
+        Ok(frame_len) => frame_len,
+        Err(OutboundFrameError::NeighborUnresolved { destination_ipv4 }) => {
+            return SinglePingTransactionStartResult::PendingResult(
+                PendingIcmpEchoResult::PendingNeighborUnresolved { destination_ipv4 },
+            );
+        }
+        Err(error) => {
+            return SinglePingTransactionStartResult::PendingResult(
+                PendingIcmpEchoResult::RouteError(OutboundRouteError::Frame(error)),
+            );
+        }
+    };
+
+    match device.transmit_frame(&output[..frame_len]) {
+        Ok(()) => match transaction.inflight.store(request) {
+            Ok(()) => SinglePingTransactionStartResult::IcmpEchoRequestTransmitted { frame_len },
+            Err(error) => SinglePingTransactionStartResult::InflightResult(error),
+        },
+        Err(error) => {
+            SinglePingTransactionStartResult::PendingResult(PendingIcmpEchoResult::TransmitError {
+                request_kind: OutboundRequestKind::Ipv4IcmpEchoRequest,
+                frame_len,
+                error,
+            })
+        }
     }
 }
 
@@ -4634,6 +4892,487 @@ mod tests {
             self.transmitted_len = frame.len();
             Ok(())
         }
+    }
+
+    #[test_case]
+    fn integrated_single_ping_starts_resolved_route_and_completes_matching_reply() {
+        let endpoint = local_endpoint();
+        let destination = [192, 0, 2, 20];
+        let destination_mac = MacAddress::new([0x02, 0, 0, 0, 0, 20]);
+        let mut cache = ArpCache::<2>::new();
+        assert_eq!(
+            cache.insert_or_update(destination, destination_mac),
+            ArpCacheUpdate::Inserted
+        );
+        let mut transaction = SinglePingTransaction::<4>::new();
+        let mut output = [0u8; 128];
+        let mut device = OutboundTransmitDevice::new();
+        let payload = [1, 2, 3, 4];
+        let policy = Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None);
+        let expected_len =
+            ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + ICMP_ECHO_HEADER_LEN + payload.len();
+
+        assert_eq!(
+            start_routed_single_ping_transaction(
+                &mut device,
+                &cache,
+                &mut transaction,
+                endpoint,
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &payload,
+                &mut output,
+            ),
+            SinglePingTransactionStartResult::IcmpEchoRequestTransmitted {
+                frame_len: expected_len,
+            }
+        );
+        assert_eq!(transaction.pending(), None);
+        let inflight = transaction.inflight().expect("inflight recorded");
+        assert_eq!(inflight.destination_ipv4(), destination);
+        assert_eq!(inflight.identifier(), 0x1234);
+        assert_eq!(inflight.sequence_number(), 7);
+        assert_eq!(inflight.payload(), &payload);
+        assert_eq!(device.transmit_attempts, 1);
+
+        let frame =
+            EthernetFrame::parse(&device.transmitted[..device.transmitted_len]).expect("icmp");
+        assert_eq!(frame.destination(), destination_mac);
+        let ipv4 = Ipv4Packet::parse(frame.payload()).expect("ipv4");
+        assert_eq!(ipv4.destination(), destination);
+        assert_eq!(frame.payload()[8], 61);
+
+        let reply = icmp_echo_reply_frame();
+        let mut poll_device = PollDevice::with_frame(&reply);
+        let mut receive_buffer = [0u8; 128];
+        assert_eq!(
+            poll_single_ping_transaction(
+                &mut poll_device,
+                &mut cache,
+                &mut transaction,
+                &mut receive_buffer,
+                &mut output,
+            ),
+            SinglePingTransactionPollResult::InflightResult(
+                InflightIcmpEchoPollResult::ObservationResult(
+                    InflightIcmpEchoResult::IcmpEchoReplyMatched {
+                        payload_len: payload.len(),
+                    }
+                )
+            )
+        );
+        assert_eq!(transaction.inflight(), None);
+    }
+
+    #[test_case]
+    fn integrated_single_ping_arps_unresolved_route_then_records_inflight_after_icmp_transmit() {
+        let endpoint = local_endpoint();
+        let destination = [192, 0, 2, 20];
+        let mut cache = ArpCache::<2>::new();
+        let mut transaction = SinglePingTransaction::<4>::new();
+        let mut output = [0u8; 128];
+        let mut device = OutboundTransmitDevice::new();
+        let payload = [1, 2, 3, 4];
+        let policy = Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None);
+
+        assert_eq!(
+            start_routed_single_ping_transaction(
+                &mut device,
+                &cache,
+                &mut transaction,
+                endpoint,
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &payload,
+                &mut output,
+            ),
+            SinglePingTransactionStartResult::ArpRequestTransmittedAndPending {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            }
+        );
+        assert_eq!(transaction.inflight(), None);
+        let pending = transaction.pending().expect("pending recorded");
+        assert_eq!(pending.destination_ipv4(), destination);
+        assert_eq!(pending.next_hop_ipv4(), destination);
+
+        let arp_frame =
+            EthernetFrame::parse(&device.transmitted[..device.transmitted_len]).expect("arp");
+        assert_eq!(arp_frame.ether_type(), EtherType::Arp);
+        let arp = ArpPacket::parse_ethernet_ipv4(arp_frame.payload()).expect("arp packet");
+        assert_eq!(arp.target_protocol_address(), destination);
+
+        let reply = arp_reply_frame();
+        let mut poll_device = PollDevice::with_frame(&reply);
+        let mut receive_buffer = [0u8; 128];
+        let expected_len =
+            ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + ICMP_ECHO_HEADER_LEN + payload.len();
+        assert_eq!(
+            poll_single_ping_transaction(
+                &mut poll_device,
+                &mut cache,
+                &mut transaction,
+                &mut receive_buffer,
+                &mut output,
+            ),
+            SinglePingTransactionPollResult::PendingResult(
+                PendingIcmpEchoPollResult::PendingResult(
+                    PendingIcmpEchoResult::IcmpEchoRequestTransmitted {
+                        frame_len: expected_len,
+                    }
+                )
+            )
+        );
+        assert_eq!(transaction.pending(), None);
+        let inflight = transaction.inflight().expect("inflight recorded");
+        assert_eq!(inflight.destination_ipv4(), destination);
+        assert_eq!(inflight.payload(), &payload);
+        assert_eq!(
+            cache.lookup(destination),
+            Some(MacAddress::new([0x02, 0, 0, 0, 0, 20]))
+        );
+        let icmp_frame =
+            EthernetFrame::parse(&poll_device.transmitted[..poll_device.transmitted_len])
+                .expect("icmp");
+        assert_eq!(
+            icmp_frame.destination(),
+            MacAddress::new([0x02, 0, 0, 0, 0, 20])
+        );
+
+        let reply = icmp_echo_reply_frame();
+        let mut reply_device = PollDevice::with_frame(&reply);
+        assert_eq!(
+            poll_single_ping_transaction(
+                &mut reply_device,
+                &mut cache,
+                &mut transaction,
+                &mut receive_buffer,
+                &mut output,
+            ),
+            SinglePingTransactionPollResult::InflightResult(
+                InflightIcmpEchoPollResult::ObservationResult(
+                    InflightIcmpEchoResult::IcmpEchoReplyMatched {
+                        payload_len: payload.len(),
+                    }
+                )
+            )
+        );
+        assert_eq!(transaction.pending(), None);
+        assert_eq!(transaction.inflight(), None);
+    }
+
+    #[test_case]
+    fn integrated_single_ping_preserves_state_on_start_and_pending_error_boundaries() {
+        let endpoint = local_endpoint();
+        let destination = [198, 51, 100, 7];
+        let mut cache = ArpCache::<2>::new();
+        let mut transaction = SinglePingTransaction::<2>::new();
+        let mut output = [0xaa; 128];
+        let mut device = OutboundTransmitDevice::new();
+        let no_gateway = Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None);
+
+        assert_eq!(
+            start_routed_single_ping_transaction(
+                &mut device,
+                &cache,
+                &mut transaction,
+                endpoint,
+                no_gateway,
+                destination,
+                1,
+                2,
+                64,
+                &[1, 2],
+                &mut output,
+            ),
+            SinglePingTransactionStartResult::PendingResult(PendingIcmpEchoResult::RouteError(
+                OutboundRouteError::NoRouteToDestination {
+                    destination_ipv4: destination,
+                }
+            ))
+        );
+        assert_eq!(transaction.pending(), None);
+        assert_eq!(transaction.inflight(), None);
+        assert_eq!(device.transmit_attempts, 0);
+        assert_eq!(output, [0xaa; 128]);
+
+        let gateway = Ipv4EgressRoutePolicy::new([255, 255, 255, 0], Some([192, 0, 2, 254]));
+        let gateway_mac = MacAddress::new([0x02, 0, 0, 0, 0, 254]);
+        assert_eq!(
+            cache.insert_or_update([192, 0, 2, 254], gateway_mac),
+            ArpCacheUpdate::Inserted
+        );
+        assert_eq!(
+            start_routed_single_ping_transaction(
+                &mut device,
+                &cache,
+                &mut transaction,
+                endpoint,
+                gateway,
+                destination,
+                1,
+                2,
+                64,
+                &[1, 2, 3],
+                &mut output,
+            ),
+            SinglePingTransactionStartResult::InflightResult(
+                InflightIcmpEchoResult::InflightPayloadTooLarge {
+                    required_len: 3,
+                    max_len: 2,
+                }
+            )
+        );
+        assert_eq!(transaction.inflight(), None);
+        assert_eq!(device.transmit_attempts, 0);
+
+        let mut small_output = [0xaa; ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN];
+        assert_eq!(
+            start_routed_single_ping_transaction(
+                &mut device,
+                &cache,
+                &mut transaction,
+                endpoint,
+                gateway,
+                destination,
+                1,
+                2,
+                64,
+                &[1, 2],
+                &mut small_output,
+            ),
+            SinglePingTransactionStartResult::PendingResult(PendingIcmpEchoResult::RouteError(
+                OutboundRouteError::Frame(OutboundFrameError::OutputBufferTooSmall {
+                    required_len: ETHERNET_HEADER_LEN
+                        + IPV4_MIN_HEADER_LEN
+                        + ICMP_ECHO_HEADER_LEN
+                        + 2,
+                    available_len: small_output.len(),
+                })
+            ))
+        );
+        assert_eq!(transaction.inflight(), None);
+        assert_eq!(device.transmit_attempts, 0);
+
+        let mut failing = OutboundTransmitDevice::with_transmit_error(DeviceError::Io);
+        assert_eq!(
+            start_routed_single_ping_transaction(
+                &mut failing,
+                &cache,
+                &mut transaction,
+                endpoint,
+                gateway,
+                destination,
+                1,
+                2,
+                64,
+                &[1, 2],
+                &mut output,
+            ),
+            SinglePingTransactionStartResult::PendingResult(PendingIcmpEchoResult::TransmitError {
+                request_kind: OutboundRequestKind::Ipv4IcmpEchoRequest,
+                frame_len: ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + ICMP_ECHO_HEADER_LEN + 2,
+                error: DeviceError::Io,
+            })
+        );
+        assert_eq!(transaction.inflight(), None);
+        assert_eq!(failing.transmit_attempts, 1);
+
+        let mut unresolved = SinglePingTransaction::<4>::new();
+        let mut arp_device = OutboundTransmitDevice::new();
+        let same_subnet = Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None);
+        assert_eq!(
+            start_routed_single_ping_transaction(
+                &mut arp_device,
+                &ArpCache::<0>::new(),
+                &mut unresolved,
+                endpoint,
+                same_subnet,
+                [192, 0, 2, 44],
+                1,
+                2,
+                64,
+                &[1, 2],
+                &mut output,
+            ),
+            SinglePingTransactionStartResult::ArpRequestTransmittedAndPending {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            }
+        );
+        assert_eq!(
+            start_routed_single_ping_transaction(
+                &mut arp_device,
+                &ArpCache::<0>::new(),
+                &mut unresolved,
+                endpoint,
+                same_subnet,
+                [192, 0, 2, 45],
+                3,
+                4,
+                64,
+                &[3, 4],
+                &mut output,
+            ),
+            SinglePingTransactionStartResult::PendingResult(
+                PendingIcmpEchoResult::PendingRequestAlreadyQueued {
+                    destination_ipv4: [192, 0, 2, 44],
+                }
+            )
+        );
+
+        let mut receive_error = PollDevice::with_receive_error(DeviceError::Io);
+        let mut receive_buffer = [0u8; 128];
+        assert_eq!(
+            poll_single_ping_transaction(
+                &mut receive_error,
+                &mut ArpCache::<2>::new(),
+                &mut unresolved,
+                &mut receive_buffer,
+                &mut output,
+            ),
+            SinglePingTransactionPollResult::PendingResult(
+                PendingIcmpEchoPollResult::ReceiveError(DeviceError::Io)
+            )
+        );
+        assert_eq!(unresolved.pending_destination_ipv4(), Some([192, 0, 2, 44]));
+
+        let nonmatching_arp_frame = arp_reply_frame();
+        let mut nonmatching_arp = PollDevice::with_frame(&nonmatching_arp_frame);
+        assert_eq!(
+            poll_single_ping_transaction(
+                &mut nonmatching_arp,
+                &mut ArpCache::<2>::new(),
+                &mut unresolved,
+                &mut receive_buffer,
+                &mut output,
+            ),
+            SinglePingTransactionPollResult::PendingResult(
+                PendingIcmpEchoPollResult::PendingResult(PendingIcmpEchoResult::NonMatchingArp {
+                    pending_destination_ipv4: [192, 0, 2, 44],
+                    arp_sender_ipv4: [192, 0, 2, 20],
+                })
+            )
+        );
+        assert_eq!(unresolved.pending_destination_ipv4(), Some([192, 0, 2, 44]));
+
+        let truncated = &arp_reply_frame()[..ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN - 1];
+        let mut malformed_arp = PollDevice::with_frame(truncated);
+        assert_eq!(
+            poll_single_ping_transaction(
+                &mut malformed_arp,
+                &mut ArpCache::<2>::new(),
+                &mut unresolved,
+                &mut receive_buffer,
+                &mut output,
+            ),
+            SinglePingTransactionPollResult::PendingResult(
+                PendingIcmpEchoPollResult::PendingResult(PendingIcmpEchoResult::ArpError(
+                    PacketError::Truncated
+                ))
+            )
+        );
+        assert_eq!(unresolved.pending_destination_ipv4(), Some([192, 0, 2, 44]));
+    }
+
+    #[test_case]
+    fn integrated_single_ping_preserves_inflight_on_duplicate_and_nonmatching_replies() {
+        let endpoint = local_endpoint();
+        let destination = [192, 0, 2, 20];
+        let destination_mac = MacAddress::new([0x02, 0, 0, 0, 0, 20]);
+        let mut cache = ArpCache::<2>::new();
+        assert_eq!(
+            cache.insert_or_update(destination, destination_mac),
+            ArpCacheUpdate::Inserted
+        );
+        let mut transaction = SinglePingTransaction::<4>::new();
+        let mut output = [0u8; 128];
+        let mut device = OutboundTransmitDevice::new();
+        let payload = [1, 2, 3, 4];
+        let policy = Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None);
+
+        assert_eq!(
+            start_routed_single_ping_transaction(
+                &mut device,
+                &cache,
+                &mut transaction,
+                endpoint,
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &payload,
+                &mut output,
+            ),
+            SinglePingTransactionStartResult::IcmpEchoRequestTransmitted {
+                frame_len: ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + ICMP_ECHO_HEADER_LEN + 4,
+            }
+        );
+        assert_eq!(
+            start_routed_single_ping_transaction(
+                &mut device,
+                &cache,
+                &mut transaction,
+                endpoint,
+                policy,
+                [192, 0, 2, 44],
+                0x1234,
+                7,
+                61,
+                &payload,
+                &mut output,
+            ),
+            SinglePingTransactionStartResult::InflightResult(
+                InflightIcmpEchoResult::InflightRequestAlreadyTracked {
+                    destination_ipv4: destination,
+                }
+            )
+        );
+        assert_eq!(transaction.inflight_destination_ipv4(), Some(destination));
+
+        let mut nonmatching_reply = icmp_echo_reply_frame();
+        nonmatching_reply[ETHERNET_HEADER_LEN + 12..ETHERNET_HEADER_LEN + 16]
+            .copy_from_slice(&[192, 0, 2, 21]);
+        rewrite_ipv4_checksum(&mut nonmatching_reply);
+        let mut poll_device = PollDevice::with_frame(&nonmatching_reply);
+        let mut receive_buffer = [0u8; 128];
+        assert_eq!(
+            poll_single_ping_transaction(
+                &mut poll_device,
+                &mut cache,
+                &mut transaction,
+                &mut receive_buffer,
+                &mut output,
+            ),
+            SinglePingTransactionPollResult::InflightResult(
+                InflightIcmpEchoPollResult::ObservationResult(
+                    InflightIcmpEchoResult::NonMatchingIcmpEchoReply {
+                        destination_ipv4: destination,
+                    }
+                )
+            )
+        );
+        assert_eq!(transaction.inflight_destination_ipv4(), Some(destination));
+
+        let mut receive_error = PollDevice::with_receive_error(DeviceError::Io);
+        assert_eq!(
+            poll_single_ping_transaction(
+                &mut receive_error,
+                &mut cache,
+                &mut transaction,
+                &mut receive_buffer,
+                &mut output,
+            ),
+            SinglePingTransactionPollResult::InflightResult(
+                InflightIcmpEchoPollResult::ReceiveError(DeviceError::Io)
+            )
+        );
+        assert_eq!(transaction.inflight_destination_ipv4(), Some(destination));
     }
 
     #[test_case]

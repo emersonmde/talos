@@ -3960,6 +3960,24 @@ The post-review correction chain is:
     is null and planningNeeded=true because no later queued task has complete
     objective dependencies after this checkpoint.
 
+225. Phase 12.3 integrated single-ping transaction core: accepted in
+    'phase12-network-integrated-single-ping-transaction-core-20260619' with
+    classification
+    'phase12-network-integrated-single-ping-transaction-core-accepted'. The
+    accepted host-only boundary now includes one coordinator that starts one
+    route-aware ICMP echo request, records in-flight only after a successful
+    resolved-next-hop transmit, or emits one ARP request and retains one
+    pending route-aware request for an unresolved next hop. A caller-driven
+    poll can consume a matching ARP reply, transmit exactly one ICMP echo
+    request, clear pending, and record in-flight only after successful
+    transmit; a matching echo reply completes and clears in-flight. Evidence is
+    source/unit-test evidence over caller-owned buffers and fake/trait-level
+    NetworkDevice behavior only. Live packet I/O, live driver adapters, packet
+    queues, autonomous retry or timeout scheduling, shell ping, sockets, SSH,
+    smoltcp adoption, reachability, hardware work, lab mutation, boot
+    publication, and phase transition remain rejected. selected_next_task is
+    'phase12-network-integrated-single-ping-transaction-closeout-20260619'.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed
