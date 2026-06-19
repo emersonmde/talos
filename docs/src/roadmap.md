@@ -3697,6 +3697,20 @@ The post-review correction chain is:
     packet I/O, sockets, SSH, hardware-driver readiness, ping/network
     reachability behavior, link readiness, or phase transition.
 
+210. Phase 12.3 outbound IPv4 ICMP echo request closeout: accepted in
+    'phase12-network-outbound-ipv4-icmp-echo-request-closeout-20260619' with
+    classification
+    'phase12-network-outbound-ipv4-icmp-echo-request-closeout-accepted'. The
+    closeout preserves the host-only caller-buffered Ethernet IPv4 ICMP echo
+    request construction frontier for already resolved neighbors and selects
+    the queued
+    'phase12-network-arp-request-emission-source-checkpoint-20260619' as the
+    next same-slice source/static checkpoint. ARP request implementation,
+    retry timers, packet queues, driver transmit, live packet I/O, sockets,
+    SSH, smoltcp adoption, ping/network reachability behavior, Pi 5 hardware
+    work, boot publication, lab mutation, link-readiness work, and phase
+    transition remain rejected.
+
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
 frontier as QEMU/substitute-proven shell-visible cat and exec behavior backed

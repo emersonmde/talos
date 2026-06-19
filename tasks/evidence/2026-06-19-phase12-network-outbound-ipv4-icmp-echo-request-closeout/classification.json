@@ -1,0 +1,87 @@
+{
+  "task_id": "phase12-network-outbound-ipv4-icmp-echo-request-closeout-20260619",
+  "status": "accepted",
+  "classification": "phase12-network-outbound-ipv4-icmp-echo-request-closeout-accepted",
+  "accepted_at": "2026-06-19T10:21:00Z",
+  "evidence_level": [
+    "static/source/task evidence review",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_frontier": [
+    "host-only caller-buffered Ethernet IPv4 ICMP echo request construction for an already resolved outbound neighbor",
+    "deterministic Ethernet destination/source MACs and IPv4 EtherType",
+    "deterministic IPv4 version/IHL/total length/TTL/protocol/source/destination/header checksum fields",
+    "deterministic ICMP echo request type/code/identifier/sequence/payload/checksum fields",
+    "deterministic unresolved-neighbor, output-buffer pressure, and oversized IPv4 payload rejection",
+    "composition with cached outbound neighbor resolution"
+  ],
+  "reviewed_evidence": [
+    "tasks/2026-06-19-phase12-network-outbound-ipv4-icmp-echo-request-core.md",
+    "tasks/evidence/2026-06-19-phase12-network-outbound-ipv4-icmp-echo-request-core/classification.json",
+    "src/network.rs",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md",
+    "commit 59db8c790d53abf255caa1c8cb181d933c16787f"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "closeout reconciles accepted implementation outcome, validation, docs, evidence, rejected claims, and deferred work"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "exact accepted frontier remains caller-buffered Ethernet IPv4 ICMP echo request construction for a resolved neighbor only"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "queued ARP request emission source checkpoint is the next mechanically clear same-slice follow-up because unresolved-neighbor rejection remains below live packet I/O and the task is fully specified"
+    },
+    {
+      "disposition": "deferred",
+      "finding": "ARP request emission, neighbor-discovery state, retry timers, packet queues, routing, driver transmit scheduling, live packet I/O, sockets, SSH, smoltcp integration, and hardware proof remain future work"
+    },
+    {
+      "disposition": "removed",
+      "finding": "no source files, tests, dependencies, prior task evidence, or docs sections were removed"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "no Pi 5 inconclusive-run triage was required because no hardware run or hardware-dependent claim was made"
+    }
+  ],
+  "selected_next_task": "phase12-network-arp-request-emission-source-checkpoint-20260619",
+  "planningNeeded": false,
+  "hardware": {
+    "hardware_test_lock_acquired": false,
+    "pi5_hardware_run": false,
+    "lab_mutation": false,
+    "boot_archive_publication": false,
+    "live_packet_io": false
+  },
+  "rejected_claims": [
+    "ARP request emission",
+    "ARP retry timer",
+    "packet queues",
+    "routing table",
+    "subnet or gateway selection",
+    "driver transmit scheduling",
+    "live packet I/O",
+    "packet capture",
+    "ping behavior",
+    "network reachability",
+    "sockets",
+    "SSH",
+    "UDP/TCP",
+    "DHCP",
+    "DNS",
+    "smoltcp adoption",
+    "RP1 Ethernet readiness",
+    "DMA/interrupt behavior",
+    "Pi 5 hardware proof",
+    "boot archive publication",
+    "lab mutation",
+    "phase transition"
+  ]
+}

@@ -2706,3 +2706,15 @@ not mutate ARP cache state, access a driver, queue packets, transmit frames,
 emit ARP requests, adopt smoltcp, claim sockets/SSH, claim ping/network
 reachability behavior, claim RP1 Ethernet readiness, or change the Phase 12.1
 hardware frontier.
+
+phase12-network-outbound-ipv4-icmp-echo-request-closeout-20260619 accepts
+phase12-network-outbound-ipv4-icmp-echo-request-closeout-accepted. The
+closeout preserves the exact host-only caller-buffered Ethernet IPv4 ICMP echo
+request construction frontier for already resolved neighbors and selects the
+queued phase12-network-arp-request-emission-source-checkpoint-20260619 as the
+next same-slice source/static checkpoint. The selected checkpoint is bounded to
+unresolved-neighbor/ARP-request planning only; it does not authorize ARP
+request implementation, retry timers, packet queues, driver transmit, live
+packet I/O, sockets, SSH, smoltcp adoption, ping/network reachability behavior,
+Pi 5 hardware work, boot publication, lab mutation, link-readiness work, or a
+phase transition.
