@@ -14077,6 +14077,24 @@ Milestone 12.3: IP Stack
   link-hardware retry, broad Phase 12.4 socket expansion, and phase transition
   remain rejected. selected_next_task is null and planningNeeded=true pending
   supervisor planning for any next bounded task.
+- The process-local ping descriptor contract accepts the next crate-internal,
+  host-only Phase 12.4 ownership boundary. A future core task may route one
+  DescriptorShapedPingControl lifecycle through the existing
+  ProcessDescriptorStore and per-ProcessOwnerId DescriptorTable model, with the
+  process-local descriptor as the caller-visible handle and a fixed-capacity
+  crate-internal ping-control description store as the backing object. The
+  contract preserves caller-owned receive/transmit/status storage,
+  fixed-capacity state, explicit terminal status observation, and the existing
+  EBADF/EMFILE/EBUSY/EAGAIN/ENOSPC/error vocabulary while delegating ARP, IPv4,
+  ICMP, route, retry, timeout, local responder behavior, and fake/trait-level
+  NetworkDevice I/O to DescriptorShapedPingControl,
+  RuntimePingOperationSyscallSubstitute, and NetworkRuntimeDevicePump. Shell
+  ping, public sockets, stable syscall ABI acceptance, socket syscall ABI
+  acceptance, live driver adapters, live packet I/O, hardware reachability,
+  SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1
+  link-hardware retry, broad socket expansion, and phase transition remain
+  rejected. The selected next bounded task is
+  phase12-network-process-local-ping-descriptor-core-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

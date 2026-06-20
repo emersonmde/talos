@@ -3853,3 +3853,26 @@ packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot
 publication, Phase 12.1 link-hardware retry, broad Phase 12.4 socket
 expansion, and phase transition remain rejected. selected_next_task is null and
 planningNeeded=true pending supervisor planning for any next bounded task.
+
+phase12-network-process-local-ping-descriptor-contract-20260620 accepts
+phase12-network-process-local-ping-descriptor-contract-accepted. The selected
+contract routes one accepted DescriptorShapedPingControl lifecycle through the
+existing process-local descriptor ownership model: ProcessDescriptorStore owns
+per-ProcessOwnerId DescriptorTable instances, the process-local descriptor is
+the caller-visible handle, and the descriptor object reference indexes only a
+crate-internal fixed-capacity ping-control description store.
+
+The future core task may open, start, pump/read-result, observe status,
+retry_arp, timeout, and close one ping-control operation through that
+process-local handle while preserving caller-owned receive/transmit/status
+storage, fixed-capacity state, explicit terminal status observation, and the
+accepted EBADF/EMFILE/EBUSY/EAGAIN/ENOSPC/error vocabulary. ARP, IPv4, ICMP,
+route policy, retry behavior, timeout behavior, local responder behavior, and
+fake/trait-level NetworkDevice I/O remain delegated to DescriptorShapedPingControl,
+RuntimePingOperationSyscallSubstitute, and NetworkRuntimeDevicePump. Public
+sockets, stable syscall ABI acceptance, socket syscall ABI acceptance, shell
+ping, live driver adapters, live packet I/O, hardware reachability, SSH,
+smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1 link-hardware
+retry, broad socket expansion, and phase transition remain rejected. The
+selected next bounded task is
+phase12-network-process-local-ping-descriptor-core-20260620.
