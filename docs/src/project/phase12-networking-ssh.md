@@ -3831,3 +3831,25 @@ publication, Phase 12.1 link-hardware retry, broad Phase 12.4 socket
 expansion, and phase transition remain rejected. selected_next_task is null and
 planningNeeded=true because no later queued Phase 12.4 task has complete
 explicit acceptance gates.
+
+phase12-network-descriptor-shaped-ping-control-closeout-20260620 accepts
+phase12-network-descriptor-shaped-ping-control-closeout-accepted. The closeout
+reconciles the accepted DescriptorShapedPingControl source/unit evidence,
+task-owned smoke script, retained host/QEMU-substitute transcript, task records,
+docs, and rejected claims. The accepted boundary remains a crate-internal
+host-only control wrapper over RuntimePingOperationSyscallSubstitute and
+NetworkRuntimeDevicePump with caller-owned receive/transmit/status storage and
+fixed-capacity state.
+
+The accepted evidence level remains host/QEMU-substitute over fake/trait-level
+NetworkDevice behavior. It covers open/start/status, unresolved ARP,
+runtime-pump ARP advancement to inflight, runtime-pump echo-reply completion,
+terminal completed status, close, invalid and closed descriptors, zero
+descriptor capacity, duplicate active open, caller receive-buffer pressure,
+retry exhaustion, explicit timeout, receive IO error, local transmit IO error,
+and active-ping transmit IO error. Shell ping, public sockets, stable syscall
+ABI acceptance, socket syscall ABI acceptance, live driver adapters, live
+packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot
+publication, Phase 12.1 link-hardware retry, broad Phase 12.4 socket
+expansion, and phase transition remain rejected. selected_next_task is null and
+planningNeeded=true pending supervisor planning for any next bounded task.

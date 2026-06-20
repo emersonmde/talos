@@ -14064,6 +14064,19 @@ Milestone 12.3: IP Stack
   12.1 link-hardware retry, broad Phase 12.4 socket expansion, and phase
   transition remain rejected. selected_next_task is null and planningNeeded=true
   pending supervisor planning.
+- The descriptor-shaped ping control closeout reconciles the accepted
+  DescriptorShapedPingControl implementation, source/unit tests, task-owned
+  smoke command, retained host/QEMU-substitute transcript, task records, docs,
+  and rejected claims. The accepted boundary remains a crate-internal host-only
+  control wrapper over RuntimePingOperationSyscallSubstitute and
+  NetworkRuntimeDevicePump with caller-owned receive/transmit/status storage,
+  fixed-capacity state, and fake/trait-level NetworkDevice evidence. Shell
+  ping, public sockets, stable syscall ABI acceptance, socket syscall ABI
+  acceptance, live driver adapters, live packet I/O, hardware reachability,
+  SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1
+  link-hardware retry, broad Phase 12.4 socket expansion, and phase transition
+  remain rejected. selected_next_task is null and planningNeeded=true pending
+  supervisor planning for any next bounded task.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
