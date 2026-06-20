@@ -3968,3 +3968,27 @@ lab mutation, boot publication, Phase 12.1 link-hardware retry, broad Phase
 12.4 socket expansion, and phase transition remain rejected. selected_next_task
 is null and planningNeeded=true pending supervisor planning for any next
 bounded task.
+
+phase12-network-process-local-ping-svc-dispatch-contract-20260620 accepts
+phase12-network-process-local-ping-svc-dispatch-contract-accepted. The contract
+selects an unstable crate-internal, host-only dispatch facade as the next
+implementation boundary for driving ProcessLocalPingDescriptorControl through
+the existing process descriptor/syscall dispatch shape.
+
+The future core task may route open, start, pump_or_read_result, status,
+retry_arp, timeout, and close through explicit dispatch context containing the
+current process owner, ProcessDescriptorStore, caller-owned buffers, and
+NetworkRuntimeDevicePump. It must preserve the existing stable syscall vocabulary
+of TalosNop, TalosWrite, TalosClose, TalosDup, TalosRead, and TalosOpen; no new
+stable SyscallNumber variant, TALOS_*_SYSCALL constant, public socket API, or
+stable userspace ABI is accepted by this contract. The accepted evidence level
+is static host-only source/task/doc review over the dispatch_process_descriptor*
+patterns, ProcessLocalPingDescriptorControl, DescriptorShapedPingControl,
+RuntimePingOperationSyscallSubstitute, NetworkRuntimeDevicePump,
+fake/trait-level NetworkDevice behavior, caller-owned buffers, and
+fixed-capacity state. Shell ping, public sockets, stable syscall ABI acceptance,
+socket syscall ABI acceptance, live driver adapters, live packet I/O, hardware
+reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1
+link-hardware retry, broad socket expansion, and phase transition remain
+rejected. The selected next bounded task is
+phase12-network-process-local-ping-svc-dispatch-core-20260620.
