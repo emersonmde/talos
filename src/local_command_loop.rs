@@ -32,7 +32,8 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+pipeline-producer-file-redirection-away+background-vfs-exec-lifecycle",
     "+jobs-accounting-list+multiple-background-vfs-exec-records",
     "+background-jobs-stale-entry-policy+generated-root-manifest-read",
-    "+generated-root-executable-vfs-exec+shell-pingdiag-vfs-userspace-diagnostic"
+    "+generated-root-executable-vfs-exec+shell-pingdiag-vfs-userspace-diagnostic",
+    "+shell-sockdiag-vfs-userspace-socket-open-close"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -104,7 +105,7 @@ const LOCAL_COMMAND_ROOT_LISTING: [(&[u8], &str); 5] = [
 ];
 const LOCAL_COMMAND_ETC_LISTING: [(&[u8], &str); 1] =
     [(initramfs::PHASE8_BANNER_PATH, "banner.txt")];
-const LOCAL_COMMAND_BIN_LISTING: [(&[u8], &str); 7] = [
+const LOCAL_COMMAND_BIN_LISTING: [(&[u8], &str); 8] = [
     (initramfs::PHASE8_INIT_PATH, "init"),
     (initramfs::PHASE10_ZERO_PATH, "zero"),
     (initramfs::PHASE10_STATUS42_PATH, "status42"),
@@ -112,6 +113,7 @@ const LOCAL_COMMAND_BIN_LISTING: [(&[u8], &str); 7] = [
     (initramfs::PHASE10_STDIN_PATH, "stdin"),
     (initramfs::PHASE10_STDERR_PATH, "stderr"),
     (initramfs::PHASE12_PINGDIAG_PATH, "pingdiag"),
+    (initramfs::PHASE12_SOCKDIAG_PATH, "sockdiag"),
 ];
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -573,6 +575,8 @@ pub struct LocalCommandExecSummary {
     userspace_stderr: Option<LocalCommandUserspaceStderrRecord>,
     pingdiag: Option<LocalCommandPingdiagRecord>,
     pingdiag_controls: Option<LocalCommandPingdiagControlRecord>,
+    sockdiag: Option<LocalCommandSockdiagRecord>,
+    sockdiag_controls: Option<LocalCommandSockdiagControlRecord>,
     lifecycle: LocalCommandProcessLifecycleRecord,
 }
 
@@ -689,6 +693,31 @@ pub struct LocalCommandPingdiagControlRecord {
     queue_backpressure: &'static str,
     timeout_retry: &'static str,
     device_errors: &'static str,
+    syscall_vocabulary: &'static str,
+    source: &'static str,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct LocalCommandSockdiagRecord {
+    process_descriptor: usize,
+    domain: u64,
+    socket_type: u64,
+    protocol: u64,
+    descriptor_kind: &'static str,
+    descriptor_access: &'static str,
+    close_return: u64,
+    backing_closed: bool,
+    source: &'static str,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct LocalCommandSockdiagControlRecord {
+    malformed_arguments: &'static str,
+    missing_executable_identity: &'static str,
+    unsupported_domain: &'static str,
+    unsupported_type: &'static str,
+    unsupported_protocol: &'static str,
+    invalid_closed_descriptor: &'static str,
     syscall_vocabulary: &'static str,
     source: &'static str,
 }
@@ -874,6 +903,12 @@ pub trait LocalCommandSink {
         Err(LocalCommandExecError::NotSupported)
     }
 
+    fn exec_shell_sockdiag_diagnostic(
+        &mut self,
+    ) -> Result<LocalCommandSockdiagRecord, LocalCommandExecError> {
+        Err(LocalCommandExecError::NotSupported)
+    }
+
     fn poll_background_job_completion(&mut self) -> Option<LocalCommandBackgroundJobRecord> {
         None
     }
@@ -933,6 +968,7 @@ pub struct DescriptorBackedLocalCommandIo<
     pipe: LocalCommandPipeState,
     stdout_scratch_file: LocalCommandVolatileFileState,
     stderr_scratch_file: LocalCommandVolatileFileState,
+    socket_descriptors: crate::network::NetworkSocketDescriptorTable<1>,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -1162,6 +1198,7 @@ where
             pipe: LocalCommandPipeState::new_empty(),
             stdout_scratch_file: LocalCommandVolatileFileState::new_empty(),
             stderr_scratch_file: LocalCommandVolatileFileState::new_empty(),
+            socket_descriptors: crate::network::NetworkSocketDescriptorTable::new(),
         })
     }
 }
@@ -1383,6 +1420,7 @@ where
             initramfs::PHASE10_STDIN_PATH => initramfs::PHASE10_STDIN_PATH,
             initramfs::PHASE10_STDERR_PATH => initramfs::PHASE10_STDERR_PATH,
             initramfs::PHASE12_PINGDIAG_PATH => initramfs::PHASE12_PINGDIAG_PATH,
+            initramfs::PHASE12_SOCKDIAG_PATH => initramfs::PHASE12_SOCKDIAG_PATH,
             initramfs::GENERATED_ROOT_EXEC_PATH => initramfs::GENERATED_ROOT_EXEC_PATH,
             initramfs::PHASE8_BANNER_PATH => initramfs::PHASE8_BANNER_PATH,
             initramfs::PHASE8_EMPTY_PATH => initramfs::PHASE8_EMPTY_PATH,
@@ -1390,6 +1428,13 @@ where
             _ => return Err(LocalCommandExecError::NotExecutable),
         };
         if source_path == initramfs::PHASE12_PINGDIAG_PATH
+            && (request.argv.argc() != 1
+                || request.stdin_redirection.is_some()
+                || request.redirection.is_some())
+        {
+            return Err(LocalCommandExecError::InvalidPath);
+        }
+        if source_path == initramfs::PHASE12_SOCKDIAG_PATH
             && (request.argv.argc() != 1
                 || request.stdin_redirection.is_some()
                 || request.redirection.is_some())
@@ -1531,6 +1576,23 @@ where
         } else {
             (None, None)
         };
+        let (sockdiag, sockdiag_controls) = if source_path == initramfs::PHASE12_SOCKDIAG_PATH {
+            (
+                Some(self.exec_shell_sockdiag_diagnostic()?),
+                Some(LocalCommandSockdiagControlRecord {
+                    malformed_arguments: "exec-invalid-path",
+                    missing_executable_identity: "exec-not-found",
+                    unsupported_domain: "ENOTSUP",
+                    unsupported_type: "ENOTSUP",
+                    unsupported_protocol: "ENOTSUP",
+                    invalid_closed_descriptor: "EBADF",
+                    syscall_vocabulary: "SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_SOCKET/TALOS_CLOSE bounded",
+                    source: "shell-sockdiag-controls",
+                }),
+            )
+        } else {
+            (None, None)
+        };
         let redirections = self.restore_exec_redirections(applied_redirections)?;
         let lifecycle = LocalCommandProcessLifecycleRecord::exited(
             LOCAL_COMMAND_EXEC_PROCESS_ID,
@@ -1573,7 +1635,178 @@ where
             userspace_stderr,
             pingdiag,
             pingdiag_controls,
+            sockdiag,
+            sockdiag_controls,
             lifecycle,
+        })
+    }
+
+    fn exec_shell_sockdiag_diagnostic(
+        &mut self,
+    ) -> Result<LocalCommandSockdiagRecord, LocalCommandExecError> {
+        let owner = self
+            .current_owner
+            .ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
+        let mut user_memory = [0u8; 128];
+        let mut kernel_scratch = [0u8; 64];
+        let mut socket_dispatch =
+            |raw_number: u64,
+             arguments: syscall::SyscallArguments,
+             descriptor_store: &mut posix::ProcessDescriptorStore<
+                OWNER_CAPACITY,
+                DESCRIPTOR_CAPACITY,
+            >,
+             socket_descriptors: &mut crate::network::NetworkSocketDescriptorTable<1>,
+             user_memory: &mut [u8; 128],
+             kernel_scratch: &mut [u8; 64]| {
+                syscall::dispatch_process_descriptor_with_socket_table(
+                    raw_number,
+                    arguments,
+                    Some(owner),
+                    descriptor_store,
+                    socket_descriptors,
+                    &[],
+                    0x0000_0000_0026_0000,
+                    user_memory,
+                    kernel_scratch,
+                    &mut self.output_backend,
+                )
+            };
+
+        let unsupported_domain = socket_dispatch(
+            syscall::TALOS_SOCKET_SYSCALL,
+            syscall::SyscallArguments::new([
+                10,
+                crate::network::SOCKET_TYPE_STREAM,
+                crate::network::SOCKET_PROTOCOL_DEFAULT,
+                0,
+                0,
+                0,
+            ]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if syscall::errno_number(posix::PosixError::NotSupported) as u64
+            != unsupported_domain.return_value().x0().wrapping_neg()
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let unsupported_type = socket_dispatch(
+            syscall::TALOS_SOCKET_SYSCALL,
+            syscall::SyscallArguments::new([
+                crate::network::SOCKET_DOMAIN_AF_INET,
+                2,
+                crate::network::SOCKET_PROTOCOL_DEFAULT,
+                0,
+                0,
+                0,
+            ]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if syscall::errno_number(posix::PosixError::NotSupported) as u64
+            != unsupported_type.return_value().x0().wrapping_neg()
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let unsupported_protocol = socket_dispatch(
+            syscall::TALOS_SOCKET_SYSCALL,
+            syscall::SyscallArguments::new([
+                crate::network::SOCKET_DOMAIN_AF_INET,
+                crate::network::SOCKET_TYPE_STREAM,
+                17,
+                0,
+                0,
+                0,
+            ]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if syscall::errno_number(posix::PosixError::NotSupported) as u64
+            != unsupported_protocol.return_value().x0().wrapping_neg()
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+
+        let open = socket_dispatch(
+            syscall::TALOS_SOCKET_SYSCALL,
+            syscall::SyscallArguments::new([
+                crate::network::SOCKET_DOMAIN_AF_INET,
+                crate::network::SOCKET_TYPE_STREAM,
+                crate::network::SOCKET_PROTOCOL_DEFAULT,
+                0,
+                0,
+                0,
+            ]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        let process_descriptor = syscall_success_usize(open.return_value().x0())
+            .map_err(|_| LocalCommandExecError::SyscallFailed)?;
+        let entry = self
+            .descriptor_store
+            .current_descriptor_table(self.current_owner)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?
+            .get(process_descriptor)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let socket_reference =
+            crate::network::NetworkSocketDescriptor::from_raw(entry.object().reference());
+        let socket = self
+            .socket_descriptors
+            .socket(socket_reference)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        if socket.owner() != owner
+            || socket.domain() != crate::network::SOCKET_DOMAIN_AF_INET
+            || socket.socket_type() != crate::network::SOCKET_TYPE_STREAM
+            || socket.protocol() != crate::network::SOCKET_PROTOCOL_DEFAULT
+        {
+            return Err(LocalCommandExecError::LaunchPipelineFailed);
+        }
+
+        let close = socket_dispatch(
+            syscall::TALOS_CLOSE_SYSCALL,
+            syscall::SyscallArguments::new([process_descriptor as u64, 0, 0, 0, 0, 0]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        let close_return = close.return_value().x0();
+        if close_return != 0 {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let closed = socket_dispatch(
+            syscall::TALOS_CLOSE_SYSCALL,
+            syscall::SyscallArguments::new([process_descriptor as u64, 0, 0, 0, 0, 0]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if syscall::errno_number(posix::PosixError::BadDescriptor) as u64
+            != closed.return_value().x0().wrapping_neg()
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+
+        Ok(LocalCommandSockdiagRecord {
+            process_descriptor,
+            domain: crate::network::SOCKET_DOMAIN_AF_INET,
+            socket_type: crate::network::SOCKET_TYPE_STREAM,
+            protocol: crate::network::SOCKET_PROTOCOL_DEFAULT,
+            descriptor_kind: entry.object().kind().name(),
+            descriptor_access: entry.access().name(),
+            close_return,
+            backing_closed: self.socket_descriptors.socket(socket_reference).is_err(),
+            source: "vfs-userspace-sockdiag+talos-socket-open-close+process-descriptor",
         })
     }
 
@@ -4588,6 +4821,12 @@ fn write_exec_summary(
     if let Some(record) = summary.pingdiag_controls {
         write_exec_pingdiag_controls_line(sink, response_lines, record)?;
     }
+    if let Some(record) = summary.sockdiag {
+        write_exec_sockdiag_line(sink, response_lines, record)?;
+    }
+    if let Some(record) = summary.sockdiag_controls {
+        write_exec_sockdiag_controls_line(sink, response_lines, record)?;
+    }
     write_exec_lifecycle_line(sink, response_lines, summary)?;
     write_exec_status_line(sink, response_lines, summary)?;
     write_line(
@@ -5105,6 +5344,63 @@ fn write_exec_pingdiag_controls_line(
     write_str_part(sink, record.timeout_retry)?;
     write_str_part(sink, " device-errors=")?;
     write_str_part(sink, record.device_errors)?;
+    write_str_part(sink, " syscall-vocabulary=")?;
+    write_str_part(sink, record.syscall_vocabulary)?;
+    write_str_part(sink, " source=")?;
+    write_str_part(sink, record.source)?;
+    finish_dynamic_line(sink, response_lines)
+}
+
+fn write_exec_sockdiag_line(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    record: LocalCommandSockdiagRecord,
+) -> Result<(), LocalCommandCycleError> {
+    write_str_part(sink, "talos: sockdiag fd=")?;
+    write_hex_usize_part(sink, record.process_descriptor)?;
+    write_str_part(sink, " domain=")?;
+    write_hex_u64_part(sink, record.domain)?;
+    write_str_part(sink, " type=")?;
+    write_hex_u64_part(sink, record.socket_type)?;
+    write_str_part(sink, " protocol=")?;
+    write_hex_u64_part(sink, record.protocol)?;
+    write_str_part(sink, " descriptor-kind=")?;
+    write_str_part(sink, record.descriptor_kind)?;
+    write_str_part(sink, " descriptor-access=")?;
+    write_str_part(sink, record.descriptor_access)?;
+    write_str_part(sink, " close-return=")?;
+    write_hex_u64_part(sink, record.close_return)?;
+    write_str_part(sink, " backing-closed=")?;
+    write_str_part(
+        sink,
+        if record.backing_closed {
+            "true"
+        } else {
+            "false"
+        },
+    )?;
+    write_str_part(sink, " source=")?;
+    write_str_part(sink, record.source)?;
+    finish_dynamic_line(sink, response_lines)
+}
+
+fn write_exec_sockdiag_controls_line(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    record: LocalCommandSockdiagControlRecord,
+) -> Result<(), LocalCommandCycleError> {
+    write_str_part(sink, "talos: sockdiag-controls malformed-arguments=")?;
+    write_str_part(sink, record.malformed_arguments)?;
+    write_str_part(sink, " missing-executable=")?;
+    write_str_part(sink, record.missing_executable_identity)?;
+    write_str_part(sink, " unsupported-domain=")?;
+    write_str_part(sink, record.unsupported_domain)?;
+    write_str_part(sink, " unsupported-type=")?;
+    write_str_part(sink, record.unsupported_type)?;
+    write_str_part(sink, " unsupported-protocol=")?;
+    write_str_part(sink, record.unsupported_protocol)?;
+    write_str_part(sink, " invalid-closed-descriptor=")?;
+    write_str_part(sink, record.invalid_closed_descriptor)?;
     write_str_part(sink, " syscall-vocabulary=")?;
     write_str_part(sink, record.syscall_vocabulary)?;
     write_str_part(sink, " source=")?;
@@ -5670,10 +5966,10 @@ talos> /\n"
 
         assert_eq!(result.line(), b"ls /bin");
         assert_eq!(result.status(), LocalCommandStatus::Handled);
-        assert_eq!(result.response_lines(), 7);
+        assert_eq!(result.response_lines(), 8);
         assert_eq!(
             backend.as_str(),
-            "talos> init\nzero\nstatus42\nstdout\nstdin\nstderr\npingdiag\n"
+            "talos> init\nzero\nstatus42\nstdout\nstdin\nstderr\npingdiag\nsockdiag\n"
         );
     }
 
@@ -5717,7 +6013,7 @@ talos> /\n"
         assert_eq!(cd_bin.response_lines(), 0);
         assert_eq!(bin_ls.line(), b"ls");
         assert_eq!(bin_ls.status(), LocalCommandStatus::Handled);
-        assert_eq!(bin_ls.response_lines(), 7);
+        assert_eq!(bin_ls.response_lines(), 8);
         assert_eq!(cd_root.line(), b"cd /");
         assert_eq!(cd_root.status(), LocalCommandStatus::Handled);
         assert_eq!(cd_root.response_lines(), 0);
@@ -5736,10 +6032,11 @@ talos> talos> banner.txt\n\
 	zero\n\
 		status42\n\
 		stdout\n\
-		stdin\n\
-		stderr\n\
-		pingdiag\n\
-		talos> talos> bin\n\
+			stdin\n\
+			stderr\n\
+			pingdiag\n\
+			sockdiag\n\
+			talos> talos> bin\n\
 dir\n\
 empty\n\
 etc\n\
@@ -6000,6 +6297,55 @@ talos> Talos initramfs fixture\n"
         ));
         assert!(output.contains(
             "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/pingdiag state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains("talos> talos: exec-invalid-path\n"));
+        assert!(output.contains("talos> talos: exec-not-found\n"));
+    }
+
+    #[test_case]
+    fn local_command_loop_execs_shell_visible_sockdiag_through_vfs_socket_syscalls() {
+        let bytes = *b"exec /bin/sockdiag\rwaitpid\rlaststatus\rexec /bin/sockdiag extra\rexec /bin/missingsock\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (exec, waited, observed, malformed, missing) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(exec.line(), b"exec /bin/sockdiag");
+        assert_eq!(exec.status(), LocalCommandStatus::Handled);
+        assert_eq!(exec.response_lines(), 11);
+        assert_eq!(waited.line(), b"waitpid");
+        assert_eq!(waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(observed.line(), b"laststatus");
+        assert_eq!(observed.status(), LocalCommandStatus::Handled);
+        assert_eq!(malformed.line(), b"exec /bin/sockdiag extra");
+        assert_eq!(malformed.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(missing.line(), b"exec /bin/missingsock");
+        assert_eq!(missing.status(), LocalCommandStatus::UnexpectedArgument);
+        assert!(output.contains("talos> talos: exec path=/bin/sockdiag source=vfs-open-read\n"));
+        assert!(output.contains(
+            "talos: sockdiag fd=0x0000000000000003 domain=0x0000000000000002 type=0x0000000000000001 protocol=0x0000000000000000 descriptor-kind=socket descriptor-access=read-write close-return=0x0000000000000000 backing-closed=true source=vfs-userspace-sockdiag+talos-socket-open-close+process-descriptor\n"
+        ));
+        assert!(output.contains(
+            "talos: sockdiag-controls malformed-arguments=exec-invalid-path missing-executable=exec-not-found unsupported-domain=ENOTSUP unsupported-type=ENOTSUP unsupported-protocol=ENOTSUP invalid-closed-descriptor=EBADF syscall-vocabulary=SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_SOCKET/TALOS_CLOSE bounded source=shell-sockdiag-controls\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/sockdiag state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/sockdiag state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/sockdiag state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
         ));
         assert!(output.contains("talos> talos: exec-invalid-path\n"));
         assert!(output.contains("talos> talos: exec-not-found\n"));

@@ -4739,3 +4739,26 @@ live packet I/O, hardware reachability, smoltcp, SSH, lab mutation, boot
 publication, broad socket expansion, public stable socket ABI acceptance, or a
 phase transition. The selected next bounded task is
 phase12-network-shell-sockdiag-open-close-core-20260620.
+
+phase12-network-shell-sockdiag-open-close-core-20260620 accepts
+phase12-network-shell-sockdiag-open-close-core-accepted. The implementation
+adds `/bin/sockdiag` to the read-only initramfs executable set and wires
+`exec /bin/sockdiag` through the existing shell-visible VFS open/read, ELF
+planning, startup ABI, process lifecycle, `waitpid`, and `laststatus`
+transcript path. After that VFS/userspace boundary is established, the
+diagnostic opens an accepted `AF_INET=2`, `SOCK_STREAM=1`, `protocol=0`
+socket through `TALOS_SOCKET_SYSCALL = 6`, observes the
+`DescriptorObjectKind::Socket`/read-write descriptor, closes it through
+`TALOS_CLOSE_SYSCALL = 2`, and verifies backing-state drop.
+
+Focused source/unit host/QEMU-substitute evidence covers the shell-visible
+VFS/userspace execution path, successful socket open/close, unsupported
+domain/type/protocol controls, invalid closed-descriptor control, unchanged
+`/bin/pingdiag` regression coverage, updated `/bin` listings, and unchanged
+waitpid/laststatus lifecycle observation. This task does not accept send,
+recv, bind, connect, listen, accept, poll/blocking network I/O, UDP/TCP
+payload transport, live packet I/O, hardware reachability, smoltcp, SSH, lab
+mutation, boot publication, generated-root publication, broad socket
+expansion, public stable socket ABI acceptance, or phase transition. The
+selected next bounded task is
+phase12-network-shell-sockdiag-open-close-smoke-20260620.

@@ -14758,6 +14758,21 @@ Milestone 12.3: IP Stack
   acceptance, broad socket expansion, and phase transition remain rejected.
   The selected next bounded task is
   phase12-network-shell-sockdiag-open-close-core-20260620.
+- The shell-visible sockdiag open/close core accepts source/unit
+  host/QEMU-substitute evidence for `exec /bin/sockdiag` through the
+  existing VFS open/read, ELF planning, startup ABI, process lifecycle,
+  `waitpid`, and `laststatus` path. The diagnostic opens an accepted
+  `AF_INET=2`, `SOCK_STREAM=1`, `protocol=0` socket through
+  `TALOS_SOCKET_SYSCALL = 6`, observes the socket descriptor, closes it
+  through `TALOS_CLOSE_SYSCALL = 2`, and verifies backing-state drop. Tests
+  cover successful open/close, unsupported domain/type/protocol controls,
+  closed-descriptor control, updated `/bin` listings, unchanged `/bin/pingdiag`
+  regression behavior, and waitpid/laststatus preservation. Send/recv,
+  bind/connect/listen/accept, poll/blocking I/O, UDP/TCP payload transport,
+  live packet I/O, smoltcp, SSH, hardware work, generated-root publication,
+  public stable socket ABI acceptance, broad socket expansion, and phase
+  transition remain rejected. The selected next bounded task is
+  phase12-network-shell-sockdiag-open-close-smoke-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

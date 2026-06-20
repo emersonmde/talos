@@ -393,6 +393,14 @@ pub(crate) enum DescriptorAccess {
 }
 
 impl DescriptorAccess {
+    pub(crate) const fn name(self) -> &'static str {
+        match self {
+            Self::ReadOnly => "read-only",
+            Self::WriteOnly => "write-only",
+            Self::ReadWrite => "read-write",
+        }
+    }
+
     const fn allows_read(self) -> bool {
         matches!(self, Self::ReadOnly | Self::ReadWrite)
     }
