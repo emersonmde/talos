@@ -3785,3 +3785,25 @@ reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase
 12.1 link-hardware retry, broad Phase 12.4 socket expansion, and phase
 transition remain rejected. The selected next task is
 phase12-network-descriptor-shaped-ping-control-core-20260620.
+
+phase12-network-descriptor-shaped-ping-control-core-20260620 accepts
+phase12-network-descriptor-shaped-ping-control-core-accepted. src/syscall.rs
+now provides DescriptorShapedPingControl, a thin crate-internal host-only
+control wrapper over RuntimePingOperationSyscallSubstitute. The wrapper exposes
+the accepted descriptor-shaped lifecycle: open, start, status,
+pump_or_read_result, retry_arp, timeout, and close while borrowing a
+caller-provided NetworkRuntimeDevicePump plus caller-owned receive/transmit
+buffers.
+
+The accepted source/unit evidence covers one successful fake-device lifecycle:
+open, idle status, start to pending ARP, runtime-pump ARP advancement to
+inflight, runtime-pump echo-reply completion, terminal completed status, close,
+and closed-descriptor EBADF. It also covers invalid descriptor, closed
+descriptor, zero descriptor capacity, duplicate active open, retry exhaustion,
+explicit timeout, caller receive-buffer pressure, receive IO error, local
+transmit IO error, and active-ping transmit IO error behavior. Shell ping,
+public sockets, stable syscall ABI acceptance, socket syscall ABI acceptance,
+live driver adapters, live packet I/O, hardware reachability, SSH, smoltcp,
+UDP/TCP, lab mutation, boot publication, Phase 12.1 link-hardware retry, broad
+Phase 12.4 socket expansion, and phase transition remain rejected. The selected
+next task is phase12-network-descriptor-shaped-ping-control-smoke-20260620.

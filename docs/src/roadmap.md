@@ -14032,6 +14032,21 @@ Milestone 12.3: IP Stack
   mutation, boot publication, Phase 12.1 link-hardware retry, broad Phase 12.4
   socket expansion, and phase transition remain rejected. The selected next
   bounded task is the descriptor-shaped ping control core.
+- The descriptor-shaped ping control core accepts DescriptorShapedPingControl
+  as a thin crate-internal host-only wrapper over
+  RuntimePingOperationSyscallSubstitute. It implements open, start, status,
+  pump_or_read_result, retry_arp, timeout, and close over a caller-provided
+  NetworkRuntimeDevicePump plus caller-owned receive/transmit/status storage.
+  Source/unit evidence covers one successful fake-device lifecycle, invalid
+  and closed descriptors, zero descriptor capacity, duplicate active open,
+  retry exhaustion, explicit timeout, caller receive-buffer pressure, receive
+  IO error, local transmit IO error, and active-ping transmit IO error. Shell
+  ping, public sockets, stable syscall ABI acceptance, socket syscall ABI
+  acceptance, live driver adapters, live packet I/O, hardware reachability,
+  SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1
+  link-hardware retry, broad Phase 12.4 socket expansion, and phase transition
+  remain rejected. The selected next bounded task is descriptor-shaped ping
+  control smoke evidence.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

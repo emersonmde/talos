@@ -1138,6 +1138,130 @@ impl<
     }
 }
 
+pub(crate) struct DescriptorShapedPingControl<
+    'a,
+    const LOCAL_ARP_CAPACITY: usize,
+    const DESCRIPTOR_CAPACITY: usize,
+    const OPERATION_ARP_CAPACITY: usize,
+    const PAYLOAD_CAPACITY: usize,
+> {
+    runtime_substitute: RuntimePingOperationSyscallSubstitute<
+        'a,
+        LOCAL_ARP_CAPACITY,
+        DESCRIPTOR_CAPACITY,
+        OPERATION_ARP_CAPACITY,
+        PAYLOAD_CAPACITY,
+    >,
+}
+
+impl<
+    'a,
+    const LOCAL_ARP_CAPACITY: usize,
+    const DESCRIPTOR_CAPACITY: usize,
+    const OPERATION_ARP_CAPACITY: usize,
+    const PAYLOAD_CAPACITY: usize,
+>
+    DescriptorShapedPingControl<
+        'a,
+        LOCAL_ARP_CAPACITY,
+        DESCRIPTOR_CAPACITY,
+        OPERATION_ARP_CAPACITY,
+        PAYLOAD_CAPACITY,
+    >
+{
+    pub(crate) fn new(
+        runtime_pump: &'a mut crate::network::NetworkRuntimeDevicePump<
+            LOCAL_ARP_CAPACITY,
+            DESCRIPTOR_CAPACITY,
+            OPERATION_ARP_CAPACITY,
+            PAYLOAD_CAPACITY,
+        >,
+        receive_buffer: &'a mut [u8],
+        transmit_buffer: &'a mut [u8],
+    ) -> Self {
+        Self {
+            runtime_substitute: RuntimePingOperationSyscallSubstitute::new(
+                runtime_pump,
+                receive_buffer,
+                transmit_buffer,
+            ),
+        }
+    }
+
+    pub(crate) fn open(&mut self) -> Result<usize, PosixError> {
+        self.runtime_substitute.open()
+    }
+
+    pub(crate) fn close(&mut self, descriptor: usize) -> Result<(), PosixError> {
+        self.runtime_substitute.close(descriptor)
+    }
+
+    pub(crate) fn status(
+        &self,
+        descriptor: usize,
+        status: &mut PingOperationSyscallSubstituteStatus,
+    ) -> Result<(), PosixError> {
+        self.runtime_substitute.status(descriptor, status)
+    }
+
+    pub(crate) fn start<D>(
+        &mut self,
+        descriptor: usize,
+        device: &mut D,
+        route_policy: crate::network::Ipv4EgressRoutePolicy,
+        destination_ipv4: [u8; 4],
+        identifier: u16,
+        sequence_number: u16,
+        ttl: u8,
+        payload: &[u8],
+        arp_retry_budget: usize,
+    ) -> Result<PingOperationSyscallSubstituteStep, PosixError>
+    where
+        D: crate::network::NetworkDevice,
+    {
+        self.runtime_substitute.start(
+            descriptor,
+            device,
+            route_policy,
+            destination_ipv4,
+            identifier,
+            sequence_number,
+            ttl,
+            payload,
+            arp_retry_budget,
+        )
+    }
+
+    pub(crate) fn pump_or_read_result<D>(
+        &mut self,
+        descriptor: usize,
+        device: &mut D,
+    ) -> Result<RuntimePingOperationSyscallSubstitutePumpStep, PosixError>
+    where
+        D: crate::network::NetworkDevice,
+    {
+        self.runtime_substitute.pump(descriptor, device)
+    }
+
+    pub(crate) fn retry_arp<D>(
+        &mut self,
+        descriptor: usize,
+        device: &mut D,
+    ) -> Result<PingOperationSyscallSubstituteStep, PosixError>
+    where
+        D: crate::network::NetworkDevice,
+    {
+        self.runtime_substitute.retry_arp(descriptor, device)
+    }
+
+    pub(crate) fn timeout(
+        &mut self,
+        descriptor: usize,
+    ) -> Result<PingOperationSyscallSubstituteStep, PosixError> {
+        self.runtime_substitute.timeout(descriptor)
+    }
+}
+
 fn dispatch_talos_write<const CAPACITY: usize, B>(
     arguments: SyscallArguments,
     descriptor_table: &crate::posix::DescriptorTable<CAPACITY>,
@@ -2644,6 +2768,268 @@ mod tests {
                 ),
             ),
             Err(PosixError::Io)
+        );
+    }
+
+    #[test_case]
+    fn descriptor_shaped_ping_control_completes_single_runtime_pump_lifecycle() {
+        let destination = [192, 0, 2, 20];
+        let policy = crate::network::Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None);
+        let payload = [1, 2, 3, 4];
+        let mut runtime =
+            crate::network::NetworkRuntimeDevicePump::<2, 1, 2, 4>::new(ping_local_endpoint());
+        let mut receive_buffer = [0u8; 128];
+        let mut transmit_buffer = [0u8; 128];
+        let mut control = DescriptorShapedPingControl::new(
+            &mut runtime,
+            &mut receive_buffer,
+            &mut transmit_buffer,
+        );
+        let mut status = PingOperationSyscallSubstituteStatus::idle();
+
+        let descriptor = control
+            .open()
+            .expect("open descriptor-shaped control handle");
+        assert_eq!(descriptor, 0);
+        assert_eq!(control.status(descriptor, &mut status), Ok(()));
+        assert_eq!(
+            status.kind(),
+            PingOperationSyscallSubstituteStatusKind::Idle
+        );
+
+        let start = control
+            .start(
+                descriptor,
+                &mut PingOutboundTransmitDevice::new(),
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &payload,
+                1,
+            )
+            .expect("start through descriptor-shaped control");
+        assert_eq!(
+            start.kind(),
+            PingOperationSyscallSubstituteStepKind::StartedPendingArp
+        );
+        assert_eq!(control.status(descriptor, &mut status), Ok(()));
+        assert_eq!(
+            status.kind(),
+            PingOperationSyscallSubstituteStatusKind::PendingArp
+        );
+        assert_eq!(status.destination_ipv4(), destination);
+        assert_eq!(status.arp_retries_remaining(), 1);
+
+        let arp_reply = ping_arp_reply_frame();
+        let advanced = control
+            .pump_or_read_result(descriptor, &mut PingPollDevice::with_frame(&arp_reply))
+            .expect("descriptor-shaped control advances arp reply");
+        assert_eq!(
+            advanced.kind(),
+            RuntimePingOperationSyscallSubstitutePumpKind::ActivePing
+        );
+        assert_eq!(advanced.descriptor(), descriptor);
+        assert_eq!(
+            advanced.active_ping_step().kind(),
+            PingOperationSyscallSubstituteStepKind::AdvancedToInflight
+        );
+        assert_eq!(control.status(descriptor, &mut status), Ok(()));
+        assert_eq!(
+            status.kind(),
+            PingOperationSyscallSubstituteStatusKind::Inflight
+        );
+
+        let echo_reply = ping_icmp_echo_reply_frame();
+        let completed = control
+            .pump_or_read_result(descriptor, &mut PingPollDevice::with_frame(&echo_reply))
+            .expect("descriptor-shaped control completes echo reply");
+        assert_eq!(
+            completed.kind(),
+            RuntimePingOperationSyscallSubstitutePumpKind::ActivePing
+        );
+        assert_eq!(
+            completed.active_ping_step().kind(),
+            PingOperationSyscallSubstituteStepKind::Completed
+        );
+        assert_eq!(completed.active_ping_step().payload_len(), payload.len());
+        assert_eq!(control.status(descriptor, &mut status), Ok(()));
+        assert_eq!(
+            status.kind(),
+            PingOperationSyscallSubstituteStatusKind::Completed
+        );
+        assert_eq!(status.payload_len(), payload.len());
+
+        assert_eq!(control.close(descriptor), Ok(()));
+        assert_eq!(
+            control.status(descriptor, &mut status),
+            Err(PosixError::BadDescriptor)
+        );
+    }
+
+    #[test_case]
+    fn descriptor_shaped_ping_control_maps_descriptor_capacity_retry_timeout_and_io_errors() {
+        let destination = [192, 0, 2, 20];
+        let policy = crate::network::Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None);
+        let payload = [1, 2, 3, 4];
+        let mut empty_runtime =
+            crate::network::NetworkRuntimeDevicePump::<0, 0, 2, 4>::new(ping_local_endpoint());
+        let mut empty_receive = [0u8; 128];
+        let mut empty_transmit = [0u8; 128];
+        let mut empty_control = DescriptorShapedPingControl::new(
+            &mut empty_runtime,
+            &mut empty_receive,
+            &mut empty_transmit,
+        );
+
+        assert_eq!(empty_control.open(), Err(PosixError::TooManyOpenFiles));
+
+        let mut runtime =
+            crate::network::NetworkRuntimeDevicePump::<1, 1, 2, 4>::new(ping_local_endpoint());
+        let mut receive_buffer = [0u8; 128];
+        let mut transmit_buffer = [0u8; 128];
+        let mut control = DescriptorShapedPingControl::new(
+            &mut runtime,
+            &mut receive_buffer,
+            &mut transmit_buffer,
+        );
+        let mut status = PingOperationSyscallSubstituteStatus::idle();
+        let descriptor = control
+            .open()
+            .expect("open descriptor-shaped control handle");
+
+        assert_eq!(control.open(), Err(PosixError::Busy));
+        assert_eq!(
+            control.status(7, &mut status),
+            Err(PosixError::BadDescriptor)
+        );
+        assert_eq!(control.close(descriptor), Ok(()));
+        assert_eq!(control.close(descriptor), Err(PosixError::BadDescriptor));
+        assert_eq!(
+            control.start(
+                descriptor,
+                &mut PingOutboundTransmitDevice::new(),
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &payload,
+                0,
+            ),
+            Err(PosixError::BadDescriptor)
+        );
+
+        let descriptor = control
+            .open()
+            .expect("reopen descriptor-shaped control handle");
+        assert_eq!(
+            control
+                .start(
+                    descriptor,
+                    &mut PingOutboundTransmitDevice::new(),
+                    policy,
+                    destination,
+                    0x1234,
+                    7,
+                    61,
+                    &payload,
+                    0,
+                )
+                .expect("start pending without retry budget")
+                .kind(),
+            PingOperationSyscallSubstituteStepKind::StartedPendingArp
+        );
+        assert_eq!(
+            control.retry_arp(descriptor, &mut PingOutboundTransmitDevice::new()),
+            Err(PosixError::Again)
+        );
+        let timeout = control.timeout(descriptor).expect("timeout pending ping");
+        assert_eq!(
+            timeout.kind(),
+            PingOperationSyscallSubstituteStepKind::TimedOut
+        );
+        assert_eq!(timeout.destination_ipv4(), destination);
+        assert_eq!(control.status(descriptor, &mut status), Ok(()));
+        assert_eq!(
+            status.kind(),
+            PingOperationSyscallSubstituteStatusKind::TimedOut
+        );
+        assert_eq!(control.close(descriptor), Ok(()));
+
+        let descriptor = control
+            .open()
+            .expect("reopen for receive and transmit errors");
+        assert_eq!(
+            control.pump_or_read_result(
+                descriptor,
+                &mut PingPollDevice::with_receive_error(crate::network::DeviceError::Io),
+            ),
+            Err(PosixError::Io)
+        );
+
+        let arp_request = ping_local_arp_request_frame();
+        assert_eq!(
+            control.pump_or_read_result(
+                descriptor,
+                &mut PingPollDevice::with_transmit_error(
+                    &arp_request,
+                    crate::network::DeviceError::Io
+                ),
+            ),
+            Err(PosixError::Io)
+        );
+
+        assert_eq!(
+            control
+                .start(
+                    descriptor,
+                    &mut PingOutboundTransmitDevice::new(),
+                    policy,
+                    destination,
+                    0x1234,
+                    7,
+                    61,
+                    &payload,
+                    1,
+                )
+                .expect("start active transmit error case")
+                .kind(),
+            PingOperationSyscallSubstituteStepKind::StartedPendingArp
+        );
+        let arp_reply = ping_arp_reply_frame();
+        assert_eq!(
+            control.pump_or_read_result(
+                descriptor,
+                &mut PingPollDevice::with_transmit_error(
+                    &arp_reply,
+                    crate::network::DeviceError::Io
+                ),
+            ),
+            Err(PosixError::Io)
+        );
+    }
+
+    #[test_case]
+    fn descriptor_shaped_ping_control_maps_caller_receive_buffer_pressure_to_enospc() {
+        let mut runtime =
+            crate::network::NetworkRuntimeDevicePump::<1, 1, 2, 4>::new(ping_local_endpoint());
+        let mut receive_buffer = [0u8; 8];
+        let mut transmit_buffer = [0u8; 128];
+        let mut control = DescriptorShapedPingControl::new(
+            &mut runtime,
+            &mut receive_buffer,
+            &mut transmit_buffer,
+        );
+        let descriptor = control
+            .open()
+            .expect("open descriptor-shaped control handle");
+        let arp_request = ping_local_arp_request_frame();
+
+        assert_eq!(
+            control.pump_or_read_result(descriptor, &mut PingPollDevice::with_frame(&arp_request)),
+            Err(PosixError::NoSpace)
         );
     }
 
