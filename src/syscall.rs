@@ -677,7 +677,7 @@ impl PingOperationSyscallSubstituteStep {
         self.destination_ipv4
     }
 
-    const fn from_userspace(step: crate::network::UserspacePingOperationStep) -> Self {
+    pub(crate) const fn from_userspace(step: crate::network::UserspacePingOperationStep) -> Self {
         match step {
             crate::network::UserspacePingOperationStep::StartedPendingArp { frame_len } => Self {
                 kind: PingOperationSyscallSubstituteStepKind::StartedPendingArp,
@@ -904,7 +904,7 @@ impl RuntimePingOperationSyscallSubstitutePumpStep {
         self.active_ping_step
     }
 
-    const fn no_frame() -> Self {
+    pub(crate) const fn no_frame() -> Self {
         Self {
             kind: RuntimePingOperationSyscallSubstitutePumpKind::NoFrame,
             descriptor: usize::MAX,

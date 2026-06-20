@@ -14660,6 +14660,25 @@ Milestone 12.3: IP Stack
   SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1 hardware
   retry, broad socket expansion, and phase transition remain rejected. The
   selected next bounded task is phase12-network-shell-pingdiag-core-20260620.
+- The shell-visible ping diagnostic core accepts `/bin/pingdiag` as a real
+  read-only initramfs executable identity and wires `exec /bin/pingdiag`
+  through the existing VFS open/read, ELF planning, startup ABI, lifecycle,
+  `waitpid`, and `laststatus` shell transcript path. The command then runs
+  the accepted diagnostic SVC lifecycle over process-local descriptor
+  ownership, UserMapping copy-in/copy-out, packet queues, and
+  `PacketQueueNetworkDevice::pump_driver`.
+- The accepted evidence level is source/unit host/QEMU-substitute. The
+  transcript proves open/start/pump/status/result/close over deterministic
+  ARP and ICMP progression, plus malformed argument and missing executable
+  controls at the shell boundary. Existing diagnostic SVC coverage continues
+  to cover owner/descriptor failures, invalid and closed descriptors, queue
+  backpressure, timeout/retry, device errors, close/drop behavior, and
+  unchanged syscall vocabulary. Kernel fake commands, public sockets,
+  stable/socket ABI acceptance, live driver adapters, live packet I/O,
+  hardware reachability, SSH, lab mutation, boot publication, broad shell or
+  socket expansion, Phase 12.1 hardware retry, and phase transition remain
+  rejected. The selected next bounded task is
+  phase12-network-shell-pingdiag-closeout-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

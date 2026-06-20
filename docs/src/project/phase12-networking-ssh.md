@@ -4601,3 +4601,29 @@ live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation,
 boot publication, Phase 12.1 hardware retry, broad socket expansion, and phase
 transition remain rejected. The selected next bounded task is
 phase12-network-shell-pingdiag-core-20260620.
+
+phase12-network-shell-pingdiag-core-20260620 accepts
+phase12-network-shell-pingdiag-core-accepted. The core adds `/bin/pingdiag` to
+the read-only initramfs executable set and wires `exec /bin/pingdiag` through
+the existing shell-visible VFS open/read, ELF planning, startup ABI, lifecycle,
+`waitpid`, and `laststatus` transcript path. After the VFS execution boundary
+is established, the command runs the accepted diagnostic SVC lifecycle over
+process-local descriptor ownership, UserMapping copy-in/copy-out, packet
+queues, and `PacketQueueNetworkDevice::pump_driver`.
+
+The accepted source/unit host/QEMU-substitute evidence proves a shell-visible
+transcript that opens the diagnostic descriptor, starts ARP resolution, pumps
+the outbound ARP request to a trait-level driver queue, injects and pumps the
+ARP reply, pumps the outbound IPv4/ICMP echo request, injects and pumps the
+ICMP echo reply, observes completed status/result copy-out, closes the
+descriptor, and preserves waitpid/laststatus lifecycle observation. Focused
+shell controls cover malformed `/bin/pingdiag` arguments and missing VFS
+executable identity; the accepted diagnostic SVC tests continue to cover wrong
+owner/descriptor, invalid and closed descriptors, queue backpressure,
+timeout/retry, transmit and receive device errors, close/drop behavior, and
+unchanged SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_* vocabulary. Kernel-backed
+fake shell commands, public sockets, stable/socket ABI acceptance, live driver
+adapters, live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab
+mutation, boot publication, Phase 12.1 hardware retry, broad shell expansion,
+broad socket expansion, and phase transition remain rejected. The selected
+next bounded task is phase12-network-shell-pingdiag-closeout-20260620.

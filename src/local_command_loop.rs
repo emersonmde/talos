@@ -32,7 +32,7 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+pipeline-producer-file-redirection-away+background-vfs-exec-lifecycle",
     "+jobs-accounting-list+multiple-background-vfs-exec-records",
     "+background-jobs-stale-entry-policy+generated-root-manifest-read",
-    "+generated-root-executable-vfs-exec"
+    "+generated-root-executable-vfs-exec+shell-pingdiag-vfs-userspace-diagnostic"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -104,13 +104,14 @@ const LOCAL_COMMAND_ROOT_LISTING: [(&[u8], &str); 5] = [
 ];
 const LOCAL_COMMAND_ETC_LISTING: [(&[u8], &str); 1] =
     [(initramfs::PHASE8_BANNER_PATH, "banner.txt")];
-const LOCAL_COMMAND_BIN_LISTING: [(&[u8], &str); 6] = [
+const LOCAL_COMMAND_BIN_LISTING: [(&[u8], &str); 7] = [
     (initramfs::PHASE8_INIT_PATH, "init"),
     (initramfs::PHASE10_ZERO_PATH, "zero"),
     (initramfs::PHASE10_STATUS42_PATH, "status42"),
     (initramfs::PHASE10_STDOUT_PATH, "stdout"),
     (initramfs::PHASE10_STDIN_PATH, "stdin"),
     (initramfs::PHASE10_STDERR_PATH, "stderr"),
+    (initramfs::PHASE12_PINGDIAG_PATH, "pingdiag"),
 ];
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -570,6 +571,8 @@ pub struct LocalCommandExecSummary {
     userspace_stdout: Option<LocalCommandUserspaceStdoutRecord>,
     userspace_stdin: Option<LocalCommandUserspaceStdinRecord>,
     userspace_stderr: Option<LocalCommandUserspaceStderrRecord>,
+    pingdiag: Option<LocalCommandPingdiagRecord>,
+    pingdiag_controls: Option<LocalCommandPingdiagControlRecord>,
     lifecycle: LocalCommandProcessLifecycleRecord,
 }
 
@@ -656,6 +659,37 @@ pub struct LocalCommandUserspaceStderrRecord {
     return_value: u64,
     stream: &'static str,
     route: LocalCommandFieldText<LOCAL_COMMAND_VOLATILE_ROUTE_BYTES>,
+    source: &'static str,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct LocalCommandPingdiagRecord {
+    process_descriptor: usize,
+    destination_ipv4: [u8; 4],
+    payload_len: usize,
+    start_step: syscall::PingOperationSyscallSubstituteStepKind,
+    arp_driver_step: &'static str,
+    arp_frame_len: usize,
+    arp_pump_step: syscall::PingOperationSyscallSubstituteStepKind,
+    icmp_driver_step: &'static str,
+    icmp_frame_len: usize,
+    result_step: syscall::PingOperationSyscallSubstituteStepKind,
+    status: syscall::PingOperationSyscallSubstituteStatusKind,
+    status_payload_len: usize,
+    closed: bool,
+    source: &'static str,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct LocalCommandPingdiagControlRecord {
+    malformed_arguments: &'static str,
+    missing_executable_identity: &'static str,
+    owner_descriptor_failure: &'static str,
+    invalid_closed_descriptor: &'static str,
+    queue_backpressure: &'static str,
+    timeout_retry: &'static str,
+    device_errors: &'static str,
+    syscall_vocabulary: &'static str,
     source: &'static str,
 }
 
@@ -831,6 +865,12 @@ pub trait LocalCommandSink {
         &mut self,
         _request: LocalCommandExecRequest,
     ) -> Result<LocalCommandBackgroundExecSummary, LocalCommandExecError> {
+        Err(LocalCommandExecError::NotSupported)
+    }
+
+    fn exec_shell_pingdiag_diagnostic(
+        &mut self,
+    ) -> Result<LocalCommandPingdiagRecord, LocalCommandExecError> {
         Err(LocalCommandExecError::NotSupported)
     }
 
@@ -1342,12 +1382,20 @@ where
             initramfs::PHASE10_STDOUT_PATH => initramfs::PHASE10_STDOUT_PATH,
             initramfs::PHASE10_STDIN_PATH => initramfs::PHASE10_STDIN_PATH,
             initramfs::PHASE10_STDERR_PATH => initramfs::PHASE10_STDERR_PATH,
+            initramfs::PHASE12_PINGDIAG_PATH => initramfs::PHASE12_PINGDIAG_PATH,
             initramfs::GENERATED_ROOT_EXEC_PATH => initramfs::GENERATED_ROOT_EXEC_PATH,
             initramfs::PHASE8_BANNER_PATH => initramfs::PHASE8_BANNER_PATH,
             initramfs::PHASE8_EMPTY_PATH => initramfs::PHASE8_EMPTY_PATH,
             initramfs::PHASE8_NESTED_PATH => initramfs::PHASE8_NESTED_PATH,
             _ => return Err(LocalCommandExecError::NotExecutable),
         };
+        if source_path == initramfs::PHASE12_PINGDIAG_PATH
+            && (request.argv.argc() != 1
+                || request.stdin_redirection.is_some()
+                || request.redirection.is_some())
+        {
+            return Err(LocalCommandExecError::InvalidPath);
+        }
         if matches!(
             request.stdin_redirection,
             Some(
@@ -1465,6 +1513,24 @@ where
         let userspace_stdout = self.emit_userspace_stdout_fixture(source_path)?;
         let userspace_stdin = self.emit_userspace_stdin_fixture(source_path)?;
         let userspace_stderr = self.emit_userspace_stderr_fixture(source_path)?;
+        let (pingdiag, pingdiag_controls) = if source_path == initramfs::PHASE12_PINGDIAG_PATH {
+            (
+                Some(self.exec_shell_pingdiag_diagnostic()?),
+                Some(LocalCommandPingdiagControlRecord {
+                    malformed_arguments: "exec-invalid-path",
+                    missing_executable_identity: "exec-not-found",
+                    owner_descriptor_failure: "EBADF",
+                    invalid_closed_descriptor: "EBADF",
+                    queue_backpressure: "ENOSPC",
+                    timeout_retry: "timed-out-after-retry",
+                    device_errors: "EIO",
+                    syscall_vocabulary: "SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_* unchanged",
+                    source: "shell-pingdiag-controls",
+                }),
+            )
+        } else {
+            (None, None)
+        };
         let redirections = self.restore_exec_redirections(applied_redirections)?;
         let lifecycle = LocalCommandProcessLifecycleRecord::exited(
             LOCAL_COMMAND_EXEC_PROCESS_ID,
@@ -1505,7 +1571,238 @@ where
             userspace_stdout,
             userspace_stdin,
             userspace_stderr,
+            pingdiag,
+            pingdiag_controls,
             lifecycle,
+        })
+    }
+
+    fn exec_shell_pingdiag_diagnostic(
+        &mut self,
+    ) -> Result<LocalCommandPingdiagRecord, LocalCommandExecError> {
+        const USER_START: u64 = 0x0000_0000_0025_0000;
+        const PAYLOAD_USER: u64 = USER_START;
+        const PUMP_USER: u64 = USER_START + 0x40;
+        const STATUS_USER: u64 = USER_START + 0x90;
+
+        let owner = self
+            .current_owner
+            .ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
+        let mappings =
+            [
+                posix::UserMapping::new(
+                    USER_START,
+                    0x100,
+                    posix::UserMappingPermissions::USER_DATA,
+                )
+                .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?,
+            ];
+        let mut user_memory = [0u8; 0x100];
+        let mut kernel_scratch = [0u8; 64];
+        let mut runtime =
+            crate::network::NetworkRuntimeDevicePump::<2, 1, 2, 4>::new(local_ping_endpoint());
+        let mut receive_buffer = [0u8; 128];
+        let mut transmit_buffer = [0u8; 128];
+        let mut driver_receive_buffer = [0u8; 128];
+        let mut queue = crate::network::PacketQueueNetworkDevice::<2, 2, 128>::new();
+        let mut driver = crate::network::PacketQueueNetworkDevice::<2, 2, 128>::new();
+        let mut step = syscall::PingOperationSyscallSubstituteStep::from_userspace(
+            crate::network::UserspacePingOperationStep::NoFrame,
+        );
+        let mut pump_step = syscall::RuntimePingOperationSyscallSubstitutePumpStep::no_frame();
+        let mut status = syscall::PingOperationSyscallSubstituteStatus::idle();
+        let payload = [1, 2, 3, 4];
+        let destination = [192, 0, 2, 20];
+        let mut fixture = syscall::VfsPingDiagnosticSvcFixture::new(
+            initramfs::phase8_readonly_initramfs_fixture(),
+            initramfs::PHASE12_PINGDIAG_PATH,
+            &mappings,
+            USER_START,
+            &mut user_memory,
+            &mut kernel_scratch,
+            PAYLOAD_USER,
+            PUMP_USER,
+            STATUS_USER,
+        )
+        .map_err(local_exec_error_from_posix)?;
+        fixture
+            .write_payload(&payload)
+            .map_err(local_exec_error_from_posix)?;
+
+        let process_descriptor = {
+            let mut outputs = syscall::ProcessLocalPingDispatchOutputs::new(
+                &mut step,
+                &mut pump_step,
+                &mut status,
+            );
+            match fixture
+                .dispatch(
+                    fixture.open_arguments(),
+                    Some(owner),
+                    &mut self.descriptor_store,
+                    &mut runtime,
+                    &mut receive_buffer,
+                    &mut transmit_buffer,
+                    &mut queue,
+                    &mut outputs,
+                )
+                .map_err(local_exec_error_from_posix)?
+            {
+                syscall::ProcessLocalPingDispatchOutcome::Opened { process_descriptor } => {
+                    process_descriptor
+                }
+                _ => return Err(LocalCommandExecError::LaunchPipelineFailed),
+            }
+        };
+
+        {
+            let mut outputs = syscall::ProcessLocalPingDispatchOutputs::new(
+                &mut step,
+                &mut pump_step,
+                &mut status,
+            );
+            fixture
+                .dispatch(
+                    fixture.start_arguments(
+                        process_descriptor,
+                        payload.len(),
+                        destination,
+                        61,
+                        24,
+                        0x1234,
+                        7,
+                        1,
+                    ),
+                    Some(owner),
+                    &mut self.descriptor_store,
+                    &mut runtime,
+                    &mut receive_buffer,
+                    &mut transmit_buffer,
+                    &mut queue,
+                    &mut outputs,
+                )
+                .map_err(local_exec_error_from_posix)?;
+        }
+        let start_step = step.kind();
+        let (arp_driver_step, arp_frame_len) =
+            local_packet_pump_transmit(queue.pump_driver(&mut driver, &mut driver_receive_buffer))?;
+        driver
+            .inject_received(&local_ping_arp_reply_frame())
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        local_packet_pump_receive(queue.pump_driver(&mut driver, &mut driver_receive_buffer))?;
+        {
+            let mut outputs = syscall::ProcessLocalPingDispatchOutputs::new(
+                &mut step,
+                &mut pump_step,
+                &mut status,
+            );
+            fixture
+                .dispatch(
+                    fixture.pump_or_read_result_arguments(
+                        process_descriptor,
+                        syscall::PROCESS_LOCAL_PING_USER_PUMP_RECORD_LEN,
+                    ),
+                    Some(owner),
+                    &mut self.descriptor_store,
+                    &mut runtime,
+                    &mut receive_buffer,
+                    &mut transmit_buffer,
+                    &mut queue,
+                    &mut outputs,
+                )
+                .map_err(local_exec_error_from_posix)?;
+        }
+        let arp_pump_step = pump_step.active_ping_step().kind();
+        let (icmp_driver_step, icmp_frame_len) =
+            local_packet_pump_transmit(queue.pump_driver(&mut driver, &mut driver_receive_buffer))?;
+        driver
+            .inject_received(&local_ping_icmp_echo_reply_frame())
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        local_packet_pump_receive(queue.pump_driver(&mut driver, &mut driver_receive_buffer))?;
+        {
+            let mut outputs = syscall::ProcessLocalPingDispatchOutputs::new(
+                &mut step,
+                &mut pump_step,
+                &mut status,
+            );
+            fixture
+                .dispatch(
+                    fixture.pump_or_read_result_arguments(
+                        process_descriptor,
+                        syscall::PROCESS_LOCAL_PING_USER_PUMP_RECORD_LEN,
+                    ),
+                    Some(owner),
+                    &mut self.descriptor_store,
+                    &mut runtime,
+                    &mut receive_buffer,
+                    &mut transmit_buffer,
+                    &mut queue,
+                    &mut outputs,
+                )
+                .map_err(local_exec_error_from_posix)?;
+        }
+        let result_step = pump_step.active_ping_step().kind();
+        {
+            let mut outputs = syscall::ProcessLocalPingDispatchOutputs::new(
+                &mut step,
+                &mut pump_step,
+                &mut status,
+            );
+            fixture
+                .dispatch(
+                    fixture.status_arguments(
+                        process_descriptor,
+                        syscall::PROCESS_LOCAL_PING_USER_STATUS_RECORD_LEN,
+                    ),
+                    Some(owner),
+                    &mut self.descriptor_store,
+                    &mut runtime,
+                    &mut receive_buffer,
+                    &mut transmit_buffer,
+                    &mut queue,
+                    &mut outputs,
+                )
+                .map_err(local_exec_error_from_posix)?;
+        }
+        let status_kind = status.kind();
+        let status_payload_len = fixture
+            .read_user_u64(STATUS_USER + 24)
+            .map_err(local_exec_error_from_posix)? as usize;
+        {
+            let mut outputs = syscall::ProcessLocalPingDispatchOutputs::new(
+                &mut step,
+                &mut pump_step,
+                &mut status,
+            );
+            fixture
+                .dispatch(
+                    fixture.close_arguments(process_descriptor),
+                    Some(owner),
+                    &mut self.descriptor_store,
+                    &mut runtime,
+                    &mut receive_buffer,
+                    &mut transmit_buffer,
+                    &mut queue,
+                    &mut outputs,
+                )
+                .map_err(local_exec_error_from_posix)?;
+        }
+
+        Ok(LocalCommandPingdiagRecord {
+            process_descriptor,
+            destination_ipv4: destination,
+            payload_len: payload.len(),
+            start_step,
+            arp_driver_step,
+            arp_frame_len,
+            arp_pump_step,
+            icmp_driver_step,
+            icmp_frame_len,
+            result_step,
+            status: status_kind,
+            status_payload_len,
+            closed: true,
+            source: "vfs-userspace-diagnostic-svc+process-local-descriptor+packet-queue-pump",
         })
     }
 
@@ -3069,6 +3366,117 @@ where
     }
 }
 
+fn local_exec_error_from_posix(error: posix::PosixError) -> LocalCommandExecError {
+    match error {
+        posix::PosixError::NoEntry => LocalCommandExecError::NotFound,
+        posix::PosixError::NotExecutable => LocalCommandExecError::NotExecutable,
+        posix::PosixError::InvalidArgument
+        | posix::PosixError::NameTooLong
+        | posix::PosixError::NoSpace => LocalCommandExecError::InvalidPath,
+        posix::PosixError::NotSupported => LocalCommandExecError::NotSupported,
+        _ => LocalCommandExecError::SyscallFailed,
+    }
+}
+
+fn local_packet_pump_transmit(
+    step: crate::network::PacketQueueDriverPumpStep,
+) -> Result<(&'static str, usize), LocalCommandExecError> {
+    match step {
+        crate::network::PacketQueueDriverPumpStep::Transmitted { frame_len } => {
+            Ok(("transmitted", frame_len))
+        }
+        _ => Err(LocalCommandExecError::LaunchPipelineFailed),
+    }
+}
+
+fn local_packet_pump_receive(
+    step: crate::network::PacketQueueDriverPumpStep,
+) -> Result<(), LocalCommandExecError> {
+    match step {
+        crate::network::PacketQueueDriverPumpStep::Received { .. } => Ok(()),
+        _ => Err(LocalCommandExecError::LaunchPipelineFailed),
+    }
+}
+
+const fn local_ping_endpoint() -> crate::network::LocalNetworkEndpoint {
+    crate::network::LocalNetworkEndpoint::new(
+        crate::network::MacAddress::new([0x02, 0, 0, 0, 0, 99]),
+        [192, 0, 2, 1],
+    )
+}
+
+fn local_ping_arp_reply_frame()
+-> [u8; crate::network::ETHERNET_HEADER_LEN + crate::network::ARP_ETHERNET_IPV4_LEN] {
+    let mut frame =
+        [0u8; crate::network::ETHERNET_HEADER_LEN + crate::network::ARP_ETHERNET_IPV4_LEN];
+    frame[..6].copy_from_slice(&[0x02, 0, 0, 0, 0, 1]);
+    frame[6..12].copy_from_slice(&[0x02, 0, 0, 0, 0, 20]);
+    local_write_be_u16(&mut frame, 12, crate::network::ETHERTYPE_ARP);
+
+    let arp = &mut frame[crate::network::ETHERNET_HEADER_LEN..];
+    local_write_be_u16(arp, 0, 1);
+    local_write_be_u16(arp, 2, crate::network::ETHERTYPE_IPV4);
+    arp[4] = crate::network::ETHERNET_ADDR_LEN as u8;
+    arp[5] = 4;
+    local_write_be_u16(arp, 6, 2);
+    arp[8..14].copy_from_slice(&[0x02, 0, 0, 0, 0, 20]);
+    arp[14..18].copy_from_slice(&[192, 0, 2, 20]);
+    arp[18..24].copy_from_slice(&[0x02, 0, 0, 0, 0, 1]);
+    arp[24..28].copy_from_slice(&[192, 0, 2, 10]);
+    frame
+}
+
+fn local_ping_icmp_echo_reply_frame()
+-> [u8; crate::network::ETHERNET_HEADER_LEN + crate::network::IPV4_MIN_HEADER_LEN + 12] {
+    let mut frame =
+        [0u8; crate::network::ETHERNET_HEADER_LEN + crate::network::IPV4_MIN_HEADER_LEN + 12];
+    frame[..6].copy_from_slice(&[0x02, 0, 0, 0, 0, 99]);
+    frame[6..12].copy_from_slice(&[0x02, 0, 0, 0, 0, 20]);
+    local_write_be_u16(&mut frame, 12, crate::network::ETHERTYPE_IPV4);
+
+    let ipv4 = &mut frame[crate::network::ETHERNET_HEADER_LEN
+        ..crate::network::ETHERNET_HEADER_LEN + crate::network::IPV4_MIN_HEADER_LEN];
+    ipv4[0] = 0x45;
+    local_write_be_u16(ipv4, 2, (crate::network::IPV4_MIN_HEADER_LEN + 12) as u16);
+    local_write_be_u16(ipv4, 4, 0x4444);
+    ipv4[8] = 64;
+    ipv4[9] = crate::network::IPV4_PROTOCOL_ICMP;
+    ipv4[12..16].copy_from_slice(&[192, 0, 2, 20]);
+    ipv4[16..20].copy_from_slice(&[192, 0, 2, 1]);
+    let checksum = local_internet_checksum(ipv4);
+    local_write_be_u16(ipv4, 10, checksum);
+
+    let icmp =
+        &mut frame[crate::network::ETHERNET_HEADER_LEN + crate::network::IPV4_MIN_HEADER_LEN..];
+    icmp[0] = 0;
+    icmp[4..].copy_from_slice(&[0x12, 0x34, 0, 7, 1, 2, 3, 4]);
+    let checksum = local_internet_checksum(icmp);
+    local_write_be_u16(icmp, 2, checksum);
+    frame
+}
+
+fn local_write_be_u16(bytes: &mut [u8], offset: usize, value: u16) {
+    let raw = value.to_be_bytes();
+    bytes[offset] = raw[0];
+    bytes[offset + 1] = raw[1];
+}
+
+fn local_internet_checksum(bytes: &[u8]) -> u16 {
+    let mut sum = 0u32;
+    let mut index = 0;
+    while index + 1 < bytes.len() {
+        sum += u16::from_be_bytes([bytes[index], bytes[index + 1]]) as u32;
+        index += 2;
+    }
+    if index < bytes.len() {
+        sum += (bytes[index] as u32) << 8;
+    }
+    while sum >> 16 != 0 {
+        sum = (sum & 0xffff) + (sum >> 16);
+    }
+    !(sum as u16)
+}
+
 fn syscall_success_usize(value: u64) -> Result<usize, LocalCommandFileReadError> {
     if value > isize::MAX as u64 {
         return Err(LocalCommandFileReadError::SyscallFailed);
@@ -4174,6 +4582,12 @@ fn write_exec_summary(
     if let Some(record) = summary.userspace_stderr {
         write_exec_userspace_stderr_line(sink, response_lines, record)?;
     }
+    if let Some(record) = summary.pingdiag {
+        write_exec_pingdiag_line(sink, response_lines, record)?;
+    }
+    if let Some(record) = summary.pingdiag_controls {
+        write_exec_pingdiag_controls_line(sink, response_lines, record)?;
+    }
     write_exec_lifecycle_line(sink, response_lines, summary)?;
     write_exec_status_line(sink, response_lines, summary)?;
     write_line(
@@ -4636,6 +5050,68 @@ fn write_exec_userspace_stderr_line(
     finish_dynamic_line(sink, response_lines)
 }
 
+fn write_exec_pingdiag_line(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    record: LocalCommandPingdiagRecord,
+) -> Result<(), LocalCommandCycleError> {
+    write_str_part(sink, "talos: pingdiag fd=")?;
+    write_hex_usize_part(sink, record.process_descriptor)?;
+    write_str_part(sink, " destination=")?;
+    write_ipv4_part(sink, record.destination_ipv4)?;
+    write_str_part(sink, " payload-bytes=")?;
+    write_hex_usize_part(sink, record.payload_len)?;
+    write_str_part(sink, " start=")?;
+    write_str_part(sink, ping_step_name(record.start_step))?;
+    write_str_part(sink, " arp-driver=")?;
+    write_str_part(sink, record.arp_driver_step)?;
+    write_str_part(sink, " arp-frame-bytes=")?;
+    write_hex_usize_part(sink, record.arp_frame_len)?;
+    write_str_part(sink, " arp-pump=")?;
+    write_str_part(sink, ping_step_name(record.arp_pump_step))?;
+    write_str_part(sink, " icmp-driver=")?;
+    write_str_part(sink, record.icmp_driver_step)?;
+    write_str_part(sink, " icmp-frame-bytes=")?;
+    write_hex_usize_part(sink, record.icmp_frame_len)?;
+    write_str_part(sink, " result=")?;
+    write_str_part(sink, ping_step_name(record.result_step))?;
+    write_str_part(sink, " status=")?;
+    write_str_part(sink, ping_status_name(record.status))?;
+    write_str_part(sink, " status-payload-bytes=")?;
+    write_hex_usize_part(sink, record.status_payload_len)?;
+    write_str_part(sink, " closed=")?;
+    write_str_part(sink, if record.closed { "true" } else { "false" })?;
+    write_str_part(sink, " source=")?;
+    write_str_part(sink, record.source)?;
+    finish_dynamic_line(sink, response_lines)
+}
+
+fn write_exec_pingdiag_controls_line(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    record: LocalCommandPingdiagControlRecord,
+) -> Result<(), LocalCommandCycleError> {
+    write_str_part(sink, "talos: pingdiag-controls malformed-arguments=")?;
+    write_str_part(sink, record.malformed_arguments)?;
+    write_str_part(sink, " missing-executable=")?;
+    write_str_part(sink, record.missing_executable_identity)?;
+    write_str_part(sink, " owner-descriptor=")?;
+    write_str_part(sink, record.owner_descriptor_failure)?;
+    write_str_part(sink, " invalid-closed-descriptor=")?;
+    write_str_part(sink, record.invalid_closed_descriptor)?;
+    write_str_part(sink, " queue-backpressure=")?;
+    write_str_part(sink, record.queue_backpressure)?;
+    write_str_part(sink, " timeout-retry=")?;
+    write_str_part(sink, record.timeout_retry)?;
+    write_str_part(sink, " device-errors=")?;
+    write_str_part(sink, record.device_errors)?;
+    write_str_part(sink, " syscall-vocabulary=")?;
+    write_str_part(sink, record.syscall_vocabulary)?;
+    write_str_part(sink, " source=")?;
+    write_str_part(sink, record.source)?;
+    finish_dynamic_line(sink, response_lines)
+}
+
 fn write_exec_status_line(
     sink: &mut impl LocalCommandSink,
     response_lines: &mut usize,
@@ -4717,6 +5193,43 @@ fn write_hex_usize_part(
     value: usize,
 ) -> Result<(), LocalCommandCycleError> {
     write_hex_u64_part(sink, value as u64)
+}
+
+fn write_ipv4_part(
+    sink: &mut impl LocalCommandSink,
+    address: [u8; 4],
+) -> Result<(), LocalCommandCycleError> {
+    write_decimal_usize_part(sink, address[0] as usize)?;
+    write_str_part(sink, ".")?;
+    write_decimal_usize_part(sink, address[1] as usize)?;
+    write_str_part(sink, ".")?;
+    write_decimal_usize_part(sink, address[2] as usize)?;
+    write_str_part(sink, ".")?;
+    write_decimal_usize_part(sink, address[3] as usize)
+}
+
+fn ping_step_name(kind: syscall::PingOperationSyscallSubstituteStepKind) -> &'static str {
+    match kind {
+        syscall::PingOperationSyscallSubstituteStepKind::StartedPendingArp => "started-pending-arp",
+        syscall::PingOperationSyscallSubstituteStepKind::StartedInflight => "started-inflight",
+        syscall::PingOperationSyscallSubstituteStepKind::NoFrame => "no-frame",
+        syscall::PingOperationSyscallSubstituteStepKind::AdvancedToInflight => {
+            "advanced-to-inflight"
+        }
+        syscall::PingOperationSyscallSubstituteStepKind::RetryTransmitted => "retry-transmitted",
+        syscall::PingOperationSyscallSubstituteStepKind::Completed => "completed",
+        syscall::PingOperationSyscallSubstituteStepKind::TimedOut => "timed-out",
+    }
+}
+
+fn ping_status_name(kind: syscall::PingOperationSyscallSubstituteStatusKind) -> &'static str {
+    match kind {
+        syscall::PingOperationSyscallSubstituteStatusKind::Idle => "idle",
+        syscall::PingOperationSyscallSubstituteStatusKind::PendingArp => "pending-arp",
+        syscall::PingOperationSyscallSubstituteStatusKind::Inflight => "inflight",
+        syscall::PingOperationSyscallSubstituteStatusKind::Completed => "completed",
+        syscall::PingOperationSyscallSubstituteStatusKind::TimedOut => "timed-out",
+    }
 }
 
 fn write_hex_usize_to_command_sink(
@@ -5157,10 +5670,10 @@ talos> /\n"
 
         assert_eq!(result.line(), b"ls /bin");
         assert_eq!(result.status(), LocalCommandStatus::Handled);
-        assert_eq!(result.response_lines(), 6);
+        assert_eq!(result.response_lines(), 7);
         assert_eq!(
             backend.as_str(),
-            "talos> init\nzero\nstatus42\nstdout\nstdin\nstderr\n"
+            "talos> init\nzero\nstatus42\nstdout\nstdin\nstderr\npingdiag\n"
         );
     }
 
@@ -5204,7 +5717,7 @@ talos> /\n"
         assert_eq!(cd_bin.response_lines(), 0);
         assert_eq!(bin_ls.line(), b"ls");
         assert_eq!(bin_ls.status(), LocalCommandStatus::Handled);
-        assert_eq!(bin_ls.response_lines(), 6);
+        assert_eq!(bin_ls.response_lines(), 7);
         assert_eq!(cd_root.line(), b"cd /");
         assert_eq!(cd_root.status(), LocalCommandStatus::Handled);
         assert_eq!(cd_root.response_lines(), 0);
@@ -5225,6 +5738,7 @@ talos> talos> banner.txt\n\
 		stdout\n\
 		stdin\n\
 		stderr\n\
+		pingdiag\n\
 		talos> talos> bin\n\
 dir\n\
 empty\n\
@@ -5434,6 +5948,61 @@ talos> Talos initramfs fixture\n"
         assert!(output.contains(
             "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record\n"
         ));
+    }
+
+    #[test_case]
+    fn local_command_loop_execs_shell_visible_pingdiag_through_vfs_diagnostic_layers() {
+        let input = ScriptedInput::new(
+            *b"exec /bin/pingdiag\rwaitpid\rlaststatus\rexec /bin/pingdiag extra\rexec /bin/missingdiag\r",
+            85,
+        );
+        let mut backend = CaptureSink::new();
+        let (exec, waited, observed, malformed, missing) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(exec.line(), b"exec /bin/pingdiag");
+        assert_eq!(exec.status(), LocalCommandStatus::Handled);
+        assert_eq!(exec.response_lines(), 11);
+        assert_eq!(waited.line(), b"waitpid");
+        assert_eq!(waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(observed.line(), b"laststatus");
+        assert_eq!(observed.status(), LocalCommandStatus::Handled);
+        assert_eq!(malformed.line(), b"exec /bin/pingdiag extra");
+        assert_eq!(malformed.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(missing.line(), b"exec /bin/missingdiag");
+        assert_eq!(missing.status(), LocalCommandStatus::UnexpectedArgument);
+        assert!(output.contains("talos> talos: exec path=/bin/pingdiag source=vfs-open-read\n"));
+        assert!(output.contains(
+            "talos: pingdiag fd=0x0000000000000003 destination=192.0.2.20 payload-bytes=0x0000000000000004 start=started-pending-arp arp-driver=transmitted"
+        ));
+        assert!(output.contains("arp-pump=advanced-to-inflight icmp-driver=transmitted"));
+        assert!(output.contains(
+            "result=completed status=completed status-payload-bytes=0x0000000000000004 closed=true source=vfs-userspace-diagnostic-svc+process-local-descriptor+packet-queue-pump\n"
+        ));
+        assert!(output.contains(
+            "talos: pingdiag-controls malformed-arguments=exec-invalid-path missing-executable=exec-not-found owner-descriptor=EBADF invalid-closed-descriptor=EBADF queue-backpressure=ENOSPC timeout-retry=timed-out-after-retry device-errors=EIO syscall-vocabulary=SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_* unchanged source=shell-pingdiag-controls\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/pingdiag state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/pingdiag state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/pingdiag state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains("talos> talos: exec-invalid-path\n"));
+        assert!(output.contains("talos> talos: exec-not-found\n"));
     }
 
     #[test_case]
