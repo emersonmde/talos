@@ -1,0 +1,23 @@
+{
+  "task_id": "phase12-network-vfs-ping-diagnostic-packet-queue-smoke-20260620",
+  "classification": "phase12-network-vfs-ping-diagnostic-packet-queue-smoke-accepted",
+  "evidence_dir": "tasks/evidence/2026-06-20-vfs-ping-diagnostic-packet-queue-smoke",
+  "artifacts": {
+    "cargo_test_quiet": "cargo-test-quiet.log",
+    "source_anchors": "source-anchors.txt",
+    "smoke_transcript": "smoke-transcript.md",
+    "classification": "classification.json"
+  },
+  "source_tests": [
+    "src/syscall.rs::vfs_ping_diagnostic_svc_fixture_records_packet_queue_lifecycle",
+    "src/syscall.rs::vfs_ping_diagnostic_svc_fixture_maps_packet_queue_controls",
+    "src/syscall.rs::vfs_ping_diagnostic_svc_fixture_maps_contract_error_controls"
+  ],
+  "source_components": [
+    "src/network.rs::PacketQueueNetworkDevice",
+    "src/network.rs::PacketQueueFrame",
+    "src/network.rs::FixedPacketQueue",
+    "src/network.rs::PacketQueueError"
+  ],
+  "selected_next_task": "phase12-network-vfs-ping-diagnostic-packet-queue-smoke-closeout-20260620"
+}

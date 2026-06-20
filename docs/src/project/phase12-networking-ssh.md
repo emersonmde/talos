@@ -4417,3 +4417,29 @@ adapters, live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab
 mutation, boot publication, Phase 12.1 link-hardware retry, broad socket
 expansion, and phase transition remain rejected. The selected next bounded task
 is phase12-network-vfs-ping-diagnostic-packet-queue-smoke-20260620.
+
+phase12-network-vfs-ping-diagnostic-packet-queue-smoke-20260620 accepts
+phase12-network-vfs-ping-diagnostic-packet-queue-smoke-accepted. The retained
+host/QEMU-substitute smoke transcript records the VFS-backed diagnostic
+lifecycle through the packet queue boundary: /bin/pingdiag VFS executable
+lookup, diagnostic SVC argument decoding, UserMapping payload copy-in,
+process-local descriptor open/start/pump/status/close, PacketQueueNetworkDevice
+outbound ARP request recording, injected ARP reply progression, outbound
+IPv4/ICMP echo request recording, injected ICMP echo reply progression, and
+UserMapping status/result copy-out.
+
+The smoke evidence distinguishes queue-backed behavior from immediate
+fake-device-only behavior by requiring outbound ARP and ICMP frames to be copied
+into inspectable packet queue transmit records and inbound ARP/ICMP replies to
+be injected through the receive queue before progress is observed.
+Deterministic controls cover missing VFS identity, malformed selector and
+payload, wrong or missing owner, invalid and closed descriptors, process
+descriptor capacity, packet queue capacity, frame capacity, caller output and
+receive buffer pressure, malformed injected frames, invalid user memory,
+scratch pressure, timeout/retry, receive/transmit device errors, and unchanged
+SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_* vocabulary. Shell ping, public
+sockets, stable/socket ABI acceptance, live driver adapters, live packet I/O,
+hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication,
+Phase 12.1 link-hardware retry, broad socket expansion, and phase transition
+remain rejected. The selected next bounded task is
+phase12-network-vfs-ping-diagnostic-packet-queue-smoke-closeout-20260620.

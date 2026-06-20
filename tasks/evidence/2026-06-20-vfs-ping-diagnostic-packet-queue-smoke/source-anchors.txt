@@ -1,0 +1,39 @@
+src/syscall.rs:16:pub(crate) const TALOS_OPEN_SYSCALL: u64 = 5;
+src/syscall.rs:50:            TALOS_OPEN_SYSCALL => Self::TalosOpen,
+src/syscall.rs:62:            Self::TalosOpen => TALOS_OPEN_SYSCALL,
+src/syscall.rs:2649:        let result = dispatch(TALOS_OPEN_SYSCALL, SyscallArguments::empty());
+src/syscall.rs:2652:        assert_eq!(result.number().raw(), TALOS_OPEN_SYSCALL);
+src/syscall.rs:5115:        assert_eq!(SyscallNumber::from_raw(6), SyscallNumber::Unknown(6));
+src/syscall.rs:5116:        assert_eq!(TALOS_OPEN_SYSCALL, 5);
+src/syscall.rs:5425:        assert_eq!(SyscallNumber::from_raw(6), SyscallNumber::Unknown(6));
+src/syscall.rs:5426:        assert_eq!(TALOS_OPEN_SYSCALL, 5);
+src/syscall.rs:5647:    fn vfs_ping_diagnostic_svc_fixture_records_packet_queue_lifecycle() {
+src/syscall.rs:5676:        let mut queue = crate::network::PacketQueueNetworkDevice::<2, 2, 128>::new();
+src/syscall.rs:5690:        assert_eq!(SyscallNumber::from_raw(6), SyscallNumber::Unknown(6));
+src/syscall.rs:5691:        assert_eq!(TALOS_OPEN_SYSCALL, 5);
+src/syscall.rs:5869:    fn vfs_ping_diagnostic_svc_fixture_maps_packet_queue_controls() {
+src/syscall.rs:5911:        let mut tiny_queue = crate::network::PacketQueueNetworkDevice::<1, 1, 2>::new();
+src/syscall.rs:5914:            Err(crate::network::PacketQueueError::FrameTooLarge {
+src/syscall.rs:5921:            let mut queue = crate::network::PacketQueueNetworkDevice::<1, 1, 128>::new();
+src/syscall.rs:5945:            let mut full_queue = crate::network::PacketQueueNetworkDevice::<1, 0, 128>::new();
+src/syscall.rs:5973:            let mut error_queue = crate::network::PacketQueueNetworkDevice::<1, 1, 128>::new();
+src/syscall.rs:6004:            let mut queue = crate::network::PacketQueueNetworkDevice::<1, 1, 128>::new();
+src/syscall.rs:6032:            let mut queue = crate::network::PacketQueueNetworkDevice::<2, 2, 128>::new();
+src/syscall.rs:6131:            let mut queue = crate::network::PacketQueueNetworkDevice::<1, 1, 128>::new();
+src/syscall.rs:6151:    fn vfs_ping_diagnostic_svc_fixture_maps_contract_error_controls() {
+src/syscall.rs:7466:            TALOS_OPEN_SYSCALL,
+src/syscall.rs:7508:            TALOS_OPEN_SYSCALL,
+src/syscall.rs:7566:            TALOS_OPEN_SYSCALL,
+src/syscall.rs:7580:            TALOS_OPEN_SYSCALL,
+src/syscall.rs:7594:            TALOS_OPEN_SYSCALL,
+src/syscall.rs:7601:            TALOS_OPEN_SYSCALL,
+src/syscall.rs:7643:            TALOS_OPEN_SYSCALL,
+src/network.rs:31:pub(crate) enum PacketQueueError {
+src/network.rs:43:    pub(crate) fn new(frame: &[u8]) -> Result<Self, PacketQueueError> {
+src/network.rs:45:            return Err(PacketQueueError::FrameTooLarge {
+src/network.rs:88:    pub(crate) fn push(&mut self, frame: &[u8]) -> Result<(), PacketQueueError> {
+src/network.rs:90:            return Err(PacketQueueError::Full);
+src/network.rs:119:pub(crate) struct PacketQueueNetworkDevice<
+src/network.rs:131:    PacketQueueNetworkDevice<RX_CAPACITY, TX_CAPACITY, FRAME_CAPACITY>
+src/network.rs:142:    pub(crate) fn inject_received(&mut self, frame: &[u8]) -> Result<(), PacketQueueError> {
+src/network.rs:168:    for PacketQueueNetworkDevice<RX_CAPACITY, TX_CAPACITY, FRAME_CAPACITY>

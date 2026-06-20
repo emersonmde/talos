@@ -14527,6 +14527,22 @@ Milestone 12.3: IP Stack
   broad socket expansion, and phase transition remain rejected. The selected
   next bounded task is
   phase12-network-vfs-ping-diagnostic-packet-queue-smoke-20260620.
+- The VFS-backed userspace ping diagnostic packet queue smoke accepts retained
+  host/QEMU-substitute smoke evidence for the queue-backed lifecycle. The
+  transcript records /bin/pingdiag VFS executable lookup, diagnostic SVC
+  argument decoding, UserMapping copy-in/copy-out, process-local descriptor
+  open/start/pump/status/close, PacketQueueNetworkDevice outbound ARP and
+  IPv4/ICMP echo request records, injected ARP and ICMP reply progression, and
+  deterministic controls for missing VFS identity, malformed selector/payload,
+  owner and descriptor failures, queue/frame capacity, caller buffer pressure,
+  malformed injected frames, invalid user memory, scratch pressure,
+  timeout/retry, device errors, and unchanged syscall vocabulary. The evidence
+  remains host/QEMU-substitute only and rejects shell ping, public sockets,
+  stable/socket ABI acceptance, live driver adapters, live packet I/O, hardware
+  reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase
+  12.1 link-hardware retry, broad socket expansion, and phase transition. The
+  selected next bounded task is
+  phase12-network-vfs-ping-diagnostic-packet-queue-smoke-closeout-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
