@@ -4783,3 +4783,21 @@ transport, live packet I/O, hardware reachability, smoltcp, SSH, lab
 mutation, boot publication, broad socket expansion, public stable socket ABI
 acceptance, or phase transition. The selected next bounded task is
 phase12-network-shell-sockdiag-open-close-closeout-20260620.
+
+phase12-network-shell-sockdiag-open-close-closeout-20260620 accepts
+phase12-network-shell-sockdiag-open-close-closeout-accepted. The closeout
+reconciles the ABI contract, socket open/close core, shell /bin/sockdiag core,
+and retained smoke evidence as a host/QEMU-substitute frontier only. The
+accepted boundary is shell-visible socket open/close through VFS/userspace
+execution: executable lookup/open/read for /bin/sockdiag, startup ABI,
+TALOS_SOCKET_SYSCALL = 6 for AF_INET/SOCK_STREAM/protocol 0, process
+DescriptorObjectKind::Socket ownership, bounded socket backing state,
+TALOS_CLOSE_SYSCALL = 2 close/drop, waitpid, laststatus, deterministic
+negative controls, and unchanged /bin/pingdiag behavior.
+
+The closeout explicitly rejects send, recv, bind, connect, listen, accept,
+poll/blocking network I/O, UDP/TCP payload transport, live driver adapters,
+live packet I/O, hardware reachability, lab mutation, boot publication, SSH,
+smoltcp, broad socket expansion, public stable socket ABI acceptance, and
+phase transition. selected_next_task is null and planningNeeded=true pending
+supervisor planning for any next bounded Phase 12.4 socket or network task.

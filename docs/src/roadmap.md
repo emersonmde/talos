@@ -14787,6 +14787,20 @@ Milestone 12.3: IP Stack
   socket expansion, public stable socket ABI acceptance, and phase transition.
   The selected next bounded task is
   phase12-network-shell-sockdiag-open-close-closeout-20260620.
+- The shell sockdiag open/close closeout accepts the socket-open frontier only
+  at source/unit plus host/QEMU-substitute smoke level. The accepted boundary
+  is shell-visible /bin/sockdiag execution through VFS executable
+  lookup/open/read, startup ABI, TALOS_SOCKET_SYSCALL = 6 for
+  AF_INET/SOCK_STREAM/protocol 0, process DescriptorObjectKind::Socket
+  ownership, bounded socket backing state, TALOS_CLOSE_SYSCALL = 2 close/drop,
+  waitpid, laststatus, deterministic negative controls, and unchanged
+  /bin/pingdiag behavior. Send/recv, bind/connect/listen/accept,
+  poll/blocking network I/O, UDP/TCP payload transport, live driver adapters,
+  live packet I/O, hardware reachability, lab mutation, boot publication, SSH,
+  smoltcp, broad socket expansion, public stable socket ABI acceptance, and
+  phase transition remain rejected. selected_next_task is null and
+  planningNeeded=true pending supervisor planning for any next bounded Phase
+  12.4 socket or network task.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
