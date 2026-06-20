@@ -3463,3 +3463,26 @@ phase transition remain rejected. selected_next_task is null and
 planningNeeded=true because no later queued Phase 12.3 task has complete
 objective dependencies, acceptance criteria, validation gates, docs, and
 evidence requirements.
+
+phase12-network-ping-operation-syscall-substitute-contract-20260620 accepts
+phase12-network-ping-operation-syscall-substitute-contract-accepted. The
+selected host-only binding is a proof-only ping-operation syscall-substitute
+adapter in src/syscall.rs, explicitly separate from stable SVC syscall
+dispatch. It will borrow the accepted NetworkPingOperationDescriptorTable,
+UserspacePingOperation, SinglePingPacketService, fake/trait-level
+NetworkDevice behavior, and caller-owned receive/transmit buffers from its
+caller rather than creating a public socket table, shell command, live driver
+adapter, packet queue, or autonomous timer layer.
+
+The selected operation vocabulary is open, start, pump, status, retry,
+timeout, and close. The contract requires descriptor lifetime and terminal
+status observation through the accepted descriptor table: invalid and closed
+descriptors map to EBADF, zero descriptor capacity to EMFILE, duplicate active
+open to EBUSY, retry exhaustion and nonmatching frames to EAGAIN, timeout to a
+terminal timed-out status, and receive/transmit IO through the existing POSIX
+device-error mappings. Shell ping, public sockets, stable syscall ABI
+acceptance, socket syscall ABI, live driver adapters, live packet I/O,
+hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication,
+Phase 12.1 link-hardware retry, Phase 12.4 socket expansion, and phase
+transition remain rejected. The selected next task is
+phase12-network-ping-operation-syscall-substitute-core-20260620.

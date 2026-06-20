@@ -13639,6 +13639,19 @@ Milestone 12.3: IP Stack
   publication, Phase 12.1 link-hardware retry, and phase transition remain
   rejected. selected_next_task is null and planningNeeded=true pending
   supervisor planning for the next bounded Phase 12.3 task.
+- The ping operation syscall-substitute contract selects a host-only,
+  proof-only adapter in src/syscall.rs over the accepted
+  NetworkPingOperationDescriptorTable, UserspacePingOperation,
+  SinglePingPacketService, fake/trait-level NetworkDevice behavior, and
+  caller-owned buffers. The selected operation vocabulary is open, start,
+  pump, status, retry, timeout, and close with descriptor lifetime, terminal
+  status, and POSIX error mapping retained from the accepted descriptor and
+  userspace operation boundaries. Shell ping, public sockets, stable syscall
+  ABI acceptance, socket syscall ABI, live driver adapters, live packet I/O,
+  hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot
+  publication, Phase 12.1 link-hardware retry, Phase 12.4 socket expansion,
+  and phase transition remain rejected. The next selected bounded task is the
+  syscall-substitute adapter core.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
