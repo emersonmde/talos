@@ -4247,6 +4247,27 @@ The post-review correction chain is:
     mutation, boot publication, Phase 12.1 retry, Phase 12.4 socket expansion,
     and phase transition remain rejected. selected_next_task is
     'phase12-network-ping-operation-syscall-substitute-smoke-core-20260620'.
+241. Phase 12.3 ping operation syscall-substitute smoke core: accepted in
+    'phase12-network-ping-operation-syscall-substitute-smoke-core-20260620'
+    with classification
+    'phase12-network-ping-operation-syscall-substitute-smoke-core-accepted'.
+    scripts/qemu-ping-operation-syscall-substitute-smoke.sh retains
+    task-owned QEMU/substitute evidence for the proof-only
+    PingOperationSyscallSubstitute adapter over
+    NetworkPingOperationDescriptorTable, UserspacePingOperation,
+    SinglePingPacketService, fake/trait-level NetworkDevice behavior, and
+    caller-owned receive/transmit/status buffers. The transcript covers
+    open/start/pump/status/retry_arp/timeout/close, unresolved ARP pending,
+    matching ARP advancement to ICMP transmit and in-flight status, matching
+    echo-reply completion, terminal status observation, invalid and closed
+    descriptors, zero-capacity EMFILE, duplicate active EBUSY, retry
+    exhaustion EAGAIN, explicit timeout, and start-time/pump-time IO-error
+    mapping. Shell ping, public sockets, stable syscall ABI acceptance, socket
+    syscall ABI, live driver adapters, live packet I/O, hardware reachability,
+    SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1 retry,
+    Phase 12.4 socket expansion, and phase transition remain rejected.
+    selected_next_task is
+    'phase12-network-ping-operation-syscall-substitute-smoke-closeout-20260620'.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -13713,6 +13734,18 @@ Milestone 12.3: IP Stack
   mutation, boot publication, Phase 12.1 link-hardware retry, Phase 12.4
   socket expansion, and phase transition remain rejected. The next selected
   bounded task is the syscall-substitute smoke core.
+- The ping operation syscall-substitute smoke core retains task-owned
+  QEMU/substitute evidence for PingOperationSyscallSubstitute over
+  NetworkPingOperationDescriptorTable, UserspacePingOperation,
+  SinglePingPacketService, fake/trait-level NetworkDevice behavior, and
+  caller-owned buffers. The transcript covers adapter lifecycle,
+  unresolved-ARP to echo-reply completion, status, retry exhaustion, timeout,
+  invalid/closed descriptors, capacity, busy, and IO-error edges while
+  rejecting shell ping, public sockets, stable syscall ABI acceptance, socket
+  syscall ABI, live driver adapters, live packet I/O, hardware reachability,
+  SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1
+  link-hardware retry, Phase 12.4 socket expansion, and phase transition. The
+  next selected bounded task is the syscall-substitute smoke closeout.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
