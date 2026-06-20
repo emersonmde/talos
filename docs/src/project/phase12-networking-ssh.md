@@ -3419,3 +3419,25 @@ hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication,
 Phase 12.1 link-hardware retry, and phase transition remain rejected. The
 selected next task is
 phase12-network-ping-operation-descriptor-substitute-smoke-core-20260620.
+
+phase12-network-ping-operation-descriptor-substitute-smoke-core-20260620
+accepts phase12-network-ping-operation-descriptor-substitute-smoke-core-accepted.
+scripts/qemu-ping-operation-descriptor-smoke.sh now retains a host/QEMU
+substitute transcript under
+tasks/evidence/2026-06-20-ping-operation-descriptor-substitute-smoke/. The
+smoke runs the network_ping_descriptor target test filter and records the
+accepted descriptor-shaped lifecycle: descriptor open, unresolved ARP pending,
+matching ARP advancement to ICMP transmit and in-flight tracking, matching
+echo reply completion, terminal status observation, and descriptor close.
+
+The retained evidence also covers caller-driven retry exhaustion, explicit
+timeout, invalid and closed descriptors, zero-capacity open, duplicate active
+open, transmit IO errors, and receive IO errors through
+NetworkPingOperationDescriptorTable over UserspacePingOperation,
+SinglePingPacketService, fake/trait-level NetworkDevice behavior, and
+caller-owned buffers. The accepted boundary remains host-only and does not
+accept shell ping, public sockets, syscall ABI acceptance, live driver
+adapters, live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab
+mutation, boot publication, Phase 12.1 link-hardware retry, or phase
+transition. The selected next task is
+phase12-network-ping-operation-descriptor-substitute-smoke-closeout-20260620.

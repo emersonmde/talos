@@ -13598,6 +13598,16 @@ Milestone 12.3: IP Stack
   task is retained substitute smoke evidence for the descriptor-shaped
   lifecycle; shell ping, public sockets, syscall ABI acceptance, live driver
   adapters, hardware reachability, SSH, and phase transition remain rejected.
+- The ping operation descriptor substitute smoke core retains host/QEMU
+  substitute evidence for NetworkPingOperationDescriptorTable over the accepted
+  UserspacePingOperation and SinglePingPacketService boundary. The transcript
+  covers descriptor open/start/pump/status/retry/timeout/close, unresolved ARP
+  through echo-reply completion, terminal status, retry exhaustion, explicit
+  timeout, invalid/closed descriptors, capacity, busy, and IO-error mapping
+  with fake NetworkDevice behavior and caller-owned buffers. Shell ping,
+  public sockets, syscall ABI acceptance, live driver adapters, live packet
+  I/O, hardware reachability, SSH, and phase transition remain rejected; the
+  next selected bounded task is descriptor substitute smoke closeout.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
