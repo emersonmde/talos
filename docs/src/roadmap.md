@@ -14206,6 +14206,24 @@ Milestone 12.3: IP Stack
   boot publication, Phase 12.1 link-hardware retry, broad socket expansion, and
   phase transition remain rejected. The selected next bounded task is
   phase12-network-process-local-ping-svc-dispatch-closeout-20260620.
+- The process-local ping SVC dispatch closeout reconciles the accepted contract,
+  core implementation, source/unit evidence, task records, docs, durable state,
+  and rejected claims for the crate-internal host-only dispatch facade. The
+  accepted evidence level remains host/QEMU-substitute source/unit evidence over
+  fake/trait-level NetworkDevice behavior, process-local descriptor ownership,
+  internal dispatch-shaped control, ProcessLocalPingDescriptorControl,
+  DescriptorShapedPingControl, RuntimePingOperationSyscallSubstitute,
+  NetworkRuntimeDevicePump, caller-owned buffers, task-owned result/status
+  slots, and fixed-capacity state. It accepts only that the internal facade can
+  drive one process-local ping descriptor through open, start, pump/read-result,
+  status, retry_arp, timeout, and close with deterministic owner, descriptor
+  lifetime, capacity, busy, retry, timeout, receive-buffer pressure, and
+  device-error controls. Shell ping, public sockets, stable syscall ABI
+  acceptance, socket syscall ABI acceptance, live driver adapters, live packet
+  I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot
+  publication, Phase 12.1 link-hardware retry, broad socket expansion, and phase
+  transition remain rejected. The selected next bounded task is
+  phase12-network-process-local-ping-svc-dispatch-smoke-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
