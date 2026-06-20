@@ -4162,3 +4162,27 @@ driver adapters, live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP,
 lab mutation, boot publication, Phase 12.1 link-hardware retry, broad socket
 expansion, and phase transition remain rejected. The selected next bounded task
 is phase12-network-process-local-ping-svc-user-argument-smoke-20260620.
+
+phase12-network-process-local-ping-svc-user-argument-smoke-20260620 accepts
+phase12-network-process-local-ping-svc-user-argument-smoke-accepted. The
+retained host/QEMU-substitute transcript exercises
+dispatch_process_local_ping_descriptor_user_arguments through UserMapping,
+ProcessLocalPingDispatchOperation, ProcessLocalPingDescriptorControl,
+ProcessDescriptorStore, NetworkRuntimeDevicePump, fake/trait-level
+NetworkDevice behavior, caller-owned buffers, task-owned result/status slots,
+and fixed-capacity state.
+
+The smoke evidence covers one experimental user-argument lifecycle: open, idle
+status copy-out, start from copied user payload, ARP-to-ICMP pump result
+copy-out, echo-reply completion, completed status copy-out, and close. It also
+covers selectors for open, start, pump_or_read_result, status, retry_arp,
+timeout, and close; payload copy-in; result/status copy-out; bounded scratch;
+malformed selector and reserved fields; missing owner; process descriptor
+capacity; invalid descriptors; output-buffer pressure; invalid user memory;
+scratch pressure; zero TTL; invalid route prefix; and unchanged stable
+SyscallNumber/TALOS_* vocabulary. Shell ping, public sockets, stable syscall
+ABI acceptance, socket syscall ABI acceptance, live driver adapters, live packet
+I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot
+publication, Phase 12.1 link-hardware retry, broad Phase 12.4 socket expansion,
+and phase transition remain rejected. The selected next bounded task is
+phase12-network-process-local-ping-svc-user-argument-smoke-closeout-20260620.

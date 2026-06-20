@@ -14325,6 +14325,26 @@ Milestone 12.3: IP Stack
   retry, broad socket expansion, and phase transition remain rejected. The
   selected next bounded task is
   phase12-network-process-local-ping-svc-user-argument-smoke-20260620.
+- The process-local ping SVC user-argument smoke accepts retained
+  host/QEMU-substitute transcript evidence for
+  dispatch_process_local_ping_descriptor_user_arguments over UserMapping,
+  ProcessLocalPingDispatchOperation, ProcessLocalPingDescriptorControl,
+  ProcessDescriptorStore, NetworkRuntimeDevicePump, fake/trait-level
+  NetworkDevice behavior, caller-owned buffers, task-owned result/status slots,
+  and fixed-capacity state. The transcript covers one experimental
+  user-argument lifecycle from open through idle status copy-out, start from
+  copied user payload, ARP-to-ICMP pump result copy-out, echo-reply completion,
+  completed status copy-out, and close. It also covers operation selectors,
+  payload copy-in, result/status copy-out, bounded scratch, malformed selector
+  and reserved fields, missing owner, process descriptor capacity, invalid
+  descriptors, output-buffer pressure, invalid user memory, scratch pressure,
+  zero TTL, invalid route prefix, and unchanged stable SyscallNumber/TALOS_*
+  vocabulary. Shell ping, public sockets, stable syscall ABI acceptance, socket
+  syscall ABI acceptance, live driver adapters, live packet I/O, hardware
+  reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase
+  12.1 link-hardware retry, broad socket expansion, and phase transition remain
+  rejected. The selected next bounded task is
+  phase12-network-process-local-ping-svc-user-argument-smoke-closeout-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
