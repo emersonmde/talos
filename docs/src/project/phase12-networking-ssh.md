@@ -3735,3 +3735,23 @@ expansion, and phase transition remain rejected. selected_next_task is null and
 planningNeeded=true because no later queued Phase 12.3 or Phase 12.4 task has
 complete objective dependencies, acceptance criteria, validation gates, and
 evidence requirements.
+
+phase12-network-host-ping-frontier-checkpoint-20260620 accepts
+phase12-network-host-ping-frontier-checkpoint-accepted. The checkpoint
+reconciles the accepted Phase 12.3 host-only ping stack through
+RuntimePingOperationSyscallSubstitute, NetworkRuntimeDevicePump, local ARP/ICMP
+responder behavior, active ping descriptor dispatch, UserspacePingOperation,
+SinglePingPacketService, fake/trait-level NetworkDevice behavior,
+caller-owned buffers, fixed-capacity state, retained smoke transcript,
+implementation commits, task records, docs, and durable-state planning.
+
+The accepted evidence level remains host/QEMU-substitute only. It covers the
+runtime-pump-backed syscall substitute/control path, local responder priority,
+active ping descriptor dispatch, caller-driven retry/timeout/status handling,
+descriptor capacity and lifecycle errors, and receive/local-transmit/active
+transmit IO errors. Shell ping, public sockets, stable syscall ABI acceptance,
+socket syscall ABI acceptance, live driver adapters, live packet I/O, hardware
+reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1
+link-hardware retry, Phase 12.4 socket expansion, and phase transition remain
+rejected. selected_next_task is
+phase12-network-descriptor-shaped-ping-control-contract-20260620.

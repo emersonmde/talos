@@ -4415,6 +4415,22 @@ The post-review correction chain is:
     null and planningNeeded=true because no later queued Phase 12.3 or Phase
     12.4 task has complete objective dependencies, acceptance criteria,
     validation gates, and evidence requirements.
+249. Phase 12.3 host ping frontier checkpoint: accepted in
+    'phase12-network-host-ping-frontier-checkpoint-20260620' with
+    classification 'phase12-network-host-ping-frontier-checkpoint-accepted'.
+    The checkpoint reconciles the accepted Phase 12.3 host-only ping stack
+    through RuntimePingOperationSyscallSubstitute, NetworkRuntimeDevicePump,
+    local ARP/ICMP responder behavior, active ping descriptor dispatch,
+    UserspacePingOperation, SinglePingPacketService, fake/trait-level
+    NetworkDevice behavior, caller-owned buffers, fixed-capacity state,
+    retained smoke evidence, implementation commits, task records, docs, and
+    durable-state planning. The accepted evidence level remains
+    host/QEMU-substitute only and does not accept shell ping, public sockets,
+    stable syscall ABI acceptance, socket syscall ABI acceptance, live driver
+    adapters, live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP,
+    lab mutation, boot publication, Phase 12.1 retry, Phase 12.4 socket
+    expansion, or phase transition. selected_next_task is
+    'phase12-network-descriptor-shaped-ping-control-contract-20260620'.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -13991,6 +14007,19 @@ Milestone 12.3: IP Stack
   socket expansion, and phase transition remain rejected. selected_next_task
   is null and planningNeeded=true pending supervisor planning for the next
   bounded Phase 12.3 or Phase 12.4 task.
+- The host ping frontier checkpoint reconciles the accepted Phase 12.3
+  host-only ping stack through RuntimePingOperationSyscallSubstitute,
+  NetworkRuntimeDevicePump, local ARP/ICMP responder behavior, active ping
+  descriptor dispatch, UserspacePingOperation, SinglePingPacketService,
+  fake/trait-level NetworkDevice behavior, caller-owned buffers, fixed-capacity
+  state, retained smoke evidence, implementation commits, task records, docs,
+  and durable-state planning. The accepted evidence level remains
+  host/QEMU-substitute only; shell ping, public sockets, stable syscall ABI
+  acceptance, socket syscall ABI acceptance, live driver adapters, live packet
+  I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot
+  publication, Phase 12.1 link-hardware retry, Phase 12.4 socket expansion,
+  and phase transition remain rejected. The selected next bounded task is the
+  descriptor-shaped ping control contract.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
