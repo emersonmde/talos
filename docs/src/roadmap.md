@@ -14597,6 +14597,20 @@ Milestone 12.3: IP Stack
   UDP/TCP, lab mutation, boot publication, Phase 12.1 link-hardware retry,
   broad socket expansion, and phase transition remain rejected. The selected
   next bounded task is phase12-network-driver-packet-pump-closeout-20260620.
+- The driver-facing packet pump closeout accepts the core after
+  source/task/evidence/doc reconciliation. The accepted evidence level remains
+  host/QEMU-substitute source/unit evidence over crate-internal packet queue
+  records, trait-level NetworkDevice pump behavior, the VFS/userspace diagnostic
+  SVC bridge, UserMapping copy-in/copy-out, process-local descriptor ownership,
+  caller-owned buffers, task-owned state, transmit FIFO ordering, explicit
+  receive polling, deterministic backpressure, device-error propagation,
+  timeout/retry controls, close/drop behavior, and unchanged
+  SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_* vocabulary. Shell ping, public
+  sockets, stable/socket ABI acceptance, live driver adapters, live packet I/O,
+  hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication,
+  Phase 12.1 link-hardware retry, broad socket expansion, and phase transition
+  remain rejected. The selected next bounded task is
+  phase12-network-driver-packet-pump-smoke-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
