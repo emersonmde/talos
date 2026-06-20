@@ -33,7 +33,8 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+jobs-accounting-list+multiple-background-vfs-exec-records",
     "+background-jobs-stale-entry-policy+generated-root-manifest-read",
     "+generated-root-executable-vfs-exec+shell-pingdiag-vfs-userspace-diagnostic",
-    "+shell-sockdiag-vfs-userspace-socket-open-close"
+    "+shell-sockdiag-vfs-userspace-socket-open-close",
+    "+shell-sockdiag-vfs-userspace-socket-bind-listen"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -703,6 +704,12 @@ pub struct LocalCommandSockdiagRecord {
     domain: u64,
     socket_type: u64,
     protocol: u64,
+    local_ipv4_be: u32,
+    local_port: u16,
+    bind_return: u64,
+    listen_backlog: u8,
+    listen_return: u64,
+    socket_state: &'static str,
     descriptor_kind: &'static str,
     descriptor_access: &'static str,
     close_return: u64,
@@ -717,6 +724,11 @@ pub struct LocalCommandSockdiagControlRecord {
     unsupported_domain: &'static str,
     unsupported_type: &'static str,
     unsupported_protocol: &'static str,
+    listen_before_bind: &'static str,
+    invalid_bind_endpoint: &'static str,
+    invalid_backlog: &'static str,
+    repeated_bind: &'static str,
+    repeated_listen: &'static str,
     invalid_closed_descriptor: &'static str,
     syscall_vocabulary: &'static str,
     source: &'static str,
@@ -1585,8 +1597,13 @@ where
                     unsupported_domain: "ENOTSUP",
                     unsupported_type: "ENOTSUP",
                     unsupported_protocol: "ENOTSUP",
+                    listen_before_bind: "EINVAL",
+                    invalid_bind_endpoint: "EINVAL",
+                    invalid_backlog: "EINVAL",
+                    repeated_bind: "EINVAL",
+                    repeated_listen: "ok-updates-backlog",
                     invalid_closed_descriptor: "EBADF",
-                    syscall_vocabulary: "SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_SOCKET/TALOS_CLOSE bounded",
+                    syscall_vocabulary: "SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_SOCKET/TALOS_BIND/TALOS_LISTEN/TALOS_CLOSE bounded",
                     source: "shell-sockdiag-controls",
                 }),
             )
@@ -1734,6 +1751,20 @@ where
             return Err(LocalCommandExecError::SyscallFailed);
         }
 
+        let invalid_closed_bind = socket_dispatch(
+            syscall::TALOS_BIND_SYSCALL,
+            syscall::SyscallArguments::new([3, 0x7f00_0001, 8080, 0, 0, 0]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if syscall::errno_number(posix::PosixError::BadDescriptor) as u64
+            != invalid_closed_bind.return_value().x0().wrapping_neg()
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+
         let open = socket_dispatch(
             syscall::TALOS_SOCKET_SYSCALL,
             syscall::SyscallArguments::new([
@@ -1771,6 +1802,148 @@ where
             return Err(LocalCommandExecError::LaunchPipelineFailed);
         }
 
+        let listen_before_bind = socket_dispatch(
+            syscall::TALOS_LISTEN_SYSCALL,
+            syscall::SyscallArguments::new([process_descriptor as u64, 1, 0, 0, 0, 0]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if syscall::errno_number(posix::PosixError::InvalidArgument) as u64
+            != listen_before_bind.return_value().x0().wrapping_neg()
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+
+        let invalid_endpoint = socket_dispatch(
+            syscall::TALOS_BIND_SYSCALL,
+            syscall::SyscallArguments::new([process_descriptor as u64, 0x7f00_0001, 0, 0, 0, 0]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if syscall::errno_number(posix::PosixError::InvalidArgument) as u64
+            != invalid_endpoint.return_value().x0().wrapping_neg()
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+
+        let invalid_backlog = socket_dispatch(
+            syscall::TALOS_LISTEN_SYSCALL,
+            syscall::SyscallArguments::new([process_descriptor as u64, 5, 0, 0, 0, 0]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if syscall::errno_number(posix::PosixError::InvalidArgument) as u64
+            != invalid_backlog.return_value().x0().wrapping_neg()
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+
+        const SOCKDIAG_LOCAL_IPV4_BE: u32 = 0x7f00_0001;
+        const SOCKDIAG_LOCAL_PORT: u16 = 8080;
+        const SOCKDIAG_LISTEN_BACKLOG: u8 = 2;
+        const SOCKDIAG_UPDATED_BACKLOG: u8 = 4;
+
+        let bind = socket_dispatch(
+            syscall::TALOS_BIND_SYSCALL,
+            syscall::SyscallArguments::new([
+                process_descriptor as u64,
+                SOCKDIAG_LOCAL_IPV4_BE as u64,
+                SOCKDIAG_LOCAL_PORT as u64,
+                0,
+                0,
+                0,
+            ]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        let bind_return = bind.return_value().x0();
+        if bind_return != 0 {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+
+        let repeated_bind = socket_dispatch(
+            syscall::TALOS_BIND_SYSCALL,
+            syscall::SyscallArguments::new([
+                process_descriptor as u64,
+                SOCKDIAG_LOCAL_IPV4_BE as u64,
+                SOCKDIAG_LOCAL_PORT as u64,
+                0,
+                0,
+                0,
+            ]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if syscall::errno_number(posix::PosixError::InvalidArgument) as u64
+            != repeated_bind.return_value().x0().wrapping_neg()
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+
+        let listen = socket_dispatch(
+            syscall::TALOS_LISTEN_SYSCALL,
+            syscall::SyscallArguments::new([
+                process_descriptor as u64,
+                SOCKDIAG_LISTEN_BACKLOG as u64,
+                0,
+                0,
+                0,
+                0,
+            ]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        let listen_return = listen.return_value().x0();
+        if listen_return != 0 {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+
+        let repeated_listen = socket_dispatch(
+            syscall::TALOS_LISTEN_SYSCALL,
+            syscall::SyscallArguments::new([
+                process_descriptor as u64,
+                SOCKDIAG_UPDATED_BACKLOG as u64,
+                0,
+                0,
+                0,
+                0,
+            ]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if repeated_listen.return_value().x0() != 0 {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let listening_socket = self
+            .socket_descriptors
+            .socket(socket_reference)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        if listening_socket.state()
+            != (crate::network::NetworkSocketState::Listening {
+                local_endpoint: crate::network::Ipv4Endpoint::new(
+                    SOCKDIAG_LOCAL_IPV4_BE,
+                    SOCKDIAG_LOCAL_PORT,
+                ),
+                backlog: SOCKDIAG_UPDATED_BACKLOG,
+            })
+        {
+            return Err(LocalCommandExecError::LaunchPipelineFailed);
+        }
+
         let close = socket_dispatch(
             syscall::TALOS_CLOSE_SYSCALL,
             syscall::SyscallArguments::new([process_descriptor as u64, 0, 0, 0, 0, 0]),
@@ -1802,11 +1975,17 @@ where
             domain: crate::network::SOCKET_DOMAIN_AF_INET,
             socket_type: crate::network::SOCKET_TYPE_STREAM,
             protocol: crate::network::SOCKET_PROTOCOL_DEFAULT,
+            local_ipv4_be: SOCKDIAG_LOCAL_IPV4_BE,
+            local_port: SOCKDIAG_LOCAL_PORT,
+            bind_return,
+            listen_backlog: SOCKDIAG_UPDATED_BACKLOG,
+            listen_return,
+            socket_state: "listening",
             descriptor_kind: entry.object().kind().name(),
             descriptor_access: entry.access().name(),
             close_return,
             backing_closed: self.socket_descriptors.socket(socket_reference).is_err(),
-            source: "vfs-userspace-sockdiag+talos-socket-open-close+process-descriptor",
+            source: "vfs-userspace-sockdiag+talos-socket-bind-listen-close+process-descriptor",
         })
     }
 
@@ -5364,6 +5543,18 @@ fn write_exec_sockdiag_line(
     write_hex_u64_part(sink, record.socket_type)?;
     write_str_part(sink, " protocol=")?;
     write_hex_u64_part(sink, record.protocol)?;
+    write_str_part(sink, " bind-ipv4=")?;
+    write_hex_u64_part(sink, record.local_ipv4_be as u64)?;
+    write_str_part(sink, " bind-port=")?;
+    write_hex_u64_part(sink, record.local_port as u64)?;
+    write_str_part(sink, " bind-return=")?;
+    write_hex_u64_part(sink, record.bind_return)?;
+    write_str_part(sink, " listen-backlog=")?;
+    write_hex_u64_part(sink, record.listen_backlog as u64)?;
+    write_str_part(sink, " listen-return=")?;
+    write_hex_u64_part(sink, record.listen_return)?;
+    write_str_part(sink, " socket-state=")?;
+    write_str_part(sink, record.socket_state)?;
     write_str_part(sink, " descriptor-kind=")?;
     write_str_part(sink, record.descriptor_kind)?;
     write_str_part(sink, " descriptor-access=")?;
@@ -5399,6 +5590,16 @@ fn write_exec_sockdiag_controls_line(
     write_str_part(sink, record.unsupported_type)?;
     write_str_part(sink, " unsupported-protocol=")?;
     write_str_part(sink, record.unsupported_protocol)?;
+    write_str_part(sink, " listen-before-bind=")?;
+    write_str_part(sink, record.listen_before_bind)?;
+    write_str_part(sink, " invalid-bind-endpoint=")?;
+    write_str_part(sink, record.invalid_bind_endpoint)?;
+    write_str_part(sink, " invalid-backlog=")?;
+    write_str_part(sink, record.invalid_backlog)?;
+    write_str_part(sink, " repeated-bind=")?;
+    write_str_part(sink, record.repeated_bind)?;
+    write_str_part(sink, " repeated-listen=")?;
+    write_str_part(sink, record.repeated_listen)?;
     write_str_part(sink, " invalid-closed-descriptor=")?;
     write_str_part(sink, record.invalid_closed_descriptor)?;
     write_str_part(sink, " syscall-vocabulary=")?;
@@ -6333,10 +6534,10 @@ talos> Talos initramfs fixture\n"
         assert_eq!(missing.status(), LocalCommandStatus::UnexpectedArgument);
         assert!(output.contains("talos> talos: exec path=/bin/sockdiag source=vfs-open-read\n"));
         assert!(output.contains(
-            "talos: sockdiag fd=0x0000000000000003 domain=0x0000000000000002 type=0x0000000000000001 protocol=0x0000000000000000 descriptor-kind=socket descriptor-access=read-write close-return=0x0000000000000000 backing-closed=true source=vfs-userspace-sockdiag+talos-socket-open-close+process-descriptor\n"
+            "talos: sockdiag fd=0x0000000000000003 domain=0x0000000000000002 type=0x0000000000000001 protocol=0x0000000000000000 bind-ipv4=0x000000007f000001 bind-port=0x0000000000001f90 bind-return=0x0000000000000000 listen-backlog=0x0000000000000004 listen-return=0x0000000000000000 socket-state=listening descriptor-kind=socket descriptor-access=read-write close-return=0x0000000000000000 backing-closed=true source=vfs-userspace-sockdiag+talos-socket-bind-listen-close+process-descriptor\n"
         ));
         assert!(output.contains(
-            "talos: sockdiag-controls malformed-arguments=exec-invalid-path missing-executable=exec-not-found unsupported-domain=ENOTSUP unsupported-type=ENOTSUP unsupported-protocol=ENOTSUP invalid-closed-descriptor=EBADF syscall-vocabulary=SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_SOCKET/TALOS_CLOSE bounded source=shell-sockdiag-controls\n"
+            "talos: sockdiag-controls malformed-arguments=exec-invalid-path missing-executable=exec-not-found unsupported-domain=ENOTSUP unsupported-type=ENOTSUP unsupported-protocol=ENOTSUP listen-before-bind=EINVAL invalid-bind-endpoint=EINVAL invalid-backlog=EINVAL repeated-bind=EINVAL repeated-listen=ok-updates-backlog invalid-closed-descriptor=EBADF syscall-vocabulary=SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_SOCKET/TALOS_BIND/TALOS_LISTEN/TALOS_CLOSE bounded source=shell-sockdiag-controls\n"
         ));
         assert!(output.contains(
             "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/sockdiag state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true\n"

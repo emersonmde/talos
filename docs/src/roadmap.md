@@ -14835,6 +14835,23 @@ Milestone 12.3: IP Stack
   socket ABI acceptance, broad socket expansion, and phase transition remain
   rejected. The selected next bounded task is
   phase12-network-shell-sockdiag-bind-listen-core-20260620.
+- The shell sockdiag bind/listen core accepts source/unit host/QEMU-substitute
+  evidence for shell-visible /bin/sockdiag over the accepted socket
+  open/bind/listen/close path. The diagnostic still resolves /bin/sockdiag
+  through VFS executable lookup/open/read, startup ABI, lifecycle, waitpid, and
+  laststatus, and now reports the bound endpoint, listen backlog, bind/listen
+  return values, listening socket state, descriptor kind/access, and close/drop
+  cleanup. Deterministic controls cover malformed arguments, missing
+  executable identity, unsupported socket domain/type/protocol, bind on a
+  closed descriptor, listen-before-bind, invalid bind endpoint, invalid
+  backlog, repeated bind, repeated listen backlog update, double-close EBADF,
+  and unchanged open/close diagnostic behavior. Retained smoke evidence,
+  send/recv, connect/accept, poll/blocking I/O, UDP/TCP payload transport,
+  accept queues, global port registry/address-conflict policy, live packet I/O,
+  smoltcp, SSH, hardware work, generated-root publication, public stable socket
+  ABI acceptance, broad socket expansion, and phase transition remain rejected.
+  The selected next bounded task is
+  phase12-network-shell-sockdiag-bind-listen-smoke-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
