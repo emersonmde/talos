@@ -14263,6 +14263,28 @@ Milestone 12.3: IP Stack
   12.1 link-hardware retry, broad socket expansion, and phase transition remain
   rejected. selected_next_task is null and planningNeeded=true pending
   supervisor planning for any next bounded Phase 12.4 task.
+- The process-local ping SVC user-argument contract accepts an unstable,
+  crate-internal, host-only decoder as the next bounded Phase 12.4 step after
+  the dispatch smoke closeout commit
+  3b55c149e86d3dbc0c84e286081d7b0d456cdb04. The future core may decode only
+  experimental selectors for open, start, pump_or_read_result, status,
+  retry_arp, timeout, and close into the accepted
+  dispatch_process_local_ping_descriptor_operation path. Scalars carry selector,
+  process descriptor where required, route policy, destination IPv4,
+  identifier, sequence number, TTL, payload/result/status user addresses and
+  lengths, and ARP retry budget. User-memory handling must use the existing
+  UserMapping plus copy_from_user/copy_to_user style with bounded scratch and
+  caller-owned buffers; open returns a scalar descriptor, pump/status copy
+  task-owned records out, and device/protocol behavior remains delegated to
+  ProcessLocalPingDescriptorControl, DescriptorShapedPingControl,
+  RuntimePingOperationSyscallSubstitute, and NetworkRuntimeDevicePump. The
+  stable SyscallNumber vocabulary, STABLE_SVC_IMMEDIATE, and TALOS_* constants
+  remain unchanged. Shell ping, public sockets, stable syscall ABI acceptance,
+  socket syscall ABI acceptance, live driver adapters, live packet I/O,
+  hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication,
+  Phase 12.1 link-hardware retry, broad socket expansion, and phase transition
+  remain rejected. The selected next bounded task is
+  phase12-network-process-local-ping-svc-user-argument-core-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

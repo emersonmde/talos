@@ -4083,3 +4083,35 @@ publication, Phase 12.1 link-hardware retry, broad Phase 12.4 socket expansion,
 and phase transition remain rejected. selected_next_task is null and
 planningNeeded=true pending supervisor planning for any next bounded Phase 12.4
 task.
+
+phase12-network-process-local-ping-svc-user-argument-contract-20260620 accepts
+phase12-network-process-local-ping-svc-user-argument-contract-accepted. The
+contract selects an unstable, crate-internal, host-only user-argument decoder as
+the next smallest useful feature step after the accepted process-local ping SVC
+dispatch smoke closeout at commit 3b55c149e86d3dbc0c84e286081d7b0d456cdb04.
+The accepted predecessor evidence remains the host/QEMU-substitute dispatch
+smoke over fake/trait-level NetworkDevice behavior, process-local descriptor
+ownership, caller-owned buffers, task-owned result/status slots, and
+fixed-capacity state.
+
+The future core may decode only experimental operation selectors for open,
+start, pump_or_read_result, status, retry_arp, timeout, and close. Scalar
+arguments are responsible for the selector, process descriptor where required,
+route policy, destination IPv4, identifier, sequence number, TTL, payload,
+result, and status user addresses and lengths, and ARP retry budget.
+User-memory handling must use the existing UserMapping plus
+copy_from_user/copy_to_user style with bounded kernel scratch and caller-owned
+buffers. Open returns the process descriptor as a scalar; pump_or_read_result
+and status copy accepted task-owned result/status records to caller memory;
+start, retry_arp, timeout, and close return scalar success after delegated
+control. EBADF, EMFILE, EBUSY, EAGAIN, ENOSPC, EFAULT, and EINVAL retain their
+accepted descriptor, capacity, busy, retry, storage, user-memory, and
+malformed-argument roles, while device errors remain delegated through the
+accepted runtime pump stack. The stable SyscallNumber vocabulary,
+STABLE_SVC_IMMEDIATE, and TALOS_* syscall constants remain unchanged. Shell
+ping, public sockets, stable syscall ABI acceptance, socket syscall ABI
+acceptance, live driver adapters, live packet I/O, hardware reachability, SSH,
+smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1 link-hardware
+retry, broad Phase 12.4 socket expansion, and phase transition remain rejected.
+The selected next bounded task is
+phase12-network-process-local-ping-svc-user-argument-core-20260620.
