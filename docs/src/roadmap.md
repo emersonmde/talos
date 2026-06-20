@@ -4193,6 +4193,24 @@ The post-review correction chain is:
     smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1 retry, and
     phase transition remain rejected. selected_next_task is
     'phase12-network-ping-operation-descriptor-contract-closeout-20260620'.
+238. Phase 12.3 ping operation descriptor substitute smoke closeout: accepted
+    in
+    'phase12-network-ping-operation-descriptor-substitute-smoke-closeout-20260620'
+    with classification
+    'phase12-network-ping-operation-descriptor-substitute-smoke-closeout-accepted'.
+    The closeout reconciles the retained host/QEMU-substitute transcript for
+    NetworkPingOperationDescriptorTable over UserspacePingOperation,
+    SinglePingPacketService, fake/trait-level NetworkDevice behavior, and
+    caller-owned buffers. The transcript covers descriptor lifecycle,
+    unresolved ARP through echo-reply completion, terminal status, retry
+    exhaustion, explicit timeout, invalid/closed descriptors, capacity, busy,
+    and receive/transmit IO-error mapping. Shell ping, public sockets, syscall
+    ABI acceptance, live driver adapters, live packet I/O, hardware
+    reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase
+    12.1 link-hardware retry, and phase transition remain rejected.
+    selected_next_task is null and planningNeeded=true because no later queued
+    Phase 12.3 task has complete objective dependencies, acceptance criteria,
+    validation gates, docs, and evidence requirements.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -13608,6 +13626,19 @@ Milestone 12.3: IP Stack
   public sockets, syscall ABI acceptance, live driver adapters, live packet
   I/O, hardware reachability, SSH, and phase transition remain rejected; the
   next selected bounded task is descriptor substitute smoke closeout.
+- The ping operation descriptor substitute smoke closeout reconciles the
+  retained descriptor smoke transcript with the accepted descriptor-shaped
+  operation contract. The accepted boundary remains host-only over
+  NetworkPingOperationDescriptorTable, UserspacePingOperation,
+  SinglePingPacketService, fake/trait-level NetworkDevice behavior, and
+  caller-owned buffers, covering descriptor lifecycle, unresolved ARP through
+  echo-reply completion, terminal status, retry exhaustion, timeout,
+  invalid/closed descriptors, capacity, busy, and IO-error mapping. Shell
+  ping, public sockets, syscall ABI acceptance, live driver adapters, live
+  packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot
+  publication, Phase 12.1 link-hardware retry, and phase transition remain
+  rejected. selected_next_task is null and planningNeeded=true pending
+  supervisor planning for the next bounded Phase 12.3 task.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

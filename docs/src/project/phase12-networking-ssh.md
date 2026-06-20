@@ -3441,3 +3441,25 @@ adapters, live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab
 mutation, boot publication, Phase 12.1 link-hardware retry, or phase
 transition. The selected next task is
 phase12-network-ping-operation-descriptor-substitute-smoke-closeout-20260620.
+
+phase12-network-ping-operation-descriptor-substitute-smoke-closeout-20260620
+accepts phase12-network-ping-operation-descriptor-substitute-smoke-closeout-accepted.
+The closeout reconciles the retained descriptor substitute smoke transcript
+with the accepted descriptor-shaped operation contract, source/tests, task
+evidence, and docs. The exact accepted evidence level remains host-only over
+NetworkPingOperationDescriptorTable, NetworkPingOperationDescriptor,
+UserspacePingOperation, SinglePingPacketService, fake/trait-level
+NetworkDevice behavior, and caller-owned buffers.
+
+The transcript covers descriptor open/start/pump/status/retry/timeout/close,
+unresolved ARP pending, matching ARP advancement to ICMP transmit and
+in-flight tracking, matching echo-reply completion, terminal status
+observation, retry exhaustion, explicit timeout, invalid and closed
+descriptors, zero-capacity open, duplicate active open, transmit IO error, and
+receive IO error. Shell ping, public sockets, syscall ABI acceptance, live
+driver adapters, live packet I/O, hardware reachability, SSH, smoltcp,
+UDP/TCP, lab mutation, boot publication, Phase 12.1 link-hardware retry, and
+phase transition remain rejected. selected_next_task is null and
+planningNeeded=true because no later queued Phase 12.3 task has complete
+objective dependencies, acceptance criteria, validation gates, docs, and
+evidence requirements.
