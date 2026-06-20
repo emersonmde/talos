@@ -4211,3 +4211,29 @@ boot publication, Phase 12.1 link-hardware retry, broad Phase 12.4 socket
 expansion, and phase transition remain rejected. selected_next_task is null
 and planningNeeded=true pending supervisor planning for any next bounded Phase
 12.4 task.
+
+phase12-network-vfs-ping-diagnostic-svc-contract-20260620 accepts
+phase12-network-vfs-ping-diagnostic-svc-contract-accepted. The contract selects
+a VFS-backed userspace diagnostic fixture as the next smallest useful Phase
+12.4 feature step after the accepted user-argument smoke closeout commit
+a029de8844513dec66197bd4af17ee10f83679bf. The future core may add only a
+task-owned, diagnostic-only VFS/initramfs executable-shaped fixture and
+host/QEMU-substitute harness path that drives the accepted
+dispatch_process_local_ping_descriptor_user_arguments bridge.
+
+The accepted future operation sequence is open, status, start from
+diagnostic-owned payload memory, pump_or_read_result through ARP-to-ICMP
+progression, completed status copy-out, and close. User-memory handling must
+use UserMapping plus copy_from_user/copy_to_user with bounded kernel scratch
+and caller-owned payload/result/status buffers. Results remain scalar
+descriptor/success returns plus copied internal task-owned pump/status records;
+the public SyscallNumber vocabulary, STABLE_SVC_IMMEDIATE, and TALOS_* syscall
+constants remain unchanged. The future evidence must include deterministic
+malformed selector or payload, missing owner, invalid or closed descriptor,
+capacity, user-memory, buffer-pressure, timeout/retry, and device-error
+controls. Shell ping, kernel-backed fake command expansion, public sockets,
+stable syscall ABI acceptance, socket syscall ABI acceptance, live driver
+adapters, live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab
+mutation, boot publication, Phase 12.1 link-hardware retry, broad socket
+expansion, and phase transition remain rejected. The selected next bounded task
+is phase12-network-vfs-ping-diagnostic-svc-core-20260620.

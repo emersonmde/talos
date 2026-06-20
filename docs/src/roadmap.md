@@ -14366,6 +14366,26 @@ Milestone 12.3: IP Stack
   selected_next_task is null and planningNeeded=true because no later queued
   Phase 12.4 task has complete objective dependencies, acceptance criteria,
   validation gates, docs requirements, and evidence requirements.
+- The VFS-backed userspace ping diagnostic SVC contract accepts the next
+  host-only Phase 12.4 feature boundary after the user-argument smoke closeout
+  commit a029de8844513dec66197bd4af17ee10f83679bf. The future core may add
+  only a task-owned diagnostic VFS/initramfs executable-shaped fixture and
+  host/QEMU-substitute harness path that drives
+  dispatch_process_local_ping_descriptor_user_arguments through UserMapping,
+  ProcessDescriptorStore process-local ownership, internal dispatch-shaped
+  control, NetworkRuntimeDevicePump, and fake/trait-level NetworkDevice
+  behavior. The future diagnostic sequence is open, status, start from copied
+  diagnostic payload memory, pump_or_read_result through ARP-to-ICMP
+  progression, completed status copy-out, and close, with deterministic
+  malformed selector or payload, missing owner, invalid or closed descriptor,
+  capacity, user-memory, buffer-pressure, timeout/retry, and device-error
+  controls. SyscallNumber, STABLE_SVC_IMMEDIATE, and public TALOS_* constants
+  remain unchanged. Shell ping, kernel-backed fake command expansion, public
+  sockets, stable syscall ABI acceptance, socket syscall ABI acceptance, live
+  driver adapters, live packet I/O, hardware reachability, SSH, smoltcp,
+  UDP/TCP, lab mutation, boot publication, Phase 12.1 link-hardware retry,
+  broad socket expansion, and phase transition remain rejected. The selected
+  next bounded task is phase12-network-vfs-ping-diagnostic-svc-core-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
