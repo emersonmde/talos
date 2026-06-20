@@ -3602,3 +3602,23 @@ stable syscall ABI, shell ping, hardware reachability, SSH, smoltcp, UDP/TCP,
 lab mutation, boot publication, Phase 12.1 link-hardware retry, Phase 12.4
 socket expansion, or phase transition. The selected next task is
 phase12-network-runtime-device-pump-substitute-smoke-core-20260620.
+
+phase12-network-runtime-device-pump-substitute-smoke-core-20260620 accepts
+phase12-network-runtime-device-pump-substitute-smoke-core-accepted. The
+retained host/QEMU-substitute smoke command is
+scripts/qemu-network-runtime-device-pump-smoke.sh, with transcript evidence
+under tasks/evidence/2026-06-20-network-runtime-device-pump-substitute-smoke/.
+The smoke exercises the accepted NetworkRuntimeDevicePump boundary over fake
+NetworkDevice behavior, local ARP/ICMP replies, one active ping descriptor
+lifecycle, caller-owned buffers, and fixed-capacity state.
+
+The accepted smoke evidence covers local ARP reply transmit, local ICMP echo
+reply transmit, local responder priority over active ping, unresolved ARP to
+ICMP transmit advancement, echo-reply completion, terminal completed status,
+retry exhaustion, explicit timeout, no-frame, receive-buffer pressure, receive
+IO error, local transmit IO error, and active transmit IO error. Shell ping,
+public sockets, stable syscall ABI acceptance, socket syscall ABI, live driver
+adapters, live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab
+mutation, boot publication, Phase 12.1 link-hardware retry, Phase 12.4 socket
+expansion, and phase transition remain rejected. The selected next task is
+phase12-network-runtime-device-pump-substitute-smoke-closeout-20260620.

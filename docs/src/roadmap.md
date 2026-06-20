@@ -4318,6 +4318,27 @@ The post-review correction chain is:
     publication, Phase 12.1 retry, Phase 12.4 socket expansion, and phase
     transition remain rejected. selected_next_task is
     'phase12-network-runtime-device-pump-substitute-smoke-core-20260620'.
+245. Phase 12.3 network runtime device pump substitute smoke core: accepted in
+    'phase12-network-runtime-device-pump-substitute-smoke-core-20260620' with
+    classification
+    'phase12-network-runtime-device-pump-substitute-smoke-core-accepted'. The
+    retained host/QEMU-substitute smoke command is
+    scripts/qemu-network-runtime-device-pump-smoke.sh, with transcript evidence
+    under
+    tasks/evidence/2026-06-20-network-runtime-device-pump-substitute-smoke/.
+    The smoke evidence covers the accepted NetworkRuntimeDevicePump boundary
+    over fake NetworkDevice behavior, local ARP/ICMP replies, one active ping
+    descriptor lifecycle, caller-owned buffers, and fixed-capacity state. It
+    covers local ARP reply transmit, local ICMP echo reply transmit, local
+    responder priority, unresolved ARP to ICMP transmit advancement,
+    echo-reply completion, terminal completed status, retry exhaustion,
+    explicit timeout, no-frame, receive-buffer pressure, receive IO error,
+    local transmit IO error, and active transmit IO error. Shell ping, public
+    sockets, stable syscall ABI acceptance, socket syscall ABI, live driver
+    adapters, live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP,
+    lab mutation, boot publication, Phase 12.1 retry, Phase 12.4 socket
+    expansion, and phase transition remain rejected. selected_next_task is
+    'phase12-network-runtime-device-pump-substitute-smoke-closeout-20260620'.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
