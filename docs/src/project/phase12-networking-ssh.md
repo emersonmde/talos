@@ -3340,3 +3340,23 @@ rejected. The selected next task is
 phase12-network-userspace-ping-operation-substitute-smoke-core-20260619, which
 must retain host-only substitute evidence before later user-visible or live I/O
 work is considered.
+
+phase12-network-userspace-ping-operation-substitute-smoke-core-20260619 accepts
+phase12-network-userspace-ping-operation-substitute-smoke-core-accepted.
+scripts/qemu-userspace-ping-operation-smoke.sh now retains a host/QEMU
+substitute transcript under
+tasks/evidence/2026-06-19-userspace-ping-operation-substitute-smoke/. The
+smoke runs the userspace_ping_operation host tests and records the accepted
+UserspacePingOperation lifecycle: unresolved ARP starts pending, matching ARP
+advances to ICMP transmit/in-flight tracking, matching echo reply completes
+the operation, terminal status remains observable, caller-driven retry
+exhaustion and explicit timeout are covered, and busy/receive/transmit IO
+error edges remain mapped at the operation boundary.
+
+The accepted evidence remains host-only over SinglePingPacketService,
+fake/trait-level NetworkDevice behavior, and caller-owned receive/transmit
+buffers. It does not accept shell ping, public sockets, live driver adapters,
+live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, autonomous
+timers, broad queues, lab mutation, boot publication, Phase 12.1
+link-hardware retry, or phase transition. The selected next task is
+phase12-network-userspace-ping-operation-substitute-smoke-closeout-20260619.
