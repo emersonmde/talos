@@ -4893,3 +4893,29 @@ packet I/O, hardware reachability, smoltcp, SSH, lab mutation, boot
 publication, generated-root publication, broad socket expansion, public stable
 socket ABI acceptance, or phase transition. The selected next bounded task is
 phase12-network-shell-sockdiag-bind-listen-smoke-20260620.
+
+phase12-network-shell-sockdiag-bind-listen-smoke-20260620 accepts
+phase12-network-shell-sockdiag-bind-listen-smoke-accepted. The retained smoke
+evidence records shell-visible /bin/sockdiag bind/listen behavior over the
+accepted VFS/userspace execution path: VFS executable lookup/open/read,
+startup ABI, TALOS_SOCKET_SYSCALL = 6, TALOS_BIND_SYSCALL = 7,
+TALOS_LISTEN_SYSCALL = 8, TALOS_CLOSE_SYSCALL = 2, process descriptor socket
+ownership, descriptor-backed listening state, close/drop cleanup, waitpid, and
+laststatus.
+
+The accepted evidence level is host/QEMU-substitute smoke only. The smoke
+transcript retains deterministic controls for malformed arguments, missing
+executable identity, unsupported socket domain/type/protocol, listen-before-bind,
+invalid bind endpoint, invalid backlog, repeated bind, repeated listen backlog
+update, invalid/closed descriptors, wrong-owner backing, scalar-dispatch
+ENOTSUP outside the socket-table-aware path, bounded syscall vocabulary,
+unchanged socket open/close behavior, and unchanged /bin/pingdiag behavior.
+
+This smoke does not accept source runtime behavior beyond the retained smoke
+script/evidence, send, recv, connect, accept, poll/blocking network I/O,
+UDP/TCP payload transport, accept queues, global port registry or
+address-conflict policy, live driver adapters, live packet I/O, hardware
+reachability, smoltcp, SSH, lab mutation, boot publication, generated-root
+publication, broad socket expansion, public stable socket ABI acceptance, or
+phase transition. The selected next bounded task is
+phase12-network-shell-sockdiag-bind-listen-closeout-20260620.

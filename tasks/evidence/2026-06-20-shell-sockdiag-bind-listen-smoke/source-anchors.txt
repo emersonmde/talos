@@ -1,0 +1,25 @@
+src/local_command_loop.rs:117 PHASE12_SOCKDIAG_PATH shell command identity
+src/local_command_loop.rs:702 LocalCommandSockdiagRecord includes bind/listen fields
+src/local_command_loop.rs:721 LocalCommandSockdiagControlRecord includes bind/listen controls
+src/local_command_loop.rs:1591 /bin/sockdiag VFS/userspace diagnostic dispatch
+src/local_command_loop.rs:1661 DescriptorBackedLocalCommandIo::exec_shell_sockdiag_diagnostic
+src/local_command_loop.rs:5533 write_exec_sockdiag_line
+src/local_command_loop.rs:5578 write_exec_sockdiag_controls_line
+src/local_command_loop.rs:6507 local_command_loop_execs_shell_visible_sockdiag_through_vfs_socket_syscalls
+src/syscall.rs:17 TALOS_SOCKET_SYSCALL = 6
+src/syscall.rs:18 TALOS_BIND_SYSCALL = 7
+src/syscall.rs:19 TALOS_LISTEN_SYSCALL = 8
+src/syscall.rs:488 dispatch_process_descriptor_with_socket_table
+src/syscall.rs:2589 dispatch_talos_bind
+src/syscall.rs:2632 dispatch_talos_listen
+src/syscall.rs:2990 socket_number_requires_socket_table_context_in_scalar_dispatch
+src/syscall.rs:7235 talos_socket_opens_af_inet_stream_descriptor_and_close_drops_backing
+src/syscall.rs:7317 talos_socket_errors_are_deterministic_and_do_not_allocate_on_failure
+src/syscall.rs:7491 talos_bind_listen_records_socket_state_and_close_drops_backing
+src/syscall.rs:7608 talos_bind_listen_errors_are_deterministic_and_do_not_mutate_state
+src/syscall.rs:7822 talos_socket_close_rejects_wrong_owner_socket_backing
+src/network.rs:1808 NetworkSocketState
+src/network.rs:1866 NetworkSocketDescriptorTable
+src/network.rs:1913 NetworkSocketDescriptorTable::bind
+src/network.rs:1936 NetworkSocketDescriptorTable::listen
+src/posix.rs:420 DescriptorObjectKind::Socket
