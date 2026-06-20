@@ -3507,3 +3507,19 @@ packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot
 publication, Phase 12.1 link-hardware retry, Phase 12.4 socket expansion, and
 phase transition remain rejected. The selected next task is
 phase12-network-ping-operation-syscall-substitute-closeout-20260620.
+
+phase12-network-ping-operation-syscall-substitute-closeout-20260620 accepts
+phase12-network-ping-operation-syscall-substitute-closeout-accepted. The
+closeout reconciles the adapter implementation, tests, task record, docs, and
+rejected claims as host-only source/unit/QEMU-substitute evidence over
+PingOperationSyscallSubstitute, NetworkPingOperationDescriptorTable,
+UserspacePingOperation, SinglePingPacketService, fake/trait-level
+NetworkDevice behavior, and caller-owned receive/transmit/status buffers.
+
+The accepted boundary remains proof-only and explicitly separate from stable
+SVC syscall dispatch. Shell ping, public sockets, stable syscall ABI
+acceptance, socket syscall ABI, live driver adapters, live packet I/O,
+hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication,
+Phase 12.1 link-hardware retry, Phase 12.4 socket expansion, and phase
+transition remain rejected. The selected next task is
+phase12-network-ping-operation-syscall-substitute-smoke-core-20260620.

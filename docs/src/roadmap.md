@@ -4232,6 +4232,21 @@ The post-review correction chain is:
     12.4 socket expansion, and phase transition remain rejected.
     selected_next_task is
     'phase12-network-ping-operation-syscall-substitute-closeout-20260620'.
+240. Phase 12.3 ping operation syscall-substitute closeout: accepted in
+    'phase12-network-ping-operation-syscall-substitute-closeout-20260620' with
+    classification
+    'phase12-network-ping-operation-syscall-substitute-closeout-accepted'.
+    The closeout reconciles the adapter implementation, tests, task record,
+    docs, and rejected claims as host-only source/unit/QEMU-substitute
+    evidence over PingOperationSyscallSubstitute,
+    NetworkPingOperationDescriptorTable, UserspacePingOperation,
+    SinglePingPacketService, fake/trait-level NetworkDevice behavior, and
+    caller-owned receive/transmit/status buffers. Shell ping, public sockets,
+    stable syscall ABI acceptance, socket syscall ABI, live driver adapters,
+    live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab
+    mutation, boot publication, Phase 12.1 retry, Phase 12.4 socket expansion,
+    and phase transition remain rejected. selected_next_task is
+    'phase12-network-ping-operation-syscall-substitute-smoke-core-20260620'.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -13687,6 +13702,17 @@ Milestone 12.3: IP Stack
   link-hardware retry, Phase 12.4 socket expansion, and phase transition
   remain rejected. The next selected bounded task is the syscall-substitute
   closeout.
+- The ping operation syscall-substitute closeout reconciles the adapter
+  implementation, tests, task record, docs, and rejected claims as host-only
+  source/unit/QEMU-substitute evidence over PingOperationSyscallSubstitute,
+  NetworkPingOperationDescriptorTable, UserspacePingOperation,
+  SinglePingPacketService, fake/trait-level NetworkDevice behavior, and
+  caller-owned receive/transmit/status buffers. Shell ping, public sockets,
+  stable syscall ABI acceptance, socket syscall ABI, live driver adapters,
+  live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab
+  mutation, boot publication, Phase 12.1 link-hardware retry, Phase 12.4
+  socket expansion, and phase transition remain rejected. The next selected
+  bounded task is the syscall-substitute smoke core.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
