@@ -4115,3 +4115,27 @@ smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1 link-hardware
 retry, broad Phase 12.4 socket expansion, and phase transition remain rejected.
 The selected next bounded task is
 phase12-network-process-local-ping-svc-user-argument-core-20260620.
+
+phase12-network-process-local-ping-svc-user-argument-core-20260620 accepts
+phase12-network-process-local-ping-svc-user-argument-core-accepted. The core
+implementation adds dispatch_process_local_ping_descriptor_user_arguments, a
+crate-internal host-only decoder that maps experimental scalar/user-memory
+inputs into the accepted process-local ping dispatch facade.
+
+The accepted decoder routes open, start, pump_or_read_result, status, retry_arp,
+timeout, and close through ProcessLocalPingDispatchOperation with explicit
+current-owner, ProcessDescriptorStore, UserMapping copy-in/copy-out, bounded
+kernel scratch, caller-owned result/status buffers, NetworkRuntimeDevicePump,
+and fake/trait-level NetworkDevice context. Source/unit evidence covers a full
+user-argument lifecycle from open through idle status copy-out, copied user
+payload start, ARP-to-ICMP pump result copy-out, echo-reply completion,
+completed status copy-out, and close. Negative evidence covers unchanged stable
+SyscallNumber/TALOS_* vocabulary, malformed selector and reserved fields,
+missing owner, process descriptor capacity, invalid descriptors, output-buffer
+pressure, invalid user memory, scratch pressure, zero TTL, and invalid route
+prefix. Shell ping, public sockets, stable syscall ABI acceptance, socket
+syscall ABI acceptance, live driver adapters, live packet I/O, hardware
+reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1
+link-hardware retry, broad Phase 12.4 socket expansion, and phase transition
+remain rejected. The selected next bounded task is
+phase12-network-process-local-ping-svc-user-argument-closeout-20260620.

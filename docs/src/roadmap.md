@@ -14285,6 +14285,26 @@ Milestone 12.3: IP Stack
   Phase 12.1 link-hardware retry, broad socket expansion, and phase transition
   remain rejected. The selected next bounded task is
   phase12-network-process-local-ping-svc-user-argument-core-20260620.
+- The process-local ping SVC user-argument core accepts
+  dispatch_process_local_ping_descriptor_user_arguments as a crate-internal,
+  host-only decoder for experimental scalar/user-memory inputs into the accepted
+  process-local ping dispatch facade. It routes open, start,
+  pump_or_read_result, status, retry_arp, timeout, and close through
+  ProcessLocalPingDispatchOperation with explicit current-owner,
+  ProcessDescriptorStore, UserMapping copy-in/copy-out, bounded kernel scratch,
+  caller-owned result/status buffers, NetworkRuntimeDevicePump, and
+  fake/trait-level NetworkDevice context. Source/unit evidence covers a full
+  lifecycle from open through copied user payload start, ARP-to-ICMP pump result
+  copy-out, echo-reply completion, completed status copy-out, and close, plus
+  malformed selector/reserved fields, missing owner, process descriptor
+  capacity, invalid descriptors, output-buffer pressure, invalid user memory,
+  scratch pressure, zero TTL, invalid route prefix, and unchanged stable
+  SyscallNumber/TALOS_* vocabulary. Shell ping, public sockets, stable syscall
+  ABI acceptance, socket syscall ABI acceptance, live driver adapters, live
+  packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot
+  publication, Phase 12.1 link-hardware retry, broad socket expansion, and phase
+  transition remain rejected. The selected next bounded task is
+  phase12-network-process-local-ping-svc-user-argument-closeout-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
