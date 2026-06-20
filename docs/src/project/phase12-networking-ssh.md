@@ -4801,3 +4801,37 @@ live packet I/O, hardware reachability, lab mutation, boot publication, SSH,
 smoltcp, broad socket expansion, public stable socket ABI acceptance, and
 phase transition. selected_next_task is null and planningNeeded=true pending
 supervisor planning for any next bounded Phase 12.4 socket or network task.
+
+phase12-network-socket-bind-listen-abi-contract-20260620 accepts
+phase12-network-socket-bind-listen-abi-contract-accepted. Supervisor planning
+after the shell-visible sockdiag open/close closeout selected the next bounded
+socket integration boundary: private descriptor-backed bind/listen state for
+sockets created by the accepted `TALOS_SOCKET_SYSCALL = 6` AF_INET stream open
+path.
+
+The accepted contract reserves future private `TALOS_BIND_SYSCALL = 7` and
+`TALOS_LISTEN_SYSCALL = 8` selectors on the existing
+`STABLE_SVC_IMMEDIATE = 0` path. Bind uses scalar `x0=fd`, `x1=ipv4_be`,
+`x2=port`, and `x3..x5=0`; `ipv4_be` must fit in 32 bits and `port` must be in
+`1..=65535`. Listen uses scalar `x0=fd`, `x1=backlog`, and `x2..x5=0`;
+`backlog` must be in `1..=4`. The socket backing state is limited to
+`OpenUnbound`, `Bound { local_endpoint }`, and
+`Listening { local_endpoint, backlog }`.
+
+Bind succeeds only on an open unbound socket owned by the current process and
+transitions it to bound state; repeated bind or bind after listen returns
+`EINVAL`. Listen succeeds on a bound socket and transitions it to listening
+state; repeated listen on an already listening socket updates the recorded
+backlog and returns success. Invalid endpoints, reserved arguments,
+listen-before-bind, and invalid state return `EINVAL`; invalid, closed,
+non-socket, missing-owner, wrong-owner, or missing-backing descriptors return
+`EBADF`. Close remains `TALOS_CLOSE_SYSCALL = 2` and drops unbound, bound, or
+listening backing state with the process descriptor.
+
+This contract does not accept send, recv, connect, accept, poll/blocking
+network I/O, UDP/TCP payload transport, accept queues, global port registry or
+address-conflict policy, live driver adapters, live packet I/O, hardware
+reachability, smoltcp, SSH, lab mutation, boot publication, broad socket
+expansion, public stable socket ABI acceptance, or phase transition. The
+selected next bounded task is
+phase12-network-socket-bind-listen-core-20260620.

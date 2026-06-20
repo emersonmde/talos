@@ -14801,6 +14801,23 @@ Milestone 12.3: IP Stack
   phase transition remain rejected. selected_next_task is null and
   planningNeeded=true pending supervisor planning for any next bounded Phase
   12.4 socket or network task.
+- The socket bind/listen ABI contract accepts the next bounded Phase 12.4
+  socket integration step after supervisor planning. The future core should add
+  private experimental `TALOS_BIND_SYSCALL = 7` and
+  `TALOS_LISTEN_SYSCALL = 8` selectors on the existing stable SVC path for
+  sockets created by the accepted `TALOS_SOCKET_SYSCALL = 6`
+  `AF_INET=2`/`SOCK_STREAM=1`/`protocol=0` open path. Bind records scalar
+  `fd`, 32-bit `ipv4_be`, and `port` in `1..=65535`; listen records scalar
+  `fd` and backlog in `1..=4`. The accepted backing states are only
+  `OpenUnbound`, `Bound { local_endpoint }`, and
+  `Listening { local_endpoint, backlog }`; close/drop remains the accepted
+  `TALOS_CLOSE_SYSCALL = 2` process descriptor and socket backing cleanup
+  path. Send/recv, connect/accept, poll/blocking I/O, UDP/TCP payload
+  transport, accept queues, global port registry/address-conflict policy, live
+  packet I/O, smoltcp, SSH, hardware work, public stable socket ABI
+  acceptance, broad socket expansion, and phase transition remain rejected.
+  The selected next bounded task is
+  phase12-network-socket-bind-listen-core-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
