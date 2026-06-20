@@ -14628,6 +14628,23 @@ Milestone 12.3: IP Stack
   link-hardware retry, broad socket expansion, and phase transition remain
   rejected. The selected next bounded task is
   phase12-network-driver-packet-pump-smoke-closeout-20260620.
+- The driver-facing packet pump smoke closeout accepts the retained
+  host/QEMU-substitute smoke frontier after source/task/evidence/doc
+  reconciliation. The accepted evidence level remains smoke evidence over
+  crate-internal packet queue records, trait-level NetworkDevice pump behavior,
+  the VFS/userspace diagnostic SVC bridge, experimental user-argument decoding,
+  UserMapping copy-in/copy-out, process-local descriptor ownership,
+  caller-owned buffers, task-owned state, fixed capacity, transmit FIFO
+  ordering, explicit receive polling, deterministic backpressure, device-error
+  propagation, timeout/retry controls, close/drop behavior, and unchanged
+  SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_* vocabulary. Shell ping, public
+  sockets, stable/socket ABI acceptance, live driver adapters, live packet I/O,
+  hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication,
+  Phase 12.1 link-hardware retry, broad socket expansion, and phase transition
+  remain rejected. No later bounded task is mechanically unblocked; supervisor
+  planning is required before live driver adapters, live packet I/O, public
+  sockets, shell ping, stable/socket ABI acceptance, SSH, broad socket
+  expansion, Phase 12.1 hardware retry, or a phase transition.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
