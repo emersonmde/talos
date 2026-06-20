@@ -13895,6 +13895,19 @@ Milestone 12.3: IP Stack
   Phase 12.1 link-hardware retry, Phase 12.4 socket expansion, and phase
   transition remain rejected. The next selected bounded task is the runtime
   ping syscall-substitute closeout.
+- The runtime ping syscall-substitute closeout reconciles the accepted
+  RuntimePingOperationSyscallSubstitute implementation, source/unit
+  QEMU-substitute validation, task record, docs, durable state, and rejected
+  claims. The accepted evidence level remains host-only over
+  NetworkRuntimeDevicePump, local ARP/ICMP responder behavior, active ping
+  descriptor dispatch, UserspacePingOperation, SinglePingPacketService,
+  fake/trait-level NetworkDevice behavior, caller-owned buffers, and
+  fixed-capacity state. Shell ping, public sockets, stable syscall ABI
+  acceptance, live driver adapters, live packet I/O, hardware reachability,
+  SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1
+  link-hardware retry, Phase 12.4 socket expansion, and phase transition
+  remain rejected. The next selected bounded task is the runtime ping
+  syscall-substitute smoke core.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
