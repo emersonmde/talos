@@ -14431,6 +14431,30 @@ Milestone 12.3: IP Stack
   UDP/TCP, lab mutation, boot publication, Phase 12.1 link-hardware retry,
   broad socket expansion, and phase transition remain rejected. The selected
   next bounded task is phase12-network-vfs-ping-diagnostic-svc-smoke-20260620.
+- The VFS-backed userspace ping diagnostic SVC smoke task accepts retained
+  host/QEMU-substitute transcript evidence for the accepted diagnostic bridge.
+  The task-owned smoke command records VFS executable lookup, open, idle status
+  copy-out, start from copied diagnostic payload memory, pump_or_read_result
+  through ARP-to-ICMP result copy-out, echo-reply completion, completed status
+  copy-out, and close through VfsPingDiagnosticSvcFixture and
+  dispatch_process_local_ping_descriptor_user_arguments. It also records
+  deterministic controls for missing executable identity, malformed selector
+  and payload, missing owner, invalid and closed descriptors, process
+  descriptor capacity, output-buffer pressure, invalid user memory, scratch
+  pressure, caller receive-buffer pressure, retry exhaustion, explicit timeout,
+  device receive IO error, and unchanged stable syscall vocabulary. The
+  accepted evidence level remains host/QEMU-substitute over a VFS/userspace
+  diagnostic SVC bridge, VFS/initramfs executable identity, experimental
+  user-argument decoding, UserMapping copy-in/copy-out, process-local
+  descriptor ownership, internal dispatch-shaped control, fake/trait-level
+  NetworkDevice behavior, caller-owned buffers, task-owned result/status slots,
+  and fixed-capacity state. Shell ping, kernel-backed fake command expansion,
+  public sockets, stable syscall ABI acceptance, socket syscall ABI acceptance,
+  live driver adapters, live packet I/O, hardware reachability, SSH, smoltcp,
+  UDP/TCP, lab mutation, boot publication, Phase 12.1 link-hardware retry,
+  broad socket expansion, and phase transition remain rejected. The selected
+  next bounded task is
+  phase12-network-vfs-ping-diagnostic-svc-smoke-closeout-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

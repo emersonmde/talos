@@ -4290,3 +4290,30 @@ I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot
 publication, Phase 12.1 link-hardware retry, broad socket expansion, and phase
 transition remain rejected. The selected next bounded task is
 phase12-network-vfs-ping-diagnostic-svc-smoke-20260620.
+
+phase12-network-vfs-ping-diagnostic-svc-smoke-20260620 accepts
+phase12-network-vfs-ping-diagnostic-svc-smoke-accepted. The retained
+host/QEMU-substitute transcript preserves the accepted VFS/userspace
+diagnostic SVC lifecycle through VfsPingDiagnosticSvcFixture and
+dispatch_process_local_ping_descriptor_user_arguments without adding runtime
+behavior. The smoke command records VFS executable lookup, open, idle status
+copy-out, start from copied diagnostic payload memory, pump_or_read_result
+through ARP-to-ICMP result copy-out, echo-reply completion, completed status
+copy-out, and close over fake/trait-level NetworkDevice behavior.
+
+The retained smoke transcript also records deterministic controls for missing
+executable identity, malformed selector and payload, missing owner, invalid
+and closed descriptors, process descriptor capacity, output-buffer pressure,
+invalid user memory, scratch pressure, caller receive-buffer pressure, retry
+exhaustion, explicit timeout, device receive IO error, and unchanged
+SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_* vocabulary. The accepted evidence
+level remains host/QEMU-substitute over a VFS/userspace diagnostic SVC bridge,
+VFS/initramfs executable identity, experimental user-argument decoding,
+UserMapping copy-in/copy-out, process-local descriptor ownership, internal
+dispatch-shaped control, caller-owned buffers, task-owned result/status slots,
+and fixed-capacity state. Shell ping, kernel-backed fake command expansion,
+public sockets, stable syscall ABI acceptance, socket syscall ABI acceptance,
+live driver adapters, live packet I/O, hardware reachability, SSH, smoltcp,
+UDP/TCP, lab mutation, boot publication, Phase 12.1 link-hardware retry, broad
+socket expansion, and phase transition remain rejected. The selected next
+bounded task is phase12-network-vfs-ping-diagnostic-svc-smoke-closeout-20260620.
