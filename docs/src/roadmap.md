@@ -14244,6 +14244,25 @@ Milestone 12.3: IP Stack
   broad socket expansion, and phase transition remain rejected. The selected
   next bounded task is
   phase12-network-process-local-ping-svc-dispatch-smoke-closeout-20260620.
+
+- The process-local ping SVC dispatch smoke closeout reconciles the accepted
+  dispatch contract, core implementation, retained smoke transcript, task
+  records, docs, durable state, and rejected claims for the crate-internal
+  host-only process-local ping SVC dispatch facade. The accepted evidence level
+  remains host/QEMU-substitute smoke evidence over fake/trait-level NetworkDevice
+  behavior, process-local descriptor ownership, internal dispatch-shaped control,
+  ProcessLocalPingDescriptorControl, DescriptorShapedPingControl,
+  RuntimePingOperationSyscallSubstitute, NetworkRuntimeDevicePump,
+  caller-owned buffers, task-owned result/status slots, and fixed-capacity
+  state. It accepts only that the internal facade has retained smoke coverage
+  for one dispatch-shaped ping-control lifecycle plus deterministic descriptor,
+  owner, lifetime, capacity, retry, timeout, receive-buffer, and device-error
+  controls. Shell ping, public sockets, stable syscall ABI acceptance, socket
+  syscall ABI acceptance, live driver adapters, live packet I/O, hardware
+  reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase
+  12.1 link-hardware retry, broad socket expansion, and phase transition remain
+  rejected. selected_next_task is null and planningNeeded=true pending
+  supervisor planning for any next bounded Phase 12.4 task.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
