@@ -5002,3 +5002,30 @@ live driver adapters, live packet I/O, hardware reachability, lab mutation,
 boot publication, SSH, smoltcp, broad socket expansion, public stable socket
 ABI acceptance, or phase transition. The selected next bounded task is
 phase12-network-shell-sockdiag-connect-accept-core-20260620.
+
+phase12-network-shell-sockdiag-connect-accept-core-20260620 accepts
+phase12-network-shell-sockdiag-connect-accept-core-accepted. The implementation
+extends the existing shell-visible /bin/sockdiag VFS/userspace diagnostic to
+exercise the accepted private local connect/accept selectors through the
+socket-table-aware descriptor dispatch. The diagnostic now records listener,
+client, and accepted descriptors; the local bind endpoint; bind/listen,
+connect, accept, and close return values; and the expected Listening,
+Connected, and Accepted socket states.
+
+The accepted evidence level is source/unit host/QEMU-substitute coverage for
+shell-visible /bin/sockdiag over TALOS_SOCKET_SYSCALL = 6,
+TALOS_BIND_SYSCALL = 7, TALOS_LISTEN_SYSCALL = 8,
+TALOS_CONNECT_SYSCALL = 9, TALOS_ACCEPT_SYSCALL = 10, and
+TALOS_CLOSE_SYSCALL = 2. The deterministic controls cover malformed
+arguments, missing executable identity, unsupported socket domain/type/protocol,
+listen-before-bind, invalid bind endpoint, invalid backlog, repeated bind,
+repeated listen backlog update, accept-before-connect, no matching listener,
+full pending queue, non-socket descriptors, invalid/closed descriptors,
+waitpid, laststatus, and unchanged accepted open/bind/listen behavior.
+
+This core does not accept retained smoke evidence, send, recv, poll/blocking
+network I/O, UDP/TCP payload transport, live driver adapters, live packet I/O,
+hardware reachability, smoltcp, SSH, lab mutation, boot publication,
+generated-root publication, broad socket expansion, public stable socket ABI
+acceptance, or phase transition. The selected next bounded task is
+phase12-network-shell-sockdiag-connect-accept-smoke-20260620.

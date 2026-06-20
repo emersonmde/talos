@@ -34,7 +34,8 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+background-jobs-stale-entry-policy+generated-root-manifest-read",
     "+generated-root-executable-vfs-exec+shell-pingdiag-vfs-userspace-diagnostic",
     "+shell-sockdiag-vfs-userspace-socket-open-close",
-    "+shell-sockdiag-vfs-userspace-socket-bind-listen"
+    "+shell-sockdiag-vfs-userspace-socket-bind-listen",
+    "+shell-sockdiag-vfs-userspace-socket-connect-accept"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -71,6 +72,7 @@ const LOCAL_COMMAND_BACKGROUND_JOB_FIRST_ID: u64 = 0x0000_0001;
 const LOCAL_COMMAND_EXEC_TEMP_DESCRIPTOR: usize = posix::STDERR_FD + 1;
 const LOCAL_COMMAND_PIPE_BUFFER_LEN: usize = 128;
 const LOCAL_COMMAND_PIPE_ENDPOINT_REFERENCE: usize = 1;
+const LOCAL_COMMAND_SOCKET_CAPACITY: usize = 4;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum LocalCommandDirectory {
@@ -701,6 +703,8 @@ pub struct LocalCommandPingdiagControlRecord {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct LocalCommandSockdiagRecord {
     process_descriptor: usize,
+    client_descriptor: usize,
+    accepted_descriptor: usize,
     domain: u64,
     socket_type: u64,
     protocol: u64,
@@ -709,7 +713,11 @@ pub struct LocalCommandSockdiagRecord {
     bind_return: u64,
     listen_backlog: u8,
     listen_return: u64,
+    connect_return: u64,
+    accept_return: u64,
     socket_state: &'static str,
+    client_state: &'static str,
+    accepted_state: &'static str,
     descriptor_kind: &'static str,
     descriptor_access: &'static str,
     close_return: u64,
@@ -729,6 +737,10 @@ pub struct LocalCommandSockdiagControlRecord {
     invalid_backlog: &'static str,
     repeated_bind: &'static str,
     repeated_listen: &'static str,
+    accept_before_connect: &'static str,
+    missing_listener: &'static str,
+    queue_backpressure: &'static str,
+    non_socket_descriptor: &'static str,
     invalid_closed_descriptor: &'static str,
     syscall_vocabulary: &'static str,
     source: &'static str,
@@ -980,7 +992,7 @@ pub struct DescriptorBackedLocalCommandIo<
     pipe: LocalCommandPipeState,
     stdout_scratch_file: LocalCommandVolatileFileState,
     stderr_scratch_file: LocalCommandVolatileFileState,
-    socket_descriptors: crate::network::NetworkSocketDescriptorTable<1>,
+    socket_descriptors: crate::network::NetworkSocketDescriptorTable<LOCAL_COMMAND_SOCKET_CAPACITY>,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -1182,7 +1194,7 @@ impl AppliedLocalCommandExecRedirections {
     }
 }
 
-impl<I, O> DescriptorBackedLocalCommandIo<I, O, 1, 4>
+impl<I, O> DescriptorBackedLocalCommandIo<I, O, 1, 7>
 where
     I: ConsoleInputBackend,
     O: ConsoleBackend,
@@ -1192,7 +1204,7 @@ where
         output_backend: O,
     ) -> Result<Self, posix::PosixError> {
         let current_owner = ProcessOwnerId::new(1).expect("local command owner id is nonzero");
-        let mut descriptor_store = posix::ProcessDescriptorStore::<1, 4>::new_empty();
+        let mut descriptor_store = posix::ProcessDescriptorStore::<1, 7>::new_empty();
         descriptor_store.create_owner_with_inherited_stdio(current_owner)?;
         Ok(Self {
             descriptor_store,
@@ -1602,8 +1614,12 @@ where
                     invalid_backlog: "EINVAL",
                     repeated_bind: "EINVAL",
                     repeated_listen: "ok-updates-backlog",
+                    accept_before_connect: "EAGAIN",
+                    missing_listener: "EINVAL",
+                    queue_backpressure: "ENOSPC",
+                    non_socket_descriptor: "EBADF",
                     invalid_closed_descriptor: "EBADF",
-                    syscall_vocabulary: "SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_SOCKET/TALOS_BIND/TALOS_LISTEN/TALOS_CLOSE bounded",
+                    syscall_vocabulary: "SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_SOCKET/TALOS_BIND/TALOS_LISTEN/TALOS_CONNECT/TALOS_ACCEPT/TALOS_CLOSE bounded",
                     source: "shell-sockdiag-controls",
                 }),
             )
@@ -1673,7 +1689,9 @@ where
                 OWNER_CAPACITY,
                 DESCRIPTOR_CAPACITY,
             >,
-             socket_descriptors: &mut crate::network::NetworkSocketDescriptorTable<1>,
+             socket_descriptors: &mut crate::network::NetworkSocketDescriptorTable<
+                LOCAL_COMMAND_SOCKET_CAPACITY,
+            >,
              user_memory: &mut [u8; 128],
              kernel_scratch: &mut [u8; 64]| {
                 syscall::dispatch_process_descriptor_with_socket_table(
@@ -1847,7 +1865,7 @@ where
         const SOCKDIAG_LOCAL_IPV4_BE: u32 = 0x7f00_0001;
         const SOCKDIAG_LOCAL_PORT: u16 = 8080;
         const SOCKDIAG_LISTEN_BACKLOG: u8 = 2;
-        const SOCKDIAG_UPDATED_BACKLOG: u8 = 4;
+        const SOCKDIAG_UPDATED_BACKLOG: u8 = 1;
 
         let bind = socket_dispatch(
             syscall::TALOS_BIND_SYSCALL,
@@ -1945,6 +1963,262 @@ where
             return Err(LocalCommandExecError::LaunchPipelineFailed);
         }
 
+        let accept_before_connect = socket_dispatch(
+            syscall::TALOS_ACCEPT_SYSCALL,
+            syscall::SyscallArguments::new([process_descriptor as u64, 0, 0, 0, 0, 0]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if syscall::errno_number(posix::PosixError::Again) as u64
+            != accept_before_connect.return_value().x0().wrapping_neg()
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+
+        let client_open = socket_dispatch(
+            syscall::TALOS_SOCKET_SYSCALL,
+            syscall::SyscallArguments::new([
+                crate::network::SOCKET_DOMAIN_AF_INET,
+                crate::network::SOCKET_TYPE_STREAM,
+                crate::network::SOCKET_PROTOCOL_DEFAULT,
+                0,
+                0,
+                0,
+            ]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        let client_descriptor = syscall_success_usize(client_open.return_value().x0())
+            .map_err(|_| LocalCommandExecError::SyscallFailed)?;
+        let client_entry = self
+            .descriptor_store
+            .current_descriptor_table(self.current_owner)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?
+            .get(client_descriptor)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let client_socket_reference =
+            crate::network::NetworkSocketDescriptor::from_raw(client_entry.object().reference());
+
+        let missing_listener = socket_dispatch(
+            syscall::TALOS_CONNECT_SYSCALL,
+            syscall::SyscallArguments::new([
+                client_descriptor as u64,
+                SOCKDIAG_LOCAL_IPV4_BE as u64,
+                (SOCKDIAG_LOCAL_PORT + 1) as u64,
+                0,
+                0,
+                0,
+            ]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if syscall::errno_number(posix::PosixError::InvalidArgument) as u64
+            != missing_listener.return_value().x0().wrapping_neg()
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+
+        let non_socket_connect = socket_dispatch(
+            syscall::TALOS_CONNECT_SYSCALL,
+            syscall::SyscallArguments::new([
+                posix::STDOUT_FD as u64,
+                SOCKDIAG_LOCAL_IPV4_BE as u64,
+                SOCKDIAG_LOCAL_PORT as u64,
+                0,
+                0,
+                0,
+            ]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if syscall::errno_number(posix::PosixError::BadDescriptor) as u64
+            != non_socket_connect.return_value().x0().wrapping_neg()
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+
+        let connect = socket_dispatch(
+            syscall::TALOS_CONNECT_SYSCALL,
+            syscall::SyscallArguments::new([
+                client_descriptor as u64,
+                SOCKDIAG_LOCAL_IPV4_BE as u64,
+                SOCKDIAG_LOCAL_PORT as u64,
+                0,
+                0,
+                0,
+            ]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        let connect_return = connect.return_value().x0();
+        if connect_return != 0 {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+
+        let second_client_open = socket_dispatch(
+            syscall::TALOS_SOCKET_SYSCALL,
+            syscall::SyscallArguments::new([
+                crate::network::SOCKET_DOMAIN_AF_INET,
+                crate::network::SOCKET_TYPE_STREAM,
+                crate::network::SOCKET_PROTOCOL_DEFAULT,
+                0,
+                0,
+                0,
+            ]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        let second_client_descriptor =
+            syscall_success_usize(second_client_open.return_value().x0())
+                .map_err(|_| LocalCommandExecError::SyscallFailed)?;
+        let second_client_entry = self
+            .descriptor_store
+            .current_descriptor_table(self.current_owner)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?
+            .get(second_client_descriptor)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let second_client_socket_reference = crate::network::NetworkSocketDescriptor::from_raw(
+            second_client_entry.object().reference(),
+        );
+
+        let queue_backpressure = socket_dispatch(
+            syscall::TALOS_CONNECT_SYSCALL,
+            syscall::SyscallArguments::new([
+                second_client_descriptor as u64,
+                SOCKDIAG_LOCAL_IPV4_BE as u64,
+                SOCKDIAG_LOCAL_PORT as u64,
+                0,
+                0,
+                0,
+            ]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if syscall::errno_number(posix::PosixError::NoSpace) as u64
+            != queue_backpressure.return_value().x0().wrapping_neg()
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        if self
+            .socket_descriptors
+            .socket(second_client_socket_reference)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?
+            .state()
+            != crate::network::NetworkSocketState::OpenUnbound
+        {
+            return Err(LocalCommandExecError::LaunchPipelineFailed);
+        }
+
+        let accept = socket_dispatch(
+            syscall::TALOS_ACCEPT_SYSCALL,
+            syscall::SyscallArguments::new([process_descriptor as u64, 0, 0, 0, 0, 0]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        let accepted_descriptor = syscall_success_usize(accept.return_value().x0())
+            .map_err(|_| LocalCommandExecError::SyscallFailed)?;
+        let accepted_entry = self
+            .descriptor_store
+            .current_descriptor_table(self.current_owner)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?
+            .get(accepted_descriptor)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let accepted_socket_reference =
+            crate::network::NetworkSocketDescriptor::from_raw(accepted_entry.object().reference());
+        let client_endpoint = crate::network::Ipv4Endpoint::new(
+            crate::network::SOCKET_SYNTHETIC_LOCAL_IPV4_BE,
+            crate::network::SOCKET_SYNTHETIC_CLIENT_PORT_BASE
+                + client_socket_reference.raw() as u16,
+        );
+        let local_endpoint =
+            crate::network::Ipv4Endpoint::new(SOCKDIAG_LOCAL_IPV4_BE, SOCKDIAG_LOCAL_PORT);
+        if self
+            .socket_descriptors
+            .socket(socket_reference)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?
+            .state()
+            != (crate::network::NetworkSocketState::Listening {
+                local_endpoint,
+                backlog: SOCKDIAG_UPDATED_BACKLOG,
+                pending: crate::network::NetworkSocketPendingQueue::new(),
+            })
+        {
+            return Err(LocalCommandExecError::LaunchPipelineFailed);
+        }
+        if self
+            .socket_descriptors
+            .socket(client_socket_reference)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?
+            .state()
+            != (crate::network::NetworkSocketState::Connected {
+                local_endpoint: client_endpoint,
+                remote_endpoint: local_endpoint,
+            })
+        {
+            return Err(LocalCommandExecError::LaunchPipelineFailed);
+        }
+        if self
+            .socket_descriptors
+            .socket(accepted_socket_reference)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?
+            .state()
+            != (crate::network::NetworkSocketState::Accepted {
+                local_endpoint,
+                remote_endpoint: client_endpoint,
+            })
+        {
+            return Err(LocalCommandExecError::LaunchPipelineFailed);
+        }
+
+        let accepted_close = socket_dispatch(
+            syscall::TALOS_CLOSE_SYSCALL,
+            syscall::SyscallArguments::new([accepted_descriptor as u64, 0, 0, 0, 0, 0]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if accepted_close.return_value().x0() != 0 {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let second_client_close = socket_dispatch(
+            syscall::TALOS_CLOSE_SYSCALL,
+            syscall::SyscallArguments::new([second_client_descriptor as u64, 0, 0, 0, 0, 0]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if second_client_close.return_value().x0() != 0 {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let client_close = socket_dispatch(
+            syscall::TALOS_CLOSE_SYSCALL,
+            syscall::SyscallArguments::new([client_descriptor as u64, 0, 0, 0, 0, 0]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if client_close.return_value().x0() != 0 {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
         let close = socket_dispatch(
             syscall::TALOS_CLOSE_SYSCALL,
             syscall::SyscallArguments::new([process_descriptor as u64, 0, 0, 0, 0, 0]),
@@ -1973,6 +2247,8 @@ where
 
         Ok(LocalCommandSockdiagRecord {
             process_descriptor,
+            client_descriptor,
+            accepted_descriptor,
             domain: crate::network::SOCKET_DOMAIN_AF_INET,
             socket_type: crate::network::SOCKET_TYPE_STREAM,
             protocol: crate::network::SOCKET_PROTOCOL_DEFAULT,
@@ -1981,12 +2257,28 @@ where
             bind_return,
             listen_backlog: SOCKDIAG_UPDATED_BACKLOG,
             listen_return,
+            connect_return,
+            accept_return: accepted_descriptor as u64,
             socket_state: "listening",
+            client_state: "connected",
+            accepted_state: "accepted",
             descriptor_kind: entry.object().kind().name(),
             descriptor_access: entry.access().name(),
             close_return,
-            backing_closed: self.socket_descriptors.socket(socket_reference).is_err(),
-            source: "vfs-userspace-sockdiag+talos-socket-bind-listen-close+process-descriptor",
+            backing_closed: self.socket_descriptors.socket(socket_reference).is_err()
+                && self
+                    .socket_descriptors
+                    .socket(client_socket_reference)
+                    .is_err()
+                && self
+                    .socket_descriptors
+                    .socket(second_client_socket_reference)
+                    .is_err()
+                && self
+                    .socket_descriptors
+                    .socket(accepted_socket_reference)
+                    .is_err(),
+            source: "vfs-userspace-sockdiag+talos-socket-bind-listen-connect-accept-close+process-descriptor",
         })
     }
 
@@ -5538,6 +5830,10 @@ fn write_exec_sockdiag_line(
 ) -> Result<(), LocalCommandCycleError> {
     write_str_part(sink, "talos: sockdiag fd=")?;
     write_hex_usize_part(sink, record.process_descriptor)?;
+    write_str_part(sink, " client-fd=")?;
+    write_hex_usize_part(sink, record.client_descriptor)?;
+    write_str_part(sink, " accepted-fd=")?;
+    write_hex_usize_part(sink, record.accepted_descriptor)?;
     write_str_part(sink, " domain=")?;
     write_hex_u64_part(sink, record.domain)?;
     write_str_part(sink, " type=")?;
@@ -5554,8 +5850,16 @@ fn write_exec_sockdiag_line(
     write_hex_u64_part(sink, record.listen_backlog as u64)?;
     write_str_part(sink, " listen-return=")?;
     write_hex_u64_part(sink, record.listen_return)?;
+    write_str_part(sink, " connect-return=")?;
+    write_hex_u64_part(sink, record.connect_return)?;
+    write_str_part(sink, " accept-return=")?;
+    write_hex_u64_part(sink, record.accept_return)?;
     write_str_part(sink, " socket-state=")?;
     write_str_part(sink, record.socket_state)?;
+    write_str_part(sink, " client-state=")?;
+    write_str_part(sink, record.client_state)?;
+    write_str_part(sink, " accepted-state=")?;
+    write_str_part(sink, record.accepted_state)?;
     write_str_part(sink, " descriptor-kind=")?;
     write_str_part(sink, record.descriptor_kind)?;
     write_str_part(sink, " descriptor-access=")?;
@@ -5601,6 +5905,14 @@ fn write_exec_sockdiag_controls_line(
     write_str_part(sink, record.repeated_bind)?;
     write_str_part(sink, " repeated-listen=")?;
     write_str_part(sink, record.repeated_listen)?;
+    write_str_part(sink, " accept-before-connect=")?;
+    write_str_part(sink, record.accept_before_connect)?;
+    write_str_part(sink, " missing-listener=")?;
+    write_str_part(sink, record.missing_listener)?;
+    write_str_part(sink, " queue-backpressure=")?;
+    write_str_part(sink, record.queue_backpressure)?;
+    write_str_part(sink, " non-socket-descriptor=")?;
+    write_str_part(sink, record.non_socket_descriptor)?;
     write_str_part(sink, " invalid-closed-descriptor=")?;
     write_str_part(sink, record.invalid_closed_descriptor)?;
     write_str_part(sink, " syscall-vocabulary=")?;
@@ -6535,10 +6847,10 @@ talos> Talos initramfs fixture\n"
         assert_eq!(missing.status(), LocalCommandStatus::UnexpectedArgument);
         assert!(output.contains("talos> talos: exec path=/bin/sockdiag source=vfs-open-read\n"));
         assert!(output.contains(
-            "talos: sockdiag fd=0x0000000000000003 domain=0x0000000000000002 type=0x0000000000000001 protocol=0x0000000000000000 bind-ipv4=0x000000007f000001 bind-port=0x0000000000001f90 bind-return=0x0000000000000000 listen-backlog=0x0000000000000004 listen-return=0x0000000000000000 socket-state=listening descriptor-kind=socket descriptor-access=read-write close-return=0x0000000000000000 backing-closed=true source=vfs-userspace-sockdiag+talos-socket-bind-listen-close+process-descriptor\n"
+            "talos: sockdiag fd=0x0000000000000003 client-fd=0x0000000000000004 accepted-fd=0x0000000000000006 domain=0x0000000000000002 type=0x0000000000000001 protocol=0x0000000000000000 bind-ipv4=0x000000007f000001 bind-port=0x0000000000001f90 bind-return=0x0000000000000000 listen-backlog=0x0000000000000001 listen-return=0x0000000000000000 connect-return=0x0000000000000000 accept-return=0x0000000000000006 socket-state=listening client-state=connected accepted-state=accepted descriptor-kind=socket descriptor-access=read-write close-return=0x0000000000000000 backing-closed=true source=vfs-userspace-sockdiag+talos-socket-bind-listen-connect-accept-close+process-descriptor\n"
         ));
         assert!(output.contains(
-            "talos: sockdiag-controls malformed-arguments=exec-invalid-path missing-executable=exec-not-found unsupported-domain=ENOTSUP unsupported-type=ENOTSUP unsupported-protocol=ENOTSUP listen-before-bind=EINVAL invalid-bind-endpoint=EINVAL invalid-backlog=EINVAL repeated-bind=EINVAL repeated-listen=ok-updates-backlog invalid-closed-descriptor=EBADF syscall-vocabulary=SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_SOCKET/TALOS_BIND/TALOS_LISTEN/TALOS_CLOSE bounded source=shell-sockdiag-controls\n"
+            "talos: sockdiag-controls malformed-arguments=exec-invalid-path missing-executable=exec-not-found unsupported-domain=ENOTSUP unsupported-type=ENOTSUP unsupported-protocol=ENOTSUP listen-before-bind=EINVAL invalid-bind-endpoint=EINVAL invalid-backlog=EINVAL repeated-bind=EINVAL repeated-listen=ok-updates-backlog accept-before-connect=EAGAIN missing-listener=EINVAL queue-backpressure=ENOSPC non-socket-descriptor=EBADF invalid-closed-descriptor=EBADF syscall-vocabulary=SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_SOCKET/TALOS_BIND/TALOS_LISTEN/TALOS_CONNECT/TALOS_ACCEPT/TALOS_CLOSE bounded source=shell-sockdiag-controls\n"
         ));
         assert!(output.contains(
             "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/sockdiag state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true\n"
