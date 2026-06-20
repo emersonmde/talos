@@ -3925,3 +3925,24 @@ live driver adapters, live packet I/O, hardware reachability, SSH, smoltcp,
 UDP/TCP, lab mutation, boot publication, Phase 12.1 link-hardware retry, broad
 socket expansion, and phase transition remain rejected. The selected next
 bounded task is phase12-network-process-local-ping-descriptor-smoke-20260620.
+
+phase12-network-process-local-ping-descriptor-smoke-20260620 accepts
+phase12-network-process-local-ping-descriptor-smoke-accepted. The retained
+host/QEMU-substitute transcript exercises ProcessLocalPingDescriptorControl
+through ProcessDescriptorStore process-local ownership,
+DescriptorShapedPingControl, RuntimePingOperationSyscallSubstitute,
+NetworkRuntimeDevicePump, fake/trait-level NetworkDevice behavior,
+caller-owned buffers, and fixed-capacity state.
+
+The smoke evidence covers open process descriptor, idle status, start to
+unresolved-ARP pending, runtime-pump ARP advancement to inflight, runtime-pump
+echo-reply completion, terminal completed status, close process descriptor,
+missing owner, full process descriptor table with backing-descriptor unwind,
+duplicate active open, wrong-kind stdio descriptor, closed descriptor, retry
+exhaustion, explicit timeout, receive IO error, and local transmit IO error.
+Shell ping, public sockets, stable syscall ABI acceptance, socket syscall ABI
+acceptance, live driver adapters, live packet I/O, hardware reachability, SSH,
+smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1 link-hardware
+retry, broad Phase 12.4 socket expansion, and phase transition remain rejected.
+The selected next bounded task is
+phase12-network-process-local-ping-descriptor-smoke-closeout-20260620.
