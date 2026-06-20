@@ -4919,3 +4919,24 @@ reachability, smoltcp, SSH, lab mutation, boot publication, generated-root
 publication, broad socket expansion, public stable socket ABI acceptance, or
 phase transition. The selected next bounded task is
 phase12-network-shell-sockdiag-bind-listen-closeout-20260620.
+
+phase12-network-shell-sockdiag-bind-listen-closeout-20260620 accepts
+phase12-network-shell-sockdiag-bind-listen-closeout-accepted. The closeout
+reconciles the bind/listen ABI contract, socket bind/listen core, shell
+/bin/sockdiag core, and retained smoke evidence as a host/QEMU-substitute
+frontier only. The accepted boundary is shell-visible socket bind/listen
+through VFS/userspace execution: executable lookup/open/read for /bin/sockdiag,
+startup ABI, TALOS_SOCKET_SYSCALL = 6 for AF_INET/SOCK_STREAM/protocol 0,
+TALOS_BIND_SYSCALL = 7 for the accepted local endpoint, TALOS_LISTEN_SYSCALL =
+8 for bounded listening state, process DescriptorObjectKind::Socket ownership,
+TALOS_CLOSE_SYSCALL = 2 close/drop, waitpid, laststatus, deterministic
+controls, unchanged socket open/close behavior, unchanged /bin/pingdiag
+behavior, and unchanged bounded syscall vocabulary.
+
+The closeout explicitly rejects send, recv, connect, accept, poll/blocking
+network I/O, UDP/TCP payload transport, accept queues, global port registry or
+address-conflict policy, live driver adapters, live packet I/O, hardware
+reachability, lab mutation, boot publication, generated-root publication, SSH,
+smoltcp, broad socket expansion, public stable socket ABI acceptance, and
+phase transition. selected_next_task is null and planningNeeded=true pending
+supervisor planning for any next bounded Phase 12.4 socket or network task.
