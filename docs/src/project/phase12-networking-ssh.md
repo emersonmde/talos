@@ -3360,3 +3360,21 @@ live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, autonomous
 timers, broad queues, lab mutation, boot publication, Phase 12.1
 link-hardware retry, or phase transition. The selected next task is
 phase12-network-userspace-ping-operation-substitute-smoke-closeout-20260619.
+
+phase12-network-userspace-ping-operation-substitute-smoke-closeout-20260619
+accepts phase12-network-userspace-ping-operation-substitute-smoke-closeout-accepted.
+The closeout reconciles the retained substitute smoke transcript with the
+accepted UserspacePingOperation contract, SinglePingPacketService packet
+service, fake/trait-level NetworkDevice behavior, and caller-owned buffers.
+The exact accepted evidence level remains host-only: one operation can drive
+the unresolved-ARP to echo-reply lifecycle and demonstrate status, retry
+exhaustion, explicit timeout, duplicate/active busy, and receive/transmit IO
+error mapping through retained QEMU/substitute evidence.
+
+The boundary remains unbound to a real descriptor object or syscall ABI.
+Shell ping, public sockets, live driver adapters, live packet I/O, hardware
+reachability, SSH, smoltcp, UDP/TCP, autonomous timers, broad queues, lab
+mutation, boot publication, Phase 12.1 link-hardware retry, and phase
+transition remain rejected. selected_next_task is null and planningNeeded=true
+because no later queued Phase 12.3 task has complete objective dependencies,
+acceptance criteria, validation gates, docs, and evidence requirements.

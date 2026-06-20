@@ -4156,6 +4156,25 @@ The post-review correction chain is:
     mutation, boot publication, Phase 12.1 link-hardware retry, and phase
     transition remain rejected. selected_next_task is
     'phase12-network-userspace-ping-operation-substitute-smoke-closeout-20260619'.
+236. Phase 12.3 userspace ping operation substitute smoke closeout: accepted
+    in
+    'phase12-network-userspace-ping-operation-substitute-smoke-closeout-20260619'
+    with classification
+    'phase12-network-userspace-ping-operation-substitute-smoke-closeout-accepted'.
+    The closeout reconciles the retained substitute smoke transcript with the
+    accepted UserspacePingOperation contract, SinglePingPacketService, fake
+    NetworkDevice behavior, and caller-owned buffers. The accepted evidence
+    remains host-only: one operation can drive unresolved ARP to echo-reply
+    completion and demonstrate status observation, retry exhaustion, explicit
+    timeout, duplicate/active busy, and receive/transmit IO error mapping
+    through retained QEMU/substitute evidence. The boundary is still not bound
+    to a real descriptor object or syscall ABI. Shell ping, public sockets,
+    live driver adapters, live packet I/O, hardware reachability, SSH,
+    smoltcp, UDP/TCP, autonomous timers, broad queues, lab mutation, boot
+    publication, Phase 12.1 link-hardware retry, and phase transition remain
+    rejected. selected_next_task is null and planningNeeded=true because no
+    later queued Phase 12.3 task has complete objective dependencies,
+    acceptance criteria, validation gates, docs, and evidence requirements.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
