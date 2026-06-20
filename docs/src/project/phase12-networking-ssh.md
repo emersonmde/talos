@@ -4579,3 +4579,25 @@ remain rejected. No later bounded task is mechanically unblocked; supervisor
 planning is required before live driver adapters, live packet I/O, public
 sockets, shell ping, stable/socket ABI acceptance, SSH, broad socket expansion,
 Phase 12.1 hardware retry, or a phase transition.
+
+phase12-network-shell-pingdiag-contract-20260620 accepts
+phase12-network-shell-pingdiag-contract-accepted. Supervisor planning after the
+driver packet pump smoke closeout selected a shell-visible `/bin/pingdiag`
+diagnostic contract as the next smallest user-visible Phase 12.4 feature step.
+The future core must expose a command-loop or VFS/userspace execution transcript
+that opens, starts, pumps, reports status/result, and closes `/bin/pingdiag`
+through the accepted VFS executable identity, diagnostic SVC user-argument
+bridge, process-local descriptor ownership, UserMapping copy-in/copy-out,
+packet queues, and PacketQueueNetworkDevice::pump_driver.
+
+The contract requires deterministic future coverage for successful ARP/ICMP
+diagnostic progression plus malformed arguments, missing VFS executable
+identity, owner/descriptor failures, invalid and closed descriptors, queue
+capacity/backpressure, timeout/retry, transmit and receive device errors,
+close/drop behavior, and unchanged
+SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_* vocabulary. Kernel-backed fake shell
+commands, public sockets, stable/socket ABI acceptance, live driver adapters,
+live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation,
+boot publication, Phase 12.1 hardware retry, broad socket expansion, and phase
+transition remain rejected. The selected next bounded task is
+phase12-network-shell-pingdiag-core-20260620.

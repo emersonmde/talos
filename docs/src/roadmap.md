@@ -14645,6 +14645,21 @@ Milestone 12.3: IP Stack
   planning is required before live driver adapters, live packet I/O, public
   sockets, shell ping, stable/socket ABI acceptance, SSH, broad socket
   expansion, Phase 12.1 hardware retry, or a phase transition.
+- The shell-visible ping diagnostic contract accepts `/bin/pingdiag` as the
+  next smallest user-visible Phase 12.4 feature boundary after the accepted VFS
+  diagnostic SVC, packet queue, and driver-facing packet pump evidence. The
+  future core must prove a command-loop or VFS/userspace execution transcript
+  that opens, starts, pumps, observes status/result, and closes `/bin/pingdiag`
+  through the accepted descriptor and packet-pump layers. Deterministic future
+  coverage must include successful ARP/ICMP progression, malformed arguments,
+  missing VFS executable identity, owner/descriptor failures, invalid and
+  closed descriptors, queue capacity/backpressure, timeout/retry, transmit and
+  receive device errors, close/drop behavior, and unchanged syscall vocabulary.
+  Kernel-backed fake shell commands, public sockets, stable/socket ABI
+  acceptance, live driver adapters, live packet I/O, hardware reachability,
+  SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1 hardware
+  retry, broad socket expansion, and phase transition remain rejected. The
+  selected next bounded task is phase12-network-shell-pingdiag-core-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
