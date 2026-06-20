@@ -4469,3 +4469,25 @@ publication, Phase 12.1 link-hardware retry, broad socket expansion, and phase
 transition remain rejected. No later bounded task is mechanically unblocked;
 supervisor planning is required before live driver packet I/O, public sockets,
 shell ping, SSH, or phase transition.
+
+phase12-network-driver-packet-pump-contract-20260620 accepts
+phase12-network-driver-packet-pump-contract-accepted. The contract selects the
+next host-only Phase 12.4 feature boundary after the accepted packet queue
+smoke closeout: a crate-internal driver-facing packet pump that drains
+diagnostic outbound packet records to trait-level NetworkDevice transmit
+behavior and polls trait-level receive behavior back into diagnostic inbound
+packet records.
+
+The future core may only bridge the accepted fixed-capacity packet queue records
+and fake/trait-level NetworkDevice behavior. It must preserve /bin/pingdiag VFS
+lookup, diagnostic SVC argument decoding, UserMapping copy-in/copy-out,
+process-local descriptor ownership, caller-owned buffers, task-owned state,
+fixed-capacity queues, transmit FIFO ordering, explicit receive polling order,
+bounded backpressure, deterministic malformed-frame handling, device-error
+propagation, close/drop cleanup, timeout/retry controls, and unchanged
+SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_* vocabulary. Shell ping, public
+sockets, stable/socket ABI acceptance, live driver adapters, live packet I/O,
+hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication,
+Phase 12.1 link-hardware retry, broad socket expansion, and phase transition
+remain rejected. The selected next bounded task is
+phase12-network-driver-packet-pump-core-20260620.

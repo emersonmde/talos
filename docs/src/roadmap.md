@@ -14563,6 +14563,22 @@ Milestone 12.3: IP Stack
   rejected. No later bounded task is mechanically unblocked; supervisor
   planning is required before live driver packet I/O, public sockets, shell
   ping, SSH, or phase transition.
+- The driver-facing packet pump contract accepts a host-only crate-internal
+  Phase 12.4 boundary after the packet queue smoke closeout. The future core
+  may only drain accepted diagnostic outbound packet records to trait-level
+  NetworkDevice transmit behavior and poll trait-level receive behavior into
+  inbound diagnostic packet records. It must preserve /bin/pingdiag VFS lookup,
+  diagnostic SVC argument decoding, UserMapping copy-in/copy-out,
+  process-local descriptor ownership, caller-owned buffers, task-owned state,
+  fixed-capacity queues, transmit FIFO ordering, explicit receive polling
+  order, bounded backpressure, malformed-frame handling, device-error
+  propagation, close/drop cleanup, timeout/retry controls, and unchanged
+  SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_* vocabulary. Shell ping, public
+  sockets, stable/socket ABI acceptance, live driver adapters, live packet I/O,
+  hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication,
+  Phase 12.1 link-hardware retry, broad socket expansion, and phase transition
+  remain rejected. The selected next bounded task is
+  phase12-network-driver-packet-pump-core-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
