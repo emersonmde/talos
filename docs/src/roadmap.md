@@ -14455,6 +14455,25 @@ Milestone 12.3: IP Stack
   broad socket expansion, and phase transition remain rejected. The selected
   next bounded task is
   phase12-network-vfs-ping-diagnostic-svc-smoke-closeout-20260620.
+- The VFS-backed userspace ping diagnostic SVC smoke closeout accepts the
+  retained host/QEMU-substitute smoke evidence as the current descriptor-shaped
+  network control frontier. The accepted evidence level remains a
+  VFS/userspace diagnostic SVC bridge, VFS/initramfs executable identity,
+  experimental user-argument decoding, UserMapping copy-in/copy-out,
+  process-local descriptor ownership, internal dispatch-shaped control,
+  fake/trait-level NetworkDevice behavior, caller-owned buffers, task-owned
+  result/status slots, and fixed-capacity state. The closeout accepts that the
+  retained smoke evidence covers the diagnostic lifecycle from VFS executable
+  lookup through close plus deterministic missing-executable, malformed
+  argument, owner, descriptor, capacity, user-memory, buffer-pressure,
+  scratch-pressure, timeout/retry, device-error, and stable
+  syscall-vocabulary controls. Shell ping, kernel-backed fake command
+  expansion, public sockets, stable syscall ABI acceptance, socket syscall ABI
+  acceptance, live driver adapters, live packet I/O, hardware reachability,
+  SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1
+  link-hardware retry, broad socket expansion, and phase transition remain
+  rejected. No later bounded task is mechanically unblocked; supervisor
+  planning is required before any next Phase 12.4 task or phase transition.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
