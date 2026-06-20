@@ -14386,6 +14386,30 @@ Milestone 12.3: IP Stack
   UDP/TCP, lab mutation, boot publication, Phase 12.1 link-hardware retry,
   broad socket expansion, and phase transition remain rejected. The selected
   next bounded task is phase12-network-vfs-ping-diagnostic-svc-core-20260620.
+- The VFS-backed userspace ping diagnostic SVC core accepts
+  VfsPingDiagnosticSvcFixture as a crate-internal host-only diagnostic fixture.
+  The fixture first resolves a task-owned executable-shaped path through a
+  ReadOnlyInitramfs regular-file lookup and then drives the accepted
+  dispatch_process_local_ping_descriptor_user_arguments bridge through
+  diagnostic-owned user memory. Source/unit evidence covers open, idle status
+  copy-out, start from copied payload memory, pump_or_read_result through
+  ARP-to-ICMP progression, completed status copy-out, close, VFS executable
+  lookup failure, malformed selector and payload, missing owner, invalid and
+  closed descriptors, process descriptor capacity, output-buffer pressure,
+  invalid user memory, scratch pressure, retry exhaustion, explicit timeout,
+  caller receive-buffer pressure, device receive IO error, and unchanged
+  SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_* vocabulary. The accepted evidence
+  level remains source/unit host/QEMU-substitute over VFS/initramfs diagnostic
+  identity, experimental user-argument decoding, UserMapping copy-in/copy-out,
+  process-local descriptor ownership, internal dispatch-shaped control,
+  fake/trait-level NetworkDevice behavior, caller-owned buffers, task-owned
+  result/status slots, and fixed-capacity state. Shell ping, kernel-backed fake
+  command expansion, public sockets, stable syscall ABI acceptance, socket
+  syscall ABI acceptance, live driver adapters, live packet I/O, hardware
+  reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase
+  12.1 link-hardware retry, broad socket expansion, and phase transition remain
+  rejected. The selected next bounded task is
+  phase12-network-vfs-ping-diagnostic-svc-closeout-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
