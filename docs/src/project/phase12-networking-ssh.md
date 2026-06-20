@@ -4365,3 +4365,33 @@ I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot
 publication, Phase 12.1 link-hardware retry, broad socket expansion, and phase
 transition remain rejected. The selected next bounded task is
 phase12-network-vfs-ping-diagnostic-packet-queue-core-20260620.
+
+phase12-network-vfs-ping-diagnostic-packet-queue-core-20260620 accepts
+phase12-network-vfs-ping-diagnostic-packet-queue-core-accepted. src/network.rs
+now provides a crate-internal PacketQueueNetworkDevice over fixed-capacity
+receive and transmit queues of bounded PacketQueueFrame records. The adapter
+implements NetworkDevice for host-only diagnostic use: transmitted frames are
+copied into an inspectable queue, injected receive frames are copied out through
+receive_frame, full queues and oversized frames remain deterministic, and
+injected receive/transmit errors map through the existing trait-level
+DeviceError boundary.
+
+The accepted source/unit evidence wires VfsPingDiagnosticSvcFixture through
+that queue-backed NetworkDevice path. The diagnostic still resolves /bin/pingdiag
+through ReadOnlyInitramfs, copies payload bytes from UserMapping-backed memory,
+opens a process-local descriptor, starts one unresolved ping-like transaction,
+records the outbound Ethernet/IPv4 ARP request, injects a matching ARP reply,
+records the outbound Ethernet/IPv4/ICMP echo request, injects a matching ICMP
+echo reply, copies completed status/result records back to user memory, and
+closes the descriptor. Deterministic controls cover transmit queue capacity,
+oversized injected frames, caller output-buffer pressure, malformed injected
+frames, explicit retry, timeout, receive/transmit IO errors, invalid descriptor,
+and unchanged SyscallNumber/TALOS_* vocabulary. Existing accepted tests continue
+to cover owner rejection, closed descriptors, caller receive-buffer pressure,
+malformed arguments, user-memory faults, scratch pressure, and the
+descriptor-shaped/VFS diagnostic lifecycle. Shell ping, public sockets,
+stable/socket ABI acceptance, live driver adapters, live packet I/O, hardware
+reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1
+link-hardware retry, broad socket expansion, and phase transition remain
+rejected. The selected next bounded task is
+phase12-network-vfs-ping-diagnostic-packet-queue-closeout-20260620.

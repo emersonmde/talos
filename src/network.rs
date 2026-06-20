@@ -28,6 +28,170 @@ pub(crate) trait NetworkDevice {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum PacketQueueError {
+    Full,
+    FrameTooLarge { required_len: usize, max_len: usize },
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct PacketQueueFrame<const FRAME_CAPACITY: usize> {
+    bytes: [u8; FRAME_CAPACITY],
+    len: usize,
+}
+
+impl<const FRAME_CAPACITY: usize> PacketQueueFrame<FRAME_CAPACITY> {
+    pub(crate) fn new(frame: &[u8]) -> Result<Self, PacketQueueError> {
+        if frame.len() > FRAME_CAPACITY {
+            return Err(PacketQueueError::FrameTooLarge {
+                required_len: frame.len(),
+                max_len: FRAME_CAPACITY,
+            });
+        }
+
+        let mut bytes = [0; FRAME_CAPACITY];
+        bytes[..frame.len()].copy_from_slice(frame);
+        Ok(Self {
+            bytes,
+            len: frame.len(),
+        })
+    }
+
+    pub(crate) fn as_bytes(&self) -> &[u8] {
+        &self.bytes[..self.len]
+    }
+
+    pub(crate) const fn len(self) -> usize {
+        self.len
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct FixedPacketQueue<const QUEUE_CAPACITY: usize, const FRAME_CAPACITY: usize> {
+    frames: [Option<PacketQueueFrame<FRAME_CAPACITY>>; QUEUE_CAPACITY],
+    len: usize,
+}
+
+impl<const QUEUE_CAPACITY: usize, const FRAME_CAPACITY: usize>
+    FixedPacketQueue<QUEUE_CAPACITY, FRAME_CAPACITY>
+{
+    pub(crate) const fn new() -> Self {
+        Self {
+            frames: [None; QUEUE_CAPACITY],
+            len: 0,
+        }
+    }
+
+    pub(crate) const fn len(self) -> usize {
+        self.len
+    }
+
+    pub(crate) fn push(&mut self, frame: &[u8]) -> Result<(), PacketQueueError> {
+        if self.len == QUEUE_CAPACITY {
+            return Err(PacketQueueError::Full);
+        }
+
+        self.frames[self.len] = Some(PacketQueueFrame::new(frame)?);
+        self.len += 1;
+        Ok(())
+    }
+
+    pub(crate) fn front(&self) -> Option<&PacketQueueFrame<FRAME_CAPACITY>> {
+        self.frames.get(0).and_then(Option::as_ref)
+    }
+
+    pub(crate) fn pop(&mut self) -> Option<PacketQueueFrame<FRAME_CAPACITY>> {
+        if self.len == 0 {
+            return None;
+        }
+
+        let frame = self.frames[0].take();
+        let mut index = 1;
+        while index < self.len {
+            self.frames[index - 1] = self.frames[index].take();
+            index += 1;
+        }
+        self.len -= 1;
+        frame
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct PacketQueueNetworkDevice<
+    const RX_CAPACITY: usize,
+    const TX_CAPACITY: usize,
+    const FRAME_CAPACITY: usize,
+> {
+    rx: FixedPacketQueue<RX_CAPACITY, FRAME_CAPACITY>,
+    tx: FixedPacketQueue<TX_CAPACITY, FRAME_CAPACITY>,
+    receive_error: Option<DeviceError>,
+    transmit_error: Option<DeviceError>,
+}
+
+impl<const RX_CAPACITY: usize, const TX_CAPACITY: usize, const FRAME_CAPACITY: usize>
+    PacketQueueNetworkDevice<RX_CAPACITY, TX_CAPACITY, FRAME_CAPACITY>
+{
+    pub(crate) const fn new() -> Self {
+        Self {
+            rx: FixedPacketQueue::new(),
+            tx: FixedPacketQueue::new(),
+            receive_error: None,
+            transmit_error: None,
+        }
+    }
+
+    pub(crate) fn inject_received(&mut self, frame: &[u8]) -> Result<(), PacketQueueError> {
+        self.rx.push(frame)
+    }
+
+    pub(crate) fn pop_transmitted(&mut self) -> Option<PacketQueueFrame<FRAME_CAPACITY>> {
+        self.tx.pop()
+    }
+
+    pub(crate) fn transmitted_len(&self) -> usize {
+        self.tx.len()
+    }
+
+    pub(crate) fn received_len(&self) -> usize {
+        self.rx.len()
+    }
+
+    pub(crate) fn set_receive_error(&mut self, error: Option<DeviceError>) {
+        self.receive_error = error;
+    }
+
+    pub(crate) fn set_transmit_error(&mut self, error: Option<DeviceError>) {
+        self.transmit_error = error;
+    }
+}
+
+impl<const RX_CAPACITY: usize, const TX_CAPACITY: usize, const FRAME_CAPACITY: usize> NetworkDevice
+    for PacketQueueNetworkDevice<RX_CAPACITY, TX_CAPACITY, FRAME_CAPACITY>
+{
+    fn receive_frame<'a>(&mut self, buffer: &'a mut [u8]) -> Result<&'a [u8], DeviceError> {
+        if let Some(error) = self.receive_error {
+            return Err(error);
+        }
+
+        let frame = self.rx.front().ok_or(DeviceError::WouldBlock)?;
+        if buffer.len() < frame.len() {
+            return Err(DeviceError::BufferTooSmall);
+        }
+
+        let frame = self.rx.pop().expect("front frame remains queued");
+        buffer[..frame.len()].copy_from_slice(frame.as_bytes());
+        Ok(&buffer[..frame.len()])
+    }
+
+    fn transmit_frame(&mut self, frame: &[u8]) -> Result<(), DeviceError> {
+        if let Some(error) = self.transmit_error {
+            return Err(error);
+        }
+
+        self.tx.push(frame).map_err(|_| DeviceError::BufferTooSmall)
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum PacketError {
     Truncated,
     UnsupportedArpHardware,
