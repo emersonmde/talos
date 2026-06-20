@@ -4175,6 +4175,24 @@ The post-review correction chain is:
     rejected. selected_next_task is null and planningNeeded=true because no
     later queued Phase 12.3 task has complete objective dependencies,
     acceptance criteria, validation gates, docs, and evidence requirements.
+237. Phase 12.3 ping operation descriptor contract core: accepted in
+    'phase12-network-ping-operation-descriptor-contract-core-20260620' with
+    classification
+    'phase12-network-ping-operation-descriptor-contract-core-accepted'.
+    src/network.rs now exposes NetworkPingOperationDescriptor and
+    NetworkPingOperationDescriptorTable as a host-only fd-like identity layer
+    over the accepted UserspacePingOperation and SinglePingPacketService
+    boundaries. The contract can open one operation descriptor, drive
+    start/pump/retry/timeout/status through descriptor identity, and
+    deterministically close/remove the descriptor. Unit evidence covers
+    unresolved ARP through echo-reply completion, invalid and closed
+    descriptor EBADF, zero-capacity EMFILE, duplicate active operation EBUSY,
+    retry exhaustion EAGAIN, explicit timeout with terminal status, and
+    receive/transmit IO-error mapping. Shell ping, public sockets, syscall
+    ABI, live driver adapters, live packet I/O, hardware reachability, SSH,
+    smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1 retry, and
+    phase transition remain rejected. selected_next_task is
+    'phase12-network-ping-operation-descriptor-contract-closeout-20260620'.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -13566,6 +13584,13 @@ Milestone 12.3: IP Stack
   substitute evidence for one complete operation through fake NetworkDevice
   behavior; shell ping, sockets, live driver adapters, hardware reachability,
   SSH, and phase transition remain rejected.
+- The ping operation descriptor contract core accepts a host-only
+  descriptor-shaped identity layer over UserspacePingOperation. It can open,
+  drive, observe, timeout, retry, and close one ping operation through fd-like
+  identity while mapping invalid/closed, capacity, busy, retry exhaustion, and
+  IO edges into the accepted POSIX vocabulary. It does not accept syscall ABI,
+  shell ping, public sockets, live packet I/O, hardware reachability, SSH, or
+  phase transition.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

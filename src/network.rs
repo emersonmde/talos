@@ -1480,6 +1480,173 @@ impl<const ARP_CAPACITY: usize, const PAYLOAD_CAPACITY: usize>
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct NetworkPingOperationDescriptor {
+    raw: usize,
+}
+
+impl NetworkPingOperationDescriptor {
+    pub(crate) const fn from_raw(raw: usize) -> Self {
+        Self { raw }
+    }
+
+    pub(crate) const fn raw(self) -> usize {
+        self.raw
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct NetworkPingOperationDescriptorTable<
+    const DESCRIPTOR_CAPACITY: usize,
+    const ARP_CAPACITY: usize,
+    const PAYLOAD_CAPACITY: usize,
+> {
+    entries: [Option<UserspacePingOperation<ARP_CAPACITY, PAYLOAD_CAPACITY>>; DESCRIPTOR_CAPACITY],
+}
+
+impl<const DESCRIPTOR_CAPACITY: usize, const ARP_CAPACITY: usize, const PAYLOAD_CAPACITY: usize>
+    NetworkPingOperationDescriptorTable<DESCRIPTOR_CAPACITY, ARP_CAPACITY, PAYLOAD_CAPACITY>
+{
+    pub(crate) const fn new() -> Self {
+        Self {
+            entries: [None; DESCRIPTOR_CAPACITY],
+        }
+    }
+
+    pub(crate) fn open(
+        &mut self,
+    ) -> Result<NetworkPingOperationDescriptor, crate::posix::PosixError> {
+        self.open_with_operation(UserspacePingOperation::new())
+    }
+
+    pub(crate) fn open_with_service(
+        &mut self,
+        service: SinglePingPacketService<ARP_CAPACITY, PAYLOAD_CAPACITY>,
+    ) -> Result<NetworkPingOperationDescriptor, crate::posix::PosixError> {
+        self.open_with_operation(UserspacePingOperation::with_service(service))
+    }
+
+    pub(crate) fn close(
+        &mut self,
+        descriptor: NetworkPingOperationDescriptor,
+    ) -> Result<(), crate::posix::PosixError> {
+        let entry = self
+            .entries
+            .get_mut(descriptor.raw())
+            .ok_or(crate::posix::PosixError::BadDescriptor)?;
+        if entry.take().is_some() {
+            Ok(())
+        } else {
+            Err(crate::posix::PosixError::BadDescriptor)
+        }
+    }
+
+    pub(crate) fn status(
+        &self,
+        descriptor: NetworkPingOperationDescriptor,
+    ) -> Result<UserspacePingOperationStatus, crate::posix::PosixError> {
+        Ok(self.operation(descriptor)?.status())
+    }
+
+    pub(crate) fn start<D: NetworkDevice>(
+        &mut self,
+        descriptor: NetworkPingOperationDescriptor,
+        device: &mut D,
+        endpoint: LocalNetworkEndpoint,
+        route_policy: Ipv4EgressRoutePolicy,
+        destination_ipv4: [u8; 4],
+        identifier: u16,
+        sequence_number: u16,
+        ttl: u8,
+        payload: &[u8],
+        transmit_buffer: &mut [u8],
+        arp_retry_budget: usize,
+    ) -> Result<UserspacePingOperationStep, crate::posix::PosixError> {
+        self.operation_mut(descriptor)?.start(
+            device,
+            endpoint,
+            route_policy,
+            destination_ipv4,
+            identifier,
+            sequence_number,
+            ttl,
+            payload,
+            transmit_buffer,
+            arp_retry_budget,
+        )
+    }
+
+    pub(crate) fn pump<D: NetworkDevice>(
+        &mut self,
+        descriptor: NetworkPingOperationDescriptor,
+        device: &mut D,
+        receive_buffer: &mut [u8],
+        transmit_buffer: &mut [u8],
+    ) -> Result<UserspacePingOperationStep, crate::posix::PosixError> {
+        self.operation_mut(descriptor)?
+            .pump(device, receive_buffer, transmit_buffer)
+    }
+
+    pub(crate) fn retry_arp<D: NetworkDevice>(
+        &mut self,
+        descriptor: NetworkPingOperationDescriptor,
+        device: &mut D,
+        transmit_buffer: &mut [u8],
+    ) -> Result<UserspacePingOperationStep, crate::posix::PosixError> {
+        self.operation_mut(descriptor)?
+            .retry_arp(device, transmit_buffer)
+    }
+
+    pub(crate) fn timeout(
+        &mut self,
+        descriptor: NetworkPingOperationDescriptor,
+    ) -> Result<UserspacePingOperationStep, crate::posix::PosixError> {
+        self.operation_mut(descriptor)?.timeout()
+    }
+
+    fn open_with_operation(
+        &mut self,
+        operation: UserspacePingOperation<ARP_CAPACITY, PAYLOAD_CAPACITY>,
+    ) -> Result<NetworkPingOperationDescriptor, crate::posix::PosixError> {
+        if self.entries.iter().any(Option::is_some) {
+            return Err(crate::posix::PosixError::Busy);
+        }
+
+        let mut raw = 0;
+        while raw < DESCRIPTOR_CAPACITY {
+            if self.entries[raw].is_none() {
+                self.entries[raw] = Some(operation);
+                return Ok(NetworkPingOperationDescriptor::from_raw(raw));
+            }
+            raw += 1;
+        }
+
+        Err(crate::posix::PosixError::TooManyOpenFiles)
+    }
+
+    fn operation(
+        &self,
+        descriptor: NetworkPingOperationDescriptor,
+    ) -> Result<&UserspacePingOperation<ARP_CAPACITY, PAYLOAD_CAPACITY>, crate::posix::PosixError>
+    {
+        self.entries
+            .get(descriptor.raw())
+            .and_then(|entry| entry.as_ref())
+            .ok_or(crate::posix::PosixError::BadDescriptor)
+    }
+
+    fn operation_mut(
+        &mut self,
+        descriptor: NetworkPingOperationDescriptor,
+    ) -> Result<&mut UserspacePingOperation<ARP_CAPACITY, PAYLOAD_CAPACITY>, crate::posix::PosixError>
+    {
+        self.entries
+            .get_mut(descriptor.raw())
+            .and_then(|entry| entry.as_mut())
+            .ok_or(crate::posix::PosixError::BadDescriptor)
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 enum UserspacePendingSuccess {
     StartedPendingArp,
     RetryTransmitted,
@@ -7063,6 +7230,251 @@ mod tests {
         );
         assert_eq!(
             inflight_operation.pump(
+                &mut PollDevice::with_receive_error(DeviceError::Io),
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            Err(crate::posix::PosixError::Io)
+        );
+    }
+
+    #[test_case]
+    fn network_ping_descriptor_lifecycle_completes_unresolved_arp_to_echo_reply() {
+        let endpoint = local_endpoint();
+        let destination = [192, 0, 2, 20];
+        let destination_mac = MacAddress::new([0x02, 0, 0, 0, 0, 20]);
+        let policy = Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None);
+        let payload = [1, 2, 3, 4];
+        let mut table = NetworkPingOperationDescriptorTable::<1, 2, 4>::new();
+        let descriptor = table.open().expect("open descriptor");
+        let mut transmit_buffer = [0u8; 128];
+        let mut receive_buffer = [0u8; 128];
+
+        assert_eq!(descriptor.raw(), 0);
+        assert_eq!(
+            table.status(descriptor),
+            Ok(UserspacePingOperationStatus::Idle)
+        );
+        assert_eq!(
+            table.start(
+                descriptor,
+                &mut OutboundTransmitDevice::new(),
+                endpoint,
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &payload,
+                &mut transmit_buffer,
+                1,
+            ),
+            Ok(UserspacePingOperationStep::StartedPendingArp {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            })
+        );
+        assert_eq!(
+            table.status(descriptor),
+            Ok(UserspacePingOperationStatus::PendingArp {
+                destination_ipv4: destination,
+                next_hop_ipv4: destination,
+                arp_retries_remaining: 1,
+            })
+        );
+        assert_eq!(
+            table.pump(
+                descriptor,
+                &mut PollDevice::with_frame(&arp_reply_frame()),
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            Ok(UserspacePingOperationStep::AdvancedToInflight {
+                frame_len: ETHERNET_HEADER_LEN
+                    + IPV4_MIN_HEADER_LEN
+                    + ICMP_ECHO_HEADER_LEN
+                    + payload.len(),
+            })
+        );
+        assert_eq!(
+            table.status(descriptor),
+            Ok(UserspacePingOperationStatus::Inflight {
+                destination_ipv4: destination,
+            })
+        );
+        assert_eq!(
+            table.pump(
+                descriptor,
+                &mut PollDevice::with_frame(&icmp_echo_reply_frame()),
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            Ok(UserspacePingOperationStep::Completed {
+                payload_len: payload.len(),
+            })
+        );
+        assert_eq!(
+            table.status(descriptor),
+            Ok(UserspacePingOperationStatus::Completed {
+                destination_ipv4: destination,
+                payload_len: payload.len(),
+            })
+        );
+        let mut seeded_cache = ArpCache::<2>::new();
+        assert_eq!(
+            seeded_cache.insert_or_update(destination, destination_mac),
+            ArpCacheUpdate::Inserted
+        );
+        assert_eq!(table.close(descriptor), Ok(()));
+        assert_eq!(
+            table.status(descriptor),
+            Err(crate::posix::PosixError::BadDescriptor)
+        );
+        assert_eq!(
+            table.open_with_service(SinglePingPacketService::<2, 4>::with_arp_cache(
+                seeded_cache,
+            )),
+            Ok(descriptor)
+        );
+    }
+
+    #[test_case]
+    fn network_ping_descriptor_maps_invalid_closed_capacity_and_busy_edges() {
+        let mut empty_table = NetworkPingOperationDescriptorTable::<0, 2, 4>::new();
+        assert_eq!(
+            empty_table.open(),
+            Err(crate::posix::PosixError::TooManyOpenFiles)
+        );
+        assert_eq!(
+            empty_table.status(NetworkPingOperationDescriptor::from_raw(0)),
+            Err(crate::posix::PosixError::BadDescriptor)
+        );
+
+        let mut table = NetworkPingOperationDescriptorTable::<1, 2, 4>::new();
+        let descriptor = table.open().expect("open descriptor");
+        assert_eq!(table.open(), Err(crate::posix::PosixError::Busy));
+        assert_eq!(
+            table.status(NetworkPingOperationDescriptor::from_raw(7)),
+            Err(crate::posix::PosixError::BadDescriptor)
+        );
+        assert_eq!(table.close(descriptor), Ok(()));
+        assert_eq!(
+            table.close(descriptor),
+            Err(crate::posix::PosixError::BadDescriptor)
+        );
+        assert_eq!(
+            table.start(
+                descriptor,
+                &mut OutboundTransmitDevice::new(),
+                local_endpoint(),
+                Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None),
+                [192, 0, 2, 20],
+                0x1234,
+                7,
+                61,
+                &[1, 2, 3, 4],
+                &mut [0u8; 128],
+                0,
+            ),
+            Err(crate::posix::PosixError::BadDescriptor)
+        );
+    }
+
+    #[test_case]
+    fn network_ping_descriptor_maps_retry_timeout_and_io_errors() {
+        let endpoint = local_endpoint();
+        let destination = [192, 0, 2, 20];
+        let policy = Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None);
+        let payload = [1, 2, 3, 4];
+        let mut table = NetworkPingOperationDescriptorTable::<1, 2, 4>::new();
+        let descriptor = table.open().expect("open descriptor");
+        let mut transmit_buffer = [0u8; 128];
+        let mut receive_buffer = [0u8; 128];
+
+        assert_eq!(
+            table.start(
+                descriptor,
+                &mut OutboundTransmitDevice::new(),
+                endpoint,
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &payload,
+                &mut transmit_buffer,
+                0,
+            ),
+            Ok(UserspacePingOperationStep::StartedPendingArp {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            })
+        );
+        assert_eq!(
+            table.retry_arp(
+                descriptor,
+                &mut OutboundTransmitDevice::new(),
+                &mut transmit_buffer,
+            ),
+            Err(crate::posix::PosixError::Again)
+        );
+        assert_eq!(
+            table.timeout(descriptor),
+            Ok(UserspacePingOperationStep::TimedOut {
+                destination_ipv4: destination,
+            })
+        );
+        assert_eq!(
+            table.status(descriptor),
+            Ok(UserspacePingOperationStatus::TimedOut {
+                destination_ipv4: destination,
+            })
+        );
+        assert_eq!(table.close(descriptor), Ok(()));
+
+        let transmit_error_descriptor = table.open().expect("reopen descriptor");
+        assert_eq!(
+            table.start(
+                transmit_error_descriptor,
+                &mut OutboundTransmitDevice::with_transmit_error(DeviceError::Io),
+                endpoint,
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &payload,
+                &mut transmit_buffer,
+                0,
+            ),
+            Err(crate::posix::PosixError::Io)
+        );
+        assert_eq!(
+            table.status(transmit_error_descriptor),
+            Ok(UserspacePingOperationStatus::Idle)
+        );
+        assert_eq!(table.close(transmit_error_descriptor), Ok(()));
+
+        let receive_error_descriptor = table.open().expect("reopen descriptor");
+        assert_eq!(
+            table.start(
+                receive_error_descriptor,
+                &mut OutboundTransmitDevice::new(),
+                endpoint,
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &payload,
+                &mut transmit_buffer,
+                1,
+            ),
+            Ok(UserspacePingOperationStep::StartedPendingArp {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            })
+        );
+        assert_eq!(
+            table.pump(
+                receive_error_descriptor,
                 &mut PollDevice::with_receive_error(DeviceError::Io),
                 &mut receive_buffer,
                 &mut transmit_buffer,

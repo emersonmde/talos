@@ -3378,3 +3378,27 @@ mutation, boot publication, Phase 12.1 link-hardware retry, and phase
 transition remain rejected. selected_next_task is null and planningNeeded=true
 because no later queued Phase 12.3 task has complete objective dependencies,
 acceptance criteria, validation gates, docs, and evidence requirements.
+
+phase12-network-ping-operation-descriptor-contract-core-20260620 accepts
+phase12-network-ping-operation-descriptor-contract-core-accepted.
+src/network.rs now exposes NetworkPingOperationDescriptor and
+NetworkPingOperationDescriptorTable, a host-only fd-like identity layer around
+the accepted UserspacePingOperation. The table can open one descriptor-shaped
+ping operation, drive start, pump, retry, timeout, status, and close through
+that descriptor identity, and remove closed descriptors deterministically.
+
+The descriptor contract delegates protocol behavior to UserspacePingOperation,
+SinglePingPacketService, and fake/trait-level NetworkDevice behavior rather
+than duplicating ARP, IPv4, ICMP, route, retry, timeout, or device logic. Unit
+evidence covers unresolved ARP through echo-reply completion, invalid and
+closed descriptor lookup as EBADF, zero-capacity open as EMFILE, duplicate
+active operation open as EBUSY, retry exhaustion as EAGAIN, explicit timeout
+with terminal timed-out status, and receive/transmit IO error mapping.
+
+The accepted boundary remains host-only source/unit-test and QEMU/substitute
+evidence over caller-owned buffers and fake/trait-level NetworkDevice
+behavior. It does not accept shell ping, public sockets, syscall ABI, live
+driver adapters, live packet I/O, hardware reachability, SSH, smoltcp,
+UDP/TCP, autonomous timers, broad queues, lab mutation, boot publication,
+Phase 12.1 link-hardware retry, or phase transition. The selected next task is
+phase12-network-ping-operation-descriptor-contract-closeout-20260620.
