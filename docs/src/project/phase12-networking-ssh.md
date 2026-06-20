@@ -4491,3 +4491,27 @@ hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication,
 Phase 12.1 link-hardware retry, broad socket expansion, and phase transition
 remain rejected. The selected next bounded task is
 phase12-network-driver-packet-pump-core-20260620.
+
+phase12-network-driver-packet-pump-core-20260620 accepts
+phase12-network-driver-packet-pump-core-accepted. The core implements the
+host-only crate-internal packet pump boundary between accepted diagnostic
+packet queue records and trait-level NetworkDevice behavior. It adds
+PacketQueueDriverPumpStep plus PacketQueueNetworkDevice::pump_driver, which
+drains one outbound record in FIFO order to transmit_frame before polling
+receive_frame into the inbound diagnostic queue.
+
+The accepted source/unit evidence proves outbound ARP and IPv4/ICMP records now
+cross the packet pump into a trait-level driver queue, and injected ARP/ICMP
+replies cross back through the pump before the VFS-backed process-local
+descriptor observes progress. Deterministic coverage includes transmit
+ordering, transmit retry preservation after device errors, receive polling
+order, receive queue backpressure, caller receive-buffer pressure, oversized
+frames, malformed injected frames, missing/wrong owner or descriptor, invalid
+and closed descriptors, timeout/retry, close/drop behavior, receive/transmit
+device errors, process descriptor capacity, user-memory faults, scratch
+pressure, and unchanged SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_* vocabulary.
+Shell ping, public sockets, stable/socket ABI acceptance, live driver adapters,
+live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation,
+boot publication, Phase 12.1 link-hardware retry, broad socket expansion, and
+phase transition remain rejected. The selected next bounded task is
+phase12-network-driver-packet-pump-closeout-20260620.

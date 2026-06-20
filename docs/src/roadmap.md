@@ -14579,6 +14579,24 @@ Milestone 12.3: IP Stack
   Phase 12.1 link-hardware retry, broad socket expansion, and phase transition
   remain rejected. The selected next bounded task is
   phase12-network-driver-packet-pump-core-20260620.
+- The driver-facing packet pump core accepts host/QEMU-substitute source/unit
+  evidence for a crate-internal packet pump between fixed-capacity diagnostic
+  packet queues and trait-level NetworkDevice behavior. PacketQueueDriverPumpStep
+  and PacketQueueNetworkDevice::pump_driver drain outbound records in FIFO order
+  to transmit_frame before polling receive_frame into inbound diagnostic records.
+  The VFS-backed ping diagnostic lifecycle now proves outbound ARP and
+  IPv4/ICMP records cross the pump into a trait-level driver queue, injected
+  ARP/ICMP replies cross back through the pump before descriptor progress, and
+  deterministic controls cover transmit ordering, receive polling,
+  backpressure, caller receive-buffer pressure, oversized frames, malformed
+  injected frames, owner and descriptor failures, timeout/retry, close/drop
+  behavior, device errors, process descriptor capacity, user-memory faults,
+  scratch pressure, and unchanged SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_*
+  vocabulary. Shell ping, public sockets, stable/socket ABI acceptance, live
+  driver adapters, live packet I/O, hardware reachability, SSH, smoltcp,
+  UDP/TCP, lab mutation, boot publication, Phase 12.1 link-hardware retry,
+  broad socket expansion, and phase transition remain rejected. The selected
+  next bounded task is phase12-network-driver-packet-pump-closeout-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

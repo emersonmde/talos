@@ -34,6 +34,28 @@ pub(crate) enum PacketQueueError {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum PacketQueueDriverPumpStep {
+    NoFrame,
+    Transmitted {
+        frame_len: usize,
+    },
+    Received {
+        frame_len: usize,
+    },
+    ReceiveQueueFull,
+    ReceiveFrameTooLarge {
+        required_len: usize,
+        max_len: usize,
+    },
+    ReceiveBufferTooSmall,
+    ReceiveError(DeviceError),
+    TransmitError {
+        frame_len: usize,
+        error: DeviceError,
+    },
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct PacketQueueFrame<const FRAME_CAPACITY: usize> {
     bytes: [u8; FRAME_CAPACITY],
     len: usize,
@@ -83,6 +105,10 @@ impl<const QUEUE_CAPACITY: usize, const FRAME_CAPACITY: usize>
 
     pub(crate) const fn len(self) -> usize {
         self.len
+    }
+
+    pub(crate) const fn is_full(self) -> bool {
+        self.len == QUEUE_CAPACITY
     }
 
     pub(crate) fn push(&mut self, frame: &[u8]) -> Result<(), PacketQueueError> {
@@ -161,6 +187,47 @@ impl<const RX_CAPACITY: usize, const TX_CAPACITY: usize, const FRAME_CAPACITY: u
 
     pub(crate) fn set_transmit_error(&mut self, error: Option<DeviceError>) {
         self.transmit_error = error;
+    }
+
+    pub(crate) fn pump_driver<D: NetworkDevice>(
+        &mut self,
+        driver: &mut D,
+        receive_buffer: &mut [u8],
+    ) -> PacketQueueDriverPumpStep {
+        if let Some(frame) = self.tx.front().copied() {
+            let frame_len = frame.len();
+            return match driver.transmit_frame(frame.as_bytes()) {
+                Ok(()) => {
+                    let _ = self.tx.pop();
+                    PacketQueueDriverPumpStep::Transmitted { frame_len }
+                }
+                Err(error) => PacketQueueDriverPumpStep::TransmitError { frame_len, error },
+            };
+        }
+
+        if self.rx.is_full() {
+            return PacketQueueDriverPumpStep::ReceiveQueueFull;
+        }
+
+        match driver.receive_frame(receive_buffer) {
+            Ok(frame) => {
+                let frame_len = frame.len();
+                match self.rx.push(frame) {
+                    Ok(()) => PacketQueueDriverPumpStep::Received { frame_len },
+                    Err(PacketQueueError::FrameTooLarge {
+                        required_len,
+                        max_len,
+                    }) => PacketQueueDriverPumpStep::ReceiveFrameTooLarge {
+                        required_len,
+                        max_len,
+                    },
+                    Err(PacketQueueError::Full) => PacketQueueDriverPumpStep::ReceiveQueueFull,
+                }
+            }
+            Err(DeviceError::WouldBlock) => PacketQueueDriverPumpStep::NoFrame,
+            Err(DeviceError::BufferTooSmall) => PacketQueueDriverPumpStep::ReceiveBufferTooSmall,
+            Err(error) => PacketQueueDriverPumpStep::ReceiveError(error),
+        }
     }
 }
 
@@ -3806,6 +3873,126 @@ mod tests {
         assert_eq!(device.transmitted_len, 3);
         assert_eq!(device.transmit_frame(&[]), Err(DeviceError::WouldBlock));
         assert_eq!(device.transmit_frame(&[0xff]), Err(DeviceError::Io));
+    }
+
+    #[test_case]
+    fn packet_queue_driver_pump_drains_outbound_before_polling_receive_fifo() {
+        let mut queue = PacketQueueNetworkDevice::<2, 2, 64>::new();
+        let mut driver = PacketQueueNetworkDevice::<2, 2, 64>::new();
+        let mut receive_buffer = [0u8; 64];
+
+        assert_eq!(queue.transmit_frame(&[1, 2, 3]), Ok(()));
+        assert_eq!(queue.transmit_frame(&[4, 5]), Ok(()));
+        assert_eq!(driver.inject_received(&[9, 8]), Ok(()));
+
+        assert_eq!(
+            queue.pump_driver(&mut driver, &mut receive_buffer),
+            PacketQueueDriverPumpStep::Transmitted { frame_len: 3 }
+        );
+        assert_eq!(queue.transmitted_len(), 1);
+        assert_eq!(
+            driver
+                .pop_transmitted()
+                .expect("first driver transmit")
+                .as_bytes(),
+            &[1, 2, 3]
+        );
+
+        assert_eq!(
+            queue.pump_driver(&mut driver, &mut receive_buffer),
+            PacketQueueDriverPumpStep::Transmitted { frame_len: 2 }
+        );
+        assert_eq!(queue.transmitted_len(), 0);
+        assert_eq!(
+            driver
+                .pop_transmitted()
+                .expect("second driver transmit")
+                .as_bytes(),
+            &[4, 5]
+        );
+
+        assert_eq!(
+            queue.pump_driver(&mut driver, &mut receive_buffer),
+            PacketQueueDriverPumpStep::Received { frame_len: 2 }
+        );
+        assert_eq!(queue.received_len(), 1);
+        assert_eq!(driver.received_len(), 0);
+        assert_eq!(
+            queue
+                .receive_frame(&mut receive_buffer)
+                .expect("queued receive"),
+            &[9, 8]
+        );
+        assert_eq!(
+            queue.pump_driver(&mut driver, &mut receive_buffer),
+            PacketQueueDriverPumpStep::NoFrame
+        );
+    }
+
+    #[test_case]
+    fn packet_queue_driver_pump_reports_backpressure_and_device_errors_deterministically() {
+        let mut queue = PacketQueueNetworkDevice::<1, 1, 2>::new();
+        let mut driver = PacketQueueNetworkDevice::<2, 2, 4>::new();
+        let mut receive_buffer = [0u8; 4];
+
+        assert_eq!(queue.transmit_frame(&[1, 2]), Ok(()));
+        driver.set_transmit_error(Some(DeviceError::Io));
+        assert_eq!(
+            queue.pump_driver(&mut driver, &mut receive_buffer),
+            PacketQueueDriverPumpStep::TransmitError {
+                frame_len: 2,
+                error: DeviceError::Io,
+            }
+        );
+        assert_eq!(queue.transmitted_len(), 1);
+        driver.set_transmit_error(None);
+        assert_eq!(
+            queue.pump_driver(&mut driver, &mut receive_buffer),
+            PacketQueueDriverPumpStep::Transmitted { frame_len: 2 }
+        );
+
+        assert_eq!(queue.inject_received(&[0xaa]), Ok(()));
+        assert_eq!(driver.inject_received(&[3, 4]), Ok(()));
+        assert_eq!(
+            queue.pump_driver(&mut driver, &mut receive_buffer),
+            PacketQueueDriverPumpStep::ReceiveQueueFull
+        );
+        assert_eq!(queue.received_len(), 1);
+        assert_eq!(driver.received_len(), 1);
+        assert_eq!(
+            queue.receive_frame(&mut receive_buffer).expect("drain rx"),
+            &[0xaa]
+        );
+
+        assert_eq!(
+            queue.pump_driver(&mut driver, &mut receive_buffer[..1]),
+            PacketQueueDriverPumpStep::ReceiveBufferTooSmall
+        );
+        assert_eq!(driver.received_len(), 1);
+        assert_eq!(
+            queue.pump_driver(&mut driver, &mut receive_buffer),
+            PacketQueueDriverPumpStep::Received { frame_len: 2 }
+        );
+
+        assert_eq!(
+            queue.receive_frame(&mut receive_buffer).expect("drain rx"),
+            &[3, 4]
+        );
+        assert_eq!(driver.inject_received(&[5, 6, 7]), Ok(()));
+        assert_eq!(
+            queue.pump_driver(&mut driver, &mut receive_buffer),
+            PacketQueueDriverPumpStep::ReceiveFrameTooLarge {
+                required_len: 3,
+                max_len: 2,
+            }
+        );
+        assert_eq!(driver.received_len(), 0);
+
+        driver.set_receive_error(Some(DeviceError::Io));
+        assert_eq!(
+            queue.pump_driver(&mut driver, &mut receive_buffer),
+            PacketQueueDriverPumpStep::ReceiveError(DeviceError::Io)
+        );
     }
 
     #[test_case]

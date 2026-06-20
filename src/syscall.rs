@@ -5674,6 +5674,8 @@ mod tests {
         let mut pump_step = RuntimePingOperationSyscallSubstitutePumpStep::no_frame();
         let mut status = PingOperationSyscallSubstituteStatus::idle();
         let mut queue = crate::network::PacketQueueNetworkDevice::<2, 2, 128>::new();
+        let mut driver = crate::network::PacketQueueNetworkDevice::<2, 2, 128>::new();
+        let mut driver_receive_buffer = [0u8; 128];
         let mut fixture = VfsPingDiagnosticSvcFixture::new(
             vfs_ping_diagnostic_initramfs(),
             VFS_PING_DIAGNOSTIC_PATH,
@@ -5745,14 +5747,28 @@ mod tests {
             PingOperationSyscallSubstituteStepKind::StartedPendingArp
         );
         assert_eq!(queue.transmitted_len(), 1);
-        let outbound_arp = queue.pop_transmitted().expect("outbound ARP request");
+        assert_eq!(
+            queue.pump_driver(&mut driver, &mut driver_receive_buffer),
+            crate::network::PacketQueueDriverPumpStep::Transmitted {
+                frame_len: crate::network::ETHERNET_HEADER_LEN
+                    + crate::network::ARP_ETHERNET_IPV4_LEN,
+            }
+        );
+        let outbound_arp = driver.pop_transmitted().expect("outbound ARP request");
         let outbound_arp =
             crate::network::EthernetFrame::parse(outbound_arp.as_bytes()).expect("parse ARP");
         assert_eq!(outbound_arp.ether_type(), crate::network::EtherType::Arp);
 
-        queue
+        driver
             .inject_received(&ping_arp_reply_frame())
-            .expect("inject ARP reply");
+            .expect("driver receives ARP reply");
+        assert_eq!(
+            queue.pump_driver(&mut driver, &mut driver_receive_buffer),
+            crate::network::PacketQueueDriverPumpStep::Received {
+                frame_len: crate::network::ETHERNET_HEADER_LEN
+                    + crate::network::ARP_ETHERNET_IPV4_LEN,
+            }
+        );
         {
             let mut outputs =
                 ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
@@ -5777,7 +5793,18 @@ mod tests {
             pump_step.active_ping_step().kind(),
             PingOperationSyscallSubstituteStepKind::AdvancedToInflight
         );
-        let outbound_icmp = queue.pop_transmitted().expect("outbound ICMP echo request");
+        assert_eq!(
+            queue.pump_driver(&mut driver, &mut driver_receive_buffer),
+            crate::network::PacketQueueDriverPumpStep::Transmitted {
+                frame_len: crate::network::ETHERNET_HEADER_LEN
+                    + crate::network::IPV4_MIN_HEADER_LEN
+                    + crate::network::ICMP_ECHO_HEADER_LEN
+                    + payload.len(),
+            }
+        );
+        let outbound_icmp = driver
+            .pop_transmitted()
+            .expect("outbound ICMP echo request");
         let outbound_icmp =
             crate::network::EthernetFrame::parse(outbound_icmp.as_bytes()).expect("parse ICMP");
         assert_eq!(outbound_icmp.ether_type(), crate::network::EtherType::Ipv4);
@@ -5788,9 +5815,18 @@ mod tests {
             crate::network::IPV4_PROTOCOL_ICMP
         );
 
-        queue
+        driver
             .inject_received(&ping_icmp_echo_reply_frame())
-            .expect("inject ICMP echo reply");
+            .expect("driver receives ICMP echo reply");
+        assert_eq!(
+            queue.pump_driver(&mut driver, &mut driver_receive_buffer),
+            crate::network::PacketQueueDriverPumpStep::Received {
+                frame_len: crate::network::ETHERNET_HEADER_LEN
+                    + crate::network::IPV4_MIN_HEADER_LEN
+                    + crate::network::ICMP_ECHO_HEADER_LEN
+                    + payload.len(),
+            }
+        );
         {
             let mut outputs =
                 ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
