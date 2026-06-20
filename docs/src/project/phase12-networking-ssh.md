@@ -4340,3 +4340,28 @@ mutation, boot publication, Phase 12.1 link-hardware retry, broad socket
 expansion, and phase transition remain rejected. No later bounded task is
 mechanically unblocked; supervisor planning is required before any next Phase
 12.4 task or phase transition.
+
+phase12-network-vfs-ping-diagnostic-packet-queue-contract-20260620 accepts
+phase12-network-vfs-ping-diagnostic-packet-queue-contract-accepted. The
+contract selects the next host-only Phase 12.4 feature boundary after the
+accepted VFS ping diagnostic SVC smoke closeout: a crate-internal,
+fixed-capacity packet queue/adapter that makes the diagnostic's ARP and ICMP
+packet movement observable without widening the public ABI.
+
+The future core may only record outbound ARP request and ICMP echo request
+frames, inject ARP/ICMP reply frames through fake/trait-level NetworkDevice
+behavior, and preserve the existing VFS executable lookup,
+dispatch_process_local_ping_descriptor_user_arguments, UserMapping
+copy-in/copy-out, process-local descriptor ownership, caller-owned
+payload/result/status buffers, and task-owned diagnostic state. Deterministic
+future evidence must cover outbound ARP/ICMP recording, injected reply
+progression, queue capacity, buffer pressure, malformed input and injected
+frames, wrong owner or descriptor, invalid and closed descriptors,
+timeout/retry, device/error controls, and unchanged
+SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_* vocabulary. Shell ping,
+kernel-backed fake command expansion, public sockets, stable syscall ABI
+acceptance, socket syscall ABI acceptance, live driver adapters, live packet
+I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot
+publication, Phase 12.1 link-hardware retry, broad socket expansion, and phase
+transition remain rejected. The selected next bounded task is
+phase12-network-vfs-ping-diagnostic-packet-queue-core-20260620.

@@ -14474,6 +14474,24 @@ Milestone 12.3: IP Stack
   link-hardware retry, broad socket expansion, and phase transition remain
   rejected. No later bounded task is mechanically unblocked; supervisor
   planning is required before any next Phase 12.4 task or phase transition.
+- The VFS-backed userspace ping diagnostic packet queue contract accepts a
+  host-only crate-internal queue boundary as the next feature-led Phase 12.4
+  step after the accepted diagnostic SVC smoke closeout. The future core may
+  only record outbound ARP request and ICMP echo request frames, inject
+  ARP/ICMP reply frames through fake/trait-level NetworkDevice behavior, and
+  preserve the accepted VFS executable lookup, experimental user-argument SVC
+  bridge, UserMapping copy-in/copy-out, process-local descriptor ownership,
+  caller-owned buffers, task-owned diagnostic state, and fixed-capacity
+  behavior. Required future coverage includes outbound record inspection,
+  injected reply progression, queue capacity, buffer pressure, malformed input
+  and injected frames, wrong owner or descriptor, invalid and closed
+  descriptors, timeout/retry, device/error controls, and unchanged
+  SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_* vocabulary. Shell ping, public
+  sockets, stable/socket ABI acceptance, live driver adapters, live packet
+  I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot
+  publication, Phase 12.1 link-hardware retry, broad socket expansion, and
+  phase transition remain rejected. The selected next bounded task is
+  phase12-network-vfs-ping-diagnostic-packet-queue-core-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
