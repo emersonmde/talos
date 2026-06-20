@@ -14679,6 +14679,20 @@ Milestone 12.3: IP Stack
   socket expansion, Phase 12.1 hardware retry, and phase transition remain
   rejected. The selected next bounded task is
   phase12-network-shell-pingdiag-closeout-20260620.
+- The shell-visible ping diagnostic closeout accepts the core evidence at
+  source/unit host/QEMU-substitute level and reconciles source, tests, docs,
+  task evidence, and rejected claims before retained smoke. The accepted
+  boundary remains an experimental `/bin/pingdiag` transcript through VFS
+  executable identity, diagnostic SVC user-argument decoding, process-local
+  descriptor ownership, UserMapping copy-in/copy-out, packet queues,
+  `PacketQueueNetworkDevice::pump_driver`, status/result copy-out,
+  close/drop behavior, and `waitpid`/`laststatus` lifecycle observation.
+  Kernel fake commands, public sockets, stable/socket ABI acceptance, live
+  driver adapters, live packet I/O, hardware reachability, SSH, smoltcp,
+  UDP/TCP, lab mutation, boot publication, broad shell or socket expansion,
+  Phase 12.1 hardware retry, and phase transition remain rejected. The retained
+  smoke task is objective and bounded; the selected next bounded task is
+  phase12-network-shell-pingdiag-smoke-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

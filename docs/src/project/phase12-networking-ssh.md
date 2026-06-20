@@ -4627,3 +4627,24 @@ adapters, live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab
 mutation, boot publication, Phase 12.1 hardware retry, broad shell expansion,
 broad socket expansion, and phase transition remain rejected. The selected
 next bounded task is phase12-network-shell-pingdiag-closeout-20260620.
+
+phase12-network-shell-pingdiag-closeout-20260620 accepts
+phase12-network-shell-pingdiag-closeout-accepted. The closeout reconciles the
+accepted shell-visible `/bin/pingdiag` core source, tests, docs, task
+evidence, durable-state frontier, accepted claims, and rejected claims. The
+accepted evidence level remains source/unit host/QEMU-substitute over
+shell-visible VFS/userspace diagnostic execution: VFS executable identity,
+command-loop transcript, diagnostic SVC user-argument decoding, process-local
+descriptor ownership, UserMapping copy-in/copy-out, packet queues,
+`PacketQueueNetworkDevice::pump_driver`, status/result copy-out,
+close/drop behavior, and `waitpid`/`laststatus` lifecycle observation.
+
+The closeout confirms this is not a kernel-backed fake shell command and does
+not accept public sockets, stable/socket ABI acceptance, live driver adapters,
+live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation,
+boot publication, broad shell expansion, broad socket expansion, Phase 12.1
+hardware retry, or a phase transition. The retained smoke task is objective
+and bounded because it has explicit dependencies, acceptance criteria,
+validation gates, evidence requirements, and rejected-claim boundaries for a
+host/QEMU-substitute transcript only. The selected next bounded task is
+phase12-network-shell-pingdiag-smoke-20260620.
