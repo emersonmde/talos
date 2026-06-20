@@ -3567,3 +3567,24 @@ transition remain rejected. selected_next_task is null and
 planningNeeded=true because no later queued Phase 12.3 or Phase 12.4 task has
 complete objective dependencies, acceptance criteria, validation gates, and
 evidence requirements.
+
+phase12-network-runtime-device-pump-core-20260620 accepts
+phase12-network-runtime-device-pump-core-accepted. src/network.rs now provides
+NetworkRuntimeDevicePump, a host-only caller-driven runtime/service boundary
+over NetworkDevice. The pump owns fixed-capacity local ARP and ping operation
+state, receives exactly one frame into caller-owned storage per pump call,
+gives local ARP/ICMP response generation first chance, and then offers
+non-reply traffic to one selected active NetworkPingOperationDescriptor.
+
+The accepted boundary preserves local ARP reply and local IPv4 ICMP echo reply
+behavior while allowing one ping operation descriptor to advance through ARP
+resolution, ICMP transmit, echo-reply completion, retry, explicit timeout, and
+terminal status observation. Unit/QEMU-substitute evidence covers no-frame,
+nonlocal/no-reply, receive-buffer pressure, receive error, local and active
+transmit errors, and deterministic ordering when inbound responder and active
+operation work are both possible. Shell ping, public sockets, stable syscall
+ABI acceptance, socket syscall ABI, live driver adapters, live packet I/O,
+hardware reachability, SSH, smoltcp, UDP/TCP, autonomous timers, broad packet
+queues, lab mutation, boot publication, Phase 12.1 link-hardware retry, Phase
+12.4 socket expansion, and phase transition remain rejected. The selected next
+task is phase12-network-runtime-device-pump-closeout-20260620.

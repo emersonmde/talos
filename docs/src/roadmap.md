@@ -4285,6 +4285,24 @@ The post-review correction chain is:
     selected_next_task is null and planningNeeded=true because no later queued
     Phase 12.3 or Phase 12.4 task has complete objective dependencies,
     acceptance criteria, validation gates, and evidence requirements.
+243. Phase 12.3 network runtime device pump core: accepted in
+    'phase12-network-runtime-device-pump-core-20260620' with classification
+    'phase12-network-runtime-device-pump-core-accepted'. src/network.rs now
+    exposes NetworkRuntimeDevicePump, a host-only caller-driven runtime/service
+    boundary over NetworkDevice. It owns fixed-capacity local ARP and ping
+    operation state, receives one frame into caller-owned storage per pump call,
+    prioritizes local ARP/ICMP response generation, and offers non-reply frames
+    to one selected active NetworkPingOperationDescriptor. Tests cover no-frame,
+    nonlocal/no-reply, local ARP reply transmit, local ICMP echo reply
+    transmit, active ping ARP-to-ICMP advancement, echo-reply completion,
+    receive-buffer pressure, receive error, local and active transmit errors,
+    retry, timeout, terminal status observation, and responder-vs-active
+    ordering. Shell ping, public sockets, stable syscall ABI acceptance, socket
+    syscall ABI, live driver adapters, live packet I/O, hardware reachability,
+    SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1 retry,
+    Phase 12.4 socket expansion, and phase transition remain rejected.
+    selected_next_task is
+    'phase12-network-runtime-device-pump-closeout-20260620'.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -13771,6 +13789,17 @@ Milestone 12.3: IP Stack
   12.1 link-hardware retry, Phase 12.4 socket expansion, and phase transition
   remain rejected. selected_next_task is null and planningNeeded=true pending
   supervisor planning for the next bounded task.
+- The network runtime device pump core accepts a host-only caller-driven
+  NetworkDevice pump that owns fixed-capacity local ARP and ping-operation
+  state, receives exactly one frame into caller-owned storage, prioritizes
+  local ARP/ICMP responder traffic, and advances one selected active ping
+  descriptor through ARP resolution, ICMP transmit, echo-reply completion,
+  retry, timeout, and terminal status observation. Shell ping, public sockets,
+  stable syscall ABI acceptance, live driver adapters, live packet I/O,
+  hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication,
+  Phase 12.1 link-hardware retry, Phase 12.4 socket expansion, and phase
+  transition remain rejected. The next selected bounded task is the runtime
+  pump closeout.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

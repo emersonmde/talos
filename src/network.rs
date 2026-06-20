@@ -1263,6 +1263,21 @@ impl<const ARP_CAPACITY: usize, const PAYLOAD_CAPACITY: usize>
         )
     }
 
+    pub(crate) fn pump_received<D: NetworkDevice>(
+        &mut self,
+        device: &mut D,
+        received_frame: &[u8],
+        transmit_buffer: &mut [u8],
+    ) -> SinglePingTransactionPollResult {
+        poll_single_ping_transaction_received(
+            device,
+            &mut self.arp_cache,
+            &mut self.transaction,
+            received_frame,
+            transmit_buffer,
+        )
+    }
+
     pub(crate) fn retry_arp<D: NetworkDevice>(
         &mut self,
         device: &mut D,
@@ -1408,6 +1423,29 @@ impl<const ARP_CAPACITY: usize, const PAYLOAD_CAPACITY: usize>
     ) -> Result<UserspacePingOperationStep, crate::posix::PosixError> {
         let before_status = self.status();
         match self.service.pump(device, receive_buffer, transmit_buffer) {
+            SinglePingTransactionPollResult::NoTransaction => {
+                Err(crate::posix::PosixError::InvalidArgument)
+            }
+            SinglePingTransactionPollResult::PendingResult(result) => {
+                userspace_step_from_pending_poll_result(result)
+            }
+            SinglePingTransactionPollResult::InflightResult(result) => {
+                self.inflight_poll_step(before_status, result)
+            }
+        }
+    }
+
+    pub(crate) fn pump_received<D: NetworkDevice>(
+        &mut self,
+        device: &mut D,
+        received_frame: &[u8],
+        transmit_buffer: &mut [u8],
+    ) -> Result<UserspacePingOperationStep, crate::posix::PosixError> {
+        let before_status = self.status();
+        match self
+            .service
+            .pump_received(device, received_frame, transmit_buffer)
+        {
             SinglePingTransactionPollResult::NoTransaction => {
                 Err(crate::posix::PosixError::InvalidArgument)
             }
@@ -1584,6 +1622,17 @@ impl<const DESCRIPTOR_CAPACITY: usize, const ARP_CAPACITY: usize, const PAYLOAD_
     ) -> Result<UserspacePingOperationStep, crate::posix::PosixError> {
         self.operation_mut(descriptor)?
             .pump(device, receive_buffer, transmit_buffer)
+    }
+
+    pub(crate) fn pump_received<D: NetworkDevice>(
+        &mut self,
+        descriptor: NetworkPingOperationDescriptor,
+        device: &mut D,
+        received_frame: &[u8],
+        transmit_buffer: &mut [u8],
+    ) -> Result<UserspacePingOperationStep, crate::posix::PosixError> {
+        self.operation_mut(descriptor)?
+            .pump_received(device, received_frame, transmit_buffer)
     }
 
     pub(crate) fn retry_arp<D: NetworkDevice>(
@@ -2301,6 +2350,212 @@ pub(crate) enum InflightIcmpEchoPollResult {
     ObservationResult(InflightIcmpEchoResult),
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum NetworkRuntimeDevicePumpStepResult {
+    NoFrame,
+    ReceiveBufferTooSmall,
+    ReceiveError(DeviceError),
+    LocalNoReply,
+    LocalDispatchError(PacketError),
+    LocalTransmitError(DeviceError),
+    LocalReply(PacketDispatchResult),
+    ActivePingStep {
+        descriptor: NetworkPingOperationDescriptor,
+        step: UserspacePingOperationStep,
+    },
+    ActivePingError {
+        descriptor: NetworkPingOperationDescriptor,
+        error: crate::posix::PosixError,
+    },
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct NetworkRuntimeDevicePump<
+    const LOCAL_ARP_CAPACITY: usize,
+    const DESCRIPTOR_CAPACITY: usize,
+    const OPERATION_ARP_CAPACITY: usize,
+    const PAYLOAD_CAPACITY: usize,
+> {
+    endpoint: LocalNetworkEndpoint,
+    local_arp_cache: ArpCache<LOCAL_ARP_CAPACITY>,
+    ping_operations: NetworkPingOperationDescriptorTable<
+        DESCRIPTOR_CAPACITY,
+        OPERATION_ARP_CAPACITY,
+        PAYLOAD_CAPACITY,
+    >,
+}
+
+impl<
+    const LOCAL_ARP_CAPACITY: usize,
+    const DESCRIPTOR_CAPACITY: usize,
+    const OPERATION_ARP_CAPACITY: usize,
+    const PAYLOAD_CAPACITY: usize,
+>
+    NetworkRuntimeDevicePump<
+        LOCAL_ARP_CAPACITY,
+        DESCRIPTOR_CAPACITY,
+        OPERATION_ARP_CAPACITY,
+        PAYLOAD_CAPACITY,
+    >
+{
+    pub(crate) const fn new(endpoint: LocalNetworkEndpoint) -> Self {
+        Self {
+            endpoint,
+            local_arp_cache: ArpCache::new(),
+            ping_operations: NetworkPingOperationDescriptorTable::new(),
+        }
+    }
+
+    pub(crate) const fn with_local_arp_cache(
+        endpoint: LocalNetworkEndpoint,
+        local_arp_cache: ArpCache<LOCAL_ARP_CAPACITY>,
+    ) -> Self {
+        Self {
+            endpoint,
+            local_arp_cache,
+            ping_operations: NetworkPingOperationDescriptorTable::new(),
+        }
+    }
+
+    pub(crate) const fn local_arp_cache(&self) -> &ArpCache<LOCAL_ARP_CAPACITY> {
+        &self.local_arp_cache
+    }
+
+    pub(crate) const fn ping_operations(
+        &self,
+    ) -> &NetworkPingOperationDescriptorTable<
+        DESCRIPTOR_CAPACITY,
+        OPERATION_ARP_CAPACITY,
+        PAYLOAD_CAPACITY,
+    > {
+        &self.ping_operations
+    }
+
+    pub(crate) fn open_ping_operation(
+        &mut self,
+    ) -> Result<NetworkPingOperationDescriptor, crate::posix::PosixError> {
+        self.ping_operations.open()
+    }
+
+    pub(crate) fn close_ping_operation(
+        &mut self,
+        descriptor: NetworkPingOperationDescriptor,
+    ) -> Result<(), crate::posix::PosixError> {
+        self.ping_operations.close(descriptor)
+    }
+
+    pub(crate) fn ping_status(
+        &self,
+        descriptor: NetworkPingOperationDescriptor,
+    ) -> Result<UserspacePingOperationStatus, crate::posix::PosixError> {
+        self.ping_operations.status(descriptor)
+    }
+
+    pub(crate) fn start_ping<D: NetworkDevice>(
+        &mut self,
+        descriptor: NetworkPingOperationDescriptor,
+        device: &mut D,
+        route_policy: Ipv4EgressRoutePolicy,
+        destination_ipv4: [u8; 4],
+        identifier: u16,
+        sequence_number: u16,
+        ttl: u8,
+        payload: &[u8],
+        transmit_buffer: &mut [u8],
+        arp_retry_budget: usize,
+    ) -> Result<UserspacePingOperationStep, crate::posix::PosixError> {
+        self.ping_operations.start(
+            descriptor,
+            device,
+            self.endpoint,
+            route_policy,
+            destination_ipv4,
+            identifier,
+            sequence_number,
+            ttl,
+            payload,
+            transmit_buffer,
+            arp_retry_budget,
+        )
+    }
+
+    pub(crate) fn retry_ping_arp<D: NetworkDevice>(
+        &mut self,
+        descriptor: NetworkPingOperationDescriptor,
+        device: &mut D,
+        transmit_buffer: &mut [u8],
+    ) -> Result<UserspacePingOperationStep, crate::posix::PosixError> {
+        self.ping_operations
+            .retry_arp(descriptor, device, transmit_buffer)
+    }
+
+    pub(crate) fn timeout_ping(
+        &mut self,
+        descriptor: NetworkPingOperationDescriptor,
+    ) -> Result<UserspacePingOperationStep, crate::posix::PosixError> {
+        self.ping_operations.timeout(descriptor)
+    }
+
+    pub(crate) fn pump<D: NetworkDevice>(
+        &mut self,
+        device: &mut D,
+        active_ping: Option<NetworkPingOperationDescriptor>,
+        receive_buffer: &mut [u8],
+        transmit_buffer: &mut [u8],
+    ) -> NetworkRuntimeDevicePumpStepResult {
+        let received = match device.receive_frame(receive_buffer) {
+            Ok(frame) => frame,
+            Err(DeviceError::WouldBlock) => return NetworkRuntimeDevicePumpStepResult::NoFrame,
+            Err(DeviceError::BufferTooSmall) => {
+                return NetworkRuntimeDevicePumpStepResult::ReceiveBufferTooSmall;
+            }
+            Err(error) => return NetworkRuntimeDevicePumpStepResult::ReceiveError(error),
+        };
+
+        match dispatch_local_packet_with_arp_cache(
+            received,
+            self.endpoint,
+            &mut self.local_arp_cache,
+            transmit_buffer,
+        ) {
+            Ok(reply) => {
+                let frame_len = reply.frame_len();
+                match device.transmit_frame(&transmit_buffer[..frame_len]) {
+                    Ok(()) => NetworkRuntimeDevicePumpStepResult::LocalReply(reply),
+                    Err(error) => NetworkRuntimeDevicePumpStepResult::LocalTransmitError(error),
+                }
+            }
+            Err(error) if network_runtime_may_offer_to_active_ping(error) => {
+                self.pump_active_ping_received(active_ping, device, received, transmit_buffer)
+            }
+            Err(error) => NetworkRuntimeDevicePumpStepResult::LocalDispatchError(error),
+        }
+    }
+
+    fn pump_active_ping_received<D: NetworkDevice>(
+        &mut self,
+        active_ping: Option<NetworkPingOperationDescriptor>,
+        device: &mut D,
+        received_frame: &[u8],
+        transmit_buffer: &mut [u8],
+    ) -> NetworkRuntimeDevicePumpStepResult {
+        let descriptor = match active_ping {
+            Some(descriptor) => descriptor,
+            None => return NetworkRuntimeDevicePumpStepResult::LocalNoReply,
+        };
+
+        match self.ping_operations.pump_received(
+            descriptor,
+            device,
+            received_frame,
+            transmit_buffer,
+        ) {
+            Ok(step) => NetworkRuntimeDevicePumpStepResult::ActivePingStep { descriptor, step },
+            Err(error) => NetworkRuntimeDevicePumpStepResult::ActivePingError { descriptor, error },
+        }
+    }
+}
+
 pub(crate) fn poll_local_network_device<D: NetworkDevice>(
     device: &mut D,
     endpoint: LocalNetworkEndpoint,
@@ -2574,6 +2829,10 @@ pub(crate) fn poll_single_ping_transaction<
     receive_buffer: &mut [u8],
     transmit_buffer: &mut [u8],
 ) -> SinglePingTransactionPollResult {
+    if transaction.pending().is_none() && transaction.inflight().is_none() {
+        return SinglePingTransactionPollResult::NoTransaction;
+    }
+
     if let Some(request) = transaction.pending() {
         if transaction.inflight().is_some() {
             return SinglePingTransactionPollResult::InflightResult(
@@ -2584,13 +2843,80 @@ pub(crate) fn poll_single_ping_transaction<
                 ),
             );
         }
+    }
 
-        let result = poll_pending_arp_reply_and_transmit_single_pending_ipv4_icmp_echo_request(
-            device,
-            arp_cache,
-            &mut transaction.pending,
-            receive_buffer,
-            transmit_buffer,
+    let received = match device.receive_frame(receive_buffer) {
+        Ok(frame) => frame,
+        Err(DeviceError::WouldBlock) => {
+            return match transaction.status() {
+                SinglePingTransactionStatus::PendingArp { .. } => {
+                    SinglePingTransactionPollResult::PendingResult(
+                        PendingIcmpEchoPollResult::NoFrame,
+                    )
+                }
+                SinglePingTransactionStatus::Inflight { .. } => {
+                    SinglePingTransactionPollResult::InflightResult(
+                        InflightIcmpEchoPollResult::NoFrame,
+                    )
+                }
+                SinglePingTransactionStatus::Idle => SinglePingTransactionPollResult::NoTransaction,
+            };
+        }
+        Err(DeviceError::BufferTooSmall) => {
+            return match transaction.status() {
+                SinglePingTransactionStatus::PendingArp { .. } => {
+                    SinglePingTransactionPollResult::PendingResult(
+                        PendingIcmpEchoPollResult::ReceiveBufferTooSmall,
+                    )
+                }
+                SinglePingTransactionStatus::Inflight { .. } => {
+                    SinglePingTransactionPollResult::InflightResult(
+                        InflightIcmpEchoPollResult::ReceiveBufferTooSmall,
+                    )
+                }
+                SinglePingTransactionStatus::Idle => SinglePingTransactionPollResult::NoTransaction,
+            };
+        }
+        Err(error) => {
+            return match transaction.status() {
+                SinglePingTransactionStatus::PendingArp { .. } => {
+                    SinglePingTransactionPollResult::PendingResult(
+                        PendingIcmpEchoPollResult::ReceiveError(error),
+                    )
+                }
+                SinglePingTransactionStatus::Inflight { .. } => {
+                    SinglePingTransactionPollResult::InflightResult(
+                        InflightIcmpEchoPollResult::ReceiveError(error),
+                    )
+                }
+                SinglePingTransactionStatus::Idle => SinglePingTransactionPollResult::NoTransaction,
+            };
+        }
+    };
+
+    poll_single_ping_transaction_received(device, arp_cache, transaction, received, transmit_buffer)
+}
+
+pub(crate) fn poll_single_ping_transaction_received<
+    D: NetworkDevice,
+    const ARP_CAPACITY: usize,
+    const PAYLOAD_CAPACITY: usize,
+>(
+    device: &mut D,
+    arp_cache: &mut ArpCache<ARP_CAPACITY>,
+    transaction: &mut SinglePingTransaction<PAYLOAD_CAPACITY>,
+    received_frame: &[u8],
+    transmit_buffer: &mut [u8],
+) -> SinglePingTransactionPollResult {
+    if let Some(request) = transaction.pending() {
+        let result = PendingIcmpEchoPollResult::PendingResult(
+            learn_arp_reply_and_transmit_single_pending_ipv4_icmp_echo_request(
+                device,
+                arp_cache,
+                &mut transaction.pending,
+                received_frame,
+                transmit_buffer,
+            ),
         );
         if let PendingIcmpEchoPollResult::PendingResult(
             PendingIcmpEchoResult::IcmpEchoRequestTransmitted { .. },
@@ -2621,10 +2947,11 @@ pub(crate) fn poll_single_ping_transaction<
 
     if transaction.inflight().is_some() {
         return SinglePingTransactionPollResult::InflightResult(
-            poll_single_inflight_ipv4_icmp_echo_reply(
-                device,
-                &mut transaction.inflight,
-                receive_buffer,
+            InflightIcmpEchoPollResult::ObservationResult(
+                observe_single_inflight_ipv4_icmp_echo_reply(
+                    &mut transaction.inflight,
+                    received_frame,
+                ),
             ),
         );
     }
@@ -2952,6 +3279,16 @@ fn write_ethernet_header(
     output[..ETHERNET_ADDR_LEN].copy_from_slice(&destination_mac.bytes());
     output[ETHERNET_ADDR_LEN..ETHERNET_ADDR_LEN * 2].copy_from_slice(&source_mac.bytes());
     write_be_u16(output, 12, ether_type.raw());
+}
+
+fn network_runtime_may_offer_to_active_ping(error: PacketError) -> bool {
+    matches!(
+        error,
+        PacketError::NotForLocalHost
+            | PacketError::UnsupportedArpOperation
+            | PacketError::InvalidIcmpEcho
+            | PacketError::InvalidIcmpChecksum
+    )
 }
 
 fn transmit_resolved_ipv4_icmp_echo_request<D: NetworkDevice, const ARP_CAPACITY: usize>(
@@ -8246,6 +8583,371 @@ mod tests {
             Some(MacAddress::new([0x02, 0, 0, 0, 0, 1]))
         );
         assert_eq!(device.transmitted_len, 0);
+    }
+
+    #[test_case]
+    fn network_runtime_device_pump_reports_no_frame_receive_pressure_and_receive_error() {
+        let mut runtime = NetworkRuntimeDevicePump::<2, 1, 2, 4>::new(local_endpoint());
+        let mut transmit_buffer = [0u8; 128];
+
+        assert_eq!(
+            runtime.pump(
+                &mut PollDevice::with_receive_error(DeviceError::WouldBlock),
+                None,
+                &mut [0u8; 128],
+                &mut transmit_buffer,
+            ),
+            NetworkRuntimeDevicePumpStepResult::NoFrame
+        );
+
+        assert_eq!(
+            runtime.pump(
+                &mut PollDevice::with_frame(&arp_request_frame()),
+                None,
+                &mut [0u8; ETHERNET_HEADER_LEN - 1],
+                &mut transmit_buffer,
+            ),
+            NetworkRuntimeDevicePumpStepResult::ReceiveBufferTooSmall
+        );
+
+        assert_eq!(
+            runtime.pump(
+                &mut PollDevice::with_receive_error(DeviceError::Io),
+                None,
+                &mut [0u8; 128],
+                &mut transmit_buffer,
+            ),
+            NetworkRuntimeDevicePumpStepResult::ReceiveError(DeviceError::Io)
+        );
+    }
+
+    #[test_case]
+    fn network_runtime_device_pump_reports_nonlocal_no_reply_without_active_operation() {
+        let mut seeded_cache = ArpCache::<2>::new();
+        assert_eq!(
+            seeded_cache.insert_or_update([192, 0, 2, 55], MacAddress::new([0x02, 0, 0, 0, 0, 55])),
+            ArpCacheUpdate::Inserted
+        );
+        let mut runtime = NetworkRuntimeDevicePump::<2, 1, 2, 4>::with_local_arp_cache(
+            local_endpoint(),
+            seeded_cache,
+        );
+        let mut nonlocal = icmp_echo_request_frame();
+        nonlocal[0..6].copy_from_slice(&[0x02, 0, 0, 0, 0, 88]);
+        let mut device = PollDevice::with_frame(&nonlocal);
+        let mut receive_buffer = [0u8; 128];
+        let mut transmit_buffer = [0u8; 128];
+
+        assert_eq!(
+            runtime.pump(&mut device, None, &mut receive_buffer, &mut transmit_buffer),
+            NetworkRuntimeDevicePumpStepResult::LocalNoReply
+        );
+        assert_eq!(device.transmitted_len, 0);
+        assert_eq!(
+            runtime.local_arp_cache().lookup([192, 0, 2, 55]),
+            Some(MacAddress::new([0x02, 0, 0, 0, 0, 55]))
+        );
+    }
+
+    #[test_case]
+    fn network_runtime_device_pump_transmits_local_arp_reply_from_caller_buffers() {
+        let mut runtime = NetworkRuntimeDevicePump::<2, 1, 2, 4>::new(local_endpoint());
+        let request = arp_request_frame();
+        let mut device = PollDevice::with_frame(&request);
+        let mut receive_buffer = [0u8; 128];
+        let mut transmit_buffer = [0u8; 128];
+
+        assert_eq!(
+            runtime.pump(&mut device, None, &mut receive_buffer, &mut transmit_buffer),
+            NetworkRuntimeDevicePumpStepResult::LocalReply(PacketDispatchResult {
+                reply_kind: PacketReplyKind::Arp,
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            })
+        );
+        assert_eq!(
+            device.transmitted_len,
+            ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN
+        );
+        let frame =
+            EthernetFrame::parse(&device.transmitted[..device.transmitted_len]).expect("arp reply");
+        assert_eq!(frame.destination(), MacAddress::new([0x02, 0, 0, 0, 0, 1]));
+        assert_eq!(frame.source(), local_endpoint().mac());
+        assert_eq!(frame.ether_type(), EtherType::Arp);
+        assert_eq!(
+            runtime.local_arp_cache().lookup([192, 0, 2, 10]),
+            Some(MacAddress::new([0x02, 0, 0, 0, 0, 1]))
+        );
+    }
+
+    #[test_case]
+    fn network_runtime_device_pump_transmits_local_icmp_echo_reply_from_caller_buffers() {
+        let mut runtime = NetworkRuntimeDevicePump::<2, 1, 2, 4>::new(local_endpoint());
+        let request = icmp_echo_request_frame();
+        let mut device = PollDevice::with_frame(&request);
+        let mut receive_buffer = [0u8; 128];
+        let mut transmit_buffer = [0u8; 128];
+
+        assert_eq!(
+            runtime.pump(&mut device, None, &mut receive_buffer, &mut transmit_buffer),
+            NetworkRuntimeDevicePumpStepResult::LocalReply(PacketDispatchResult {
+                reply_kind: PacketReplyKind::IcmpEcho,
+                frame_len: ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + 12,
+            })
+        );
+        assert_eq!(
+            device.transmitted_len,
+            ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + 12
+        );
+        let frame = EthernetFrame::parse(&device.transmitted[..device.transmitted_len])
+            .expect("icmp reply");
+        assert_eq!(frame.destination(), MacAddress::new([0x02, 0, 0, 0, 0, 1]));
+        assert_eq!(frame.source(), local_endpoint().mac());
+        assert_eq!(frame.ether_type(), EtherType::Ipv4);
+        assert_eq!(frame.payload()[IPV4_MIN_HEADER_LEN], 0);
+    }
+
+    #[test_case]
+    fn network_runtime_device_pump_advances_active_ping_from_arp_to_completed_status() {
+        let endpoint = local_endpoint();
+        let destination = [192, 0, 2, 20];
+        let payload = [1, 2, 3, 4];
+        let expected_icmp_len =
+            ETHERNET_HEADER_LEN + IPV4_MIN_HEADER_LEN + ICMP_ECHO_HEADER_LEN + payload.len();
+        let policy = Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None);
+        let mut runtime = NetworkRuntimeDevicePump::<2, 1, 2, 4>::new(endpoint);
+        let descriptor = runtime.open_ping_operation().expect("open ping op");
+        let mut transmit_buffer = [0u8; 128];
+        let mut receive_buffer = [0u8; 128];
+
+        assert_eq!(
+            runtime.start_ping(
+                descriptor,
+                &mut OutboundTransmitDevice::new(),
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &payload,
+                &mut transmit_buffer,
+                1,
+            ),
+            Ok(UserspacePingOperationStep::StartedPendingArp {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            })
+        );
+        assert_eq!(
+            runtime.ping_operations().status(descriptor),
+            Ok(UserspacePingOperationStatus::PendingArp {
+                destination_ipv4: destination,
+                next_hop_ipv4: destination,
+                arp_retries_remaining: 1,
+            })
+        );
+
+        let arp_reply = arp_reply_frame();
+        let mut arp_device = PollDevice::with_frame(&arp_reply);
+        assert_eq!(
+            runtime.pump(
+                &mut arp_device,
+                Some(descriptor),
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            NetworkRuntimeDevicePumpStepResult::ActivePingStep {
+                descriptor,
+                step: UserspacePingOperationStep::AdvancedToInflight {
+                    frame_len: expected_icmp_len,
+                },
+            }
+        );
+        assert_eq!(arp_device.receive_attempts, 1);
+        assert_eq!(arp_device.transmitted_len, expected_icmp_len);
+        assert_eq!(
+            runtime.ping_status(descriptor),
+            Ok(UserspacePingOperationStatus::Inflight {
+                destination_ipv4: destination,
+            })
+        );
+
+        let icmp_reply = icmp_echo_reply_frame();
+        let mut reply_device = PollDevice::with_frame(&icmp_reply);
+        assert_eq!(
+            runtime.pump(
+                &mut reply_device,
+                Some(descriptor),
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            NetworkRuntimeDevicePumpStepResult::ActivePingStep {
+                descriptor,
+                step: UserspacePingOperationStep::Completed {
+                    payload_len: payload.len(),
+                },
+            }
+        );
+        assert_eq!(
+            runtime.ping_status(descriptor),
+            Ok(UserspacePingOperationStatus::Completed {
+                destination_ipv4: destination,
+                payload_len: payload.len(),
+            })
+        );
+        assert_eq!(runtime.close_ping_operation(descriptor), Ok(()));
+    }
+
+    #[test_case]
+    fn network_runtime_device_pump_preserves_retry_timeout_and_terminal_observation() {
+        let destination = [192, 0, 2, 20];
+        let policy = Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None);
+        let mut runtime = NetworkRuntimeDevicePump::<2, 1, 2, 4>::new(local_endpoint());
+        let descriptor = runtime.open_ping_operation().expect("open ping op");
+        let mut transmit_buffer = [0u8; 128];
+
+        assert_eq!(
+            runtime.start_ping(
+                descriptor,
+                &mut OutboundTransmitDevice::new(),
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &[1, 2, 3, 4],
+                &mut transmit_buffer,
+                1,
+            ),
+            Ok(UserspacePingOperationStep::StartedPendingArp {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            })
+        );
+        assert_eq!(
+            runtime.retry_ping_arp(
+                descriptor,
+                &mut OutboundTransmitDevice::new(),
+                &mut transmit_buffer,
+            ),
+            Ok(UserspacePingOperationStep::RetryTransmitted {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            })
+        );
+        assert_eq!(
+            runtime.retry_ping_arp(
+                descriptor,
+                &mut OutboundTransmitDevice::new(),
+                &mut transmit_buffer,
+            ),
+            Err(crate::posix::PosixError::Again)
+        );
+        assert_eq!(
+            runtime.timeout_ping(descriptor),
+            Ok(UserspacePingOperationStep::TimedOut {
+                destination_ipv4: destination,
+            })
+        );
+        assert_eq!(
+            runtime.ping_status(descriptor),
+            Ok(UserspacePingOperationStatus::TimedOut {
+                destination_ipv4: destination,
+            })
+        );
+    }
+
+    #[test_case]
+    fn network_runtime_device_pump_reports_local_and_active_transmit_errors() {
+        let mut runtime = NetworkRuntimeDevicePump::<2, 1, 2, 4>::new(local_endpoint());
+        let mut receive_buffer = [0u8; 128];
+        let mut transmit_buffer = [0u8; 128];
+
+        assert_eq!(
+            runtime.pump(
+                &mut PollDevice::with_transmit_error(&arp_request_frame(), DeviceError::Io),
+                None,
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            NetworkRuntimeDevicePumpStepResult::LocalTransmitError(DeviceError::Io)
+        );
+
+        let descriptor = runtime.open_ping_operation().expect("open ping op");
+        assert_eq!(
+            runtime.start_ping(
+                descriptor,
+                &mut OutboundTransmitDevice::new(),
+                Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None),
+                [192, 0, 2, 20],
+                0x1234,
+                7,
+                61,
+                &[1, 2, 3, 4],
+                &mut transmit_buffer,
+                0,
+            ),
+            Ok(UserspacePingOperationStep::StartedPendingArp {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            })
+        );
+        assert_eq!(
+            runtime.pump(
+                &mut PollDevice::with_transmit_error(&arp_reply_frame(), DeviceError::Io),
+                Some(descriptor),
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            NetworkRuntimeDevicePumpStepResult::ActivePingError {
+                descriptor,
+                error: crate::posix::PosixError::Io,
+            }
+        );
+    }
+
+    #[test_case]
+    fn network_runtime_device_pump_prioritizes_local_reply_over_active_operation() {
+        let destination = [192, 0, 2, 20];
+        let policy = Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None);
+        let mut runtime = NetworkRuntimeDevicePump::<2, 1, 2, 4>::new(local_endpoint());
+        let descriptor = runtime.open_ping_operation().expect("open ping op");
+        let mut receive_buffer = [0u8; 128];
+        let mut transmit_buffer = [0u8; 128];
+
+        assert_eq!(
+            runtime.start_ping(
+                descriptor,
+                &mut OutboundTransmitDevice::new(),
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &[1, 2, 3, 4],
+                &mut transmit_buffer,
+                1,
+            ),
+            Ok(UserspacePingOperationStep::StartedPendingArp {
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            })
+        );
+
+        assert_eq!(
+            runtime.pump(
+                &mut PollDevice::with_frame(&arp_request_frame()),
+                Some(descriptor),
+                &mut receive_buffer,
+                &mut transmit_buffer,
+            ),
+            NetworkRuntimeDevicePumpStepResult::LocalReply(PacketDispatchResult {
+                reply_kind: PacketReplyKind::Arp,
+                frame_len: ETHERNET_HEADER_LEN + ARP_ETHERNET_IPV4_LEN,
+            })
+        );
+        assert_eq!(
+            runtime.ping_status(descriptor),
+            Ok(UserspacePingOperationStatus::PendingArp {
+                destination_ipv4: destination,
+                next_hop_ipv4: destination,
+                arp_retries_remaining: 1,
+            })
+        );
     }
 
     const fn local_endpoint() -> LocalNetworkEndpoint {
