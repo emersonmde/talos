@@ -14709,6 +14709,25 @@ Milestone 12.3: IP Stack
   publication, broad shell or socket expansion, Phase 12.1 hardware retry, and
   phase transition remain rejected. The selected next bounded task is
   phase12-network-shell-pingdiag-smoke-closeout-20260620.
+- The shell-visible ping diagnostic smoke closeout accepts the retained
+  host/QEMU-substitute smoke frontier after source/task/evidence/doc
+  reconciliation. The accepted evidence level remains shell-visible
+  VFS/userspace diagnostic execution through VFS executable lookup, VFS
+  open/read execution, startup ABI, diagnostic SVC user-argument decoding,
+  process-local descriptor ownership, UserMapping copy-in/copy-out,
+  fixed-capacity packet queues, PacketQueueNetworkDevice::pump_driver,
+  caller-owned buffers, task-owned state, status/result copy-out, close,
+  waitpid, laststatus, and unchanged syscall vocabulary. The retained
+  transcript covers successful ARP/ICMP progression plus malformed arguments,
+  missing VFS executable identity, owner/descriptor failures, invalid and
+  closed descriptors, process descriptor capacity, queue capacity/backpressure,
+  caller buffer pressure, malformed received frames, timeout/retry, transmit and
+  receive device errors, and close/drop behavior. Kernel fake commands, public
+  sockets, stable/socket ABI acceptance, live driver adapters, live packet I/O,
+  hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication,
+  broad shell or socket expansion, Phase 12.1 hardware retry, and phase
+  transition remain rejected. selected_next_task is null and planningNeeded=true
+  pending supervisor planning for the next bounded task.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

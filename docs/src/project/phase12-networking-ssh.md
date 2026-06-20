@@ -4669,3 +4669,26 @@ driver adapters, live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP,
 lab mutation, boot publication, Phase 12.1 hardware retry, broad shell
 expansion, broad socket expansion, or a phase transition. The selected next
 bounded task is phase12-network-shell-pingdiag-smoke-closeout-20260620.
+
+phase12-network-shell-pingdiag-smoke-closeout-20260620 accepts
+phase12-network-shell-pingdiag-smoke-closeout-accepted. The closeout reconciles
+the retained smoke transcript, task evidence, source anchors, docs, durable
+state, accepted claims, and rejected claims before supervisor planning selects
+any later public socket, live packet I/O, SSH, hardware retry, or
+phase-transition work.
+
+The accepted evidence level remains host/QEMU-substitute smoke over
+shell-visible VFS/userspace diagnostic execution, VFS executable lookup, VFS
+open/read execution, startup ABI, diagnostic SVC user-argument decoding,
+process-local descriptor ownership, UserMapping copy-in/copy-out,
+fixed-capacity packet queues, `PacketQueueNetworkDevice::pump_driver`,
+caller-owned buffers, task-owned state, completed status/result copy-out,
+close/drop behavior, `waitpid`, `laststatus`, and unchanged
+SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_* vocabulary. Kernel fake commands,
+public sockets, stable/socket ABI acceptance, live driver adapters, live packet
+I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot
+publication, broad shell expansion, broad socket expansion, Phase 12.1 hardware
+retry, and phase transition remain rejected. No later bounded task is
+mechanically unblocked; supervisor planning is required before public sockets,
+live driver packet I/O, SSH, Phase 12.1 hardware retry, broad socket expansion,
+or a phase transition.
