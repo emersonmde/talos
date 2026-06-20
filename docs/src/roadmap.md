@@ -4363,6 +4363,31 @@ The post-review correction chain is:
     planningNeeded=true because no later queued Phase 12.3 or Phase 12.4 task
     has complete objective dependencies, acceptance criteria, validation gates,
     and evidence requirements.
+247. Phase 12.3 network runtime ping syscall substitute smoke core: accepted
+    in
+    'phase12-network-runtime-ping-syscall-substitute-smoke-core-20260620' with
+    classification
+    'phase12-network-runtime-ping-syscall-substitute-smoke-core-accepted'. The
+    retained host/QEMU-substitute smoke command is
+    scripts/qemu-runtime-ping-syscall-substitute-smoke.sh, with transcript
+    evidence under
+    tasks/evidence/2026-06-20-runtime-ping-syscall-substitute-smoke/. The
+    smoke evidence covers the accepted RuntimePingOperationSyscallSubstitute
+    boundary over NetworkRuntimeDevicePump, local ARP/ICMP responder behavior,
+    active ping descriptor dispatch, UserspacePingOperation,
+    SinglePingPacketService, fake/trait-level NetworkDevice behavior,
+    caller-owned receive/transmit/status buffers, and fixed-capacity state. It
+    covers open/start/status, unresolved ARP, runtime-pump ARP advancement to
+    ICMP transmit, inflight status, runtime-pump echo-reply completion,
+    terminal completed status, close, local ARP and ICMP reply dispatch while a
+    descriptor is open, retry exhaustion, explicit timeout, invalid descriptor,
+    closed descriptor, zero-capacity, busy-open, receive IO error, local
+    transmit IO error, and active-ping transmit IO error. Shell ping, public
+    sockets, stable syscall ABI acceptance, socket syscall ABI, live driver
+    adapters, live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP,
+    lab mutation, boot publication, Phase 12.1 retry, Phase 12.4 socket
+    expansion, and phase transition remain rejected. selected_next_task is
+    'phase12-network-runtime-ping-syscall-substitute-smoke-closeout-20260620'.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -13908,6 +13933,23 @@ Milestone 12.3: IP Stack
   link-hardware retry, Phase 12.4 socket expansion, and phase transition
   remain rejected. The next selected bounded task is the runtime ping
   syscall-substitute smoke core.
+- The runtime ping syscall-substitute smoke core accepts the retained
+  host/QEMU-substitute transcript for RuntimePingOperationSyscallSubstitute
+  over NetworkRuntimeDevicePump, local ARP/ICMP responder behavior, active ping
+  descriptor dispatch, UserspacePingOperation, SinglePingPacketService,
+  fake/trait-level NetworkDevice behavior, caller-owned buffers, and
+  fixed-capacity state. The smoke covers open/start/status, unresolved ARP,
+  runtime-pump ARP advancement to ICMP transmit, inflight status,
+  runtime-pump echo-reply completion, terminal completed status, close, local
+  ARP and ICMP reply dispatch while a descriptor is open, retry exhaustion,
+  explicit timeout, invalid descriptor, closed descriptor, zero-capacity,
+  busy-open, receive IO error, local transmit IO error, and active-ping
+  transmit IO error. Shell ping, public sockets, stable syscall ABI
+  acceptance, live driver adapters, live packet I/O, hardware reachability,
+  SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1
+  link-hardware retry, Phase 12.4 socket expansion, and phase transition
+  remain rejected. The next selected bounded task is the runtime ping
+  syscall-substitute smoke closeout.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

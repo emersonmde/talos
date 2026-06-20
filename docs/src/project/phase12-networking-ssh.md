@@ -3686,3 +3686,26 @@ reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1
 link-hardware retry, Phase 12.4 socket expansion, or phase transition. The
 selected next task is
 phase12-network-runtime-ping-syscall-substitute-smoke-core-20260620.
+
+phase12-network-runtime-ping-syscall-substitute-smoke-core-20260620 accepts
+phase12-network-runtime-ping-syscall-substitute-smoke-core-accepted. The
+retained host/QEMU-substitute smoke command is
+scripts/qemu-runtime-ping-syscall-substitute-smoke.sh, with transcript evidence
+under tasks/evidence/2026-06-20-runtime-ping-syscall-substitute-smoke/. The
+smoke exercises the accepted RuntimePingOperationSyscallSubstitute boundary
+over NetworkRuntimeDevicePump, local ARP/ICMP responder behavior, active ping
+descriptor dispatch, UserspacePingOperation, SinglePingPacketService,
+fake/trait-level NetworkDevice behavior, caller-owned buffers, and
+fixed-capacity state.
+
+The accepted smoke evidence covers open/start/status, unresolved ARP,
+runtime-pump ARP advancement to ICMP transmit, inflight status, runtime-pump
+echo-reply completion, terminal completed status, close, local ARP and ICMP
+reply dispatch while a descriptor is open, retry exhaustion, explicit timeout,
+invalid descriptor, closed descriptor, zero-capacity, busy-open, receive IO
+error, local transmit IO error, and active-ping transmit IO error. Shell ping,
+public sockets, stable syscall ABI acceptance, socket syscall ABI, live driver
+adapters, live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab
+mutation, boot publication, Phase 12.1 link-hardware retry, Phase 12.4 socket
+expansion, and phase transition remain rejected. The selected next task is
+phase12-network-runtime-ping-syscall-substitute-smoke-closeout-20260620.
