@@ -3807,3 +3807,27 @@ live driver adapters, live packet I/O, hardware reachability, SSH, smoltcp,
 UDP/TCP, lab mutation, boot publication, Phase 12.1 link-hardware retry, broad
 Phase 12.4 socket expansion, and phase transition remain rejected. The selected
 next task is phase12-network-descriptor-shaped-ping-control-smoke-20260620.
+
+phase12-network-descriptor-shaped-ping-control-smoke-20260620 accepts
+phase12-network-descriptor-shaped-ping-control-smoke-accepted. The retained
+host/QEMU-substitute smoke command is
+scripts/qemu-descriptor-shaped-ping-control-smoke.sh, with transcript evidence
+under tasks/evidence/2026-06-20-descriptor-shaped-ping-control-smoke/. The
+smoke exercises DescriptorShapedPingControl over
+RuntimePingOperationSyscallSubstitute, NetworkRuntimeDevicePump, local
+ARP/ICMP responder behavior, active ping descriptor dispatch,
+UserspacePingOperation, SinglePingPacketService, fake/trait-level
+NetworkDevice behavior, caller-owned buffers, and fixed-capacity state.
+
+The accepted smoke evidence covers open/start/status, unresolved ARP,
+runtime-pump ARP advancement to inflight, runtime-pump echo-reply completion,
+terminal completed status, close, invalid and closed descriptors, zero
+descriptor capacity, duplicate active open, caller receive-buffer pressure,
+retry exhaustion, explicit timeout, receive IO error, local transmit IO error,
+and active-ping transmit IO error. Shell ping, public sockets, stable syscall
+ABI acceptance, socket syscall ABI acceptance, live driver adapters, live
+packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot
+publication, Phase 12.1 link-hardware retry, broad Phase 12.4 socket
+expansion, and phase transition remain rejected. selected_next_task is null and
+planningNeeded=true because no later queued Phase 12.4 task has complete
+explicit acceptance gates.
