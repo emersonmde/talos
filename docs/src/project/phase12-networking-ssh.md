@@ -3321,3 +3321,22 @@ live packet I/O, hardware reachability, UDP/TCP, smoltcp, SSH, autonomous
 timers, broad queues, lab mutation, boot publication, Phase 12.1
 link-hardware retry, or phase transition. The selected next task is
 phase12-network-userspace-ping-operation-contract-closeout-20260619.
+
+phase12-network-userspace-ping-operation-contract-closeout-20260619 accepts
+phase12-network-userspace-ping-operation-contract-closeout-accepted. The
+closeout reconciles the accepted UserspacePingOperation core, source/unit
+evidence, task record, and docs. The exact accepted boundary is a host-only
+local operation over SinglePingPacketService, caller-owned buffers, and
+fake/trait-level NetworkDevice behavior. It exposes start, pump, status,
+retry, timeout, duplicate/active busy, retry exhaustion, and receive/transmit
+error mapping outcomes through the accepted POSIX error vocabulary.
+
+The boundary remains unbound to a real descriptor object or syscall ABI
+because no accepted network descriptor/syscall contract exists yet. Shell ping,
+public sockets, live driver adapters, live packet I/O, hardware reachability,
+SSH, smoltcp, UDP/TCP, autonomous timers, broad queues, lab mutation, boot
+publication, Phase 12.1 link-hardware retry, and phase transition remain
+rejected. The selected next task is
+phase12-network-userspace-ping-operation-substitute-smoke-core-20260619, which
+must retain host-only substitute evidence before later user-visible or live I/O
+work is considered.

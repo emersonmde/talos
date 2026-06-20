@@ -4123,6 +4123,21 @@ The post-review correction chain is:
     Phase 12.1 link-hardware retry, and phase transition remain rejected.
     selected_next_task is
     'phase12-network-userspace-ping-operation-contract-closeout-20260619'.
+234. Phase 12.3 userspace ping operation contract closeout: accepted in
+    'phase12-network-userspace-ping-operation-contract-closeout-20260619'
+    with classification
+    'phase12-network-userspace-ping-operation-contract-closeout-accepted'.
+    The closeout reconciles the accepted UserspacePingOperation source/unit
+    evidence, task record, and docs. The accepted boundary remains host-only:
+    one local operation over SinglePingPacketService, caller-owned buffers,
+    and fake/trait-level NetworkDevice behavior, with start/pump/status,
+    retry, timeout, duplicate/active busy, retry exhaustion, and IO error
+    mapping outcomes. It is not yet bound to a real descriptor object or
+    syscall ABI. Shell ping, public sockets, live driver adapters, live packet
+    I/O, hardware reachability, SSH, smoltcp, UDP/TCP, autonomous timers,
+    broad queues, lab mutation, boot publication, Phase 12.1 link-hardware
+    retry, and phase transition remain rejected. selected_next_task is
+    'phase12-network-userspace-ping-operation-substitute-smoke-core-20260619'.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -13508,6 +13523,12 @@ Milestone 12.3: IP Stack
   exposes start/pump/status/retry/timeout outcomes and POSIX error mapping for
   fake/trait-level NetworkDevice behavior without accepting shell ping, public
   sockets, live packet I/O, hardware reachability, SSH, or phase transition.
+- The userspace ping operation contract closeout reconciles that boundary as
+  host-only source/unit-test evidence, still unbound to a real descriptor
+  object or syscall ABI. The next selected bounded task is host-only
+  substitute evidence for one complete operation through fake NetworkDevice
+  behavior; shell ping, sockets, live driver adapters, hardware reachability,
+  SSH, and phase transition remain rejected.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
