@@ -1447,6 +1447,156 @@ impl<
     }
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum ProcessLocalPingDispatchOperation<'a> {
+    Open,
+    Start {
+        process_descriptor: usize,
+        route_policy: crate::network::Ipv4EgressRoutePolicy,
+        destination_ipv4: [u8; 4],
+        identifier: u16,
+        sequence_number: u16,
+        ttl: u8,
+        payload: &'a [u8],
+        arp_retry_budget: usize,
+    },
+    PumpOrReadResult {
+        process_descriptor: usize,
+    },
+    Status {
+        process_descriptor: usize,
+    },
+    RetryArp {
+        process_descriptor: usize,
+    },
+    Timeout {
+        process_descriptor: usize,
+    },
+    Close {
+        process_descriptor: usize,
+    },
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum ProcessLocalPingDispatchOutcome {
+    Opened { process_descriptor: usize },
+    Started,
+    PumpedOrReadResult,
+    Status,
+    RetriedArp,
+    TimedOut,
+    Closed,
+}
+
+pub(crate) struct ProcessLocalPingDispatchOutputs<'a> {
+    step: &'a mut PingOperationSyscallSubstituteStep,
+    pump_step: &'a mut RuntimePingOperationSyscallSubstitutePumpStep,
+    status: &'a mut PingOperationSyscallSubstituteStatus,
+}
+
+impl<'a> ProcessLocalPingDispatchOutputs<'a> {
+    pub(crate) fn new(
+        step: &'a mut PingOperationSyscallSubstituteStep,
+        pump_step: &'a mut RuntimePingOperationSyscallSubstitutePumpStep,
+        status: &'a mut PingOperationSyscallSubstituteStatus,
+    ) -> Self {
+        Self {
+            step,
+            pump_step,
+            status,
+        }
+    }
+}
+
+pub(crate) fn dispatch_process_local_ping_descriptor_operation<
+    const OWNER_CAPACITY: usize,
+    const PROCESS_DESCRIPTOR_CAPACITY: usize,
+    const LOCAL_ARP_CAPACITY: usize,
+    const PING_DESCRIPTOR_CAPACITY: usize,
+    const OPERATION_ARP_CAPACITY: usize,
+    const PAYLOAD_CAPACITY: usize,
+    D,
+>(
+    operation: ProcessLocalPingDispatchOperation<'_>,
+    current_owner: Option<crate::scheduler::ProcessOwnerId>,
+    descriptor_store: &mut crate::posix::ProcessDescriptorStore<
+        OWNER_CAPACITY,
+        PROCESS_DESCRIPTOR_CAPACITY,
+    >,
+    runtime_pump: &mut crate::network::NetworkRuntimeDevicePump<
+        LOCAL_ARP_CAPACITY,
+        PING_DESCRIPTOR_CAPACITY,
+        OPERATION_ARP_CAPACITY,
+        PAYLOAD_CAPACITY,
+    >,
+    receive_buffer: &mut [u8],
+    transmit_buffer: &mut [u8],
+    device: &mut D,
+    outputs: &mut ProcessLocalPingDispatchOutputs<'_>,
+) -> Result<ProcessLocalPingDispatchOutcome, PosixError>
+where
+    D: crate::network::NetworkDevice,
+{
+    let mut control = ProcessLocalPingDescriptorControl::new(
+        current_owner,
+        descriptor_store,
+        runtime_pump,
+        receive_buffer,
+        transmit_buffer,
+    );
+
+    match operation {
+        ProcessLocalPingDispatchOperation::Open => {
+            control.open().map(
+                |process_descriptor| ProcessLocalPingDispatchOutcome::Opened { process_descriptor },
+            )
+        }
+        ProcessLocalPingDispatchOperation::Start {
+            process_descriptor,
+            route_policy,
+            destination_ipv4,
+            identifier,
+            sequence_number,
+            ttl,
+            payload,
+            arp_retry_budget,
+        } => {
+            *outputs.step = control.start(
+                process_descriptor,
+                device,
+                route_policy,
+                destination_ipv4,
+                identifier,
+                sequence_number,
+                ttl,
+                payload,
+                arp_retry_budget,
+            )?;
+            Ok(ProcessLocalPingDispatchOutcome::Started)
+        }
+        ProcessLocalPingDispatchOperation::PumpOrReadResult { process_descriptor } => {
+            *outputs.pump_step = control.pump_or_read_result(process_descriptor, device)?;
+            Ok(ProcessLocalPingDispatchOutcome::PumpedOrReadResult)
+        }
+        ProcessLocalPingDispatchOperation::Status { process_descriptor } => {
+            control.status(process_descriptor, outputs.status)?;
+            Ok(ProcessLocalPingDispatchOutcome::Status)
+        }
+        ProcessLocalPingDispatchOperation::RetryArp { process_descriptor } => {
+            *outputs.step = control.retry_arp(process_descriptor, device)?;
+            Ok(ProcessLocalPingDispatchOutcome::RetriedArp)
+        }
+        ProcessLocalPingDispatchOperation::Timeout { process_descriptor } => {
+            *outputs.step = control.timeout(process_descriptor)?;
+            Ok(ProcessLocalPingDispatchOutcome::TimedOut)
+        }
+        ProcessLocalPingDispatchOperation::Close { process_descriptor } => {
+            control.close(process_descriptor)?;
+            Ok(ProcessLocalPingDispatchOutcome::Closed)
+        }
+    }
+}
+
 fn dispatch_talos_write<const CAPACITY: usize, B>(
     arguments: SyscallArguments,
     descriptor_table: &crate::posix::DescriptorTable<CAPACITY>,
@@ -3450,6 +3600,610 @@ mod tests {
             ),
             Err(PosixError::Io)
         );
+    }
+
+    #[test_case]
+    fn process_local_ping_dispatch_completes_lifecycle_through_dispatch_shape() {
+        let owner = crate::scheduler::ProcessOwnerId::new(31).expect("owner id");
+        let destination = [192, 0, 2, 20];
+        let policy = crate::network::Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None);
+        let payload = [1, 2, 3, 4];
+        let mut store = crate::posix::ProcessDescriptorStore::<1, 5>::new_empty();
+        store
+            .create_owner_with_inherited_stdio(owner)
+            .expect("create owner");
+        let mut runtime =
+            crate::network::NetworkRuntimeDevicePump::<2, 1, 2, 4>::new(ping_local_endpoint());
+        let mut receive_buffer = [0u8; 128];
+        let mut transmit_buffer = [0u8; 128];
+        let mut step = PingOperationSyscallSubstituteStep::from_userspace(
+            crate::network::UserspacePingOperationStep::NoFrame,
+        );
+        let mut pump_step = RuntimePingOperationSyscallSubstitutePumpStep::no_frame();
+        let mut status = PingOperationSyscallSubstituteStatus::idle();
+
+        let process_descriptor = {
+            let mut device = PingOutboundTransmitDevice::new();
+            let mut outputs =
+                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+            match dispatch_process_local_ping_descriptor_operation(
+                ProcessLocalPingDispatchOperation::Open,
+                Some(owner),
+                &mut store,
+                &mut runtime,
+                &mut receive_buffer,
+                &mut transmit_buffer,
+                &mut device,
+                &mut outputs,
+            )
+            .expect("open process-local ping descriptor through dispatch")
+            {
+                ProcessLocalPingDispatchOutcome::Opened { process_descriptor } => {
+                    process_descriptor
+                }
+                outcome => panic!("unexpected open outcome {outcome:?}"),
+            }
+        };
+        assert_eq!(process_descriptor, 3);
+
+        {
+            let mut device = PingOutboundTransmitDevice::new();
+            let mut outputs =
+                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+            assert_eq!(
+                dispatch_process_local_ping_descriptor_operation(
+                    ProcessLocalPingDispatchOperation::Status { process_descriptor },
+                    Some(owner),
+                    &mut store,
+                    &mut runtime,
+                    &mut receive_buffer,
+                    &mut transmit_buffer,
+                    &mut device,
+                    &mut outputs,
+                ),
+                Ok(ProcessLocalPingDispatchOutcome::Status)
+            );
+        }
+        assert_eq!(
+            status.kind(),
+            PingOperationSyscallSubstituteStatusKind::Idle
+        );
+
+        {
+            let mut device = PingOutboundTransmitDevice::new();
+            let mut outputs =
+                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+            assert_eq!(
+                dispatch_process_local_ping_descriptor_operation(
+                    ProcessLocalPingDispatchOperation::Start {
+                        process_descriptor,
+                        route_policy: policy,
+                        destination_ipv4: destination,
+                        identifier: 0x1234,
+                        sequence_number: 7,
+                        ttl: 61,
+                        payload: &payload,
+                        arp_retry_budget: 1,
+                    },
+                    Some(owner),
+                    &mut store,
+                    &mut runtime,
+                    &mut receive_buffer,
+                    &mut transmit_buffer,
+                    &mut device,
+                    &mut outputs,
+                ),
+                Ok(ProcessLocalPingDispatchOutcome::Started)
+            );
+        }
+        assert_eq!(
+            step.kind(),
+            PingOperationSyscallSubstituteStepKind::StartedPendingArp
+        );
+
+        let arp_reply = ping_arp_reply_frame();
+        {
+            let mut device = PingPollDevice::with_frame(&arp_reply);
+            let mut outputs =
+                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+            assert_eq!(
+                dispatch_process_local_ping_descriptor_operation(
+                    ProcessLocalPingDispatchOperation::PumpOrReadResult { process_descriptor },
+                    Some(owner),
+                    &mut store,
+                    &mut runtime,
+                    &mut receive_buffer,
+                    &mut transmit_buffer,
+                    &mut device,
+                    &mut outputs,
+                ),
+                Ok(ProcessLocalPingDispatchOutcome::PumpedOrReadResult)
+            );
+        }
+        assert_eq!(
+            pump_step.kind(),
+            RuntimePingOperationSyscallSubstitutePumpKind::ActivePing
+        );
+        assert_eq!(
+            pump_step.active_ping_step().kind(),
+            PingOperationSyscallSubstituteStepKind::AdvancedToInflight
+        );
+
+        let echo_reply = ping_icmp_echo_reply_frame();
+        {
+            let mut device = PingPollDevice::with_frame(&echo_reply);
+            let mut outputs =
+                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+            assert_eq!(
+                dispatch_process_local_ping_descriptor_operation(
+                    ProcessLocalPingDispatchOperation::PumpOrReadResult { process_descriptor },
+                    Some(owner),
+                    &mut store,
+                    &mut runtime,
+                    &mut receive_buffer,
+                    &mut transmit_buffer,
+                    &mut device,
+                    &mut outputs,
+                ),
+                Ok(ProcessLocalPingDispatchOutcome::PumpedOrReadResult)
+            );
+        }
+        assert_eq!(
+            pump_step.active_ping_step().kind(),
+            PingOperationSyscallSubstituteStepKind::Completed
+        );
+        assert_eq!(pump_step.active_ping_step().payload_len(), payload.len());
+
+        {
+            let mut device = PingOutboundTransmitDevice::new();
+            let mut outputs =
+                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+            assert_eq!(
+                dispatch_process_local_ping_descriptor_operation(
+                    ProcessLocalPingDispatchOperation::Status { process_descriptor },
+                    Some(owner),
+                    &mut store,
+                    &mut runtime,
+                    &mut receive_buffer,
+                    &mut transmit_buffer,
+                    &mut device,
+                    &mut outputs,
+                ),
+                Ok(ProcessLocalPingDispatchOutcome::Status)
+            );
+        }
+        assert_eq!(
+            status.kind(),
+            PingOperationSyscallSubstituteStatusKind::Completed
+        );
+        assert_eq!(status.payload_len(), payload.len());
+
+        {
+            let mut device = PingOutboundTransmitDevice::new();
+            let mut outputs =
+                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+            assert_eq!(
+                dispatch_process_local_ping_descriptor_operation(
+                    ProcessLocalPingDispatchOperation::Close { process_descriptor },
+                    Some(owner),
+                    &mut store,
+                    &mut runtime,
+                    &mut receive_buffer,
+                    &mut transmit_buffer,
+                    &mut device,
+                    &mut outputs,
+                ),
+                Ok(ProcessLocalPingDispatchOutcome::Closed)
+            );
+        }
+
+        {
+            let mut device = PingOutboundTransmitDevice::new();
+            let mut outputs =
+                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+            assert_eq!(
+                dispatch_process_local_ping_descriptor_operation(
+                    ProcessLocalPingDispatchOperation::Status { process_descriptor },
+                    Some(owner),
+                    &mut store,
+                    &mut runtime,
+                    &mut receive_buffer,
+                    &mut transmit_buffer,
+                    &mut device,
+                    &mut outputs,
+                ),
+                Err(PosixError::BadDescriptor)
+            );
+        }
+    }
+
+    #[test_case]
+    fn process_local_ping_dispatch_maps_descriptor_capacity_and_runtime_errors() {
+        let owner = crate::scheduler::ProcessOwnerId::new(31).expect("owner id");
+        let destination = [192, 0, 2, 20];
+        let policy = crate::network::Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None);
+        let payload = [1, 2, 3, 4];
+        let mut step = PingOperationSyscallSubstituteStep::from_userspace(
+            crate::network::UserspacePingOperationStep::NoFrame,
+        );
+        let mut pump_step = RuntimePingOperationSyscallSubstitutePumpStep::no_frame();
+        let mut status = PingOperationSyscallSubstituteStatus::idle();
+
+        let mut missing_store = crate::posix::ProcessDescriptorStore::<1, 5>::new_empty();
+        let mut missing_runtime =
+            crate::network::NetworkRuntimeDevicePump::<1, 1, 2, 4>::new(ping_local_endpoint());
+        let mut missing_receive = [0u8; 128];
+        let mut missing_transmit = [0u8; 128];
+        let mut missing_device = PingOutboundTransmitDevice::new();
+        let mut missing_outputs =
+            ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+        assert_eq!(
+            dispatch_process_local_ping_descriptor_operation(
+                ProcessLocalPingDispatchOperation::Open,
+                None,
+                &mut missing_store,
+                &mut missing_runtime,
+                &mut missing_receive,
+                &mut missing_transmit,
+                &mut missing_device,
+                &mut missing_outputs,
+            ),
+            Err(PosixError::BadDescriptor)
+        );
+
+        let mut full_store = crate::posix::ProcessDescriptorStore::<1, 3>::new_empty();
+        full_store
+            .create_owner_with_inherited_stdio(owner)
+            .expect("create full owner");
+        let mut full_runtime =
+            crate::network::NetworkRuntimeDevicePump::<1, 1, 2, 4>::new(ping_local_endpoint());
+        let mut full_receive = [0u8; 128];
+        let mut full_transmit = [0u8; 128];
+        let mut full_device = PingOutboundTransmitDevice::new();
+        let mut full_outputs =
+            ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+        assert_eq!(
+            dispatch_process_local_ping_descriptor_operation(
+                ProcessLocalPingDispatchOperation::Open,
+                Some(owner),
+                &mut full_store,
+                &mut full_runtime,
+                &mut full_receive,
+                &mut full_transmit,
+                &mut full_device,
+                &mut full_outputs,
+            ),
+            Err(PosixError::TooManyOpenFiles)
+        );
+        assert_eq!(
+            dispatch_process_local_ping_descriptor_operation(
+                ProcessLocalPingDispatchOperation::Open,
+                Some(owner),
+                &mut full_store,
+                &mut full_runtime,
+                &mut full_receive,
+                &mut full_transmit,
+                &mut full_device,
+                &mut full_outputs,
+            ),
+            Err(PosixError::TooManyOpenFiles)
+        );
+
+        let mut store = crate::posix::ProcessDescriptorStore::<1, 5>::new_empty();
+        store
+            .create_owner_with_inherited_stdio(owner)
+            .expect("create owner");
+        let mut runtime =
+            crate::network::NetworkRuntimeDevicePump::<1, 1, 2, 4>::new(ping_local_endpoint());
+        let mut receive_buffer = [0u8; 128];
+        let mut transmit_buffer = [0u8; 128];
+        let mut device = PingOutboundTransmitDevice::new();
+        let process_descriptor = {
+            let mut outputs =
+                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+            match dispatch_process_local_ping_descriptor_operation(
+                ProcessLocalPingDispatchOperation::Open,
+                Some(owner),
+                &mut store,
+                &mut runtime,
+                &mut receive_buffer,
+                &mut transmit_buffer,
+                &mut device,
+                &mut outputs,
+            )
+            .expect("open descriptor")
+            {
+                ProcessLocalPingDispatchOutcome::Opened { process_descriptor } => {
+                    process_descriptor
+                }
+                outcome => panic!("unexpected open outcome {outcome:?}"),
+            }
+        };
+
+        {
+            let mut outputs =
+                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+            assert_eq!(
+                dispatch_process_local_ping_descriptor_operation(
+                    ProcessLocalPingDispatchOperation::Status {
+                        process_descriptor: 7,
+                    },
+                    Some(owner),
+                    &mut store,
+                    &mut runtime,
+                    &mut receive_buffer,
+                    &mut transmit_buffer,
+                    &mut device,
+                    &mut outputs,
+                ),
+                Err(PosixError::BadDescriptor)
+            );
+            assert_eq!(
+                dispatch_process_local_ping_descriptor_operation(
+                    ProcessLocalPingDispatchOperation::Status {
+                        process_descriptor: crate::posix::STDOUT_FD,
+                    },
+                    Some(owner),
+                    &mut store,
+                    &mut runtime,
+                    &mut receive_buffer,
+                    &mut transmit_buffer,
+                    &mut device,
+                    &mut outputs,
+                ),
+                Err(PosixError::BadDescriptor)
+            );
+            assert_eq!(
+                dispatch_process_local_ping_descriptor_operation(
+                    ProcessLocalPingDispatchOperation::Start {
+                        process_descriptor,
+                        route_policy: policy,
+                        destination_ipv4: destination,
+                        identifier: 0x1234,
+                        sequence_number: 7,
+                        ttl: 61,
+                        payload: &payload,
+                        arp_retry_budget: 0,
+                    },
+                    Some(owner),
+                    &mut store,
+                    &mut runtime,
+                    &mut receive_buffer,
+                    &mut transmit_buffer,
+                    &mut device,
+                    &mut outputs,
+                ),
+                Ok(ProcessLocalPingDispatchOutcome::Started)
+            );
+            assert_eq!(
+                dispatch_process_local_ping_descriptor_operation(
+                    ProcessLocalPingDispatchOperation::Start {
+                        process_descriptor,
+                        route_policy: policy,
+                        destination_ipv4: destination,
+                        identifier: 0x1234,
+                        sequence_number: 7,
+                        ttl: 61,
+                        payload: &payload,
+                        arp_retry_budget: 0,
+                    },
+                    Some(owner),
+                    &mut store,
+                    &mut runtime,
+                    &mut receive_buffer,
+                    &mut transmit_buffer,
+                    &mut device,
+                    &mut outputs,
+                ),
+                Err(PosixError::Busy)
+            );
+            assert_eq!(
+                dispatch_process_local_ping_descriptor_operation(
+                    ProcessLocalPingDispatchOperation::RetryArp { process_descriptor },
+                    Some(owner),
+                    &mut store,
+                    &mut runtime,
+                    &mut receive_buffer,
+                    &mut transmit_buffer,
+                    &mut device,
+                    &mut outputs,
+                ),
+                Err(PosixError::Again)
+            );
+            assert_eq!(
+                dispatch_process_local_ping_descriptor_operation(
+                    ProcessLocalPingDispatchOperation::Timeout { process_descriptor },
+                    Some(owner),
+                    &mut store,
+                    &mut runtime,
+                    &mut receive_buffer,
+                    &mut transmit_buffer,
+                    &mut device,
+                    &mut outputs,
+                ),
+                Ok(ProcessLocalPingDispatchOutcome::TimedOut)
+            );
+            assert_eq!(
+                dispatch_process_local_ping_descriptor_operation(
+                    ProcessLocalPingDispatchOperation::Status { process_descriptor },
+                    Some(owner),
+                    &mut store,
+                    &mut runtime,
+                    &mut receive_buffer,
+                    &mut transmit_buffer,
+                    &mut device,
+                    &mut outputs,
+                ),
+                Ok(ProcessLocalPingDispatchOutcome::Status)
+            );
+        }
+        assert_eq!(
+            status.kind(),
+            PingOperationSyscallSubstituteStatusKind::TimedOut
+        );
+
+        let mut small_receive = [0u8; 4];
+        let arp_reply = ping_arp_reply_frame();
+        {
+            let mut outputs =
+                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+            assert_eq!(
+                dispatch_process_local_ping_descriptor_operation(
+                    ProcessLocalPingDispatchOperation::PumpOrReadResult { process_descriptor },
+                    Some(owner),
+                    &mut store,
+                    &mut runtime,
+                    &mut small_receive,
+                    &mut transmit_buffer,
+                    &mut PingPollDevice::with_frame(&arp_reply),
+                    &mut outputs,
+                ),
+                Err(PosixError::NoSpace)
+            );
+            assert_eq!(
+                dispatch_process_local_ping_descriptor_operation(
+                    ProcessLocalPingDispatchOperation::PumpOrReadResult { process_descriptor },
+                    Some(owner),
+                    &mut store,
+                    &mut runtime,
+                    &mut receive_buffer,
+                    &mut transmit_buffer,
+                    &mut PingPollDevice::with_receive_error(crate::network::DeviceError::Io),
+                    &mut outputs,
+                ),
+                Err(PosixError::Io)
+            );
+        }
+
+        let mut local_store = crate::posix::ProcessDescriptorStore::<1, 5>::new_empty();
+        local_store
+            .create_owner_with_inherited_stdio(owner)
+            .expect("create local owner");
+        let mut local_runtime =
+            crate::network::NetworkRuntimeDevicePump::<1, 1, 2, 4>::new(ping_local_endpoint());
+        let mut local_receive = [0u8; 128];
+        let mut local_transmit = [0u8; 128];
+        let mut local_device = PingOutboundTransmitDevice::new();
+        let local_descriptor = {
+            let mut outputs =
+                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+            match dispatch_process_local_ping_descriptor_operation(
+                ProcessLocalPingDispatchOperation::Open,
+                Some(owner),
+                &mut local_store,
+                &mut local_runtime,
+                &mut local_receive,
+                &mut local_transmit,
+                &mut local_device,
+                &mut outputs,
+            )
+            .expect("open local descriptor")
+            {
+                ProcessLocalPingDispatchOutcome::Opened { process_descriptor } => {
+                    process_descriptor
+                }
+                outcome => panic!("unexpected open outcome {outcome:?}"),
+            }
+        };
+
+        let local_arp_request = ping_local_arp_request_frame();
+        {
+            let mut outputs =
+                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+            assert_eq!(
+                dispatch_process_local_ping_descriptor_operation(
+                    ProcessLocalPingDispatchOperation::PumpOrReadResult {
+                        process_descriptor: local_descriptor,
+                    },
+                    Some(owner),
+                    &mut local_store,
+                    &mut local_runtime,
+                    &mut local_receive,
+                    &mut local_transmit,
+                    &mut PingPollDevice::with_transmit_error(
+                        &local_arp_request,
+                        crate::network::DeviceError::Io
+                    ),
+                    &mut outputs,
+                ),
+                Err(PosixError::Io)
+            );
+        }
+
+        let mut active_store = crate::posix::ProcessDescriptorStore::<1, 5>::new_empty();
+        active_store
+            .create_owner_with_inherited_stdio(owner)
+            .expect("create active owner");
+        let mut active_runtime =
+            crate::network::NetworkRuntimeDevicePump::<1, 1, 2, 4>::new(ping_local_endpoint());
+        let mut active_receive = [0u8; 128];
+        let mut active_transmit = [0u8; 128];
+        let mut active_device = PingOutboundTransmitDevice::new();
+        let active_descriptor = {
+            let mut outputs =
+                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+            match dispatch_process_local_ping_descriptor_operation(
+                ProcessLocalPingDispatchOperation::Open,
+                Some(owner),
+                &mut active_store,
+                &mut active_runtime,
+                &mut active_receive,
+                &mut active_transmit,
+                &mut active_device,
+                &mut outputs,
+            )
+            .expect("open active descriptor")
+            {
+                ProcessLocalPingDispatchOutcome::Opened { process_descriptor } => {
+                    process_descriptor
+                }
+                outcome => panic!("unexpected open outcome {outcome:?}"),
+            }
+        };
+        {
+            let mut outputs =
+                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+            assert_eq!(
+                dispatch_process_local_ping_descriptor_operation(
+                    ProcessLocalPingDispatchOperation::Start {
+                        process_descriptor: active_descriptor,
+                        route_policy: policy,
+                        destination_ipv4: destination,
+                        identifier: 0x1234,
+                        sequence_number: 7,
+                        ttl: 61,
+                        payload: &payload,
+                        arp_retry_budget: 1,
+                    },
+                    Some(owner),
+                    &mut active_store,
+                    &mut active_runtime,
+                    &mut active_receive,
+                    &mut active_transmit,
+                    &mut active_device,
+                    &mut outputs,
+                ),
+                Ok(ProcessLocalPingDispatchOutcome::Started)
+            );
+            assert_eq!(
+                dispatch_process_local_ping_descriptor_operation(
+                    ProcessLocalPingDispatchOperation::PumpOrReadResult {
+                        process_descriptor: active_descriptor,
+                    },
+                    Some(owner),
+                    &mut active_store,
+                    &mut active_runtime,
+                    &mut active_receive,
+                    &mut active_transmit,
+                    &mut PingPollDevice::with_transmit_error(
+                        &arp_reply,
+                        crate::network::DeviceError::Io
+                    ),
+                    &mut outputs,
+                ),
+                Err(PosixError::Io)
+            );
+        }
     }
 
     #[test_case]

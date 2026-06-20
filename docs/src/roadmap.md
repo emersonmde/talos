@@ -14187,6 +14187,25 @@ Milestone 12.3: IP Stack
   publication, Phase 12.1 link-hardware retry, broad socket expansion, and
   phase transition remain rejected. The selected next bounded task is
   phase12-network-process-local-ping-svc-dispatch-core-20260620.
+- The process-local ping SVC dispatch core accepts an unstable crate-internal,
+  host-only dispatch facade in src/syscall.rs. It routes open, start,
+  pump_or_read_result, status, retry_arp, timeout, and close through
+  ProcessLocalPingDescriptorControl with explicit current-owner,
+  ProcessDescriptorStore, caller-owned receive/transmit buffers, task-owned
+  result/status slots, NetworkRuntimeDevicePump, and fake/trait-level
+  NetworkDevice context. Source/unit evidence covers one dispatch-shaped
+  lifecycle from open through unresolved ARP, ARP-to-ICMP advancement,
+  echo-reply completion, terminal completed status, and close, plus invalid and
+  closed descriptors, missing current owner, process descriptor capacity unwind,
+  duplicate active operation, retry exhaustion, explicit timeout with terminal
+  status, caller receive-buffer pressure, receive IO error, local transmit IO
+  error, and active transmit IO error. The stable SyscallNumber vocabulary and
+  TALOS_* syscall constants remain unchanged. Shell ping, public sockets, stable
+  syscall ABI acceptance, socket syscall ABI acceptance, live driver adapters,
+  live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation,
+  boot publication, Phase 12.1 link-hardware retry, broad socket expansion, and
+  phase transition remain rejected. The selected next bounded task is
+  phase12-network-process-local-ping-svc-dispatch-closeout-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

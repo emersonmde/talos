@@ -3992,3 +3992,27 @@ reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1
 link-hardware retry, broad socket expansion, and phase transition remain
 rejected. The selected next bounded task is
 phase12-network-process-local-ping-svc-dispatch-core-20260620.
+
+phase12-network-process-local-ping-svc-dispatch-core-20260620 accepts
+phase12-network-process-local-ping-svc-dispatch-core-accepted. The core
+implementation adds an unstable crate-internal host-only dispatch facade for
+driving ProcessLocalPingDescriptorControl through explicit process-dispatch
+context without changing the stable SyscallNumber vocabulary or adding public
+socket ABI.
+
+The accepted facade routes open, start, pump_or_read_result, status, retry_arp,
+timeout, and close through ProcessLocalPingDescriptorControl with the current
+process owner, ProcessDescriptorStore, caller-owned receive/transmit buffers,
+task-owned result/status slots, NetworkRuntimeDevicePump, and fake/trait-level
+NetworkDevice context. The source/unit evidence covers one dispatch-shaped
+lifecycle from open through unresolved ARP, ARP-to-ICMP advancement, echo-reply
+completion, terminal completed status, and close. It also covers invalid and
+closed descriptors, missing current owner, process descriptor capacity unwind,
+duplicate active operation, retry exhaustion, explicit timeout with terminal
+status, caller receive-buffer pressure, receive IO error, local transmit IO
+error, and active transmit IO error. Shell ping, public sockets, stable syscall
+ABI acceptance, socket syscall ABI acceptance, live driver adapters, live packet
+I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot
+publication, Phase 12.1 link-hardware retry, broad socket expansion, and phase
+transition remain rejected. The selected next bounded task is
+phase12-network-process-local-ping-svc-dispatch-closeout-20260620.
