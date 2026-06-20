@@ -14305,6 +14305,26 @@ Milestone 12.3: IP Stack
   publication, Phase 12.1 link-hardware retry, broad socket expansion, and phase
   transition remain rejected. The selected next bounded task is
   phase12-network-process-local-ping-svc-user-argument-closeout-20260620.
+- The process-local ping SVC user-argument closeout accepts the unstable
+  crate-internal decoder boundary after reconciling the accepted contract, core
+  source/unit evidence, task records, durable state, and rejected claims. The
+  accepted evidence level remains host/QEMU-substitute source/unit evidence over
+  fake/trait-level NetworkDevice behavior, experimental user-argument decoding,
+  UserMapping copy-in/copy-out, process-local descriptor ownership, internal
+  dispatch-shaped control, ProcessLocalPingDescriptorControl,
+  DescriptorShapedPingControl, RuntimePingOperationSyscallSubstitute,
+  NetworkRuntimeDevicePump, caller-owned buffers, task-owned result/status
+  slots, and fixed-capacity state. It accepts only that the host-only decoder
+  can drive one process-local ping dispatch lifecycle through experimental
+  scalar/user-memory arguments with deterministic malformed selector,
+  reserved-field, owner/descriptor, capacity, user-memory, buffer-pressure,
+  scratch-pressure, TTL, route-prefix, and stable syscall-vocabulary controls.
+  Shell ping, public sockets, stable syscall ABI acceptance, socket syscall ABI
+  acceptance, live driver adapters, live packet I/O, hardware reachability, SSH,
+  smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1 link-hardware
+  retry, broad socket expansion, and phase transition remain rejected. The
+  selected next bounded task is
+  phase12-network-process-local-ping-svc-user-argument-smoke-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
