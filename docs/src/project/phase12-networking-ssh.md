@@ -3588,3 +3588,17 @@ hardware reachability, SSH, smoltcp, UDP/TCP, autonomous timers, broad packet
 queues, lab mutation, boot publication, Phase 12.1 link-hardware retry, Phase
 12.4 socket expansion, and phase transition remain rejected. The selected next
 task is phase12-network-runtime-device-pump-closeout-20260620.
+
+phase12-network-runtime-device-pump-closeout-20260620 accepts
+phase12-network-runtime-device-pump-closeout-accepted. The closeout reconciles
+the accepted runtime pump implementation, source/unit/QEMU-substitute
+validation, task record, docs, durable state, and rejected claims. The accepted
+boundary remains host-only over NetworkDevice/fake-device behavior,
+caller-owned buffers, fixed-capacity state, local ARP/ICMP dispatch, and the
+accepted ping operation stack.
+
+The closeout accepts no live driver adapter, live packet I/O, public sockets,
+stable syscall ABI, shell ping, hardware reachability, SSH, smoltcp, UDP/TCP,
+lab mutation, boot publication, Phase 12.1 link-hardware retry, Phase 12.4
+socket expansion, or phase transition. The selected next task is
+phase12-network-runtime-device-pump-substitute-smoke-core-20260620.
