@@ -4443,3 +4443,29 @@ hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication,
 Phase 12.1 link-hardware retry, broad socket expansion, and phase transition
 remain rejected. The selected next bounded task is
 phase12-network-vfs-ping-diagnostic-packet-queue-smoke-closeout-20260620.
+
+phase12-network-vfs-ping-diagnostic-packet-queue-smoke-closeout-20260620
+accepts
+phase12-network-vfs-ping-diagnostic-packet-queue-smoke-closeout-accepted. The
+closeout reconciles the accepted packet queue contract, core, core closeout,
+retained smoke transcript, docs, durable state, and rejected claims. The
+accepted evidence level remains host/QEMU-substitute smoke evidence over
+crate-internal fixed-capacity packet queue records, the VFS/userspace
+diagnostic SVC bridge, experimental user-argument decoding, UserMapping
+copy-in/copy-out, process-local descriptor ownership, fake/trait-level
+NetworkDevice behavior, caller-owned buffers, task-owned state, and fixed
+capacity.
+
+The retained smoke frontier proves /bin/pingdiag VFS executable lookup,
+diagnostic SVC argument decoding, outbound ARP and IPv4/ICMP echo request
+records, injected ARP and ICMP reply progression, status/result copy-out, and
+close. Deterministic controls cover missing VFS identity, malformed
+selector/payload, owner and descriptor failures, queue/frame capacity, caller
+buffer pressure, malformed injected frames, invalid user memory, scratch
+pressure, timeout/retry, device errors, and unchanged syscall vocabulary. Shell
+ping, public sockets, stable/socket ABI acceptance, live driver adapters, live
+packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot
+publication, Phase 12.1 link-hardware retry, broad socket expansion, and phase
+transition remain rejected. No later bounded task is mechanically unblocked;
+supervisor planning is required before live driver packet I/O, public sockets,
+shell ping, SSH, or phase transition.

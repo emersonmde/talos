@@ -14543,6 +14543,26 @@ Milestone 12.3: IP Stack
   12.1 link-hardware retry, broad socket expansion, and phase transition. The
   selected next bounded task is
   phase12-network-vfs-ping-diagnostic-packet-queue-smoke-closeout-20260620.
+- The VFS-backed userspace ping diagnostic packet queue smoke closeout accepts
+  the retained host/QEMU-substitute smoke frontier after source/task/evidence
+  reconciliation. The accepted evidence level remains smoke evidence over
+  crate-internal fixed-capacity packet queue records, VFS/userspace diagnostic
+  SVC bridging, experimental user-argument decoding, UserMapping
+  copy-in/copy-out, process-local descriptor ownership, fake/trait-level
+  NetworkDevice behavior, caller-owned buffers, task-owned state, and fixed
+  capacity. The retained transcript proves /bin/pingdiag VFS executable lookup,
+  outbound ARP and IPv4/ICMP echo request records, injected ARP and ICMP reply
+  progression, status/result copy-out, close, and deterministic controls for
+  missing VFS identity, malformed input, owner and descriptor failures,
+  queue/frame capacity, caller buffer pressure, malformed injected frames,
+  invalid user memory, scratch pressure, timeout/retry, device errors, and
+  unchanged syscall vocabulary. Shell ping, public sockets, stable/socket ABI
+  acceptance, live driver adapters, live packet I/O, hardware reachability,
+  SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1
+  link-hardware retry, broad socket expansion, and phase transition remain
+  rejected. No later bounded task is mechanically unblocked; supervisor
+  planning is required before live driver packet I/O, public sockets, shell
+  ping, SSH, or phase transition.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
