@@ -1,0 +1,21 @@
+src/initramfs.rs:49:PHASE12_SOCKDIAG_PATH is the read-only VFS executable identity for /bin/sockdiag.
+src/initramfs.rs:903:the initramfs /bin directory includes the sockdiag executable entry.
+src/local_command_loop.rs:116:shell exec fixture mapping includes /bin/sockdiag as sockdiag.
+src/local_command_loop.rs:1579:exec summary attaches sockdiag diagnostics only after resolving PHASE12_SOCKDIAG_PATH through the VFS path.
+src/local_command_loop.rs:1644:exec_shell_sockdiag_diagnostic runs the shell-visible diagnostic.
+src/local_command_loop.rs:1662:the diagnostic dispatches through dispatch_process_descriptor_with_socket_table.
+src/local_command_loop.rs:1677:the positive diagnostic path uses TALOS_SOCKET_SYSCALL.
+src/local_command_loop.rs:1809:the transcript source labels VFS/userspace sockdiag plus TALOS_SOCKET open/close and process descriptors.
+src/local_command_loop.rs:5354:write_exec_sockdiag_line renders the retained socket open/close transcript.
+src/local_command_loop.rs:5387:write_exec_sockdiag_controls_line renders deterministic controls.
+src/local_command_loop.rs:6306:local_command_loop_execs_shell_visible_sockdiag_through_vfs_socket_syscalls covers exec /bin/sockdiag, waitpid, laststatus, malformed arguments, and missing executable controls.
+src/syscall.rs:17:TALOS_SOCKET_SYSCALL is the private experimental socket selector.
+src/syscall.rs:470:dispatch_process_descriptor_with_socket_table is the socket-table-aware process descriptor syscall dispatcher.
+src/syscall.rs:2474:dispatch_talos_socket implements the accepted AF_INET/SOCK_STREAM/protocol 0 open subset.
+src/syscall.rs:2621:dispatch_talos_close_socket_aware preserves close/drop through the descriptor lifetime path.
+src/syscall.rs:2843:socket_number_requires_socket_table_context_in_scalar_dispatch keeps scalar dispatch ENOTSUP for TALOS_SOCKET.
+src/syscall.rs:7088:talos_socket_opens_af_inet_stream_descriptor_and_close_drops_backing covers successful open/close and backing drop.
+src/syscall.rs:7170:talos_socket_errors_are_deterministic_and_do_not_allocate_on_failure covers domain/type/protocol/capacity/no-owner controls.
+src/syscall.rs:7344:talos_socket_close_rejects_wrong_owner_socket_backing covers wrong-owner socket backing rejection.
+src/network.rs:1826:NetworkSocketDescriptorTable owns the bounded socket backing entries.
+src/posix.rs:1254:DescriptorObjectKind::Socket names the process descriptor object kind used by the diagnostic.

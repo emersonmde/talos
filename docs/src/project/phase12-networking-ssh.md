@@ -4762,3 +4762,24 @@ mutation, boot publication, generated-root publication, broad socket
 expansion, public stable socket ABI acceptance, or phase transition. The
 selected next bounded task is
 phase12-network-shell-sockdiag-open-close-smoke-20260620.
+
+phase12-network-shell-sockdiag-open-close-smoke-20260620 accepts
+phase12-network-shell-sockdiag-open-close-smoke-accepted. The retained
+host/QEMU-substitute smoke evidence records a shell-visible
+`exec /bin/sockdiag` transcript through VFS executable lookup/open/read,
+startup ABI, `TALOS_SOCKET_SYSCALL = 6` socket open,
+`DescriptorObjectKind::Socket` process descriptor ownership, bounded socket
+backing state, `TALOS_CLOSE_SYSCALL = 2` close/drop, `waitpid`, and
+`laststatus`.
+
+The smoke transcript retains deterministic controls for malformed arguments,
+missing executable identity, unsupported domain/type/protocol, invalid and
+closed descriptors, wrong-owner backing, descriptor capacity, socket backing
+capacity, no-partial-allocation failures, scalar dispatch ENOTSUP outside the
+socket-table-aware path, bounded syscall vocabulary, and unchanged
+`/bin/pingdiag` behavior. This task does not accept send, recv, bind,
+connect, listen, accept, poll/blocking network I/O, UDP/TCP payload
+transport, live packet I/O, hardware reachability, smoltcp, SSH, lab
+mutation, boot publication, broad socket expansion, public stable socket ABI
+acceptance, or phase transition. The selected next bounded task is
+phase12-network-shell-sockdiag-open-close-closeout-20260620.

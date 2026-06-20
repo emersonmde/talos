@@ -1,0 +1,33 @@
+{
+  "task_id": "phase12-network-shell-sockdiag-open-close-smoke-20260620",
+  "classification": "phase12-network-shell-sockdiag-open-close-smoke-accepted",
+  "evidence_dir": "tasks/evidence/2026-06-20-shell-sockdiag-open-close-smoke",
+  "artifacts": {
+    "smoke_command": "scripts/qemu-shell-sockdiag-open-close-smoke.sh",
+    "qemu_substitute_log": "qemu-shell-sockdiag-open-close-smoke.log",
+    "source_anchors": "source-anchors.txt",
+    "smoke_transcript": "smoke-transcript.md",
+    "classification": "classification.json"
+  },
+  "source_tests": [
+    "src/local_command_loop.rs::local_command_loop_execs_shell_visible_sockdiag_through_vfs_socket_syscalls",
+    "src/local_command_loop.rs::local_command_loop_execs_shell_visible_pingdiag_through_vfs_diagnostic_layers",
+    "src/syscall.rs::talos_socket_opens_af_inet_stream_descriptor_and_close_drops_backing",
+    "src/syscall.rs::talos_socket_errors_are_deterministic_and_do_not_allocate_on_failure",
+    "src/syscall.rs::talos_socket_close_rejects_wrong_owner_socket_backing",
+    "src/syscall.rs::socket_number_requires_socket_table_context_in_scalar_dispatch"
+  ],
+  "source_components": [
+    "src/initramfs.rs::PHASE12_SOCKDIAG_PATH",
+    "src/local_command_loop.rs::exec_shell_sockdiag_diagnostic",
+    "src/local_command_loop.rs::write_exec_sockdiag_line",
+    "src/local_command_loop.rs::write_exec_sockdiag_controls_line",
+    "src/syscall.rs::TALOS_SOCKET_SYSCALL",
+    "src/syscall.rs::dispatch_process_descriptor_with_socket_table",
+    "src/syscall.rs::dispatch_talos_socket",
+    "src/syscall.rs::dispatch_talos_close_socket_aware",
+    "src/network.rs::NetworkSocketDescriptorTable",
+    "src/posix.rs::DescriptorObjectKind::Socket"
+  ],
+  "selected_next_task": "phase12-network-shell-sockdiag-open-close-closeout-20260620"
+}
