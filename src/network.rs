@@ -1768,6 +1768,9 @@ pub(crate) const SOCKET_TYPE_STREAM: u64 = 1;
 pub(crate) const SOCKET_PROTOCOL_DEFAULT: u64 = 0;
 pub(crate) const SOCKET_LISTEN_BACKLOG_MIN: u64 = 1;
 pub(crate) const SOCKET_LISTEN_BACKLOG_MAX: u64 = 4;
+pub(crate) const SOCKET_LISTEN_BACKLOG_CAPACITY: usize = 4;
+pub(crate) const SOCKET_SYNTHETIC_LOCAL_IPV4_BE: u32 = 0x7f00_0001;
+pub(crate) const SOCKET_SYNTHETIC_CLIENT_PORT_BASE: u16 = 49152;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct NetworkSocketDescriptor {
@@ -1805,6 +1808,86 @@ impl Ipv4Endpoint {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct NetworkSocketPendingLocalPeer {
+    client_descriptor: NetworkSocketDescriptor,
+    client_endpoint: Ipv4Endpoint,
+}
+
+impl NetworkSocketPendingLocalPeer {
+    pub(crate) const fn new(
+        client_descriptor: NetworkSocketDescriptor,
+        client_endpoint: Ipv4Endpoint,
+    ) -> Self {
+        Self {
+            client_descriptor,
+            client_endpoint,
+        }
+    }
+
+    pub(crate) const fn client_descriptor(self) -> NetworkSocketDescriptor {
+        self.client_descriptor
+    }
+
+    pub(crate) const fn client_endpoint(self) -> Ipv4Endpoint {
+        self.client_endpoint
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct NetworkSocketPendingQueue {
+    peers: [Option<NetworkSocketPendingLocalPeer>; SOCKET_LISTEN_BACKLOG_CAPACITY],
+    len: u8,
+}
+
+impl NetworkSocketPendingQueue {
+    pub(crate) const fn new() -> Self {
+        Self {
+            peers: [None; SOCKET_LISTEN_BACKLOG_CAPACITY],
+            len: 0,
+        }
+    }
+
+    pub(crate) const fn len(self) -> u8 {
+        self.len
+    }
+
+    const fn is_full(self, backlog: u8) -> bool {
+        self.len >= backlog || self.len as usize >= SOCKET_LISTEN_BACKLOG_CAPACITY
+    }
+
+    fn push(
+        &mut self,
+        backlog: u8,
+        peer: NetworkSocketPendingLocalPeer,
+    ) -> Result<(), crate::posix::PosixError> {
+        if self.is_full(backlog) {
+            return Err(crate::posix::PosixError::NoSpace);
+        }
+
+        self.peers[self.len as usize] = Some(peer);
+        self.len += 1;
+        Ok(())
+    }
+
+    fn pop(&mut self) -> Result<NetworkSocketPendingLocalPeer, crate::posix::PosixError> {
+        if self.len == 0 {
+            return Err(crate::posix::PosixError::Again);
+        }
+
+        let peer = self.peers[0]
+            .take()
+            .expect("non-empty pending socket queue has a front peer");
+        let mut index = 1;
+        while index < self.len as usize {
+            self.peers[index - 1] = self.peers[index].take();
+            index += 1;
+        }
+        self.len -= 1;
+        Ok(peer)
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum NetworkSocketState {
     OpenUnbound,
     Bound {
@@ -1813,6 +1896,15 @@ pub(crate) enum NetworkSocketState {
     Listening {
         local_endpoint: Ipv4Endpoint,
         backlog: u8,
+        pending: NetworkSocketPendingQueue,
+    },
+    Connected {
+        local_endpoint: Ipv4Endpoint,
+        remote_endpoint: Ipv4Endpoint,
+    },
+    Accepted {
+        local_endpoint: Ipv4Endpoint,
+        remote_endpoint: Ipv4Endpoint,
     },
 }
 
@@ -1927,9 +2019,10 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
                 socket.state = NetworkSocketState::Bound { local_endpoint };
                 Ok(())
             }
-            NetworkSocketState::Bound { .. } | NetworkSocketState::Listening { .. } => {
-                Err(crate::posix::PosixError::InvalidArgument)
-            }
+            NetworkSocketState::Bound { .. }
+            | NetworkSocketState::Listening { .. }
+            | NetworkSocketState::Connected { .. }
+            | NetworkSocketState::Accepted { .. } => Err(crate::posix::PosixError::InvalidArgument),
         }
     }
 
@@ -1946,16 +2039,151 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
             .and_then(Option::as_mut)
             .ok_or(crate::posix::PosixError::BadDescriptor)?;
         match socket.state {
-            NetworkSocketState::Bound { local_endpoint }
-            | NetworkSocketState::Listening { local_endpoint, .. } => {
+            NetworkSocketState::Bound { local_endpoint } => {
                 socket.state = NetworkSocketState::Listening {
                     local_endpoint,
                     backlog,
+                    pending: NetworkSocketPendingQueue::new(),
+                };
+                Ok(())
+            }
+            NetworkSocketState::Listening {
+                local_endpoint,
+                pending,
+                ..
+            } => {
+                if pending.len() > backlog {
+                    return Err(crate::posix::PosixError::InvalidArgument);
+                }
+                socket.state = NetworkSocketState::Listening {
+                    local_endpoint,
+                    backlog,
+                    pending,
                 };
                 Ok(())
             }
             NetworkSocketState::OpenUnbound => Err(crate::posix::PosixError::InvalidArgument),
+            NetworkSocketState::Connected { .. } | NetworkSocketState::Accepted { .. } => {
+                Err(crate::posix::PosixError::InvalidArgument)
+            }
         }
+    }
+
+    pub(crate) fn connect(
+        &mut self,
+        owner: crate::scheduler::ProcessOwnerId,
+        client_descriptor: NetworkSocketDescriptor,
+        remote_endpoint: Ipv4Endpoint,
+    ) -> Result<(), crate::posix::PosixError> {
+        self.require_owner(owner, client_descriptor)?;
+        let client = self.socket(client_descriptor)?;
+        if client.state != NetworkSocketState::OpenUnbound {
+            return Err(crate::posix::PosixError::InvalidArgument);
+        }
+
+        let client_port = synthetic_client_port(client_descriptor)?;
+        let client_endpoint = Ipv4Endpoint::new(SOCKET_SYNTHETIC_LOCAL_IPV4_BE, client_port);
+        let mut listener_descriptor = None;
+        let mut match_count = 0usize;
+        let mut raw = 0;
+        while raw < CAPACITY {
+            if let Some(socket) = self.entries[raw] {
+                if socket.owner == owner {
+                    if let NetworkSocketState::Listening { local_endpoint, .. } = socket.state {
+                        if local_endpoint == remote_endpoint {
+                            listener_descriptor = Some(NetworkSocketDescriptor::from_raw(raw));
+                            match_count += 1;
+                        }
+                    }
+                }
+            }
+            raw += 1;
+        }
+        if match_count != 1 {
+            return Err(crate::posix::PosixError::InvalidArgument);
+        }
+
+        let listener_descriptor =
+            listener_descriptor.expect("single listener match records a descriptor");
+        let mut listener = self.socket(listener_descriptor)?;
+        let NetworkSocketState::Listening {
+            local_endpoint,
+            backlog,
+            mut pending,
+        } = listener.state
+        else {
+            return Err(crate::posix::PosixError::InvalidArgument);
+        };
+        pending.push(
+            backlog,
+            NetworkSocketPendingLocalPeer::new(client_descriptor, client_endpoint),
+        )?;
+
+        listener.state = NetworkSocketState::Listening {
+            local_endpoint,
+            backlog,
+            pending,
+        };
+        self.entries[listener_descriptor.raw()] = Some(listener);
+
+        let mut connected_client = client;
+        connected_client.state = NetworkSocketState::Connected {
+            local_endpoint: client_endpoint,
+            remote_endpoint,
+        };
+        self.entries[client_descriptor.raw()] = Some(connected_client);
+        Ok(())
+    }
+
+    pub(crate) fn accept(
+        &mut self,
+        owner: crate::scheduler::ProcessOwnerId,
+        listener_descriptor: NetworkSocketDescriptor,
+    ) -> Result<NetworkSocketDescriptor, crate::posix::PosixError> {
+        self.require_owner(owner, listener_descriptor)?;
+        let mut listener = self.socket(listener_descriptor)?;
+        let NetworkSocketState::Listening {
+            local_endpoint,
+            backlog,
+            mut pending,
+        } = listener.state
+        else {
+            return Err(crate::posix::PosixError::InvalidArgument);
+        };
+        if pending.len() == 0 {
+            return Err(crate::posix::PosixError::Again);
+        }
+
+        let mut accepted_raw = None;
+        let mut raw = 0;
+        while raw < CAPACITY {
+            if self.entries[raw].is_none() {
+                accepted_raw = Some(raw);
+                break;
+            }
+            raw += 1;
+        }
+        let accepted_raw = accepted_raw.ok_or(crate::posix::PosixError::NoSpace)?;
+        let peer = pending.pop()?;
+        let _client_descriptor = peer.client_descriptor();
+
+        listener.state = NetworkSocketState::Listening {
+            local_endpoint,
+            backlog,
+            pending,
+        };
+        self.entries[listener_descriptor.raw()] = Some(listener);
+        self.entries[accepted_raw] = Some(NetworkSocket {
+            owner,
+            domain: SOCKET_DOMAIN_AF_INET,
+            socket_type: SOCKET_TYPE_STREAM,
+            protocol: SOCKET_PROTOCOL_DEFAULT,
+            state: NetworkSocketState::Accepted {
+                local_endpoint,
+                remote_endpoint: peer.client_endpoint(),
+            },
+        });
+        Ok(NetworkSocketDescriptor::from_raw(accepted_raw))
     }
 
     pub(crate) fn socket(
@@ -1980,6 +2208,15 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
             Err(crate::posix::PosixError::BadDescriptor)
         }
     }
+}
+
+fn synthetic_client_port(
+    descriptor: NetworkSocketDescriptor,
+) -> Result<u16, crate::posix::PosixError> {
+    let raw = u16::try_from(descriptor.raw()).map_err(|_| crate::posix::PosixError::NoSpace)?;
+    SOCKET_SYNTHETIC_CLIENT_PORT_BASE
+        .checked_add(raw)
+        .ok_or(crate::posix::PosixError::NoSpace)
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

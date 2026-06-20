@@ -14899,6 +14899,24 @@ Milestone 12.3: IP Stack
   live driver adapters, live packet I/O, hardware reachability, SSH, public
   stable socket ABI acceptance, or phase transition. The selected next bounded
   task is phase12-network-socket-connect-accept-core-20260620.
+- The socket connect/accept core accepts source/unit host/QEMU-substitute
+  evidence for private descriptor-backed local AF_INET stream handshake state.
+  The implementation adds TALOS_CONNECT_SYSCALL = 9 and
+  TALOS_ACCEPT_SYSCALL = 10 only to the socket-table-aware process descriptor
+  path while scalar dispatch still returns ENOTSUP. Connect validates scalar
+  endpoint bounds, current-process socket ownership, open-unbound client state,
+  unique local listener lookup, and listener backlog capacity before queuing a
+  synthetic 127.0.0.1:(49152 + socket_descriptor.raw()) client endpoint.
+  Accept validates listener state, pending queue, process descriptor capacity,
+  and socket backing capacity before creating a new accepted server-side
+  descriptor. Tests cover successful handshake state, close/drop cleanup,
+  listener absence, empty accept, full queue, process descriptor capacity,
+  socket backing capacity, non-socket descriptors, and unchanged state on
+  failures. Shell /bin/sockdiag connect/accept output, retained smoke,
+  send/recv, poll/blocking I/O, UDP/TCP payload transport, live packet I/O,
+  SSH, public stable socket ABI acceptance, broad socket expansion, and phase
+  transition remain rejected. The selected next bounded task is
+  phase12-network-shell-sockdiag-connect-accept-core-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

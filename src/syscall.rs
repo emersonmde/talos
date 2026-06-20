@@ -17,6 +17,8 @@ pub(crate) const TALOS_OPEN_SYSCALL: u64 = 5;
 pub(crate) const TALOS_SOCKET_SYSCALL: u64 = 6;
 pub(crate) const TALOS_BIND_SYSCALL: u64 = 7;
 pub(crate) const TALOS_LISTEN_SYSCALL: u64 = 8;
+pub(crate) const TALOS_CONNECT_SYSCALL: u64 = 9;
+pub(crate) const TALOS_ACCEPT_SYSCALL: u64 = 10;
 #[cfg(any(
     test,
     talos_boot_scenario = "qemu_pointer_copy_smoke",
@@ -42,6 +44,8 @@ pub(crate) enum SyscallNumber {
     TalosSocket,
     TalosBind,
     TalosListen,
+    TalosConnect,
+    TalosAccept,
     Unknown(u64),
 }
 
@@ -57,6 +61,8 @@ impl SyscallNumber {
             TALOS_SOCKET_SYSCALL => Self::TalosSocket,
             TALOS_BIND_SYSCALL => Self::TalosBind,
             TALOS_LISTEN_SYSCALL => Self::TalosListen,
+            TALOS_CONNECT_SYSCALL => Self::TalosConnect,
+            TALOS_ACCEPT_SYSCALL => Self::TalosAccept,
             unknown => Self::Unknown(unknown),
         }
     }
@@ -72,6 +78,8 @@ impl SyscallNumber {
             Self::TalosSocket => TALOS_SOCKET_SYSCALL,
             Self::TalosBind => TALOS_BIND_SYSCALL,
             Self::TalosListen => TALOS_LISTEN_SYSCALL,
+            Self::TalosConnect => TALOS_CONNECT_SYSCALL,
+            Self::TalosAccept => TALOS_ACCEPT_SYSCALL,
             Self::Unknown(raw) => raw,
         }
     }
@@ -225,7 +233,9 @@ pub(crate) const fn dispatch(
         | SyscallNumber::TalosOpen
         | SyscallNumber::TalosSocket
         | SyscallNumber::TalosBind
-        | SyscallNumber::TalosListen => SyscallReturn::error(PosixError::NotSupported),
+        | SyscallNumber::TalosListen
+        | SyscallNumber::TalosConnect
+        | SyscallNumber::TalosAccept => SyscallReturn::error(PosixError::NotSupported),
         SyscallNumber::Unknown(_) => SyscallReturn::error(PosixError::NotImplemented),
     };
 
@@ -268,6 +278,8 @@ where
         | SyscallNumber::TalosSocket
         | SyscallNumber::TalosBind
         | SyscallNumber::TalosListen
+        | SyscallNumber::TalosConnect
+        | SyscallNumber::TalosAccept
         | SyscallNumber::Unknown(_) => dispatch(raw_number, arguments).return_value(),
     };
 
@@ -323,6 +335,8 @@ where
         | SyscallNumber::TalosSocket
         | SyscallNumber::TalosBind
         | SyscallNumber::TalosListen
+        | SyscallNumber::TalosConnect
+        | SyscallNumber::TalosAccept
         | SyscallNumber::TalosNop
         | SyscallNumber::Unknown(_) => dispatch(raw_number, arguments).return_value(),
     };
@@ -392,6 +406,8 @@ where
         | SyscallNumber::TalosSocket
         | SyscallNumber::TalosBind
         | SyscallNumber::TalosListen
+        | SyscallNumber::TalosConnect
+        | SyscallNumber::TalosAccept
         | SyscallNumber::TalosNop
         | SyscallNumber::Unknown(_) => dispatch(raw_number, arguments).return_value(),
     };
@@ -474,6 +490,8 @@ where
         SyscallNumber::TalosSocket
         | SyscallNumber::TalosBind
         | SyscallNumber::TalosListen
+        | SyscallNumber::TalosConnect
+        | SyscallNumber::TalosAccept
         | SyscallNumber::TalosNop
         | SyscallNumber::Unknown(_) => dispatch(raw_number, arguments).return_value(),
     };
@@ -538,6 +556,12 @@ where
         }
         SyscallNumber::TalosListen => {
             dispatch_talos_listen(arguments, current_owner, descriptor_store, socket_table)
+        }
+        SyscallNumber::TalosConnect => {
+            dispatch_talos_connect(arguments, current_owner, descriptor_store, socket_table)
+        }
+        SyscallNumber::TalosAccept => {
+            dispatch_talos_accept(arguments, current_owner, descriptor_store, socket_table)
         }
         SyscallNumber::TalosRead
         | SyscallNumber::TalosOpen
@@ -634,6 +658,8 @@ where
         SyscallNumber::TalosSocket
         | SyscallNumber::TalosBind
         | SyscallNumber::TalosListen
+        | SyscallNumber::TalosConnect
+        | SyscallNumber::TalosAccept
         | SyscallNumber::TalosNop
         | SyscallNumber::Unknown(_) => dispatch(raw_number, arguments).return_value(),
     };
@@ -2674,6 +2700,117 @@ fn dispatch_talos_listen<
     match socket_table.listen(owner, socket_descriptor, backlog as u8) {
         Ok(()) => SyscallReturn::success(0),
         Err(error) => SyscallReturn::error(error),
+    }
+}
+
+fn dispatch_talos_connect<
+    const OWNER_CAPACITY: usize,
+    const DESCRIPTOR_CAPACITY: usize,
+    const SOCKET_CAPACITY: usize,
+>(
+    arguments: SyscallArguments,
+    current_owner: Option<crate::scheduler::ProcessOwnerId>,
+    descriptor_store: &mut crate::posix::ProcessDescriptorStore<
+        OWNER_CAPACITY,
+        DESCRIPTOR_CAPACITY,
+    >,
+    socket_table: &mut crate::network::NetworkSocketDescriptorTable<SOCKET_CAPACITY>,
+) -> SyscallReturn {
+    let [descriptor, ipv4_be, port, reserved0, reserved1, reserved2] = arguments.values();
+    if reserved0 != 0 || reserved1 != 0 || reserved2 != 0 {
+        return SyscallReturn::error(PosixError::InvalidArgument);
+    }
+    if ipv4_be > u32::MAX as u64 || port == 0 || port > u16::MAX as u64 {
+        return SyscallReturn::error(PosixError::InvalidArgument);
+    }
+    let Ok(process_descriptor) = usize::try_from(descriptor) else {
+        return SyscallReturn::error(PosixError::BadDescriptor);
+    };
+    let (owner, socket_descriptor) = match current_socket_descriptor(
+        current_owner,
+        descriptor_store,
+        socket_table,
+        process_descriptor,
+    ) {
+        Ok(socket) => socket,
+        Err(error) => return SyscallReturn::error(error),
+    };
+
+    match socket_table.connect(
+        owner,
+        socket_descriptor,
+        crate::network::Ipv4Endpoint::new(ipv4_be as u32, port as u16),
+    ) {
+        Ok(()) => SyscallReturn::success(0),
+        Err(error) => SyscallReturn::error(error),
+    }
+}
+
+fn dispatch_talos_accept<
+    const OWNER_CAPACITY: usize,
+    const DESCRIPTOR_CAPACITY: usize,
+    const SOCKET_CAPACITY: usize,
+>(
+    arguments: SyscallArguments,
+    current_owner: Option<crate::scheduler::ProcessOwnerId>,
+    descriptor_store: &mut crate::posix::ProcessDescriptorStore<
+        OWNER_CAPACITY,
+        DESCRIPTOR_CAPACITY,
+    >,
+    socket_table: &mut crate::network::NetworkSocketDescriptorTable<SOCKET_CAPACITY>,
+) -> SyscallReturn {
+    let [
+        descriptor,
+        reserved0,
+        reserved1,
+        reserved2,
+        reserved3,
+        reserved4,
+    ] = arguments.values();
+    if reserved0 != 0 || reserved1 != 0 || reserved2 != 0 || reserved3 != 0 || reserved4 != 0 {
+        return SyscallReturn::error(PosixError::InvalidArgument);
+    }
+    let Ok(process_descriptor) = usize::try_from(descriptor) else {
+        return SyscallReturn::error(PosixError::BadDescriptor);
+    };
+    let (owner, listener_descriptor) = match current_socket_descriptor(
+        current_owner,
+        descriptor_store,
+        socket_table,
+        process_descriptor,
+    ) {
+        Ok(socket) => socket,
+        Err(error) => return SyscallReturn::error(error),
+    };
+    let descriptor_table = match descriptor_store.current_descriptor_table(current_owner) {
+        Ok(descriptor_table) => descriptor_table,
+        Err(error) => return SyscallReturn::error(error),
+    };
+    if !descriptor_table.has_free_slot() {
+        return SyscallReturn::error(PosixError::TooManyOpenFiles);
+    }
+
+    let accepted_socket_descriptor = match socket_table.accept(owner, listener_descriptor) {
+        Ok(descriptor) => descriptor,
+        Err(error) => return SyscallReturn::error(error),
+    };
+    let entry = crate::posix::DescriptorEntry::new(
+        crate::posix::DescriptorAccess::ReadWrite,
+        crate::posix::DescriptorFlags::EMPTY,
+        crate::posix::DescriptorObject::new(
+            crate::posix::DescriptorObjectKind::Socket,
+            accepted_socket_descriptor.raw(),
+        ),
+    );
+    match descriptor_store
+        .current_descriptor_table_mut(current_owner)
+        .and_then(|descriptor_table| descriptor_table.allocate(entry))
+    {
+        Ok(process_descriptor) => SyscallReturn::success(process_descriptor as u64),
+        Err(error) => {
+            let _ = socket_table.close(owner, accepted_socket_descriptor);
+            SyscallReturn::error(error)
+        }
     }
 }
 
@@ -7586,6 +7723,7 @@ mod tests {
             crate::network::NetworkSocketState::Listening {
                 local_endpoint: endpoint,
                 backlog: 4,
+                pending: crate::network::NetworkSocketPendingQueue::new(),
             }
         );
 
@@ -7602,6 +7740,553 @@ mod tests {
             sockets.socket(crate::network::NetworkSocketDescriptor::from_raw(0)),
             Err(PosixError::BadDescriptor)
         );
+    }
+
+    #[test_case]
+    fn talos_connect_accept_records_local_handshake_state() {
+        let owner = crate::scheduler::ProcessOwnerId::new(31).expect("owner id");
+        let mut store = crate::posix::ProcessDescriptorStore::<1, 7>::new_empty();
+        store
+            .create_owner_with_inherited_stdio(owner)
+            .expect("create owner");
+        let mut sockets = crate::network::NetworkSocketDescriptorTable::<4>::new();
+        let mut user_memory = [0u8; 128];
+        let listener_endpoint = crate::network::Ipv4Endpoint::new(0x7f00_0001, 8080);
+        let client_endpoint = crate::network::Ipv4Endpoint::new(
+            crate::network::SOCKET_SYNTHETIC_LOCAL_IPV4_BE,
+            crate::network::SOCKET_SYNTHETIC_CLIENT_PORT_BASE + 1,
+        );
+
+        let listener_fd = dispatch_socket_case(
+            TALOS_SOCKET_SYSCALL,
+            SyscallArguments::new([
+                crate::network::SOCKET_DOMAIN_AF_INET,
+                crate::network::SOCKET_TYPE_STREAM,
+                crate::network::SOCKET_PROTOCOL_DEFAULT,
+                0,
+                0,
+                0,
+            ]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        assert_eq!(listener_fd.return_value().x0(), 3);
+        let bind = dispatch_socket_case(
+            TALOS_BIND_SYSCALL,
+            SyscallArguments::new([
+                3,
+                listener_endpoint.ipv4_be() as u64,
+                listener_endpoint.port() as u64,
+                0,
+                0,
+                0,
+            ]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        let listen = dispatch_socket_case(
+            TALOS_LISTEN_SYSCALL,
+            SyscallArguments::new([3, 2, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        let client_fd = dispatch_socket_case(
+            TALOS_SOCKET_SYSCALL,
+            SyscallArguments::new([
+                crate::network::SOCKET_DOMAIN_AF_INET,
+                crate::network::SOCKET_TYPE_STREAM,
+                crate::network::SOCKET_PROTOCOL_DEFAULT,
+                0,
+                0,
+                0,
+            ]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        let connect = dispatch_socket_case(
+            TALOS_CONNECT_SYSCALL,
+            SyscallArguments::new([
+                4,
+                listener_endpoint.ipv4_be() as u64,
+                listener_endpoint.port() as u64,
+                0,
+                0,
+                0,
+            ]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        let accept = dispatch_socket_case(
+            TALOS_ACCEPT_SYSCALL,
+            SyscallArguments::new([3, 0, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+
+        assert_eq!(bind.return_value().x0(), 0);
+        assert_eq!(listen.return_value().x0(), 0);
+        assert_eq!(client_fd.return_value().x0(), 4);
+        assert_eq!(connect.number(), SyscallNumber::TalosConnect);
+        assert_eq!(connect.return_value().x0(), 0);
+        assert_eq!(accept.number(), SyscallNumber::TalosAccept);
+        assert_eq!(accept.return_value().x0(), 5);
+        assert_eq!(
+            sockets
+                .socket(crate::network::NetworkSocketDescriptor::from_raw(0))
+                .expect("listener backing")
+                .state(),
+            crate::network::NetworkSocketState::Listening {
+                local_endpoint: listener_endpoint,
+                backlog: 2,
+                pending: crate::network::NetworkSocketPendingQueue::new(),
+            }
+        );
+        assert_eq!(
+            sockets
+                .socket(crate::network::NetworkSocketDescriptor::from_raw(1))
+                .expect("client backing")
+                .state(),
+            crate::network::NetworkSocketState::Connected {
+                local_endpoint: client_endpoint,
+                remote_endpoint: listener_endpoint,
+            }
+        );
+        assert_eq!(
+            sockets
+                .socket(crate::network::NetworkSocketDescriptor::from_raw(2))
+                .expect("accepted backing")
+                .state(),
+            crate::network::NetworkSocketState::Accepted {
+                local_endpoint: listener_endpoint,
+                remote_endpoint: client_endpoint,
+            }
+        );
+
+        let close_client = dispatch_socket_case(
+            TALOS_CLOSE_SYSCALL,
+            SyscallArguments::new([4, 0, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        let close_accepted = dispatch_socket_case(
+            TALOS_CLOSE_SYSCALL,
+            SyscallArguments::new([5, 0, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        assert_eq!(close_client.return_value().x0(), 0);
+        assert_eq!(close_accepted.return_value().x0(), 0);
+        assert_eq!(
+            sockets.socket(crate::network::NetworkSocketDescriptor::from_raw(1)),
+            Err(PosixError::BadDescriptor)
+        );
+        assert_eq!(
+            sockets.socket(crate::network::NetworkSocketDescriptor::from_raw(2)),
+            Err(PosixError::BadDescriptor)
+        );
+    }
+
+    #[test_case]
+    fn talos_connect_accept_errors_are_all_or_nothing() {
+        let owner = crate::scheduler::ProcessOwnerId::new(31).expect("owner id");
+        let mut store = crate::posix::ProcessDescriptorStore::<1, 7>::new_empty();
+        store
+            .create_owner_with_inherited_stdio(owner)
+            .expect("create owner");
+        let mut sockets = crate::network::NetworkSocketDescriptorTable::<4>::new();
+        let mut user_memory = [0u8; 128];
+        let endpoint = crate::network::Ipv4Endpoint::new(0x7f00_0001, 8080);
+
+        let scalar_connect = dispatch(TALOS_CONNECT_SYSCALL, SyscallArguments::empty());
+        let scalar_accept = dispatch(TALOS_ACCEPT_SYSCALL, SyscallArguments::empty());
+        assert_eq!(
+            scalar_connect.return_value().x0(),
+            (ENOTSUP as u64).wrapping_neg()
+        );
+        assert_eq!(
+            scalar_accept.return_value().x0(),
+            (ENOTSUP as u64).wrapping_neg()
+        );
+
+        let listener = dispatch_socket_case(
+            TALOS_SOCKET_SYSCALL,
+            SyscallArguments::new([
+                crate::network::SOCKET_DOMAIN_AF_INET,
+                crate::network::SOCKET_TYPE_STREAM,
+                crate::network::SOCKET_PROTOCOL_DEFAULT,
+                0,
+                0,
+                0,
+            ]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        assert_eq!(listener.return_value().x0(), 3);
+        assert_eq!(
+            dispatch_socket_case(
+                TALOS_BIND_SYSCALL,
+                SyscallArguments::new([
+                    3,
+                    endpoint.ipv4_be() as u64,
+                    endpoint.port() as u64,
+                    0,
+                    0,
+                    0,
+                ]),
+                Some(owner),
+                &mut store,
+                &mut sockets,
+                &mut user_memory,
+            )
+            .return_value()
+            .x0(),
+            0
+        );
+        assert_eq!(
+            dispatch_socket_case(
+                TALOS_LISTEN_SYSCALL,
+                SyscallArguments::new([3, 1, 0, 0, 0, 0]),
+                Some(owner),
+                &mut store,
+                &mut sockets,
+                &mut user_memory,
+            )
+            .return_value()
+            .x0(),
+            0
+        );
+        let client = dispatch_socket_case(
+            TALOS_SOCKET_SYSCALL,
+            SyscallArguments::new([
+                crate::network::SOCKET_DOMAIN_AF_INET,
+                crate::network::SOCKET_TYPE_STREAM,
+                crate::network::SOCKET_PROTOCOL_DEFAULT,
+                0,
+                0,
+                0,
+            ]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        assert_eq!(client.return_value().x0(), 4);
+
+        let reserved_connect = dispatch_socket_case(
+            TALOS_CONNECT_SYSCALL,
+            SyscallArguments::new([
+                4,
+                endpoint.ipv4_be() as u64,
+                endpoint.port() as u64,
+                1,
+                0,
+                0,
+            ]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        let oversized_ipv4 = dispatch_socket_case(
+            TALOS_CONNECT_SYSCALL,
+            SyscallArguments::new([4, u32::MAX as u64 + 1, endpoint.port() as u64, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        let zero_port = dispatch_socket_case(
+            TALOS_CONNECT_SYSCALL,
+            SyscallArguments::new([4, endpoint.ipv4_be() as u64, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        let stdout_connect = dispatch_socket_case(
+            TALOS_CONNECT_SYSCALL,
+            SyscallArguments::new([
+                1,
+                endpoint.ipv4_be() as u64,
+                endpoint.port() as u64,
+                0,
+                0,
+                0,
+            ]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        let empty_accept = dispatch_socket_case(
+            TALOS_ACCEPT_SYSCALL,
+            SyscallArguments::new([3, 0, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        let no_listener_connect = dispatch_socket_case(
+            TALOS_CONNECT_SYSCALL,
+            SyscallArguments::new([
+                4,
+                endpoint.ipv4_be() as u64,
+                endpoint.port() as u64 + 1,
+                0,
+                0,
+                0,
+            ]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+
+        assert_eq!(
+            reserved_connect.return_value().x0(),
+            (EINVAL as u64).wrapping_neg()
+        );
+        assert_eq!(
+            oversized_ipv4.return_value().x0(),
+            (EINVAL as u64).wrapping_neg()
+        );
+        assert_eq!(
+            zero_port.return_value().x0(),
+            (EINVAL as u64).wrapping_neg()
+        );
+        assert_eq!(
+            stdout_connect.return_value().x0(),
+            (EBADF as u64).wrapping_neg()
+        );
+        assert_eq!(
+            empty_accept.return_value().x0(),
+            (EAGAIN as u64).wrapping_neg()
+        );
+        assert_eq!(
+            no_listener_connect.return_value().x0(),
+            (EINVAL as u64).wrapping_neg()
+        );
+        assert_eq!(
+            sockets
+                .socket(crate::network::NetworkSocketDescriptor::from_raw(1))
+                .expect("client unchanged")
+                .state(),
+            crate::network::NetworkSocketState::OpenUnbound
+        );
+
+        let connect = dispatch_socket_case(
+            TALOS_CONNECT_SYSCALL,
+            SyscallArguments::new([
+                4,
+                endpoint.ipv4_be() as u64,
+                endpoint.port() as u64,
+                0,
+                0,
+                0,
+            ]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        assert_eq!(connect.return_value().x0(), 0);
+        let second_client = dispatch_socket_case(
+            TALOS_SOCKET_SYSCALL,
+            SyscallArguments::new([
+                crate::network::SOCKET_DOMAIN_AF_INET,
+                crate::network::SOCKET_TYPE_STREAM,
+                crate::network::SOCKET_PROTOCOL_DEFAULT,
+                0,
+                0,
+                0,
+            ]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        let full_queue_connect = dispatch_socket_case(
+            TALOS_CONNECT_SYSCALL,
+            SyscallArguments::new([
+                5,
+                endpoint.ipv4_be() as u64,
+                endpoint.port() as u64,
+                0,
+                0,
+                0,
+            ]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        assert_eq!(second_client.return_value().x0(), 5);
+        assert_eq!(
+            full_queue_connect.return_value().x0(),
+            (ENOSPC as u64).wrapping_neg()
+        );
+        assert_eq!(
+            sockets
+                .socket(crate::network::NetworkSocketDescriptor::from_raw(2))
+                .expect("second client unchanged")
+                .state(),
+            crate::network::NetworkSocketState::OpenUnbound
+        );
+    }
+
+    #[test_case]
+    fn talos_accept_rejects_capacity_failures_without_dequeueing_peer() {
+        let owner = crate::scheduler::ProcessOwnerId::new(31).expect("owner id");
+        let mut store = crate::posix::ProcessDescriptorStore::<1, 5>::new_empty();
+        store
+            .create_owner_with_inherited_stdio(owner)
+            .expect("create owner");
+        let mut sockets = crate::network::NetworkSocketDescriptorTable::<2>::new();
+        let mut user_memory = [0u8; 128];
+        let endpoint = crate::network::Ipv4Endpoint::new(0x7f00_0001, 8080);
+
+        for expected_fd in 3..=4 {
+            let open = dispatch_socket_case(
+                TALOS_SOCKET_SYSCALL,
+                SyscallArguments::new([
+                    crate::network::SOCKET_DOMAIN_AF_INET,
+                    crate::network::SOCKET_TYPE_STREAM,
+                    crate::network::SOCKET_PROTOCOL_DEFAULT,
+                    0,
+                    0,
+                    0,
+                ]),
+                Some(owner),
+                &mut store,
+                &mut sockets,
+                &mut user_memory,
+            );
+            assert_eq!(open.return_value().x0(), expected_fd);
+        }
+        assert_eq!(
+            dispatch_socket_case(
+                TALOS_BIND_SYSCALL,
+                SyscallArguments::new([
+                    3,
+                    endpoint.ipv4_be() as u64,
+                    endpoint.port() as u64,
+                    0,
+                    0,
+                    0,
+                ]),
+                Some(owner),
+                &mut store,
+                &mut sockets,
+                &mut user_memory,
+            )
+            .return_value()
+            .x0(),
+            0
+        );
+        assert_eq!(
+            dispatch_socket_case(
+                TALOS_LISTEN_SYSCALL,
+                SyscallArguments::new([3, 1, 0, 0, 0, 0]),
+                Some(owner),
+                &mut store,
+                &mut sockets,
+                &mut user_memory,
+            )
+            .return_value()
+            .x0(),
+            0
+        );
+        assert_eq!(
+            dispatch_socket_case(
+                TALOS_CONNECT_SYSCALL,
+                SyscallArguments::new([
+                    4,
+                    endpoint.ipv4_be() as u64,
+                    endpoint.port() as u64,
+                    0,
+                    0,
+                    0
+                ]),
+                Some(owner),
+                &mut store,
+                &mut sockets,
+                &mut user_memory,
+            )
+            .return_value()
+            .x0(),
+            0
+        );
+
+        let no_process_descriptor = dispatch_socket_case(
+            TALOS_ACCEPT_SYSCALL,
+            SyscallArguments::new([3, 0, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        assert_eq!(
+            no_process_descriptor.return_value().x0(),
+            (EMFILE as u64).wrapping_neg()
+        );
+        assert!(matches!(
+            sockets
+                .socket(crate::network::NetworkSocketDescriptor::from_raw(0))
+                .expect("listener still queued")
+                .state(),
+            crate::network::NetworkSocketState::Listening { pending, .. } if pending.len() == 1
+        ));
+
+        assert_eq!(
+            dispatch_socket_case(
+                TALOS_CLOSE_SYSCALL,
+                SyscallArguments::new([1, 0, 0, 0, 0, 0]),
+                Some(owner),
+                &mut store,
+                &mut sockets,
+                &mut user_memory,
+            )
+            .return_value()
+            .x0(),
+            0
+        );
+        let no_socket_backing = dispatch_socket_case(
+            TALOS_ACCEPT_SYSCALL,
+            SyscallArguments::new([3, 0, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        assert_eq!(
+            no_socket_backing.return_value().x0(),
+            (ENOSPC as u64).wrapping_neg()
+        );
+        assert!(matches!(
+            sockets
+                .socket(crate::network::NetworkSocketDescriptor::from_raw(0))
+                .expect("listener still queued after backing failure")
+                .state(),
+            crate::network::NetworkSocketState::Listening { pending, .. } if pending.len() == 1
+        ));
     }
 
     #[test_case]

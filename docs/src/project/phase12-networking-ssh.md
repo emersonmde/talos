@@ -4976,3 +4976,29 @@ I/O, hardware reachability, lab mutation, boot publication, SSH, smoltcp,
 broad socket expansion, public stable socket ABI acceptance, or phase
 transition. The selected next bounded task is
 phase12-network-socket-connect-accept-core-20260620.
+
+phase12-network-socket-connect-accept-core-20260620 accepts
+phase12-network-socket-connect-accept-core-accepted. The implementation adds
+private TALOS_CONNECT_SYSCALL = 9 and TALOS_ACCEPT_SYSCALL = 10 selectors only
+to the socket-table-aware process descriptor dispatch path; scalar dispatch
+still returns ENOTSUP outside that context.
+
+The accepted source/unit frontier is descriptor-backed local handshake state:
+connect transitions an open-unbound current-process AF_INET stream socket to
+Connected and queues one synthetic local peer on exactly one matching
+current-process listener; accept dequeues one pending peer and creates a new
+current-process descriptor backed by an Accepted server-side socket. The
+listener pending queue is bounded by the accepted listen backlog, client
+endpoints remain synthetic 127.0.0.1:(49152 + socket_descriptor.raw()), and
+failures leave prior client/listener/descriptor/backing state unchanged.
+
+Focused unit coverage records successful handshake state, close/drop cleanup,
+scalar-dispatch ENOTSUP, reserved and malformed scalar arguments, listener
+absence, empty accept, full listener queue, process descriptor capacity, socket
+backing capacity, and non-socket descriptor rejection. This does not accept
+shell /bin/sockdiag connect/accept output, retained smoke evidence, send, recv,
+poll/blocking network I/O, UDP/TCP payload transport, cross-process sockets,
+live driver adapters, live packet I/O, hardware reachability, lab mutation,
+boot publication, SSH, smoltcp, broad socket expansion, public stable socket
+ABI acceptance, or phase transition. The selected next bounded task is
+phase12-network-shell-sockdiag-connect-accept-core-20260620.

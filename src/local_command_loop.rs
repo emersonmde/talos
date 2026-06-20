@@ -1939,6 +1939,7 @@ where
                     SOCKDIAG_LOCAL_PORT,
                 ),
                 backlog: SOCKDIAG_UPDATED_BACKLOG,
+                pending: crate::network::NetworkSocketPendingQueue::new(),
             })
         {
             return Err(LocalCommandExecError::LaunchPipelineFailed);
