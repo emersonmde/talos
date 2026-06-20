@@ -1763,6 +1763,137 @@ impl NetworkPingOperationDescriptor {
     }
 }
 
+pub(crate) const SOCKET_DOMAIN_AF_INET: u64 = 2;
+pub(crate) const SOCKET_TYPE_STREAM: u64 = 1;
+pub(crate) const SOCKET_PROTOCOL_DEFAULT: u64 = 0;
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct NetworkSocketDescriptor {
+    raw: usize,
+}
+
+impl NetworkSocketDescriptor {
+    pub(crate) const fn from_raw(raw: usize) -> Self {
+        Self { raw }
+    }
+
+    pub(crate) const fn raw(self) -> usize {
+        self.raw
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct NetworkSocket {
+    owner: crate::scheduler::ProcessOwnerId,
+    domain: u64,
+    socket_type: u64,
+    protocol: u64,
+}
+
+impl NetworkSocket {
+    const fn new(
+        owner: crate::scheduler::ProcessOwnerId,
+        domain: u64,
+        socket_type: u64,
+        protocol: u64,
+    ) -> Self {
+        Self {
+            owner,
+            domain,
+            socket_type,
+            protocol,
+        }
+    }
+
+    pub(crate) const fn owner(self) -> crate::scheduler::ProcessOwnerId {
+        self.owner
+    }
+
+    pub(crate) const fn domain(self) -> u64 {
+        self.domain
+    }
+
+    pub(crate) const fn socket_type(self) -> u64 {
+        self.socket_type
+    }
+
+    pub(crate) const fn protocol(self) -> u64 {
+        self.protocol
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct NetworkSocketDescriptorTable<const CAPACITY: usize> {
+    entries: [Option<NetworkSocket>; CAPACITY],
+}
+
+impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
+    pub(crate) const fn new() -> Self {
+        Self {
+            entries: [None; CAPACITY],
+        }
+    }
+
+    pub(crate) fn open(
+        &mut self,
+        owner: crate::scheduler::ProcessOwnerId,
+        domain: u64,
+        socket_type: u64,
+        protocol: u64,
+    ) -> Result<NetworkSocketDescriptor, crate::posix::PosixError> {
+        if domain != SOCKET_DOMAIN_AF_INET
+            || socket_type != SOCKET_TYPE_STREAM
+            || protocol != SOCKET_PROTOCOL_DEFAULT
+        {
+            return Err(crate::posix::PosixError::NotSupported);
+        }
+
+        let mut raw = 0;
+        while raw < CAPACITY {
+            if self.entries[raw].is_none() {
+                self.entries[raw] = Some(NetworkSocket::new(owner, domain, socket_type, protocol));
+                return Ok(NetworkSocketDescriptor::from_raw(raw));
+            }
+            raw += 1;
+        }
+
+        Err(crate::posix::PosixError::NoSpace)
+    }
+
+    pub(crate) fn close(
+        &mut self,
+        owner: crate::scheduler::ProcessOwnerId,
+        descriptor: NetworkSocketDescriptor,
+    ) -> Result<(), crate::posix::PosixError> {
+        self.require_owner(owner, descriptor)?;
+        self.entries[descriptor.raw()] = None;
+        Ok(())
+    }
+
+    pub(crate) fn socket(
+        &self,
+        descriptor: NetworkSocketDescriptor,
+    ) -> Result<NetworkSocket, crate::posix::PosixError> {
+        self.entries
+            .get(descriptor.raw())
+            .and_then(|entry| *entry)
+            .ok_or(crate::posix::PosixError::BadDescriptor)
+    }
+
+    pub(crate) fn require_owner(
+        &self,
+        owner: crate::scheduler::ProcessOwnerId,
+        descriptor: NetworkSocketDescriptor,
+    ) -> Result<(), crate::posix::PosixError> {
+        let socket = self.socket(descriptor)?;
+        if socket.owner() == owner {
+            Ok(())
+        } else {
+            Err(crate::posix::PosixError::BadDescriptor)
+        }
+    }
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct NetworkPingOperationDescriptorTable<
     const DESCRIPTOR_CAPACITY: usize,

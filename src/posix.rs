@@ -603,6 +603,10 @@ impl<const CAPACITY: usize> DescriptorTable<CAPACITY> {
         Err(PosixError::TooManyOpenFiles)
     }
 
+    pub(crate) fn has_free_slot(&self) -> bool {
+        self.entries.iter().any(Option::is_none)
+    }
+
     pub(crate) fn allocate_at(
         &mut self,
         descriptor: usize,

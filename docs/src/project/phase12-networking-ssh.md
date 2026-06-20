@@ -4716,3 +4716,26 @@ datagram/raw sockets, live driver adapters, live packet I/O, hardware
 reachability, smoltcp, SSH, lab mutation, boot publication, broad socket
 expansion, public stable socket ABI acceptance, or phase transition. The
 selected next bounded task is phase12-network-socket-open-close-core-20260620.
+
+phase12-network-socket-open-close-core-20260620 accepts
+phase12-network-socket-open-close-core-accepted. The implementation adds the
+private experimental `TALOS_SOCKET_SYSCALL = 6` selector to
+`SyscallNumber` and a socket-table-aware process descriptor dispatch path.
+The accepted runtime surface remains limited to opening `AF_INET=2`,
+`SOCK_STREAM=1`, `protocol=0` sockets into
+`DescriptorObjectKind::Socket` process descriptors and closing them through
+the existing `TALOS_CLOSE_SYSCALL = 2` descriptor lifetime path. Backing
+entries record owner/domain/type/protocol in a fixed-capacity socket table;
+close validates owner/backing identity, drops the process descriptor, and then
+drops the matching socket backing entry.
+
+Focused source/unit evidence covers successful open/close, unsupported
+domain/type/protocol, reserved arguments, missing owner, process descriptor
+capacity, socket backing capacity, wrong-owner backing rejection, invalid and
+closed descriptor behavior, and unchanged non-socket close behavior. This core
+does not add `/bin/sockdiag`, generated-root content, send, recv, bind,
+connect, listen, accept, poll/blocking network I/O, UDP/TCP payload transport,
+live packet I/O, hardware reachability, smoltcp, SSH, lab mutation, boot
+publication, broad socket expansion, public stable socket ABI acceptance, or a
+phase transition. The selected next bounded task is
+phase12-network-shell-sockdiag-open-close-core-20260620.

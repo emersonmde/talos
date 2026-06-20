@@ -36,10 +36,12 @@ ADR template:
   smoke closeout evidence. The task record is
   tasks/2026-06-20-phase12-network-socket-open-close-abi-contract.md.
 - Consequences: The follow-up implementation can add only descriptor-backed
-  socket open/close behavior and focused tests. The selector is Talos-private
-  and experimental for this task chain; it is not a Linux syscall-number
-  compatibility claim and does not accept libc/public ABI stability beyond the
-  bounded open/close contract.
+  socket open/close behavior and focused tests. The follow-up core task
+  accepted that source/unit implementation in
+  phase12-network-socket-open-close-core-20260620 without broadening the
+  surface. The selector is Talos-private and experimental for this task chain;
+  it is not a Linux syscall-number compatibility claim and does not accept
+  libc/public ABI stability beyond the bounded open/close contract.
 - Alternatives considered: overload `TALOS_OPEN_SYSCALL` with a synthetic
   socket path, extend the pingdiag diagnostic descriptor, or reserve a broad
   stable POSIX socket ABI immediately. Overloading open would confuse VFS file

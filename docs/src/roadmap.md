@@ -14743,6 +14743,21 @@ Milestone 12.3: IP Stack
   hardware work, public stable socket ABI acceptance, broad socket expansion,
   and phase transition. The selected next bounded task is
   phase12-network-socket-open-close-core-20260620.
+- The socket open/close core accepts source/unit evidence for the private
+  experimental `TALOS_SOCKET_SYSCALL = 6` selector and socket-table-aware
+  process descriptor dispatch. The accepted behavior is limited to
+  `AF_INET=2`, `SOCK_STREAM=1`, `protocol=0` open into a
+  `DescriptorObjectKind::Socket` process descriptor and close/drop through
+  the existing `TALOS_CLOSE_SYSCALL = 2` lifetime path. Tests cover
+  successful open/close, reserved arguments, unsupported tuple, missing owner,
+  process descriptor capacity, socket backing capacity, wrong-owner backing,
+  invalid/closed descriptors, and unchanged non-socket descriptor close
+  behavior. `/bin/sockdiag`, generated-root content, send/recv,
+  bind/connect/listen/accept, poll/blocking I/O, UDP/TCP payload transport,
+  live packet I/O, smoltcp, SSH, hardware work, public stable socket ABI
+  acceptance, broad socket expansion, and phase transition remain rejected.
+  The selected next bounded task is
+  phase12-network-shell-sockdiag-open-close-core-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
