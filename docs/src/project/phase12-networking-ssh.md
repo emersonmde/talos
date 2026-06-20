@@ -4940,3 +4940,39 @@ reachability, lab mutation, boot publication, generated-root publication, SSH,
 smoltcp, broad socket expansion, public stable socket ABI acceptance, and
 phase transition. selected_next_task is null and planningNeeded=true pending
 supervisor planning for any next bounded Phase 12.4 socket or network task.
+
+phase12-network-socket-connect-accept-abi-contract-20260620 accepts
+phase12-network-socket-connect-accept-abi-contract-accepted. Supervisor
+planning after the shell-visible sockdiag bind/listen closeout selected the
+next bounded socket integration boundary: private descriptor-backed local
+connect/accept handshake state for AF_INET stream sockets created by the
+accepted socket open, bind, and listen path.
+
+The accepted contract reserves future private TALOS_CONNECT_SYSCALL = 9 and
+TALOS_ACCEPT_SYSCALL = 10 selectors on the existing STABLE_SVC_IMMEDIATE = 0
+path. Connect uses scalar x0=fd, x1=ipv4_be, x2=port, and x3..x5=0. Accept
+uses scalar x0=listener_fd and x1..x5=0, returning a new current-process
+descriptor for the accepted server-side socket.
+
+Listener lookup is intentionally process-local and deterministic: connect
+targets exactly one Listening socket owned by the current process whose local
+endpoint matches the requested IPv4/port. Zero or multiple matches return
+EINVAL. The listener pending-peer queue is bounded by the accepted listen
+backlog; full queues return ENOSPC and accept on an empty queue returns EAGAIN.
+Client endpoints are synthetic local state only, 127.0.0.1:(49152 +
+client_socket_descriptor.raw()), so this contract does not accept ephemeral
+port allocation, routing policy, TCP behavior, or packet transport.
+
+The backing socket states remain descriptor-owned and extend the accepted
+OpenUnbound, Bound, and Listening model with Connected and Accepted local peer
+states. Connect and accept are all-or-nothing: failed calls leave client,
+listener, pending queue, process descriptor, and socket backing state
+unchanged. Closing a listener drops queued local peers; closing connected or
+accepted descriptors drops only that descriptor backing state.
+
+This contract does not accept send, recv, poll/blocking network I/O, UDP/TCP
+payload transport, cross-process sockets, live driver adapters, live packet
+I/O, hardware reachability, lab mutation, boot publication, SSH, smoltcp,
+broad socket expansion, public stable socket ABI acceptance, or phase
+transition. The selected next bounded task is
+phase12-network-socket-connect-accept-core-20260620.

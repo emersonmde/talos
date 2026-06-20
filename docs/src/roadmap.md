@@ -14885,6 +14885,20 @@ Milestone 12.3: IP Stack
   socket expansion, public stable socket ABI acceptance, and phase transition
   remain rejected. selected_next_task is null and planningNeeded=true pending
   supervisor planning for any next bounded Phase 12.4 socket or network task.
+- The socket connect/accept ABI contract accepts only private descriptor-backed
+  local AF_INET stream handshake state after the bind/listen frontier. It
+  selects TALOS_CONNECT_SYSCALL = 9 and TALOS_ACCEPT_SYSCALL = 10 on the
+  existing STABLE_SVC_IMMEDIATE = 0 path. Connect targets exactly one
+  current-process Listening socket by IPv4/port; accept returns a new
+  current-process descriptor for the accepted server-side socket. Pending
+  peers are bounded by the accepted listen backlog, empty accept returns
+  EAGAIN, full queues return ENOSPC, and client endpoints are deterministic
+  synthetic local state only: 127.0.0.1:(49152 +
+  client_socket_descriptor.raw()). This does not accept send/recv,
+  poll/blocking network I/O, UDP/TCP payload transport, cross-process sockets,
+  live driver adapters, live packet I/O, hardware reachability, SSH, public
+  stable socket ABI acceptance, or phase transition. The selected next bounded
+  task is phase12-network-socket-connect-accept-core-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
