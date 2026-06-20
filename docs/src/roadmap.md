@@ -14611,6 +14611,23 @@ Milestone 12.3: IP Stack
   Phase 12.1 link-hardware retry, broad socket expansion, and phase transition
   remain rejected. The selected next bounded task is
   phase12-network-driver-packet-pump-smoke-20260620.
+- The driver-facing packet pump smoke accepts retained host/QEMU-substitute
+  evidence for the VFS /bin/pingdiag lifecycle crossing
+  PacketQueueNetworkDevice::pump_driver into trait-level NetworkDevice behavior.
+  scripts/qemu-driver-packet-pump-smoke.sh records the smoke transcript under
+  tasks/evidence/2026-06-20-driver-packet-pump-smoke/. The evidence covers
+  outbound ARP and IPv4/ICMP echo request records crossing to trait-level
+  transmit behavior, injected ARP and ICMP echo replies crossing back through
+  the pump, completed status/result copy-out, close/drop behavior, missing VFS
+  identity, malformed arguments, owner and descriptor failures, process
+  descriptor capacity, queue capacity/backpressure, caller buffer pressure,
+  malformed received frames, timeout/retry, transmit and receive device errors,
+  and unchanged syscall vocabulary. Shell ping, public sockets, stable/socket
+  ABI acceptance, live driver adapters, live packet I/O, hardware reachability,
+  SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1
+  link-hardware retry, broad socket expansion, and phase transition remain
+  rejected. The selected next bounded task is
+  phase12-network-driver-packet-pump-smoke-closeout-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

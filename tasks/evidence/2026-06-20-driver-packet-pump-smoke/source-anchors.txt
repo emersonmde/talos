@@ -1,0 +1,74 @@
+37:pub(crate) enum PacketQueueDriverPumpStep {
+145:pub(crate) struct PacketQueueNetworkDevice<
+157:    PacketQueueNetworkDevice<RX_CAPACITY, TX_CAPACITY, FRAME_CAPACITY>
+192:    pub(crate) fn pump_driver<D: NetworkDevice>(
+196:    ) -> PacketQueueDriverPumpStep {
+202:                    PacketQueueDriverPumpStep::Transmitted { frame_len }
+204:                Err(error) => PacketQueueDriverPumpStep::TransmitError { frame_len, error },
+209:            return PacketQueueDriverPumpStep::ReceiveQueueFull;
+216:                    Ok(()) => PacketQueueDriverPumpStep::Received { frame_len },
+220:                    }) => PacketQueueDriverPumpStep::ReceiveFrameTooLarge {
+224:                    Err(PacketQueueError::Full) => PacketQueueDriverPumpStep::ReceiveQueueFull,
+227:            Err(DeviceError::WouldBlock) => PacketQueueDriverPumpStep::NoFrame,
+228:            Err(DeviceError::BufferTooSmall) => PacketQueueDriverPumpStep::ReceiveBufferTooSmall,
+229:            Err(error) => PacketQueueDriverPumpStep::ReceiveError(error),
+235:    for PacketQueueNetworkDevice<RX_CAPACITY, TX_CAPACITY, FRAME_CAPACITY>
+3879:    fn packet_queue_driver_pump_drains_outbound_before_polling_receive_fifo() {
+3880:        let mut queue = PacketQueueNetworkDevice::<2, 2, 64>::new();
+3881:        let mut driver = PacketQueueNetworkDevice::<2, 2, 64>::new();
+3889:            queue.pump_driver(&mut driver, &mut receive_buffer),
+3890:            PacketQueueDriverPumpStep::Transmitted { frame_len: 3 }
+3902:            queue.pump_driver(&mut driver, &mut receive_buffer),
+3903:            PacketQueueDriverPumpStep::Transmitted { frame_len: 2 }
+3915:            queue.pump_driver(&mut driver, &mut receive_buffer),
+3916:            PacketQueueDriverPumpStep::Received { frame_len: 2 }
+3927:            queue.pump_driver(&mut driver, &mut receive_buffer),
+3928:            PacketQueueDriverPumpStep::NoFrame
+3933:    fn packet_queue_driver_pump_reports_backpressure_and_device_errors_deterministically() {
+3934:        let mut queue = PacketQueueNetworkDevice::<1, 1, 2>::new();
+3935:        let mut driver = PacketQueueNetworkDevice::<2, 2, 4>::new();
+3941:            queue.pump_driver(&mut driver, &mut receive_buffer),
+3942:            PacketQueueDriverPumpStep::TransmitError {
+3950:            queue.pump_driver(&mut driver, &mut receive_buffer),
+3951:            PacketQueueDriverPumpStep::Transmitted { frame_len: 2 }
+3957:            queue.pump_driver(&mut driver, &mut receive_buffer),
+3958:            PacketQueueDriverPumpStep::ReceiveQueueFull
+3968:            queue.pump_driver(&mut driver, &mut receive_buffer[..1]),
+3969:            PacketQueueDriverPumpStep::ReceiveBufferTooSmall
+3973:            queue.pump_driver(&mut driver, &mut receive_buffer),
+3974:            PacketQueueDriverPumpStep::Received { frame_len: 2 }
+3983:            queue.pump_driver(&mut driver, &mut receive_buffer),
+3984:            PacketQueueDriverPumpStep::ReceiveFrameTooLarge {
+3993:            queue.pump_driver(&mut driver, &mut receive_buffer),
+3994:            PacketQueueDriverPumpStep::ReceiveError(DeviceError::Io)
+16:pub(crate) const TALOS_OPEN_SYSCALL: u64 = 5;
+50:            TALOS_OPEN_SYSCALL => Self::TalosOpen,
+62:            Self::TalosOpen => TALOS_OPEN_SYSCALL,
+2649:        let result = dispatch(TALOS_OPEN_SYSCALL, SyscallArguments::empty());
+2652:        assert_eq!(result.number().raw(), TALOS_OPEN_SYSCALL);
+5094:    fn process_local_ping_user_arguments_reject_malformed_owner_descriptor_capacity_and_buffers() {
+5115:        assert_eq!(SyscallNumber::from_raw(6), SyscallNumber::Unknown(6));
+5116:        assert_eq!(TALOS_OPEN_SYSCALL, 5);
+5425:        assert_eq!(SyscallNumber::from_raw(6), SyscallNumber::Unknown(6));
+5426:        assert_eq!(TALOS_OPEN_SYSCALL, 5);
+5647:    fn vfs_ping_diagnostic_svc_fixture_records_packet_queue_lifecycle() {
+5692:        assert_eq!(SyscallNumber::from_raw(6), SyscallNumber::Unknown(6));
+5693:        assert_eq!(TALOS_OPEN_SYSCALL, 5);
+5905:    fn vfs_ping_diagnostic_svc_fixture_maps_packet_queue_controls() {
+6187:    fn vfs_ping_diagnostic_svc_fixture_maps_contract_error_controls() {
+7502:            TALOS_OPEN_SYSCALL,
+7544:            TALOS_OPEN_SYSCALL,
+7602:            TALOS_OPEN_SYSCALL,
+7616:            TALOS_OPEN_SYSCALL,
+7630:            TALOS_OPEN_SYSCALL,
+7637:            TALOS_OPEN_SYSCALL,
+7679:            TALOS_OPEN_SYSCALL,
+5:EVIDENCE_LOG="$EVIDENCE_DIR/qemu-driver-packet-pump-smoke.log"
+18:    echo "qemu-driver-packet-pump-smoke: cargo-test-filter=$filter"
+23:    echo "qemu-driver-packet-pump-smoke: start"
+24:    echo "qemu-driver-packet-pump-smoke: substitute=target-cargo-test-via-qemu-runner"
+25:    echo "qemu-driver-packet-pump-smoke: boundary=PacketQueueNetworkDevice::pump_driver over trait-level NetworkDevice behavior plus VFS /bin/pingdiag diagnostic SVC lifecycle"
+26:    echo "qemu-driver-packet-pump-smoke: lifecycle=/bin/pingdiag-open -> start-unresolved-arp -> pump-outbound-arp-to-driver -> inject-arp-reply-through-driver -> pump-outbound-icmp-to-driver -> inject-icmp-reply-through-driver -> completed-status -> close"
+27:    echo "qemu-driver-packet-pump-smoke: positive-frames=outbound-arp-request,outbound-ipv4-icmp-echo-request,inbound-arp-reply,inbound-icmp-echo-reply"
+28:    echo "qemu-driver-packet-pump-smoke: deterministic-controls=missing-vfs-identity,malformed-arguments,wrong-owner,invalid-or-closed-descriptor,queue-capacity,caller-buffer-pressure,malformed-received-frames,timeout-retry,transmit-receive-device-errors,close-drop,stable-syscall-vocabulary"
+34:    echo "qemu-driver-packet-pump-smoke: PASS classification=host-substitute-driver-packet-pump-smoke-complete"

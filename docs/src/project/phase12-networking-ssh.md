@@ -4533,3 +4533,27 @@ I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot
 publication, Phase 12.1 link-hardware retry, broad socket expansion, and phase
 transition remain rejected. The selected next bounded task is
 phase12-network-driver-packet-pump-smoke-20260620.
+
+phase12-network-driver-packet-pump-smoke-20260620 accepts
+phase12-network-driver-packet-pump-smoke-accepted. The retained
+host/QEMU-substitute smoke command is
+scripts/qemu-driver-packet-pump-smoke.sh, with transcript evidence under
+tasks/evidence/2026-06-20-driver-packet-pump-smoke/. The smoke exercises the
+accepted VFS /bin/pingdiag diagnostic lifecycle through
+PacketQueueNetworkDevice::pump_driver over trait-level NetworkDevice behavior.
+
+The accepted smoke evidence covers /bin/pingdiag VFS lookup, diagnostic SVC
+argument decoding, UserMapping copy-in/copy-out, process-local descriptor
+ownership, outbound ARP and IPv4/ICMP echo request records crossing pump_driver
+to trait-level transmit behavior, injected ARP and ICMP echo replies crossing
+back through pump_driver, completed status/result copy-out, close/drop
+behavior, and deterministic controls for missing VFS identity, malformed
+arguments, missing or wrong owner, invalid and closed descriptors, process
+descriptor capacity, queue capacity/backpressure, caller buffer pressure,
+malformed received frames, timeout/retry, transmit and receive device errors,
+and unchanged SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_* vocabulary. Shell
+ping, public sockets, stable/socket ABI acceptance, live driver adapters, live
+packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot
+publication, Phase 12.1 link-hardware retry, broad socket expansion, and phase
+transition remain rejected. The selected next bounded task is
+phase12-network-driver-packet-pump-smoke-closeout-20260620.
