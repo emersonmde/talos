@@ -550,6 +550,322 @@ where
     }
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum PingOperationSyscallSubstituteStatusKind {
+    Idle,
+    PendingArp,
+    Inflight,
+    Completed,
+    TimedOut,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct PingOperationSyscallSubstituteStatus {
+    kind: PingOperationSyscallSubstituteStatusKind,
+    destination_ipv4: [u8; 4],
+    next_hop_ipv4: [u8; 4],
+    payload_len: usize,
+    arp_retries_remaining: usize,
+}
+
+impl PingOperationSyscallSubstituteStatus {
+    pub(crate) const fn idle() -> Self {
+        Self {
+            kind: PingOperationSyscallSubstituteStatusKind::Idle,
+            destination_ipv4: [0; 4],
+            next_hop_ipv4: [0; 4],
+            payload_len: 0,
+            arp_retries_remaining: 0,
+        }
+    }
+
+    pub(crate) const fn kind(self) -> PingOperationSyscallSubstituteStatusKind {
+        self.kind
+    }
+
+    pub(crate) const fn destination_ipv4(self) -> [u8; 4] {
+        self.destination_ipv4
+    }
+
+    pub(crate) const fn next_hop_ipv4(self) -> [u8; 4] {
+        self.next_hop_ipv4
+    }
+
+    pub(crate) const fn payload_len(self) -> usize {
+        self.payload_len
+    }
+
+    pub(crate) const fn arp_retries_remaining(self) -> usize {
+        self.arp_retries_remaining
+    }
+
+    const fn from_userspace(status: crate::network::UserspacePingOperationStatus) -> Self {
+        match status {
+            crate::network::UserspacePingOperationStatus::Idle => Self::idle(),
+            crate::network::UserspacePingOperationStatus::PendingArp {
+                destination_ipv4,
+                next_hop_ipv4,
+                arp_retries_remaining,
+            } => Self {
+                kind: PingOperationSyscallSubstituteStatusKind::PendingArp,
+                destination_ipv4,
+                next_hop_ipv4,
+                payload_len: 0,
+                arp_retries_remaining,
+            },
+            crate::network::UserspacePingOperationStatus::Inflight { destination_ipv4 } => Self {
+                kind: PingOperationSyscallSubstituteStatusKind::Inflight,
+                destination_ipv4,
+                next_hop_ipv4: [0; 4],
+                payload_len: 0,
+                arp_retries_remaining: 0,
+            },
+            crate::network::UserspacePingOperationStatus::Completed {
+                destination_ipv4,
+                payload_len,
+            } => Self {
+                kind: PingOperationSyscallSubstituteStatusKind::Completed,
+                destination_ipv4,
+                next_hop_ipv4: [0; 4],
+                payload_len,
+                arp_retries_remaining: 0,
+            },
+            crate::network::UserspacePingOperationStatus::TimedOut { destination_ipv4 } => Self {
+                kind: PingOperationSyscallSubstituteStatusKind::TimedOut,
+                destination_ipv4,
+                next_hop_ipv4: [0; 4],
+                payload_len: 0,
+                arp_retries_remaining: 0,
+            },
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum PingOperationSyscallSubstituteStepKind {
+    StartedPendingArp,
+    StartedInflight,
+    NoFrame,
+    AdvancedToInflight,
+    RetryTransmitted,
+    Completed,
+    TimedOut,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct PingOperationSyscallSubstituteStep {
+    kind: PingOperationSyscallSubstituteStepKind,
+    frame_len: usize,
+    payload_len: usize,
+    destination_ipv4: [u8; 4],
+}
+
+impl PingOperationSyscallSubstituteStep {
+    pub(crate) const fn kind(self) -> PingOperationSyscallSubstituteStepKind {
+        self.kind
+    }
+
+    pub(crate) const fn frame_len(self) -> usize {
+        self.frame_len
+    }
+
+    pub(crate) const fn payload_len(self) -> usize {
+        self.payload_len
+    }
+
+    pub(crate) const fn destination_ipv4(self) -> [u8; 4] {
+        self.destination_ipv4
+    }
+
+    const fn from_userspace(step: crate::network::UserspacePingOperationStep) -> Self {
+        match step {
+            crate::network::UserspacePingOperationStep::StartedPendingArp { frame_len } => Self {
+                kind: PingOperationSyscallSubstituteStepKind::StartedPendingArp,
+                frame_len,
+                payload_len: 0,
+                destination_ipv4: [0; 4],
+            },
+            crate::network::UserspacePingOperationStep::StartedInflight { frame_len } => Self {
+                kind: PingOperationSyscallSubstituteStepKind::StartedInflight,
+                frame_len,
+                payload_len: 0,
+                destination_ipv4: [0; 4],
+            },
+            crate::network::UserspacePingOperationStep::NoFrame => Self {
+                kind: PingOperationSyscallSubstituteStepKind::NoFrame,
+                frame_len: 0,
+                payload_len: 0,
+                destination_ipv4: [0; 4],
+            },
+            crate::network::UserspacePingOperationStep::AdvancedToInflight { frame_len } => Self {
+                kind: PingOperationSyscallSubstituteStepKind::AdvancedToInflight,
+                frame_len,
+                payload_len: 0,
+                destination_ipv4: [0; 4],
+            },
+            crate::network::UserspacePingOperationStep::RetryTransmitted { frame_len } => Self {
+                kind: PingOperationSyscallSubstituteStepKind::RetryTransmitted,
+                frame_len,
+                payload_len: 0,
+                destination_ipv4: [0; 4],
+            },
+            crate::network::UserspacePingOperationStep::Completed { payload_len } => Self {
+                kind: PingOperationSyscallSubstituteStepKind::Completed,
+                frame_len: 0,
+                payload_len,
+                destination_ipv4: [0; 4],
+            },
+            crate::network::UserspacePingOperationStep::TimedOut { destination_ipv4 } => Self {
+                kind: PingOperationSyscallSubstituteStepKind::TimedOut,
+                frame_len: 0,
+                payload_len: 0,
+                destination_ipv4,
+            },
+        }
+    }
+}
+
+pub(crate) struct PingOperationSyscallSubstitute<
+    'a,
+    const DESCRIPTOR_CAPACITY: usize,
+    const ARP_CAPACITY: usize,
+    const PAYLOAD_CAPACITY: usize,
+> {
+    descriptor_table: &'a mut crate::network::NetworkPingOperationDescriptorTable<
+        DESCRIPTOR_CAPACITY,
+        ARP_CAPACITY,
+        PAYLOAD_CAPACITY,
+    >,
+    receive_buffer: &'a mut [u8],
+    transmit_buffer: &'a mut [u8],
+}
+
+impl<'a, const DESCRIPTOR_CAPACITY: usize, const ARP_CAPACITY: usize, const PAYLOAD_CAPACITY: usize>
+    PingOperationSyscallSubstitute<'a, DESCRIPTOR_CAPACITY, ARP_CAPACITY, PAYLOAD_CAPACITY>
+{
+    pub(crate) fn new(
+        descriptor_table: &'a mut crate::network::NetworkPingOperationDescriptorTable<
+            DESCRIPTOR_CAPACITY,
+            ARP_CAPACITY,
+            PAYLOAD_CAPACITY,
+        >,
+        receive_buffer: &'a mut [u8],
+        transmit_buffer: &'a mut [u8],
+    ) -> Self {
+        Self {
+            descriptor_table,
+            receive_buffer,
+            transmit_buffer,
+        }
+    }
+
+    pub(crate) fn open(&mut self) -> Result<usize, PosixError> {
+        self.descriptor_table
+            .open()
+            .map(crate::network::NetworkPingOperationDescriptor::raw)
+    }
+
+    pub(crate) fn close(&mut self, descriptor: usize) -> Result<(), PosixError> {
+        self.descriptor_table
+            .close(Self::operation_descriptor(descriptor))
+    }
+
+    pub(crate) fn status(
+        &self,
+        descriptor: usize,
+        status: &mut PingOperationSyscallSubstituteStatus,
+    ) -> Result<(), PosixError> {
+        *status = PingOperationSyscallSubstituteStatus::from_userspace(
+            self.descriptor_table
+                .status(Self::operation_descriptor(descriptor))?,
+        );
+        Ok(())
+    }
+
+    pub(crate) fn start<D>(
+        &mut self,
+        descriptor: usize,
+        device: &mut D,
+        endpoint: crate::network::LocalNetworkEndpoint,
+        route_policy: crate::network::Ipv4EgressRoutePolicy,
+        destination_ipv4: [u8; 4],
+        identifier: u16,
+        sequence_number: u16,
+        ttl: u8,
+        payload: &[u8],
+        arp_retry_budget: usize,
+    ) -> Result<PingOperationSyscallSubstituteStep, PosixError>
+    where
+        D: crate::network::NetworkDevice,
+    {
+        self.descriptor_table
+            .start(
+                Self::operation_descriptor(descriptor),
+                device,
+                endpoint,
+                route_policy,
+                destination_ipv4,
+                identifier,
+                sequence_number,
+                ttl,
+                payload,
+                self.transmit_buffer,
+                arp_retry_budget,
+            )
+            .map(PingOperationSyscallSubstituteStep::from_userspace)
+    }
+
+    pub(crate) fn pump<D>(
+        &mut self,
+        descriptor: usize,
+        device: &mut D,
+    ) -> Result<PingOperationSyscallSubstituteStep, PosixError>
+    where
+        D: crate::network::NetworkDevice,
+    {
+        self.descriptor_table
+            .pump(
+                Self::operation_descriptor(descriptor),
+                device,
+                self.receive_buffer,
+                self.transmit_buffer,
+            )
+            .map(PingOperationSyscallSubstituteStep::from_userspace)
+    }
+
+    pub(crate) fn retry_arp<D>(
+        &mut self,
+        descriptor: usize,
+        device: &mut D,
+    ) -> Result<PingOperationSyscallSubstituteStep, PosixError>
+    where
+        D: crate::network::NetworkDevice,
+    {
+        self.descriptor_table
+            .retry_arp(
+                Self::operation_descriptor(descriptor),
+                device,
+                self.transmit_buffer,
+            )
+            .map(PingOperationSyscallSubstituteStep::from_userspace)
+    }
+
+    pub(crate) fn timeout(
+        &mut self,
+        descriptor: usize,
+    ) -> Result<PingOperationSyscallSubstituteStep, PosixError> {
+        self.descriptor_table
+            .timeout(Self::operation_descriptor(descriptor))
+            .map(PingOperationSyscallSubstituteStep::from_userspace)
+    }
+
+    const fn operation_descriptor(
+        descriptor: usize,
+    ) -> crate::network::NetworkPingOperationDescriptor {
+        crate::network::NetworkPingOperationDescriptor::from_raw(descriptor)
+    }
+}
+
 fn dispatch_talos_write<const CAPACITY: usize, B>(
     arguments: SyscallArguments,
     descriptor_table: &crate::posix::DescriptorTable<CAPACITY>,
@@ -1302,6 +1618,446 @@ mod tests {
             &mut scratch,
             console,
         )
+    }
+
+    struct PingOutboundTransmitDevice {
+        transmit_error: Option<crate::network::DeviceError>,
+        transmitted: [u8; 128],
+        transmitted_len: usize,
+    }
+
+    impl PingOutboundTransmitDevice {
+        const fn new() -> Self {
+            Self {
+                transmit_error: None,
+                transmitted: [0; 128],
+                transmitted_len: 0,
+            }
+        }
+
+        const fn with_transmit_error(error: crate::network::DeviceError) -> Self {
+            Self {
+                transmit_error: Some(error),
+                transmitted: [0; 128],
+                transmitted_len: 0,
+            }
+        }
+    }
+
+    impl crate::network::NetworkDevice for PingOutboundTransmitDevice {
+        fn receive_frame<'a>(
+            &mut self,
+            _buffer: &'a mut [u8],
+        ) -> Result<&'a [u8], crate::network::DeviceError> {
+            Err(crate::network::DeviceError::WouldBlock)
+        }
+
+        fn transmit_frame(&mut self, frame: &[u8]) -> Result<(), crate::network::DeviceError> {
+            if let Some(error) = self.transmit_error {
+                return Err(error);
+            }
+
+            self.transmitted[..frame.len()].copy_from_slice(frame);
+            self.transmitted_len = frame.len();
+            Ok(())
+        }
+    }
+
+    struct PingPollDevice<'a> {
+        frame: Option<&'a [u8]>,
+        receive_error: Option<crate::network::DeviceError>,
+        transmit_error: Option<crate::network::DeviceError>,
+        transmitted: [u8; 128],
+        transmitted_len: usize,
+    }
+
+    impl<'a> PingPollDevice<'a> {
+        fn with_frame(frame: &'a [u8]) -> Self {
+            Self {
+                frame: Some(frame),
+                receive_error: None,
+                transmit_error: None,
+                transmitted: [0; 128],
+                transmitted_len: 0,
+            }
+        }
+
+        fn with_receive_error(error: crate::network::DeviceError) -> Self {
+            Self {
+                frame: None,
+                receive_error: Some(error),
+                transmit_error: None,
+                transmitted: [0; 128],
+                transmitted_len: 0,
+            }
+        }
+
+        fn with_transmit_error(frame: &'a [u8], error: crate::network::DeviceError) -> Self {
+            Self {
+                frame: Some(frame),
+                receive_error: None,
+                transmit_error: Some(error),
+                transmitted: [0; 128],
+                transmitted_len: 0,
+            }
+        }
+    }
+
+    impl<'a> crate::network::NetworkDevice for PingPollDevice<'a> {
+        fn receive_frame<'b>(
+            &mut self,
+            buffer: &'b mut [u8],
+        ) -> Result<&'b [u8], crate::network::DeviceError> {
+            if let Some(error) = self.receive_error {
+                return Err(error);
+            }
+
+            let frame = self.frame.expect("test poll frame configured");
+            if buffer.len() < frame.len() {
+                return Err(crate::network::DeviceError::BufferTooSmall);
+            }
+
+            buffer[..frame.len()].copy_from_slice(frame);
+            Ok(&buffer[..frame.len()])
+        }
+
+        fn transmit_frame(&mut self, frame: &[u8]) -> Result<(), crate::network::DeviceError> {
+            if let Some(error) = self.transmit_error {
+                return Err(error);
+            }
+
+            self.transmitted[..frame.len()].copy_from_slice(frame);
+            self.transmitted_len = frame.len();
+            Ok(())
+        }
+    }
+
+    const fn ping_local_endpoint() -> crate::network::LocalNetworkEndpoint {
+        crate::network::LocalNetworkEndpoint::new(
+            crate::network::MacAddress::new([0x02, 0, 0, 0, 0, 99]),
+            [192, 0, 2, 1],
+        )
+    }
+
+    fn ping_arp_reply_frame()
+    -> [u8; crate::network::ETHERNET_HEADER_LEN + crate::network::ARP_ETHERNET_IPV4_LEN] {
+        let mut frame =
+            [0u8; crate::network::ETHERNET_HEADER_LEN + crate::network::ARP_ETHERNET_IPV4_LEN];
+        frame[..6].copy_from_slice(&[0x02, 0, 0, 0, 0, 1]);
+        frame[6..12].copy_from_slice(&[0x02, 0, 0, 0, 0, 20]);
+        write_test_be_u16(&mut frame, 12, crate::network::ETHERTYPE_ARP);
+
+        let arp = &mut frame[crate::network::ETHERNET_HEADER_LEN..];
+        write_test_be_u16(arp, 0, 1);
+        write_test_be_u16(arp, 2, crate::network::ETHERTYPE_IPV4);
+        arp[4] = crate::network::ETHERNET_ADDR_LEN as u8;
+        arp[5] = 4;
+        write_test_be_u16(arp, 6, 2);
+        arp[8..14].copy_from_slice(&[0x02, 0, 0, 0, 0, 20]);
+        arp[14..18].copy_from_slice(&[192, 0, 2, 20]);
+        arp[18..24].copy_from_slice(&[0x02, 0, 0, 0, 0, 1]);
+        arp[24..28].copy_from_slice(&[192, 0, 2, 10]);
+        frame
+    }
+
+    fn ping_icmp_echo_reply_frame()
+    -> [u8; crate::network::ETHERNET_HEADER_LEN + crate::network::IPV4_MIN_HEADER_LEN + 12] {
+        let mut frame =
+            [0u8; crate::network::ETHERNET_HEADER_LEN + crate::network::IPV4_MIN_HEADER_LEN + 12];
+        frame[..6].copy_from_slice(&[0x02, 0, 0, 0, 0, 99]);
+        frame[6..12].copy_from_slice(&[0x02, 0, 0, 0, 0, 20]);
+        write_test_be_u16(&mut frame, 12, crate::network::ETHERTYPE_IPV4);
+
+        let ipv4 = &mut frame[crate::network::ETHERNET_HEADER_LEN
+            ..crate::network::ETHERNET_HEADER_LEN + crate::network::IPV4_MIN_HEADER_LEN];
+        ipv4[0] = 0x45;
+        write_test_be_u16(ipv4, 2, (crate::network::IPV4_MIN_HEADER_LEN + 12) as u16);
+        write_test_be_u16(ipv4, 4, 0x4444);
+        ipv4[8] = 64;
+        ipv4[9] = crate::network::IPV4_PROTOCOL_ICMP;
+        ipv4[12..16].copy_from_slice(&[192, 0, 2, 20]);
+        ipv4[16..20].copy_from_slice(&[192, 0, 2, 1]);
+        let checksum = test_internet_checksum(ipv4);
+        write_test_be_u16(ipv4, 10, checksum);
+
+        let icmp =
+            &mut frame[crate::network::ETHERNET_HEADER_LEN + crate::network::IPV4_MIN_HEADER_LEN..];
+        icmp[0] = 0;
+        icmp[4..].copy_from_slice(&[0x12, 0x34, 0, 7, 1, 2, 3, 4]);
+        let checksum = test_internet_checksum(icmp);
+        write_test_be_u16(icmp, 2, checksum);
+        frame
+    }
+
+    fn write_test_be_u16(bytes: &mut [u8], offset: usize, value: u16) {
+        let raw = value.to_be_bytes();
+        bytes[offset] = raw[0];
+        bytes[offset + 1] = raw[1];
+    }
+
+    fn test_internet_checksum(bytes: &[u8]) -> u16 {
+        let mut sum = 0u32;
+        let mut index = 0;
+        while index + 1 < bytes.len() {
+            sum += u16::from_be_bytes([bytes[index], bytes[index + 1]]) as u32;
+            index += 2;
+        }
+        if index < bytes.len() {
+            sum += (bytes[index] as u32) << 8;
+        }
+        while sum >> 16 != 0 {
+            sum = (sum & 0xffff) + (sum >> 16);
+        }
+        !(sum as u16)
+    }
+
+    #[test_case]
+    fn ping_operation_syscall_substitute_completes_unresolved_arp_to_echo_reply() {
+        let destination = [192, 0, 2, 20];
+        let policy = crate::network::Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None);
+        let payload = [1, 2, 3, 4];
+        let mut table = crate::network::NetworkPingOperationDescriptorTable::<1, 2, 4>::new();
+        let mut receive_buffer = [0u8; 128];
+        let mut transmit_buffer = [0u8; 128];
+        let mut adapter = PingOperationSyscallSubstitute::new(
+            &mut table,
+            &mut receive_buffer,
+            &mut transmit_buffer,
+        );
+        let mut status = PingOperationSyscallSubstituteStatus::idle();
+
+        let descriptor = adapter.open().expect("open descriptor");
+        assert_eq!(descriptor, 0);
+        assert_eq!(adapter.status(descriptor, &mut status), Ok(()));
+        assert_eq!(
+            status.kind(),
+            PingOperationSyscallSubstituteStatusKind::Idle
+        );
+
+        let start = adapter
+            .start(
+                descriptor,
+                &mut PingOutboundTransmitDevice::new(),
+                ping_local_endpoint(),
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &payload,
+                1,
+            )
+            .expect("start pending arp");
+        assert_eq!(
+            start.kind(),
+            PingOperationSyscallSubstituteStepKind::StartedPendingArp
+        );
+        assert_eq!(
+            start.frame_len(),
+            crate::network::ETHERNET_HEADER_LEN + crate::network::ARP_ETHERNET_IPV4_LEN
+        );
+        assert_eq!(adapter.status(descriptor, &mut status), Ok(()));
+        assert_eq!(
+            status.kind(),
+            PingOperationSyscallSubstituteStatusKind::PendingArp
+        );
+        assert_eq!(status.destination_ipv4(), destination);
+        assert_eq!(status.next_hop_ipv4(), destination);
+        assert_eq!(status.arp_retries_remaining(), 1);
+
+        let arp_reply = ping_arp_reply_frame();
+        let advanced = adapter
+            .pump(descriptor, &mut PingPollDevice::with_frame(&arp_reply))
+            .expect("advance to inflight");
+        assert_eq!(
+            advanced.kind(),
+            PingOperationSyscallSubstituteStepKind::AdvancedToInflight
+        );
+        assert_eq!(
+            advanced.frame_len(),
+            crate::network::ETHERNET_HEADER_LEN
+                + crate::network::IPV4_MIN_HEADER_LEN
+                + crate::network::ICMP_ECHO_HEADER_LEN
+                + payload.len()
+        );
+        assert_eq!(adapter.status(descriptor, &mut status), Ok(()));
+        assert_eq!(
+            status.kind(),
+            PingOperationSyscallSubstituteStatusKind::Inflight
+        );
+
+        let echo_reply = ping_icmp_echo_reply_frame();
+        let completed = adapter
+            .pump(descriptor, &mut PingPollDevice::with_frame(&echo_reply))
+            .expect("complete echo reply");
+        assert_eq!(
+            completed.kind(),
+            PingOperationSyscallSubstituteStepKind::Completed
+        );
+        assert_eq!(completed.payload_len(), payload.len());
+        assert_eq!(adapter.status(descriptor, &mut status), Ok(()));
+        assert_eq!(
+            status.kind(),
+            PingOperationSyscallSubstituteStatusKind::Completed
+        );
+        assert_eq!(status.destination_ipv4(), destination);
+        assert_eq!(status.payload_len(), payload.len());
+
+        assert_eq!(adapter.close(descriptor), Ok(()));
+        assert_eq!(
+            adapter.status(descriptor, &mut status),
+            Err(PosixError::BadDescriptor)
+        );
+    }
+
+    #[test_case]
+    fn ping_operation_syscall_substitute_maps_descriptor_and_device_errors() {
+        let destination = [192, 0, 2, 20];
+        let policy = crate::network::Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None);
+        let payload = [1, 2, 3, 4];
+        let mut empty_table = crate::network::NetworkPingOperationDescriptorTable::<0, 2, 4>::new();
+        let mut empty_receive = [0u8; 128];
+        let mut empty_transmit = [0u8; 128];
+        let mut empty_adapter = PingOperationSyscallSubstitute::new(
+            &mut empty_table,
+            &mut empty_receive,
+            &mut empty_transmit,
+        );
+
+        assert_eq!(empty_adapter.open(), Err(PosixError::TooManyOpenFiles));
+
+        let mut table = crate::network::NetworkPingOperationDescriptorTable::<1, 2, 4>::new();
+        let mut receive_buffer = [0u8; 128];
+        let mut transmit_buffer = [0u8; 128];
+        let mut adapter = PingOperationSyscallSubstitute::new(
+            &mut table,
+            &mut receive_buffer,
+            &mut transmit_buffer,
+        );
+        let mut status = PingOperationSyscallSubstituteStatus::idle();
+        let descriptor = adapter.open().expect("open descriptor");
+
+        assert_eq!(adapter.open(), Err(PosixError::Busy));
+        assert_eq!(
+            adapter.status(7, &mut status),
+            Err(PosixError::BadDescriptor)
+        );
+        assert_eq!(adapter.close(descriptor), Ok(()));
+        assert_eq!(adapter.close(descriptor), Err(PosixError::BadDescriptor));
+        assert_eq!(
+            adapter.start(
+                descriptor,
+                &mut PingOutboundTransmitDevice::new(),
+                ping_local_endpoint(),
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &payload,
+                0,
+            ),
+            Err(PosixError::BadDescriptor)
+        );
+
+        let descriptor = adapter.open().expect("reopen descriptor");
+        assert_eq!(
+            adapter
+                .start(
+                    descriptor,
+                    &mut PingOutboundTransmitDevice::new(),
+                    ping_local_endpoint(),
+                    policy,
+                    destination,
+                    0x1234,
+                    7,
+                    61,
+                    &payload,
+                    0,
+                )
+                .expect("start pending without retry budget")
+                .kind(),
+            PingOperationSyscallSubstituteStepKind::StartedPendingArp
+        );
+        assert_eq!(
+            adapter.retry_arp(descriptor, &mut PingOutboundTransmitDevice::new()),
+            Err(PosixError::Again)
+        );
+        let timeout = adapter.timeout(descriptor).expect("explicit timeout");
+        assert_eq!(
+            timeout.kind(),
+            PingOperationSyscallSubstituteStepKind::TimedOut
+        );
+        assert_eq!(timeout.destination_ipv4(), destination);
+        assert_eq!(adapter.status(descriptor, &mut status), Ok(()));
+        assert_eq!(
+            status.kind(),
+            PingOperationSyscallSubstituteStatusKind::TimedOut
+        );
+        assert_eq!(adapter.close(descriptor), Ok(()));
+
+        let descriptor = adapter.open().expect("reopen for tx error");
+        assert_eq!(
+            adapter.start(
+                descriptor,
+                &mut PingOutboundTransmitDevice::with_transmit_error(
+                    crate::network::DeviceError::Io,
+                ),
+                ping_local_endpoint(),
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &payload,
+                0,
+            ),
+            Err(PosixError::Io)
+        );
+        assert_eq!(adapter.status(descriptor, &mut status), Ok(()));
+        assert_eq!(
+            status.kind(),
+            PingOperationSyscallSubstituteStatusKind::Idle
+        );
+        assert_eq!(adapter.close(descriptor), Ok(()));
+
+        let descriptor = adapter.open().expect("reopen for rx and pump tx errors");
+        assert_eq!(
+            adapter
+                .start(
+                    descriptor,
+                    &mut PingOutboundTransmitDevice::new(),
+                    ping_local_endpoint(),
+                    policy,
+                    destination,
+                    0x1234,
+                    7,
+                    61,
+                    &payload,
+                    1,
+                )
+                .expect("start pending")
+                .kind(),
+            PingOperationSyscallSubstituteStepKind::StartedPendingArp
+        );
+        assert_eq!(
+            adapter.pump(
+                descriptor,
+                &mut PingPollDevice::with_receive_error(crate::network::DeviceError::Io),
+            ),
+            Err(PosixError::Io)
+        );
+        let arp_reply = ping_arp_reply_frame();
+        assert_eq!(
+            adapter.pump(
+                descriptor,
+                &mut PingPollDevice::with_transmit_error(
+                    &arp_reply,
+                    crate::network::DeviceError::Io
+                ),
+            ),
+            Err(PosixError::Io)
+        );
     }
 
     #[test_case]

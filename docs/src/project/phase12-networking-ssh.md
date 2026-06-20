@@ -3486,3 +3486,24 @@ hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication,
 Phase 12.1 link-hardware retry, Phase 12.4 socket expansion, and phase
 transition remain rejected. The selected next task is
 phase12-network-ping-operation-syscall-substitute-core-20260620.
+
+phase12-network-ping-operation-syscall-substitute-core-20260620 accepts
+phase12-network-ping-operation-syscall-substitute-core-accepted. src/syscall.rs
+now provides PingOperationSyscallSubstitute, a host-only proof adapter that
+borrows NetworkPingOperationDescriptorTable plus caller-owned receive and
+transmit buffers and drives open/start/pump/status/retry_arp/timeout/close
+through the accepted descriptor table. It also exposes scalar-shaped
+PingOperationSyscallSubstituteStatus and PingOperationSyscallSubstituteStep
+records so tests can observe state, frame length, payload length, retry count,
+destination, and timeout destination without accepting a stable syscall ABI.
+
+Unit and QEMU-substitute evidence cover unresolved ARP through echo-reply
+completion, terminal completed status, invalid and closed descriptors,
+zero-capacity open, duplicate active open, retry exhaustion, explicit timeout
+with terminal timed-out status, transmit IO error, receive IO error, and
+pump-time transmit IO error through the adapter. Shell ping, public sockets,
+stable syscall ABI acceptance, socket syscall ABI, live driver adapters, live
+packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot
+publication, Phase 12.1 link-hardware retry, Phase 12.4 socket expansion, and
+phase transition remain rejected. The selected next task is
+phase12-network-ping-operation-syscall-substitute-closeout-20260620.

@@ -4211,6 +4211,27 @@ The post-review correction chain is:
     selected_next_task is null and planningNeeded=true because no later queued
     Phase 12.3 task has complete objective dependencies, acceptance criteria,
     validation gates, docs, and evidence requirements.
+239. Phase 12.3 ping operation syscall-substitute core: accepted in
+    'phase12-network-ping-operation-syscall-substitute-core-20260620' with
+    classification
+    'phase12-network-ping-operation-syscall-substitute-core-accepted'.
+    src/syscall.rs now provides PingOperationSyscallSubstitute, a host-only
+    proof adapter over NetworkPingOperationDescriptorTable and caller-owned
+    receive/transmit/status buffers. It drives
+    open/start/pump/status/retry_arp/timeout/close through the accepted
+    descriptor table and reports scalar-shaped status and step records without
+    adding a public socket table, stable syscall number, live packet queue, or
+    autonomous timer. Unit/QEMU-substitute evidence covers unresolved ARP
+    through echo-reply completion, terminal completed status, invalid and
+    closed descriptor EBADF, zero-capacity EMFILE, duplicate active operation
+    EBUSY, retry exhaustion EAGAIN, explicit timeout with terminal status, and
+    receive/transmit IO-error mapping including pump-time transmit failure.
+    Shell ping, public sockets, stable syscall ABI acceptance, socket syscall
+    ABI, live driver adapters, live packet I/O, hardware reachability, SSH,
+    smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1 retry, Phase
+    12.4 socket expansion, and phase transition remain rejected.
+    selected_next_task is
+    'phase12-network-ping-operation-syscall-substitute-closeout-20260620'.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -13652,6 +13673,20 @@ Milestone 12.3: IP Stack
   publication, Phase 12.1 link-hardware retry, Phase 12.4 socket expansion,
   and phase transition remain rejected. The next selected bounded task is the
   syscall-substitute adapter core.
+- The ping operation syscall-substitute core accepts a host-only proof adapter
+  in src/syscall.rs that borrows NetworkPingOperationDescriptorTable plus
+  caller-owned receive/transmit/status buffers and drives
+  open/start/pump/status/retry_arp/timeout/close through the accepted
+  descriptor table. Unit and QEMU-substitute evidence cover unresolved ARP
+  through echo-reply completion, terminal status, invalid/closed descriptors,
+  zero-capacity open, duplicate active open, retry exhaustion, explicit
+  timeout, transmit IO error, receive IO error, and pump-time transmit IO
+  error. Shell ping, public sockets, stable syscall ABI acceptance, socket
+  syscall ABI, live driver adapters, live packet I/O, hardware reachability,
+  SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1
+  link-hardware retry, Phase 12.4 socket expansion, and phase transition
+  remain rejected. The next selected bounded task is the syscall-substitute
+  closeout.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
