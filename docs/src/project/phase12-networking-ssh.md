@@ -5076,6 +5076,38 @@ network I/O, UDP/TCP payload transport, cross-process sockets, global port
 registry or address-conflict policy, live driver adapters, live packet I/O,
 hardware reachability, lab mutation, boot publication, generated-root
 publication, SSH, smoltcp, broad socket expansion, public stable socket ABI
-acceptance, and phase transition. selected_next_task is null and
-planningNeeded=true pending supervisor planning for any next bounded Phase 12.4
-socket or network task.
+acceptance, and phase transition. At closeout acceptance time,
+selected_next_task was null and planningNeeded=true pending supervisor
+planning for any next bounded Phase 12.4 socket or network task.
+
+phase12-network-socket-send-recv-abi-contract-20260620 accepts
+phase12-network-socket-send-recv-abi-contract-accepted. Supervisor planning
+after the shell-visible sockdiag connect/accept closeout selected the next
+bounded socket integration boundary: private descriptor-backed local send/recv
+payload transfer for AF_INET stream sockets already connected or accepted by
+the accepted local socket chain.
+
+The accepted contract reserves future private TALOS_SEND_SYSCALL = 11 and
+TALOS_RECV_SYSCALL = 12 selectors on the existing STABLE_SVC_IMMEDIATE = 0
+path. Send uses scalar x0=fd, x1=user_buffer_start, x2=len, x3=flags=0, and
+x4=x5=0; it copies readable caller bytes into the peer socket's inbound queue.
+Recv uses scalar x0=fd, x1=user_buffer_start, x2=len, x3=flags=0, and
+x4=x5=0; it copies queued bytes from the caller socket's inbound queue into
+writable caller memory.
+
+Each Connected or Accepted socket owns a fixed 64-byte inbound FIFO. Send is
+nonblocking and all-or-nothing: len 0 returns 0, oversize or insufficient peer
+queue capacity returns ENOSPC, and no partial send is accepted. Recv is
+nonblocking: len 0 returns 0, an empty queue returns EAGAIN while the peer
+exists, otherwise recv returns and consumes min(len, queued_bytes). Missing,
+closed, wrong-owner, duplicate, or non-connected peers return EPIPE for send;
+recv may drain already queued bytes before reporting EPIPE once the queue is
+empty and no peer exists.
+
+This contract does not accept shell /bin/sockdiag send/recv output, retained
+smoke evidence, poll/blocking network I/O, readiness/wait queues, UDP/TCP
+payload transport, cross-process sockets, live driver adapters, live packet
+I/O, hardware reachability, lab mutation, boot publication, SSH, smoltcp,
+broad socket expansion, public stable socket ABI acceptance, or phase
+transition. The selected next bounded task is
+phase12-network-socket-send-recv-core-20260620.

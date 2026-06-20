@@ -12,6 +12,37 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-20 - Phase 12 Socket Send/Recv Uses Local Descriptor Queues
+
+- Status: accepted as the bounded socket send/recv ABI contract in
+  phase12-network-socket-send-recv-abi-contract-20260620. No runtime source
+  implementation, shell send/recv output, public stable socket ABI acceptance,
+  poll/blocking I/O, UDP/TCP payload transport, live packet I/O, hardware work,
+  SSH, broad socket expansion, or phase transition is accepted here.
+- Context: The accepted shell-visible /bin/sockdiag connect/accept closeout
+  proves local descriptor-backed handshake state through VFS/userspace
+  execution, but explicitly rejects payload bytes and transport behavior.
+- Decision: Reserve future private experimental TALOS_SEND_SYSCALL = 11 and
+  TALOS_RECV_SYSCALL = 12 selectors on the existing STABLE_SVC_IMMEDIATE = 0
+  path. Connected and Accepted socket backing state will own a 64-byte inbound
+  FIFO. Send appends caller-readable bytes to the peer FIFO using an
+  all-or-nothing nonblocking policy; recv drains the caller FIFO and may return
+  a short positive byte count.
+- Evidence level: static source/task/evidence review of src/syscall.rs,
+  src/network.rs, src/posix.rs, accepted connect/accept task records, and the
+  retained shell sockdiag connect/accept smoke evidence. The task record is
+  tasks/2026-06-20-phase12-network-socket-send-recv-abi-contract.md.
+- Consequences: The follow-up implementation can add only local queue-backed
+  payload transfer and focused source/unit tests. The selectors, queue bound,
+  all-or-nothing send, and short-read recv policy are Talos-private task-chain
+  details, not Linux syscall-number compatibility or public libc ABI claims.
+- Alternatives considered: block until TCP/smoltcp, add shell-only fake payload
+  diagnostics, or use packet queues as socket payload storage. Waiting for TCP
+  would skip the next feature test, shell-only fake output would repeat the
+  fake-command failure mode Matthew rejected, and packet queues would mix local
+  socket semantics with live-frame plumbing before the transport boundary is
+  accepted.
+
 ## 2026-06-20 - Phase 12 Socket Open/Close Uses Private Talos Selector
 
 - Status: accepted as the bounded socket open/close ABI contract in

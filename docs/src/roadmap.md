@@ -14967,8 +14967,24 @@ Milestone 12.3: IP Stack
   driver adapters, live packet I/O, hardware reachability, lab mutation, boot
   publication, generated-root publication, SSH, smoltcp, broad socket
   expansion, public stable socket ABI acceptance, and phase transition remain
-  rejected. selected_next_task is null and planningNeeded=true pending
-  supervisor planning for any next bounded Phase 12.4 socket or network task.
+  rejected. At closeout acceptance time, selected_next_task was null and
+  planningNeeded=true pending supervisor planning for any next bounded Phase
+  12.4 socket or network task.
+- The socket send/recv ABI contract accepts only private descriptor-backed
+  local AF_INET stream payload transfer after the connect/accept frontier. It
+  selects TALOS_SEND_SYSCALL = 11 and TALOS_RECV_SYSCALL = 12 on the existing
+  STABLE_SVC_IMMEDIATE = 0 path. Send copies caller-readable bytes into the
+  peer socket's inbound 64-byte FIFO; recv copies from the caller socket's FIFO
+  into caller-writable memory. Send is nonblocking and all-or-nothing, recv may
+  return a short positive byte count, empty queues return EAGAIN, full or
+  oversize sends return ENOSPC, caller-buffer failures return EFAULT, and
+  disconnected peers return EPIPE. The accepted claim remains local
+  descriptor-backed payload state only; shell send/recv output, retained smoke,
+  poll/blocking I/O, readiness/wait queues, UDP/TCP payload transport,
+  cross-process sockets, live packet I/O, hardware reachability, SSH, public
+  stable socket ABI acceptance, broad socket expansion, and phase transition
+  remain rejected. The selected next bounded task is
+  phase12-network-socket-send-recv-core-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
