@@ -3646,3 +3646,26 @@ remain rejected. selected_next_task is null and planningNeeded=true because no
 later queued Phase 12.3 or Phase 12.4 task has complete objective
 dependencies, acceptance criteria, validation gates, and evidence
 requirements.
+
+phase12-network-runtime-ping-syscall-substitute-core-20260620 accepts
+phase12-network-runtime-ping-syscall-substitute-core-accepted. src/syscall.rs
+now provides RuntimePingOperationSyscallSubstitute, a host-only proof/control
+adapter that borrows NetworkRuntimeDevicePump plus caller-owned receive and
+transmit buffers. The adapter routes open/start/status/retry_arp/timeout/close
+through the runtime pump and exposes one pump step that preserves local
+ARP/ICMP responder priority before active ping descriptor dispatch.
+
+The accepted boundary preserves the earlier PingOperationSyscallSubstitute
+status/step vocabulary for active ping work and adds explicit local-pump
+outcomes for no-frame, local no-reply, local ARP/ICMP reply, and active ping
+progress. Unit/QEMU-substitute evidence covers open/start/status, unresolved
+ARP to inflight through NetworkRuntimeDevicePump, echo-reply completion through
+active-ping dispatch, local ARP and ICMP reply dispatch while a descriptor is
+open, close and bad descriptors, zero-capacity and duplicate-open behavior,
+retry exhaustion, explicit timeout, receive IO error, local transmit IO error,
+and active-ping transmit IO error. Shell ping, public sockets, stable syscall
+ABI acceptance, socket syscall ABI, live driver adapters, live packet I/O,
+hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication,
+Phase 12.1 link-hardware retry, Phase 12.4 socket expansion, and phase
+transition remain rejected. The selected next task is
+phase12-network-runtime-ping-syscall-substitute-closeout-20260620.

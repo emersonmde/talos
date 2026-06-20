@@ -866,6 +866,278 @@ impl<'a, const DESCRIPTOR_CAPACITY: usize, const ARP_CAPACITY: usize, const PAYL
     }
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum RuntimePingOperationSyscallSubstitutePumpKind {
+    NoFrame,
+    LocalNoReply,
+    LocalReply,
+    ActivePing,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct RuntimePingOperationSyscallSubstitutePumpStep {
+    kind: RuntimePingOperationSyscallSubstitutePumpKind,
+    descriptor: usize,
+    local_reply_kind: Option<crate::network::PacketReplyKind>,
+    local_reply_frame_len: usize,
+    active_ping_step: PingOperationSyscallSubstituteStep,
+}
+
+impl RuntimePingOperationSyscallSubstitutePumpStep {
+    pub(crate) const fn kind(self) -> RuntimePingOperationSyscallSubstitutePumpKind {
+        self.kind
+    }
+
+    pub(crate) const fn descriptor(self) -> usize {
+        self.descriptor
+    }
+
+    pub(crate) const fn local_reply_kind(self) -> Option<crate::network::PacketReplyKind> {
+        self.local_reply_kind
+    }
+
+    pub(crate) const fn local_reply_frame_len(self) -> usize {
+        self.local_reply_frame_len
+    }
+
+    pub(crate) const fn active_ping_step(self) -> PingOperationSyscallSubstituteStep {
+        self.active_ping_step
+    }
+
+    const fn no_frame() -> Self {
+        Self {
+            kind: RuntimePingOperationSyscallSubstitutePumpKind::NoFrame,
+            descriptor: usize::MAX,
+            local_reply_kind: None,
+            local_reply_frame_len: 0,
+            active_ping_step: PingOperationSyscallSubstituteStep::from_userspace(
+                crate::network::UserspacePingOperationStep::NoFrame,
+            ),
+        }
+    }
+
+    const fn local_no_reply() -> Self {
+        Self {
+            kind: RuntimePingOperationSyscallSubstitutePumpKind::LocalNoReply,
+            descriptor: usize::MAX,
+            local_reply_kind: None,
+            local_reply_frame_len: 0,
+            active_ping_step: PingOperationSyscallSubstituteStep::from_userspace(
+                crate::network::UserspacePingOperationStep::NoFrame,
+            ),
+        }
+    }
+
+    const fn local_reply(reply: crate::network::PacketDispatchResult) -> Self {
+        Self {
+            kind: RuntimePingOperationSyscallSubstitutePumpKind::LocalReply,
+            descriptor: usize::MAX,
+            local_reply_kind: Some(reply.reply_kind()),
+            local_reply_frame_len: reply.frame_len(),
+            active_ping_step: PingOperationSyscallSubstituteStep::from_userspace(
+                crate::network::UserspacePingOperationStep::NoFrame,
+            ),
+        }
+    }
+
+    const fn active_ping(
+        descriptor: crate::network::NetworkPingOperationDescriptor,
+        step: crate::network::UserspacePingOperationStep,
+    ) -> Self {
+        Self {
+            kind: RuntimePingOperationSyscallSubstitutePumpKind::ActivePing,
+            descriptor: descriptor.raw(),
+            local_reply_kind: None,
+            local_reply_frame_len: 0,
+            active_ping_step: PingOperationSyscallSubstituteStep::from_userspace(step),
+        }
+    }
+}
+
+pub(crate) struct RuntimePingOperationSyscallSubstitute<
+    'a,
+    const LOCAL_ARP_CAPACITY: usize,
+    const DESCRIPTOR_CAPACITY: usize,
+    const OPERATION_ARP_CAPACITY: usize,
+    const PAYLOAD_CAPACITY: usize,
+> {
+    runtime_pump: &'a mut crate::network::NetworkRuntimeDevicePump<
+        LOCAL_ARP_CAPACITY,
+        DESCRIPTOR_CAPACITY,
+        OPERATION_ARP_CAPACITY,
+        PAYLOAD_CAPACITY,
+    >,
+    receive_buffer: &'a mut [u8],
+    transmit_buffer: &'a mut [u8],
+}
+
+impl<
+    'a,
+    const LOCAL_ARP_CAPACITY: usize,
+    const DESCRIPTOR_CAPACITY: usize,
+    const OPERATION_ARP_CAPACITY: usize,
+    const PAYLOAD_CAPACITY: usize,
+>
+    RuntimePingOperationSyscallSubstitute<
+        'a,
+        LOCAL_ARP_CAPACITY,
+        DESCRIPTOR_CAPACITY,
+        OPERATION_ARP_CAPACITY,
+        PAYLOAD_CAPACITY,
+    >
+{
+    pub(crate) fn new(
+        runtime_pump: &'a mut crate::network::NetworkRuntimeDevicePump<
+            LOCAL_ARP_CAPACITY,
+            DESCRIPTOR_CAPACITY,
+            OPERATION_ARP_CAPACITY,
+            PAYLOAD_CAPACITY,
+        >,
+        receive_buffer: &'a mut [u8],
+        transmit_buffer: &'a mut [u8],
+    ) -> Self {
+        Self {
+            runtime_pump,
+            receive_buffer,
+            transmit_buffer,
+        }
+    }
+
+    pub(crate) fn open(&mut self) -> Result<usize, PosixError> {
+        self.runtime_pump
+            .open_ping_operation()
+            .map(crate::network::NetworkPingOperationDescriptor::raw)
+    }
+
+    pub(crate) fn close(&mut self, descriptor: usize) -> Result<(), PosixError> {
+        self.runtime_pump
+            .close_ping_operation(Self::operation_descriptor(descriptor))
+    }
+
+    pub(crate) fn status(
+        &self,
+        descriptor: usize,
+        status: &mut PingOperationSyscallSubstituteStatus,
+    ) -> Result<(), PosixError> {
+        *status = PingOperationSyscallSubstituteStatus::from_userspace(
+            self.runtime_pump
+                .ping_status(Self::operation_descriptor(descriptor))?,
+        );
+        Ok(())
+    }
+
+    pub(crate) fn start<D>(
+        &mut self,
+        descriptor: usize,
+        device: &mut D,
+        route_policy: crate::network::Ipv4EgressRoutePolicy,
+        destination_ipv4: [u8; 4],
+        identifier: u16,
+        sequence_number: u16,
+        ttl: u8,
+        payload: &[u8],
+        arp_retry_budget: usize,
+    ) -> Result<PingOperationSyscallSubstituteStep, PosixError>
+    where
+        D: crate::network::NetworkDevice,
+    {
+        self.runtime_pump
+            .start_ping(
+                Self::operation_descriptor(descriptor),
+                device,
+                route_policy,
+                destination_ipv4,
+                identifier,
+                sequence_number,
+                ttl,
+                payload,
+                self.transmit_buffer,
+                arp_retry_budget,
+            )
+            .map(PingOperationSyscallSubstituteStep::from_userspace)
+    }
+
+    pub(crate) fn pump<D>(
+        &mut self,
+        descriptor: usize,
+        device: &mut D,
+    ) -> Result<RuntimePingOperationSyscallSubstitutePumpStep, PosixError>
+    where
+        D: crate::network::NetworkDevice,
+    {
+        let active_ping = Self::operation_descriptor(descriptor);
+        match self.runtime_pump.pump(
+            device,
+            Some(active_ping),
+            self.receive_buffer,
+            self.transmit_buffer,
+        ) {
+            crate::network::NetworkRuntimeDevicePumpStepResult::NoFrame => {
+                Ok(RuntimePingOperationSyscallSubstitutePumpStep::no_frame())
+            }
+            crate::network::NetworkRuntimeDevicePumpStepResult::ReceiveBufferTooSmall => {
+                Err(PosixError::NoSpace)
+            }
+            crate::network::NetworkRuntimeDevicePumpStepResult::ReceiveError(error) => {
+                Err(crate::network::posix_error_from_device_error(error))
+            }
+            crate::network::NetworkRuntimeDevicePumpStepResult::LocalNoReply => {
+                Ok(RuntimePingOperationSyscallSubstitutePumpStep::local_no_reply())
+            }
+            crate::network::NetworkRuntimeDevicePumpStepResult::LocalDispatchError(error) => {
+                Err(crate::network::posix_error_from_packet_error(error))
+            }
+            crate::network::NetworkRuntimeDevicePumpStepResult::LocalTransmitError(error) => {
+                Err(crate::network::posix_error_from_device_error(error))
+            }
+            crate::network::NetworkRuntimeDevicePumpStepResult::LocalReply(reply) => Ok(
+                RuntimePingOperationSyscallSubstitutePumpStep::local_reply(reply),
+            ),
+            crate::network::NetworkRuntimeDevicePumpStepResult::ActivePingStep {
+                descriptor,
+                step,
+            } => Ok(RuntimePingOperationSyscallSubstitutePumpStep::active_ping(
+                descriptor, step,
+            )),
+            crate::network::NetworkRuntimeDevicePumpStepResult::ActivePingError {
+                error, ..
+            } => Err(error),
+        }
+    }
+
+    pub(crate) fn retry_arp<D>(
+        &mut self,
+        descriptor: usize,
+        device: &mut D,
+    ) -> Result<PingOperationSyscallSubstituteStep, PosixError>
+    where
+        D: crate::network::NetworkDevice,
+    {
+        self.runtime_pump
+            .retry_ping_arp(
+                Self::operation_descriptor(descriptor),
+                device,
+                self.transmit_buffer,
+            )
+            .map(PingOperationSyscallSubstituteStep::from_userspace)
+    }
+
+    pub(crate) fn timeout(
+        &mut self,
+        descriptor: usize,
+    ) -> Result<PingOperationSyscallSubstituteStep, PosixError> {
+        self.runtime_pump
+            .timeout_ping(Self::operation_descriptor(descriptor))
+            .map(PingOperationSyscallSubstituteStep::from_userspace)
+    }
+
+    const fn operation_descriptor(
+        descriptor: usize,
+    ) -> crate::network::NetworkPingOperationDescriptor {
+        crate::network::NetworkPingOperationDescriptor::from_raw(descriptor)
+    }
+}
+
 fn dispatch_talos_write<const CAPACITY: usize, B>(
     arguments: SyscallArguments,
     descriptor_table: &crate::posix::DescriptorTable<CAPACITY>,
@@ -1789,6 +2061,56 @@ mod tests {
         frame
     }
 
+    fn ping_local_arp_request_frame()
+    -> [u8; crate::network::ETHERNET_HEADER_LEN + crate::network::ARP_ETHERNET_IPV4_LEN] {
+        let mut frame =
+            [0u8; crate::network::ETHERNET_HEADER_LEN + crate::network::ARP_ETHERNET_IPV4_LEN];
+        frame[..6].copy_from_slice(&[0xff; crate::network::ETHERNET_ADDR_LEN]);
+        frame[6..12].copy_from_slice(&[0x02, 0, 0, 0, 0, 20]);
+        write_test_be_u16(&mut frame, 12, crate::network::ETHERTYPE_ARP);
+
+        let arp = &mut frame[crate::network::ETHERNET_HEADER_LEN..];
+        write_test_be_u16(arp, 0, 1);
+        write_test_be_u16(arp, 2, crate::network::ETHERTYPE_IPV4);
+        arp[4] = crate::network::ETHERNET_ADDR_LEN as u8;
+        arp[5] = 4;
+        write_test_be_u16(arp, 6, 1);
+        arp[8..14].copy_from_slice(&[0x02, 0, 0, 0, 0, 20]);
+        arp[14..18].copy_from_slice(&[192, 0, 2, 20]);
+        arp[18..24].copy_from_slice(&[0; crate::network::ETHERNET_ADDR_LEN]);
+        arp[24..28].copy_from_slice(&[192, 0, 2, 1]);
+        frame
+    }
+
+    fn ping_local_icmp_echo_request_frame()
+    -> [u8; crate::network::ETHERNET_HEADER_LEN + crate::network::IPV4_MIN_HEADER_LEN + 12] {
+        let mut frame =
+            [0u8; crate::network::ETHERNET_HEADER_LEN + crate::network::IPV4_MIN_HEADER_LEN + 12];
+        frame[..6].copy_from_slice(&[0x02, 0, 0, 0, 0, 99]);
+        frame[6..12].copy_from_slice(&[0x02, 0, 0, 0, 0, 20]);
+        write_test_be_u16(&mut frame, 12, crate::network::ETHERTYPE_IPV4);
+
+        let ipv4 = &mut frame[crate::network::ETHERNET_HEADER_LEN
+            ..crate::network::ETHERNET_HEADER_LEN + crate::network::IPV4_MIN_HEADER_LEN];
+        ipv4[0] = 0x45;
+        write_test_be_u16(ipv4, 2, (crate::network::IPV4_MIN_HEADER_LEN + 12) as u16);
+        write_test_be_u16(ipv4, 4, 0x2222);
+        ipv4[8] = 64;
+        ipv4[9] = crate::network::IPV4_PROTOCOL_ICMP;
+        ipv4[12..16].copy_from_slice(&[192, 0, 2, 20]);
+        ipv4[16..20].copy_from_slice(&[192, 0, 2, 1]);
+        let checksum = test_internet_checksum(ipv4);
+        write_test_be_u16(ipv4, 10, checksum);
+
+        let icmp =
+            &mut frame[crate::network::ETHERNET_HEADER_LEN + crate::network::IPV4_MIN_HEADER_LEN..];
+        icmp[0] = 8;
+        icmp[4..].copy_from_slice(&[0x56, 0x78, 0, 9, 5, 6, 7, 8]);
+        let checksum = test_internet_checksum(icmp);
+        write_test_be_u16(icmp, 2, checksum);
+        frame
+    }
+
     fn write_test_be_u16(bytes: &mut [u8], offset: usize, value: u16) {
         let raw = value.to_be_bytes();
         bytes[offset] = raw[0];
@@ -2046,6 +2368,271 @@ mod tests {
                 &mut PingPollDevice::with_receive_error(crate::network::DeviceError::Io),
             ),
             Err(PosixError::Io)
+        );
+        let arp_reply = ping_arp_reply_frame();
+        assert_eq!(
+            adapter.pump(
+                descriptor,
+                &mut PingPollDevice::with_transmit_error(
+                    &arp_reply,
+                    crate::network::DeviceError::Io
+                ),
+            ),
+            Err(PosixError::Io)
+        );
+    }
+
+    #[test_case]
+    fn runtime_ping_syscall_substitute_completes_unresolved_arp_to_echo_reply_through_runtime_pump()
+    {
+        let destination = [192, 0, 2, 20];
+        let policy = crate::network::Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None);
+        let payload = [1, 2, 3, 4];
+        let mut runtime =
+            crate::network::NetworkRuntimeDevicePump::<2, 1, 2, 4>::new(ping_local_endpoint());
+        let mut receive_buffer = [0u8; 128];
+        let mut transmit_buffer = [0u8; 128];
+        let mut adapter = RuntimePingOperationSyscallSubstitute::new(
+            &mut runtime,
+            &mut receive_buffer,
+            &mut transmit_buffer,
+        );
+        let mut status = PingOperationSyscallSubstituteStatus::idle();
+
+        let descriptor = adapter.open().expect("open runtime ping descriptor");
+        assert_eq!(descriptor, 0);
+        assert_eq!(adapter.status(descriptor, &mut status), Ok(()));
+        assert_eq!(
+            status.kind(),
+            PingOperationSyscallSubstituteStatusKind::Idle
+        );
+
+        let start = adapter
+            .start(
+                descriptor,
+                &mut PingOutboundTransmitDevice::new(),
+                policy,
+                destination,
+                0x1234,
+                7,
+                61,
+                &payload,
+                1,
+            )
+            .expect("start through runtime pump");
+        assert_eq!(
+            start.kind(),
+            PingOperationSyscallSubstituteStepKind::StartedPendingArp
+        );
+        assert_eq!(adapter.status(descriptor, &mut status), Ok(()));
+        assert_eq!(
+            status.kind(),
+            PingOperationSyscallSubstituteStatusKind::PendingArp
+        );
+        assert_eq!(status.destination_ipv4(), destination);
+
+        let arp_reply = ping_arp_reply_frame();
+        let advanced = adapter
+            .pump(descriptor, &mut PingPollDevice::with_frame(&arp_reply))
+            .expect("runtime pump advances arp reply");
+        assert_eq!(
+            advanced.kind(),
+            RuntimePingOperationSyscallSubstitutePumpKind::ActivePing
+        );
+        assert_eq!(advanced.descriptor(), descriptor);
+        assert_eq!(
+            advanced.active_ping_step().kind(),
+            PingOperationSyscallSubstituteStepKind::AdvancedToInflight
+        );
+        assert_eq!(adapter.status(descriptor, &mut status), Ok(()));
+        assert_eq!(
+            status.kind(),
+            PingOperationSyscallSubstituteStatusKind::Inflight
+        );
+
+        let echo_reply = ping_icmp_echo_reply_frame();
+        let completed = adapter
+            .pump(descriptor, &mut PingPollDevice::with_frame(&echo_reply))
+            .expect("runtime pump completes echo reply");
+        assert_eq!(
+            completed.kind(),
+            RuntimePingOperationSyscallSubstitutePumpKind::ActivePing
+        );
+        assert_eq!(
+            completed.active_ping_step().kind(),
+            PingOperationSyscallSubstituteStepKind::Completed
+        );
+        assert_eq!(completed.active_ping_step().payload_len(), payload.len());
+        assert_eq!(adapter.status(descriptor, &mut status), Ok(()));
+        assert_eq!(
+            status.kind(),
+            PingOperationSyscallSubstituteStatusKind::Completed
+        );
+        assert_eq!(status.payload_len(), payload.len());
+    }
+
+    #[test_case]
+    fn runtime_ping_syscall_substitute_keeps_local_responder_working_with_open_descriptor() {
+        let mut runtime =
+            crate::network::NetworkRuntimeDevicePump::<2, 1, 2, 4>::new(ping_local_endpoint());
+        let mut receive_buffer = [0u8; 128];
+        let mut transmit_buffer = [0u8; 128];
+        let mut adapter = RuntimePingOperationSyscallSubstitute::new(
+            &mut runtime,
+            &mut receive_buffer,
+            &mut transmit_buffer,
+        );
+        let descriptor = adapter.open().expect("open descriptor");
+
+        let arp_request = ping_local_arp_request_frame();
+        let arp_reply = adapter
+            .pump(descriptor, &mut PingPollDevice::with_frame(&arp_request))
+            .expect("local arp reply");
+        assert_eq!(
+            arp_reply.kind(),
+            RuntimePingOperationSyscallSubstitutePumpKind::LocalReply
+        );
+        assert_eq!(
+            arp_reply.local_reply_kind(),
+            Some(crate::network::PacketReplyKind::Arp)
+        );
+        assert_eq!(
+            arp_reply.local_reply_frame_len(),
+            crate::network::ETHERNET_HEADER_LEN + crate::network::ARP_ETHERNET_IPV4_LEN
+        );
+
+        let icmp_request = ping_local_icmp_echo_request_frame();
+        let icmp_reply = adapter
+            .pump(descriptor, &mut PingPollDevice::with_frame(&icmp_request))
+            .expect("local icmp reply");
+        assert_eq!(
+            icmp_reply.kind(),
+            RuntimePingOperationSyscallSubstitutePumpKind::LocalReply
+        );
+        assert_eq!(
+            icmp_reply.local_reply_kind(),
+            Some(crate::network::PacketReplyKind::IcmpEcho)
+        );
+        assert_eq!(
+            icmp_reply.local_reply_frame_len(),
+            crate::network::ETHERNET_HEADER_LEN
+                + crate::network::IPV4_MIN_HEADER_LEN
+                + crate::network::ICMP_ECHO_HEADER_LEN
+                + 4
+        );
+
+        assert_eq!(adapter.close(descriptor), Ok(()));
+    }
+
+    #[test_case]
+    fn runtime_ping_syscall_substitute_maps_descriptor_capacity_timeout_and_device_errors() {
+        let destination = [192, 0, 2, 20];
+        let policy = crate::network::Ipv4EgressRoutePolicy::new([255, 255, 255, 0], None);
+        let payload = [1, 2, 3, 4];
+        let mut empty_runtime =
+            crate::network::NetworkRuntimeDevicePump::<0, 0, 2, 4>::new(ping_local_endpoint());
+        let mut empty_receive = [0u8; 128];
+        let mut empty_transmit = [0u8; 128];
+        let mut empty_adapter = RuntimePingOperationSyscallSubstitute::new(
+            &mut empty_runtime,
+            &mut empty_receive,
+            &mut empty_transmit,
+        );
+
+        assert_eq!(empty_adapter.open(), Err(PosixError::TooManyOpenFiles));
+
+        let mut runtime =
+            crate::network::NetworkRuntimeDevicePump::<1, 1, 2, 4>::new(ping_local_endpoint());
+        let mut receive_buffer = [0u8; 128];
+        let mut transmit_buffer = [0u8; 128];
+        let mut adapter = RuntimePingOperationSyscallSubstitute::new(
+            &mut runtime,
+            &mut receive_buffer,
+            &mut transmit_buffer,
+        );
+        let mut status = PingOperationSyscallSubstituteStatus::idle();
+        let descriptor = adapter.open().expect("open descriptor");
+
+        assert_eq!(adapter.open(), Err(PosixError::Busy));
+        assert_eq!(
+            adapter.status(7, &mut status),
+            Err(PosixError::BadDescriptor)
+        );
+        assert_eq!(adapter.close(descriptor), Ok(()));
+        assert_eq!(adapter.close(descriptor), Err(PosixError::BadDescriptor));
+
+        let descriptor = adapter.open().expect("reopen descriptor");
+        assert_eq!(
+            adapter
+                .start(
+                    descriptor,
+                    &mut PingOutboundTransmitDevice::new(),
+                    policy,
+                    destination,
+                    0x1234,
+                    7,
+                    61,
+                    &payload,
+                    0,
+                )
+                .expect("start pending without retry budget")
+                .kind(),
+            PingOperationSyscallSubstituteStepKind::StartedPendingArp
+        );
+        assert_eq!(
+            adapter.retry_arp(descriptor, &mut PingOutboundTransmitDevice::new()),
+            Err(PosixError::Again)
+        );
+        let timeout = adapter.timeout(descriptor).expect("timeout pending ping");
+        assert_eq!(
+            timeout.kind(),
+            PingOperationSyscallSubstituteStepKind::TimedOut
+        );
+        assert_eq!(timeout.destination_ipv4(), destination);
+        assert_eq!(adapter.status(descriptor, &mut status), Ok(()));
+        assert_eq!(
+            status.kind(),
+            PingOperationSyscallSubstituteStatusKind::TimedOut
+        );
+        assert_eq!(adapter.close(descriptor), Ok(()));
+
+        let descriptor = adapter.open().expect("reopen for runtime pump errors");
+        assert_eq!(
+            adapter.pump(
+                descriptor,
+                &mut PingPollDevice::with_receive_error(crate::network::DeviceError::Io),
+            ),
+            Err(PosixError::Io)
+        );
+
+        let arp_request = ping_local_arp_request_frame();
+        assert_eq!(
+            adapter.pump(
+                descriptor,
+                &mut PingPollDevice::with_transmit_error(
+                    &arp_request,
+                    crate::network::DeviceError::Io
+                ),
+            ),
+            Err(PosixError::Io)
+        );
+
+        assert_eq!(
+            adapter
+                .start(
+                    descriptor,
+                    &mut PingOutboundTransmitDevice::new(),
+                    policy,
+                    destination,
+                    0x1234,
+                    7,
+                    61,
+                    &payload,
+                    1,
+                )
+                .expect("start active-error case")
+                .kind(),
+            PingOperationSyscallSubstituteStepKind::StartedPendingArp
         );
         let arp_reply = ping_arp_reply_frame();
         assert_eq!(

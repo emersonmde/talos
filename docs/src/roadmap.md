@@ -13881,6 +13881,20 @@ Milestone 12.3: IP Stack
   publication, Phase 12.1 link-hardware retry, Phase 12.4 socket expansion,
   and phase transition remain rejected. selected_next_task is null and
   planningNeeded=true pending supervisor planning for the next bounded task.
+- The runtime ping syscall-substitute core accepts a host-only proof/control
+  adapter over NetworkRuntimeDevicePump. It routes
+  open/start/status/retry_arp/timeout/close through the runtime pump, preserves
+  the existing ping status/step vocabulary for active ping work, and exposes
+  local-pump outcomes for no-frame, local no-reply, local ARP/ICMP reply, and
+  active ping progress. Unit/QEMU-substitute evidence covers unresolved ARP to
+  inflight, echo-reply completion, local responder dispatch with an open
+  descriptor, descriptor/capacity errors, retry exhaustion, timeout, and
+  receive/local-transmit/active-transmit IO errors. Shell ping, public sockets,
+  stable syscall ABI acceptance, live driver adapters, live packet I/O,
+  hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication,
+  Phase 12.1 link-hardware retry, Phase 12.4 socket expansion, and phase
+  transition remain rejected. The next selected bounded task is the runtime
+  ping syscall-substitute closeout.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

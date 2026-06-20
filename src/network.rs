@@ -1808,7 +1808,7 @@ fn userspace_step_from_inflight_result(
     }
 }
 
-fn posix_error_from_device_error(error: DeviceError) -> crate::posix::PosixError {
+pub(crate) fn posix_error_from_device_error(error: DeviceError) -> crate::posix::PosixError {
     match error {
         DeviceError::WouldBlock => crate::posix::PosixError::Again,
         DeviceError::BufferTooSmall => crate::posix::PosixError::NoSpace,
@@ -1831,7 +1831,7 @@ fn posix_error_from_frame_error(error: OutboundFrameError) -> crate::posix::Posi
     }
 }
 
-fn posix_error_from_packet_error(error: PacketError) -> crate::posix::PosixError {
+pub(crate) fn posix_error_from_packet_error(error: PacketError) -> crate::posix::PosixError {
     match error {
         PacketError::OutputBufferTooSmall => crate::posix::PosixError::NoSpace,
         PacketError::UnsupportedEtherType
