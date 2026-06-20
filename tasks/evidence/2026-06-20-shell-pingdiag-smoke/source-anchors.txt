@@ -1,0 +1,362 @@
+47:pub(crate) const PHASE12_PINGDIAG_PATH: &[u8] = b"/bin/pingdiag";
+899:    DirectoryEntry::new(b"pingdiag", PHASE12_PINGDIAG_INDEX),
+20:    "+lifecycle-laststatus+waitpid-lifecycle-observation+standard-descriptor-inheritance",
+871:    fn exec_shell_pingdiag_diagnostic(
+1518:                Some(self.exec_shell_pingdiag_diagnostic()?),
+1580:    fn exec_shell_pingdiag_diagnostic(
+3721:                "talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid jobs",
+3759:                "talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid jobs",
+3990:        "laststatus" => {
+4006:        "waitpid" => {
+4013:                    write_waitpid_status_line(sink, responses, record)?;
+4020:                        "talos: waitpid no-child source=lifecycle-record",
+4586:        write_exec_pingdiag_line(sink, response_lines, record)?;
+4589:        write_exec_pingdiag_controls_line(sink, response_lines, record)?;
+5053:fn write_exec_pingdiag_line(
+5089:fn write_exec_pingdiag_controls_line(
+5153:fn write_waitpid_status_line(
+5158:    write_str_part(sink, "talos: waitpid pid=")?;
+5487:	talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid jobs\n\
+5917:        let input = ScriptedInput::new(*b"exec /bin/status42\rlaststatus\r", 30);
+5932:        assert_eq!(observed.line(), b"laststatus");
+5954:    fn local_command_loop_execs_shell_visible_pingdiag_through_vfs_diagnostic_layers() {
+5956:            *b"exec /bin/pingdiag\rwaitpid\rlaststatus\rexec /bin/pingdiag extra\rexec /bin/missingdiag\r",
+5973:        assert_eq!(exec.line(), b"exec /bin/pingdiag");
+5976:        assert_eq!(waited.line(), b"waitpid");
+5978:        assert_eq!(observed.line(), b"laststatus");
+5980:        assert_eq!(malformed.line(), b"exec /bin/pingdiag extra");
+5999:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/pingdiag state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+6010:        let input = ScriptedInput::new(*b"exec stdout\rwaitpid\rlaststatus\r", 31);
+6026:        assert_eq!(waited.line(), b"waitpid");
+6029:        assert_eq!(observed.line(), b"laststatus");
+6047:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+6056:        let input = ScriptedInput::new(*b"exec stdout 1>&2\rwaitpid\rexec stdout\r", 37);
+6072:        assert_eq!(waited.line(), b"waitpid");
+6086:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+6095:        let input = ScriptedInput::new(*b"exec stdout >/dev/null\rwaitpid\rexec stdout\r", 43);
+6111:        assert_eq!(waited.line(), b"waitpid");
+6133:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+6143:            *b"exec stdout >/tmp/stdout.txt\rwaitpid\rlaststatus\rcat /tmp/stdout.txt\rexec stdout\r";
+6162:        assert_eq!(waited.line(), b"waitpid");
+6164:        assert_eq!(observed.line(), b"laststatus");
+6192:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+6204:        let bytes = *b"exec stdout >/tmp/stdout.txt\rexec stdout >>/tmp/stdout.txt\rwaitpid\rlaststatus\rcat /tmp/stdout.txt\rexec stdout\r";
+6226:        assert_eq!(waited.line(), b"waitpid");
+6228:        assert_eq!(observed.line(), b"laststatus");
+6248:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+6260:        let bytes = *b"exec stdout >>/tmp/stdout.txt\rwaitpid\rlaststatus\rcat /tmp/stdout.txt\rexec stdout\r";
+6279:        assert_eq!(waited.line(), b"waitpid");
+6281:        assert_eq!(observed.line(), b"laststatus");
+6302:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+6314:        let bytes = *b"exec stdout 1>/tmp/stdout.txt\rwaitpid\rlaststatus\rcat /tmp/stdout.txt\rexec stdout\rexec stdout 1>>/tmp/stdout.txt\rwaitpid\rlaststatus\rcat /tmp/stdout.txt\rexec stdout\r";
+6349:        assert_eq!(waited.line(), b"waitpid");
+6351:        assert_eq!(observed.line(), b"laststatus");
+6360:        assert_eq!(append_waited.line(), b"waitpid");
+6362:        assert_eq!(append_observed.line(), b"laststatus");
+6387:        let bytes = *b"exec stdout >/tmp/alpha.log\rwaitpid\rlaststatus\rcat /tmp/alpha.log\rexec stdout 1>>/tmp/beta.out\rwaitpid\rlaststatus\rcat /tmp/beta.out\rexec stdout\r";
+6419:        assert_eq!(first_waited.line(), b"waitpid");
+6421:        assert_eq!(first_observed.line(), b"laststatus");
+6427:        assert_eq!(second_waited.line(), b"waitpid");
+6429:        assert_eq!(second_observed.line(), b"laststatus");
+6457:        let bytes = *b"exec stderr 2>/tmp/omega.err\rwaitpid\rlaststatus\rcat /tmp/omega.err\rexec stderr 2>>/tmp/theta.log\rwaitpid\rlaststatus\rcat /tmp/theta.log\rexec stderr\rexec stdout\r";
+6491:        assert_eq!(first_waited.line(), b"waitpid");
+6493:        assert_eq!(first_observed.line(), b"laststatus");
+6499:        assert_eq!(second_waited.line(), b"waitpid");
+6501:        assert_eq!(second_observed.line(), b"laststatus");
+6574:        let bytes = *b"exec stderr 2>/tmp/stderr.txt\rwaitpid\rlaststatus\rcat /tmp/stderr.txt\rexec stderr\rexec stdout\r";
+6594:        assert_eq!(waited.line(), b"waitpid");
+6596:        assert_eq!(observed.line(), b"laststatus");
+6633:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stderr state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+6648:        let bytes = *b"exec stderr 2>/tmp/stderr.txt\rexec stderr 2>>/tmp/stderr.txt\rwaitpid\rlaststatus\rcat /tmp/stderr.txt\rexec stderr\rexec stdout\r";
+6671:        assert_eq!(waited.line(), b"waitpid");
+6673:        assert_eq!(observed.line(), b"laststatus");
+6701:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stderr state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+6716:        let bytes = *b"exec stderr 2>>/tmp/stderr.txt\rwaitpid\rlaststatus\rcat /tmp/stderr.txt\rexec stderr\rexec stdout\r";
+6736:        assert_eq!(waited.line(), b"waitpid");
+6738:        assert_eq!(observed.line(), b"laststatus");
+6767:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stderr state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+6782:        let bytes = *b"exec stderr 2>/dev/null\rwaitpid\rexec stderr\r";
+6799:        assert_eq!(waited.line(), b"waitpid");
+6821:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stderr state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+6830:        let bytes = *b"exec stdin </dev/null\rwaitpid\rexec stdin\rtalos-console0";
+6847:        assert_eq!(waited.line(), b"waitpid");
+6866:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+6876:        let bytes = *b"exec stdin </etc/banner.txt\rwaitpid\rexec stdin\rtalos-console0";
+6893:        assert_eq!(waited.line(), b"waitpid");
+6910:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+6920:        let bytes = *b"exec stdin </etc/banner.txt >/tmp/stdin-report.txt\rwaitpid\rlaststatus\rcat /tmp/stdin-report.txt\rexec stdin >/tmp/stdin-report.txt </etc/banner.txt\rexec stdin </dev/null >/tmp/stdin-report.txt\rexec stdin </etc/banner.txt 1>/tmp/stdin-report.txt\rexec stdin < /etc/banner.txt >/tmp/stdin-report.txt\rexec stdin </etc/banner.txt >/tmp/nested/out.txt\rexec stdin\rtalos-console0";
+6958:        assert_eq!(waited.line(), b"waitpid");
+6960:        assert_eq!(observed.line(), b"laststatus");
+6995:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+7008:        let input = ScriptedInput::new(*b"exec stderr 2>&1\rwaitpid\rexec stderr\r", 37);
+7024:        assert_eq!(waited.line(), b"waitpid");
+7038:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stderr state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+7047:        let input = ScriptedInput::new(*b"exec stdout 1>&-\rwaitpid\rexec stdout\r", 37);
+7063:        assert_eq!(waited.line(), b"waitpid");
+7079:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+7088:        let input = ScriptedInput::new(*b"exec stderr 2>&-\rwaitpid\rexec stderr\r", 37);
+7104:        assert_eq!(waited.line(), b"waitpid");
+7120:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stderr state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+7197:        let input = ScriptedInput::new(*b"exec stdout | exec stdin\rwaitpid\rlaststatus\r", 44);
+7213:        assert_eq!(waited.line(), b"waitpid");
+7215:        assert_eq!(observed.line(), b"laststatus");
+7236:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+7245:        let input = ScriptedInput::new(*b"exec stderr | exec stdin\rwaitpid\rlaststatus\r", 44);
+7261:        assert_eq!(waited.line(), b"waitpid");
+7263:        assert_eq!(observed.line(), b"laststatus");
+7280:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+7289:        let bytes = *b"exec stderr 2>&1 | exec stdin\rwaitpid\rlaststatus\rexec stderr | exec stdin\rexec stdout | exec stdin\r";
+7308:        assert_eq!(waited.line(), b"waitpid");
+7310:        assert_eq!(observed.line(), b"laststatus");
+7335:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+7350:        let bytes = *b"exec stdout 1>&2 | exec stdin\rwaitpid\rlaststatus\rexec stderr 2>&1 | exec stdin\rexec stdout | exec stdin\r";
+7369:        assert_eq!(waited.line(), b"waitpid");
+7371:        assert_eq!(observed.line(), b"laststatus");
+7394:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+7409:        let bytes = *b"exec stdout | exec stdin >/tmp/pipe-consumer.txt\rwaitpid\rlaststatus\rcat /tmp/pipe-consumer.txt\rexec stdout | exec stdin\rexec stdout | exec stdin >>/tmp/pipe-consumer.txt\rexec stderr | exec stdin >/tmp/pipe-consumer.txt\rexec stdout >/tmp/src.txt | exec stdin >/tmp/out.txt\r";
+7443:        assert_eq!(waited.line(), b"waitpid");
+7445:        assert_eq!(observed.line(), b"laststatus");
+7475:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+7487:        let bytes = *b"exec stdout >/tmp/pipe-source.txt | exec stdin\rwaitpid\rlaststatus\rcat /tmp/pipe-source.txt\rexec stdout | exec stdin\rexec stdout >>/tmp/pipe-source.txt | exec stdin\rexec stderr >/tmp/pipe-source.txt | exec stdin\rexec stdout >/tmp/src.txt | exec stdin >/tmp/out.txt\r";
+7521:        assert_eq!(waited.line(), b"waitpid");
+7523:        assert_eq!(observed.line(), b"laststatus");
+7554:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+7596:        let input = ScriptedInput::new(*b"exec stdin\rtalos-console0waitpid\rlaststatus\r", 44);
+7612:        assert_eq!(waited.line(), b"waitpid");
+7615:        assert_eq!(observed.line(), b"laststatus");
+7633:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+7672:        let input = ScriptedInput::new(*b"exec stdin\r\x04waitpid\rlaststatus\r", 31);
+7688:        assert_eq!(waited.line(), b"waitpid");
+7690:        assert_eq!(observed.line(), b"laststatus");
+7702:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+7712:            *b"exec stdin\rtalos-console0waitpid\rlaststatus\r",
+7732:        assert_eq!(waited.line(), b"waitpid");
+7734:        assert_eq!(observed.line(), b"laststatus");
+7748:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+7757:        let input = ScriptedInput::new(*b"exec stderr\rwaitpid\rlaststatus\r", 31);
+7773:        assert_eq!(waited.line(), b"waitpid");
+7776:        assert_eq!(observed.line(), b"laststatus");
+7794:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stderr state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+7803:        let input = ScriptedInput::new(*b"exec /bin/status42 alpha beta\rwaitpid\r", 38);
+7818:        assert_eq!(waited.line(), b"waitpid");
+7832:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record\n"
+7838:        let input = ScriptedInput::new(*b"exec status42 alpha beta\rwaitpid\rlaststatus\r", 48);
+7854:        assert_eq!(waited.line(), b"waitpid");
+7857:        assert_eq!(observed.line(), b"laststatus");
+7868:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record\n"
+7878:            ScriptedInput::new(*b"exec /generated/status7 alpha\rwaitpid\rlaststatus\r", 49);
+7894:        assert_eq!(waited.line(), b"waitpid");
+7896:        assert_eq!(observed.line(), b"laststatus");
+7908:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/generated/status7 state=exited status=0x0000000000000007 observed-status=0x0000000000000007 reaped=true source=lifecycle-record\n"
+7945:    fn local_command_loop_waitpid_consumes_vfs_exec_lifecycle_record() {
+7947:            *b"waitpid\rexec /bin/status42\rwaitpid\rwaitpid\rlaststatus\r",
+7964:        assert_eq!(empty.line(), b"waitpid");
+7970:        assert_eq!(waited.line(), b"waitpid");
+7973:        assert_eq!(consumed.line(), b"waitpid");
+7976:        assert_eq!(observed.line(), b"laststatus");
+7979:        assert!(output.contains("talos> talos: waitpid no-child source=lifecycle-record\n"));
+7984:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record\n"
+7993:        let bytes = *b"jobs\rexec /bin/status42 &\rjobs\rjobs\rwaitpid\rlaststatus\rfg\rbg\r";
+8024:        assert_eq!(waited.line(), b"waitpid");
+8026:        assert_eq!(observed.line(), b"laststatus");
+8040:        assert!(output.contains("talos> talos: waitpid no-child source=lifecycle-record\n"));
+8048:        let bytes = *b"jobs\rexec /bin/status42 &\rexec /bin/zero &\rjobs\rjobs\rjobs\rwaitpid\rlaststatus\rexec /bin/zero\rwaitpid\rlaststatus\rexec /bin/status42&\rexec stdout &\r";
+8104:        assert_eq!(empty_wait.line(), b"waitpid");
+8106:        assert_eq!(empty_last.line(), b"laststatus");
+8111:        assert_eq!(foreground_wait.line(), b"waitpid");
+8113:        assert_eq!(foreground_last.line(), b"laststatus");
+8148:        assert!(output.contains("talos> talos: waitpid no-child source=lifecycle-record\n"));
+8151:            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/zero state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+8162:        let input = ScriptedInput::new(*b"laststatus\rexec /bin/init\rlaststatus\r", 37);
+8175:        assert_eq!(none.line(), b"laststatus");
+8181:        assert_eq!(observed.line(), b"laststatus");
+16:pub(crate) const TALOS_OPEN_SYSCALL: u64 = 5;
+50:            TALOS_OPEN_SYSCALL => Self::TalosOpen,
+62:            Self::TalosOpen => TALOS_OPEN_SYSCALL,
+1265:pub(crate) struct ProcessLocalPingDescriptorControl<
+1295:    ProcessLocalPingDescriptorControl<
+1451:pub(crate) enum ProcessLocalPingDispatchOperation<'a> {
+1491:pub(crate) struct ProcessLocalPingDispatchOutputs<'a> {
+1497:impl<'a> ProcessLocalPingDispatchOutputs<'a> {
+1520:    operation: ProcessLocalPingDispatchOperation<'_>,
+1535:    outputs: &mut ProcessLocalPingDispatchOutputs<'_>,
+1540:    let mut control = ProcessLocalPingDescriptorControl::new(
+1549:        ProcessLocalPingDispatchOperation::Open => {
+1554:        ProcessLocalPingDispatchOperation::Start {
+1577:        ProcessLocalPingDispatchOperation::PumpOrReadResult { process_descriptor } => {
+1581:        ProcessLocalPingDispatchOperation::Status { process_descriptor } => {
+1585:        ProcessLocalPingDispatchOperation::RetryArp { process_descriptor } => {
+1589:        ProcessLocalPingDispatchOperation::Timeout { process_descriptor } => {
+1593:        ProcessLocalPingDispatchOperation::Close { process_descriptor } => {
+1642:    outputs: &mut ProcessLocalPingDispatchOutputs<'_>,
+1651:                ProcessLocalPingDispatchOperation::Open,
+1689:                ProcessLocalPingDispatchOperation::Start {
+1717:                ProcessLocalPingDispatchOperation::PumpOrReadResult { process_descriptor },
+1747:                ProcessLocalPingDispatchOperation::Status { process_descriptor },
+1772:                ProcessLocalPingDispatchOperation::RetryArp { process_descriptor },
+1786:                ProcessLocalPingDispatchOperation::Timeout { process_descriptor },
+1800:                ProcessLocalPingDispatchOperation::Close { process_descriptor },
+1979:pub(crate) struct VfsPingDiagnosticSvcFixture<'a> {
+1991:impl<'a> VfsPingDiagnosticSvcFixture<'a> {
+2156:        outputs: &mut ProcessLocalPingDispatchOutputs<'_>,
+2649:        let result = dispatch(TALOS_OPEN_SYSCALL, SyscallArguments::empty());
+2652:        assert_eq!(result.number().raw(), TALOS_OPEN_SYSCALL);
+3991:        let mut control = ProcessLocalPingDescriptorControl::new(
+4087:        let mut missing_control = ProcessLocalPingDescriptorControl::new(
+4104:        let mut full_control = ProcessLocalPingDescriptorControl::new(
+4122:        let mut control = ProcessLocalPingDescriptorControl::new(
+4234:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+4236:                ProcessLocalPingDispatchOperation::Open,
+4258:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+4261:                    ProcessLocalPingDispatchOperation::Status { process_descriptor },
+4281:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+4284:                    ProcessLocalPingDispatchOperation::Start {
+4314:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+4317:                    ProcessLocalPingDispatchOperation::PumpOrReadResult { process_descriptor },
+4342:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+4345:                    ProcessLocalPingDispatchOperation::PumpOrReadResult { process_descriptor },
+4366:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+4369:                    ProcessLocalPingDispatchOperation::Status { process_descriptor },
+4390:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+4393:                    ProcessLocalPingDispatchOperation::Close { process_descriptor },
+4409:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+4412:                    ProcessLocalPingDispatchOperation::Status { process_descriptor },
+4445:            ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+4448:                ProcessLocalPingDispatchOperation::Open,
+4470:            ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+4473:                ProcessLocalPingDispatchOperation::Open,
+4486:                ProcessLocalPingDispatchOperation::Open,
+4509:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+4511:                ProcessLocalPingDispatchOperation::Open,
+4531:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+4534:                    ProcessLocalPingDispatchOperation::Status {
+4549:                    ProcessLocalPingDispatchOperation::Status {
+4564:                    ProcessLocalPingDispatchOperation::Start {
+4586:                    ProcessLocalPingDispatchOperation::Start {
+4608:                    ProcessLocalPingDispatchOperation::RetryArp { process_descriptor },
+4621:                    ProcessLocalPingDispatchOperation::Timeout { process_descriptor },
+4634:                    ProcessLocalPingDispatchOperation::Status { process_descriptor },
+4655:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+4658:                    ProcessLocalPingDispatchOperation::PumpOrReadResult { process_descriptor },
+4671:                    ProcessLocalPingDispatchOperation::PumpOrReadResult { process_descriptor },
+4695:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+4697:                ProcessLocalPingDispatchOperation::Open,
+4718:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+4721:                    ProcessLocalPingDispatchOperation::PumpOrReadResult {
+4750:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+4752:                ProcessLocalPingDispatchOperation::Open,
+4771:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+4774:                    ProcessLocalPingDispatchOperation::Start {
+4796:                    ProcessLocalPingDispatchOperation::PumpOrReadResult {
+4849:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+4876:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+4912:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+4948:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+4991:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+5027:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+5065:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+5094:    fn process_local_ping_user_arguments_reject_malformed_owner_descriptor_capacity_and_buffers() {
+5115:        assert_eq!(SyscallNumber::from_raw(6), SyscallNumber::Unknown(6));
+5116:        assert_eq!(TALOS_OPEN_SYSCALL, 5);
+5124:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+5153:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+5182:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+5410:        let mut fixture = VfsPingDiagnosticSvcFixture::new(
+5425:        assert_eq!(SyscallNumber::from_raw(6), SyscallNumber::Unknown(6));
+5426:        assert_eq!(TALOS_OPEN_SYSCALL, 5);
+5432:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+5456:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+5486:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+5520:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+5557:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+5587:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+5629:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+5647:    fn vfs_ping_diagnostic_svc_fixture_records_packet_queue_lifecycle() {
+5679:        let mut fixture = VfsPingDiagnosticSvcFixture::new(
+5692:        assert_eq!(SyscallNumber::from_raw(6), SyscallNumber::Unknown(6));
+5693:        assert_eq!(TALOS_OPEN_SYSCALL, 5);
+5698:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+5721:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+5774:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+5832:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+5858:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+5887:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+5905:    fn vfs_ping_diagnostic_svc_fixture_maps_packet_queue_controls() {
+5933:        let mut fixture = VfsPingDiagnosticSvcFixture::new(
+5959:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+5983:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+6012:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+6042:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+6070:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+6169:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+6187:    fn vfs_ping_diagnostic_svc_fixture_maps_contract_error_controls() {
+6213:            VfsPingDiagnosticSvcFixture::new(
+6228:        let mut fixture = VfsPingDiagnosticSvcFixture::new(
+6248:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+6273:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+6298:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+6317:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+6341:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+6453:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+6537:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+6563:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+6584:                ProcessLocalPingDispatchOutputs::new(&mut step, &mut pump_step, &mut status);
+7502:            TALOS_OPEN_SYSCALL,
+7544:            TALOS_OPEN_SYSCALL,
+7602:            TALOS_OPEN_SYSCALL,
+7616:            TALOS_OPEN_SYSCALL,
+7630:            TALOS_OPEN_SYSCALL,
+7637:            TALOS_OPEN_SYSCALL,
+7679:            TALOS_OPEN_SYSCALL,
+37:pub(crate) enum PacketQueueDriverPumpStep {
+145:pub(crate) struct PacketQueueNetworkDevice<
+157:    PacketQueueNetworkDevice<RX_CAPACITY, TX_CAPACITY, FRAME_CAPACITY>
+192:    pub(crate) fn pump_driver<D: NetworkDevice>(
+196:    ) -> PacketQueueDriverPumpStep {
+202:                    PacketQueueDriverPumpStep::Transmitted { frame_len }
+204:                Err(error) => PacketQueueDriverPumpStep::TransmitError { frame_len, error },
+209:            return PacketQueueDriverPumpStep::ReceiveQueueFull;
+216:                    Ok(()) => PacketQueueDriverPumpStep::Received { frame_len },
+220:                    }) => PacketQueueDriverPumpStep::ReceiveFrameTooLarge {
+224:                    Err(PacketQueueError::Full) => PacketQueueDriverPumpStep::ReceiveQueueFull,
+227:            Err(DeviceError::WouldBlock) => PacketQueueDriverPumpStep::NoFrame,
+228:            Err(DeviceError::BufferTooSmall) => PacketQueueDriverPumpStep::ReceiveBufferTooSmall,
+229:            Err(error) => PacketQueueDriverPumpStep::ReceiveError(error),
+235:    for PacketQueueNetworkDevice<RX_CAPACITY, TX_CAPACITY, FRAME_CAPACITY>
+3879:    fn packet_queue_driver_pump_drains_outbound_before_polling_receive_fifo() {
+3880:        let mut queue = PacketQueueNetworkDevice::<2, 2, 64>::new();
+3881:        let mut driver = PacketQueueNetworkDevice::<2, 2, 64>::new();
+3889:            queue.pump_driver(&mut driver, &mut receive_buffer),
+3890:            PacketQueueDriverPumpStep::Transmitted { frame_len: 3 }
+3902:            queue.pump_driver(&mut driver, &mut receive_buffer),
+3903:            PacketQueueDriverPumpStep::Transmitted { frame_len: 2 }
+3915:            queue.pump_driver(&mut driver, &mut receive_buffer),
+3916:            PacketQueueDriverPumpStep::Received { frame_len: 2 }
+3927:            queue.pump_driver(&mut driver, &mut receive_buffer),
+3928:            PacketQueueDriverPumpStep::NoFrame
+3933:    fn packet_queue_driver_pump_reports_backpressure_and_device_errors_deterministically() {
+3934:        let mut queue = PacketQueueNetworkDevice::<1, 1, 2>::new();
+3935:        let mut driver = PacketQueueNetworkDevice::<2, 2, 4>::new();
+3941:            queue.pump_driver(&mut driver, &mut receive_buffer),
+3942:            PacketQueueDriverPumpStep::TransmitError {
+3950:            queue.pump_driver(&mut driver, &mut receive_buffer),
+3951:            PacketQueueDriverPumpStep::Transmitted { frame_len: 2 }
+3957:            queue.pump_driver(&mut driver, &mut receive_buffer),
+3958:            PacketQueueDriverPumpStep::ReceiveQueueFull
+3968:            queue.pump_driver(&mut driver, &mut receive_buffer[..1]),
+3969:            PacketQueueDriverPumpStep::ReceiveBufferTooSmall
+3973:            queue.pump_driver(&mut driver, &mut receive_buffer),
+3974:            PacketQueueDriverPumpStep::Received { frame_len: 2 }
+3983:            queue.pump_driver(&mut driver, &mut receive_buffer),
+3984:            PacketQueueDriverPumpStep::ReceiveFrameTooLarge {
+3993:            queue.pump_driver(&mut driver, &mut receive_buffer),
+3994:            PacketQueueDriverPumpStep::ReceiveError(DeviceError::Io)
+5:EVIDENCE_LOG="$EVIDENCE_DIR/qemu-shell-pingdiag-smoke.log"
+24:    echo "qemu-shell-pingdiag-smoke: cargo-test-filter=$filter"
+29:    echo "qemu-shell-pingdiag-smoke: start"
+30:    echo "qemu-shell-pingdiag-smoke: substitute=target-cargo-test-via-qemu-runner"
+31:    echo "qemu-shell-pingdiag-smoke: boundary=shell-visible exec /bin/pingdiag over VFS/userspace diagnostic SVC, process-local descriptor ownership, UserMapping copy-in/copy-out, packet queues, and PacketQueueNetworkDevice::pump_driver"
+32:    echo "qemu-shell-pingdiag-smoke: shell-script=exec /bin/pingdiag -> waitpid -> laststatus -> exec /bin/pingdiag extra -> exec /bin/missingdiag"
+33:    echo "qemu-shell-pingdiag-smoke: lifecycle=vfs-executable-lookup -> exec-open-read -> startup-abi -> open -> start -> pump-outbound-arp-to-driver -> inject-arp-reply -> pump-outbound-icmp-to-driver -> inject-icmp-reply -> completed-status-result-copy-out -> close -> waitpid -> laststatus"
+34:    echo "qemu-shell-pingdiag-smoke: deterministic-controls=malformed-arguments,missing-vfs-identity,wrong-owner,invalid-or-closed-descriptor,queue-capacity,caller-buffer-pressure,malformed-received-frames,timeout-retry,transmit-receive-device-errors,close-drop,stable-syscall-vocabulary"
+40:    echo "qemu-shell-pingdiag-smoke: PASS classification=host-substitute-shell-pingdiag-smoke-complete"

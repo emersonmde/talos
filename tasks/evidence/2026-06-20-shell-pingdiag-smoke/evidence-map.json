@@ -1,0 +1,34 @@
+{
+  "task_id": "phase12-network-shell-pingdiag-smoke-20260620",
+  "classification": "phase12-network-shell-pingdiag-smoke-accepted",
+  "evidence_dir": "tasks/evidence/2026-06-20-shell-pingdiag-smoke",
+  "artifacts": {
+    "smoke_command": "scripts/qemu-shell-pingdiag-smoke.sh",
+    "qemu_substitute_log": "qemu-shell-pingdiag-smoke.log",
+    "source_anchors": "source-anchors.txt",
+    "smoke_transcript": "smoke-transcript.md",
+    "classification": "classification.json"
+  },
+  "source_tests": [
+    "src/local_command_loop.rs::local_command_loop_execs_shell_visible_pingdiag_through_vfs_diagnostic_layers",
+    "src/syscall.rs::vfs_ping_diagnostic_svc_fixture_records_packet_queue_lifecycle",
+    "src/syscall.rs::vfs_ping_diagnostic_svc_fixture_maps_packet_queue_controls",
+    "src/syscall.rs::vfs_ping_diagnostic_svc_fixture_maps_contract_error_controls",
+    "src/syscall.rs::process_local_ping_user_arguments_reject_malformed_owner_descriptor_capacity_and_buffers"
+  ],
+  "source_components": [
+    "src/initramfs.rs::PHASE12_PINGDIAG_PATH",
+    "src/local_command_loop.rs::exec_shell_pingdiag_diagnostic",
+    "src/local_command_loop.rs::write_exec_pingdiag_line",
+    "src/local_command_loop.rs::write_exec_pingdiag_controls_line",
+    "src/syscall.rs::VfsPingDiagnosticSvcFixture",
+    "src/syscall.rs::ProcessLocalPingDispatchOperation",
+    "src/syscall.rs::ProcessLocalPingDispatchOutputs",
+    "src/network.rs::PacketQueueNetworkDevice",
+    "src/network.rs::PacketQueueDriverPumpStep",
+    "src/network.rs::NetworkDevice",
+    "src/posix.rs::ProcessDescriptorStore",
+    "src/posix.rs::UserMapping"
+  ],
+  "selected_next_task": "phase12-network-shell-pingdiag-smoke-closeout-20260620"
+}

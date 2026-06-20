@@ -4648,3 +4648,24 @@ and bounded because it has explicit dependencies, acceptance criteria,
 validation gates, evidence requirements, and rejected-claim boundaries for a
 host/QEMU-substitute transcript only. The selected next bounded task is
 phase12-network-shell-pingdiag-smoke-20260620.
+
+phase12-network-shell-pingdiag-smoke-20260620 accepts
+phase12-network-shell-pingdiag-smoke-accepted. The retained smoke evidence
+records a shell-visible `exec /bin/pingdiag` transcript through VFS executable
+lookup, VFS open/read execution, startup ABI, diagnostic SVC user-argument
+decoding, process-local descriptor ownership, UserMapping copy-in/copy-out,
+packet queues, `PacketQueueNetworkDevice::pump_driver`, completed
+status/result copy-out, close, `waitpid`, and `laststatus`.
+
+The accepted evidence level is host/QEMU-substitute smoke. The transcript
+proves successful ARP and ICMP progression through the accepted packet-pump
+layers and retains deterministic controls for malformed arguments, missing VFS
+executable identity, owner/descriptor failures, invalid and closed descriptors,
+queue capacity/backpressure, caller buffer pressure, malformed received frames,
+timeout/retry, transmit and receive device errors, close/drop behavior, and
+unchanged SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_* vocabulary. It does not
+accept kernel fake commands, public sockets, stable/socket ABI acceptance, live
+driver adapters, live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP,
+lab mutation, boot publication, Phase 12.1 hardware retry, broad shell
+expansion, broad socket expansion, or a phase transition. The selected next
+bounded task is phase12-network-shell-pingdiag-smoke-closeout-20260620.
