@@ -14935,6 +14935,23 @@ Milestone 12.3: IP Stack
   broad socket expansion, and phase transition remain rejected. The selected
   next bounded task is
   phase12-network-shell-sockdiag-connect-accept-smoke-20260620.
+- The shell sockdiag connect/accept smoke accepts retained host/QEMU-substitute
+  evidence for shell-visible `/bin/sockdiag` local connect/accept over the
+  accepted VFS/userspace path. The transcript records executable
+  lookup/open/read, startup ABI, private TALOS_SOCKET/TALOS_BIND/TALOS_LISTEN/
+  TALOS_CONNECT/TALOS_ACCEPT/TALOS_CLOSE dispatch, listener fd 3, client fd 4,
+  accepted fd 6, successful connect/accept returns, Listening/Connected/
+  Accepted state, close/drop cleanup, waitpid, and laststatus. Controls cover
+  malformed arguments, missing executable identity, unsupported socket
+  domain/type/protocol, listen-before-bind, invalid endpoint/backlog, repeated
+  bind/listen behavior, accept-before-connect, missing listener, pending queue
+  backpressure, non-socket descriptors, invalid/closed descriptors, descriptor
+  and backing capacity, unchanged open/close behavior, unchanged bind/listen
+  behavior, and unchanged /bin/pingdiag behavior. Send/recv, payload transport,
+  poll/blocking I/O, UDP/TCP payload transport, live packet I/O, hardware
+  reachability, SSH, public stable socket ABI acceptance, broad socket
+  expansion, and phase transition remain rejected. The selected next bounded
+  task is phase12-network-shell-sockdiag-connect-accept-closeout-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

@@ -5029,3 +5029,27 @@ hardware reachability, smoltcp, SSH, lab mutation, boot publication,
 generated-root publication, broad socket expansion, public stable socket ABI
 acceptance, or phase transition. The selected next bounded task is
 phase12-network-shell-sockdiag-connect-accept-smoke-20260620.
+
+phase12-network-shell-sockdiag-connect-accept-smoke-20260620 accepts
+phase12-network-shell-sockdiag-connect-accept-smoke-accepted. The retained
+host/QEMU-substitute smoke evidence records shell-visible /bin/sockdiag local
+connect/accept behavior over the accepted VFS/userspace execution path:
+executable lookup/open/read for /bin/sockdiag, startup ABI, TALOS_SOCKET,
+TALOS_BIND, TALOS_LISTEN, TALOS_CONNECT, TALOS_ACCEPT, and TALOS_CLOSE through
+socket-table-aware process descriptor dispatch. The transcript records
+listener fd 3, client fd 4, accepted fd 6, successful connect/accept returns,
+Listening/Connected/Accepted state, close/drop cleanup, waitpid, and
+laststatus.
+
+The retained controls cover malformed arguments, missing executable identity,
+unsupported socket domain/type/protocol, listen-before-bind, invalid endpoint
+and backlog, repeated bind/listen behavior, accept-before-connect, missing
+listener, pending queue backpressure, non-socket descriptors, invalid/closed
+descriptors, descriptor and backing capacity, unchanged open/close behavior,
+unchanged bind/listen behavior, and unchanged /bin/pingdiag behavior. The
+evidence remains host/QEMU-substitute smoke only and does not accept send,
+recv, payload bytes, poll/blocking network I/O, UDP/TCP payload transport,
+live driver adapters, live packet I/O, hardware reachability, SSH, public
+stable socket ABI acceptance, broad socket expansion, or phase transition. The
+selected next bounded task is
+phase12-network-shell-sockdiag-connect-accept-closeout-20260620.
