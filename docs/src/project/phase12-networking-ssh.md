@@ -5053,3 +5053,29 @@ live driver adapters, live packet I/O, hardware reachability, SSH, public
 stable socket ABI acceptance, broad socket expansion, or phase transition. The
 selected next bounded task is
 phase12-network-shell-sockdiag-connect-accept-closeout-20260620.
+
+phase12-network-shell-sockdiag-connect-accept-closeout-20260620 accepts
+phase12-network-shell-sockdiag-connect-accept-closeout-accepted. The closeout
+reconciles the connect/accept ABI contract, descriptor-backed core, shell
+/bin/sockdiag core, and retained smoke evidence as a host/QEMU-substitute
+frontier only. The accepted boundary is shell-visible local connect/accept
+through VFS/userspace execution: executable lookup/open/read for /bin/sockdiag,
+startup ABI, TALOS_SOCKET_SYSCALL = 6 for AF_INET/SOCK_STREAM/protocol 0,
+TALOS_BIND_SYSCALL = 7 for the accepted local endpoint,
+TALOS_LISTEN_SYSCALL = 8 for bounded listening state,
+TALOS_CONNECT_SYSCALL = 9 for one current-process local listener,
+TALOS_ACCEPT_SYSCALL = 10 for a new accepted current-process descriptor,
+process DescriptorObjectKind::Socket ownership, listener/client/accepted
+descriptor-backed state, TALOS_CLOSE_SYSCALL = 2 close/drop, waitpid,
+laststatus, deterministic controls, unchanged socket open/close behavior,
+unchanged bind/listen behavior, unchanged /bin/pingdiag behavior, and
+unchanged bounded syscall vocabulary.
+
+The closeout explicitly rejects send, recv, payload bytes, poll/blocking
+network I/O, UDP/TCP payload transport, cross-process sockets, global port
+registry or address-conflict policy, live driver adapters, live packet I/O,
+hardware reachability, lab mutation, boot publication, generated-root
+publication, SSH, smoltcp, broad socket expansion, public stable socket ABI
+acceptance, and phase transition. selected_next_task is null and
+planningNeeded=true pending supervisor planning for any next bounded Phase 12.4
+socket or network task.
