@@ -14726,8 +14726,23 @@ Milestone 12.3: IP Stack
   sockets, stable/socket ABI acceptance, live driver adapters, live packet I/O,
   hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication,
   broad shell or socket expansion, Phase 12.1 hardware retry, and phase
-  transition remain rejected. selected_next_task is null and planningNeeded=true
-  pending supervisor planning for the next bounded task.
+  transition remain rejected. selected_next_task was null and
+  planningNeeded=true until supervisor planning selected the following bounded
+  socket open/close contract.
+- The socket open/close ABI contract accepts the next bounded Phase 12.4
+  socket integration step after supervisor planning. The future core should add
+  a private experimental `TALOS_SOCKET_SYSCALL = 6` selector on the existing
+  stable SVC path with `socket(domain, type, protocol)` arguments. The only
+  accepted success tuple is `AF_INET=2`, `SOCK_STREAM=1`, `protocol=0`,
+  returning the lowest available process descriptor backed by a fixed-capacity
+  `DescriptorObjectKind::Socket` entry owned by the current process. Close
+  remains the existing `TALOS_CLOSE_SYSCALL = 2` descriptor path and must drop
+  socket backing state. The contract explicitly rejects send, recv, bind,
+  connect, listen, accept, poll/blocking I/O, UDP/TCP payload transport,
+  explicit IPPROTO_TCP, datagram/raw sockets, live packet I/O, smoltcp, SSH,
+  hardware work, public stable socket ABI acceptance, broad socket expansion,
+  and phase transition. The selected next bounded task is
+  phase12-network-socket-open-close-core-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

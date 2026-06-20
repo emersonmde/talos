@@ -12,6 +12,41 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-20 - Phase 12 Socket Open/Close Uses Private Talos Selector
+
+- Status: accepted as the bounded socket open/close ABI contract in
+  phase12-network-socket-open-close-abi-contract-20260620. No runtime source
+  implementation, public stable socket ABI acceptance, send/recv, bind/connect,
+  UDP/TCP payload transport, live packet I/O, hardware work, SSH, broad socket
+  expansion, or phase transition is accepted here.
+- Context: The accepted shell-visible `/bin/pingdiag` smoke frontier proves
+  VFS/userspace diagnostic execution, process-local descriptor ownership,
+  close/drop behavior, packet queues, PacketQueueNetworkDevice::pump_driver,
+  and deterministic diagnostic controls, but it deliberately rejects public
+  sockets and live network reachability.
+- Decision: Reserve a future private experimental `TALOS_SOCKET_SYSCALL = 6`
+  selector on the existing `STABLE_SVC_IMMEDIATE = 0` path. The selector uses
+  conventional `socket(domain, type, protocol)` scalar arguments, accepts only
+  `AF_INET=2`, `SOCK_STREAM=1`, `protocol=0`, and returns a normal process
+  descriptor backed by a fixed-capacity `DescriptorObjectKind::Socket` entry.
+  Close remains the existing `TALOS_CLOSE_SYSCALL = 2` path and must drop the
+  matching socket backing entry.
+- Evidence level: static source/task/evidence review of `src/syscall.rs`,
+  `src/posix.rs`, `src/network.rs`, and the accepted shell-visible pingdiag
+  smoke closeout evidence. The task record is
+  tasks/2026-06-20-phase12-network-socket-open-close-abi-contract.md.
+- Consequences: The follow-up implementation can add only descriptor-backed
+  socket open/close behavior and focused tests. The selector is Talos-private
+  and experimental for this task chain; it is not a Linux syscall-number
+  compatibility claim and does not accept libc/public ABI stability beyond the
+  bounded open/close contract.
+- Alternatives considered: overload `TALOS_OPEN_SYSCALL` with a synthetic
+  socket path, extend the pingdiag diagnostic descriptor, or reserve a broad
+  stable POSIX socket ABI immediately. Overloading open would confuse VFS file
+  semantics, extending pingdiag would keep sockets hidden behind diagnostics,
+  and a broad stable ABI would accept more surface than the next feature test
+  can prove.
+
 ## 2026-06-16 - Pi 5 generated-root firmware initramfs is reserved by early memory-plan exclusion
 
 - Status: Accepted source contract in

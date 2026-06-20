@@ -4688,7 +4688,31 @@ SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_* vocabulary. Kernel fake commands,
 public sockets, stable/socket ABI acceptance, live driver adapters, live packet
 I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot
 publication, broad shell expansion, broad socket expansion, Phase 12.1 hardware
-retry, and phase transition remain rejected. No later bounded task is
-mechanically unblocked; supervisor planning is required before public sockets,
-live driver packet I/O, SSH, Phase 12.1 hardware retry, broad socket expansion,
-or a phase transition.
+retry, and phase transition remain rejected. At closeout acceptance, no later
+bounded task was mechanically unblocked; supervisor planning was required
+before public sockets, live driver packet I/O, SSH, Phase 12.1 hardware retry,
+broad socket expansion, or a phase transition.
+
+phase12-network-socket-open-close-abi-contract-20260620 accepts
+phase12-network-socket-open-close-abi-contract-accepted. Supervisor planning
+after the shell-visible pingdiag smoke closeout selected the smallest socket
+integration boundary: a private experimental socket-open selector paired with
+the existing process descriptor close path.
+
+The accepted contract reserves a future private `TALOS_SOCKET_SYSCALL = 6`
+selector on the existing `STABLE_SVC_IMMEDIATE = 0` path with scalar
+`socket(domain, type, protocol)` arguments. The only accepted success tuple is
+`AF_INET=2`, `SOCK_STREAM=1`, and `protocol=0`; the returned value is the
+lowest available process descriptor backed by a fixed-capacity
+`DescriptorObjectKind::Socket` entry owned by the current process. Close uses
+the existing `TALOS_CLOSE_SYSCALL = 2` path and must drop both the process
+descriptor and socket backing entry. Error vocabulary is bounded to existing
+Talos POSIX errors for unsupported tuple, reserved argument, descriptor
+capacity, backing capacity, wrong-owner, invalid, and closed descriptor cases.
+
+This contract does not accept send, recv, bind, connect, listen, accept,
+poll/blocking network I/O, UDP/TCP payload transport, explicit `IPPROTO_TCP`,
+datagram/raw sockets, live driver adapters, live packet I/O, hardware
+reachability, smoltcp, SSH, lab mutation, boot publication, broad socket
+expansion, public stable socket ABI acceptance, or phase transition. The
+selected next bounded task is phase12-network-socket-open-close-core-20260620.
