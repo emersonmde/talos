@@ -14410,6 +14410,27 @@ Milestone 12.3: IP Stack
   12.1 link-hardware retry, broad socket expansion, and phase transition remain
   rejected. The selected next bounded task is
   phase12-network-vfs-ping-diagnostic-svc-closeout-20260620.
+- The VFS-backed userspace ping diagnostic SVC closeout accepts the core
+  evidence and selects retained smoke evidence as the next bounded task. The
+  closeout reconciles the accepted contract, VfsPingDiagnosticSvcFixture
+  implementation, source/unit transcript, task records, docs, durable state,
+  and rejected claims. The evidence level remains source/unit host-only over a
+  VFS/userspace diagnostic SVC bridge, VFS/initramfs executable identity,
+  experimental user-argument decoding, UserMapping copy-in/copy-out,
+  process-local descriptor ownership, internal dispatch-shaped control,
+  fake/trait-level NetworkDevice behavior, caller-owned buffers, task-owned
+  result/status slots, and fixed-capacity state. It accepts only the already
+  committed diagnostic lifecycle and deterministic controls for malformed
+  selector and payload, missing owner, invalid and closed descriptors, process
+  descriptor capacity, VFS executable lookup failure, output-buffer pressure,
+  invalid user memory, scratch pressure, retry exhaustion, explicit timeout,
+  caller receive-buffer pressure, device receive IO error, and unchanged stable
+  syscall vocabulary. Shell ping, kernel-backed fake command expansion, public
+  sockets, stable syscall ABI acceptance, socket syscall ABI acceptance, live
+  driver adapters, live packet I/O, hardware reachability, SSH, smoltcp,
+  UDP/TCP, lab mutation, boot publication, Phase 12.1 link-hardware retry,
+  broad socket expansion, and phase transition remain rejected. The selected
+  next bounded task is phase12-network-vfs-ping-diagnostic-svc-smoke-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

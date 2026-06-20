@@ -4264,3 +4264,29 @@ live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation,
 boot publication, Phase 12.1 link-hardware retry, broad socket expansion, and
 phase transition remain rejected. The selected next bounded task is
 phase12-network-vfs-ping-diagnostic-svc-closeout-20260620.
+
+phase12-network-vfs-ping-diagnostic-svc-closeout-20260620 accepts
+phase12-network-vfs-ping-diagnostic-svc-closeout-accepted. The closeout
+reconciles the accepted contract, core implementation, source/unit transcript,
+task records, docs, durable state, and rejected claims before retaining broader
+smoke evidence. It confirms that VfsPingDiagnosticSvcFixture remains a
+crate-internal host-only diagnostic bridge over a VFS/initramfs
+executable-shaped identity,
+dispatch_process_local_ping_descriptor_user_arguments, UserMapping
+copy-in/copy-out, process-local descriptor ownership, internal dispatch-shaped
+control, fake/trait-level NetworkDevice behavior, caller-owned buffers,
+task-owned result/status slots, and fixed-capacity state.
+
+The accepted evidence level remains source/unit host-only. It accepts only the
+already committed diagnostic lifecycle and deterministic controls for malformed
+selector and payload, missing owner, invalid and closed descriptors, process
+descriptor capacity, VFS executable lookup failure, output-buffer pressure,
+invalid user memory, scratch pressure, retry exhaustion, explicit timeout,
+caller receive-buffer pressure, device receive IO error, and unchanged
+SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_* vocabulary. Shell ping,
+kernel-backed fake command expansion, public sockets, stable syscall ABI
+acceptance, socket syscall ABI acceptance, live driver adapters, live packet
+I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot
+publication, Phase 12.1 link-hardware retry, broad socket expansion, and phase
+transition remain rejected. The selected next bounded task is
+phase12-network-vfs-ping-diagnostic-svc-smoke-20260620.
