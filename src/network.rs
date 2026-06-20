@@ -1766,6 +1766,8 @@ impl NetworkPingOperationDescriptor {
 pub(crate) const SOCKET_DOMAIN_AF_INET: u64 = 2;
 pub(crate) const SOCKET_TYPE_STREAM: u64 = 1;
 pub(crate) const SOCKET_PROTOCOL_DEFAULT: u64 = 0;
+pub(crate) const SOCKET_LISTEN_BACKLOG_MIN: u64 = 1;
+pub(crate) const SOCKET_LISTEN_BACKLOG_MAX: u64 = 4;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct NetworkSocketDescriptor {
@@ -1783,11 +1785,44 @@ impl NetworkSocketDescriptor {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct Ipv4Endpoint {
+    ipv4_be: u32,
+    port: u16,
+}
+
+impl Ipv4Endpoint {
+    pub(crate) const fn new(ipv4_be: u32, port: u16) -> Self {
+        Self { ipv4_be, port }
+    }
+
+    pub(crate) const fn ipv4_be(self) -> u32 {
+        self.ipv4_be
+    }
+
+    pub(crate) const fn port(self) -> u16 {
+        self.port
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum NetworkSocketState {
+    OpenUnbound,
+    Bound {
+        local_endpoint: Ipv4Endpoint,
+    },
+    Listening {
+        local_endpoint: Ipv4Endpoint,
+        backlog: u8,
+    },
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct NetworkSocket {
     owner: crate::scheduler::ProcessOwnerId,
     domain: u64,
     socket_type: u64,
     protocol: u64,
+    state: NetworkSocketState,
 }
 
 impl NetworkSocket {
@@ -1802,6 +1837,7 @@ impl NetworkSocket {
             domain,
             socket_type,
             protocol,
+            state: NetworkSocketState::OpenUnbound,
         }
     }
 
@@ -1819,6 +1855,10 @@ impl NetworkSocket {
 
     pub(crate) const fn protocol(self) -> u64 {
         self.protocol
+    }
+
+    pub(crate) const fn state(self) -> NetworkSocketState {
+        self.state
     }
 }
 
@@ -1868,6 +1908,54 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
         self.require_owner(owner, descriptor)?;
         self.entries[descriptor.raw()] = None;
         Ok(())
+    }
+
+    pub(crate) fn bind(
+        &mut self,
+        owner: crate::scheduler::ProcessOwnerId,
+        descriptor: NetworkSocketDescriptor,
+        local_endpoint: Ipv4Endpoint,
+    ) -> Result<(), crate::posix::PosixError> {
+        self.require_owner(owner, descriptor)?;
+        let socket = self
+            .entries
+            .get_mut(descriptor.raw())
+            .and_then(Option::as_mut)
+            .ok_or(crate::posix::PosixError::BadDescriptor)?;
+        match socket.state {
+            NetworkSocketState::OpenUnbound => {
+                socket.state = NetworkSocketState::Bound { local_endpoint };
+                Ok(())
+            }
+            NetworkSocketState::Bound { .. } | NetworkSocketState::Listening { .. } => {
+                Err(crate::posix::PosixError::InvalidArgument)
+            }
+        }
+    }
+
+    pub(crate) fn listen(
+        &mut self,
+        owner: crate::scheduler::ProcessOwnerId,
+        descriptor: NetworkSocketDescriptor,
+        backlog: u8,
+    ) -> Result<(), crate::posix::PosixError> {
+        self.require_owner(owner, descriptor)?;
+        let socket = self
+            .entries
+            .get_mut(descriptor.raw())
+            .and_then(Option::as_mut)
+            .ok_or(crate::posix::PosixError::BadDescriptor)?;
+        match socket.state {
+            NetworkSocketState::Bound { local_endpoint }
+            | NetworkSocketState::Listening { local_endpoint, .. } => {
+                socket.state = NetworkSocketState::Listening {
+                    local_endpoint,
+                    backlog,
+                };
+                Ok(())
+            }
+            NetworkSocketState::OpenUnbound => Err(crate::posix::PosixError::InvalidArgument),
+        }
     }
 
     pub(crate) fn socket(

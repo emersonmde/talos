@@ -14818,6 +14818,23 @@ Milestone 12.3: IP Stack
   acceptance, broad socket expansion, and phase transition remain rejected.
   The selected next bounded task is
   phase12-network-socket-bind-listen-core-20260620.
+- The socket bind/listen core accepts source/unit host/QEMU-substitute
+  evidence for private descriptor-backed AF_INET stream bind/listen state.
+  The implementation adds `TALOS_BIND_SYSCALL = 7` and
+  `TALOS_LISTEN_SYSCALL = 8` only to the socket-table-aware process descriptor
+  dispatch path, preserves scalar-dispatch `ENOTSUP`, and records
+  `OpenUnbound`, `Bound { local_endpoint }`, and
+  `Listening { local_endpoint, backlog }` backing states. Bind/listen validate
+  reserved scalars, endpoint/backlog bounds, current-process descriptor
+  ownership, socket descriptor kind, and backing owner before all-or-nothing
+  state transitions; close/drop cleanup remains the accepted socket close
+  path for unbound, bound, or listening sockets. Shell `/bin/sockdiag`
+  bind/listen reporting, send/recv, connect/accept, poll/blocking I/O,
+  UDP/TCP payload transport, accept queues, global port registry/address
+  conflict policy, live packet I/O, smoltcp, SSH, hardware work, public stable
+  socket ABI acceptance, broad socket expansion, and phase transition remain
+  rejected. The selected next bounded task is
+  phase12-network-shell-sockdiag-bind-listen-core-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

@@ -4835,3 +4835,34 @@ reachability, smoltcp, SSH, lab mutation, boot publication, broad socket
 expansion, public stable socket ABI acceptance, or phase transition. The
 selected next bounded task is
 phase12-network-socket-bind-listen-core-20260620.
+
+phase12-network-socket-bind-listen-core-20260620 accepts
+phase12-network-socket-bind-listen-core-accepted. The implementation adds
+private experimental `TALOS_BIND_SYSCALL = 7` and
+`TALOS_LISTEN_SYSCALL = 8` selectors only to the socket-table-aware process
+descriptor dispatch path. Scalar dispatch without socket-table context still
+returns `ENOTSUP`, preserving the accepted private task-chain boundary.
+
+The backing socket record now carries explicit state: `OpenUnbound`,
+`Bound { local_endpoint }`, and `Listening { local_endpoint, backlog }`.
+Bind validates reserved arguments, a 32-bit big-endian IPv4 scalar, port
+`1..=65535`, current-process descriptor ownership, `DescriptorObjectKind::Socket`,
+and backing socket owner before transitioning `OpenUnbound` to `Bound`.
+Listen validates reserved arguments, backlog `1..=4`, descriptor/backing
+ownership, and state before transitioning a bound socket to listening or
+updating an already listening socket backlog. Failed bind/listen calls leave
+prior socket state unchanged; closing an unbound, bound, or listening socket
+continues to drop the process descriptor and matching backing entry.
+
+The accepted evidence level is source/unit host/QEMU-substitute coverage for
+successful bind/listen transitions, repeated bind rejection, repeated listen
+backlog updates, close/drop cleanup, scalar-dispatch `ENOTSUP`, malformed
+arguments, listen-before-bind, non-socket descriptors, wrong-owner backing
+rejection, and state preservation on failures. This core does not accept shell
+`/bin/sockdiag` bind/listen reporting, send, recv, connect, accept,
+poll/blocking network I/O, UDP/TCP payload transport, accept queues, global
+port registry or address-conflict policy, live driver adapters, live packet
+I/O, hardware reachability, smoltcp, SSH, lab mutation, boot publication,
+broad socket expansion, public stable socket ABI acceptance, or phase
+transition. The selected next bounded task is
+phase12-network-shell-sockdiag-bind-listen-core-20260620.
