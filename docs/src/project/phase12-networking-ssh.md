@@ -3876,3 +3876,28 @@ smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1 link-hardware
 retry, broad socket expansion, and phase transition remain rejected. The
 selected next bounded task is
 phase12-network-process-local-ping-descriptor-core-20260620.
+
+phase12-network-process-local-ping-descriptor-core-20260620 accepts
+phase12-network-process-local-ping-descriptor-core-accepted. src/syscall.rs now
+provides ProcessLocalPingDescriptorControl, a crate-internal host-only wrapper
+that routes one DescriptorShapedPingControl operation through the existing
+ProcessDescriptorStore and per-ProcessOwnerId DescriptorTable model. The
+process-local descriptor is the caller-visible handle; the descriptor object is
+an OtherKernelObject whose reference indexes the backing ping-control descriptor.
+
+The accepted source/unit evidence covers process-local open after inherited
+stdio, idle status, start to pending ARP, runtime-pump ARP advancement to
+inflight, echo-reply completion, terminal completed status, close, closed
+descriptor EBADF, missing current owner EBADF, full process descriptor table
+EMFILE with backing-descriptor unwind, duplicate active operation EBUSY,
+wrong-kind stdio descriptor EBADF, retry exhaustion EAGAIN, explicit timeout,
+receive IO error, and local transmit IO error. ARP, IPv4, ICMP, route policy,
+retry behavior, timeout behavior, local responder behavior, and fake/trait-level
+NetworkDevice I/O remain delegated to DescriptorShapedPingControl,
+RuntimePingOperationSyscallSubstitute, and NetworkRuntimeDevicePump. Public
+sockets, stable syscall ABI acceptance, socket syscall ABI acceptance, shell
+ping, live driver adapters, live packet I/O, hardware reachability, SSH,
+smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1 link-hardware
+retry, broad socket expansion, and phase transition remain rejected. The
+selected next bounded task is
+phase12-network-process-local-ping-descriptor-closeout-20260620.

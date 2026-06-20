@@ -14095,6 +14095,26 @@ Milestone 12.3: IP Stack
   link-hardware retry, broad socket expansion, and phase transition remain
   rejected. The selected next bounded task is
   phase12-network-process-local-ping-descriptor-core-20260620.
+- The process-local ping descriptor core accepts
+  ProcessLocalPingDescriptorControl in src/syscall.rs. It is a crate-internal,
+  host-only wrapper that maps one process-local DescriptorTable handle to one
+  backing DescriptorShapedPingControl operation through OtherKernelObject
+  references. The accepted source/unit evidence covers process-local open after
+  inherited stdio, idle status, start to pending ARP, runtime-pump ARP
+  advancement to inflight, echo-reply completion, terminal completed status,
+  close, closed descriptor EBADF, missing current owner EBADF, full process
+  descriptor table EMFILE with backing-descriptor unwind, duplicate active
+  operation EBUSY, wrong-kind stdio descriptor EBADF, retry exhaustion EAGAIN,
+  explicit timeout, receive IO error, and local transmit IO error. ARP, IPv4,
+  ICMP, route policy, retry behavior, timeout behavior, local responder
+  behavior, and fake/trait-level NetworkDevice I/O remain delegated to
+  DescriptorShapedPingControl, RuntimePingOperationSyscallSubstitute, and
+  NetworkRuntimeDevicePump. Shell ping, public sockets, stable syscall ABI
+  acceptance, socket syscall ABI acceptance, live driver adapters, live packet
+  I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot
+  publication, Phase 12.1 link-hardware retry, broad socket expansion, and
+  phase transition remain rejected. The selected next bounded task is
+  phase12-network-process-local-ping-descriptor-closeout-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
