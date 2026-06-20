@@ -4339,6 +4339,30 @@ The post-review correction chain is:
     lab mutation, boot publication, Phase 12.1 retry, Phase 12.4 socket
     expansion, and phase transition remain rejected. selected_next_task is
     'phase12-network-runtime-device-pump-substitute-smoke-closeout-20260620'.
+246. Phase 12.3 network runtime device pump substitute smoke closeout:
+    accepted in
+    'phase12-network-runtime-device-pump-substitute-smoke-closeout-20260620'
+    with classification
+    'phase12-network-runtime-device-pump-substitute-smoke-closeout-accepted'.
+    The closeout reconciles the retained smoke transcript, full-suite
+    transcript, runtime pump source/tests, task record, docs, durable state,
+    and rejected claims. The accepted evidence level remains host-only
+    QEMU/substitute smoke over NetworkRuntimeDevicePump, local ARP/ICMP responder
+    behavior, NetworkPingOperationDescriptorTable, UserspacePingOperation,
+    SinglePingPacketService, fake/trait-level NetworkDevice behavior,
+    caller-owned receive/transmit buffers, and fixed-capacity state. It covers
+    local ARP reply transmit, local ICMP echo reply transmit, local responder
+    priority, unresolved ARP to ICMP transmit advancement, echo-reply
+    completion, terminal completed status, retry exhaustion, explicit timeout,
+    no-frame, receive-buffer pressure, receive IO error, local transmit IO
+    error, and active transmit IO error. Shell ping, public sockets, stable
+    syscall ABI acceptance, socket syscall ABI, live driver adapters, live
+    packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation,
+    boot publication, Phase 12.1 retry, Phase 12.4 socket expansion, and phase
+    transition remain rejected. selected_next_task is null and
+    planningNeeded=true because no later queued Phase 12.3 or Phase 12.4 task
+    has complete objective dependencies, acceptance criteria, validation gates,
+    and evidence requirements.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -13845,6 +13869,18 @@ Milestone 12.3: IP Stack
   publication, Phase 12.1 link-hardware retry, Phase 12.4 socket expansion,
   and phase transition remain rejected. The next selected bounded task is the
   runtime pump substitute smoke core.
+- The network runtime device pump substitute smoke closeout accepts only the
+  retained host-only QEMU/substitute smoke evidence for the runtime pump and
+  fake-device edges. The accepted evidence level remains over
+  NetworkRuntimeDevicePump, local ARP/ICMP responder behavior,
+  NetworkPingOperationDescriptorTable, UserspacePingOperation,
+  SinglePingPacketService, fake/trait-level NetworkDevice behavior,
+  caller-owned receive/transmit buffers, and fixed-capacity state. Shell ping,
+  public sockets, stable syscall ABI acceptance, live driver adapters, live
+  packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot
+  publication, Phase 12.1 link-hardware retry, Phase 12.4 socket expansion,
+  and phase transition remain rejected. selected_next_task is null and
+  planningNeeded=true pending supervisor planning for the next bounded task.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
