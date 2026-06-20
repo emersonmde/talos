@@ -3755,3 +3755,33 @@ reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1
 link-hardware retry, Phase 12.4 socket expansion, and phase transition remain
 rejected. selected_next_task is
 phase12-network-descriptor-shaped-ping-control-contract-20260620.
+
+phase12-network-descriptor-shaped-ping-control-contract-20260620 accepts
+phase12-network-descriptor-shaped-ping-control-contract-accepted. The selected
+Phase 12.4 contract is a narrow crate-internal, host-only descriptor-shaped
+control layer over the accepted RuntimePingOperationSyscallSubstitute and
+NetworkRuntimeDevicePump. It keeps caller-owned receive/transmit/status
+buffers, fixed-capacity state, and one-operation scope while exposing open,
+start, pump/read-result, status, retry_arp, timeout, and close.
+
+The contract maps local responder and active ping behavior to the accepted
+runtime pump rather than duplicating ARP, IPv4, ICMP, route, retry, timeout, or
+device logic. open/close own descriptor lifecycle; start begins one
+route-aware ping-like operation; pump/read-result performs exactly one runtime
+pump step with local ARP/ICMP responder priority before active ping progress;
+status preserves terminal completed/timed-out observation in caller-owned
+storage; retry_arp and timeout remain caller-driven. EBADF, EMFILE, EBUSY,
+EAGAIN, ENOSPC, and existing internal packet/device error mappings remain the
+selected error vocabulary.
+
+The accepted evidence level is host-only contract evidence over
+RuntimePingOperationSyscallSubstitute, NetworkRuntimeDevicePump, local ARP/ICMP
+responder behavior, active ping descriptor dispatch, UserspacePingOperation,
+SinglePingPacketService, fake/trait-level NetworkDevice behavior,
+caller-owned buffers, fixed-capacity state, source/task/doc review, and durable
+state. Shell ping, public sockets, stable syscall ABI acceptance, socket
+syscall ABI acceptance, live driver adapters, live packet I/O, hardware
+reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase
+12.1 link-hardware retry, broad Phase 12.4 socket expansion, and phase
+transition remain rejected. The selected next task is
+phase12-network-descriptor-shaped-ping-control-core-20260620.

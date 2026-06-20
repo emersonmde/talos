@@ -14020,6 +14020,18 @@ Milestone 12.3: IP Stack
   publication, Phase 12.1 link-hardware retry, Phase 12.4 socket expansion,
   and phase transition remain rejected. The selected next bounded task is the
   descriptor-shaped ping control contract.
+- The descriptor-shaped ping control contract accepts a narrow crate-internal,
+  host-only Phase 12.4 control boundary over RuntimePingOperationSyscallSubstitute
+  and NetworkRuntimeDevicePump. It preserves caller-owned buffers,
+  fixed-capacity state, one-operation scope, explicit terminal status
+  observation, and open/start/pump-or-read-result/status/retry_arp/timeout/close
+  semantics while delegating ARP, IPv4, ICMP, route, retry, timeout, and local
+  responder behavior to the accepted runtime pump and ping operation stack.
+  Shell ping, public sockets, stable syscall ABI acceptance, live driver
+  adapters, live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab
+  mutation, boot publication, Phase 12.1 link-hardware retry, broad Phase 12.4
+  socket expansion, and phase transition remain rejected. The selected next
+  bounded task is the descriptor-shaped ping control core.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
