@@ -4268,6 +4268,23 @@ The post-review correction chain is:
     Phase 12.4 socket expansion, and phase transition remain rejected.
     selected_next_task is
     'phase12-network-ping-operation-syscall-substitute-smoke-closeout-20260620'.
+242. Phase 12.3 ping operation syscall-substitute smoke closeout: accepted in
+    'phase12-network-ping-operation-syscall-substitute-smoke-closeout-20260620'
+    with classification
+    'phase12-network-ping-operation-syscall-substitute-smoke-closeout-accepted'.
+    The closeout reconciles retained smoke evidence, full-suite evidence,
+    adapter source/tests, task record, docs, and rejected claims. The accepted
+    evidence level remains host-only QEMU/substitute smoke over the proof-only
+    PingOperationSyscallSubstitute adapter, NetworkPingOperationDescriptorTable,
+    UserspacePingOperation, SinglePingPacketService, fake/trait-level
+    NetworkDevice behavior, and caller-owned receive/transmit/status buffers.
+    Shell ping, public sockets, stable syscall ABI acceptance, socket syscall
+    ABI, live driver adapters, live packet I/O, hardware reachability, SSH,
+    smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1 retry, Phase
+    12.4 socket expansion, and phase transition remain rejected.
+    selected_next_task is null and planningNeeded=true because no later queued
+    Phase 12.3 or Phase 12.4 task has complete objective dependencies,
+    acceptance criteria, validation gates, and evidence requirements.
 
 The process lifecycle/status closeout checkpoint is accepted in
 `phase10-process-lifecycle-status-closeout-20260603`. It records the accepted
@@ -13746,6 +13763,14 @@ Milestone 12.3: IP Stack
   SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1
   link-hardware retry, Phase 12.4 socket expansion, and phase transition. The
   next selected bounded task is the syscall-substitute smoke closeout.
+- The ping operation syscall-substitute smoke closeout accepts only the
+  retained host-only QEMU/substitute smoke evidence for the proof-only adapter
+  lifecycle and fake-device edges. Shell ping, public sockets, stable syscall
+  ABI acceptance, live driver adapters, live packet I/O, hardware
+  reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase
+  12.1 link-hardware retry, Phase 12.4 socket expansion, and phase transition
+  remain rejected. selected_next_task is null and planningNeeded=true pending
+  supervisor planning for the next bounded task.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

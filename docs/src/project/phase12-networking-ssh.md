@@ -3544,3 +3544,26 @@ packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot
 publication, Phase 12.1 link-hardware retry, Phase 12.4 socket expansion, and
 phase transition remain rejected. The selected next task is
 phase12-network-ping-operation-syscall-substitute-smoke-closeout-20260620.
+
+phase12-network-ping-operation-syscall-substitute-smoke-closeout-20260620
+accepts
+phase12-network-ping-operation-syscall-substitute-smoke-closeout-accepted. The
+closeout reconciles the retained smoke transcript, full-suite transcript,
+adapter source/tests, task record, docs, and rejected claims. The accepted
+evidence level remains host-only QEMU/substitute smoke over the proof-only
+PingOperationSyscallSubstitute adapter, NetworkPingOperationDescriptorTable,
+UserspacePingOperation, SinglePingPacketService, fake/trait-level
+NetworkDevice behavior, and caller-owned receive/transmit/status buffers.
+
+The closeout accepts only the retained fake-device adapter lifecycle evidence:
+open/start/pump/status/retry_arp/timeout/close, unresolved ARP pending,
+ARP-to-ICMP advancement, echo-reply completion, terminal status observation,
+retry exhaustion, explicit timeout, invalid and closed descriptors, capacity,
+busy, and IO-error mapping. Shell ping, public sockets, stable syscall ABI
+acceptance, socket syscall ABI, live driver adapters, live packet I/O,
+hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication,
+Phase 12.1 link-hardware retry, Phase 12.4 socket expansion, and phase
+transition remain rejected. selected_next_task is null and
+planningNeeded=true because no later queued Phase 12.3 or Phase 12.4 task has
+complete objective dependencies, acceptance criteria, validation gates, and
+evidence requirements.
