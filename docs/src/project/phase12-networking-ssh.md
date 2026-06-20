@@ -3901,3 +3901,27 @@ smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1 link-hardware
 retry, broad socket expansion, and phase transition remain rejected. The
 selected next bounded task is
 phase12-network-process-local-ping-descriptor-closeout-20260620.
+
+phase12-network-process-local-ping-descriptor-closeout-20260620 accepts
+phase12-network-process-local-ping-descriptor-closeout-accepted. The closeout
+reconciles the accepted process-local ping descriptor contract, core
+implementation, source/unit evidence, task records, docs, durable state, and
+rejected claims. The accepted boundary remains crate-internal and host-only:
+ProcessLocalPingDescriptorControl maps a process-local DescriptorTable handle to
+one backing DescriptorShapedPingControl operation through OtherKernelObject
+references.
+
+The accepted evidence level remains host/QEMU-substitute source/unit evidence
+over fake/trait-level NetworkDevice behavior, process-local descriptor
+ownership, DescriptorShapedPingControl, RuntimePingOperationSyscallSubstitute,
+NetworkRuntimeDevicePump, caller-owned receive/transmit/status storage, and
+fixed-capacity state. It covers open/start/pump-or-read-result/status,
+retry_arp, timeout, close, inherited-stdio descriptor allocation, invalid and
+closed descriptors, missing current owner, process descriptor capacity unwind,
+duplicate active operation, wrong-kind stdio descriptors, retry exhaustion,
+explicit timeout, receive IO error, and local transmit IO error. Shell ping,
+public sockets, stable syscall ABI acceptance, socket syscall ABI acceptance,
+live driver adapters, live packet I/O, hardware reachability, SSH, smoltcp,
+UDP/TCP, lab mutation, boot publication, Phase 12.1 link-hardware retry, broad
+socket expansion, and phase transition remain rejected. The selected next
+bounded task is phase12-network-process-local-ping-descriptor-smoke-20260620.
