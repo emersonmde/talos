@@ -4395,3 +4395,25 @@ reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication, Phase 12.1
 link-hardware retry, broad socket expansion, and phase transition remain
 rejected. The selected next bounded task is
 phase12-network-vfs-ping-diagnostic-packet-queue-closeout-20260620.
+
+phase12-network-vfs-ping-diagnostic-packet-queue-closeout-20260620 accepts
+phase12-network-vfs-ping-diagnostic-packet-queue-closeout-accepted. The
+closeout reconciles the accepted packet queue core source, source/unit tests,
+task record, durable state, architecture notes, roadmap, and rejected claims.
+The accepted evidence level remains host/QEMU-substitute source/unit evidence
+over crate-internal fixed-capacity packet queue records behind the VFS-backed
+userspace ping diagnostic SVC path.
+
+The closeout preserves the accepted boundary: PacketQueueNetworkDevice records
+outbound ARP request and IPv4/ICMP echo request frames, accepts injected
+ARP/ICMP reply frames, completes status/result copy-out through UserMapping,
+and closes the process-local descriptor without exposing a public socket or
+stable networking ABI. Deterministic coverage remains with the accepted core
+for queue capacity, oversized frames, output-buffer pressure, malformed injected
+frames, explicit retry, timeout, device errors, invalid descriptors, unchanged
+SyscallNumber/TALOS_* vocabulary, and predecessor descriptor/VFS diagnostic
+controls. Shell ping, public sockets, stable/socket ABI acceptance, live driver
+adapters, live packet I/O, hardware reachability, SSH, smoltcp, UDP/TCP, lab
+mutation, boot publication, Phase 12.1 link-hardware retry, broad socket
+expansion, and phase transition remain rejected. The selected next bounded task
+is phase12-network-vfs-ping-diagnostic-packet-queue-smoke-20260620.

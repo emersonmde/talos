@@ -14509,6 +14509,24 @@ Milestone 12.3: IP Stack
   publication, Phase 12.1 link-hardware retry, broad socket expansion, and phase
   transition remain rejected. The selected next bounded task is
   phase12-network-vfs-ping-diagnostic-packet-queue-closeout-20260620.
+- The VFS-backed userspace ping diagnostic packet queue closeout accepts the
+  accepted core frontier after source/task/evidence reconciliation. The accepted
+  evidence level remains host/QEMU-substitute source/unit evidence over
+  crate-internal fixed-capacity packet queue records behind the VFS-backed
+  userspace ping diagnostic SVC path: outbound ARP and IPv4/ICMP echo request
+  recording, injected ARP/ICMP reply progression, UserMapping copy-in/copy-out,
+  process-local descriptor ownership, fake/trait-level NetworkDevice behavior,
+  caller-owned buffers, and task-owned diagnostic state. Deterministic core
+  coverage remains accepted for queue capacity, oversized injected frames,
+  output-buffer pressure, malformed injected frames, explicit retry, timeout,
+  receive/transmit IO errors, invalid descriptors, unchanged
+  SyscallNumber/TALOS_* vocabulary, and predecessor descriptor/VFS diagnostic
+  controls. Shell ping, public sockets, stable/socket ABI acceptance, live
+  driver adapters, live packet I/O, hardware reachability, SSH, smoltcp,
+  UDP/TCP, lab mutation, boot publication, Phase 12.1 link-hardware retry,
+  broad socket expansion, and phase transition remain rejected. The selected
+  next bounded task is
+  phase12-network-vfs-ping-diagnostic-packet-queue-smoke-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
