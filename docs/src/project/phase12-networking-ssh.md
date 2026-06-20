@@ -3402,3 +3402,20 @@ driver adapters, live packet I/O, hardware reachability, SSH, smoltcp,
 UDP/TCP, autonomous timers, broad queues, lab mutation, boot publication,
 Phase 12.1 link-hardware retry, or phase transition. The selected next task is
 phase12-network-ping-operation-descriptor-contract-closeout-20260620.
+
+phase12-network-ping-operation-descriptor-contract-closeout-20260620 accepts
+phase12-network-ping-operation-descriptor-contract-closeout-accepted. The
+closeout reconciles the descriptor-shaped operation contract core, source/unit
+evidence, task record, docs, and commit
+e91f7ee2b8a576eaaa620afd5193dabe1839808c.
+
+The accepted evidence level remains host-only over NetworkPingOperationDescriptor,
+NetworkPingOperationDescriptorTable, UserspacePingOperation,
+SinglePingPacketService, fake/trait-level NetworkDevice behavior, and
+caller-owned buffers. The descriptor layer owns fd-like identity and lifecycle
+only: open, start, pump, retry, timeout, status, and close. Shell ping, public
+sockets, syscall ABI acceptance, live driver adapters, live packet I/O,
+hardware reachability, SSH, smoltcp, UDP/TCP, lab mutation, boot publication,
+Phase 12.1 link-hardware retry, and phase transition remain rejected. The
+selected next task is
+phase12-network-ping-operation-descriptor-substitute-smoke-core-20260620.

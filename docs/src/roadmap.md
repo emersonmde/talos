@@ -13591,6 +13591,13 @@ Milestone 12.3: IP Stack
   IO edges into the accepted POSIX vocabulary. It does not accept syscall ABI,
   shell ping, public sockets, live packet I/O, hardware reachability, SSH, or
   phase transition.
+- The ping operation descriptor contract closeout reconciles that descriptor
+  boundary as host-only source/unit-test and QEMU/substitute evidence over
+  UserspacePingOperation, SinglePingPacketService, fake/trait-level
+  NetworkDevice behavior, and caller-owned buffers. The next selected bounded
+  task is retained substitute smoke evidence for the descriptor-shaped
+  lifecycle; shell ping, public sockets, syscall ABI acceptance, live driver
+  adapters, hardware reachability, SSH, and phase transition remain rejected.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
