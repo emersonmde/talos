@@ -15043,6 +15043,22 @@ Milestone 12.3: IP Stack
   stable socket ABI acceptance, and phase transition remain rejected. The
   selected next bounded task is
   phase12-network-shell-sockdiag-send-recv-closeout-20260620.
+- The shell sockdiag send/recv closeout accepts the local payload-transfer
+  frontier only as source/unit plus host/QEMU-substitute evidence over
+  shell-visible VFS/userspace `/bin/sockdiag` execution. The accepted boundary
+  includes VFS executable lookup/open/read, startup ABI, TALOS_SOCKET,
+  TALOS_BIND, TALOS_LISTEN, TALOS_CONNECT, TALOS_ACCEPT, TALOS_SEND,
+  TALOS_RECV, TALOS_CLOSE, descriptor-backed listener/client/accepted socket
+  state, per-socket 64-byte inbound FIFOs, bidirectional local payload bytes,
+  close/drop behavior, waitpid, laststatus, deterministic controls, unchanged
+  accepted socket diagnostics, unchanged /bin/pingdiag, and unchanged bounded
+  syscall vocabulary. Poll/blocking I/O, readiness/wait queues, UDP/TCP
+  payload transport, smoltcp integration, cross-process sockets, live driver
+  adapters, live packet I/O, hardware reachability, lab mutation, boot
+  publication, generated-root publication, SSH, broad socket expansion, public
+  stable socket ABI acceptance, and phase transition remain rejected.
+  selected_next_task is null and planningNeeded=true pending supervisor
+  planning for any next bounded Phase 12.4 socket or network task.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
