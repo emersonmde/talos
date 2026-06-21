@@ -6194,3 +6194,18 @@ authorized-key storage, service lifecycle, SSH service behavior, hardware
 randomness, live packet I/O, reachability, broad expansion, and phase transition
 remain rejected. The selected next bounded task is
 phase12-entropy-ssh-strategy-closeout-20260621.
+
+phase12-entropy-ssh-strategy-closeout-20260621 accepts
+phase12-entropy-ssh-strategy-closeout-accepted-planning-needed. The closeout
+reconciles the accepted prerequisite-first SSH strategy, entropy source
+contract, and source/unit entropy diagnostic implementation. Talos now has a
+documented fail-closed entropy diagnostic frontier, but it still has no
+accepted cryptographic entropy, random-byte generation, seed persistence,
+host-key generation, crypto dependency integration, SSH service, live transport
+reachability, public ABI/POSIX/Linux compatibility, or phase transition.
+
+No follow-up task is mechanically unblocked from the existing queue: the
+remaining link-ready discriminator chain still depends on a selected
+discriminator and selected_next_task that were not provided, and no explicit
+Phase 12.5 key-management, crypto, seed, or service-shape task has been queued
+with objective gates. Supervisor planning is required before continuing.

@@ -15739,6 +15739,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   This implementation does not accept random-byte generation, cryptographic
   strength, SSH readiness, hardware randomness, live packet I/O, reachability,
   public ABI/POSIX/Linux compatibility, broad expansion, or phase transition.
+- phase12-entropy-ssh-strategy-closeout-20260621 accepts the initial entropy and
+  SSH-strategy prerequisite slice as closed at static task/docs/evidence review
+  level. The accepted frontier is a documented prerequisite-first strategy, an
+  entropy source contract, and a source/unit fail-closed entropy diagnostic
+  classifier. It does not accept cryptographic entropy, random-byte generation,
+  seed persistence, host-key generation, crypto dependency integration, SSH
+  service behavior, live packet I/O, hardware reachability, public
+  ABI/POSIX/Linux compatibility, broad expansion, or phase transition. No
+  mechanically unblocked follow-up exists in the current queue: remaining
+  link-ready discriminator tasks are still blocked by missing selected
+  discriminator/selected_next_task evidence, and no explicit Phase 12.5
+  key-management, crypto, seed, or service-shape task has been queued with
+  objective gates. Supervisor planning is required before continuing.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
