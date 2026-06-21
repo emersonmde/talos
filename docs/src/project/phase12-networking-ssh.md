@@ -6275,3 +6275,23 @@ persistence, crypto/SSH dependency adoption, SSH service behavior, live packet
 I/O, hardware reachability, public ABI/POSIX/Linux compatibility, broad
 expansion, or phase transition. The selected next bounded task is
 phase12-ssh-key-management-readiness-closeout-20260621.
+
+phase12-ssh-key-management-readiness-closeout-20260621 accepts
+phase12-ssh-key-management-readiness-closeout-accepted-planning-needed. The
+closeout reconciles the accepted Phase 12.5 prerequisite slice: a fail-closed
+SSH key-management readiness contract, the source/unit sshkeydiag classifier
+and internal diagnostic command, and retained host/QEMU-substitute smoke
+evidence for the default not-ready state.
+
+The accepted frontier remains metadata-only and diagnostic. Talos can report
+that SSH key management is not ready because host-key metadata, authorized-key
+metadata, accepted entropy/seed material, persistence, and explicit exposure
+are absent or disabled. Talos still does not have accepted cryptographic
+entropy, random-byte generation, seed persistence, host-key generation or
+provisioning, authorized-key storage, crypto/SSH dependency integration, SSH
+service behavior, live packet I/O, hardware reachability, public
+ABI/POSIX/Linux compatibility, broad expansion, or phase transition. Supervisor
+planning is required before any next Phase 12.5 key-management, entropy-source,
+crypto, service, or exposure-control task; the stale link-ready discriminator
+chain remains blocked by missing selected discriminator and selected_next_task
+evidence.

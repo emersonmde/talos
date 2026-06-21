@@ -15799,6 +15799,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   accept key generation, secret persistence, crypto dependency adoption, SSH
   service behavior, live packet I/O, hardware reachability, public
   ABI/POSIX/Linux compatibility, broad expansion, or phase transition.
+- phase12-ssh-key-management-readiness-closeout-20260621 accepts the SSH
+  key-management readiness slice as closed at static task/docs/evidence review
+  level. The accepted frontier is a prerequisite-only metadata classifier,
+  source/unit sshkeydiag diagnostic command, and retained host/QEMU-substitute
+  smoke evidence. Talos can report SSH key management not ready because host-key
+  metadata, authorized-key metadata, accepted entropy/seed material,
+  persistence, and explicit exposure are absent or disabled. It still does not
+  accept cryptographic entropy, random-byte generation, seed persistence,
+  host-key generation or provisioning, authorized-key storage, crypto/SSH
+  dependency integration, SSH service behavior, live packet I/O, hardware
+  reachability, public ABI/POSIX/Linux compatibility, broad expansion, or phase
+  transition. No next Phase 12.5 key-management task is mechanically unblocked;
+  supervisor planning is required before key-management, entropy-source,
+  crypto, service, exposure-control, stale link-ready discriminator, or
+  phase-transition work.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
