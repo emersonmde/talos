@@ -1,0 +1,45 @@
+{
+  "task_id": "phase12-network-shell-sockdiag-userspace-abi-smoke-20260621",
+  "classification": "phase12-network-shell-sockdiag-userspace-abi-smoke-accepted",
+  "evidence_dir": "tasks/evidence/2026-06-21-shell-sockdiag-userspace-abi-smoke",
+  "artifacts": {
+    "smoke_command": "scripts/qemu-shell-sockdiag-userspace-abi-smoke.sh",
+    "qemu_substitute_log": "qemu-shell-sockdiag-userspace-abi-smoke.log",
+    "smoke_transcript": "smoke-transcript.md",
+    "source_anchors": "source-anchors.txt",
+    "classification": "classification.json"
+  },
+  "source_unit_filters": [
+    "src/local_command_loop.rs::local_command_loop_execs_shell_visible_sockdiag_through_userspace_socket_abi",
+    "src/userspace_socket_abi.rs::userspace_socket_abi_constants_match_private_kernel_contract",
+    "src/userspace_socket_abi.rs::userspace_socket_abi_wrappers_reach_smoltcp_tcp_socket_bridge",
+    "src/local_command_loop.rs::local_command_loop_execs_shell_visible_pingdiag_through_vfs_diagnostic_layers"
+  ],
+  "source_anchors": [
+    "src/initramfs.rs::PHASE12_SOCKDIAG_PATH",
+    "src/local_command_loop.rs::LOCAL_COMMAND_BUILTIN_BOUNDARY",
+    "src/local_command_loop.rs::DescriptorBackedLocalCommandIo::exec_shell_sockdiag_diagnostic",
+    "src/local_command_loop.rs::LocalCommandSockdiagRecord",
+    "src/local_command_loop.rs::write_exec_sockdiag_line",
+    "src/local_command_loop.rs::local_smoltcp_tcp_state_name",
+    "src/local_command_loop.rs::local_command_loop_execs_shell_visible_sockdiag_through_userspace_socket_abi",
+    "src/local_command_loop.rs::local_command_loop_execs_shell_visible_pingdiag_through_vfs_diagnostic_layers",
+    "src/syscall.rs::talos_smoltcp_socket_bridge_transfers_payload_through_private_syscalls",
+    "src/userspace_socket_abi.rs::SocketAbiCall",
+    "src/userspace_socket_abi.rs::PollEntry",
+    "src/userspace_socket_abi.rs::userspace_socket_abi_constants_match_private_kernel_contract",
+    "src/userspace_socket_abi.rs::userspace_socket_abi_wrappers_reach_smoltcp_tcp_socket_bridge"
+  ],
+  "validation": {
+    "command": "scripts/qemu-shell-sockdiag-userspace-abi-smoke.sh",
+    "result": "passed",
+    "test_result_summaries": [
+      "local_command_loop_execs_shell_visible_sockdiag_through_userspace_socket_abi: test result ok, 695 passed",
+      "userspace_socket_abi_constants_match_private_kernel_contract: test result ok, 695 passed",
+      "userspace_socket_abi_wrappers_reach_smoltcp_tcp_socket_bridge: test result ok, 695 passed",
+      "local_command_loop_execs_shell_visible_pingdiag_through_vfs_diagnostic_layers: test result ok, 695 passed"
+    ],
+    "final_log_line": "qemu-shell-sockdiag-userspace-abi-smoke: PASS classification=host-substitute-shell-sockdiag-userspace-abi-smoke-complete"
+  },
+  "selected_next_task": "phase12-network-shell-sockdiag-userspace-abi-closeout-20260621"
+}

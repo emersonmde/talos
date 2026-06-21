@@ -1,0 +1,29 @@
+{
+  "task_id": "phase12-network-shell-sockdiag-userspace-abi-smoke-20260621",
+  "classification": "phase12-network-shell-sockdiag-userspace-abi-smoke-accepted",
+  "evidence_level": "host/QEMU-substitute",
+  "smoke_classification": "host-substitute-shell-sockdiag-userspace-abi-smoke-complete",
+  "accepted_boundary": "shell-visible VFS/userspace /bin/sockdiag execution of the accepted host-only smoltcp TCP diagnostic through the documented private userspace_socket_abi helper surface and existing descriptor-backed socket dispatch",
+  "retained_controls": [
+    "exec /bin/sockdiag resolves through VFS executable lookup/open/read",
+    "diagnostic output records userspace-socket-abi-v1 and exercises socket, bind, listen, connect, accept, send, recv, poll, poll_wait, and close through userspace_socket_abi wrappers",
+    "private socket dispatch reports Established smoltcp handshake states, deterministic frame/step counters, accepted descriptor attachment, and one bounded payload-transfer observation",
+    "malformed arguments, missing executable identity, local socket diagnostics, pingdiag, userspace ABI constant/wrapper tests, waitpid, laststatus, and bounded syscall vocabulary remain covered"
+  ],
+  "rejected_claims": [
+    "live packet I/O",
+    "Pi 5 hardware behavior",
+    "hardware reachability",
+    "hardwareTestLock acquisition",
+    "lab mutation",
+    "boot publication",
+    "generated-root publication",
+    "SSH",
+    "UDP/raw sockets",
+    "broad socket expansion",
+    "POSIX/Linux compatibility",
+    "public stable socket ABI acceptance",
+    "phase transition"
+  ],
+  "selected_next_task": "phase12-network-shell-sockdiag-userspace-abi-closeout-20260621"
+}

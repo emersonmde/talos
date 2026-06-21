@@ -1,0 +1,27 @@
+src/initramfs.rs:49:pub(crate) const PHASE12_SOCKDIAG_PATH: &[u8] = b"/bin/sockdiag";
+src/local_command_loop.rs:19:pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
+src/local_command_loop.rs:1000:fn exec_shell_sockdiag_diagnostic(...)
+src/local_command_loop.rs:1766:fn exec_shell_sockdiag_diagnostic(...)
+src/local_command_loop.rs:3388:source: "vfs-userspace-sockdiag+userspace-socket-abi-v1+talos-socket-bind-listen-connect-accept-send-recv-poll-wait-close+process-descriptor+cross-process-local-rendezvous+private-smoltcp-tcp-bridge",
+src/local_command_loop.rs:5216:const fn local_smoltcp_tcp_state_name(state: smoltcp::socket::tcp::State) -> &'static str
+src/local_command_loop.rs:5340:userspace_socket_abi::PollEntry::new(fd, events).encode(...)
+src/local_command_loop.rs:5350:userspace_socket_abi::PollEntry::decode(...)
+src/local_command_loop.rs:6992:fn write_exec_sockdiag_line(...)
+src/local_command_loop.rs:8069:fn local_command_loop_execs_shell_visible_pingdiag_through_vfs_diagnostic_layers()
+src/local_command_loop.rs:8124:fn local_command_loop_execs_shell_visible_sockdiag_through_userspace_socket_abi()
+src/syscall.rs:10643:fn talos_smoltcp_socket_bridge_transfers_payload_through_private_syscalls()
+src/userspace_socket_abi.rs:40:pub(crate) struct SocketAbiCall
+src/userspace_socket_abi.rs:73:pub(crate) struct PollEntry
+src/userspace_socket_abi.rs:141:pub(crate) const fn socket(domain: u64, socket_type: u64, protocol: u64) -> SocketAbiCall
+src/userspace_socket_abi.rs:145:pub(crate) const fn inet_stream_socket() -> SocketAbiCall
+src/userspace_socket_abi.rs:149:pub(crate) const fn bind(fd: u64, ipv4_be: u32, port: u16) -> SocketAbiCall
+src/userspace_socket_abi.rs:153:pub(crate) const fn listen(fd: u64, backlog: u64) -> SocketAbiCall
+src/userspace_socket_abi.rs:157:pub(crate) const fn connect(fd: u64, ipv4_be: u32, port: u16) -> SocketAbiCall
+src/userspace_socket_abi.rs:161:pub(crate) const fn accept(fd: u64) -> SocketAbiCall
+src/userspace_socket_abi.rs:165:pub(crate) const fn send(fd: u64, buffer_start: u64, len: u64) -> SocketAbiCall
+src/userspace_socket_abi.rs:169:pub(crate) const fn recv(fd: u64, buffer_start: u64, len: u64) -> SocketAbiCall
+src/userspace_socket_abi.rs:173:pub(crate) const fn poll(entries_start: u64, entry_count: u64) -> SocketAbiCall
+src/userspace_socket_abi.rs:181:pub(crate) const fn poll_wait(...) -> SocketAbiCall
+src/userspace_socket_abi.rs:188:pub(crate) const fn close(fd: u64) -> SocketAbiCall
+src/userspace_socket_abi.rs:227:fn userspace_socket_abi_constants_match_private_kernel_contract()
+src/userspace_socket_abi.rs:278:fn userspace_socket_abi_wrappers_reach_smoltcp_tcp_socket_bridge()
