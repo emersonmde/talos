@@ -216,6 +216,8 @@ mod diagnostics;
 mod dma_cache;
 mod early_format;
 #[cfg_attr(not(test), allow(dead_code))]
+mod entropy;
+#[cfg_attr(not(test), allow(dead_code))]
 mod initial_process_launch;
 #[cfg_attr(not(test), allow(dead_code))]
 mod initial_user_stack;

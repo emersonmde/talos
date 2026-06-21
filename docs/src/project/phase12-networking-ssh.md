@@ -6169,3 +6169,28 @@ entropydiag-hardware-rng-unaccepted. The selected next bounded task is
 phase12-entropydiag-core-20260621. This contract accepts no cryptographic
 strength, SSH readiness, hardware randomness, live packet I/O, reachability,
 public ABI/POSIX/Linux compatibility, broad expansion, or phase transition.
+
+phase12-entropydiag-core-20260621 accepts
+phase12-entropydiag-core-accepted. Talos now has a source/unit entropy
+diagnostic classifier over explicit caller-supplied observations. The accepted
+snapshot inputs are optional timer samples, scheduler-event samples,
+console-timing samples, operator-provisioned seed metadata, deterministic test
+control state, and a hardware-RNG-observed flag that remains rejected as a
+randomness source.
+
+The internal diagnostic command channel now includes entropy, which reports the
+default no-input fail-closed baseline:
+entropydiag-fail-closed-no-input, entropydiag-hardware-rng-unaccepted,
+entropydiag-operator-seed-required, cryptographic-strength false, and
+ssh-ready false. Source/unit tests prove fixed timer-only input,
+fixed local-event mixes, fixed deterministic seed controls, hardware RNG
+rejection, and local-input-without-seed operator-seed-required behavior.
+
+The accepted evidence level is source/unit plus full host/QEMU-substitute no_std
+test coverage. The implementation does not sample ambient hardware or lab state,
+generate random bytes, derive keys, persist seeds, expose a public ABI, or claim
+SSH readiness. Host key generation, crypto RNG/DRBG selection, seed persistence,
+authorized-key storage, service lifecycle, SSH service behavior, hardware
+randomness, live packet I/O, reachability, broad expansion, and phase transition
+remain rejected. The selected next bounded task is
+phase12-entropy-ssh-strategy-closeout-20260621.

@@ -1,4 +1,5 @@
 use crate::{
+    entropy::{self, EntropyDiagnosticSnapshot},
     runtime_console::{self, ConsoleBackend, DEFAULT_RUNTIME_CONSOLE},
     tty::CANONICAL_LINE_CAPACITY,
 };
@@ -6,7 +7,7 @@ use crate::{
 pub const DIAGNOSTIC_COMMAND_CHANNEL_VERSION: &str = "phase5.3-contract-v1";
 pub const MAX_COMMAND_TOKEN_BYTES: usize = 16;
 pub const MAX_COMMAND_ARGUMENTS: usize = 2;
-pub const DEFAULT_COMMAND_COUNT: usize = 3;
+pub const DEFAULT_COMMAND_COUNT: usize = 4;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum DiagnosticParseError {
@@ -145,6 +146,7 @@ pub fn dispatch_default_diagnostic_command(
     }
 
     match command.name() {
+        "entropy" => write_entropy_response(sink),
         "help" => write_help_response(sink),
         "list" => write_list_response(sink),
         "status" => write_status_response(sink),
@@ -164,7 +166,11 @@ fn write_help_response(
 ) -> Result<DiagnosticDispatchResult, DiagnosticDispatchError> {
     let mut responses = 0usize;
     write_line(sink, &mut responses, "diag: ok help")?;
-    write_line(sink, &mut responses, "diag: commands help list status")?;
+    write_line(
+        sink,
+        &mut responses,
+        "diag: commands entropy help list status",
+    )?;
     Ok(DiagnosticDispatchResult {
         status: DiagnosticDispatchStatus::Handled,
         response_lines: responses,
@@ -176,7 +182,11 @@ fn write_list_response(
 ) -> Result<DiagnosticDispatchResult, DiagnosticDispatchError> {
     let mut responses = 0usize;
     write_line(sink, &mut responses, "diag: ok list")?;
-    write_line(sink, &mut responses, "diag: commands help list status")?;
+    write_line(
+        sink,
+        &mut responses,
+        "diag: commands entropy help list status",
+    )?;
     Ok(DiagnosticDispatchResult {
         status: DiagnosticDispatchStatus::Handled,
         response_lines: responses,
@@ -210,7 +220,47 @@ fn write_status_response(
         "diag: command-count ",
         DEFAULT_COMMAND_COUNT,
     )?;
-    write_line(sink, &mut responses, "diag: commands help list status")?;
+    write_line(
+        sink,
+        &mut responses,
+        "diag: commands entropy help list status",
+    )?;
+    Ok(DiagnosticDispatchResult {
+        status: DiagnosticDispatchStatus::Handled,
+        response_lines: responses,
+    })
+}
+
+fn write_entropy_response(
+    sink: &mut impl DiagnosticResponseSink,
+) -> Result<DiagnosticDispatchResult, DiagnosticDispatchError> {
+    let report = entropy::classify_entropy_snapshot(EntropyDiagnosticSnapshot::empty());
+    let mut responses = 0usize;
+    write_line(sink, &mut responses, "diag: ok entropy")?;
+    write_parts_line(
+        sink,
+        &mut responses,
+        &["diag: entropy-label ", report.input_label().name()],
+    )?;
+    write_parts_line(
+        sink,
+        &mut responses,
+        &["diag: hardware-rng ", report.hardware_rng_label().name()],
+    )?;
+    if let Some(seed_label) = report.operator_seed_label() {
+        write_parts_line(
+            sink,
+            &mut responses,
+            &["diag: operator-seed ", seed_label.name()],
+        )?;
+    }
+    write_bool_line(
+        sink,
+        &mut responses,
+        "diag: cryptographic-strength ",
+        report.cryptographic_strength(),
+    )?;
+    write_bool_line(sink, &mut responses, "diag: ssh-ready ", report.ssh_ready())?;
     Ok(DiagnosticDispatchResult {
         status: DiagnosticDispatchStatus::Handled,
         response_lines: responses,
@@ -305,6 +355,19 @@ fn write_usize_line(
     write_newline(sink, response_lines)
 }
 
+fn write_bool_line(
+    sink: &mut impl DiagnosticResponseSink,
+    response_lines: &mut usize,
+    prefix: &str,
+    value: bool,
+) -> Result<(), DiagnosticDispatchError> {
+    write_parts_line(
+        sink,
+        response_lines,
+        &[prefix, if value { "true" } else { "false" }],
+    )
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -391,7 +454,7 @@ mod tests {
         assert_eq!(result.response_lines, 2);
         assert_eq!(
             sink.as_str(),
-            "diag: ok help\ndiag: commands help list status\n"
+            "diag: ok help\ndiag: commands entropy help list status\n"
         );
     }
 
@@ -404,7 +467,20 @@ mod tests {
         assert_eq!(result.response_lines, 6);
         assert_eq!(
             sink.as_str(),
-            "diag: ok status\ndiag: version phase5.3-contract-v1\ndiag: runtime-console runtime-console0\ndiag: tty canonical-lite line-capacity 64\ndiag: command-count 3\ndiag: commands help list status\n"
+            "diag: ok status\ndiag: version phase5.3-contract-v1\ndiag: runtime-console runtime-console0\ndiag: tty canonical-lite line-capacity 64\ndiag: command-count 4\ndiag: commands entropy help list status\n"
+        );
+    }
+
+    #[test_case]
+    fn dispatcher_reports_entropy_diagnostic_fail_closed_without_crypto_claim() {
+        let mut sink = CaptureSink::new();
+        let result = dispatch_default_diagnostic_command(b"entropy", &mut sink).unwrap();
+
+        assert_eq!(result.status, DiagnosticDispatchStatus::Handled);
+        assert_eq!(result.response_lines, 6);
+        assert_eq!(
+            sink.as_str(),
+            "diag: ok entropy\ndiag: entropy-label entropydiag-fail-closed-no-input\ndiag: hardware-rng entropydiag-hardware-rng-unaccepted\ndiag: operator-seed entropydiag-operator-seed-required\ndiag: cryptographic-strength false\ndiag: ssh-ready false\n"
         );
     }
 

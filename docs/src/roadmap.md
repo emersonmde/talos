@@ -15725,6 +15725,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   cryptographic strength, SSH readiness, hardware randomness, live packet I/O,
   reachability, public ABI/POSIX/Linux compatibility, broad expansion, or phase
   transition.
+- phase12-entropydiag-core-20260621 accepts a source/unit entropy diagnostic
+  core and internal diagnostic command surface. The classifier consumes only an
+  explicit EntropyDiagnosticSnapshot of caller-supplied timer, scheduler-event,
+  console-timing, operator-seed, deterministic-control, and rejected
+  hardware-RNG-observed facts. The entropy diagnostic command reports the
+  default no-input fail-closed baseline:
+  entropydiag-fail-closed-no-input, entropydiag-hardware-rng-unaccepted,
+  entropydiag-operator-seed-required, cryptographic-strength false, and
+  ssh-ready false. Focused source/unit tests and the full host/QEMU-substitute
+  no_std suite cover deterministic controls and fail-closed behavior. The
+  selected next bounded task is phase12-entropy-ssh-strategy-closeout-20260621.
+  This implementation does not accept random-byte generation, cryptographic
+  strength, SSH readiness, hardware randomness, live packet I/O, reachability,
+  public ABI/POSIX/Linux compatibility, broad expansion, or phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
