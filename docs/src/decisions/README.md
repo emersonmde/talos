@@ -12,6 +12,46 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-21 - Phase 12 Operator Seed Material Enters Through Read-Only VFS
+
+- Status: accepted as the bounded operator seed VFS contract in
+  phase12-operator-seed-vfs-contract-20260621. No runtime implementation,
+  random-byte generation, CSPRNG/conditioning, cryptographic-strength
+  acceptance, host-key generation, authorized-key storage, writable seed
+  persistence, crypto/SSH dependency adoption, SSH service, live packet I/O,
+  hardware work, public ABI/POSIX/Linux compatibility, broad expansion, or
+  phase transition is accepted here.
+- Context: Accepted entropydiag and sshkeydiag work can report fail-closed
+  missing seed material, but the next SSH prerequisite needs a concrete
+  operator-provisioned seed input boundary. Talos already has an accepted
+  immutable initramfs/VFS and generated-root model, while writable persistence
+  and CSPRNG policy remain unaccepted.
+- Decision: Reserve /etc/talos/operator-seed.bin as the optional read-only
+  operator seed file. The file is opaque raw bytes. Diagnostics may expose only
+  metadata: missing/invalid, insufficient, or sufficient-length state and byte
+  length. The first sufficient-length threshold is 32 bytes and the first
+  diagnostic-read limit is 4096 bytes. Diagnostics and task evidence must not
+  print, retain, digest, fingerprint, derive from, or otherwise expose actual
+  seed bytes or cross-boot comparable secret identifiers.
+- Evidence level: static source/docs/evidence review of src/entropy.rs,
+  src/ssh_key_readiness.rs, src/initramfs.rs, accepted read-only VFS/generated
+  root docs, accepted Phase 12.5 entropy and SSH key-readiness task records,
+  and retained sshkeydiag smoke evidence. The task record is
+  tasks/2026-06-21-phase12-operator-seed-vfs-contract.md.
+- Consequences: The follow-up core task can implement only metadata ingestion
+  from the accepted read-only VFS path and focused missing/insufficient/
+  sufficient redaction tests. Sufficient seed metadata may clear only the
+  seed-material prerequisite; cryptographic-strength and ssh-ready remain
+  false until later CSPRNG/conditioning, host-key, authorized-key, persistence,
+  exposure, crypto dependency, and service tasks are accepted.
+- Alternatives considered: treat lab randomness or generated-root manifests as
+  entropy, hardcode a seed constant in Rust source, store a seed in writable
+  persistence, or log a digest/fingerprint for evidence. Lab metadata and
+  manifests are not operator seed material, hardcoded source constants are not
+  provisioned secrets, writable persistence is outside the accepted storage
+  frontier, and digest/fingerprint logging would create a comparable secret
+  identifier before a secret-handling policy exists.
+
 ## 2026-06-21 - Phase 12 Adopts smoltcp Behind a No-Std Dependency Boundary
 
 - Status: accepted as the bounded smoltcp adoption contract in

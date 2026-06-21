@@ -15814,6 +15814,27 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   supervisor planning is required before key-management, entropy-source,
   crypto, service, exposure-control, stale link-ready discriminator, or
   phase-transition work.
+- phase12-operator-seed-vfs-contract-20260621 accepts a read-only
+  VFS/initramfs operator seed material contract for entropy and SSH
+  key-readiness diagnostics. The optional seed path is
+  /etc/talos/operator-seed.bin, a regular file of opaque raw bytes. The first
+  implementation may expose only metadata to diagnostics: missing/invalid,
+  insufficient, or sufficient-length state and byte length. It must not print,
+  retain, derive, digest, fingerprint, or otherwise expose actual seed bytes or
+  cross-boot comparable secret identifiers. The sufficient-length threshold is
+  32 bytes and the first diagnostic-read limit is 4096 bytes. Missing seed
+  preserves entropydiag-operator-seed-required and
+  sshkeydiag-seed-material-missing; lengths 1 through 31 report
+  sshkeydiag-seed-material-insufficient; lengths 32 through 4096 may clear only
+  the seed-material prerequisite while cryptographic-strength and ssh-ready
+  remain false. The selected next bounded task is
+  phase12-operator-seed-vfs-core-20260621. This contract does not accept
+  cryptographic entropy, random-byte generation, CSPRNG/conditioning, host-key
+  generation or provisioning, authorized-key storage, writable seed
+  persistence, crypto/SSH dependency adoption, SSH service behavior, live
+  packet I/O, hardware reachability, public ABI/POSIX/Linux compatibility,
+  broad expansion, stale link-ready discriminator promotion, or phase
+  transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

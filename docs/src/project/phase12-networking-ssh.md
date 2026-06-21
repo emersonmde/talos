@@ -6295,3 +6295,33 @@ planning is required before any next Phase 12.5 key-management, entropy-source,
 crypto, service, or exposure-control task; the stale link-ready discriminator
 chain remains blocked by missing selected discriminator and selected_next_task
 evidence.
+
+phase12-operator-seed-vfs-contract-20260621 accepts
+phase12-operator-seed-vfs-contract-accepted. The accepted operator seed
+frontier is a read-only VFS/initramfs diagnostic contract, not a random-byte
+generator or writable seed store. The optional operator-provisioned seed file
+is /etc/talos/operator-seed.bin, a regular file of opaque raw bytes. The first
+implementation may expose only metadata to diagnostics: missing/invalid,
+insufficient, or sufficient-length state and byte length. It must not print,
+retain, derive, digest, fingerprint, or otherwise expose actual seed bytes or
+cross-boot comparable secret identifiers.
+
+The sufficient metadata threshold is 32 bytes, with a first-slice diagnostic
+read limit of 4096 bytes. Missing seed material preserves
+entropydiag-operator-seed-required and sshkeydiag-seed-material-missing.
+Lengths 1 through 31 are insufficient and map to
+sshkeydiag-seed-material-insufficient. Lengths 32 through 4096 may clear only
+the seed-material prerequisite; cryptographic-strength remains false and
+ssh-ready remains false. Invalid objects such as directories, unsupported VFS
+objects, unreadable objects, malformed VFS state, and oversized files remain
+not ready and may be classified as insufficient until a later contract adds a
+dedicated invalid label.
+
+The accepted evidence level is static source/docs/evidence review plus docs
+validation. This contract does not accept cryptographic entropy, random-byte
+generation, CSPRNG/conditioning, host-key generation or provisioning,
+authorized-key storage, writable seed persistence, crypto/SSH dependency
+adoption, SSH service behavior, live packet I/O, hardware reachability, public
+ABI/POSIX/Linux compatibility, broad expansion, stale link-ready discriminator
+promotion, or phase transition. The selected next bounded task is
+phase12-operator-seed-vfs-core-20260621.
