@@ -63,6 +63,7 @@ impl SocketAbiCall {
     }
 
     #[cfg(target_arch = "aarch64")]
+    #[allow(dead_code)]
     pub(crate) unsafe fn invoke(self) -> u64 {
         unsafe { syscall6(self.number, self.arguments) }
     }
@@ -189,6 +190,7 @@ pub(crate) const fn close(fd: u64) -> SocketAbiCall {
 }
 
 #[cfg(target_arch = "aarch64")]
+#[allow(dead_code)]
 unsafe fn syscall6(number: u64, arguments: [u64; crate::syscall::MAX_SCALAR_ARGUMENTS]) -> u64 {
     let mut x0 = arguments[0];
     unsafe {
@@ -264,9 +266,12 @@ mod tests {
         assert_eq!(ERRNO_ENOTSUP, 95);
 
         let entry = PollEntry::with_revents(4, POLL_READ | POLL_WRITE, POLL_HANGUP);
+        assert_eq!(entry.fd(), 4);
+        assert_eq!(entry.events(), POLL_READ | POLL_WRITE);
         let mut encoded = [0u8; POLL_ENTRY_SIZE];
         entry.encode(&mut encoded).expect("encode poll entry");
         assert_eq!(PollEntry::decode(&encoded), Ok(entry));
+        assert_eq!(socket(1, 2, 3).arguments(), [1, 2, 3, 0, 0, 0]);
     }
 
     #[test_case]
@@ -281,7 +286,7 @@ mod tests {
         let mut scratch = [0u8; crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY];
         let mappings = [crate::posix::UserMapping::new(
             USER_MEMORY_START,
-            user_memory.len() as u64,
+            user_memory.len(),
             crate::posix::UserMappingPermissions::USER_DATA,
         )
         .expect("user data mapping")];

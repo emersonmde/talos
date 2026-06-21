@@ -12,6 +12,7 @@ use crate::{
     scheduler::{self, ProcessOwnerId, TaskId, TaskState},
     syscall,
     tty::{self, CANONICAL_LINE_CAPACITY, PollingTtyRxOutcome, PollingTtyRxResult},
+    userspace_socket_abi,
 };
 
 pub const LOCAL_COMMAND_LOOP_VERSION: &str = "phase10.2-kernel-builtins-v2";
@@ -1801,6 +1802,19 @@ where
                     &mut self.output_backend,
                 )
             };
+        macro_rules! socket_abi_dispatch {
+            ($call:expr) => {{
+                let call = $call;
+                socket_dispatch(
+                    call.number(),
+                    call.syscall_arguments(),
+                    &mut self.descriptor_store,
+                    &mut self.socket_descriptors,
+                    &mut user_memory,
+                    &mut kernel_scratch,
+                )
+            }};
+        }
 
         let unsupported_domain = socket_dispatch(
             syscall::TALOS_SOCKET_SYSCALL,
@@ -1877,21 +1891,7 @@ where
             return Err(LocalCommandExecError::SyscallFailed);
         }
 
-        let open = socket_dispatch(
-            syscall::TALOS_SOCKET_SYSCALL,
-            syscall::SyscallArguments::new([
-                crate::network::SOCKET_DOMAIN_AF_INET,
-                crate::network::SOCKET_TYPE_STREAM,
-                crate::network::SOCKET_PROTOCOL_DEFAULT,
-                0,
-                0,
-                0,
-            ]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let open = socket_abi_dispatch!(userspace_socket_abi::inet_stream_socket());
         let process_descriptor = syscall_success_usize(open.return_value().x0())
             .map_err(|_| LocalCommandExecError::SyscallFailed)?;
         let entry = self
@@ -1961,21 +1961,11 @@ where
         const SOCKDIAG_LISTEN_BACKLOG: u8 = 2;
         const SOCKDIAG_UPDATED_BACKLOG: u8 = 1;
 
-        let bind = socket_dispatch(
-            syscall::TALOS_BIND_SYSCALL,
-            syscall::SyscallArguments::new([
-                process_descriptor as u64,
-                SOCKDIAG_LOCAL_IPV4_BE as u64,
-                SOCKDIAG_LOCAL_PORT as u64,
-                0,
-                0,
-                0,
-            ]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let bind = socket_abi_dispatch!(userspace_socket_abi::bind(
+            process_descriptor as u64,
+            SOCKDIAG_LOCAL_IPV4_BE,
+            SOCKDIAG_LOCAL_PORT,
+        ));
         let bind_return = bind.return_value().x0();
         if bind_return != 0 {
             return Err(LocalCommandExecError::SyscallFailed);
@@ -2002,21 +1992,10 @@ where
             return Err(LocalCommandExecError::SyscallFailed);
         }
 
-        let listen = socket_dispatch(
-            syscall::TALOS_LISTEN_SYSCALL,
-            syscall::SyscallArguments::new([
-                process_descriptor as u64,
-                SOCKDIAG_LISTEN_BACKLOG as u64,
-                0,
-                0,
-                0,
-                0,
-            ]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let listen = socket_abi_dispatch!(userspace_socket_abi::listen(
+            process_descriptor as u64,
+            SOCKDIAG_LISTEN_BACKLOG as u64,
+        ));
         let listen_return = listen.return_value().x0();
         if listen_return != 0 {
             return Err(LocalCommandExecError::SyscallFailed);
@@ -2089,21 +2068,7 @@ where
         }
         let empty_listener_revents = local_read_poll_revents(&user_memory, 0);
 
-        let client_open = socket_dispatch(
-            syscall::TALOS_SOCKET_SYSCALL,
-            syscall::SyscallArguments::new([
-                crate::network::SOCKET_DOMAIN_AF_INET,
-                crate::network::SOCKET_TYPE_STREAM,
-                crate::network::SOCKET_PROTOCOL_DEFAULT,
-                0,
-                0,
-                0,
-            ]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let client_open = socket_abi_dispatch!(userspace_socket_abi::inet_stream_socket());
         let client_descriptor = syscall_success_usize(client_open.return_value().x0())
             .map_err(|_| LocalCommandExecError::SyscallFailed)?;
         let client_entry = self
@@ -2156,7 +2121,8 @@ where
             syscall::TALOS_POLL_READ,
         );
         let invalid_timeout_wait = socket_poll_wait_dispatch!(
-            syscall::SyscallArguments::new([LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 0, 0, 0, 0]),
+            userspace_socket_abi::poll_wait(LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 0)
+                .syscall_arguments(),
             &mut invalid_timeout_task,
             7
         );
@@ -2177,7 +2143,11 @@ where
             syscall::TALOS_POLL_READ | 0x10,
         );
         let unsupported_poll_wait = socket_poll_wait_dispatch!(
-            syscall::SyscallArguments::new([LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 5, 0, 0, 0]),
+            userspace_socket_abi::SocketAbiCall::new(
+                userspace_socket_abi::POLL_WAIT,
+                [LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 5, 0, 0, 0],
+            )
+            .syscall_arguments(),
             &mut unsupported_wait_task,
             8
         );
@@ -2197,7 +2167,8 @@ where
             syscall::TALOS_POLL_READ,
         );
         let pending_listener_wait = socket_poll_wait_dispatch!(
-            syscall::SyscallArguments::new([LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 5, 0, 0, 0]),
+            userspace_socket_abi::poll_wait(LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 5)
+                .syscall_arguments(),
             &mut listener_wait_task,
             10
         );
@@ -2255,21 +2226,11 @@ where
             return Err(LocalCommandExecError::SyscallFailed);
         }
 
-        let connect = socket_dispatch(
-            syscall::TALOS_CONNECT_SYSCALL,
-            syscall::SyscallArguments::new([
-                client_descriptor as u64,
-                SOCKDIAG_LOCAL_IPV4_BE as u64,
-                SOCKDIAG_LOCAL_PORT as u64,
-                0,
-                0,
-                0,
-            ]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let connect = socket_abi_dispatch!(userspace_socket_abi::connect(
+            client_descriptor as u64,
+            SOCKDIAG_LOCAL_IPV4_BE,
+            SOCKDIAG_LOCAL_PORT,
+        ));
         let connect_return = connect.return_value().x0();
         if connect_return != 0 {
             return Err(LocalCommandExecError::SyscallFailed);
@@ -2323,14 +2284,10 @@ where
             process_descriptor as u64,
             syscall::TALOS_POLL_READ,
         );
-        let pending_listener_poll = socket_dispatch(
-            syscall::TALOS_POLL_SYSCALL,
-            syscall::SyscallArguments::new([LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 0, 0, 0, 0]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let pending_listener_poll = socket_abi_dispatch!(userspace_socket_abi::poll(
+            LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+            1,
+        ));
         if pending_listener_poll.return_value().x0() != 1 {
             return Err(LocalCommandExecError::SyscallFailed);
         }
@@ -2343,7 +2300,8 @@ where
             syscall::TALOS_POLL_READ,
         );
         let immediate_wait = socket_poll_wait_dispatch!(
-            syscall::SyscallArguments::new([LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 5, 0, 0, 0]),
+            userspace_socket_abi::poll_wait(LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 5)
+                .syscall_arguments(),
             &mut immediate_wait_task,
             12
         );
@@ -2355,21 +2313,7 @@ where
         }
         let poll_wait_immediate_revents = local_read_poll_revents(&user_memory, 0);
 
-        let second_client_open = socket_dispatch(
-            syscall::TALOS_SOCKET_SYSCALL,
-            syscall::SyscallArguments::new([
-                crate::network::SOCKET_DOMAIN_AF_INET,
-                crate::network::SOCKET_TYPE_STREAM,
-                crate::network::SOCKET_PROTOCOL_DEFAULT,
-                0,
-                0,
-                0,
-            ]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let second_client_open = socket_abi_dispatch!(userspace_socket_abi::inet_stream_socket());
         let second_client_descriptor =
             syscall_success_usize(second_client_open.return_value().x0())
                 .map_err(|_| LocalCommandExecError::SyscallFailed)?;
@@ -2413,14 +2357,7 @@ where
             return Err(LocalCommandExecError::LaunchPipelineFailed);
         }
 
-        let accept = socket_dispatch(
-            syscall::TALOS_ACCEPT_SYSCALL,
-            syscall::SyscallArguments::new([process_descriptor as u64, 0, 0, 0, 0, 0]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let accept = socket_abi_dispatch!(userspace_socket_abi::accept(process_descriptor as u64));
         let accepted_descriptor = syscall_success_usize(accept.return_value().x0())
             .map_err(|_| LocalCommandExecError::SyscallFailed)?;
         let accepted_entry = self
@@ -2498,14 +2435,10 @@ where
             accepted_descriptor as u64,
             syscall::TALOS_POLL_READ,
         );
-        let empty_recv_poll = socket_dispatch(
-            syscall::TALOS_POLL_SYSCALL,
-            syscall::SyscallArguments::new([LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 0, 0, 0, 0]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let empty_recv_poll = socket_abi_dispatch!(userspace_socket_abi::poll(
+            LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+            1,
+        ));
         if empty_recv_poll.return_value().x0() != 0 {
             return Err(LocalCommandExecError::SyscallFailed);
         }
@@ -2535,34 +2468,20 @@ where
             client_descriptor as u64,
             syscall::TALOS_POLL_WRITE,
         );
-        let write_ready_poll = socket_dispatch(
-            syscall::TALOS_POLL_SYSCALL,
-            syscall::SyscallArguments::new([LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 0, 0, 0, 0]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let write_ready_poll = socket_abi_dispatch!(userspace_socket_abi::poll(
+            LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+            1,
+        ));
         if write_ready_poll.return_value().x0() != 1 {
             return Err(LocalCommandExecError::SyscallFailed);
         }
         let write_ready_revents = local_read_poll_revents(&user_memory, 0);
 
-        let empty_recv = socket_dispatch(
-            syscall::TALOS_RECV_SYSCALL,
-            syscall::SyscallArguments::new([
-                accepted_descriptor as u64,
-                LOCAL_COMMAND_SOCKDIAG_USER_BASE + 0x40,
-                16,
-                0,
-                0,
-                0,
-            ]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let empty_recv = socket_abi_dispatch!(userspace_socket_abi::recv(
+            accepted_descriptor as u64,
+            LOCAL_COMMAND_SOCKDIAG_USER_BASE + 0x40,
+            16,
+        ));
         if syscall::errno_number(posix::PosixError::Again) as u64
             != empty_recv.return_value().x0().wrapping_neg()
         {
@@ -2576,7 +2495,8 @@ where
             syscall::TALOS_POLL_READ,
         );
         let timeout_wait = socket_poll_wait_dispatch!(
-            syscall::SyscallArguments::new([LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 2, 0, 0, 0]),
+            userspace_socket_abi::poll_wait(LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 2)
+                .syscall_arguments(),
             &mut timeout_wait_task,
             20
         );
@@ -2679,7 +2599,8 @@ where
             syscall::TALOS_POLL_READ,
         );
         let payload_wait = socket_poll_wait_dispatch!(
-            syscall::SyscallArguments::new([LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 9, 0, 0, 0]),
+            userspace_socket_abi::poll_wait(LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 9)
+                .syscall_arguments(),
             &mut payload_wait_task,
             30
         );
@@ -2693,21 +2614,11 @@ where
             return Err(LocalCommandExecError::SyscallFailed);
         }
         user_memory[..SOCKDIAG_CLIENT_PAYLOAD.len()].copy_from_slice(SOCKDIAG_CLIENT_PAYLOAD);
-        let client_send = socket_dispatch(
-            syscall::TALOS_SEND_SYSCALL,
-            syscall::SyscallArguments::new([
-                client_descriptor as u64,
-                LOCAL_COMMAND_SOCKDIAG_USER_BASE,
-                SOCKDIAG_CLIENT_PAYLOAD.len() as u64,
-                0,
-                0,
-                0,
-            ]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let client_send = socket_abi_dispatch!(userspace_socket_abi::send(
+            client_descriptor as u64,
+            LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+            SOCKDIAG_CLIENT_PAYLOAD.len() as u64,
+        ));
         if client_send.return_value().x0() != SOCKDIAG_CLIENT_PAYLOAD.len() as u64 {
             return Err(LocalCommandExecError::SyscallFailed);
         }
@@ -2747,33 +2658,19 @@ where
             accepted_descriptor as u64,
             syscall::TALOS_POLL_READ,
         );
-        let payload_recv_poll = socket_dispatch(
-            syscall::TALOS_POLL_SYSCALL,
-            syscall::SyscallArguments::new([LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 0, 0, 0, 0]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let payload_recv_poll = socket_abi_dispatch!(userspace_socket_abi::poll(
+            LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+            1,
+        ));
         if payload_recv_poll.return_value().x0() != 1 {
             return Err(LocalCommandExecError::SyscallFailed);
         }
         let payload_recv_revents = local_read_poll_revents(&user_memory, 0);
-        let server_recv = socket_dispatch(
-            syscall::TALOS_RECV_SYSCALL,
-            syscall::SyscallArguments::new([
-                accepted_descriptor as u64,
-                LOCAL_COMMAND_SOCKDIAG_USER_BASE + 0x40,
-                32,
-                0,
-                0,
-                0,
-            ]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let server_recv = socket_abi_dispatch!(userspace_socket_abi::recv(
+            accepted_descriptor as u64,
+            LOCAL_COMMAND_SOCKDIAG_USER_BASE + 0x40,
+            32,
+        ));
         if server_recv.return_value().x0() != SOCKDIAG_CLIENT_PAYLOAD.len() as u64
             || &user_memory[0x40..0x40 + SOCKDIAG_CLIENT_PAYLOAD.len()] != SOCKDIAG_CLIENT_PAYLOAD
         {
@@ -2782,39 +2679,19 @@ where
 
         user_memory[0x20..0x20 + SOCKDIAG_SERVER_PAYLOAD.len()]
             .copy_from_slice(SOCKDIAG_SERVER_PAYLOAD);
-        let server_send = socket_dispatch(
-            syscall::TALOS_SEND_SYSCALL,
-            syscall::SyscallArguments::new([
-                accepted_descriptor as u64,
-                LOCAL_COMMAND_SOCKDIAG_USER_BASE + 0x20,
-                SOCKDIAG_SERVER_PAYLOAD.len() as u64,
-                0,
-                0,
-                0,
-            ]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let server_send = socket_abi_dispatch!(userspace_socket_abi::send(
+            accepted_descriptor as u64,
+            LOCAL_COMMAND_SOCKDIAG_USER_BASE + 0x20,
+            SOCKDIAG_SERVER_PAYLOAD.len() as u64,
+        ));
         if server_send.return_value().x0() != SOCKDIAG_SERVER_PAYLOAD.len() as u64 {
             return Err(LocalCommandExecError::SyscallFailed);
         }
-        let client_recv = socket_dispatch(
-            syscall::TALOS_RECV_SYSCALL,
-            syscall::SyscallArguments::new([
-                client_descriptor as u64,
-                LOCAL_COMMAND_SOCKDIAG_USER_BASE + 0x60,
-                32,
-                0,
-                0,
-                0,
-            ]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let client_recv = socket_abi_dispatch!(userspace_socket_abi::recv(
+            client_descriptor as u64,
+            LOCAL_COMMAND_SOCKDIAG_USER_BASE + 0x60,
+            32,
+        ));
         if client_recv.return_value().x0() != SOCKDIAG_SERVER_PAYLOAD.len() as u64
             || &user_memory[0x60..0x60 + SOCKDIAG_SERVER_PAYLOAD.len()] != SOCKDIAG_SERVER_PAYLOAD
         {
@@ -2826,39 +2703,19 @@ where
             user_memory[index] = index as u8;
             index += 1;
         }
-        let fill_queue = socket_dispatch(
-            syscall::TALOS_SEND_SYSCALL,
-            syscall::SyscallArguments::new([
-                client_descriptor as u64,
-                LOCAL_COMMAND_SOCKDIAG_USER_BASE,
-                crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY as u64,
-                0,
-                0,
-                0,
-            ]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let fill_queue = socket_abi_dispatch!(userspace_socket_abi::send(
+            client_descriptor as u64,
+            LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+            crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY as u64,
+        ));
         if fill_queue.return_value().x0() != crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY as u64 {
             return Err(LocalCommandExecError::SyscallFailed);
         }
-        let full_queue_send = socket_dispatch(
-            syscall::TALOS_SEND_SYSCALL,
-            syscall::SyscallArguments::new([
-                client_descriptor as u64,
-                LOCAL_COMMAND_SOCKDIAG_USER_BASE,
-                1,
-                0,
-                0,
-                0,
-            ]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let full_queue_send = socket_abi_dispatch!(userspace_socket_abi::send(
+            client_descriptor as u64,
+            LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+            1,
+        ));
         if syscall::errno_number(posix::PosixError::NoSpace) as u64
             != full_queue_send.return_value().x0().wrapping_neg()
         {
@@ -2870,33 +2727,19 @@ where
             client_descriptor as u64,
             syscall::TALOS_POLL_WRITE,
         );
-        let write_backpressure_poll = socket_dispatch(
-            syscall::TALOS_POLL_SYSCALL,
-            syscall::SyscallArguments::new([LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 0, 0, 0, 0]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let write_backpressure_poll = socket_abi_dispatch!(userspace_socket_abi::poll(
+            LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+            1,
+        ));
         if write_backpressure_poll.return_value().x0() != 0 {
             return Err(LocalCommandExecError::SyscallFailed);
         }
         let write_backpressure_revents = local_read_poll_revents(&user_memory, 0);
-        let drain_queue = socket_dispatch(
-            syscall::TALOS_RECV_SYSCALL,
-            syscall::SyscallArguments::new([
-                accepted_descriptor as u64,
-                LOCAL_COMMAND_SOCKDIAG_USER_BASE + 0x40,
-                crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY as u64,
-                0,
-                0,
-                0,
-            ]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let drain_queue = socket_abi_dispatch!(userspace_socket_abi::recv(
+            accepted_descriptor as u64,
+            LOCAL_COMMAND_SOCKDIAG_USER_BASE + 0x40,
+            crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY as u64,
+        ));
         if drain_queue.return_value().x0() != crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY as u64 {
             return Err(LocalCommandExecError::SyscallFailed);
         }
@@ -2909,7 +2752,8 @@ where
             syscall::TALOS_POLL_READ,
         );
         let hangup_wait = socket_poll_wait_dispatch!(
-            syscall::SyscallArguments::new([LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 8, 0, 0, 0]),
+            userspace_socket_abi::poll_wait(LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 8)
+                .syscall_arguments(),
             &mut hangup_wait_task,
             40
         );
@@ -2922,14 +2766,8 @@ where
         ) {
             return Err(LocalCommandExecError::SyscallFailed);
         }
-        let accepted_close = socket_dispatch(
-            syscall::TALOS_CLOSE_SYSCALL,
-            syscall::SyscallArguments::new([accepted_descriptor as u64, 0, 0, 0, 0, 0]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let accepted_close =
+            socket_abi_dispatch!(userspace_socket_abi::close(accepted_descriptor as u64));
         if accepted_close.return_value().x0() != 0 {
             return Err(LocalCommandExecError::SyscallFailed);
         }
@@ -2964,70 +2802,37 @@ where
             posix::STDOUT_FD as u64,
             syscall::TALOS_POLL_READ,
         );
-        let hangup_and_errors_poll = socket_dispatch(
-            syscall::TALOS_POLL_SYSCALL,
-            syscall::SyscallArguments::new([LOCAL_COMMAND_SOCKDIAG_USER_BASE, 3, 0, 0, 0, 0]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let hangup_and_errors_poll = socket_abi_dispatch!(userspace_socket_abi::poll(
+            LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+            3,
+        ));
         if hangup_and_errors_poll.return_value().x0() != 3 {
             return Err(LocalCommandExecError::SyscallFailed);
         }
         let peer_hangup_revents = local_read_poll_revents(&user_memory, 0);
         let invalid_descriptor_revents = local_read_poll_revents(&user_memory, 1);
         let non_socket_descriptor_revents = local_read_poll_revents(&user_memory, 2);
-        let send_after_peer_close = socket_dispatch(
-            syscall::TALOS_SEND_SYSCALL,
-            syscall::SyscallArguments::new([
-                client_descriptor as u64,
-                LOCAL_COMMAND_SOCKDIAG_USER_BASE,
-                1,
-                0,
-                0,
-                0,
-            ]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let send_after_peer_close = socket_abi_dispatch!(userspace_socket_abi::send(
+            client_descriptor as u64,
+            LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+            1,
+        ));
         if syscall::errno_number(posix::PosixError::Pipe) as u64
             != send_after_peer_close.return_value().x0().wrapping_neg()
         {
             return Err(LocalCommandExecError::SyscallFailed);
         }
-        let second_client_close = socket_dispatch(
-            syscall::TALOS_CLOSE_SYSCALL,
-            syscall::SyscallArguments::new([second_client_descriptor as u64, 0, 0, 0, 0, 0]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let second_client_close =
+            socket_abi_dispatch!(userspace_socket_abi::close(second_client_descriptor as u64,));
         if second_client_close.return_value().x0() != 0 {
             return Err(LocalCommandExecError::SyscallFailed);
         }
-        let client_close = socket_dispatch(
-            syscall::TALOS_CLOSE_SYSCALL,
-            syscall::SyscallArguments::new([client_descriptor as u64, 0, 0, 0, 0, 0]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let client_close =
+            socket_abi_dispatch!(userspace_socket_abi::close(client_descriptor as u64));
         if client_close.return_value().x0() != 0 {
             return Err(LocalCommandExecError::SyscallFailed);
         }
-        let close = socket_dispatch(
-            syscall::TALOS_CLOSE_SYSCALL,
-            syscall::SyscallArguments::new([process_descriptor as u64, 0, 0, 0, 0, 0]),
-            &mut self.descriptor_store,
-            &mut self.socket_descriptors,
-            &mut user_memory,
-            &mut kernel_scratch,
-        );
+        let close = socket_abi_dispatch!(userspace_socket_abi::close(process_descriptor as u64));
         let close_return = close.return_value().x0();
         if close_return != 0 {
             return Err(LocalCommandExecError::SyscallFailed);
@@ -3580,7 +3385,7 @@ where
             smoltcp_payload_server_state: local_smoltcp_tcp_state_name(
                 smoltcp_payload.server_state(),
             ),
-            source: "vfs-userspace-sockdiag+talos-socket-bind-listen-connect-accept-send-recv-poll-wait-close+process-descriptor+cross-process-local-rendezvous+private-smoltcp-tcp-bridge",
+            source: "vfs-userspace-sockdiag+userspace-socket-abi-v1+talos-socket-bind-listen-connect-accept-send-recv-poll-wait-close+process-descriptor+cross-process-local-rendezvous+private-smoltcp-tcp-bridge",
         })
     }
 
@@ -5531,20 +5336,23 @@ fn syscall_success_usize(value: u64) -> Result<usize, LocalCommandFileReadError>
 }
 
 fn local_write_poll_entry(memory: &mut [u8], index: usize, fd: u64, events: u32) {
-    let offset = index * syscall::TALOS_POLL_ENTRY_SIZE;
-    memory[offset..offset + 8].copy_from_slice(&fd.to_le_bytes());
-    memory[offset + 8..offset + 12].copy_from_slice(&events.to_le_bytes());
-    memory[offset + 12..offset + 16].copy_from_slice(&0u32.to_le_bytes());
+    let offset = index * userspace_socket_abi::POLL_ENTRY_SIZE;
+    match userspace_socket_abi::PollEntry::new(fd, events)
+        .encode(&mut memory[offset..offset + userspace_socket_abi::POLL_ENTRY_SIZE])
+    {
+        Ok(()) => {}
+        Err(userspace_socket_abi::PollEntryEncodeError::BufferTooSmall) => unreachable!(),
+    }
 }
 
 fn local_read_poll_revents(memory: &[u8], index: usize) -> u32 {
-    let offset = index * syscall::TALOS_POLL_ENTRY_SIZE + 12;
-    u32::from_le_bytes([
-        memory[offset],
-        memory[offset + 1],
-        memory[offset + 2],
-        memory[offset + 3],
-    ])
+    let offset = index * userspace_socket_abi::POLL_ENTRY_SIZE;
+    match userspace_socket_abi::PollEntry::decode(
+        &memory[offset..offset + userspace_socket_abi::POLL_ENTRY_SIZE],
+    ) {
+        Ok(entry) => entry.revents(),
+        Err(userspace_socket_abi::PollEntryEncodeError::BufferTooSmall) => unreachable!(),
+    }
 }
 
 fn decode_phase8_init_completion_status(
@@ -8313,7 +8121,7 @@ talos> Talos initramfs fixture\n"
     }
 
     #[test_case]
-    fn local_command_loop_execs_shell_visible_sockdiag_through_vfs_socket_syscalls() {
+    fn local_command_loop_execs_shell_visible_sockdiag_through_userspace_socket_abi() {
         let bytes = *b"exec /bin/sockdiag\rwaitpid\rlaststatus\rexec /bin/sockdiag extra\rexec /bin/missingsock\r";
         let input = ScriptedInput::new(bytes, bytes.len());
         let mut backend = CaptureSink::new();
@@ -8380,7 +8188,7 @@ talos> Talos initramfs fixture\n"
             "smoltcp-accepted-attached=true smoltcp-payload-transfers=0x0000000000000001 smoltcp-payload-len=0x000000000000000e smoltcp-payload-client=established smoltcp-payload-server=established "
         ));
         assert!(output.contains(
-            "source=vfs-userspace-sockdiag+talos-socket-bind-listen-connect-accept-send-recv-poll-wait-close+process-descriptor+cross-process-local-rendezvous+private-smoltcp-tcp-bridge\n"
+            "source=vfs-userspace-sockdiag+userspace-socket-abi-v1+talos-socket-bind-listen-connect-accept-send-recv-poll-wait-close+process-descriptor+cross-process-local-rendezvous+private-smoltcp-tcp-bridge\n"
         ));
         assert!(output.contains(concat!(
             "talos: sockdiag-controls malformed-arguments=exec-invalid-path missing-executable=exec-not-found ",

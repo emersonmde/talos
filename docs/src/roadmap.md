@@ -15448,6 +15448,24 @@ Milestone 12.3: IP Stack
   broad socket expansion, and phase transition remain rejected. The selected
   next bounded task is
   phase12-network-shell-sockdiag-userspace-abi-core-20260621.
+- phase12-network-shell-sockdiag-userspace-abi-core-20260621 accepts
+  shell-visible /bin/sockdiag use of the documented private
+  userspace_socket_abi helper surface. The diagnostic success path now builds
+  SocketAbiCall values for socket, bind, listen, connect, accept, send, recv,
+  poll, poll_wait, and close before entering the existing descriptor-backed
+  socket-table dispatch, and it uses the ABI PollEntry codec for the 16-byte
+  fd/events/revents layout. Source/unit evidence shows /bin/sockdiag still
+  reaches the accepted host-only smoltcp TCP diagnostic with Established
+  handshake states, deterministic frame/step counters, accepted descriptor
+  attachment, payload-transfer observation, waitpid, laststatus, local socket
+  controls, /bin/pingdiag controls, and bounded syscall vocabulary. Evidence
+  remains source/unit plus host/QEMU-substitute only; retained smoke evidence,
+  live driver adapters, live packet I/O, hardware reachability, SSH, UDP/raw
+  sockets, libc/std, POSIX/Linux compatibility, public stable ABI acceptance,
+  broad socket expansion, and phase transition remain rejected. The selected
+  next bounded task is
+  phase12-network-shell-sockdiag-userspace-abi-smoke-20260621.
+
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

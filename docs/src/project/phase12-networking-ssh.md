@@ -5841,3 +5841,27 @@ reachability, SSH, UDP/raw sockets, libc/std socket wrappers, POSIX/Linux
 compatibility, public stable socket ABI acceptance, broad socket expansion,
 and phase transition. The selected next bounded task is
 phase12-network-shell-sockdiag-userspace-abi-core-20260621.
+
+phase12-network-shell-sockdiag-userspace-abi-core-20260621 accepts
+phase12-network-shell-sockdiag-userspace-abi-core-accepted. The shell-visible
+/bin/sockdiag VFS/userspace TCP diagnostic now routes its accepted success path
+through the documented private src/userspace_socket_abi.rs helper surface
+before invoking the existing descriptor-backed socket-table dispatch.
+
+The diagnostic uses userspace_socket_abi wrapper constructors for socket, bind,
+listen, connect, accept, send, recv, poll, poll_wait, and close, and uses the
+ABI PollEntry codec for the 16-byte little-endian fd/events/revents user-memory
+layout. Its shell output records userspace-socket-abi-v1 in the diagnostic
+source while preserving the accepted Established smoltcp client/server
+handshake states, deterministic step/frame counters, accepted descriptor
+attachment, one bounded payload-transfer observation, waitpid, laststatus,
+local socket controls, /bin/pingdiag controls, and bounded syscall vocabulary.
+
+The accepted evidence level remains source/unit plus host/QEMU-substitute cargo
+test only. This task rejects retained smoke evidence, live driver adapters,
+live packet I/O, Pi 5 hardware behavior, lab mutation, boot publication,
+generated-root publication, hardware reachability, SSH, UDP/raw sockets,
+libc/std socket wrappers, POSIX/Linux compatibility, public stable socket ABI
+acceptance, broad socket expansion, and phase transition. The selected next
+bounded task is
+phase12-network-shell-sockdiag-userspace-abi-smoke-20260621.
