@@ -15376,6 +15376,19 @@ Milestone 12.3: IP Stack
   socket ABI acceptance, broad socket expansion, UDP/raw sockets, and phase
   transition remain rejected. The selected next bounded task is
   phase12-network-shell-sockdiag-smoltcp-tcp-core-20260621.
+- phase12-network-shell-sockdiag-smoltcp-tcp-core-20260621 accepts
+  shell-visible /bin/sockdiag source/unit coverage for the accepted private
+  host-only smoltcp TCP bridge. The diagnostic executes through the
+  VFS/userspace /bin/sockdiag path and the existing private socket syscall
+  dispatch, then reports the SmoltcpSocketBridgeRecord connection id,
+  Established handshake states, deterministic step/frame counters, accepted
+  descriptor attachment, one bounded payload-transfer observation, and
+  Established payload states. Evidence is source/unit plus
+  host/QEMU-substitute only; retained smoke, live packet I/O, hardware
+  reachability, SSH, public stable socket ABI acceptance, broad socket
+  expansion, UDP/raw sockets, and phase transition remain rejected. The
+  selected next bounded task is
+  phase12-network-shell-sockdiag-smoltcp-tcp-smoke-20260621.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

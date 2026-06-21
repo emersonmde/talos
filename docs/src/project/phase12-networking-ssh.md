@@ -5736,3 +5736,21 @@ publication, hardware reachability, SSH, public stable socket ABI acceptance,
 broad socket expansion, UDP/raw sockets, or phase transition. The selected
 next bounded task is
 phase12-network-shell-sockdiag-smoltcp-tcp-core-20260621.
+
+phase12-network-shell-sockdiag-smoltcp-tcp-core-20260621 accepts
+phase12-network-shell-sockdiag-smoltcp-tcp-core-accepted. The existing
+shell-visible /bin/sockdiag VFS/userspace diagnostic now reports the private
+host-only smoltcp TCP bridge frontier by executing the accepted socket,
+bind, listen, connect, accept, send, recv, poll, poll-wait, and close syscall
+path and reading SmoltcpSocketBridgeRecord evidence from the same
+descriptor-backed connection.
+
+The diagnostic records the smoltcp connection id, Established client/server
+handshake states, deterministic handshake step/frame counters, accepted
+descriptor attachment, one bounded payload-transfer observation, and
+Established payload states. This remains source/unit plus
+host/QEMU-substitute evidence only. It does not accept retained smoke
+evidence, live packet I/O, hardware reachability, SSH, public stable socket
+ABI acceptance, broad socket expansion, UDP/raw sockets, or phase transition.
+The selected next bounded task is
+phase12-network-shell-sockdiag-smoltcp-tcp-smoke-20260621.

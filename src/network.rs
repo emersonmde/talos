@@ -3242,19 +3242,19 @@ fn smoltcp_bridge_drive<
                 payload_sent = true;
             }
             if payload_sent && !payload_received {
-                match server_sockets
-                    .get_mut::<smoltcp::socket::tcp::Socket>(server_handle)
-                    .recv_slice(&mut receive_buffer[..payload.len()])
-                {
-                    Ok(received) if received == payload.len() => {
-                        if &receive_buffer[..payload.len()] != payload {
-                            return Err(crate::posix::PosixError::Io);
+                let server_socket =
+                    server_sockets.get_mut::<smoltcp::socket::tcp::Socket>(server_handle);
+                if server_socket.can_recv() {
+                    match server_socket.recv_slice(&mut receive_buffer[..payload.len()]) {
+                        Ok(received) if received == payload.len() => {
+                            if &receive_buffer[..payload.len()] != payload {
+                                return Err(crate::posix::PosixError::Io);
+                            }
+                            payload_received = true;
                         }
-                        payload_received = true;
+                        Ok(_) => return Err(crate::posix::PosixError::Io),
+                        Err(_) => return Err(crate::posix::PosixError::Pipe),
                     }
-                    Ok(_) => return Err(crate::posix::PosixError::Io),
-                    Err(smoltcp::socket::tcp::RecvError::Exhausted) => {}
-                    Err(_) => return Err(crate::posix::PosixError::Pipe),
                 }
             }
             if payload_received {
@@ -3265,7 +3265,6 @@ fn smoltcp_bridge_drive<
         step += 1;
     }
 
-    observation.steps = SMOLTCP_SOCKET_BRIDGE_MAX_STEPS;
     Err(crate::posix::PosixError::Again)
 }
 

@@ -39,7 +39,8 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+shell-sockdiag-vfs-userspace-socket-send-recv",
     "+shell-sockdiag-vfs-userspace-socket-readiness-poll",
     "+shell-sockdiag-vfs-userspace-socket-blocking-poll-wait",
-    "+shell-sockdiag-vfs-userspace-cross-process-local-socket"
+    "+shell-sockdiag-vfs-userspace-cross-process-local-socket",
+    "+shell-sockdiag-vfs-userspace-smoltcp-tcp"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -768,6 +769,17 @@ pub struct LocalCommandSockdiagRecord {
     cross_process_reply: &'static str,
     cross_process_descriptor_ownership: &'static str,
     cross_process_backing_closed: bool,
+    smoltcp_connection_id: u64,
+    smoltcp_handshake_client_state: &'static str,
+    smoltcp_handshake_server_state: &'static str,
+    smoltcp_handshake_steps: usize,
+    smoltcp_handshake_client_to_server_frames: usize,
+    smoltcp_handshake_server_to_client_frames: usize,
+    smoltcp_accepted_attached: bool,
+    smoltcp_payload_transfers: u64,
+    smoltcp_payload_len: usize,
+    smoltcp_payload_client_state: &'static str,
+    smoltcp_payload_server_state: &'static str,
     source: &'static str,
 }
 
@@ -2262,6 +2274,28 @@ where
         if connect_return != 0 {
             return Err(LocalCommandExecError::SyscallFailed);
         }
+        let smoltcp_connection_id = match self
+            .socket_descriptors
+            .socket(client_socket_reference)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?
+            .state()
+        {
+            crate::network::NetworkSocketState::Connected { connection_id, .. } => connection_id,
+            _ => return Err(LocalCommandExecError::LaunchPipelineFailed),
+        };
+        let smoltcp_handshake_record = self
+            .socket_descriptors
+            .smoltcp_bridge_record(smoltcp_connection_id)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let smoltcp_handshake = smoltcp_handshake_record.handshake();
+        if smoltcp_handshake_record.connection_id() != smoltcp_connection_id
+            || smoltcp_handshake.client_state() != smoltcp::socket::tcp::State::Established
+            || smoltcp_handshake.server_state() != smoltcp::socket::tcp::State::Established
+            || smoltcp_handshake_record.payload_transfers() != 0
+            || smoltcp_handshake_record.accepted_descriptor().is_some()
+        {
+            return Err(LocalCommandExecError::LaunchPipelineFailed);
+        }
         let pending_listener_resume = poll_waits
             .resume_ready_or_expired(
                 &mut listener_wait_task,
@@ -2397,6 +2431,15 @@ where
             .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
         let accepted_socket_reference =
             crate::network::NetworkSocketDescriptor::from_raw(accepted_entry.object().reference());
+        let smoltcp_accepted_record = self
+            .socket_descriptors
+            .smoltcp_bridge_record(smoltcp_connection_id)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let smoltcp_accepted_attached =
+            smoltcp_accepted_record.accepted_descriptor() == Some(accepted_socket_reference);
+        if !smoltcp_accepted_attached {
+            return Err(LocalCommandExecError::LaunchPipelineFailed);
+        }
         let client_endpoint = crate::network::Ipv4Endpoint::new(
             crate::network::SOCKET_SYNTHETIC_LOCAL_IPV4_BE,
             crate::network::SOCKET_SYNTHETIC_CLIENT_PORT_BASE
@@ -2667,6 +2710,18 @@ where
         );
         if client_send.return_value().x0() != SOCKDIAG_CLIENT_PAYLOAD.len() as u64 {
             return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let smoltcp_payload_record = self
+            .socket_descriptors
+            .smoltcp_bridge_record(smoltcp_connection_id)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let smoltcp_payload = smoltcp_payload_record.last_payload();
+        if smoltcp_payload_record.payload_transfers() != 1
+            || smoltcp_payload.payload_len() != SOCKDIAG_CLIENT_PAYLOAD.len()
+            || smoltcp_payload.client_state() != smoltcp::socket::tcp::State::Established
+            || smoltcp_payload.server_state() != smoltcp::socket::tcp::State::Established
+        {
+            return Err(LocalCommandExecError::LaunchPipelineFailed);
         }
         if !matches!(
             poll_waits
@@ -3506,7 +3561,26 @@ where
             cross_process_reply: "cross-server",
             cross_process_descriptor_ownership: "server-owner-listener-accepted+client-owner-connected",
             cross_process_backing_closed,
-            source: "vfs-userspace-sockdiag+talos-socket-bind-listen-connect-accept-send-recv-poll-wait-close+process-descriptor+cross-process-local-rendezvous",
+            smoltcp_connection_id,
+            smoltcp_handshake_client_state: local_smoltcp_tcp_state_name(
+                smoltcp_handshake.client_state(),
+            ),
+            smoltcp_handshake_server_state: local_smoltcp_tcp_state_name(
+                smoltcp_handshake.server_state(),
+            ),
+            smoltcp_handshake_steps: smoltcp_handshake.steps(),
+            smoltcp_handshake_client_to_server_frames: smoltcp_handshake.client_to_server_frames(),
+            smoltcp_handshake_server_to_client_frames: smoltcp_handshake.server_to_client_frames(),
+            smoltcp_accepted_attached,
+            smoltcp_payload_transfers: smoltcp_payload_record.payload_transfers(),
+            smoltcp_payload_len: smoltcp_payload.payload_len(),
+            smoltcp_payload_client_state: local_smoltcp_tcp_state_name(
+                smoltcp_payload.client_state(),
+            ),
+            smoltcp_payload_server_state: local_smoltcp_tcp_state_name(
+                smoltcp_payload.server_state(),
+            ),
+            source: "vfs-userspace-sockdiag+talos-socket-bind-listen-connect-accept-send-recv-poll-wait-close+process-descriptor+cross-process-local-rendezvous+private-smoltcp-tcp-bridge",
         })
     }
 
@@ -5331,6 +5405,22 @@ const fn local_task_state_name(state: TaskState) -> &'static str {
         TaskState::Running => "running",
         TaskState::Runnable => "runnable",
         TaskState::Blocked => "blocked",
+    }
+}
+
+const fn local_smoltcp_tcp_state_name(state: smoltcp::socket::tcp::State) -> &'static str {
+    match state {
+        smoltcp::socket::tcp::State::Established => "established",
+        smoltcp::socket::tcp::State::Closed => "closed",
+        smoltcp::socket::tcp::State::Listen => "listen",
+        smoltcp::socket::tcp::State::SynSent => "syn-sent",
+        smoltcp::socket::tcp::State::SynReceived => "syn-received",
+        smoltcp::socket::tcp::State::FinWait1 => "fin-wait-1",
+        smoltcp::socket::tcp::State::FinWait2 => "fin-wait-2",
+        smoltcp::socket::tcp::State::CloseWait => "close-wait",
+        smoltcp::socket::tcp::State::Closing => "closing",
+        smoltcp::socket::tcp::State::LastAck => "last-ack",
+        smoltcp::socket::tcp::State::TimeWait => "time-wait",
     }
 }
 
@@ -7230,6 +7320,35 @@ fn write_exec_sockdiag_line(
             "false"
         },
     )?;
+    write_str_part(sink, " smoltcp-connection-id=")?;
+    write_hex_u64_part(sink, record.smoltcp_connection_id)?;
+    write_str_part(sink, " smoltcp-handshake-client=")?;
+    write_str_part(sink, record.smoltcp_handshake_client_state)?;
+    write_str_part(sink, " smoltcp-handshake-server=")?;
+    write_str_part(sink, record.smoltcp_handshake_server_state)?;
+    write_str_part(sink, " smoltcp-handshake-steps=")?;
+    write_hex_usize_part(sink, record.smoltcp_handshake_steps)?;
+    write_str_part(sink, " smoltcp-handshake-c2s-frames=")?;
+    write_hex_usize_part(sink, record.smoltcp_handshake_client_to_server_frames)?;
+    write_str_part(sink, " smoltcp-handshake-s2c-frames=")?;
+    write_hex_usize_part(sink, record.smoltcp_handshake_server_to_client_frames)?;
+    write_str_part(sink, " smoltcp-accepted-attached=")?;
+    write_str_part(
+        sink,
+        if record.smoltcp_accepted_attached {
+            "true"
+        } else {
+            "false"
+        },
+    )?;
+    write_str_part(sink, " smoltcp-payload-transfers=")?;
+    write_hex_u64_part(sink, record.smoltcp_payload_transfers)?;
+    write_str_part(sink, " smoltcp-payload-len=")?;
+    write_hex_usize_part(sink, record.smoltcp_payload_len)?;
+    write_str_part(sink, " smoltcp-payload-client=")?;
+    write_str_part(sink, record.smoltcp_payload_client_state)?;
+    write_str_part(sink, " smoltcp-payload-server=")?;
+    write_str_part(sink, record.smoltcp_payload_server_state)?;
     write_str_part(sink, " source=")?;
     write_str_part(sink, record.source)?;
     finish_dynamic_line(sink, response_lines)
@@ -8252,9 +8371,17 @@ talos> Talos initramfs fixture\n"
             "cross-process-cleanup-close=0x0000000000000000 cross-process-payload-text=cross-client ",
             "cross-process-reply=cross-server ",
             "cross-process-ownership=server-owner-listener-accepted+client-owner-connected ",
-            "cross-process-backing-closed=true ",
-            "source=vfs-userspace-sockdiag+talos-socket-bind-listen-connect-accept-send-recv-poll-wait-close+process-descriptor+cross-process-local-rendezvous\n"
+            "cross-process-backing-closed=true "
         )));
+        assert!(output.contains(
+            "smoltcp-connection-id=0x0000000000000001 smoltcp-handshake-client=established smoltcp-handshake-server=established "
+        ));
+        assert!(output.contains(
+            "smoltcp-accepted-attached=true smoltcp-payload-transfers=0x0000000000000001 smoltcp-payload-len=0x000000000000000e smoltcp-payload-client=established smoltcp-payload-server=established "
+        ));
+        assert!(output.contains(
+            "source=vfs-userspace-sockdiag+talos-socket-bind-listen-connect-accept-send-recv-poll-wait-close+process-descriptor+cross-process-local-rendezvous+private-smoltcp-tcp-bridge\n"
+        ));
         assert!(output.contains(concat!(
             "talos: sockdiag-controls malformed-arguments=exec-invalid-path missing-executable=exec-not-found ",
             "unsupported-domain=ENOTSUP unsupported-type=ENOTSUP unsupported-protocol=ENOTSUP ",
