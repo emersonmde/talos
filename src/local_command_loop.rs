@@ -2169,6 +2169,7 @@ where
             != (crate::network::NetworkSocketState::Connected {
                 local_endpoint: client_endpoint,
                 remote_endpoint: local_endpoint,
+                recv_queue: crate::network::NetworkSocketPayloadQueue::new(),
             })
         {
             return Err(LocalCommandExecError::LaunchPipelineFailed);
@@ -2181,6 +2182,7 @@ where
             != (crate::network::NetworkSocketState::Accepted {
                 local_endpoint,
                 remote_endpoint: client_endpoint,
+                recv_queue: crate::network::NetworkSocketPayloadQueue::new(),
             })
         {
             return Err(LocalCommandExecError::LaunchPipelineFailed);

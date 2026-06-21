@@ -14985,6 +14985,23 @@ Milestone 12.3: IP Stack
   stable socket ABI acceptance, broad socket expansion, and phase transition
   remain rejected. The selected next bounded task is
   phase12-network-socket-send-recv-core-20260620.
+- The socket send/recv core accepts source/unit evidence for private
+  descriptor-backed local payload transfer through TALOS_SEND_SYSCALL = 11 and
+  TALOS_RECV_SYSCALL = 12 only on the socket-table-aware dispatch path.
+  Connected and Accepted AF_INET stream socket states now own 64-byte inbound
+  FIFOs. Send is all-or-nothing into the peer queue after descriptor, state,
+  unique-peer, capacity, and caller-buffer checks; recv may short-read from
+  the local queue and consumes bytes only after copy-out succeeds. Unit
+  coverage records bidirectional payload transfer, short reads, empty receive
+  EAGAIN, oversize/full queue ENOSPC, caller-buffer EFAULT, non-socket and
+  non-connected descriptor failures, close/drop cleanup, queued-byte drain
+  after peer close, and EPIPE after disconnection. Shell /bin/sockdiag
+  send/recv output, retained smoke evidence, poll/blocking I/O,
+  readiness/wait queues, UDP/TCP payload transport, cross-process sockets,
+  live packet I/O, hardware reachability, SSH, public stable socket ABI
+  acceptance, broad socket expansion, and phase transition remain rejected.
+  The selected next bounded task is
+  phase12-network-shell-sockdiag-send-recv-core-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

@@ -5111,3 +5111,31 @@ I/O, hardware reachability, lab mutation, boot publication, SSH, smoltcp,
 broad socket expansion, public stable socket ABI acceptance, or phase
 transition. The selected next bounded task is
 phase12-network-socket-send-recv-core-20260620.
+
+phase12-network-socket-send-recv-core-20260620 accepts
+phase12-network-socket-send-recv-core-accepted. The implementation adds private
+TALOS_SEND_SYSCALL = 11 and TALOS_RECV_SYSCALL = 12 selectors only to the
+socket-table-aware process descriptor dispatch path; scalar dispatch and
+descriptor dispatch paths without socket-table state still return ENOTSUP.
+
+The accepted source/unit frontier is descriptor-backed local payload transfer
+between accepted Connected and Accepted AF_INET stream socket states. Each
+connected or accepted socket now owns a 64-byte inbound FIFO. Send validates
+the current-process socket descriptor, connected state, unique reverse-endpoint
+peer, peer queue capacity, and readable caller buffer before appending all
+bytes to the peer inbound queue. Recv validates the descriptor and local queue,
+copies queued bytes into writable caller memory, and consumes bytes only after
+copy-out succeeds.
+
+Focused unit coverage records client-to-server and server-to-client byte
+transfer, short reads, scalar-dispatch ENOTSUP, empty receive EAGAIN, malformed
+flags, non-socket and non-connected descriptors, oversize and full-queue
+ENOSPC, caller-buffer EFAULT with unchanged queue state, close/drop cleanup,
+queued-byte drain after peer close, and EPIPE after the disconnected peer queue
+is empty. This does not accept shell /bin/sockdiag send/recv output, retained
+smoke evidence, poll/blocking network I/O, readiness/wait queues, UDP/TCP
+payload transport, cross-process sockets, live driver adapters, live packet
+I/O, hardware reachability, lab mutation, boot publication, SSH, smoltcp,
+broad socket expansion, public stable socket ABI acceptance, or phase
+transition. The selected next bounded task is
+phase12-network-shell-sockdiag-send-recv-core-20260620.
