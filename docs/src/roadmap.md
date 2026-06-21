@@ -15482,6 +15482,26 @@ Milestone 12.3: IP Stack
   socket ABI acceptance, and phase transition remain rejected. The selected
   next bounded task is
   phase12-network-shell-sockdiag-userspace-abi-closeout-20260621.
+- phase12-network-shell-sockdiag-userspace-abi-closeout-20260621 accepts the
+  documented private userspace socket ABI frontier as closed at source/unit
+  plus retained host/QEMU-substitute evidence. The accepted boundary is
+  shell-visible VFS/userspace /bin/sockdiag execution through
+  userspace_socket_abi helper constructors and the existing descriptor-backed
+  host-only smoltcp TCP bridge. It covers VFS executable lookup/open/read,
+  startup ABI, svc #0/x8 private selector shape, x0..x5 scalar arguments,
+  negative errno returns, AF_INET/SOCK_STREAM constants, socket/bind/listen/
+  connect/accept/send/recv/poll/poll-wait/close wrappers, 16-byte PollEntry
+  fd/events/revents layout, process descriptor ownership, Established smoltcp
+  client/server states, deterministic frame/step counters, accepted descriptor
+  attachment, one bounded payload-transfer observation, waitpid, laststatus,
+  deterministic controls, unchanged local socket diagnostics, unchanged
+  /bin/pingdiag behavior, ABI constant/wrapper coverage, and bounded syscall
+  vocabulary. Live driver adapters, live packet I/O, hardware reachability,
+  SSH, UDP/raw sockets, libc/std socket wrappers, POSIX/Linux compatibility,
+  public stable socket ABI acceptance, broad socket expansion, and phase
+  transition remain rejected. selected_next_task is null and
+  planningNeeded=true pending supervisor planning for any next bounded
+  socket/network task.
 
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning

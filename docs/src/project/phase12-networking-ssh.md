@@ -5888,3 +5888,28 @@ hardware reachability, SSH, UDP/raw sockets, broad socket expansion,
 POSIX/Linux compatibility, public stable socket ABI acceptance, and phase
 transition. The selected next bounded task is
 phase12-network-shell-sockdiag-userspace-abi-closeout-20260621.
+
+phase12-network-shell-sockdiag-userspace-abi-closeout-20260621 accepts
+phase12-network-shell-sockdiag-userspace-abi-closeout-accepted. The documented
+private userspace socket ABI frontier is now closed at source/unit plus
+retained host/QEMU-substitute evidence over shell-visible VFS/userspace
+/bin/sockdiag execution through userspace_socket_abi helper constructors and
+the existing descriptor-backed host-only smoltcp TCP bridge.
+
+The accepted boundary covers read-only VFS executable lookup/open/read,
+startup ABI, svc #0/x8 private selector shape, x0..x5 scalar arguments,
+negative errno returns, AF_INET/SOCK_STREAM constants, socket/bind/listen/
+connect/accept/send/recv/poll/poll-wait/close wrappers, 16-byte PollEntry
+fd/events/revents layout, process descriptor ownership, Established smoltcp
+client/server states, deterministic frame/step counters, accepted descriptor
+attachment, one bounded payload-transfer observation, waitpid, laststatus,
+deterministic controls, unchanged local socket diagnostics, unchanged
+/bin/pingdiag behavior, ABI constant/wrapper coverage, and bounded syscall
+vocabulary.
+
+This closeout rejects live driver adapters, live packet I/O, Pi 5 hardware
+behavior, lab mutation, boot publication, generated-root publication, hardware
+reachability, SSH, UDP/raw sockets, libc/std socket wrappers, POSIX/Linux
+compatibility, public stable socket ABI acceptance, broad socket expansion, and
+phase transition. planningNeeded=true; no later bounded socket/network task is
+mechanically unblocked without supervisor planning.
