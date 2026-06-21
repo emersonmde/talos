@@ -1,0 +1,29 @@
+{
+  "task_id": "phase12-network-shell-sockdiag-readiness-poll-smoke-20260621",
+  "classification": "phase12-network-shell-sockdiag-readiness-poll-smoke-accepted",
+  "evidence_level": "host/QEMU-substitute smoke",
+  "result": "passed",
+  "smoke_classification": "host-substitute-shell-sockdiag-readiness-poll-smoke-complete",
+  "accepted_boundary": "shell-visible VFS/userspace /bin/sockdiag execution of private nonblocking TALOS_POLL readiness over descriptor-backed local socket states, deterministic controls, waitpid, and laststatus",
+  "rejected_claims": [
+    "runtime implementation beyond smoke/evidence harness work",
+    "Pi 5 hardware behavior",
+    "hardwareTestLock acquisition",
+    "lab mutation",
+    "boot publication",
+    "generated-root publication",
+    "live driver adapters",
+    "live packet I/O",
+    "hardware reachability",
+    "blocking waits",
+    "scheduler wait queues",
+    "timeout handling",
+    "UDP/TCP payload transport",
+    "smoltcp integration",
+    "cross-process/global poll sets",
+    "SSH",
+    "broad socket expansion",
+    "public stable socket ABI acceptance",
+    "phase transition"
+  ]
+}

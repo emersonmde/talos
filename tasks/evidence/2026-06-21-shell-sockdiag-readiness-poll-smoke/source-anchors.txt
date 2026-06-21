@@ -1,0 +1,45 @@
+Task: phase12-network-shell-sockdiag-readiness-poll-smoke-20260621
+
+Shell-visible VFS/userspace anchors:
+- src/initramfs.rs:49 PHASE12_SOCKDIAG_PATH = /bin/sockdiag
+- src/local_command_loop.rs:121 command manifest includes sockdiag
+- src/local_command_loop.rs:706 LocalCommandSockdiagRecord records descriptor/lifecycle/readiness result fields
+- src/local_command_loop.rs:747 LocalCommandSockdiagControlRecord records deterministic controls including poll controls
+- src/local_command_loop.rs:943 trait boundary for exec_shell_sockdiag_diagnostic
+- src/local_command_loop.rs:1616 /bin/sockdiag selection after VFS executable lookup/open/read
+- src/local_command_loop.rs:1695 DescriptorBackedLocalCommandIo::exec_shell_sockdiag_diagnostic
+- src/local_command_loop.rs:2266 empty accepted recv queue TALOS_POLL READ observation
+- src/local_command_loop.rs:2284 unsupported poll-event control through TALOS_POLL
+- src/local_command_loop.rs:2303 client write-ready TALOS_POLL observation
+- src/local_command_loop.rs:2406 payload recv-readiness TALOS_POLL observation
+- src/local_command_loop.rs:2529 peer FIFO backpressure TALOS_POLL observation
+- src/local_command_loop.rs:2577 peer hangup plus invalid/non-socket descriptor TALOS_POLL observation
+- src/local_command_loop.rs:6282 write_exec_sockdiag_line shell output
+- src/local_command_loop.rs:6369 write_exec_sockdiag_controls_line shell output
+- src/local_command_loop.rs:7322 local_command_loop_execs_shell_visible_sockdiag_through_vfs_socket_syscalls
+
+Private socket readiness/poll syscall anchors:
+- src/syscall.rs:17 TALOS_SOCKET_SYSCALL = 6
+- src/syscall.rs:18 TALOS_BIND_SYSCALL = 7
+- src/syscall.rs:19 TALOS_LISTEN_SYSCALL = 8
+- src/syscall.rs:20 TALOS_CONNECT_SYSCALL = 9
+- src/syscall.rs:21 TALOS_ACCEPT_SYSCALL = 10
+- src/syscall.rs:22 TALOS_SEND_SYSCALL = 11
+- src/syscall.rs:23 TALOS_RECV_SYSCALL = 12
+- src/syscall.rs:24 TALOS_POLL_SYSCALL = 13
+- src/syscall.rs:524 dispatch_process_descriptor_with_socket_table
+- src/syscall.rs:3017 dispatch_talos_poll
+- src/syscall.rs:3068 ready-count and per-entry revents handling
+- src/syscall.rs:9063 talos_poll_reports_listener_local_payload_and_peer_hangup_readiness
+- src/syscall.rs:9319 talos_poll_reports_write_backpressure_and_deterministic_entry_errors
+- src/syscall.rs:9388 talos_poll_rejects_malformed_calls_and_scalar_dispatch_fails_closed
+
+Socket backing anchors:
+- src/network.rs:1963 NetworkSocketReadiness
+- src/network.rs:2010 NetworkSocketDescriptorTable
+- src/network.rs:2187 pending listener queue creation on connect
+- src/network.rs:2243 NetworkSocketDescriptorTable::send
+- src/network.rs:2319 NetworkSocketDescriptorTable::recv_peek
+- src/network.rs:2356 NetworkSocketDescriptorTable::readiness
+- src/network.rs:2383 unique peer lookup for READ/WRITE/HANGUP readiness
+- src/posix.rs:1254 DescriptorObjectKind::Socket display contract

@@ -5296,3 +5296,25 @@ handling, UDP/TCP payload transport, cross-process/global poll sets, live
 packet I/O, hardware reachability, SSH, public socket ABI acceptance, broad
 socket expansion, and phase transition remain rejected. The selected next
 bounded task is phase12-network-shell-sockdiag-readiness-poll-smoke-20260621.
+
+phase12-network-shell-sockdiag-readiness-poll-smoke-20260621 accepts
+phase12-network-shell-sockdiag-readiness-poll-smoke-accepted. The retained
+host/QEMU-substitute smoke evidence records shell-visible /bin/sockdiag
+readiness/poll behavior over the accepted private socket path. The transcript
+covers VFS executable lookup/open/read for /bin/sockdiag, startup ABI,
+TALOS_SOCKET, TALOS_BIND, TALOS_LISTEN, TALOS_CONNECT, TALOS_ACCEPT,
+TALOS_SEND, TALOS_RECV, TALOS_POLL, TALOS_CLOSE, waitpid, laststatus, and
+socket-table-aware process descriptor dispatch.
+
+The retained smoke proves listener pending accept READ, empty recv queue zero
+readiness, queued payload READ, writable peer FIFO WRITE, full peer FIFO zero
+write readiness, peer close READ | HANGUP, invalid descriptor ERROR,
+non-socket descriptor ERROR, unsupported poll events EINVAL, malformed poll
+calls, scalar dispatch ENOTSUP, unchanged accepted socket diagnostics, and
+unchanged /bin/pingdiag behavior. It does not accept blocking waits, scheduler
+wait queues, timeout handling, UDP/TCP payload transport, cross-process/global
+poll sets, live driver adapters, live packet I/O, hardware reachability, lab
+mutation, boot publication, generated-root publication, SSH, smoltcp, broad
+socket expansion, public stable socket ABI acceptance, or phase transition.
+The selected next bounded task is
+phase12-network-shell-sockdiag-readiness-poll-closeout-20260621.

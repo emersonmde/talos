@@ -1,0 +1,39 @@
+{
+  "task_id": "phase12-network-shell-sockdiag-readiness-poll-smoke-20260621",
+  "classification": "phase12-network-shell-sockdiag-readiness-poll-smoke-accepted",
+  "evidence_dir": "tasks/evidence/2026-06-21-shell-sockdiag-readiness-poll-smoke",
+  "artifacts": {
+    "smoke_command": "scripts/qemu-shell-sockdiag-readiness-poll-smoke.sh",
+    "qemu_substitute_log": "qemu-shell-sockdiag-readiness-poll-smoke.log",
+    "source_anchors": "source-anchors.txt",
+    "smoke_transcript": "smoke-transcript.md",
+    "classification": "classification.json"
+  },
+  "source_tests": [
+    "src/local_command_loop.rs::local_command_loop_execs_shell_visible_sockdiag_through_vfs_socket_syscalls",
+    "src/syscall.rs::talos_poll_reports_listener_local_payload_and_peer_hangup_readiness",
+    "src/syscall.rs::talos_poll_reports_write_backpressure_and_deterministic_entry_errors",
+    "src/syscall.rs::talos_poll_rejects_malformed_calls_and_scalar_dispatch_fails_closed",
+    "src/local_command_loop.rs::local_command_loop_execs_shell_visible_pingdiag_through_vfs_diagnostic_layers"
+  ],
+  "source_components": [
+    "src/initramfs.rs::PHASE12_SOCKDIAG_PATH",
+    "src/local_command_loop.rs::DescriptorBackedLocalCommandIo::exec_shell_sockdiag_diagnostic",
+    "src/local_command_loop.rs::write_exec_sockdiag_line",
+    "src/local_command_loop.rs::write_exec_sockdiag_controls_line",
+    "src/syscall.rs::TALOS_POLL_SYSCALL",
+    "src/syscall.rs::dispatch_process_descriptor_with_socket_table",
+    "src/syscall.rs::dispatch_talos_poll",
+    "src/network.rs::NetworkSocketReadiness",
+    "src/network.rs::NetworkSocketDescriptorTable::readiness",
+    "src/posix.rs::DescriptorObjectKind::Socket"
+  ],
+  "smoke_result": {
+    "command": "scripts/qemu-shell-sockdiag-readiness-poll-smoke.sh",
+    "result": "passed",
+    "filtered_invocations": 5,
+    "tests_per_invocation": 679,
+    "final_log_line": "qemu-shell-sockdiag-readiness-poll-smoke: PASS classification=host-substitute-shell-sockdiag-readiness-poll-smoke-complete"
+  },
+  "selected_next_task": "phase12-network-shell-sockdiag-readiness-poll-closeout-20260621"
+}
