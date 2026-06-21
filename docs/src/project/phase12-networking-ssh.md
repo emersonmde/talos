@@ -5623,3 +5623,24 @@ Pi 5 hardware behavior, lab mutation, boot publication, hardware reachability,
 SSH, public stable socket ABI acceptance, broad socket expansion, or phase
 transition. The selected next bounded task is
 phase12-network-smoltcp-packet-device-adapter-core-20260621.
+
+phase12-network-smoltcp-packet-device-adapter-core-20260621 accepts
+phase12-network-smoltcp-packet-device-adapter-core-accepted. src/network.rs
+now owns SmoltcpPacketDeviceAdapter as a host-only smoltcp phy::Device boundary
+over PacketQueueNetworkDevice. The adapter keeps frame storage fixed-capacity,
+maps receive outcomes to Received, NoFrame, TransmitQueueFull,
+ReceiveBufferTooSmall, and ReceiveError, maps transmit outcomes to Ready,
+Transmitted, TransmitQueueFull, FrameTooLarge, and TransmitError, and exposes
+Ethernet DeviceCapabilities with a single-frame burst.
+
+The accepted evidence level is source/unit plus host/QEMU-substitute only:
+cargo fmt and the full cargo -Zjson-target-spec test suite passed with the
+project QEMU path. Focused tests cover receive/reply frame movement,
+no-frame behavior, transmit queue pressure without consuming receive frames,
+device receive errors, transmit errors, and frame bounds. This task does not
+accept TCP handshake behavior, UDP/TCP payload transport, socket syscall
+bridging, shell diagnostic expansion, live driver adapters, live packet I/O,
+Pi 5 hardware behavior, lab mutation, boot publication, hardware reachability,
+SSH, public stable socket ABI acceptance, broad socket expansion, or phase
+transition. The selected next bounded task is
+phase12-network-smoltcp-loopback-tcp-handshake-core-20260621.

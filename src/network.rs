@@ -69,6 +69,139 @@ impl SmoltcpDependencyCore {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SmoltcpPacketDeviceAdapterReceiveResult {
+    Idle,
+    Received { frame_len: usize },
+    NoFrame,
+    TransmitQueueFull,
+    ReceiveBufferTooSmall,
+    ReceiveError(DeviceError),
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SmoltcpPacketDeviceAdapterTransmitResult {
+    Idle,
+    Ready,
+    Transmitted { frame_len: usize },
+    TransmitQueueFull,
+    FrameTooLarge { required_len: usize, max_len: usize },
+    TransmitError(DeviceError),
+}
+
+pub(crate) struct SmoltcpPacketDeviceAdapter<
+    const RX_CAPACITY: usize,
+    const TX_CAPACITY: usize,
+    const FRAME_CAPACITY: usize,
+> {
+    device: PacketQueueNetworkDevice<RX_CAPACITY, TX_CAPACITY, FRAME_CAPACITY>,
+    receive_buffer: [u8; FRAME_CAPACITY],
+    last_receive_result: SmoltcpPacketDeviceAdapterReceiveResult,
+    last_transmit_result: SmoltcpPacketDeviceAdapterTransmitResult,
+}
+
+impl<const RX_CAPACITY: usize, const TX_CAPACITY: usize, const FRAME_CAPACITY: usize>
+    SmoltcpPacketDeviceAdapter<RX_CAPACITY, TX_CAPACITY, FRAME_CAPACITY>
+{
+    pub(crate) const fn new() -> Self {
+        Self {
+            device: PacketQueueNetworkDevice::new(),
+            receive_buffer: [0; FRAME_CAPACITY],
+            last_receive_result: SmoltcpPacketDeviceAdapterReceiveResult::Idle,
+            last_transmit_result: SmoltcpPacketDeviceAdapterTransmitResult::Idle,
+        }
+    }
+
+    pub(crate) fn inject_received(&mut self, frame: &[u8]) -> Result<(), PacketQueueError> {
+        self.device.inject_received(frame)
+    }
+
+    pub(crate) fn pop_transmitted(&mut self) -> Option<PacketQueueFrame<FRAME_CAPACITY>> {
+        self.device.pop_transmitted()
+    }
+
+    pub(crate) fn received_len(&self) -> usize {
+        self.device.received_len()
+    }
+
+    pub(crate) fn transmitted_len(&self) -> usize {
+        self.device.transmitted_len()
+    }
+
+    pub(crate) fn set_receive_error(&mut self, error: Option<DeviceError>) {
+        self.device.set_receive_error(error);
+    }
+
+    pub(crate) fn set_transmit_error(&mut self, error: Option<DeviceError>) {
+        self.device.set_transmit_error(error);
+    }
+
+    pub(crate) const fn last_receive_result(&self) -> SmoltcpPacketDeviceAdapterReceiveResult {
+        self.last_receive_result
+    }
+
+    pub(crate) const fn last_transmit_result(&self) -> SmoltcpPacketDeviceAdapterTransmitResult {
+        self.last_transmit_result
+    }
+}
+
+pub(crate) struct SmoltcpPacketDeviceRxToken<const FRAME_CAPACITY: usize> {
+    frame: PacketQueueFrame<FRAME_CAPACITY>,
+}
+
+impl<const FRAME_CAPACITY: usize> smoltcp::phy::RxToken
+    for SmoltcpPacketDeviceRxToken<FRAME_CAPACITY>
+{
+    fn consume<R, F>(self, f: F) -> R
+    where
+        F: FnOnce(&[u8]) -> R,
+    {
+        f(self.frame.as_bytes())
+    }
+}
+
+pub(crate) struct SmoltcpPacketDeviceTxToken<
+    'a,
+    const RX_CAPACITY: usize,
+    const TX_CAPACITY: usize,
+    const FRAME_CAPACITY: usize,
+> {
+    device: &'a mut PacketQueueNetworkDevice<RX_CAPACITY, TX_CAPACITY, FRAME_CAPACITY>,
+    status: &'a mut SmoltcpPacketDeviceAdapterTransmitResult,
+}
+
+impl<const RX_CAPACITY: usize, const TX_CAPACITY: usize, const FRAME_CAPACITY: usize>
+    smoltcp::phy::TxToken
+    for SmoltcpPacketDeviceTxToken<'_, RX_CAPACITY, TX_CAPACITY, FRAME_CAPACITY>
+{
+    fn consume<R, F>(self, len: usize, f: F) -> R
+    where
+        F: FnOnce(&mut [u8]) -> R,
+    {
+        let mut frame = [0; FRAME_CAPACITY];
+        if len > FRAME_CAPACITY {
+            let result = f(&mut frame[..0]);
+            *self.status = SmoltcpPacketDeviceAdapterTransmitResult::FrameTooLarge {
+                required_len: len,
+                max_len: FRAME_CAPACITY,
+            };
+            return result;
+        }
+
+        let result = f(&mut frame[..len]);
+        match self.device.transmit_frame(&frame[..len]) {
+            Ok(()) => {
+                *self.status =
+                    SmoltcpPacketDeviceAdapterTransmitResult::Transmitted { frame_len: len };
+            }
+            Err(error) => {
+                *self.status = SmoltcpPacketDeviceAdapterTransmitResult::TransmitError(error);
+            }
+        }
+        result
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum PacketQueueError {
     Full,
     FrameTooLarge { required_len: usize, max_len: usize },
@@ -296,6 +429,81 @@ impl<const RX_CAPACITY: usize, const TX_CAPACITY: usize, const FRAME_CAPACITY: u
         }
 
         self.tx.push(frame).map_err(|_| DeviceError::BufferTooSmall)
+    }
+}
+
+impl<const RX_CAPACITY: usize, const TX_CAPACITY: usize, const FRAME_CAPACITY: usize>
+    smoltcp::phy::Device for SmoltcpPacketDeviceAdapter<RX_CAPACITY, TX_CAPACITY, FRAME_CAPACITY>
+{
+    type RxToken<'a>
+        = SmoltcpPacketDeviceRxToken<FRAME_CAPACITY>
+    where
+        Self: 'a;
+    type TxToken<'a>
+        = SmoltcpPacketDeviceTxToken<'a, RX_CAPACITY, TX_CAPACITY, FRAME_CAPACITY>
+    where
+        Self: 'a;
+
+    fn receive(
+        &mut self,
+        _timestamp: smoltcp::time::Instant,
+    ) -> Option<(Self::RxToken<'_>, Self::TxToken<'_>)> {
+        if self.device.transmitted_len() == TX_CAPACITY {
+            self.last_receive_result = SmoltcpPacketDeviceAdapterReceiveResult::TransmitQueueFull;
+            return None;
+        }
+
+        match self.device.receive_frame(&mut self.receive_buffer) {
+            Ok(frame) => {
+                let frame_len = frame.len();
+                let frame = PacketQueueFrame::new(frame).expect("receive buffer bounds frame");
+                self.last_receive_result =
+                    SmoltcpPacketDeviceAdapterReceiveResult::Received { frame_len };
+                self.last_transmit_result = SmoltcpPacketDeviceAdapterTransmitResult::Ready;
+                Some((
+                    SmoltcpPacketDeviceRxToken { frame },
+                    SmoltcpPacketDeviceTxToken {
+                        device: &mut self.device,
+                        status: &mut self.last_transmit_result,
+                    },
+                ))
+            }
+            Err(DeviceError::WouldBlock) => {
+                self.last_receive_result = SmoltcpPacketDeviceAdapterReceiveResult::NoFrame;
+                None
+            }
+            Err(DeviceError::BufferTooSmall) => {
+                self.last_receive_result =
+                    SmoltcpPacketDeviceAdapterReceiveResult::ReceiveBufferTooSmall;
+                None
+            }
+            Err(error) => {
+                self.last_receive_result =
+                    SmoltcpPacketDeviceAdapterReceiveResult::ReceiveError(error);
+                None
+            }
+        }
+    }
+
+    fn transmit(&mut self, _timestamp: smoltcp::time::Instant) -> Option<Self::TxToken<'_>> {
+        if self.device.transmitted_len() == TX_CAPACITY {
+            self.last_transmit_result = SmoltcpPacketDeviceAdapterTransmitResult::TransmitQueueFull;
+            return None;
+        }
+
+        self.last_transmit_result = SmoltcpPacketDeviceAdapterTransmitResult::Ready;
+        Some(SmoltcpPacketDeviceTxToken {
+            device: &mut self.device,
+            status: &mut self.last_transmit_result,
+        })
+    }
+
+    fn capabilities(&self) -> smoltcp::phy::DeviceCapabilities {
+        let mut capabilities = smoltcp::phy::DeviceCapabilities::default();
+        capabilities.medium = smoltcp::phy::Medium::Ethernet;
+        capabilities.max_transmission_unit = FRAME_CAPACITY;
+        capabilities.max_burst_size = Some(1);
+        capabilities
     }
 }
 
@@ -4807,6 +5015,143 @@ mod tests {
             core.poll_without_device(),
             SmoltcpDependencyCorePollResult::NoDeviceBound
         );
+    }
+
+    #[test_case]
+    fn smoltcp_packet_device_adapter_moves_receive_and_reply_frames() {
+        let mut adapter = SmoltcpPacketDeviceAdapter::<2, 2, 64>::new();
+        adapter
+            .inject_received(ETHERNET_IPV4_FRAME)
+            .expect("inject frame");
+
+        let (rx, tx) =
+            smoltcp::phy::Device::receive(&mut adapter, smoltcp::time::Instant::from_millis(1))
+                .expect("smoltcp receive token");
+        smoltcp::phy::RxToken::consume(rx, |frame| {
+            assert_eq!(frame, ETHERNET_IPV4_FRAME);
+        });
+        smoltcp::phy::TxToken::consume(tx, 3, |frame| {
+            frame.copy_from_slice(&[0xaa, 0xbb, 0xcc]);
+        });
+        assert_eq!(
+            adapter.last_receive_result(),
+            SmoltcpPacketDeviceAdapterReceiveResult::Received {
+                frame_len: ETHERNET_IPV4_FRAME.len(),
+            }
+        );
+        assert_eq!(
+            adapter.last_transmit_result(),
+            SmoltcpPacketDeviceAdapterTransmitResult::Transmitted { frame_len: 3 }
+        );
+        assert_eq!(adapter.received_len(), 0);
+        assert_eq!(adapter.transmitted_len(), 1);
+        assert_eq!(
+            adapter
+                .pop_transmitted()
+                .expect("transmitted reply")
+                .as_bytes(),
+            &[0xaa, 0xbb, 0xcc]
+        );
+    }
+
+    #[test_case]
+    fn smoltcp_packet_device_adapter_reports_no_frame_and_transmit_queue_pressure() {
+        let mut adapter = SmoltcpPacketDeviceAdapter::<2, 1, 64>::new();
+
+        assert!(
+            smoltcp::phy::Device::receive(&mut adapter, smoltcp::time::Instant::from_millis(1),)
+                .is_none()
+        );
+        assert_eq!(
+            adapter.last_receive_result(),
+            SmoltcpPacketDeviceAdapterReceiveResult::NoFrame
+        );
+
+        let tx =
+            smoltcp::phy::Device::transmit(&mut adapter, smoltcp::time::Instant::from_millis(2))
+                .expect("transmit token");
+        smoltcp::phy::TxToken::consume(tx, 2, |frame| {
+            frame.copy_from_slice(&[1, 2]);
+        });
+        assert_eq!(
+            adapter.last_transmit_result(),
+            SmoltcpPacketDeviceAdapterTransmitResult::Transmitted { frame_len: 2 }
+        );
+        assert!(
+            smoltcp::phy::Device::transmit(&mut adapter, smoltcp::time::Instant::from_millis(3))
+                .is_none()
+        );
+        assert_eq!(
+            adapter.last_transmit_result(),
+            SmoltcpPacketDeviceAdapterTransmitResult::TransmitQueueFull
+        );
+
+        adapter
+            .inject_received(&[0x10, 0x20])
+            .expect("inject held receive frame");
+        assert!(
+            smoltcp::phy::Device::receive(&mut adapter, smoltcp::time::Instant::from_millis(4),)
+                .is_none()
+        );
+        assert_eq!(
+            adapter.last_receive_result(),
+            SmoltcpPacketDeviceAdapterReceiveResult::TransmitQueueFull
+        );
+        assert_eq!(adapter.received_len(), 1);
+    }
+
+    #[test_case]
+    fn smoltcp_packet_device_adapter_maps_device_errors_and_frame_bounds() {
+        let mut adapter = SmoltcpPacketDeviceAdapter::<2, 2, 64>::new();
+        adapter
+            .inject_received(&[1, 2, 3])
+            .expect("inject frame before receive error");
+        adapter.set_receive_error(Some(DeviceError::Io));
+
+        assert!(
+            smoltcp::phy::Device::receive(&mut adapter, smoltcp::time::Instant::from_millis(1),)
+                .is_none()
+        );
+        assert_eq!(
+            adapter.last_receive_result(),
+            SmoltcpPacketDeviceAdapterReceiveResult::ReceiveError(DeviceError::Io)
+        );
+        assert_eq!(adapter.received_len(), 1);
+
+        adapter.set_receive_error(None);
+        let (rx, _reply_tx) =
+            smoltcp::phy::Device::receive(&mut adapter, smoltcp::time::Instant::from_millis(2))
+                .expect("receive after clearing error");
+        smoltcp::phy::RxToken::consume(rx, |frame| assert_eq!(frame, &[1, 2, 3]));
+
+        adapter.set_transmit_error(Some(DeviceError::Io));
+        let tx =
+            smoltcp::phy::Device::transmit(&mut adapter, smoltcp::time::Instant::from_millis(3))
+                .expect("transmit token");
+        smoltcp::phy::TxToken::consume(tx, 2, |frame| {
+            frame.copy_from_slice(&[9, 8]);
+        });
+        assert_eq!(
+            adapter.last_transmit_result(),
+            SmoltcpPacketDeviceAdapterTransmitResult::TransmitError(DeviceError::Io)
+        );
+        assert_eq!(adapter.transmitted_len(), 0);
+
+        adapter.set_transmit_error(None);
+        let tx =
+            smoltcp::phy::Device::transmit(&mut adapter, smoltcp::time::Instant::from_millis(4))
+                .expect("bounded transmit token");
+        smoltcp::phy::TxToken::consume(tx, 65, |frame| {
+            assert!(frame.is_empty());
+        });
+        assert_eq!(
+            adapter.last_transmit_result(),
+            SmoltcpPacketDeviceAdapterTransmitResult::FrameTooLarge {
+                required_len: 65,
+                max_len: 64,
+            }
+        );
+        assert_eq!(adapter.transmitted_len(), 0);
     }
 
     #[test_case]

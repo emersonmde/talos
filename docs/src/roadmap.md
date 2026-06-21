@@ -15303,6 +15303,19 @@ Milestone 12.3: IP Stack
   broad socket expansion, and phase transition remain rejected. The selected
   next bounded task is
   phase12-network-smoltcp-packet-device-adapter-core-20260621.
+- phase12-network-smoltcp-packet-device-adapter-core-20260621 accepts the
+  host-only smoltcp packet-device adapter core. src/network.rs now owns
+  SmoltcpPacketDeviceAdapter as a smoltcp phy::Device boundary over
+  PacketQueueNetworkDevice with fixed frame storage, explicit Ethernet
+  DeviceCapabilities, deterministic receive result mapping, and deterministic
+  transmit result mapping. Source/unit plus host/QEMU-substitute evidence
+  passes cargo fmt and the full cargo -Zjson-target-spec test suite. Existing
+  runtime ping, pingdiag, and sockdiag behavior remains separate from smoltcp.
+  TCP handshake behavior, UDP/TCP payload transport, socket syscall bridging,
+  shell diagnostic expansion, live driver adapters, live packet I/O, hardware
+  reachability, SSH, public stable socket ABI acceptance, broad socket
+  expansion, and phase transition remain rejected. The selected next bounded
+  task is phase12-network-smoltcp-loopback-tcp-handshake-core-20260621.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
