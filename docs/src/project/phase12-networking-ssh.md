@@ -5754,3 +5754,22 @@ evidence, live packet I/O, hardware reachability, SSH, public stable socket
 ABI acceptance, broad socket expansion, UDP/raw sockets, or phase transition.
 The selected next bounded task is
 phase12-network-shell-sockdiag-smoltcp-tcp-smoke-20260621.
+
+phase12-network-shell-sockdiag-smoltcp-tcp-smoke-20260621 accepts
+phase12-network-shell-sockdiag-smoltcp-tcp-smoke-accepted. The retained
+host/QEMU-substitute smoke evidence records shell-visible /bin/sockdiag
+reaching the private host-only smoltcp TCP bridge diagnostic through VFS
+executable lookup/open/read, startup ABI, the existing private socket syscall
+path, and descriptor-backed SmoltcpSocketBridgeRecord evidence.
+
+The retained smoke covers Established smoltcp client/server handshake states,
+deterministic handshake step/frame counters, accepted-descriptor attachment,
+one bounded payload-transfer observation, Established payload states, waitpid,
+laststatus, malformed arguments, missing executable identity, unchanged local
+socket diagnostics, unchanged /bin/pingdiag, and unchanged bounded syscall
+vocabulary. Evidence remains host/QEMU-substitute only. Live packet I/O, Pi 5
+hardware behavior, hardware reachability, lab mutation, boot publication,
+generated-root publication, SSH, public stable socket ABI acceptance, broad
+socket expansion, UDP/raw sockets, and phase transition remain rejected. The
+selected next bounded task is
+phase12-network-shell-sockdiag-smoltcp-tcp-closeout-20260621.

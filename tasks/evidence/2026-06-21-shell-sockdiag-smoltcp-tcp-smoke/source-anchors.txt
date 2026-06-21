@@ -1,0 +1,26 @@
+Task: phase12-network-shell-sockdiag-smoltcp-tcp-smoke-20260621
+
+Smoke command:
+- scripts/qemu-shell-sockdiag-smoltcp-tcp-smoke.sh:1 task-owned retained host/QEMU-substitute smoke command.
+- scripts/qemu-shell-sockdiag-smoltcp-tcp-smoke.sh:34 records boundary, lifecycle, deterministic controls, and focused filters.
+
+VFS/userspace executable anchors:
+- src/initramfs.rs:49 PHASE12_SOCKDIAG_PATH is /bin/sockdiag.
+- src/initramfs.rs:903 exposes sockdiag in the read-only /bin fixture.
+- src/local_command_loop.rs:43 tags the shell-visible smoltcp TCP sockdiag boundary.
+
+Shell-visible smoltcp TCP bridge anchors:
+- src/local_command_loop.rs:772 records smoltcp bridge fields in LocalCommandSockdiagRecord.
+- src/local_command_loop.rs:2277 reads the connection id from the private AF_INET/SOCK_STREAM descriptor state after connect.
+- src/local_command_loop.rs:2286 verifies the SmoltcpSocketBridgeRecord Established handshake before continuing.
+- src/local_command_loop.rs:2434 verifies the accepted socket descriptor is attached to the bridge record after accept.
+- src/local_command_loop.rs:2714 verifies one bounded smoltcp payload-transfer observation after send.
+- src/local_command_loop.rs:3564 stores the smoltcp bridge evidence in the shell-visible diagnostic record.
+- src/local_command_loop.rs:7323 renders the smoltcp bridge fields in /bin/sockdiag output.
+- src/local_command_loop.rs:8377 asserts the retained shell-visible output includes Established handshake and payload-transfer smoltcp fields.
+
+Retained log anchors:
+- tasks/evidence/2026-06-21-shell-sockdiag-smoltcp-tcp-smoke/qemu-shell-sockdiag-smoltcp-tcp-smoke.log:7 filtered /bin/sockdiag VFS/userspace source/unit smoke.
+- tasks/evidence/2026-06-21-shell-sockdiag-smoltcp-tcp-smoke/qemu-shell-sockdiag-smoltcp-tcp-smoke.log:704 filtered private smoltcp bridge regression.
+- tasks/evidence/2026-06-21-shell-sockdiag-smoltcp-tcp-smoke/qemu-shell-sockdiag-smoltcp-tcp-smoke.log:1401 filtered /bin/pingdiag regression/control.
+- tasks/evidence/2026-06-21-shell-sockdiag-smoltcp-tcp-smoke/qemu-shell-sockdiag-smoltcp-tcp-smoke.log:2098 PASS classification.

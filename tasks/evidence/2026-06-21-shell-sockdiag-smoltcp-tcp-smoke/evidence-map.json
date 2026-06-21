@@ -1,0 +1,38 @@
+{
+  "task_id": "phase12-network-shell-sockdiag-smoltcp-tcp-smoke-20260621",
+  "classification": "phase12-network-shell-sockdiag-smoltcp-tcp-smoke-accepted",
+  "evidence_dir": "tasks/evidence/2026-06-21-shell-sockdiag-smoltcp-tcp-smoke",
+  "artifacts": {
+    "smoke_command": "scripts/qemu-shell-sockdiag-smoltcp-tcp-smoke.sh",
+    "qemu_substitute_log": "qemu-shell-sockdiag-smoltcp-tcp-smoke.log",
+    "smoke_transcript": "smoke-transcript.md",
+    "source_anchors": "source-anchors.txt",
+    "classification": "classification.json"
+  },
+  "source_unit_filters": [
+    "src/local_command_loop.rs::local_command_loop_execs_shell_visible_sockdiag_through_vfs_socket_syscalls",
+    "src/syscall.rs::talos_smoltcp_socket_bridge_transfers_payload_through_private_syscalls",
+    "src/local_command_loop.rs::local_command_loop_execs_shell_visible_pingdiag_through_vfs_diagnostic_layers"
+  ],
+  "source_anchors": [
+    "src/initramfs.rs::PHASE12_SOCKDIAG_PATH",
+    "src/local_command_loop.rs::LOCAL_COMMAND_BUILTIN_BOUNDARY",
+    "src/local_command_loop.rs::DescriptorBackedLocalCommandIo::exec_shell_sockdiag_diagnostic",
+    "src/local_command_loop.rs::LocalCommandSockdiagRecord",
+    "src/local_command_loop.rs::write_exec_sockdiag_line",
+    "src/local_command_loop.rs::local_smoltcp_tcp_state_name",
+    "src/network.rs::SmoltcpSocketBridgeRecord",
+    "src/syscall.rs::talos_smoltcp_socket_bridge_transfers_payload_through_private_syscalls"
+  ],
+  "validation": {
+    "command": "scripts/qemu-shell-sockdiag-smoltcp-tcp-smoke.sh",
+    "result": "passed",
+    "test_result_summaries": [
+      "local_command_loop_execs_shell_visible_sockdiag_through_vfs_socket_syscalls: test result ok, 693 passed",
+      "talos_smoltcp_socket_bridge_transfers_payload_through_private_syscalls: test result ok, 693 passed",
+      "local_command_loop_execs_shell_visible_pingdiag_through_vfs_diagnostic_layers: test result ok, 693 passed"
+    ],
+    "final_log_line": "qemu-shell-sockdiag-smoltcp-tcp-smoke: PASS classification=host-substitute-shell-sockdiag-smoltcp-tcp-smoke-complete"
+  },
+  "selected_next_task": "phase12-network-shell-sockdiag-smoltcp-tcp-closeout-20260621"
+}

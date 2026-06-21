@@ -1,0 +1,28 @@
+{
+  "task_id": "phase12-network-shell-sockdiag-smoltcp-tcp-smoke-20260621",
+  "classification": "phase12-network-shell-sockdiag-smoltcp-tcp-smoke-accepted",
+  "evidence_level": "host/QEMU-substitute",
+  "smoke_classification": "host-substitute-shell-sockdiag-smoltcp-tcp-smoke-complete",
+  "accepted_boundary": "shell-visible VFS/userspace /bin/sockdiag execution of the private host-only smoltcp TCP bridge diagnostic through existing private socket syscalls and descriptor-backed bridge records",
+  "retained_controls": [
+    "exec /bin/sockdiag resolves through VFS executable lookup/open/read",
+    "private socket syscall dispatch reports Established smoltcp handshake states",
+    "accepted descriptor attachment and one bounded payload-transfer observation are visible in /bin/sockdiag output",
+    "malformed arguments, missing executable identity, local socket diagnostics, pingdiag, and bounded syscall vocabulary remain covered"
+  ],
+  "rejected_claims": [
+    "live packet I/O",
+    "Pi 5 hardware behavior",
+    "hardware reachability",
+    "hardwareTestLock acquisition",
+    "lab mutation",
+    "boot publication",
+    "generated-root publication",
+    "SSH",
+    "public stable socket ABI acceptance",
+    "broad socket expansion",
+    "UDP/raw sockets",
+    "phase transition"
+  ],
+  "selected_next_task": "phase12-network-shell-sockdiag-smoltcp-tcp-closeout-20260621"
+}
