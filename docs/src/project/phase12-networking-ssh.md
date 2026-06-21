@@ -5773,3 +5773,24 @@ generated-root publication, SSH, public stable socket ABI acceptance, broad
 socket expansion, UDP/raw sockets, and phase transition remain rejected. The
 selected next bounded task is
 phase12-network-shell-sockdiag-smoltcp-tcp-closeout-20260621.
+
+phase12-network-shell-sockdiag-smoltcp-tcp-closeout-20260621 accepts
+phase12-network-shell-sockdiag-smoltcp-tcp-closeout-accepted. The
+shell-visible smoltcp TCP diagnostic frontier is now closed at source/unit
+plus retained host/QEMU-substitute smoke evidence over VFS/userspace
+/bin/sockdiag execution and the private descriptor-backed host-only smoltcp TCP
+bridge only.
+
+The accepted boundary covers VFS executable lookup/open/read, startup ABI,
+private socket/bind/listen/connect/accept/send/recv/poll/poll-wait/close
+dispatch, process descriptor ownership, SmoltcpSocketBridgeRecord reporting,
+Established client/server handshake states, deterministic step/frame counters,
+accepted-descriptor attachment, one bounded payload-transfer observation,
+waitpid, laststatus, deterministic controls, unchanged local socket
+diagnostics, unchanged /bin/pingdiag, and bounded syscall vocabulary. This
+closeout rejects live driver adapters, live packet I/O, Pi 5 hardware
+behavior, lab mutation, boot publication, generated-root publication, hardware
+reachability, SSH, public stable socket ABI acceptance, broad socket
+expansion, UDP/raw sockets, and phase transition. planningNeeded=true; no
+later bounded socket/network task is mechanically unblocked without supervisor
+planning.
