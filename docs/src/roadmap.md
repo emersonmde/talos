@@ -15059,6 +15059,22 @@ Milestone 12.3: IP Stack
   stable socket ABI acceptance, and phase transition remain rejected.
   selected_next_task is null and planningNeeded=true pending supervisor
   planning for any next bounded Phase 12.4 socket or network task.
+- The socket readiness/poll ABI contract accepts only a private nonblocking
+  readiness query over accepted process-local socket states. It selects
+  TALOS_POLL_SYSCALL = 13 on the existing STABLE_SVC_IMMEDIATE = 0 path with
+  x0 as a user poll-entry array pointer, x1 as a bounded entry count from 1
+  through 8, x2 as flags=0, and x3=x4=x5 reserved. Each 16-byte entry carries
+  fd, requested events, and returned events. Private READ, WRITE, HANGUP, and
+  ERROR bits report listener pending-accept readiness, connected/accepted
+  inbound FIFO bytes, peer inbound FIFO capacity, peer close/drop, and
+  descriptor-specific errors. The accepted claim remains nonblocking,
+  descriptor-backed, process-local readiness only; runtime implementation,
+  shell /bin/sockdiag readiness output, retained smoke evidence, blocking
+  sleep, scheduler wait queues, timeout handling, UDP/TCP payload transport,
+  cross-process/global poll sets, live packet I/O, hardware reachability, SSH,
+  public stable socket ABI acceptance, broad socket expansion, and phase
+  transition remain rejected. The selected next bounded task is
+  phase12-network-socket-readiness-poll-core-20260621.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

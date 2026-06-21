@@ -5214,3 +5214,34 @@ generated-root publication, SSH, broad socket expansion, public stable socket
 ABI acceptance, and phase transition. selected_next_task is null and
 planningNeeded=true pending supervisor planning for any next bounded Phase
 12.4 socket or network task.
+
+phase12-network-socket-readiness-poll-abi-contract-20260621 accepts
+phase12-network-socket-readiness-poll-abi-contract-accepted. Supervisor
+planning after the shell-visible sockdiag send/recv closeout selected the next
+bounded socket integration boundary: private nonblocking readiness observation
+for accepted process-local socket states.
+
+The accepted contract reserves future private TALOS_POLL_SYSCALL = 13 on the
+existing STABLE_SVC_IMMEDIATE = 0 path. The syscall uses x0 as a caller-owned
+user poll-entry array pointer, x1 as an entry count from 1 through 8, x2 as
+flags=0, and x3=x4=x5 as reserved zero registers. Each entry is a fixed
+16-byte native layout: fd, events, and revents. Supported private readiness
+bits are READ, WRITE, HANGUP, and ERROR; unsupported flags, reserved
+registers, bad event masks, zero entries, or too many entries return EINVAL,
+and caller-buffer copy failures return EFAULT.
+
+Readiness remains descriptor-backed and process-local only. Listening sockets
+report READ when a pending local peer can be accepted. Connected and Accepted
+sockets report READ when their inbound FIFO has bytes, WRITE when a one-byte
+send would fit in the unique local peer's inbound FIFO, and HANGUP when the
+accepted reverse-endpoint peer is absent or closed. Queued bytes after peer
+close report READ | HANGUP, and an empty queue after peer close still reports
+READ | HANGUP so a subsequent nonblocking recv can observe EPIPE. Invalid,
+closed, wrong-owner, non-socket, or missing-backing descriptors report
+per-entry ERROR. This contract does not accept runtime implementation, shell
+/bin/sockdiag readiness output, retained smoke evidence, blocking sleep,
+scheduler wait queues, wakeup registration, timeout handling, UDP/TCP payload
+transport, cross-process/global poll sets, live packet I/O, hardware
+reachability, SSH, public stable socket ABI acceptance, broad socket
+expansion, or phase transition. The selected next bounded task is
+phase12-network-socket-readiness-poll-core-20260621.
