@@ -15289,6 +15289,20 @@ Milestone 12.3: IP Stack
   stable socket ABI acceptance, broad socket expansion, or phase transition.
   The selected next bounded task is
   phase12-network-smoltcp-no-std-dependency-core-20260621.
+- phase12-network-smoltcp-no-std-dependency-core-20260621 accepts the minimal
+  no_std smoltcp dependency core. Cargo.toml pins smoltcp 0.13.1 with
+  default-features=false and only medium-ethernet, proto-ipv4, and socket-tcp
+  enabled; Cargo.lock records the resulting bounded transitive dependency
+  closure. src/network.rs owns SmoltcpDependencyCore as a Talos-first
+  closed/no-device-bound boundary over smoltcp EthernetAddress, Ipv4Cidr, and
+  TCP State symbols. Source/unit plus host/QEMU-substitute evidence passes
+  cargo fmt and the full cargo -Zjson-target-spec test suite. Packet movement
+  through smoltcp, TCP handshake behavior, UDP/TCP payload transport, socket
+  syscall bridging, shell diagnostic expansion, live driver adapters, live
+  packet I/O, hardware reachability, SSH, public stable socket ABI acceptance,
+  broad socket expansion, and phase transition remain rejected. The selected
+  next bounded task is
+  phase12-network-smoltcp-packet-device-adapter-core-20260621.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

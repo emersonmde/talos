@@ -5604,3 +5604,22 @@ tasks explicitly adapt them to smoltcp. The selected next bounded task is
 phase12-network-smoltcp-no-std-dependency-core-20260621, which may add the
 dependency and minimal fail-closed source boundary but may not accept UDP/TCP
 payload transport.
+
+phase12-network-smoltcp-no-std-dependency-core-20260621 accepts
+phase12-network-smoltcp-no-std-dependency-core-accepted. Cargo now pins
+smoltcp 0.13.1 with default-features=false and only medium-ethernet,
+proto-ipv4, and socket-tcp enabled. src/network.rs owns
+SmoltcpDependencyCore as a Talos-first closed/no-device-bound source boundary
+using smoltcp EthernetAddress, Ipv4Cidr, and TCP State symbols. The focused
+source/unit test proves the dependency compiles and remains Closed/
+NoDeviceBound until a later adapter task binds packet queues to smoltcp.
+
+The accepted evidence level is source/unit plus host/QEMU-substitute only:
+cargo fmt and the full cargo -Zjson-target-spec test suite passed with the
+project QEMU path. This task does not accept TCP connection establishment,
+UDP/TCP payload transport, packet movement through smoltcp, socket syscall
+bridging, shell diagnostic expansion, live driver adapters, live packet I/O,
+Pi 5 hardware behavior, lab mutation, boot publication, hardware reachability,
+SSH, public stable socket ABI acceptance, broad socket expansion, or phase
+transition. The selected next bounded task is
+phase12-network-smoltcp-packet-device-adapter-core-20260621.

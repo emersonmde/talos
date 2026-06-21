@@ -28,6 +28,47 @@ pub(crate) trait NetworkDevice {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SmoltcpDependencyCorePollResult {
+    NoDeviceBound,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SmoltcpDependencyCore {
+    hardware_address: smoltcp::wire::EthernetAddress,
+    ipv4_cidr: smoltcp::wire::Ipv4Cidr,
+    tcp_state: smoltcp::socket::tcp::State,
+}
+
+impl SmoltcpDependencyCore {
+    pub(crate) fn new(mac: MacAddress, ipv4: [u8; 4], prefix_len: u8) -> Self {
+        Self {
+            hardware_address: smoltcp::wire::EthernetAddress::from_bytes(&mac.bytes()),
+            ipv4_cidr: smoltcp::wire::Ipv4Cidr::new(
+                smoltcp::wire::Ipv4Address::new(ipv4[0], ipv4[1], ipv4[2], ipv4[3]),
+                prefix_len,
+            ),
+            tcp_state: smoltcp::socket::tcp::State::Closed,
+        }
+    }
+
+    pub(crate) const fn hardware_address(&self) -> smoltcp::wire::EthernetAddress {
+        self.hardware_address
+    }
+
+    pub(crate) const fn ipv4_cidr(&self) -> smoltcp::wire::Ipv4Cidr {
+        self.ipv4_cidr
+    }
+
+    pub(crate) const fn tcp_state(&self) -> smoltcp::socket::tcp::State {
+        self.tcp_state
+    }
+
+    pub(crate) const fn poll_without_device(&self) -> SmoltcpDependencyCorePollResult {
+        SmoltcpDependencyCorePollResult::NoDeviceBound
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum PacketQueueError {
     Full,
     FrameTooLarge { required_len: usize, max_len: usize },
@@ -4746,6 +4787,26 @@ mod tests {
         assert_eq!(device.transmitted_len, 3);
         assert_eq!(device.transmit_frame(&[]), Err(DeviceError::WouldBlock));
         assert_eq!(device.transmit_frame(&[0xff]), Err(DeviceError::Io));
+    }
+
+    #[test_case]
+    fn smoltcp_dependency_core_keeps_tcp_closed_until_device_adapter_exists() {
+        let core =
+            SmoltcpDependencyCore::new(MacAddress::new([0x02, 0, 0, 0, 0, 1]), [192, 0, 2, 10], 24);
+
+        assert_eq!(
+            core.hardware_address(),
+            smoltcp::wire::EthernetAddress([0x02, 0, 0, 0, 0, 1])
+        );
+        assert_eq!(
+            core.ipv4_cidr(),
+            smoltcp::wire::Ipv4Cidr::new(smoltcp::wire::Ipv4Address::new(192, 0, 2, 10), 24)
+        );
+        assert_eq!(core.tcp_state(), smoltcp::socket::tcp::State::Closed);
+        assert_eq!(
+            core.poll_without_device(),
+            SmoltcpDependencyCorePollResult::NoDeviceBound
+        );
     }
 
     #[test_case]

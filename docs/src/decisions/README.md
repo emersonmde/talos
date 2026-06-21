@@ -43,6 +43,15 @@ ADR template:
   Packet-device adapter behavior, host-only TCP handshake proof, socket bridge,
   live driver adapters, hardware reachability, SSH, and public ABI stability
   require later explicit tasks.
+- Dependency-core update: phase12-network-smoltcp-no-std-dependency-core-20260621
+  implemented this boundary by pinning smoltcp 0.13.1 with
+  default-features=false and only medium-ethernet, proto-ipv4, and socket-tcp
+  enabled. src/network.rs owns SmoltcpDependencyCore, which starts with
+  smoltcp TCP State::Closed and returns NoDeviceBound until a later packet
+  adapter task exists. This update still does not accept packet movement,
+  TCP/UDP payload transport, socket syscall bridging, live packet I/O,
+  hardware reachability, SSH, public ABI stability, broad socket expansion, or
+  phase transition.
 - Alternatives considered: continue expanding local socket diagnostics, write
   a bespoke TCP stack immediately, or adopt smoltcp with default features.
   Diagnostic expansion would not test the real feature, bespoke TCP is too much
