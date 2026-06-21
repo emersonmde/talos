@@ -16039,6 +16039,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   accepted. selected_next_task is null and planningNeeded=true because no
   later queued Phase 12.5 prerequisite task has complete objective
   dependencies and gates.
+- phase12-ssh-authorized-key-policy-contract-20260621 accepts the first
+  authorized-key source policy after host-key metadata readiness. Talos selects
+  operator-provisioned read-only VFS material at
+  /etc/talos/ssh/authorized_keys as the smallest reversible next prerequisite.
+  The next implementation may classify only regular-file presence and byte
+  length: missing preserves sshkeydiag-missing-authorized-key, invalid covers
+  non-regular, unreadable, zero-length, or oversized files, insufficient covers
+  lengths 1 through 63, and metadata-present covers lengths 64 through 4096
+  while clearing only the authorized-key metadata prerequisite. SSH readiness
+  remains false until persistence/exposure, SSH service behavior, live
+  transport, and reachability are accepted separately. The selected next
+  bounded task is phase12-ssh-authorized-key-vfs-metadata-core-20260621. This
+  contract does not accept authorized-key parsing, user authentication,
+  operator identity binding, writable storage, persistence/exposure, SSH
+  service behavior, live transport, hardware reachability, public
+  ABI/POSIX/Linux compatibility, broad expansion, stale link-ready
+  discriminator promotion, or phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

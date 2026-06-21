@@ -6602,3 +6602,27 @@ expansion, stale link-ready discriminator promotion, or phase transition is
 accepted. selected_next_task is null and planningNeeded=true because no later
 queued Phase 12.5 prerequisite task has complete objective dependencies and
 gates.
+
+phase12-ssh-authorized-key-policy-contract-20260621 accepts the first
+authorized-key source policy after host-key metadata readiness. Talos selects
+operator-provisioned read-only VFS material at
+/etc/talos/ssh/authorized_keys as the smallest reversible next prerequisite.
+The path is intended for a future OpenSSH authorized_keys-compatible public-key
+list, but this contract accepts no authorized-key parsing, user authentication,
+operator identity binding, writable storage, persistence/exposure, SSH service
+behavior, live transport, hardware reachability, public
+ABI/POSIX/Linux compatibility, broad expansion, stale link-ready discriminator
+promotion, or phase transition.
+
+The next implementation may expose only metadata for that read-only VFS file:
+missing path preserves sshkeydiag-missing-authorized-key; non-regular,
+unreadable, zero-length, or greater-than-4096-byte material is invalid;
+regular readable length 1 through 63 is insufficient; and regular readable
+length 64 through 4096 is metadata-present and clears only the authorized-key
+metadata prerequisite. Diagnostics, shell output, serial logs, docs, task
+evidence, and public surfaces must not retain, print, digest, fingerprint,
+derive from, compare, or otherwise expose authorized-key bytes, operator
+identity, key-derived identifiers, or comparable stable identifiers. ssh-ready
+remains false until persistence/exposure, SSH service behavior, live transport,
+and reachability prerequisites are separately accepted. The selected next
+bounded task is phase12-ssh-authorized-key-vfs-metadata-core-20260621.

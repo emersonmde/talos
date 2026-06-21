@@ -12,6 +12,48 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-21 - Phase 12 Authorized Keys Are Operator-Provisioned Read-Only VFS Metadata First
+
+- Status: accepted as the bounded authorized-key policy contract in
+  phase12-ssh-authorized-key-policy-contract-20260621. No runtime
+  implementation, authorized-key parsing, user authentication, operator
+  identity binding, writable storage, persistence/exposure, SSH service
+  behavior, live transport, hardware reachability, public
+  ABI/POSIX/Linux compatibility, broad expansion, stale link-ready
+  discriminator promotion, or phase transition is accepted here.
+- Context: Talos now has accepted operator-seeded CSPRNG readiness and
+  metadata-only host-key readiness, but ssh-ready remains false because
+  authorized-key metadata, persistence/exposure, service, transport, and
+  reachability prerequisites remain unaccepted. Choosing an authorized-key
+  source path before parsing or service work keeps the authentication boundary
+  explicit and reversible.
+- Decision: Use operator-provisioned read-only VFS material as the first
+  authorized-key source policy. Reserve /etc/talos/ssh/authorized_keys as the
+  first authorized-key path. The next implementation may classify only regular
+  file presence and byte length: missing, invalid, insufficient, or
+  metadata-present. Metadata-present clears only the authorized-key metadata
+  prerequisite; ssh-ready remains false until persistence/exposure, service,
+  transport, and reachability work is separately accepted.
+- Evidence level: static source/task/docs/evidence review of accepted host-key
+  metadata readiness records, sshkeydiag readiness records, operator-seeded
+  CSPRNG closeout, Phase 12 architecture notes, roadmap, and this ADR index.
+  The task record is
+  tasks/2026-06-21-phase12-ssh-authorized-key-policy-contract.md.
+- Consequences: The follow-up core task can add only VFS metadata ingestion,
+  labels/state for invalid and insufficient authorized-key metadata, focused
+  source/unit tests, and retained metadata-only evidence. A future parser or
+  service may later read authorized-key bytes for authentication, but
+  diagnostics and task evidence must not retain, print, digest, fingerprint,
+  derive from, compare, or expose authorized-key bytes, operator identity, or
+  stable key-derived identifiers.
+- Alternatives considered: parse authorized_keys immediately, store keys in
+  writable persistence, embed test/operator public keys in source, or skip
+  authorized-key policy until SSH service work. Immediate parsing broadens the
+  slice before the metadata prerequisite exists; writable persistence is not
+  accepted; embedded keys are not operator-provisioned material; and skipping
+  the policy would leave authentication source semantics ambiguous for the next
+  diagnostic.
+
 ## 2026-06-21 - Phase 12 Host Keys Are Operator-Provisioned Read-Only VFS Material First
 
 - Status: accepted as the bounded host-key provisioning policy contract in
