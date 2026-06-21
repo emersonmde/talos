@@ -1,0 +1,159 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-source-core-20260621",
+  "status": "accepted",
+  "classification": "bcm54213pe-lifecycle-ownership-powerdown-exit-source-core-local-static",
+  "evidence_level": [
+    "static source/task/docs/evidence review",
+    "focused Rust unit tests",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "selected_discriminator": "bcm54213pe-phy1-bmcr-powerdown-exit-gate",
+  "selected_next_task": "phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof-20260621",
+  "planningNeeded": false,
+  "hardware_authorized_by_this_task": false,
+  "accepted_input_frontier": {
+    "link_ready_source_contract": {
+      "task_id": "phase12-rp1-ethernet-link-ready-discriminator-source-contract-20260621",
+      "commit": "a4048ba329affda79f8506dba3c166242fdbdcbf",
+      "classification": "phase12-rp1-ethernet-link-ready-discriminator-source-contract-blocked-no-defensible-discriminator"
+    },
+    "low_power_lifecycle_checkpoint": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-low-power-lifecycle-source-checkpoint-20260618",
+      "classification": "bcm54213pe-low-power-lifecycle-no-distinct-source-backed-discriminator-pause"
+    },
+    "accepted_hardware_visible_frontier": {
+      "mii_ctrl1000_master_mode_write_readback": true,
+      "bmcr_autoneg_restart_write_count": "0x1",
+      "accepted_context_pre_bmcr": "0x1200",
+      "bmsr_link_status": false,
+      "bmsr_autoneg_complete": false,
+      "macb_nsr_link": false
+    }
+  },
+  "selected_sequence": {
+    "invariant": "The candidate owns only a BMCR_PDOWN exit gate: it may clear BMCR bit 11 only after a read-before-write snapshot proves that bit is set, then it must wait 40us before post-status sampling.",
+    "phy_address": 1,
+    "register_ownership": [
+      "PHY1 BMCR 0x00 read-before-write snapshot and conditional bit-11 clear",
+      "post BMCR 0x00 sample",
+      "post BMSR 0x01 double sample",
+      "post ANAR 0x04 sample",
+      "post ANLPAR 0x05 sample",
+      "post MII_CTRL1000 0x09 sample",
+      "post MII_STAT1000 0x0a sample",
+      "passive MACB_NSR_LINK context"
+    ],
+    "bmcr_powerdown_bit": "0x0800",
+    "clear_mask": "0xf7ff",
+    "accepted_context_pre_bmcr": "0x1200",
+    "accepted_context_expected_clear_value": "0x1200",
+    "accepted_context_write_frame": "0x50821200",
+    "ordering": [
+      "emit contract marker and capture nonce",
+      "pre-read BMCR",
+      "write only if BMCR_PDOWN is set",
+      "preserve all non-PDOWN BMCR bits",
+      "wait at least 40us after any PDOWN-clear write",
+      "post-sample BMCR/BMSR/ANAR/ANLPAR/MII_CTRL1000/MII_STAT1000/passive MACB_NSR_LINK"
+    ],
+    "side_effects": [
+      "may bring PHY out of BMCR powerdown if hardware is actually in BMCR_PDOWN",
+      "does not intentionally suspend the PHY",
+      "does not reassert BMCR_PDOWN during cleanup"
+    ],
+    "restore_behavior": [
+      "later Pi 5 proof must use hardwareTestLock serialization",
+      "later Pi 5 proof must retain selected-tree/TFTP/serial/final identity and post-restore evidence",
+      "boot tree/lab baseline restore is required before hardware lock release",
+      "do not widen into APD, EEE, IDDQ, soft reset, interrupts, GPIO32 reset, or config_init replay"
+    ]
+  },
+  "paired_control": {
+    "candidate_boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_candidate",
+    "control_boot_scenario": "rpi5_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_no_mdio_control",
+    "control_classification": "no-mdio-no-ethernet-bcm54213pe-lifecycle-ownership-control",
+    "control_constructs_mdio_target": false,
+    "control_constructs_man_frames": false,
+    "control_constructs_macb_target": false,
+    "control_constructs_gpio32_or_phy_target": false
+  },
+  "terminal_classifications": [
+    "bcm54213pe-lifecycle-powerdown-exit-link-ready",
+    "bcm54213pe-lifecycle-powerdown-exit-no-change-link-not-ready",
+    "bcm54213pe-lifecycle-powerdown-exit-pdown-clear-sampled-link-not-ready",
+    "bcm54213pe-lifecycle-powerdown-exit-precondition-blocker",
+    "bcm54213pe-lifecycle-powerdown-exit-readback-mismatch",
+    "bcm54213pe-lifecycle-powerdown-exit-capture-blocker",
+    "no-mdio-no-ethernet-bcm54213pe-lifecycle-ownership-control"
+  ],
+  "candidate_dispositions": [
+    {
+      "candidate": "BMCR_PDOWN exit gate",
+      "disposition": "fixed",
+      "reason": "Selected as the only broader lifecycle ownership sequence for the next serialized proof."
+    },
+    {
+      "candidate": "APD shadow writes",
+      "disposition": "rejected",
+      "reason": "Unselected write/restore lifecycle policy and not needed for the selected BMCR gate."
+    },
+    {
+      "candidate": "EEE/MMD writes",
+      "disposition": "rejected",
+      "reason": "Unselected feature advertisement/LPI state mutation."
+    },
+    {
+      "candidate": "IDDQ/TOP_MISC writes",
+      "disposition": "rejected",
+      "reason": "Requires a separate accepted IDDQ lifecycle prerequisite."
+    },
+    {
+      "candidate": "soft reset",
+      "disposition": "rejected",
+      "reason": "Linux source gates soft reset behind PHY_BRCM_IDDQ_SUSPEND during resume; that prerequisite is not accepted."
+    },
+    {
+      "candidate": "interrupt ISR/IMR/ECR ownership",
+      "disposition": "rejected",
+      "reason": "Side-effecting or delivery-state ownership outside this selected sequence."
+    },
+    {
+      "candidate": "broad config_init replay",
+      "disposition": "rejected",
+      "reason": "Would widen into RGMII/LED/PTP/WOL/interrupt surfaces."
+    },
+    {
+      "candidate": "GPIO32 reset, MAC/phylink, packet I/O, reachability, SSH",
+      "disposition": "rejected",
+      "reason": "Outside source/core lifecycle gate and still unaccepted."
+    }
+  ],
+  "rejected_claims": [
+    "link-ready-from-local-static-evidence",
+    "autoneg-complete-from-local-static-evidence",
+    "packet-readiness-from-local-static-evidence",
+    "same-shaped-status-retry",
+    "apd-eee-iddq-soft-reset-config-init-replay",
+    "interrupt-ownership",
+    "gpio32-reset-ownership",
+    "mac-phylink-ownership",
+    "live-packet-io",
+    "ping-hardware-reachability",
+    "ssh",
+    "udp-raw-sockets",
+    "libc-std-wrappers",
+    "posix-linux-compatibility",
+    "broad-socket-expansion",
+    "phase-transition"
+  ],
+  "validation": {
+    "cargo_fmt_check": "pass",
+    "focused_rust_unit_tests": "pass",
+    "jq_empty": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass before commit"
+  }
+}

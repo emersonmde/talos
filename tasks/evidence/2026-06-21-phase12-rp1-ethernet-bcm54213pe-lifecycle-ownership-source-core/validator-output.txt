@@ -1,0 +1,5 @@
+cargo fmt --all -- --check
+result: pass
+
+cargo -Zjson-target-spec test --quiet rp1_ethernet_bcm54213pe_lifecycle_ownership_source_core
+result: pass

@@ -13580,6 +13580,24 @@ are null, planningNeeded=true, and the queued generic core/proof/closeout chain
 is not mechanically unblocked pending new source evidence or explicit
 supervisor/human strategy selection.
 
+phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-source-core-20260621
+accepts
+bcm54213pe-lifecycle-ownership-powerdown-exit-source-core-local-static.
+Supervisor strategy selection authorized a broader low-power/lifecycle
+ownership slice, and the source/core selected exactly one sequence:
+bcm54213pe-phy1-bmcr-powerdown-exit-gate. The later candidate may pre-read
+PHY1 BMCR, clear only BMCR_PDOWN bit 11 if set, preserve all other BMCR bits,
+wait at least 40us after any powerdown exit, and then post-sample BMCR,
+double-sampled BMSR, ANAR, ANLPAR, MII_CTRL1000, MII_STAT1000, and passive
+MACB_NSR_LINK context. The paired control constructs no MDIO, MAN, MACB,
+GPIO32/PHY, interrupt, packet, networking, or SSH targets. APD, EEE,
+IDDQ/TOP_MISC, soft reset without accepted IDDQ prerequisite, interrupt
+ISR/IMR/ECR access, broad config_init replay, GPIO32 reset, MAC/phylink, live
+packet I/O, reachability, SSH, broad socket expansion, and phase transition
+remain rejected. Local/static evidence does not accept link-ready,
+autoneg-complete, packet-readiness, or live RX/TX. selected_next_task is
+phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof-20260621.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

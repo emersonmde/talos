@@ -1,0 +1,52 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-source-core-20260621",
+  "classification": "bcm54213pe-lifecycle-ownership-powerdown-exit-source-core-local-static",
+  "artifacts": [
+    {
+      "level": "task record",
+      "path": "tasks/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-source-core.md"
+    },
+    {
+      "level": "task-owned classification",
+      "path": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-source-core/classification.json"
+    },
+    {
+      "level": "validator output",
+      "path": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-source-core/validator-output.txt"
+    },
+    {
+      "level": "source implementation",
+      "path": "src/rp1_ethernet.rs"
+    },
+    {
+      "level": "accepted source blocker input",
+      "path": "tasks/2026-06-21-phase12-rp1-ethernet-link-ready-discriminator-source-contract.md"
+    },
+    {
+      "level": "accepted low-power/lifecycle source checkpoint input",
+      "path": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-low-power-lifecycle-source-checkpoint.md"
+    },
+    {
+      "level": "retained Linux source excerpt",
+      "path": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract/source/linux-rpi-6.12-broadcom-bcm54213pe-config-contract-excerpt.txt"
+    },
+    {
+      "level": "retained Linux source excerpt",
+      "path": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-broadcom-phy-id-driver-source-inventory/source/linux-rpi-6.12-bcm-phy-lib-interrupt-apd-eee-excerpt.txt"
+    },
+    {
+      "level": "docs",
+      "path": "docs/src/project/phase12-networking-ssh.md"
+    },
+    {
+      "level": "roadmap",
+      "path": "docs/src/roadmap.md"
+    }
+  ],
+  "selected_next_task": "phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof-20260621",
+  "hardware_level": "none-local-static-only",
+  "notes": [
+    "No hardwareTestLock acquisition or Pi 5 action occurred.",
+    "The selected sequence is a source/core gate for a later serialized hardware proof."
+  ]
+}
