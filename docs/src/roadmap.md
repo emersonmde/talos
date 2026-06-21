@@ -15002,6 +15002,26 @@ Milestone 12.3: IP Stack
   acceptance, broad socket expansion, and phase transition remain rejected.
   The selected next bounded task is
   phase12-network-shell-sockdiag-send-recv-core-20260620.
+- The shell sockdiag send/recv core accepts source/unit host/QEMU-substitute
+  evidence for shell-visible `/bin/sockdiag` over the accepted private local
+  send/recv path. The diagnostic executes through VFS executable lookup/open/
+  read, startup ABI, descriptor-backed socket open/bind/listen/connect/accept,
+  `TALOS_SEND_SYSCALL = 11`, `TALOS_RECV_SYSCALL = 12`,
+  `TALOS_CLOSE_SYSCALL = 2`, waitpid, and laststatus. It records local
+  bidirectional payload bytes (`client->server` and `server->client`)
+  between the connected client and accepted server descriptors through the
+  accepted caller-buffer copy path.
+  Controls cover empty recv `EAGAIN`, invalid send/recv flags `EINVAL`,
+  payload queue backpressure `ENOSPC`, send after peer close `EPIPE`,
+  malformed arguments, missing executable identity, unsupported socket
+  parameters, connect/accept controls, non-socket descriptors, invalid/closed
+  descriptors, and bounded syscall vocabulary. Retained smoke evidence,
+  poll/blocking I/O, readiness/wait queues, UDP/TCP payload transport,
+  cross-process sockets, live driver adapters, live packet I/O, hardware
+  reachability, lab mutation, boot publication, generated-root publication,
+  SSH, smoltcp, broad socket expansion, public stable socket ABI acceptance,
+  and phase transition remain rejected. The selected next bounded task is
+  phase12-network-shell-sockdiag-send-recv-smoke-20260620.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

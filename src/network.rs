@@ -1929,9 +1929,10 @@ impl NetworkSocketPayloadQueue {
     }
 
     fn consume(&mut self, count: usize) {
-        debug_assert!(count <= self.len());
-        let remaining = self.len() - count;
-        self.bytes.copy_within(count..self.len(), 0);
+        let len = self.len();
+        debug_assert!(count <= len);
+        let remaining = len - count;
+        self.bytes.copy_within(count..len, 0);
         self.len = remaining as u8;
     }
 }

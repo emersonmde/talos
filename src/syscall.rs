@@ -8573,10 +8573,10 @@ mod tests {
         let (client_fd, accepted_fd) =
             create_socket_pair(owner, &mut store, &mut sockets, &mut user_memory);
 
-        user_memory[..15].copy_from_slice(b"client->server");
+        user_memory[..14].copy_from_slice(b"client->server");
         let send = dispatch_socket_case(
             TALOS_SEND_SYSCALL,
-            SyscallArguments::new([client_fd, 0x0000_0000_0011_0000, 15, 0, 0, 0]),
+            SyscallArguments::new([client_fd, 0x0000_0000_0011_0000, 14, 0, 0, 0]),
             Some(owner),
             &mut store,
             &mut sockets,
@@ -8591,10 +8591,10 @@ mod tests {
             &mut user_memory,
         );
         assert_eq!(send.number(), SyscallNumber::TalosSend);
-        assert_eq!(send.return_value().x0(), 15);
+        assert_eq!(send.return_value().x0(), 14);
         assert_eq!(recv.number(), SyscallNumber::TalosRecv);
-        assert_eq!(recv.return_value().x0(), 15);
-        assert_eq!(&user_memory[0x40..0x4f], b"client->server");
+        assert_eq!(recv.return_value().x0(), 14);
+        assert_eq!(&user_memory[0x40..0x4e], b"client->server");
 
         user_memory[0x20..0x23].copy_from_slice(b"ack");
         assert_eq!(

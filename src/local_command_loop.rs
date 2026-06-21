@@ -35,7 +35,8 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+generated-root-executable-vfs-exec+shell-pingdiag-vfs-userspace-diagnostic",
     "+shell-sockdiag-vfs-userspace-socket-open-close",
     "+shell-sockdiag-vfs-userspace-socket-bind-listen",
-    "+shell-sockdiag-vfs-userspace-socket-connect-accept"
+    "+shell-sockdiag-vfs-userspace-socket-connect-accept",
+    "+shell-sockdiag-vfs-userspace-socket-send-recv"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -73,6 +74,7 @@ const LOCAL_COMMAND_EXEC_TEMP_DESCRIPTOR: usize = posix::STDERR_FD + 1;
 const LOCAL_COMMAND_PIPE_BUFFER_LEN: usize = 128;
 const LOCAL_COMMAND_PIPE_ENDPOINT_REFERENCE: usize = 1;
 const LOCAL_COMMAND_SOCKET_CAPACITY: usize = 4;
+const LOCAL_COMMAND_SOCKDIAG_USER_BASE: u64 = 0x0000_0000_0026_0000;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum LocalCommandDirectory {
@@ -705,6 +707,12 @@ pub struct LocalCommandSockdiagRecord {
     process_descriptor: usize,
     client_descriptor: usize,
     accepted_descriptor: usize,
+    client_send_bytes: usize,
+    server_recv_bytes: usize,
+    server_send_bytes: usize,
+    client_recv_bytes: usize,
+    client_payload: &'static str,
+    server_payload: &'static str,
     domain: u64,
     socket_type: u64,
     protocol: u64,
@@ -741,6 +749,11 @@ pub struct LocalCommandSockdiagControlRecord {
     missing_listener: &'static str,
     queue_backpressure: &'static str,
     non_socket_descriptor: &'static str,
+    empty_recv: &'static str,
+    send_invalid_flags: &'static str,
+    recv_invalid_flags: &'static str,
+    payload_queue_backpressure: &'static str,
+    send_after_peer_close: &'static str,
     invalid_closed_descriptor: &'static str,
     syscall_vocabulary: &'static str,
     source: &'static str,
@@ -1618,8 +1631,13 @@ where
                     missing_listener: "EINVAL",
                     queue_backpressure: "ENOSPC",
                     non_socket_descriptor: "EBADF",
+                    empty_recv: "EAGAIN",
+                    send_invalid_flags: "EINVAL",
+                    recv_invalid_flags: "EINVAL",
+                    payload_queue_backpressure: "ENOSPC",
+                    send_after_peer_close: "EPIPE",
                     invalid_closed_descriptor: "EBADF",
-                    syscall_vocabulary: "SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_SOCKET/TALOS_BIND/TALOS_LISTEN/TALOS_CONNECT/TALOS_ACCEPT/TALOS_CLOSE bounded",
+                    syscall_vocabulary: "SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_SOCKET/TALOS_BIND/TALOS_LISTEN/TALOS_CONNECT/TALOS_ACCEPT/TALOS_SEND/TALOS_RECV/TALOS_CLOSE bounded",
                     source: "shell-sockdiag-controls",
                 }),
             )
@@ -1682,6 +1700,12 @@ where
             .ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
         let mut user_memory = [0u8; 128];
         let mut kernel_scratch = [0u8; 64];
+        let mappings = [posix::UserMapping::new(
+            LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+            user_memory.len(),
+            posix::UserMappingPermissions::USER_DATA,
+        )
+        .map_err(local_exec_error_from_posix)?];
         let mut socket_dispatch =
             |raw_number: u64,
              arguments: syscall::SyscallArguments,
@@ -1700,8 +1724,8 @@ where
                     Some(owner),
                     descriptor_store,
                     socket_descriptors,
-                    &[],
-                    0x0000_0000_0026_0000,
+                    &mappings,
+                    LOCAL_COMMAND_SOCKDIAG_USER_BASE,
                     user_memory,
                     kernel_scratch,
                     &mut self.output_backend,
@@ -2188,6 +2212,214 @@ where
             return Err(LocalCommandExecError::LaunchPipelineFailed);
         }
 
+        let empty_recv = socket_dispatch(
+            syscall::TALOS_RECV_SYSCALL,
+            syscall::SyscallArguments::new([
+                accepted_descriptor as u64,
+                LOCAL_COMMAND_SOCKDIAG_USER_BASE + 0x40,
+                16,
+                0,
+                0,
+                0,
+            ]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if syscall::errno_number(posix::PosixError::Again) as u64
+            != empty_recv.return_value().x0().wrapping_neg()
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+
+        let send_invalid_flags = socket_dispatch(
+            syscall::TALOS_SEND_SYSCALL,
+            syscall::SyscallArguments::new([
+                client_descriptor as u64,
+                LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+                1,
+                1,
+                0,
+                0,
+            ]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if syscall::errno_number(posix::PosixError::InvalidArgument) as u64
+            != send_invalid_flags.return_value().x0().wrapping_neg()
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+
+        let recv_invalid_flags = socket_dispatch(
+            syscall::TALOS_RECV_SYSCALL,
+            syscall::SyscallArguments::new([
+                accepted_descriptor as u64,
+                LOCAL_COMMAND_SOCKDIAG_USER_BASE + 0x40,
+                1,
+                1,
+                0,
+                0,
+            ]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if syscall::errno_number(posix::PosixError::InvalidArgument) as u64
+            != recv_invalid_flags.return_value().x0().wrapping_neg()
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+
+        const SOCKDIAG_CLIENT_PAYLOAD: &[u8] = b"client->server";
+        const SOCKDIAG_SERVER_PAYLOAD: &[u8] = b"server->client";
+        user_memory[..SOCKDIAG_CLIENT_PAYLOAD.len()].copy_from_slice(SOCKDIAG_CLIENT_PAYLOAD);
+        let client_send = socket_dispatch(
+            syscall::TALOS_SEND_SYSCALL,
+            syscall::SyscallArguments::new([
+                client_descriptor as u64,
+                LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+                SOCKDIAG_CLIENT_PAYLOAD.len() as u64,
+                0,
+                0,
+                0,
+            ]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if client_send.return_value().x0() != SOCKDIAG_CLIENT_PAYLOAD.len() as u64 {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let server_recv = socket_dispatch(
+            syscall::TALOS_RECV_SYSCALL,
+            syscall::SyscallArguments::new([
+                accepted_descriptor as u64,
+                LOCAL_COMMAND_SOCKDIAG_USER_BASE + 0x40,
+                32,
+                0,
+                0,
+                0,
+            ]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if server_recv.return_value().x0() != SOCKDIAG_CLIENT_PAYLOAD.len() as u64
+            || &user_memory[0x40..0x40 + SOCKDIAG_CLIENT_PAYLOAD.len()] != SOCKDIAG_CLIENT_PAYLOAD
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+
+        user_memory[0x20..0x20 + SOCKDIAG_SERVER_PAYLOAD.len()]
+            .copy_from_slice(SOCKDIAG_SERVER_PAYLOAD);
+        let server_send = socket_dispatch(
+            syscall::TALOS_SEND_SYSCALL,
+            syscall::SyscallArguments::new([
+                accepted_descriptor as u64,
+                LOCAL_COMMAND_SOCKDIAG_USER_BASE + 0x20,
+                SOCKDIAG_SERVER_PAYLOAD.len() as u64,
+                0,
+                0,
+                0,
+            ]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if server_send.return_value().x0() != SOCKDIAG_SERVER_PAYLOAD.len() as u64 {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let client_recv = socket_dispatch(
+            syscall::TALOS_RECV_SYSCALL,
+            syscall::SyscallArguments::new([
+                client_descriptor as u64,
+                LOCAL_COMMAND_SOCKDIAG_USER_BASE + 0x60,
+                32,
+                0,
+                0,
+                0,
+            ]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if client_recv.return_value().x0() != SOCKDIAG_SERVER_PAYLOAD.len() as u64
+            || &user_memory[0x60..0x60 + SOCKDIAG_SERVER_PAYLOAD.len()] != SOCKDIAG_SERVER_PAYLOAD
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+
+        let mut index = 0usize;
+        while index < crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY {
+            user_memory[index] = index as u8;
+            index += 1;
+        }
+        let fill_queue = socket_dispatch(
+            syscall::TALOS_SEND_SYSCALL,
+            syscall::SyscallArguments::new([
+                client_descriptor as u64,
+                LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+                crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY as u64,
+                0,
+                0,
+                0,
+            ]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if fill_queue.return_value().x0() != crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY as u64 {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let full_queue_send = socket_dispatch(
+            syscall::TALOS_SEND_SYSCALL,
+            syscall::SyscallArguments::new([
+                client_descriptor as u64,
+                LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+                1,
+                0,
+                0,
+                0,
+            ]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if syscall::errno_number(posix::PosixError::NoSpace) as u64
+            != full_queue_send.return_value().x0().wrapping_neg()
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let drain_queue = socket_dispatch(
+            syscall::TALOS_RECV_SYSCALL,
+            syscall::SyscallArguments::new([
+                accepted_descriptor as u64,
+                LOCAL_COMMAND_SOCKDIAG_USER_BASE + 0x40,
+                crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY as u64,
+                0,
+                0,
+                0,
+            ]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if drain_queue.return_value().x0() != crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY as u64 {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+
         let accepted_close = socket_dispatch(
             syscall::TALOS_CLOSE_SYSCALL,
             syscall::SyscallArguments::new([accepted_descriptor as u64, 0, 0, 0, 0, 0]),
@@ -2197,6 +2429,26 @@ where
             &mut kernel_scratch,
         );
         if accepted_close.return_value().x0() != 0 {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let send_after_peer_close = socket_dispatch(
+            syscall::TALOS_SEND_SYSCALL,
+            syscall::SyscallArguments::new([
+                client_descriptor as u64,
+                LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+                1,
+                0,
+                0,
+                0,
+            ]),
+            &mut self.descriptor_store,
+            &mut self.socket_descriptors,
+            &mut user_memory,
+            &mut kernel_scratch,
+        );
+        if syscall::errno_number(posix::PosixError::Pipe) as u64
+            != send_after_peer_close.return_value().x0().wrapping_neg()
+        {
             return Err(LocalCommandExecError::SyscallFailed);
         }
         let second_client_close = socket_dispatch(
@@ -2251,6 +2503,12 @@ where
             process_descriptor,
             client_descriptor,
             accepted_descriptor,
+            client_send_bytes: SOCKDIAG_CLIENT_PAYLOAD.len(),
+            server_recv_bytes: SOCKDIAG_CLIENT_PAYLOAD.len(),
+            server_send_bytes: SOCKDIAG_SERVER_PAYLOAD.len(),
+            client_recv_bytes: SOCKDIAG_SERVER_PAYLOAD.len(),
+            client_payload: "client->server",
+            server_payload: "server->client",
             domain: crate::network::SOCKET_DOMAIN_AF_INET,
             socket_type: crate::network::SOCKET_TYPE_STREAM,
             protocol: crate::network::SOCKET_PROTOCOL_DEFAULT,
@@ -2280,7 +2538,7 @@ where
                     .socket_descriptors
                     .socket(accepted_socket_reference)
                     .is_err(),
-            source: "vfs-userspace-sockdiag+talos-socket-bind-listen-connect-accept-close+process-descriptor",
+            source: "vfs-userspace-sockdiag+talos-socket-bind-listen-connect-accept-send-recv-close+process-descriptor",
         })
     }
 
@@ -5836,6 +6094,18 @@ fn write_exec_sockdiag_line(
     write_hex_usize_part(sink, record.client_descriptor)?;
     write_str_part(sink, " accepted-fd=")?;
     write_hex_usize_part(sink, record.accepted_descriptor)?;
+    write_str_part(sink, " client-send=")?;
+    write_hex_usize_part(sink, record.client_send_bytes)?;
+    write_str_part(sink, " server-recv=")?;
+    write_hex_usize_part(sink, record.server_recv_bytes)?;
+    write_str_part(sink, " server-send=")?;
+    write_hex_usize_part(sink, record.server_send_bytes)?;
+    write_str_part(sink, " client-recv=")?;
+    write_hex_usize_part(sink, record.client_recv_bytes)?;
+    write_str_part(sink, " payload=")?;
+    write_str_part(sink, record.client_payload)?;
+    write_str_part(sink, " reply=")?;
+    write_str_part(sink, record.server_payload)?;
     write_str_part(sink, " domain=")?;
     write_hex_u64_part(sink, record.domain)?;
     write_str_part(sink, " type=")?;
@@ -5915,6 +6185,16 @@ fn write_exec_sockdiag_controls_line(
     write_str_part(sink, record.queue_backpressure)?;
     write_str_part(sink, " non-socket-descriptor=")?;
     write_str_part(sink, record.non_socket_descriptor)?;
+    write_str_part(sink, " empty-recv=")?;
+    write_str_part(sink, record.empty_recv)?;
+    write_str_part(sink, " send-invalid-flags=")?;
+    write_str_part(sink, record.send_invalid_flags)?;
+    write_str_part(sink, " recv-invalid-flags=")?;
+    write_str_part(sink, record.recv_invalid_flags)?;
+    write_str_part(sink, " payload-queue-backpressure=")?;
+    write_str_part(sink, record.payload_queue_backpressure)?;
+    write_str_part(sink, " send-after-peer-close=")?;
+    write_str_part(sink, record.send_after_peer_close)?;
     write_str_part(sink, " invalid-closed-descriptor=")?;
     write_str_part(sink, record.invalid_closed_descriptor)?;
     write_str_part(sink, " syscall-vocabulary=")?;
@@ -6849,10 +7129,10 @@ talos> Talos initramfs fixture\n"
         assert_eq!(missing.status(), LocalCommandStatus::UnexpectedArgument);
         assert!(output.contains("talos> talos: exec path=/bin/sockdiag source=vfs-open-read\n"));
         assert!(output.contains(
-            "talos: sockdiag fd=0x0000000000000003 client-fd=0x0000000000000004 accepted-fd=0x0000000000000006 domain=0x0000000000000002 type=0x0000000000000001 protocol=0x0000000000000000 bind-ipv4=0x000000007f000001 bind-port=0x0000000000001f90 bind-return=0x0000000000000000 listen-backlog=0x0000000000000001 listen-return=0x0000000000000000 connect-return=0x0000000000000000 accept-return=0x0000000000000006 socket-state=listening client-state=connected accepted-state=accepted descriptor-kind=socket descriptor-access=read-write close-return=0x0000000000000000 backing-closed=true source=vfs-userspace-sockdiag+talos-socket-bind-listen-connect-accept-close+process-descriptor\n"
+            "talos: sockdiag fd=0x0000000000000003 client-fd=0x0000000000000004 accepted-fd=0x0000000000000006 client-send=0x000000000000000e server-recv=0x000000000000000e server-send=0x000000000000000e client-recv=0x000000000000000e payload=client->server reply=server->client domain=0x0000000000000002 type=0x0000000000000001 protocol=0x0000000000000000 bind-ipv4=0x000000007f000001 bind-port=0x0000000000001f90 bind-return=0x0000000000000000 listen-backlog=0x0000000000000001 listen-return=0x0000000000000000 connect-return=0x0000000000000000 accept-return=0x0000000000000006 socket-state=listening client-state=connected accepted-state=accepted descriptor-kind=socket descriptor-access=read-write close-return=0x0000000000000000 backing-closed=true source=vfs-userspace-sockdiag+talos-socket-bind-listen-connect-accept-send-recv-close+process-descriptor\n"
         ));
         assert!(output.contains(
-            "talos: sockdiag-controls malformed-arguments=exec-invalid-path missing-executable=exec-not-found unsupported-domain=ENOTSUP unsupported-type=ENOTSUP unsupported-protocol=ENOTSUP listen-before-bind=EINVAL invalid-bind-endpoint=EINVAL invalid-backlog=EINVAL repeated-bind=EINVAL repeated-listen=ok-updates-backlog accept-before-connect=EAGAIN missing-listener=EINVAL queue-backpressure=ENOSPC non-socket-descriptor=EBADF invalid-closed-descriptor=EBADF syscall-vocabulary=SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_SOCKET/TALOS_BIND/TALOS_LISTEN/TALOS_CONNECT/TALOS_ACCEPT/TALOS_CLOSE bounded source=shell-sockdiag-controls\n"
+            "talos: sockdiag-controls malformed-arguments=exec-invalid-path missing-executable=exec-not-found unsupported-domain=ENOTSUP unsupported-type=ENOTSUP unsupported-protocol=ENOTSUP listen-before-bind=EINVAL invalid-bind-endpoint=EINVAL invalid-backlog=EINVAL repeated-bind=EINVAL repeated-listen=ok-updates-backlog accept-before-connect=EAGAIN missing-listener=EINVAL queue-backpressure=ENOSPC non-socket-descriptor=EBADF empty-recv=EAGAIN send-invalid-flags=EINVAL recv-invalid-flags=EINVAL payload-queue-backpressure=ENOSPC send-after-peer-close=EPIPE invalid-closed-descriptor=EBADF syscall-vocabulary=SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_SOCKET/TALOS_BIND/TALOS_LISTEN/TALOS_CONNECT/TALOS_ACCEPT/TALOS_SEND/TALOS_RECV/TALOS_CLOSE bounded source=shell-sockdiag-controls\n"
         ));
         assert!(output.contains(
             "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/sockdiag state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true\n"

@@ -5139,3 +5139,26 @@ I/O, hardware reachability, lab mutation, boot publication, SSH, smoltcp,
 broad socket expansion, public stable socket ABI acceptance, or phase
 transition. The selected next bounded task is
 phase12-network-shell-sockdiag-send-recv-core-20260620.
+
+phase12-network-shell-sockdiag-send-recv-core-20260620 accepts
+phase12-network-shell-sockdiag-send-recv-core-accepted. The shell-visible
+`/bin/sockdiag` diagnostic now exercises the accepted private local
+send/recv path through VFS executable lookup/open/read, startup ABI,
+descriptor-backed socket open/bind/listen/connect/accept,
+`TALOS_SEND_SYSCALL = 11`, `TALOS_RECV_SYSCALL = 12`,
+`TALOS_CLOSE_SYSCALL = 2`, waitpid, and laststatus.
+
+The accepted source/unit frontier proves local bidirectional payload bytes
+(`client->server` and `server->client`) move between the connected client
+and accepted server descriptors through the accepted caller-buffer copy path.
+Controls cover empty recv `EAGAIN`, invalid send/recv flags `EINVAL`,
+payload queue backpressure `ENOSPC`, send after peer close `EPIPE`,
+malformed arguments, missing executable identity, unsupported socket
+parameters, connect/accept controls, non-socket descriptors, invalid/closed
+descriptors, and bounded syscall vocabulary. Retained smoke evidence,
+poll/blocking I/O, readiness/wait queues, UDP/TCP payload transport,
+cross-process sockets, live driver adapters, live packet I/O, hardware
+reachability, lab mutation, boot publication, generated-root publication, SSH,
+smoltcp, broad socket expansion, public stable socket ABI acceptance, and
+phase transition remain rejected. The selected next bounded task is
+phase12-network-shell-sockdiag-send-recv-smoke-20260620.
