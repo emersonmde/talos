@@ -5318,3 +5318,22 @@ mutation, boot publication, generated-root publication, SSH, smoltcp, broad
 socket expansion, public stable socket ABI acceptance, or phase transition.
 The selected next bounded task is
 phase12-network-shell-sockdiag-readiness-poll-closeout-20260621.
+
+phase12-network-shell-sockdiag-readiness-poll-closeout-20260621 accepts
+phase12-network-shell-sockdiag-readiness-poll-closeout-accepted. The closeout
+freezes the shell-visible readiness/poll frontier at source/unit plus
+host/QEMU-substitute evidence over VFS/userspace /bin/sockdiag execution and
+private nonblocking local socket readiness. The accepted boundary includes VFS
+executable lookup/open/read, startup ABI, TALOS_SOCKET, TALOS_BIND,
+TALOS_LISTEN, TALOS_CONNECT, TALOS_ACCEPT, TALOS_SEND, TALOS_RECV, TALOS_POLL,
+TALOS_CLOSE, descriptor-backed listener/client/accepted socket state, waitpid,
+laststatus, deterministic readiness/error controls, unchanged accepted socket
+diagnostics, and unchanged /bin/pingdiag behavior.
+
+The closeout explicitly rejects blocking waits, scheduler wait queues, timeout
+handling, UDP/TCP payload transport, smoltcp integration, cross-process/global
+poll sets, live driver adapters, live packet I/O, hardware reachability, lab
+mutation, boot publication, generated-root publication, SSH, broad socket
+expansion, public stable socket ABI acceptance, and phase transition.
+selected_next_task is null and planningNeeded=true pending supervisor planning
+for any next bounded Phase 12.4 socket or network task.

@@ -15124,6 +15124,20 @@ Milestone 12.3: IP Stack
   reachability, SSH, public socket ABI acceptance, broad socket expansion, and
   phase transition remain rejected. The selected next bounded task is
   phase12-network-shell-sockdiag-readiness-poll-closeout-20260621.
+- The shell sockdiag readiness/poll closeout accepts the readiness/poll
+  frontier only as source/unit plus host/QEMU-substitute evidence over
+  shell-visible VFS/userspace /bin/sockdiag execution and private nonblocking
+  local socket readiness. The accepted boundary includes VFS executable
+  lookup/open/read, startup ABI, socket open/bind/listen/connect/accept/send/
+  recv/poll/close, descriptor-backed listener/client/accepted socket state,
+  waitpid, laststatus, deterministic readiness/error controls, unchanged
+  accepted socket diagnostics, and unchanged /bin/pingdiag behavior. Blocking
+  waits, scheduler wait queues, timeout handling, UDP/TCP payload transport,
+  smoltcp integration, cross-process/global poll sets, live packet I/O,
+  hardware reachability, SSH, public socket ABI acceptance, broad socket
+  expansion, and phase transition remain rejected. selected_next_task is null
+  and planningNeeded=true pending supervisor planning for any next bounded
+  Phase 12.4 socket or network task.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
