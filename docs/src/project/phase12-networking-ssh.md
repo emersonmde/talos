@@ -2542,6 +2542,21 @@ transition, and same-shaped status/autoneg retry work remain explicitly
 rejected until an explicit supervisor/human strategy selection changes the
 frontier.
 
+phase12-rp1-ethernet-link-ready-discriminator-source-contract-20260621 accepts
+phase12-rp1-ethernet-link-ready-discriminator-source-contract-blocked-no-defensible-discriminator.
+The source contract reconciles the accepted post-master-mode/autoneg
+link-not-ready frontier, retained BCM54213PE Linux source evidence, current
+rp1_ethernet guardrails, and the driver packet adapter closeout. It selects no
+new discriminator: the adapter closeout is host/QEMU-substitute packet plumbing
+only and adds no PHY/MAC link fact; same-shaped BMCR restart/status/autoneg
+polling remains rejected; GPIO32 reset ownership remains blocked; RGMII
+delay/TX-order and MII_CTRL1000 master-mode plus BMCR restart are already
+closed as link-not-ready; APD/EEE/lifecycle, interrupt, and MAC/phylink work
+need broader ownership and restore scope. selected_discriminator and
+selected_next_task are null, planningNeeded=true, and the queued generic
+core/proof/closeout chain is not mechanically unblocked without new source
+evidence or explicit supervisor/human strategy selection.
+
 ## Phase 12.2 Host Network Abstraction Core
 
 phase12-network-device-abstraction-ethernet-arp-ip-host-core-20260618 accepts

@@ -1,0 +1,50 @@
+{
+  "task_id": "phase12-rp1-ethernet-link-ready-discriminator-source-contract-20260621",
+  "classification": "phase12-rp1-ethernet-link-ready-discriminator-source-contract-blocked-no-defensible-discriminator",
+  "selected_discriminator": null,
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "evidence": [
+    {
+      "level": "static/task evidence review",
+      "path": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-pause-closeout.md",
+      "result": "Accepted frontier has MII_CTRL1000 master-mode write/readback and one BMCR autoneg restart visible, but BMSR link, BMSR autoneg-complete, and MACB_NSR_LINK remain false."
+    },
+    {
+      "level": "static/source evidence review",
+      "path": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-source-checkpoint.md",
+      "result": "Remaining source-backed candidate families were already classified with selected_discriminator=null."
+    },
+    {
+      "level": "static/source evidence review",
+      "path": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-low-power-lifecycle-source-checkpoint.md",
+      "result": "APD/EEE/lifecycle, interrupt, and MAC/phylink candidates remain deferred or rejected pending broader ownership/restore scope."
+    },
+    {
+      "level": "retained public Linux source evidence",
+      "path": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract/source/",
+      "result": "BCM54213PE config-init, Broadcom register, APD/EEE, interrupt, suspend/resume, and read_status excerpts provide no new narrow link-ready discriminator in this task."
+    },
+    {
+      "level": "static/source/task evidence review",
+      "path": "tasks/2026-06-21-phase12-network-driver-packet-adapter-closeout.md",
+      "result": "Accepted DriverPacketAdapter evidence is source/unit plus host/QEMU-substitute and does not change physical link readiness."
+    },
+    {
+      "level": "task-owned JSON evidence",
+      "path": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-link-ready-discriminator-source-contract/classification.json",
+      "result": "Concrete missing prerequisite recorded; queued core/proof chain remains not mechanically unblocked."
+    },
+    {
+      "level": "docs",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "result": "Phase 12 docs record the blocked link-ready discriminator source contract."
+    },
+    {
+      "level": "docs",
+      "path": "docs/src/roadmap.md",
+      "result": "Roadmap records the blocked link-ready discriminator source contract."
+    }
+  ],
+  "next_action": "Stop for supervisor planning before promoting the queued core/proof/closeout chain or any live packet I/O, ping reachability, hardware reachability, SSH, UDP/raw sockets, libc/std wrappers, public ABI/POSIX/Linux compatibility, broad socket expansion, or phase transition."
+}

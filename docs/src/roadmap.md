@@ -13563,6 +13563,23 @@ ownership, MAC/phylink, packet I/O, networking, sockets, SSH, Phase 12.2, phase
 transition, and same-shaped status/autoneg retry work remain rejected pending an
 explicit supervisor/human strategy selection.
 
+phase12-rp1-ethernet-link-ready-discriminator-source-contract-20260621
+accepts
+phase12-rp1-ethernet-link-ready-discriminator-source-contract-blocked-no-defensible-discriminator.
+The source contract revisits the live link-ready discriminator question after
+the accepted driver packet adapter closeout and preserves the same physical
+link blocker. The DriverPacketAdapter evidence is source/unit plus
+host/QEMU-substitute only, so it does not change the BCM54213PE/RP1 hardware
+frontier. No selected discriminator is retained: same-shaped BMCR restart,
+status/autoneg polling, wait tuning, and capture retries remain rejected;
+GPIO32 reset remains blocked; RGMII delay/TX-order and MII_CTRL1000
+master-mode plus BMCR restart are already closed as link-not-ready; and
+APD/EEE/lifecycle, interrupt, and MAC/phylink candidates require broader
+ownership and restore contracts. selected_discriminator and selected_next_task
+are null, planningNeeded=true, and the queued generic core/proof/closeout chain
+is not mechanically unblocked pending new source evidence or explicit
+supervisor/human strategy selection.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

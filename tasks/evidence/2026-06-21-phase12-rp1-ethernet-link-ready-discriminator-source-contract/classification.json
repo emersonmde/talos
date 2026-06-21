@@ -1,0 +1,102 @@
+{
+  "task_id": "phase12-rp1-ethernet-link-ready-discriminator-source-contract-20260621",
+  "status": "accepted",
+  "classification": "phase12-rp1-ethernet-link-ready-discriminator-source-contract-blocked-no-defensible-discriminator",
+  "evidence_level": [
+    "static source/task/docs/evidence review",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_input_frontier": {
+    "post_master_mode_autoneg_pause": {
+      "task_id": "phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-pause-closeout-20260618",
+      "classification": "bcm54213pe-post-master-mode-autoneg-frontier-paused-no-distinct-discriminator",
+      "terminal_facts": {
+        "mii_ctrl1000_master_mode_write_readback": true,
+        "bmcr_autoneg_restart_write_count": "0x1",
+        "bmsr_link_status": false,
+        "bmsr_autoneg_complete": false,
+        "anlpar": "0x0000",
+        "mii_stat1000": "0x0000",
+        "macb_nsr_link": false
+      }
+    },
+    "driver_packet_adapter_closeout": {
+      "task_id": "phase12-network-driver-packet-adapter-closeout-20260621",
+      "commit": "11bf998d51a180e47afb7cba0bc76092c974eb1f",
+      "evidence_level": "source/unit plus retained host/QEMU-substitute",
+      "changes_physical_link_frontier": false
+    }
+  },
+  "selected_discriminator": null,
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "blocked_reason": "No defensible source-backed link-ready discriminator remains without new source evidence or explicit broader ownership strategy. Existing retained evidence already rejects same-shaped BMCR restart/status/autoneg polling, blocks GPIO32 reset ownership, closes RGMII delay/TX-order and MII_CTRL1000 master-mode as link-not-ready, and defers APD/EEE/lifecycle, interrupt, and MAC/phylink work behind broader ownership/restore contracts.",
+  "missing_prerequisites": [
+    "new source evidence isolating a narrow side-effect-bounded BCM54213PE/RP1 link-ready discriminator not already classified by accepted tasks",
+    "or explicit supervisor/human strategy selection authorizing a broader APD/EEE/lifecycle, interrupt, GPIO32 reset, or MAC/phylink ownership slice with restore rules and terminal classifications"
+  ],
+  "generic_core_unblocked": false,
+  "hardware_authorized_by_this_task": false,
+  "candidate_dispositions": [
+    {
+      "candidate": "same-shaped BMCR restart/status/autoneg/convergence/wait/capture retry",
+      "disposition": "rejected",
+      "reason": "Repeats accepted timeout/link-not-ready evidence."
+    },
+    {
+      "candidate": "GPIO32 / ETH_RST_N reset ownership",
+      "disposition": "blocked",
+      "reason": "Accepted persistent-or-firmware-owned GPIO32 event-state blocker still controls reset risk."
+    },
+    {
+      "candidate": "RGMII delay/TX-order and MII_CTRL1000 master-mode plus BMCR restart",
+      "disposition": "rejected",
+      "reason": "Already exercised and closed as link-not-ready."
+    },
+    {
+      "candidate": "APD/EEE/WOL/IDDQ/suspend/resume/BMCR powerdown/soft reset/config_init replay",
+      "disposition": "deferred",
+      "reason": "Lifecycle write/restore ownership surface requiring broader source contract and restore rules."
+    },
+    {
+      "candidate": "MII_BCM54XX_ISR/WOL status and interrupt handler",
+      "disposition": "rejected",
+      "reason": "Read-with-side-effect or interrupt state-machine ownership, not a bounded link-ready discriminator."
+    },
+    {
+      "candidate": "IMR/ECR interrupt mask/control",
+      "disposition": "deferred",
+      "reason": "Requires interrupt ownership and paired restore rules."
+    },
+    {
+      "candidate": "MAC/phylink",
+      "disposition": "deferred",
+      "reason": "Broader MAC configuration and driver-readiness boundary while link-ready remains unaccepted."
+    },
+    {
+      "candidate": "DriverPacketAdapter host substrate",
+      "disposition": "not-an-issue",
+      "reason": "Accepted source/unit plus host/QEMU-substitute packet plumbing, not physical link evidence."
+    }
+  ],
+  "rejected_claims": [
+    "live-packet-io",
+    "ping-reachability",
+    "hardware-reachability",
+    "ssh",
+    "udp-raw-sockets",
+    "libc-std-wrappers",
+    "posix-linux-compatibility",
+    "public-stable-abi",
+    "broad-socket-expansion",
+    "phase-transition"
+  ],
+  "validation": {
+    "static_source_task_docs_evidence_review": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass before commit"
+  }
+}
