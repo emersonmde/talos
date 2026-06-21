@@ -7985,6 +7985,34 @@ mod tests {
         read_test_le_u32(user_memory, index * TALOS_POLL_ENTRY_SIZE + 12)
     }
 
+    fn socket_backing_descriptor<const OWNER_CAPACITY: usize, const DESCRIPTOR_CAPACITY: usize>(
+        owner: crate::scheduler::ProcessOwnerId,
+        process_descriptor: usize,
+        store: &crate::posix::ProcessDescriptorStore<OWNER_CAPACITY, DESCRIPTOR_CAPACITY>,
+    ) -> crate::network::NetworkSocketDescriptor {
+        let entry = store
+            .descriptor_table(owner)
+            .expect("owner descriptor table")
+            .get(process_descriptor)
+            .expect("socket process descriptor");
+        assert_eq!(
+            entry.object().kind(),
+            crate::posix::DescriptorObjectKind::Socket
+        );
+        crate::network::NetworkSocketDescriptor::from_raw(entry.object().reference())
+    }
+
+    fn socket_connection_id<const SOCKET_CAPACITY: usize>(
+        descriptor: crate::network::NetworkSocketDescriptor,
+        sockets: &crate::network::NetworkSocketDescriptorTable<SOCKET_CAPACITY>,
+    ) -> u64 {
+        match sockets.socket(descriptor).expect("socket backing").state() {
+            crate::network::NetworkSocketState::Connected { connection_id, .. }
+            | crate::network::NetworkSocketState::Accepted { connection_id, .. } => connection_id,
+            _ => panic!("socket is not connected"),
+        }
+    }
+
     #[test_case]
     fn talos_write_stdout_copies_user_bytes_before_runtime_console_output() {
         let mut console = CaptureConsole::new();
@@ -10605,6 +10633,177 @@ mod tests {
             &mut user_memory,
         );
         assert_eq!(drained_after_peer_close.return_value().x0(), 1);
+        assert_eq!(
+            read_poll_revents(&user_memory, 0),
+            TALOS_POLL_READ | TALOS_POLL_HANGUP
+        );
+    }
+
+    #[test_case]
+    fn talos_smoltcp_socket_bridge_transfers_payload_through_private_syscalls() {
+        let owner = crate::scheduler::ProcessOwnerId::new(31).expect("owner id");
+        let other_owner = crate::scheduler::ProcessOwnerId::new(32).expect("other owner id");
+        let mut store = crate::posix::ProcessDescriptorStore::<2, 8>::new_empty();
+        store
+            .create_owner_with_inherited_stdio(owner)
+            .expect("create owner");
+        store
+            .create_owner_with_inherited_stdio(other_owner)
+            .expect("create other owner");
+        let mut sockets = crate::network::NetworkSocketDescriptorTable::<4>::new();
+        let mut user_memory = [0u8; 128];
+        let (client_fd, accepted_fd) =
+            create_socket_pair(owner, &mut store, &mut sockets, &mut user_memory);
+        let client_descriptor = socket_backing_descriptor(owner, client_fd as usize, &store);
+        let accepted_descriptor = socket_backing_descriptor(owner, accepted_fd as usize, &store);
+        let connection_id = socket_connection_id(client_descriptor, &sockets);
+        let record = sockets
+            .smoltcp_bridge_record(connection_id)
+            .expect("smoltcp bridge record");
+
+        assert_eq!(
+            record.handshake().client_state(),
+            smoltcp::socket::tcp::State::Established
+        );
+        assert_eq!(
+            record.handshake().server_state(),
+            smoltcp::socket::tcp::State::Established
+        );
+        assert!(record.handshake().client_to_server_frames() > 0);
+        assert!(record.handshake().server_to_client_frames() > 0);
+        assert_eq!(record.accepted_descriptor(), Some(accepted_descriptor));
+        assert_eq!(record.payload_transfers(), 0);
+
+        user_memory[0x40..0x46].copy_from_slice(b"tcp-ok");
+        assert_eq!(
+            dispatch_socket_case(
+                TALOS_SEND_SYSCALL,
+                SyscallArguments::new([client_fd, 0x0000_0000_0011_0040, 6, 0, 0, 0]),
+                Some(owner),
+                &mut store,
+                &mut sockets,
+                &mut user_memory,
+            )
+            .return_value()
+            .x0(),
+            6
+        );
+        let record = sockets
+            .smoltcp_bridge_record(connection_id)
+            .expect("smoltcp bridge record after payload");
+        assert_eq!(record.payload_transfers(), 1);
+        assert_eq!(record.last_payload().payload_len(), 6);
+        assert_eq!(
+            record.last_payload().client_state(),
+            smoltcp::socket::tcp::State::Established
+        );
+        assert_eq!(
+            record.last_payload().server_state(),
+            smoltcp::socket::tcp::State::Established
+        );
+        write_poll_entry(&mut user_memory, 0, accepted_fd, TALOS_POLL_READ, 0);
+        assert_eq!(
+            dispatch_socket_case(
+                TALOS_POLL_SYSCALL,
+                SyscallArguments::new([0x0000_0000_0011_0000, 1, 0, 0, 0, 0]),
+                Some(owner),
+                &mut store,
+                &mut sockets,
+                &mut user_memory,
+            )
+            .return_value()
+            .x0(),
+            1
+        );
+        assert_eq!(read_poll_revents(&user_memory, 0), TALOS_POLL_READ);
+        assert_eq!(
+            dispatch_socket_case(
+                TALOS_RECV_SYSCALL,
+                SyscallArguments::new([accepted_fd, 0x0000_0000_0011_0060, 8, 0, 0, 0]),
+                Some(owner),
+                &mut store,
+                &mut sockets,
+                &mut user_memory,
+            )
+            .return_value()
+            .x0(),
+            6
+        );
+        assert_eq!(&user_memory[0x60..0x66], b"tcp-ok");
+
+        let too_large_payload = [0x5au8; crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY + 1];
+        user_memory[..too_large_payload.len()].copy_from_slice(&too_large_payload);
+        assert_eq!(
+            dispatch_socket_case(
+                TALOS_SEND_SYSCALL,
+                SyscallArguments::new([
+                    client_fd,
+                    0x0000_0000_0011_0000,
+                    too_large_payload.len() as u64,
+                    0,
+                    0,
+                    0,
+                ]),
+                Some(owner),
+                &mut store,
+                &mut sockets,
+                &mut user_memory,
+            )
+            .return_value()
+            .x0(),
+            (ENOSPC as u64).wrapping_neg()
+        );
+        assert_eq!(
+            sockets
+                .smoltcp_bridge_record(connection_id)
+                .expect("smoltcp bridge record after backpressure")
+                .payload_transfers(),
+            1
+        );
+        assert_eq!(
+            dispatch_socket_case(
+                TALOS_SEND_SYSCALL,
+                SyscallArguments::new([client_fd, 0x0000_0000_0011_0040, 1, 0, 0, 0]),
+                Some(other_owner),
+                &mut store,
+                &mut sockets,
+                &mut user_memory,
+            )
+            .return_value()
+            .x0(),
+            (EBADF as u64).wrapping_neg()
+        );
+        assert_eq!(
+            dispatch_socket_case(
+                TALOS_CLOSE_SYSCALL,
+                SyscallArguments::new([client_fd, 0, 0, 0, 0, 0]),
+                Some(owner),
+                &mut store,
+                &mut sockets,
+                &mut user_memory,
+            )
+            .return_value()
+            .x0(),
+            0
+        );
+        assert_eq!(
+            sockets.smoltcp_bridge_record(connection_id),
+            Err(PosixError::BadDescriptor)
+        );
+        write_poll_entry(&mut user_memory, 0, accepted_fd, TALOS_POLL_READ, 0);
+        assert_eq!(
+            dispatch_socket_case(
+                TALOS_POLL_SYSCALL,
+                SyscallArguments::new([0x0000_0000_0011_0000, 1, 0, 0, 0, 0]),
+                Some(owner),
+                &mut store,
+                &mut sockets,
+                &mut user_memory,
+            )
+            .return_value()
+            .x0(),
+            1
+        );
         assert_eq!(
             read_poll_revents(&user_memory, 0),
             TALOS_POLL_READ | TALOS_POLL_HANGUP

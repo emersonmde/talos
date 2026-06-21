@@ -5708,3 +5708,31 @@ TCP diagnostics, retained smoke evidence, live driver adapters, live packet
 I/O, hardware reachability, SSH, public stable socket ABI acceptance, broad
 socket expansion, and phase transition remain rejected. The selected next
 bounded task is phase12-network-smoltcp-socket-bridge-core-20260621.
+
+phase12-network-smoltcp-socket-bridge-core-20260621 accepts
+phase12-network-smoltcp-socket-bridge-core-accepted. src/network.rs now keeps
+fixed-capacity SmoltcpSocketBridgeRecord entries beside the private
+NetworkSocketDescriptorTable and records deterministic smoltcp Established
+handshake plus payload-transfer observations for descriptor-backed
+AF_INET/SOCK_STREAM connections.
+
+The accepted path remains private and host-only. connect creates bridge
+backing only after a bounded smoltcp TCP handshake over
+SmoltcpPacketDeviceAdapter, fixed packet queues, fixed TCP buffers, and
+explicit MAC/IP/time inputs reaches Established. send records a bounded
+smoltcp payload transfer before the existing descriptor-backed recv queue is
+made readable. close/drop removes matching bridge records while preserving the
+accepted peer hangup/EPIPE readiness behavior. Focused source/unit evidence
+exercises socket, bind, listen, connect, accept, send, recv, poll, poll-wait,
+and close through the private syscall dispatch and process descriptor
+ownership path.
+
+The accepted evidence level is source/unit plus host/QEMU-substitute only:
+cargo fmt and cargo -Zjson-target-spec test --quiet passed with the project
+QEMU path, and the static test-case count is 693. This task does not accept a
+shell-visible /bin/sockdiag TCP diagnostic, retained smoke transcript, live
+driver adapter, live packet I/O, Pi 5 hardware behavior, lab mutation, boot
+publication, hardware reachability, SSH, public stable socket ABI acceptance,
+broad socket expansion, UDP/raw sockets, or phase transition. The selected
+next bounded task is
+phase12-network-shell-sockdiag-smoltcp-tcp-core-20260621.

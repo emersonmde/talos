@@ -2022,6 +2022,17 @@ pub(crate) const SOCKET_SYNTHETIC_LOCAL_IPV4_BE: u32 = 0x7f00_0001;
 pub(crate) const SOCKET_SYNTHETIC_CLIENT_PORT_BASE: u16 = 49152;
 pub(crate) const SOCKET_PAYLOAD_QUEUE_CAPACITY: usize = 64;
 pub(crate) const SOCKET_CONNECTION_ID_START: u64 = 1;
+const SMOLTCP_SOCKET_BRIDGE_FRAME_CAPACITY: usize = 256;
+const SMOLTCP_SOCKET_BRIDGE_PACKET_QUEUE_CAPACITY: usize = 8;
+const SMOLTCP_SOCKET_BRIDGE_TCP_BUFFER_CAPACITY: usize = 128;
+const SMOLTCP_SOCKET_BRIDGE_CLIENT_MAC: [u8; ETHERNET_ADDR_LEN] = [0x02, 0, 0, 0, 0, 0x10];
+const SMOLTCP_SOCKET_BRIDGE_SERVER_MAC: [u8; ETHERNET_ADDR_LEN] = [0x02, 0, 0, 0, 0, 0x20];
+const SMOLTCP_SOCKET_BRIDGE_CLIENT_IPV4: [u8; 4] = [192, 0, 2, 10];
+const SMOLTCP_SOCKET_BRIDGE_SERVER_IPV4: [u8; 4] = [192, 0, 2, 20];
+const SMOLTCP_SOCKET_BRIDGE_PREFIX_LEN: u8 = 24;
+const SMOLTCP_SOCKET_BRIDGE_CLIENT_PORT: u16 = SOCKET_SYNTHETIC_CLIENT_PORT_BASE;
+const SMOLTCP_SOCKET_BRIDGE_SERVER_PORT: u16 = 8080;
+const SMOLTCP_SOCKET_BRIDGE_MAX_STEPS: usize = 48;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct NetworkSocketDescriptor {
@@ -2302,8 +2313,81 @@ impl NetworkSocket {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SmoltcpSocketBridgeObservation {
+    client_state: smoltcp::socket::tcp::State,
+    server_state: smoltcp::socket::tcp::State,
+    steps: usize,
+    client_to_server_frames: usize,
+    server_to_client_frames: usize,
+    payload_len: usize,
+}
+
+impl SmoltcpSocketBridgeObservation {
+    pub(crate) const fn client_state(self) -> smoltcp::socket::tcp::State {
+        self.client_state
+    }
+
+    pub(crate) const fn server_state(self) -> smoltcp::socket::tcp::State {
+        self.server_state
+    }
+
+    pub(crate) const fn steps(self) -> usize {
+        self.steps
+    }
+
+    pub(crate) const fn client_to_server_frames(self) -> usize {
+        self.client_to_server_frames
+    }
+
+    pub(crate) const fn server_to_client_frames(self) -> usize {
+        self.server_to_client_frames
+    }
+
+    pub(crate) const fn payload_len(self) -> usize {
+        self.payload_len
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SmoltcpSocketBridgeRecord {
+    client_owner: crate::scheduler::ProcessOwnerId,
+    client_descriptor: NetworkSocketDescriptor,
+    listener_owner: crate::scheduler::ProcessOwnerId,
+    listener_descriptor: NetworkSocketDescriptor,
+    accepted_owner: Option<crate::scheduler::ProcessOwnerId>,
+    accepted_descriptor: Option<NetworkSocketDescriptor>,
+    connection_id: u64,
+    handshake: SmoltcpSocketBridgeObservation,
+    payload_transfers: u64,
+    last_payload: SmoltcpSocketBridgeObservation,
+}
+
+impl SmoltcpSocketBridgeRecord {
+    pub(crate) const fn connection_id(self) -> u64 {
+        self.connection_id
+    }
+
+    pub(crate) const fn accepted_descriptor(self) -> Option<NetworkSocketDescriptor> {
+        self.accepted_descriptor
+    }
+
+    pub(crate) const fn handshake(self) -> SmoltcpSocketBridgeObservation {
+        self.handshake
+    }
+
+    pub(crate) const fn payload_transfers(self) -> u64 {
+        self.payload_transfers
+    }
+
+    pub(crate) const fn last_payload(self) -> SmoltcpSocketBridgeObservation {
+        self.last_payload
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct NetworkSocketDescriptorTable<const CAPACITY: usize> {
     entries: [Option<NetworkSocket>; CAPACITY],
+    smoltcp_bridges: [Option<SmoltcpSocketBridgeRecord>; CAPACITY],
     next_connection_id: u64,
 }
 
@@ -2311,6 +2395,7 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
     pub(crate) const fn new() -> Self {
         Self {
             entries: [None; CAPACITY],
+            smoltcp_bridges: [None; CAPACITY],
             next_connection_id: SOCKET_CONNECTION_ID_START,
         }
     }
@@ -2348,6 +2433,7 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
     ) -> Result<(), crate::posix::PosixError> {
         self.require_owner(owner, descriptor)?;
         self.entries[descriptor.raw()] = None;
+        self.remove_smoltcp_bridge_for_descriptor(owner, descriptor);
         Ok(())
     }
 
@@ -2357,6 +2443,10 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
         while raw < CAPACITY {
             if let Some(socket) = self.entries[raw] {
                 if socket.owner == owner {
+                    self.remove_smoltcp_bridge_for_descriptor(
+                        owner,
+                        NetworkSocketDescriptor::from_raw(raw),
+                    );
                     self.entries[raw] = None;
                     closed += 1;
                 }
@@ -2498,6 +2588,13 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
                 connection_id,
             ),
         )?;
+        let bridge_record = self.create_smoltcp_bridge_record(
+            owner,
+            client_descriptor,
+            listener.owner(),
+            listener_descriptor,
+            connection_id,
+        )?;
 
         listener.state = NetworkSocketState::Listening {
             local_endpoint,
@@ -2514,6 +2611,7 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
             recv_queue: NetworkSocketPayloadQueue::new(),
         };
         self.entries[client_descriptor.raw()] = Some(connected_client);
+        self.insert_smoltcp_bridge_record(bridge_record)?;
         Ok(())
     }
 
@@ -2573,6 +2671,11 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
                 recv_queue: NetworkSocketPayloadQueue::new(),
             },
         });
+        self.attach_smoltcp_accepted_descriptor(
+            peer.connection_id(),
+            owner,
+            NetworkSocketDescriptor::from_raw(accepted_raw),
+        )?;
         Ok(NetworkSocketDescriptor::from_raw(accepted_raw))
     }
 
@@ -2591,6 +2694,7 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
         let (local_endpoint, remote_endpoint, connection_id) = connected_endpoints(socket.state)?;
         let peer_descriptor =
             self.unique_peer_descriptor(connection_id, local_endpoint, remote_endpoint)?;
+        self.record_smoltcp_payload_transfer(connection_id, payload)?;
         let mut peer = self.socket(peer_descriptor)?;
         connected_recv_queue_mut(&mut peer.state)?.push_all(payload)?;
         self.entries[peer_descriptor.raw()] = Some(peer);
@@ -2727,6 +2831,18 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
             .ok_or(crate::posix::PosixError::BadDescriptor)
     }
 
+    pub(crate) fn smoltcp_bridge_record(
+        &self,
+        connection_id: u64,
+    ) -> Result<SmoltcpSocketBridgeRecord, crate::posix::PosixError> {
+        self.smoltcp_bridges
+            .iter()
+            .flatten()
+            .copied()
+            .find(|record| record.connection_id == connection_id)
+            .ok_or(crate::posix::PosixError::BadDescriptor)
+    }
+
     pub(crate) fn require_owner(
         &self,
         owner: crate::scheduler::ProcessOwnerId,
@@ -2828,6 +2944,329 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
         }
         false
     }
+
+    fn create_smoltcp_bridge_record(
+        &self,
+        client_owner: crate::scheduler::ProcessOwnerId,
+        client_descriptor: NetworkSocketDescriptor,
+        listener_owner: crate::scheduler::ProcessOwnerId,
+        listener_descriptor: NetworkSocketDescriptor,
+        connection_id: u64,
+    ) -> Result<SmoltcpSocketBridgeRecord, crate::posix::PosixError> {
+        if self.smoltcp_bridges.iter().all(Option::is_some) {
+            return Err(crate::posix::PosixError::NoSpace);
+        }
+        let handshake = smoltcp_socket_bridge_transfer(&[])?;
+        Ok(SmoltcpSocketBridgeRecord {
+            client_owner,
+            client_descriptor,
+            listener_owner,
+            listener_descriptor,
+            accepted_owner: None,
+            accepted_descriptor: None,
+            connection_id,
+            handshake,
+            payload_transfers: 0,
+            last_payload: handshake,
+        })
+    }
+
+    fn insert_smoltcp_bridge_record(
+        &mut self,
+        record: SmoltcpSocketBridgeRecord,
+    ) -> Result<(), crate::posix::PosixError> {
+        let Some(slot) = self.smoltcp_bridges.iter_mut().find(|slot| slot.is_none()) else {
+            return Err(crate::posix::PosixError::NoSpace);
+        };
+        *slot = Some(record);
+        Ok(())
+    }
+
+    fn attach_smoltcp_accepted_descriptor(
+        &mut self,
+        connection_id: u64,
+        accepted_owner: crate::scheduler::ProcessOwnerId,
+        accepted_descriptor: NetworkSocketDescriptor,
+    ) -> Result<(), crate::posix::PosixError> {
+        let Some(record) = self
+            .smoltcp_bridges
+            .iter_mut()
+            .flatten()
+            .find(|record| record.connection_id == connection_id)
+        else {
+            return Err(crate::posix::PosixError::BadDescriptor);
+        };
+        record.accepted_owner = Some(accepted_owner);
+        record.accepted_descriptor = Some(accepted_descriptor);
+        Ok(())
+    }
+
+    fn record_smoltcp_payload_transfer(
+        &mut self,
+        connection_id: u64,
+        payload: &[u8],
+    ) -> Result<(), crate::posix::PosixError> {
+        if payload.is_empty() {
+            return Ok(());
+        }
+        let observation = smoltcp_socket_bridge_transfer(payload)?;
+        let Some(record) = self
+            .smoltcp_bridges
+            .iter_mut()
+            .flatten()
+            .find(|record| record.connection_id == connection_id)
+        else {
+            return Err(crate::posix::PosixError::BadDescriptor);
+        };
+        record.payload_transfers = record
+            .payload_transfers
+            .checked_add(1)
+            .ok_or(crate::posix::PosixError::NoSpace)?;
+        record.last_payload = observation;
+        Ok(())
+    }
+
+    fn remove_smoltcp_bridge_for_descriptor(
+        &mut self,
+        owner: crate::scheduler::ProcessOwnerId,
+        descriptor: NetworkSocketDescriptor,
+    ) {
+        for slot in &mut self.smoltcp_bridges {
+            let Some(record) = slot else {
+                continue;
+            };
+            let accepted_matches = record.accepted_owner == Some(owner)
+                && record.accepted_descriptor == Some(descriptor);
+            if (record.client_owner == owner && record.client_descriptor == descriptor)
+                || (record.listener_owner == owner && record.listener_descriptor == descriptor)
+                || accepted_matches
+            {
+                *slot = None;
+            }
+        }
+    }
+}
+
+fn smoltcp_socket_bridge_transfer(
+    payload: &[u8],
+) -> Result<SmoltcpSocketBridgeObservation, crate::posix::PosixError> {
+    if payload.len() > SMOLTCP_SOCKET_BRIDGE_TCP_BUFFER_CAPACITY {
+        return Err(crate::posix::PosixError::NoSpace);
+    }
+
+    let mut client_adapter = SmoltcpPacketDeviceAdapter::<
+        SMOLTCP_SOCKET_BRIDGE_PACKET_QUEUE_CAPACITY,
+        SMOLTCP_SOCKET_BRIDGE_PACKET_QUEUE_CAPACITY,
+        SMOLTCP_SOCKET_BRIDGE_FRAME_CAPACITY,
+    >::new();
+    let mut server_adapter = SmoltcpPacketDeviceAdapter::<
+        SMOLTCP_SOCKET_BRIDGE_PACKET_QUEUE_CAPACITY,
+        SMOLTCP_SOCKET_BRIDGE_PACKET_QUEUE_CAPACITY,
+        SMOLTCP_SOCKET_BRIDGE_FRAME_CAPACITY,
+    >::new();
+    let mut client_iface = smoltcp_bridge_interface(
+        &mut client_adapter,
+        SMOLTCP_SOCKET_BRIDGE_CLIENT_MAC,
+        SMOLTCP_SOCKET_BRIDGE_CLIENT_IPV4,
+    );
+    let mut server_iface = smoltcp_bridge_interface(
+        &mut server_adapter,
+        SMOLTCP_SOCKET_BRIDGE_SERVER_MAC,
+        SMOLTCP_SOCKET_BRIDGE_SERVER_IPV4,
+    );
+    let mut client_rx_storage = [0u8; SMOLTCP_SOCKET_BRIDGE_TCP_BUFFER_CAPACITY];
+    let mut client_tx_storage = [0u8; SMOLTCP_SOCKET_BRIDGE_TCP_BUFFER_CAPACITY];
+    let mut server_rx_storage = [0u8; SMOLTCP_SOCKET_BRIDGE_TCP_BUFFER_CAPACITY];
+    let mut server_tx_storage = [0u8; SMOLTCP_SOCKET_BRIDGE_TCP_BUFFER_CAPACITY];
+    let client_socket = smoltcp::socket::tcp::Socket::new(
+        smoltcp::socket::tcp::SocketBuffer::new(&mut client_rx_storage[..]),
+        smoltcp::socket::tcp::SocketBuffer::new(&mut client_tx_storage[..]),
+    );
+    let server_socket = smoltcp::socket::tcp::Socket::new(
+        smoltcp::socket::tcp::SocketBuffer::new(&mut server_rx_storage[..]),
+        smoltcp::socket::tcp::SocketBuffer::new(&mut server_tx_storage[..]),
+    );
+    let mut client_socket_storage = [smoltcp::iface::SocketStorage::EMPTY];
+    let mut server_socket_storage = [smoltcp::iface::SocketStorage::EMPTY];
+    let mut client_sockets = smoltcp::iface::SocketSet::new(&mut client_socket_storage[..]);
+    let mut server_sockets = smoltcp::iface::SocketSet::new(&mut server_socket_storage[..]);
+    let client_handle = client_sockets.add(client_socket);
+    let server_handle = server_sockets.add(server_socket);
+    server_sockets
+        .get_mut::<smoltcp::socket::tcp::Socket>(server_handle)
+        .listen(SMOLTCP_SOCKET_BRIDGE_SERVER_PORT)
+        .map_err(|_| crate::posix::PosixError::InvalidArgument)?;
+    client_sockets
+        .get_mut::<smoltcp::socket::tcp::Socket>(client_handle)
+        .connect(
+            client_iface.context(),
+            (
+                smoltcp::wire::IpAddress::v4(
+                    SMOLTCP_SOCKET_BRIDGE_SERVER_IPV4[0],
+                    SMOLTCP_SOCKET_BRIDGE_SERVER_IPV4[1],
+                    SMOLTCP_SOCKET_BRIDGE_SERVER_IPV4[2],
+                    SMOLTCP_SOCKET_BRIDGE_SERVER_IPV4[3],
+                ),
+                SMOLTCP_SOCKET_BRIDGE_SERVER_PORT,
+            ),
+            SMOLTCP_SOCKET_BRIDGE_CLIENT_PORT,
+        )
+        .map_err(|_| crate::posix::PosixError::InvalidArgument)?;
+
+    let mut observation = smoltcp_bridge_drive(
+        &mut client_adapter,
+        &mut server_adapter,
+        &mut client_iface,
+        &mut server_iface,
+        &mut client_sockets,
+        &mut server_sockets,
+        client_handle,
+        server_handle,
+        payload,
+    )?;
+    observation.payload_len = payload.len();
+    Ok(observation)
+}
+
+fn smoltcp_bridge_interface<
+    const RX_CAPACITY: usize,
+    const TX_CAPACITY: usize,
+    const FRAME_CAPACITY: usize,
+>(
+    adapter: &mut SmoltcpPacketDeviceAdapter<RX_CAPACITY, TX_CAPACITY, FRAME_CAPACITY>,
+    mac: [u8; ETHERNET_ADDR_LEN],
+    ipv4: [u8; 4],
+) -> smoltcp::iface::Interface {
+    let config = smoltcp::iface::Config::new(smoltcp::wire::EthernetAddress(mac).into());
+    let mut iface = smoltcp::iface::Interface::new(config, adapter, smoltcp::time::Instant::ZERO);
+    iface.update_ip_addrs(|addresses| {
+        addresses
+            .push(smoltcp::wire::IpCidr::new(
+                smoltcp::wire::IpAddress::v4(ipv4[0], ipv4[1], ipv4[2], ipv4[3]),
+                SMOLTCP_SOCKET_BRIDGE_PREFIX_LEN,
+            ))
+            .expect("single smoltcp IPv4 address slot remains available");
+    });
+    iface
+}
+
+fn smoltcp_bridge_move_frames<
+    const FROM_RX_CAPACITY: usize,
+    const FROM_TX_CAPACITY: usize,
+    const TO_RX_CAPACITY: usize,
+    const TO_TX_CAPACITY: usize,
+    const FRAME_CAPACITY: usize,
+>(
+    from: &mut SmoltcpPacketDeviceAdapter<FROM_RX_CAPACITY, FROM_TX_CAPACITY, FRAME_CAPACITY>,
+    to: &mut SmoltcpPacketDeviceAdapter<TO_RX_CAPACITY, TO_TX_CAPACITY, FRAME_CAPACITY>,
+) -> Result<usize, crate::posix::PosixError> {
+    let mut moved = 0usize;
+    while let Some(frame) = from.pop_transmitted() {
+        to.inject_received(frame.as_bytes())
+            .map_err(|_| crate::posix::PosixError::NoSpace)?;
+        moved += 1;
+    }
+    Ok(moved)
+}
+
+fn smoltcp_bridge_drive<
+    const CLIENT_RX_CAPACITY: usize,
+    const CLIENT_TX_CAPACITY: usize,
+    const SERVER_RX_CAPACITY: usize,
+    const SERVER_TX_CAPACITY: usize,
+    const FRAME_CAPACITY: usize,
+>(
+    client_adapter: &mut SmoltcpPacketDeviceAdapter<
+        CLIENT_RX_CAPACITY,
+        CLIENT_TX_CAPACITY,
+        FRAME_CAPACITY,
+    >,
+    server_adapter: &mut SmoltcpPacketDeviceAdapter<
+        SERVER_RX_CAPACITY,
+        SERVER_TX_CAPACITY,
+        FRAME_CAPACITY,
+    >,
+    client_iface: &mut smoltcp::iface::Interface,
+    server_iface: &mut smoltcp::iface::Interface,
+    client_sockets: &mut smoltcp::iface::SocketSet<'_>,
+    server_sockets: &mut smoltcp::iface::SocketSet<'_>,
+    client_handle: smoltcp::iface::SocketHandle,
+    server_handle: smoltcp::iface::SocketHandle,
+    payload: &[u8],
+) -> Result<SmoltcpSocketBridgeObservation, crate::posix::PosixError> {
+    let mut observation = SmoltcpSocketBridgeObservation {
+        client_state: smoltcp::socket::tcp::State::Closed,
+        server_state: smoltcp::socket::tcp::State::Closed,
+        steps: 0,
+        client_to_server_frames: 0,
+        server_to_client_frames: 0,
+        payload_len: 0,
+    };
+    let mut payload_sent = payload.is_empty();
+    let mut payload_received = payload.is_empty();
+    let mut receive_buffer = [0u8; SMOLTCP_SOCKET_BRIDGE_TCP_BUFFER_CAPACITY];
+
+    let mut step = 0usize;
+    while step < SMOLTCP_SOCKET_BRIDGE_MAX_STEPS {
+        let now = smoltcp::time::Instant::from_millis(step as i64);
+        client_iface.poll(now, client_adapter, client_sockets);
+        observation.client_to_server_frames +=
+            smoltcp_bridge_move_frames(client_adapter, server_adapter)?;
+        server_iface.poll(now, server_adapter, server_sockets);
+        observation.server_to_client_frames +=
+            smoltcp_bridge_move_frames(server_adapter, client_adapter)?;
+        client_iface.poll(now, client_adapter, client_sockets);
+        observation.client_to_server_frames +=
+            smoltcp_bridge_move_frames(client_adapter, server_adapter)?;
+        server_iface.poll(now, server_adapter, server_sockets);
+        observation.server_to_client_frames +=
+            smoltcp_bridge_move_frames(server_adapter, client_adapter)?;
+
+        observation.client_state = client_sockets
+            .get::<smoltcp::socket::tcp::Socket>(client_handle)
+            .state();
+        observation.server_state = server_sockets
+            .get::<smoltcp::socket::tcp::Socket>(server_handle)
+            .state();
+        if observation.client_state == smoltcp::socket::tcp::State::Established
+            && observation.server_state == smoltcp::socket::tcp::State::Established
+        {
+            if !payload_sent {
+                let sent = client_sockets
+                    .get_mut::<smoltcp::socket::tcp::Socket>(client_handle)
+                    .send_slice(payload)
+                    .map_err(|_| crate::posix::PosixError::NoSpace)?;
+                if sent != payload.len() {
+                    return Err(crate::posix::PosixError::NoSpace);
+                }
+                payload_sent = true;
+            }
+            if payload_sent && !payload_received {
+                match server_sockets
+                    .get_mut::<smoltcp::socket::tcp::Socket>(server_handle)
+                    .recv_slice(&mut receive_buffer[..payload.len()])
+                {
+                    Ok(received) if received == payload.len() => {
+                        if &receive_buffer[..payload.len()] != payload {
+                            return Err(crate::posix::PosixError::Io);
+                        }
+                        payload_received = true;
+                    }
+                    Ok(_) => return Err(crate::posix::PosixError::Io),
+                    Err(smoltcp::socket::tcp::RecvError::Exhausted) => {}
+                    Err(_) => return Err(crate::posix::PosixError::Pipe),
+                }
+            }
+            if payload_received {
+                observation.steps = step + 1;
+                return Ok(observation);
+            }
+        }
+        step += 1;
+    }
+
+    observation.steps = SMOLTCP_SOCKET_BRIDGE_MAX_STEPS;
+    Err(crate::posix::PosixError::Again)
 }
 
 fn connected_endpoints(
