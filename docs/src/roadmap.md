@@ -15502,6 +15502,25 @@ Milestone 12.3: IP Stack
   transition remain rejected. selected_next_task is null and
   planningNeeded=true pending supervisor planning for any next bounded
   socket/network task.
+- phase12-network-driver-packet-adapter-contract-20260621 accepts a static
+  source/task/docs/evidence contract for the next host-only driver packet
+  adapter substrate. The contract ties accepted PacketQueueNetworkDevice driver
+  packet pump evidence, SmoltcpPacketDeviceAdapter, private descriptor-backed
+  smoltcp TCP bridge, userspace_socket_abi helpers, /bin/pingdiag controls,
+  and /bin/sockdiag diagnostics into one bounded source/unit target. The future
+  core must use copied fixed-capacity PacketQueueFrame records as the only
+  frame ownership boundary, preserve compile-time RX/TX/frame capacities, map
+  Full, FrameTooLarge, WouldBlock, BufferTooSmall, and Io outcomes explicitly,
+  and advance smoltcp with caller-supplied Instant values. The next shell
+  diagnostic may later expose adapter RX/TX queue counts, last RX/TX result
+  names, smoltcp bridge continuity, waitpid, and laststatus only through the
+  accepted VFS/userspace private socket ABI path. Runtime implementation, live
+  driver programming, live packet I/O, Pi 5 hardware behavior, lab mutation,
+  boot publication, hardware reachability, SSH, UDP/raw sockets, libc/std
+  socket wrappers, POSIX/Linux compatibility, public stable ABI acceptance,
+  broad socket expansion, and phase transition remain rejected. The selected
+  next bounded task is
+  phase12-network-driver-packet-adapter-core-20260621.
 
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning

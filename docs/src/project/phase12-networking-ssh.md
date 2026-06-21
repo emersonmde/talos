@@ -5913,3 +5913,35 @@ reachability, SSH, UDP/raw sockets, libc/std socket wrappers, POSIX/Linux
 compatibility, public stable socket ABI acceptance, broad socket expansion, and
 phase transition. planningNeeded=true; no later bounded socket/network task is
 mechanically unblocked without supervisor planning.
+
+phase12-network-driver-packet-adapter-contract-20260621 accepts
+phase12-network-driver-packet-adapter-contract-accepted. Supervisor planning
+after the userspace socket ABI closeout selected a contract-only slice for the
+next driver packet adapter substrate before any live packet I/O, hardware
+reachability, SSH, UDP/raw sockets, public ABI stabilization, or phase
+transition.
+
+The contract ties the accepted PacketQueueNetworkDevice driver packet pump,
+SmoltcpPacketDeviceAdapter, private descriptor-backed smoltcp TCP bridge,
+userspace_socket_abi helper surface, /bin/pingdiag controls, and /bin/sockdiag
+diagnostics into one host-only source/unit implementation target. The future
+core must keep copied fixed-capacity PacketQueueFrame records as the only
+accepted frame ownership boundary, with compile-time RX/TX/frame capacities,
+explicit Full and FrameTooLarge behavior, deterministic DeviceError mapping,
+caller-supplied smoltcp::time::Instant progression, and no ambient hardware
+time dependency.
+
+The selected core may inject one driver RX frame into the accepted smoltcp
+packet-device path, observe one smoltcp-produced TX frame, and prove
+backpressure/error behavior through source/unit tests. Later shell diagnostics
+may report adapter RX/TX queue counts, last RX/TX result names, smoltcp bridge
+continuity, waitpid, and laststatus only through the accepted VFS/userspace
+private socket ABI path.
+
+The evidence level is static source/task/docs/evidence review only. Runtime
+implementation, live driver programming, live packet I/O, Pi 5 hardware
+behavior, lab mutation, boot publication, generated-root publication, hardware
+reachability, SSH, UDP/raw sockets, libc/std socket wrappers, POSIX/Linux
+compatibility, public stable ABI acceptance, broad socket expansion, and phase
+transition remain rejected. The selected next bounded task is
+phase12-network-driver-packet-adapter-core-20260621.
