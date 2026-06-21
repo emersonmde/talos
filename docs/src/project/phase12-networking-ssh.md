@@ -5401,3 +5401,25 @@ integration, live packet I/O, hardware reachability, SSH, public socket ABI
 acceptance, broad socket expansion, or phase transition. The selected next
 bounded task is
 phase12-network-shell-sockdiag-blocking-poll-wait-core-20260621.
+
+phase12-network-shell-sockdiag-blocking-poll-wait-core-20260621 accepts
+phase12-network-shell-sockdiag-blocking-poll-wait-core-accepted. The existing
+shell-visible `/bin/sockdiag` VFS/userspace diagnostic now exercises the
+accepted private process-local bounded blocking poll wait over local AF_INET
+stream sockets. The transcript covers executable lookup/open/read, startup
+ABI, descriptor-backed socket setup, wait registration through
+`TALOS_POLL_WAIT_SYSCALL = 14`, scheduler-visible `TaskState::Blocked`,
+resume through `SingleCoreScheduler::make_runnable`, waitpid, and laststatus.
+
+The accepted shell-visible cases are immediate-ready listener readiness,
+pending-listener wake after local connect, payload-read wake after local send,
+finite timeout with zero revents, peer close/hangup wake, scalar fail-closed
+`ENOTSUP`, invalid timeout `EINVAL`, unsupported events `EINVAL`, and
+unchanged accepted open/close, bind/listen, connect/accept, send/recv, and
+nonblocking `TALOS_POLL` controls. This remains source/unit
+host/QEMU-substitute evidence only. It does not accept retained smoke
+evidence, cross-process/global poll sets, UDP/TCP payload transport, smoltcp
+integration, live packet I/O, hardware reachability, SSH, public stable socket
+ABI acceptance, broad socket expansion, or phase transition. The selected next
+bounded task is
+phase12-network-shell-sockdiag-blocking-poll-wait-smoke-20260621.

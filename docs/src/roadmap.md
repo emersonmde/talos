@@ -15176,6 +15176,16 @@ Milestone 12.3: IP Stack
   acceptance, broad socket expansion, and phase transition remain rejected.
   The selected next bounded task is
   phase12-network-shell-sockdiag-blocking-poll-wait-core-20260621.
+- phase12-network-shell-sockdiag-blocking-poll-wait-core-20260621 accepts
+  shell-visible source/unit evidence for `/bin/sockdiag` exercising the
+  accepted private process-local bounded blocking poll wait through
+  VFS/userspace execution, scheduler-visible blocked/resume states, waitpid,
+  and laststatus. The accepted cases are immediate readiness, readiness after
+  local connect/send events, finite timeout, peer hangup, and malformed/error
+  controls. Retained smoke evidence, UDP/TCP payload transport, live packet
+  I/O, hardware reachability, SSH, public socket ABI acceptance, broad socket
+  expansion, and phase transition remain rejected. The selected next bounded
+  task is phase12-network-shell-sockdiag-blocking-poll-wait-smoke-20260621.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

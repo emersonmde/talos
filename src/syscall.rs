@@ -536,6 +536,7 @@ where
         | SyscallNumber::TalosSend
         | SyscallNumber::TalosRecv
         | SyscallNumber::TalosPoll
+        | SyscallNumber::TalosPollWait
         | SyscallNumber::TalosNop
         | SyscallNumber::Unknown(_) => dispatch(raw_number, arguments).return_value(),
     };
@@ -670,10 +671,6 @@ pub(crate) struct SocketPollWaitDispatchResult {
 impl SocketPollWaitDispatchResult {
     pub(crate) const fn number(self) -> SyscallNumber {
         self.number
-    }
-
-    pub(crate) const fn arguments(self) -> SyscallArguments {
-        self.arguments
     }
 
     pub(crate) const fn outcome(self) -> SocketPollWaitOutcome {

@@ -9,7 +9,7 @@ use crate::{
     },
     program_loader,
     runtime_console::{self, ConsoleBackend, ConsoleInputBackend, DEFAULT_RUNTIME_CONSOLE},
-    scheduler::{ProcessOwnerId, TaskId, TaskState},
+    scheduler::{self, ProcessOwnerId, TaskId, TaskState},
     syscall,
     tty::{self, CANONICAL_LINE_CAPACITY, PollingTtyRxOutcome, PollingTtyRxResult},
 };
@@ -37,7 +37,8 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+shell-sockdiag-vfs-userspace-socket-bind-listen",
     "+shell-sockdiag-vfs-userspace-socket-connect-accept",
     "+shell-sockdiag-vfs-userspace-socket-send-recv",
-    "+shell-sockdiag-vfs-userspace-socket-readiness-poll"
+    "+shell-sockdiag-vfs-userspace-socket-readiness-poll",
+    "+shell-sockdiag-vfs-userspace-socket-blocking-poll-wait"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -76,6 +77,7 @@ const LOCAL_COMMAND_PIPE_BUFFER_LEN: usize = 128;
 const LOCAL_COMMAND_PIPE_ENDPOINT_REFERENCE: usize = 1;
 const LOCAL_COMMAND_SOCKET_CAPACITY: usize = 4;
 const LOCAL_COMMAND_SOCKDIAG_USER_BASE: u64 = 0x0000_0000_0026_0000;
+const LOCAL_COMMAND_SOCKDIAG_POLL_WAIT_TASK_BASE: u64 = 0x0000_0000_0000_1200;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum LocalCommandDirectory {
@@ -717,6 +719,16 @@ pub struct LocalCommandSockdiagRecord {
     peer_hangup_revents: u32,
     invalid_descriptor_revents: u32,
     non_socket_descriptor_revents: u32,
+    poll_wait_immediate_revents: u32,
+    poll_wait_pending_listener_revents: u32,
+    poll_wait_payload_revents: u32,
+    poll_wait_timeout_revents: u32,
+    poll_wait_peer_hangup_revents: u32,
+    poll_wait_blocked_state: &'static str,
+    poll_wait_ready_state: &'static str,
+    poll_wait_timeout_state: &'static str,
+    poll_wait_ready_count: u64,
+    poll_wait_timeout_tick: u64,
     client_send_bytes: usize,
     server_recv_bytes: usize,
     server_send_bytes: usize,
@@ -767,6 +779,9 @@ pub struct LocalCommandSockdiagControlRecord {
     poll_unsupported_events: &'static str,
     poll_invalid_descriptor: &'static str,
     poll_non_socket_descriptor: &'static str,
+    poll_wait_scalar_dispatch: &'static str,
+    poll_wait_invalid_timeout: &'static str,
+    poll_wait_unsupported_events: &'static str,
     invalid_closed_descriptor: &'static str,
     syscall_vocabulary: &'static str,
     source: &'static str,
@@ -1019,6 +1034,14 @@ pub struct DescriptorBackedLocalCommandIo<
     stdout_scratch_file: LocalCommandVolatileFileState,
     stderr_scratch_file: LocalCommandVolatileFileState,
     socket_descriptors: crate::network::NetworkSocketDescriptorTable<LOCAL_COMMAND_SOCKET_CAPACITY>,
+}
+
+struct LocalCommandDiscardConsole;
+
+impl core::fmt::Write for LocalCommandDiscardConsole {
+    fn write_str(&mut self, _s: &str) -> core::fmt::Result {
+        Ok(())
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -1652,8 +1675,11 @@ where
                     poll_unsupported_events: "EINVAL",
                     poll_invalid_descriptor: "ERROR",
                     poll_non_socket_descriptor: "ERROR",
+                    poll_wait_scalar_dispatch: "ENOTSUP",
+                    poll_wait_invalid_timeout: "EINVAL",
+                    poll_wait_unsupported_events: "EINVAL",
                     invalid_closed_descriptor: "EBADF",
-                    syscall_vocabulary: "SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_SOCKET/TALOS_BIND/TALOS_LISTEN/TALOS_CONNECT/TALOS_ACCEPT/TALOS_SEND/TALOS_RECV/TALOS_POLL/TALOS_CLOSE bounded",
+                    syscall_vocabulary: "SyscallNumber/STABLE_SVC_IMMEDIATE/TALOS_SOCKET/TALOS_BIND/TALOS_LISTEN/TALOS_CONNECT/TALOS_ACCEPT/TALOS_SEND/TALOS_RECV/TALOS_POLL/TALOS_POLL_WAIT/TALOS_CLOSE bounded",
                     source: "shell-sockdiag-controls",
                 }),
             )
@@ -2061,6 +2087,104 @@ where
         let client_socket_reference =
             crate::network::NetworkSocketDescriptor::from_raw(client_entry.object().reference());
 
+        let mut poll_waits = syscall::SocketPollWaitTable::<2>::new();
+        let mut poll_wait_scheduler = scheduler::SingleCoreScheduler::<8>::new();
+        let mut poll_wait_console = LocalCommandDiscardConsole;
+        macro_rules! socket_poll_wait_dispatch {
+            ($arguments:expr, $task:expr, $now_tick:expr) => {
+                syscall::dispatch_process_descriptor_with_socket_table_and_poll_wait(
+                    syscall::TALOS_POLL_WAIT_SYSCALL,
+                    $arguments,
+                    Some(owner),
+                    $task,
+                    $now_tick,
+                    &mut self.descriptor_store,
+                    &mut self.socket_descriptors,
+                    &mut poll_waits,
+                    &mappings,
+                    LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+                    &mut user_memory,
+                    &mut kernel_scratch,
+                    &mut poll_wait_console,
+                )
+            };
+        }
+
+        let poll_wait_scalar = syscall::dispatch(
+            syscall::TALOS_POLL_WAIT_SYSCALL,
+            syscall::SyscallArguments::empty(),
+        );
+        if syscall::errno_number(posix::PosixError::NotSupported) as u64
+            != poll_wait_scalar.return_value().x0().wrapping_neg()
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+
+        let mut invalid_timeout_task = local_sockdiag_poll_wait_task(0)?;
+        local_write_poll_entry(
+            &mut user_memory,
+            0,
+            process_descriptor as u64,
+            syscall::TALOS_POLL_READ,
+        );
+        let invalid_timeout_wait = socket_poll_wait_dispatch!(
+            syscall::SyscallArguments::new([LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 0, 0, 0, 0]),
+            &mut invalid_timeout_task,
+            7
+        );
+        if invalid_timeout_wait.number() != syscall::SyscallNumber::TalosPollWait
+            || invalid_timeout_wait.outcome()
+                != syscall::SocketPollWaitOutcome::Completed(syscall::SyscallReturn::error(
+                    posix::PosixError::InvalidArgument,
+                ))
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+
+        let mut unsupported_wait_task = local_sockdiag_poll_wait_task(1)?;
+        local_write_poll_entry(
+            &mut user_memory,
+            0,
+            process_descriptor as u64,
+            syscall::TALOS_POLL_READ | 0x10,
+        );
+        let unsupported_poll_wait = socket_poll_wait_dispatch!(
+            syscall::SyscallArguments::new([LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 5, 0, 0, 0]),
+            &mut unsupported_wait_task,
+            8
+        );
+        if unsupported_poll_wait.outcome()
+            != syscall::SocketPollWaitOutcome::Completed(syscall::SyscallReturn::error(
+                posix::PosixError::InvalidArgument,
+            ))
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+
+        let mut listener_wait_task = local_sockdiag_poll_wait_task(2)?;
+        local_write_poll_entry(
+            &mut user_memory,
+            0,
+            process_descriptor as u64,
+            syscall::TALOS_POLL_READ,
+        );
+        let pending_listener_wait = socket_poll_wait_dispatch!(
+            syscall::SyscallArguments::new([LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 5, 0, 0, 0]),
+            &mut listener_wait_task,
+            10
+        );
+        if pending_listener_wait.outcome()
+            != (syscall::SocketPollWaitOutcome::Blocked {
+                task_id: listener_wait_task.id(),
+                deadline_tick: 15,
+            })
+            || listener_wait_task.state() != TaskState::Blocked
+            || !poll_waits.has_wait_for_task(listener_wait_task.id())
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let poll_wait_blocked_state = local_task_state_name(listener_wait_task.state());
+
         let missing_listener = socket_dispatch(
             syscall::TALOS_CONNECT_SYSCALL,
             syscall::SyscallArguments::new([
@@ -2122,6 +2246,27 @@ where
         if connect_return != 0 {
             return Err(LocalCommandExecError::SyscallFailed);
         }
+        let pending_listener_resume = poll_waits
+            .resume_ready_or_expired(
+                &mut listener_wait_task,
+                &mut poll_wait_scheduler,
+                &self.socket_descriptors,
+                11,
+                &mappings,
+                LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+                &mut user_memory,
+                &mut kernel_scratch,
+            )
+            .map_err(local_exec_error_from_posix)?;
+        let poll_wait_ready_count = match pending_listener_resume {
+            Some(syscall::SocketPollWaitResume::Ready {
+                task_id,
+                ready_count,
+            }) if task_id == listener_wait_task.id() => ready_count,
+            _ => return Err(LocalCommandExecError::SyscallFailed),
+        };
+        let poll_wait_pending_listener_revents = local_read_poll_revents(&user_memory, 0);
+        let poll_wait_ready_state = local_task_state_name(listener_wait_task.state());
         local_write_poll_entry(
             &mut user_memory,
             0,
@@ -2140,6 +2285,25 @@ where
             return Err(LocalCommandExecError::SyscallFailed);
         }
         let pending_listener_revents = local_read_poll_revents(&user_memory, 0);
+        let mut immediate_wait_task = local_sockdiag_poll_wait_task(3)?;
+        local_write_poll_entry(
+            &mut user_memory,
+            0,
+            process_descriptor as u64,
+            syscall::TALOS_POLL_READ,
+        );
+        let immediate_wait = socket_poll_wait_dispatch!(
+            syscall::SyscallArguments::new([LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 5, 0, 0, 0]),
+            &mut immediate_wait_task,
+            12
+        );
+        if immediate_wait.outcome()
+            != syscall::SocketPollWaitOutcome::Completed(syscall::SyscallReturn::success(1))
+            || immediate_wait_task.state() != TaskState::Runnable
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let poll_wait_immediate_revents = local_read_poll_revents(&user_memory, 0);
 
         let second_client_open = socket_dispatch(
             syscall::TALOS_SOCKET_SYSCALL,
@@ -2339,6 +2503,64 @@ where
         {
             return Err(LocalCommandExecError::SyscallFailed);
         }
+        let mut timeout_wait_task = local_sockdiag_poll_wait_task(4)?;
+        local_write_poll_entry(
+            &mut user_memory,
+            0,
+            accepted_descriptor as u64,
+            syscall::TALOS_POLL_READ,
+        );
+        let timeout_wait = socket_poll_wait_dispatch!(
+            syscall::SyscallArguments::new([LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 2, 0, 0, 0]),
+            &mut timeout_wait_task,
+            20
+        );
+        if timeout_wait.outcome()
+            != (syscall::SocketPollWaitOutcome::Blocked {
+                task_id: timeout_wait_task.id(),
+                deadline_tick: 22,
+            })
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        if poll_waits
+            .resume_ready_or_expired(
+                &mut timeout_wait_task,
+                &mut poll_wait_scheduler,
+                &self.socket_descriptors,
+                21,
+                &mappings,
+                LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+                &mut user_memory,
+                &mut kernel_scratch,
+            )
+            .map_err(local_exec_error_from_posix)?
+            .is_some()
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let timeout_resume = poll_waits
+            .resume_ready_or_expired(
+                &mut timeout_wait_task,
+                &mut poll_wait_scheduler,
+                &self.socket_descriptors,
+                22,
+                &mappings,
+                LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+                &mut user_memory,
+                &mut kernel_scratch,
+            )
+            .map_err(local_exec_error_from_posix)?;
+        if timeout_resume
+            != Some(syscall::SocketPollWaitResume::Timeout {
+                task_id: timeout_wait_task.id(),
+            })
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let poll_wait_timeout_revents = local_read_poll_revents(&user_memory, 0);
+        let poll_wait_timeout_state = local_task_state_name(timeout_wait_task.state());
+        let poll_wait_timeout_tick = 22;
 
         let send_invalid_flags = socket_dispatch(
             syscall::TALOS_SEND_SYSCALL,
@@ -2384,6 +2606,27 @@ where
 
         const SOCKDIAG_CLIENT_PAYLOAD: &[u8] = b"client->server";
         const SOCKDIAG_SERVER_PAYLOAD: &[u8] = b"server->client";
+        let mut payload_wait_task = local_sockdiag_poll_wait_task(5)?;
+        local_write_poll_entry(
+            &mut user_memory,
+            0,
+            accepted_descriptor as u64,
+            syscall::TALOS_POLL_READ,
+        );
+        let payload_wait = socket_poll_wait_dispatch!(
+            syscall::SyscallArguments::new([LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 9, 0, 0, 0]),
+            &mut payload_wait_task,
+            30
+        );
+        if !matches!(
+            payload_wait.outcome(),
+            syscall::SocketPollWaitOutcome::Blocked {
+                deadline_tick: 39,
+                ..
+            }
+        ) {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
         user_memory[..SOCKDIAG_CLIENT_PAYLOAD.len()].copy_from_slice(SOCKDIAG_CLIENT_PAYLOAD);
         let client_send = socket_dispatch(
             syscall::TALOS_SEND_SYSCALL,
@@ -2403,6 +2646,24 @@ where
         if client_send.return_value().x0() != SOCKDIAG_CLIENT_PAYLOAD.len() as u64 {
             return Err(LocalCommandExecError::SyscallFailed);
         }
+        if !matches!(
+            poll_waits
+                .resume_ready_or_expired(
+                    &mut payload_wait_task,
+                    &mut poll_wait_scheduler,
+                    &self.socket_descriptors,
+                    31,
+                    &mappings,
+                    LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+                    &mut user_memory,
+                    &mut kernel_scratch,
+                )
+                .map_err(local_exec_error_from_posix)?,
+            Some(syscall::SocketPollWaitResume::Ready { ready_count: 1, .. })
+        ) {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let poll_wait_payload_revents = local_read_poll_revents(&user_memory, 0);
         local_write_poll_entry(
             &mut user_memory,
             0,
@@ -2563,6 +2824,27 @@ where
             return Err(LocalCommandExecError::SyscallFailed);
         }
 
+        let mut hangup_wait_task = local_sockdiag_poll_wait_task(6)?;
+        local_write_poll_entry(
+            &mut user_memory,
+            0,
+            client_descriptor as u64,
+            syscall::TALOS_POLL_READ,
+        );
+        let hangup_wait = socket_poll_wait_dispatch!(
+            syscall::SyscallArguments::new([LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 8, 0, 0, 0]),
+            &mut hangup_wait_task,
+            40
+        );
+        if !matches!(
+            hangup_wait.outcome(),
+            syscall::SocketPollWaitOutcome::Blocked {
+                deadline_tick: 48,
+                ..
+            }
+        ) {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
         let accepted_close = socket_dispatch(
             syscall::TALOS_CLOSE_SYSCALL,
             syscall::SyscallArguments::new([accepted_descriptor as u64, 0, 0, 0, 0, 0]),
@@ -2574,6 +2856,24 @@ where
         if accepted_close.return_value().x0() != 0 {
             return Err(LocalCommandExecError::SyscallFailed);
         }
+        if !matches!(
+            poll_waits
+                .resume_ready_or_expired(
+                    &mut hangup_wait_task,
+                    &mut poll_wait_scheduler,
+                    &self.socket_descriptors,
+                    41,
+                    &mappings,
+                    LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+                    &mut user_memory,
+                    &mut kernel_scratch,
+                )
+                .map_err(local_exec_error_from_posix)?,
+            Some(syscall::SocketPollWaitResume::Ready { ready_count: 1, .. })
+        ) {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let poll_wait_peer_hangup_revents = local_read_poll_revents(&user_memory, 0);
         local_write_poll_entry(
             &mut user_memory,
             0,
@@ -2682,6 +2982,16 @@ where
             peer_hangup_revents,
             invalid_descriptor_revents,
             non_socket_descriptor_revents,
+            poll_wait_immediate_revents,
+            poll_wait_pending_listener_revents,
+            poll_wait_payload_revents,
+            poll_wait_timeout_revents,
+            poll_wait_peer_hangup_revents,
+            poll_wait_blocked_state,
+            poll_wait_ready_state,
+            poll_wait_timeout_state,
+            poll_wait_ready_count,
+            poll_wait_timeout_tick,
             client_send_bytes: SOCKDIAG_CLIENT_PAYLOAD.len(),
             server_recv_bytes: SOCKDIAG_CLIENT_PAYLOAD.len(),
             server_send_bytes: SOCKDIAG_SERVER_PAYLOAD.len(),
@@ -2717,7 +3027,7 @@ where
                     .socket_descriptors
                     .socket(accepted_socket_reference)
                     .is_err(),
-            source: "vfs-userspace-sockdiag+talos-socket-bind-listen-connect-accept-send-recv-poll-close+process-descriptor",
+            source: "vfs-userspace-sockdiag+talos-socket-bind-listen-connect-accept-send-recv-poll-wait-close+process-descriptor",
         })
     }
 
@@ -4522,6 +4832,29 @@ fn local_exec_error_from_posix(error: posix::PosixError) -> LocalCommandExecErro
     }
 }
 
+fn local_sockdiag_poll_wait_task(offset: u64) -> Result<scheduler::Task, LocalCommandExecError> {
+    let raw_task_id = LOCAL_COMMAND_SOCKDIAG_POLL_WAIT_TASK_BASE
+        .checked_add(offset)
+        .ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
+    let task_id =
+        scheduler::TaskId::new(raw_task_id).ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
+    let kernel_stack = scheduler::KernelStack::new(0x8000 + offset as usize * 0x1000, 0x1000)
+        .ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
+    Ok(scheduler::Task::kernel_thread(
+        task_id,
+        kernel_stack,
+        scheduler::ContextFrame::new(0x9000 + offset as usize * 0x1000, 0x1000),
+    ))
+}
+
+const fn local_task_state_name(state: TaskState) -> &'static str {
+    match state {
+        TaskState::Running => "running",
+        TaskState::Runnable => "runnable",
+        TaskState::Blocked => "blocked",
+    }
+}
+
 fn local_packet_pump_transmit(
     step: crate::network::PacketQueueDriverPumpStep,
 ) -> Result<(&'static str, usize), LocalCommandExecError> {
@@ -6308,6 +6641,26 @@ fn write_exec_sockdiag_line(
     write_hex_u64_part(sink, record.invalid_descriptor_revents as u64)?;
     write_str_part(sink, " poll-non-socket-descriptor=")?;
     write_hex_u64_part(sink, record.non_socket_descriptor_revents as u64)?;
+    write_str_part(sink, " poll-wait-immediate=")?;
+    write_hex_u64_part(sink, record.poll_wait_immediate_revents as u64)?;
+    write_str_part(sink, " poll-wait-pending-listener=")?;
+    write_hex_u64_part(sink, record.poll_wait_pending_listener_revents as u64)?;
+    write_str_part(sink, " poll-wait-payload-recv=")?;
+    write_hex_u64_part(sink, record.poll_wait_payload_revents as u64)?;
+    write_str_part(sink, " poll-wait-timeout=")?;
+    write_hex_u64_part(sink, record.poll_wait_timeout_revents as u64)?;
+    write_str_part(sink, " poll-wait-peer-hangup=")?;
+    write_hex_u64_part(sink, record.poll_wait_peer_hangup_revents as u64)?;
+    write_str_part(sink, " poll-wait-blocked-state=")?;
+    write_str_part(sink, record.poll_wait_blocked_state)?;
+    write_str_part(sink, " poll-wait-ready-state=")?;
+    write_str_part(sink, record.poll_wait_ready_state)?;
+    write_str_part(sink, " poll-wait-timeout-state=")?;
+    write_str_part(sink, record.poll_wait_timeout_state)?;
+    write_str_part(sink, " poll-wait-ready-count=")?;
+    write_hex_u64_part(sink, record.poll_wait_ready_count)?;
+    write_str_part(sink, " poll-wait-timeout-tick=")?;
+    write_hex_u64_part(sink, record.poll_wait_timeout_tick)?;
     write_str_part(sink, " client-send=")?;
     write_hex_usize_part(sink, record.client_send_bytes)?;
     write_str_part(sink, " server-recv=")?;
@@ -6415,6 +6768,12 @@ fn write_exec_sockdiag_controls_line(
     write_str_part(sink, record.poll_invalid_descriptor)?;
     write_str_part(sink, " poll-non-socket-descriptor=")?;
     write_str_part(sink, record.poll_non_socket_descriptor)?;
+    write_str_part(sink, " poll-wait-scalar-dispatch=")?;
+    write_str_part(sink, record.poll_wait_scalar_dispatch)?;
+    write_str_part(sink, " poll-wait-invalid-timeout=")?;
+    write_str_part(sink, record.poll_wait_invalid_timeout)?;
+    write_str_part(sink, " poll-wait-unsupported-events=")?;
+    write_str_part(sink, record.poll_wait_unsupported_events)?;
     write_str_part(sink, " invalid-closed-descriptor=")?;
     write_str_part(sink, record.invalid_closed_descriptor)?;
     write_str_part(sink, " syscall-vocabulary=")?;
@@ -7354,7 +7713,13 @@ talos> Talos initramfs fixture\n"
             "poll-empty-recv=0x0000000000000000 poll-payload-recv=0x0000000000000001 ",
             "poll-write-ready=0x0000000000000002 poll-write-backpressure=0x0000000000000000 ",
             "poll-peer-hangup=0x0000000000000005 poll-invalid-descriptor=0x0000000000000008 ",
-            "poll-non-socket-descriptor=0x0000000000000008 client-send=0x000000000000000e ",
+            "poll-non-socket-descriptor=0x0000000000000008 ",
+            "poll-wait-immediate=0x0000000000000001 poll-wait-pending-listener=0x0000000000000001 ",
+            "poll-wait-payload-recv=0x0000000000000001 poll-wait-timeout=0x0000000000000000 ",
+            "poll-wait-peer-hangup=0x0000000000000005 poll-wait-blocked-state=blocked ",
+            "poll-wait-ready-state=runnable poll-wait-timeout-state=runnable ",
+            "poll-wait-ready-count=0x0000000000000001 poll-wait-timeout-tick=0x0000000000000016 ",
+            "client-send=0x000000000000000e ",
             "server-recv=0x000000000000000e server-send=0x000000000000000e client-recv=0x000000000000000e ",
             "payload=client->server reply=server->client domain=0x0000000000000002 ",
             "type=0x0000000000000001 protocol=0x0000000000000000 bind-ipv4=0x000000007f000001 ",
@@ -7363,7 +7728,7 @@ talos> Talos initramfs fixture\n"
             "accept-return=0x0000000000000006 socket-state=listening client-state=connected ",
             "accepted-state=accepted descriptor-kind=socket descriptor-access=read-write ",
             "close-return=0x0000000000000000 backing-closed=true ",
-            "source=vfs-userspace-sockdiag+talos-socket-bind-listen-connect-accept-send-recv-poll-close+process-descriptor\n"
+            "source=vfs-userspace-sockdiag+talos-socket-bind-listen-connect-accept-send-recv-poll-wait-close+process-descriptor\n"
         )));
         assert!(output.contains(concat!(
             "talos: sockdiag-controls malformed-arguments=exec-invalid-path missing-executable=exec-not-found ",
@@ -7374,9 +7739,11 @@ talos> Talos initramfs fixture\n"
             "empty-recv=EAGAIN send-invalid-flags=EINVAL recv-invalid-flags=EINVAL ",
             "payload-queue-backpressure=ENOSPC send-after-peer-close=EPIPE ",
             "poll-unsupported-events=EINVAL poll-invalid-descriptor=ERROR poll-non-socket-descriptor=ERROR ",
+            "poll-wait-scalar-dispatch=ENOTSUP poll-wait-invalid-timeout=EINVAL ",
+            "poll-wait-unsupported-events=EINVAL ",
             "invalid-closed-descriptor=EBADF syscall-vocabulary=SyscallNumber/STABLE_SVC_IMMEDIATE/",
             "TALOS_SOCKET/TALOS_BIND/TALOS_LISTEN/TALOS_CONNECT/TALOS_ACCEPT/TALOS_SEND/",
-            "TALOS_RECV/TALOS_POLL/TALOS_CLOSE bounded source=shell-sockdiag-controls\n"
+            "TALOS_RECV/TALOS_POLL/TALOS_POLL_WAIT/TALOS_CLOSE bounded source=shell-sockdiag-controls\n"
         )));
         assert!(output.contains(
             "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/sockdiag state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true\n"
