@@ -5463,3 +5463,35 @@ hardware reachability, SSH, public stable socket ABI acceptance, broad socket
 expansion, and phase transition remain rejected. selected_next_task is null
 and planningNeeded=true pending supervisor planning for any next bounded
 Phase 12.4 socket or network task.
+
+phase12-network-cross-process-local-socket-rendezvous-contract-20260621
+accepts
+phase12-network-cross-process-local-socket-rendezvous-contract-accepted.
+Supervisor planning after the blocking poll-wait closeout selected the next
+bounded socket integration boundary: a private cross-process local rendezvous
+contract for two distinct process descriptor stores.
+
+The accepted contract keeps process-visible file descriptors in their owning
+process descriptor tables and uses a bounded kernel-local rendezvous table for
+listener records, pending connection records, and connected-pair records.
+Connect targets a listener endpoint without creating an fd in the listener
+process. Accept consumes a pending connection, allocates a server-owned socket
+backing descriptor, installs a descriptor-table entry in the accepting
+process, and joins that accepted socket to the client's connection id. Payload
+state is connection-local with two bounded queues, one per direction.
+
+The accepted readiness and wait semantics are the prior local socket semantics
+lifted across the connection record: listener pending-accept READ, inbound
+payload READ, peer queue capacity WRITE, peer close/drop HANGUP, descriptor or
+connection invalidation ERROR, and finite scheduler-owned poll-wait timeout.
+Close/drop/exit cleanup must wake affected waiters, preserve queued bytes
+until drained after peer close, and release connection capacity only after both
+endpoints are gone and queues are drained.
+
+This remains source/task/docs evidence only. Runtime implementation,
+shell-visible /bin/sockdiag cross-process diagnostics, retained smoke
+evidence, UDP/TCP payload transport, smoltcp integration, live driver
+adapters, live packet I/O, hardware reachability, SSH, public stable socket
+ABI acceptance, broad socket expansion, and phase transition remain rejected.
+The selected next bounded task is
+phase12-network-cross-process-local-socket-rendezvous-core-20260621.

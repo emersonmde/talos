@@ -15211,6 +15211,24 @@ Milestone 12.3: IP Stack
   public socket ABI acceptance, broad socket expansion, and phase transition
   remain rejected. selected_next_task is null and planningNeeded=true pending
   supervisor planning for any next bounded Phase 12.4 socket or network task.
+- phase12-network-cross-process-local-socket-rendezvous-contract-20260621
+  accepts a private source/task/docs contract for the next bounded socket
+  integration step: cross-process local socket rendezvous across two distinct
+  process descriptor stores. Process-visible fds remain per-owner, while a
+  bounded kernel-local rendezvous table owns listener records, pending
+  connection records, connected-pair records, and two per-connection payload
+  queues. Connect targets a listener endpoint without mutating the listener
+  process descriptor table; accept consumes a pending connection, creates a
+  server-owned accepted socket, and joins it to the client's connection id.
+  Readiness and bounded wait semantics cover listener pending-accept READ,
+  inbound payload READ, peer queue capacity WRITE, peer close/drop HANGUP,
+  descriptor/connection invalidation ERROR, and finite scheduler-owned
+  timeout. Runtime implementation, shell /bin/sockdiag cross-process output,
+  retained smoke, UDP/TCP payload transport, smoltcp integration, live packet
+  I/O, hardware reachability, SSH, public stable socket ABI acceptance, broad
+  socket expansion, and phase transition remain rejected. The selected next
+  bounded task is
+  phase12-network-cross-process-local-socket-rendezvous-core-20260621.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
