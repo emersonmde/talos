@@ -15244,6 +15244,23 @@ Milestone 12.3: IP Stack
   socket expansion, and phase transition remain rejected. The selected next
   bounded task is
   phase12-network-shell-sockdiag-cross-process-local-socket-core-20260621.
+- phase12-network-shell-sockdiag-cross-process-local-socket-smoke-20260621
+  accepts retained host/QEMU-substitute evidence for shell-visible
+  `/bin/sockdiag` cross-process local socket rendezvous over VFS/userspace
+  execution. The smoke covers executable lookup/open/read, startup ABI,
+  distinct server/client ProcessOwnerId descriptor owners, server-owned
+  listener/accepted descriptors, a client-owned connected descriptor,
+  bidirectional payload transfer, listener and payload bounded wait wakeups,
+  peer-close hangup readiness, cleanup release, waitpid, laststatus,
+  malformed/missing executable controls, unchanged prior process-local sockdiag
+  diagnostics, and unchanged /bin/pingdiag behavior. The smoke task also fixed
+  predecessor compile/test drift around Connected/Accepted connection_id
+  comparisons, duplicate-listener borrow checking, and hangup-wait test setup
+  without accepting a broader runtime contract. UDP/TCP payload transport,
+  smoltcp integration, live packet I/O, hardware reachability, SSH, public
+  stable socket ABI acceptance, broad socket expansion, and phase transition
+  remain rejected. The selected next bounded task is
+  phase12-network-shell-sockdiag-cross-process-local-socket-closeout-20260621.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

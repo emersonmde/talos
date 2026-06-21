@@ -1,0 +1,29 @@
+{
+  "task_id": "phase12-network-shell-sockdiag-cross-process-local-socket-smoke-20260621",
+  "classification": "phase12-network-shell-sockdiag-cross-process-local-socket-smoke-accepted",
+  "evidence_level": "host-qemu-substitute",
+  "smoke_classification": "host-substitute-shell-sockdiag-cross-process-local-socket-smoke-complete",
+  "accepted_boundary": "shell-visible VFS/userspace /bin/sockdiag execution of private cross-process local socket rendezvous over distinct ProcessOwnerId descriptor tables, deterministic controls, waitpid, and laststatus",
+  "accepted_claims": [
+    "exec /bin/sockdiag resolves through VFS executable lookup/open/read",
+    "server and client use distinct process descriptor owners",
+    "cross-process connect/accept preserves descriptor ownership",
+    "bidirectional local socket payload transfer is visible through /bin/sockdiag markers",
+    "bounded poll waits wake for listener readiness, payload readiness, and peer close",
+    "cleanup releases accepted/listener descriptors and backing socket state",
+    "malformed arguments, missing executable identity, pingdiag, and previous sockdiag controls remain covered"
+  ],
+  "rejected_claims": [
+    "UDP/TCP payload transport",
+    "smoltcp integration",
+    "live driver adapters",
+    "live packet I/O",
+    "Pi 5 hardware reachability",
+    "lab mutation or boot publication",
+    "SSH",
+    "public stable socket ABI acceptance",
+    "broad socket expansion",
+    "phase transition"
+  ],
+  "selected_next_task": "phase12-network-shell-sockdiag-cross-process-local-socket-closeout-20260621"
+}

@@ -2148,16 +2148,17 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
         backlog: u8,
     ) -> Result<(), crate::posix::PosixError> {
         self.require_owner(owner, descriptor)?;
-        let socket = self
-            .entries
-            .get_mut(descriptor.raw())
-            .and_then(Option::as_mut)
-            .ok_or(crate::posix::PosixError::BadDescriptor)?;
-        match socket.state {
+        let state = self.socket(descriptor)?.state;
+        match state {
             NetworkSocketState::Bound { local_endpoint } => {
                 if self.active_listener_endpoint_in_use(descriptor, local_endpoint) {
                     return Err(crate::posix::PosixError::Exists);
                 }
+                let socket = self
+                    .entries
+                    .get_mut(descriptor.raw())
+                    .and_then(Option::as_mut)
+                    .ok_or(crate::posix::PosixError::BadDescriptor)?;
                 socket.state = NetworkSocketState::Listening {
                     local_endpoint,
                     backlog,
@@ -2176,6 +2177,11 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
                 if self.active_listener_endpoint_in_use(descriptor, local_endpoint) {
                     return Err(crate::posix::PosixError::Exists);
                 }
+                let socket = self
+                    .entries
+                    .get_mut(descriptor.raw())
+                    .and_then(Option::as_mut)
+                    .ok_or(crate::posix::PosixError::BadDescriptor)?;
                 socket.state = NetworkSocketState::Listening {
                     local_endpoint,
                     backlog,

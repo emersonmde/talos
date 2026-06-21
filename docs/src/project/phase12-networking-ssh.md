@@ -5540,3 +5540,26 @@ Pi 5 hardware runs, lab mutation, boot publication, hardware reachability,
 SSH, public stable socket ABI acceptance, broad socket expansion, and phase
 transition remain rejected. The selected next bounded task is
 phase12-network-shell-sockdiag-cross-process-local-socket-smoke-20260621.
+
+phase12-network-shell-sockdiag-cross-process-local-socket-smoke-20260621
+accepts
+phase12-network-shell-sockdiag-cross-process-local-socket-smoke-accepted. The
+retained host/QEMU-substitute smoke evidence records shell-visible
+`/bin/sockdiag` cross-process local socket rendezvous through VFS/userspace
+execution. It covers executable lookup/open/read, startup ABI, distinct
+server/client ProcessOwnerId descriptor owners, server-owned listener and
+accepted descriptors, a client-owned connected descriptor, bidirectional
+payload transfer, listener and payload bounded wait wakeups, peer-close hangup
+readiness, cleanup release, waitpid, laststatus, malformed/missing executable
+controls, prior process-local sockdiag diagnostics, and unchanged /bin/pingdiag
+behavior.
+
+The first smoke attempt exposed predecessor drift in source comparisons for
+Connected/Accepted connection_id fields and a duplicate-listener borrow shape;
+the smoke task fixed those compile blockers without accepting a broader runtime
+contract. Accepted evidence remains host/QEMU-substitute only. UDP/TCP payload
+transport, smoltcp integration, live driver adapters, live packet I/O, Pi 5
+hardware runs, lab mutation, boot publication, hardware reachability, SSH,
+public stable socket ABI acceptance, broad socket expansion, and phase
+transition remain rejected. The selected next bounded task is
+phase12-network-shell-sockdiag-cross-process-local-socket-closeout-20260621.

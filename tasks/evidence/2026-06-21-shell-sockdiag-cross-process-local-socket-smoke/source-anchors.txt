@@ -1,0 +1,24 @@
+Task: phase12-network-shell-sockdiag-cross-process-local-socket-smoke-20260621
+
+Smoke command:
+- scripts/qemu-shell-sockdiag-cross-process-local-socket-smoke.sh
+
+Source anchors:
+- src/initramfs.rs:49 PHASE12_SOCKDIAG_PATH is /bin/sockdiag.
+- src/initramfs.rs:903 exposes sockdiag in the read-only /bin fixture.
+- src/local_command_loop.rs:42 records shell-sockdiag-vfs-userspace-cross-process-local-socket in the local command boundary.
+- src/local_command_loop.rs:125 maps /bin/sockdiag to the sockdiag executable identity.
+- src/local_command_loop.rs:1668 selects sockdiag diagnostics only after VFS executable lookup/open/read resolves PHASE12_SOCKDIAG_PATH.
+- src/local_command_loop.rs:1753 runs DescriptorBackedLocalCommandIo::exec_shell_sockdiag_diagnostic.
+- src/local_command_loop.rs:2995 starts the cross-process sockdiag path with distinct server/client ProcessOwnerId values.
+- src/local_command_loop.rs:3084 records listener TALOS_POLL_WAIT blocking before client connect.
+- src/local_command_loop.rs:3199 accepts into the server descriptor table and preserves client descriptor ownership.
+- src/local_command_loop.rs:3223 records payload TALOS_POLL_WAIT blocking before cross-process send.
+- src/local_command_loop.rs:3387 records peer-close hangup readiness.
+- src/local_command_loop.rs:7196 renders deterministic cross-process-* shell-visible markers.
+- src/local_command_loop.rs:8197 covers exec /bin/sockdiag, waitpid, laststatus, malformed arguments, and missing executable controls.
+- src/network.rs:2144 listens without overlapping mutable/immutable borrows while preserving duplicate-listener rejection.
+- src/network.rs:2536 identifies duplicate active listener endpoints.
+- src/syscall.rs:9258 covers cross-process local socket descriptor ownership.
+- src/syscall.rs:9462 covers cross-process poll wait wakeups for accept, payload, and peer close.
+- src/syscall.rs:9770 covers cross-process close cleanup and capacity release.

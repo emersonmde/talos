@@ -2417,30 +2417,36 @@ where
         {
             return Err(LocalCommandExecError::LaunchPipelineFailed);
         }
-        if self
-            .socket_descriptors
-            .socket(client_socket_reference)
-            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?
-            .state()
-            != (crate::network::NetworkSocketState::Connected {
-                local_endpoint: client_endpoint,
-                remote_endpoint: local_endpoint,
-                recv_queue: crate::network::NetworkSocketPayloadQueue::new(),
-            })
-        {
+        if !matches!(
+            self.socket_descriptors
+                .socket(client_socket_reference)
+                .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?
+                .state(),
+            crate::network::NetworkSocketState::Connected {
+                local_endpoint: connected_local_endpoint,
+                remote_endpoint: connected_remote_endpoint,
+                recv_queue,
+                ..
+            } if connected_local_endpoint == client_endpoint
+                && connected_remote_endpoint == local_endpoint
+                && recv_queue == crate::network::NetworkSocketPayloadQueue::new()
+        ) {
             return Err(LocalCommandExecError::LaunchPipelineFailed);
         }
-        if self
-            .socket_descriptors
-            .socket(accepted_socket_reference)
-            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?
-            .state()
-            != (crate::network::NetworkSocketState::Accepted {
-                local_endpoint,
-                remote_endpoint: client_endpoint,
-                recv_queue: crate::network::NetworkSocketPayloadQueue::new(),
-            })
-        {
+        if !matches!(
+            self.socket_descriptors
+                .socket(accepted_socket_reference)
+                .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?
+                .state(),
+            crate::network::NetworkSocketState::Accepted {
+                local_endpoint: accepted_local_endpoint,
+                remote_endpoint: accepted_remote_endpoint,
+                recv_queue,
+                ..
+            } if accepted_local_endpoint == local_endpoint
+                && accepted_remote_endpoint == client_endpoint
+                && recv_queue == crate::network::NetworkSocketPayloadQueue::new()
+        ) {
             return Err(LocalCommandExecError::LaunchPipelineFailed);
         }
         local_write_poll_entry(

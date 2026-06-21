@@ -8706,28 +8706,34 @@ mod tests {
                 pending: crate::network::NetworkSocketPendingQueue::new(),
             }
         );
-        assert_eq!(
+        assert!(matches!(
             sockets
                 .socket(crate::network::NetworkSocketDescriptor::from_raw(1))
                 .expect("client backing")
                 .state(),
             crate::network::NetworkSocketState::Connected {
-                local_endpoint: client_endpoint,
-                remote_endpoint: listener_endpoint,
-                recv_queue: crate::network::NetworkSocketPayloadQueue::new(),
-            }
-        );
-        assert_eq!(
+                local_endpoint,
+                remote_endpoint,
+                recv_queue,
+                ..
+            } if local_endpoint == client_endpoint
+                && remote_endpoint == listener_endpoint
+                && recv_queue == crate::network::NetworkSocketPayloadQueue::new()
+        ));
+        assert!(matches!(
             sockets
                 .socket(crate::network::NetworkSocketDescriptor::from_raw(2))
                 .expect("accepted backing")
                 .state(),
             crate::network::NetworkSocketState::Accepted {
-                local_endpoint: listener_endpoint,
-                remote_endpoint: client_endpoint,
-                recv_queue: crate::network::NetworkSocketPayloadQueue::new(),
-            }
-        );
+                local_endpoint,
+                remote_endpoint,
+                recv_queue,
+                ..
+            } if local_endpoint == listener_endpoint
+                && remote_endpoint == client_endpoint
+                && recv_queue == crate::network::NetworkSocketPayloadQueue::new()
+        ));
 
         let close_client = dispatch_socket_case(
             TALOS_CLOSE_SYSCALL,
@@ -9690,6 +9696,20 @@ mod tests {
             })
         );
         assert_eq!(read_poll_revents(&user_memory, 0), TALOS_POLL_READ);
+        assert_eq!(
+            dispatch_socket_case(
+                TALOS_RECV_SYSCALL,
+                SyscallArguments::new([4, 0x0000_0000_0011_0048, 2, 0, 0, 0]),
+                Some(server),
+                &mut store,
+                &mut sockets,
+                &mut user_memory,
+            )
+            .return_value()
+            .x0(),
+            2
+        );
+        assert_eq!(&user_memory[0x48..0x4a], b"hi");
 
         write_poll_entry(&mut user_memory, 0, 4, TALOS_POLL_READ, 0x3333);
         assert!(matches!(
