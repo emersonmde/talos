@@ -1,0 +1,36 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof-20260621",
+  "classification_file": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/classification.json",
+  "task_record": "tasks/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof.md",
+  "source_core_task": "tasks/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-source-core.md",
+  "control": {
+    "nonce_file": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/control-nonce.txt",
+    "archive": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/control-archive.tar.gz",
+    "archive_review": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/control-archive-review.txt",
+    "capture_summary": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/control-run/capture-invariant-summary.json",
+    "serial_window": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/control-run/serial-observe-window.json",
+    "tftp_stability": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/control-run/tftp-delta-stable-pre-restore.json",
+    "serial_freshness": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/control-run/serial-freshness-guard-v1.json",
+    "identity_join": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/control-run/identity-join-run-unique.json",
+    "boot_staging_identity": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/control-run/boot-staging-identity.json"
+  },
+  "candidate": {
+    "nonce_file": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/candidate-nonce.txt",
+    "archive": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/candidate-archive.tar.gz",
+    "archive_review": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/candidate-archive-review.txt",
+    "capture_summary": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/candidate-run/capture-invariant-summary.json",
+    "serial_window": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/candidate-run/serial-observe-window.json",
+    "tftp_stability": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/candidate-run/tftp-delta-stable-pre-restore.json",
+    "serial_freshness": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/candidate-run/serial-freshness-guard-v1.json",
+    "identity_join": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/candidate-run/identity-join-run-unique.json",
+    "boot_staging_identity": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/candidate-run/boot-staging-identity.json"
+  },
+  "restore": {
+    "pre_run_snapshot": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/pre-run-snapshot.json",
+    "snapshot_name": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/restore-snapshot-name.txt",
+    "final_restore_snapshot": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/final-restore-snapshot.json",
+    "final_post_restore_boot_files": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/final-post-restore-boot-files.json",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "summary": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/hardware-run-summary.json"
+}

@@ -13598,6 +13598,21 @@ remain rejected. Local/static evidence does not accept link-ready,
 autoneg-complete, packet-readiness, or live RX/TX. selected_next_task is
 phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof-20260621.
 
+phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof-20260621
+accepts bcm54213pe-lifecycle-powerdown-exit-no-change-link-not-ready. The
+serialized Pi 5 proof retained selected-tree identity, same-power-cycle TFTP
+byte evidence, serial nonce freshness, final pre-restore identity, and restore
+to the pre-run boot tree. The no-MDIO/no-Ethernet control classified
+no-mdio-no-ethernet-bcm54213pe-lifecycle-ownership-control. The candidate
+observed BMCR 0x1000 with BMCR_PDOWN already clear, so the selected
+fail-closed gate performed no BMCR clear write; post-sampling retained BMCR
+0x1000, BMSR 0x7949/0x7949, ANAR 0x01e1, ANLPAR 0x0000, MII_CTRL1000 0x0200,
+MII_STAT1000 0x0000, and passive MACB_NSR_LINK=false. This accepts only the
+no-change link-not-ready terminal. It does not accept link-ready,
+autoneg-complete, packet-readiness, live RX/TX, packet I/O, networking, SSH,
+Phase 12.2, or a phase transition. selected_next_task is
+phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-closeout-20260621.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

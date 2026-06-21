@@ -543,6 +543,16 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[],
     },
     BootScenario {
+        value: "rpi5_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_candidate",
+        implied_values: &[],
+        asm_defines: &[],
+    },
+    BootScenario {
+        value: "rpi5_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_no_mdio_control",
+        implied_values: &[],
+        asm_defines: &[],
+    },
+    BootScenario {
         value: "rpi5_rp1_ethernet_bcm54213pe_boot_transport_sentinel_candidate",
         implied_values: &[],
         asm_defines: &[],

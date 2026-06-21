@@ -1,0 +1,8 @@
+control_archive=tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/control-archive.tar.gz
+control_archive_sha256=030f4b3e401c16299067145b635fa518aecf8cb363914c86c8a58e1d2edd4f93
+kernel_2712_sha256=9cb11ffc97d5804e87d49d68463e7e85ded83acd1b1702efee815632d48fe303
+kernel_2712_size=50344
+header_image_size=50344
+text_offset=0
+flags=12
+forbidden_bcm54213pe_lifecycle_control_runtime_strings_absent=true

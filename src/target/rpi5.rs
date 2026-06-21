@@ -12821,6 +12821,7 @@ fn clean_cache_range_to_poc(start: usize, len: usize) {
         talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_candidate",
         talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_candidate",
         talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_master_mode_autoneg_candidate",
+        talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_candidate",
         talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
         talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_read",
         talos_boot_scenario = "rpi5_rp1_bridge_config_preflight_read",
@@ -12860,7 +12861,8 @@ fn read_rp1_reg_u32(addr: usize) -> u32 {
         talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_rgmii_delay_candidate",
         talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_candidate",
         talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_candidate",
-        talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_master_mode_autoneg_candidate"
+        talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_master_mode_autoneg_candidate",
+        talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_candidate"
     )
 ))]
 fn write_rp1_reg_u32_ordered(addr: usize, value: u32) {
@@ -19856,6 +19858,407 @@ fn write_rp1_ethernet_bcm54213pe_master_mode_autoneg_rejections(
     write_early_static(" claims-ssh=false claims-phase-12-2=false claims-phase-transition=false");
 }
 
+#[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_candidate")]
+pub fn run_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_candidate() -> ! {
+    const NCR: usize = 0x1c_0010_0000;
+    const NSR: usize = 0x1c_0010_0008;
+    const MAN: usize = 0x1c_0010_0034;
+    const NCR_MPE: u32 = 1 << 4;
+    const NSR_IDLE: u32 = 1 << 2;
+    const MACB_NSR_LINK: u32 = 1 << 0;
+    const BMCR_READ_MAN_FRAME: u32 = 0x6082_0000;
+    const BMSR_READ_MAN_FRAME: u32 = 0x6086_0000;
+    const ANAR_READ_MAN_FRAME: u32 = 0x6092_0000;
+    const ANLPAR_READ_MAN_FRAME: u32 = 0x6096_0000;
+    const CTRL1000_READ_MAN_FRAME: u32 = 0x60a6_0000;
+    const STAT1000_READ_MAN_FRAME: u32 = 0x60aa_0000;
+    const BMCR_WRITE_FRAME_PREFIX: u32 =
+        crate::rp1_ethernet::RP1_ETHERNET_BCM54213PE_LIFECYCLE_OWNERSHIP_BMCR_WRITE_FRAME_PREFIX;
+    const BMCR_POWERDOWN: u16 =
+        crate::rp1_ethernet::RP1_ETHERNET_BCM54213PE_LIFECYCLE_OWNERSHIP_BMCR_POWERDOWN;
+    const BMCR_CLEAR_MASK: u16 =
+        crate::rp1_ethernet::RP1_ETHERNET_BCM54213PE_LIFECYCLE_OWNERSHIP_BMCR_CLEAR_PDOWN_MASK;
+    const EXIT_DELAY_SPINS: u32 = 0x4000;
+
+    write_early_static("rpi5-rp1-ethernet-bcm54213pe-lifecycle-powerdown-exit-candidate: start\n");
+    write_early_static(
+        "rpi5-rp1-ethernet-bcm54213pe-lifecycle-powerdown-exit-candidate: before-conditional-bmcr-pdown-clear-then-status-sampling\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    let ncr_before = read_rp1_reg_u32(NCR);
+    let mut pre_bmcr_raw = 0u16;
+    let mut clear_value = 0u16;
+    let mut post_bmcr_raw = 0u16;
+    let mut post_bmsr_first_raw = 0u16;
+    let mut post_bmsr_second_raw = 0u16;
+    let mut post_anar_raw = 0u16;
+    let mut post_anlpar_raw = 0u16;
+    let mut post_ctrl1000_raw = 0u16;
+    let mut post_stat1000_raw = 0u16;
+    let mut post_macb_nsr_raw = 0u32;
+    let mut mdio_man_transactions_performed = false;
+    let mut bmcr_pre_read_completed = false;
+    let mut bmcr_pdown_pre_set = false;
+    let mut bmcr_write_performed = false;
+    let mut bmcr_post_read_completed = false;
+    let mut post_status_sampling_completed = false;
+    let mut exit_delay_performed = false;
+    let mut link_ready = false;
+
+    let classification = if ncr_before & NCR_MPE == 0 {
+        "bcm54213pe-lifecycle-powerdown-exit-precondition-blocker"
+    } else if let Some(pre_value) = read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
+        NSR,
+        MAN,
+        NSR_IDLE,
+        BMCR_READ_MAN_FRAME,
+    ) {
+        mdio_man_transactions_performed = true;
+        bmcr_pre_read_completed = true;
+        pre_bmcr_raw = pre_value;
+        bmcr_pdown_pre_set = pre_value & BMCR_POWERDOWN != 0;
+        clear_value = pre_value & BMCR_CLEAR_MASK;
+
+        let mut capture_blocked = false;
+        if bmcr_pdown_pre_set {
+            if write_rp1_ethernet_bcm54213pe_rgmii_delay_phy1_register(
+                NSR,
+                MAN,
+                NSR_IDLE,
+                BMCR_WRITE_FRAME_PREFIX,
+                clear_value,
+            ) {
+                bmcr_write_performed = true;
+                let mut delay = EXIT_DELAY_SPINS;
+                while delay > 0 {
+                    core::hint::spin_loop();
+                    delay -= 1;
+                }
+                exit_delay_performed = true;
+            } else {
+                capture_blocked = true;
+            }
+        }
+
+        if !capture_blocked {
+            if let Some(value) = read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
+                NSR,
+                MAN,
+                NSR_IDLE,
+                BMCR_READ_MAN_FRAME,
+            ) {
+                post_bmcr_raw = value;
+                bmcr_post_read_completed = true;
+            } else {
+                capture_blocked = true;
+            }
+        }
+        if !capture_blocked {
+            if let Some(value) = read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
+                NSR,
+                MAN,
+                NSR_IDLE,
+                BMSR_READ_MAN_FRAME,
+            ) {
+                post_bmsr_first_raw = value;
+            } else {
+                capture_blocked = true;
+            }
+        }
+        if !capture_blocked {
+            if let Some(value) = read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
+                NSR,
+                MAN,
+                NSR_IDLE,
+                BMSR_READ_MAN_FRAME,
+            ) {
+                post_bmsr_second_raw = value;
+            } else {
+                capture_blocked = true;
+            }
+        }
+        if !capture_blocked {
+            if let Some(value) = read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
+                NSR,
+                MAN,
+                NSR_IDLE,
+                ANAR_READ_MAN_FRAME,
+            ) {
+                post_anar_raw = value;
+            } else {
+                capture_blocked = true;
+            }
+        }
+        if !capture_blocked {
+            if let Some(value) = read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
+                NSR,
+                MAN,
+                NSR_IDLE,
+                ANLPAR_READ_MAN_FRAME,
+            ) {
+                post_anlpar_raw = value;
+            } else {
+                capture_blocked = true;
+            }
+        }
+        if !capture_blocked {
+            if let Some(value) = read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
+                NSR,
+                MAN,
+                NSR_IDLE,
+                CTRL1000_READ_MAN_FRAME,
+            ) {
+                post_ctrl1000_raw = value;
+            } else {
+                capture_blocked = true;
+            }
+        }
+        if !capture_blocked {
+            if let Some(value) = read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
+                NSR,
+                MAN,
+                NSR_IDLE,
+                STAT1000_READ_MAN_FRAME,
+            ) {
+                post_stat1000_raw = value;
+            } else {
+                capture_blocked = true;
+            }
+        }
+
+        if capture_blocked {
+            "bcm54213pe-lifecycle-powerdown-exit-capture-blocker"
+        } else if bmcr_pdown_pre_set && post_bmcr_raw & BMCR_POWERDOWN != 0 {
+            "bcm54213pe-lifecycle-powerdown-exit-readback-mismatch"
+        } else {
+            post_macb_nsr_raw = read_rp1_reg_u32(NSR);
+            post_status_sampling_completed = true;
+            let bmsr = crate::rp1_ethernet::decode_rp1_ethernet_phy1_bmsr(post_bmsr_second_raw);
+            link_ready =
+                bmsr.link_status && bmsr.autoneg_complete && post_macb_nsr_raw & MACB_NSR_LINK != 0;
+            if link_ready {
+                "bcm54213pe-lifecycle-powerdown-exit-link-ready"
+            } else if bmcr_write_performed {
+                "bcm54213pe-lifecycle-powerdown-exit-pdown-clear-sampled-link-not-ready"
+            } else {
+                "bcm54213pe-lifecycle-powerdown-exit-no-change-link-not-ready"
+            }
+        }
+    } else {
+        "bcm54213pe-lifecycle-powerdown-exit-capture-blocker"
+    };
+
+    let ncr_after = read_rp1_reg_u32(NCR);
+    let bmsr_second = crate::rp1_ethernet::decode_rp1_ethernet_phy1_bmsr(post_bmsr_second_raw);
+
+    loop {
+        write_early_static("TALOS: rp1-ethernet-bcm54213pe-lifecycle-powerdown-exit-candidate");
+        write_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_capture_nonce();
+        write_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_common("candidate");
+        write_early_static(" target=phy1-bmcr-powerdown-exit-gate");
+        write_early_static(" controller=rp1_eth compatible=raspberrypi,rp1-gem,cdns,macb");
+        write_early_static(" phy-model=Broadcom-BCM54213PE physid1=0x600d physid2=0x84a2");
+        write_early_static(" phy-handle=phy1 phy-node=ethernet-phy@1 phy-address=1");
+        write_early_static(" ncr-observed-target=");
+        write_early_hex_u64(NCR as u64);
+        write_early_static(" nsr-observed-target=");
+        write_early_hex_u64(NSR as u64);
+        write_early_static(" man-observed-target=");
+        write_early_hex_u64(MAN as u64);
+        write_early_static(" ncr-before=");
+        write_early_hex_u64(ncr_before as u64);
+        write_early_static(" ncr-after=");
+        write_early_hex_u64(ncr_after as u64);
+        write_early_static(" bmcr-read-frame=0x60820000 bmcr-write-frame-prefix=0x50820000");
+        write_early_static(" bmcr-powerdown-bit=0x0800 bmcr-clear-pdown-mask=0xf7ff");
+        write_early_static(
+            " accepted-context-pre-bmcr=0x1200 accepted-context-expected-clear-value=0x1200",
+        );
+        write_early_static(" accepted-context-write-frame=0x50821200");
+        write_early_static(" pre-bmcr-raw=");
+        write_early_hex_u64(pre_bmcr_raw as u64);
+        write_early_static(" bmcr-clear-value=");
+        write_early_hex_u64(clear_value as u64);
+        write_early_static(" post-bmcr-raw=");
+        write_early_hex_u64(post_bmcr_raw as u64);
+        write_early_static(" bmcr-pre-read-completed=");
+        write_bool(bmcr_pre_read_completed);
+        write_early_static(" bmcr-pdown-pre-set=");
+        write_bool(bmcr_pdown_pre_set);
+        write_early_static(" bmcr-write-performed=");
+        write_bool(bmcr_write_performed);
+        write_early_static(" bmcr-post-read-completed=");
+        write_bool(bmcr_post_read_completed);
+        write_early_static(" powerdown-exit-delay-us=40 exit-delay-spins=");
+        write_early_hex_u64(EXIT_DELAY_SPINS as u64);
+        write_early_static(" exit-delay-performed=");
+        write_bool(exit_delay_performed);
+        write_early_static(
+            " selected-registers=pre-BMCR,conditional-clear-BMCR_PDOWN,post-BMCR,post-BMSR-first,post-BMSR-second,post-ANAR,post-ANLPAR,post-MII_CTRL1000,post-MII_STAT1000,post-passive-MACB_NSR_LINK",
+        );
+        write_early_static(
+            " stage-boundaries=pre-mdio-marker,ncr-mpe-precondition,bmcr-pre-read,conditional-pdown-clear,powerdown-exit-delay,post-status-sampling",
+        );
+        write_early_static(" post-bmsr-first=");
+        write_early_hex_u64(post_bmsr_first_raw as u64);
+        write_early_static(" post-bmsr-second=");
+        write_early_hex_u64(post_bmsr_second_raw as u64);
+        write_early_static(" post-anar=");
+        write_early_hex_u64(post_anar_raw as u64);
+        write_early_static(" post-anlpar=");
+        write_early_hex_u64(post_anlpar_raw as u64);
+        write_early_static(" post-ctrl1000=");
+        write_early_hex_u64(post_ctrl1000_raw as u64);
+        write_early_static(" post-stat1000=");
+        write_early_hex_u64(post_stat1000_raw as u64);
+        write_early_static(" post-bmsr-link-status=");
+        write_bool(bmsr_second.link_status);
+        write_early_static(" post-bmsr-autoneg-complete=");
+        write_bool(bmsr_second.autoneg_complete);
+        write_early_static(" passive-macb-nsr-raw=");
+        write_early_hex_u64(post_macb_nsr_raw as u64);
+        write_early_static(" passive-macb-nsr-link=");
+        write_bool(post_macb_nsr_raw & MACB_NSR_LINK != 0);
+        write_early_static(" link-ready-terminal=");
+        write_bool(link_ready);
+        write_early_static(" post-status-sampling-completed=");
+        write_bool(post_status_sampling_completed);
+        write_early_static(" mdio-man-transactions-performed=");
+        write_bool(mdio_man_transactions_performed);
+        write_early_static(" macb-read-performed=true macb-write-performed=false");
+        write_early_static(" phy-reset-or-gpio32-action=false link-forcing=false");
+        write_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_rejections(
+            mdio_man_transactions_performed,
+            bmcr_write_performed,
+        );
+        write_early_static(" classification=");
+        write_early_static(classification);
+        write_early_static("\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_no_mdio_control"
+)]
+pub fn run_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_no_mdio_control() -> ! {
+    write_early_static("rpi5-rp1-ethernet-bcm54213pe-lifecycle-powerdown-exit-control: start\n");
+    write_early_static(
+        "rpi5-rp1-ethernet-bcm54213pe-lifecycle-powerdown-exit-control: no-mdio-no-macb-no-gpio32-no-phy-target-construction\n",
+    );
+    wait_uart10_empty_early_phase();
+
+    loop {
+        write_early_static("TALOS: rp1-ethernet-bcm54213pe-lifecycle-powerdown-exit-control");
+        write_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_capture_nonce();
+        write_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_common(
+            "no-mdio-no-ethernet-control",
+        );
+        write_early_static(" target=none controller=none compatible=none");
+        write_early_static(" phy-model=none physid1=withheld physid2=withheld");
+        write_early_static(" phy-handle=none phy-node=none phy-address=none");
+        write_early_static(" ncr-observed-target=not-constructed");
+        write_early_static(" nsr-observed-target=not-constructed");
+        write_early_static(" man-observed-target=not-constructed");
+        write_early_static(" bmcr-read-frame=withheld bmcr-write-frame-prefix=withheld");
+        write_early_static(" bmcr-powerdown-bit=withheld bmcr-clear-pdown-mask=withheld");
+        write_early_static(
+            " accepted-context-pre-bmcr=0x1200 accepted-context-expected-clear-value=0x1200",
+        );
+        write_early_static(" accepted-context-write-frame=withheld");
+        write_early_static(
+            " pre-bmcr-raw=withheld bmcr-clear-value=withheld post-bmcr-raw=withheld",
+        );
+        write_early_static(" bmcr-pre-read-completed=false bmcr-pdown-pre-set=false");
+        write_early_static(" bmcr-write-performed=false bmcr-post-read-completed=false");
+        write_early_static(
+            " powerdown-exit-delay-us=40 exit-delay-spins=0x0 exit-delay-performed=false",
+        );
+        write_early_static(" selected-registers=withheld stage-boundaries=withheld");
+        write_early_static(" post-bmsr-first=withheld post-bmsr-second=withheld");
+        write_early_static(" post-anar=withheld post-anlpar=withheld");
+        write_early_static(" post-ctrl1000=withheld post-stat1000=withheld");
+        write_early_static(" post-bmsr-link-status=false post-bmsr-autoneg-complete=false");
+        write_early_static(" passive-macb-nsr-raw=withheld passive-macb-nsr-link=false");
+        write_early_static(" link-ready-terminal=false post-status-sampling-completed=false");
+        write_early_static(" mdio-man-transactions-performed=false");
+        write_early_static(" macb-read-performed=false macb-write-performed=false");
+        write_early_static(" phy-reset-or-gpio32-action=false link-forcing=false");
+        write_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_rejections(false, false);
+        write_early_static(
+            " classification=no-mdio-no-ethernet-bcm54213pe-lifecycle-ownership-control\n",
+        );
+        wait_uart10_empty_early_phase();
+    }
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_no_mdio_control"
+))]
+fn write_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_common(report_kind: &str) {
+    write_early_static(
+        " bcm54213pe-lifecycle-ownership-contract-id=phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-source-contract-v1",
+    );
+    write_early_static(
+        " task-id=phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof-20260621",
+    );
+    write_early_static(
+        " source-core-task-id=phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-source-core-20260621",
+    );
+    write_early_static(" source-core-commit=b4a6d3fe12a05771eb8d831ab4e9aa35042830e9");
+    write_early_static(" selected-discriminator=bcm54213pe-phy1-bmcr-powerdown-exit-gate");
+    write_early_static(" report-kind=");
+    write_early_static(report_kind);
+    write_early_static(
+        " hardware-proof-boundary-classification=bcm54213pe-lifecycle-powerdown-exit-pi5-proof-runtime",
+    );
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_no_mdio_control"
+))]
+fn write_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_capture_nonce() {
+    if let Some(nonce) = option_env!("TALOS_CAPTURE_NONCE") {
+        if !nonce.is_empty() {
+            write_early_static(" capture-nonce=");
+            write_early_static(nonce);
+        }
+    }
+}
+
+#[cfg(any(
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_no_mdio_control"
+))]
+fn write_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_rejections(
+    runtime_mdio_transaction: bool,
+    bmcr_write_executed: bool,
+) {
+    write_early_static(
+        " allowed-hardware-classifications=bcm54213pe-lifecycle-powerdown-exit-link-ready,bcm54213pe-lifecycle-powerdown-exit-no-change-link-not-ready,bcm54213pe-lifecycle-powerdown-exit-pdown-clear-sampled-link-not-ready,bcm54213pe-lifecycle-powerdown-exit-precondition-blocker,bcm54213pe-lifecycle-powerdown-exit-readback-mismatch,bcm54213pe-lifecycle-powerdown-exit-capture-blocker,no-mdio-no-ethernet-bcm54213pe-lifecycle-ownership-control",
+    );
+    write_early_static(
+        " rejected-runtime-hardware-claims=apd-shadow-write,eee-mmd-write,iddq-top-misc-write,soft-reset,interrupt-ownership,config-init-replay,gpio32-reset-action,mac-phylink-configuration,link-ready-unless-directly-observed,autoneg-complete-unless-directly-observed,packet-io,networking,sockets,ssh,phase-12-2,phase-transition",
+    );
+    write_early_static(
+        " retained-risks=bmcr-powerdown-exit-does-not-prove-phy-powered-or-packet-ready,hardware-proof-must-retain-identity-tftp-serial-restore,apd-eee-iddq-soft-reset-interrupt-gpio32-mac-phylink-packet-network-ssh-remain-unaccepted",
+    );
+    write_early_static(" claims-runtime-mdio-transaction=");
+    write_bool(runtime_mdio_transaction);
+    write_early_static(" claims-bmcr-pdown-clear-write-executed=");
+    write_bool(bmcr_write_executed);
+    write_early_static(" claims-bmcr-pdown-assertion=false claims-apd-shadow-write=false");
+    write_early_static(" claims-eee-mmd-write=false claims-iddq-top-misc-write=false");
+    write_early_static(" claims-soft-reset=false claims-interrupt-ownership=false");
+    write_early_static(" claims-config-init-replay=false claims-gpio32-reset-action=false");
+    write_early_static(" claims-mac-phylink-configuration=false claims-link-forcing=false");
+    write_early_static(" claims-packet-io=false claims-networking=false claims-sockets=false");
+    write_early_static(" claims-ssh=false claims-phase-12-2=false claims-phase-transition=false");
+}
+
 #[cfg(any(
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_no_write_control"
@@ -21380,7 +21783,8 @@ fn poll_rp1_ethernet_mdio_phy_id_after_mpe_idle(nsr: usize, idle_bit: u32) -> bo
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_rgmii_delay_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_candidate",
-    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_master_mode_autoneg_candidate"
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_master_mode_autoneg_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_candidate"
 ))]
 fn poll_rp1_ethernet_mdio_register_vector_idle(nsr: usize, idle_bit: u32) -> bool {
     let mut remaining = 1_000_000u32;
@@ -21424,7 +21828,8 @@ fn poll_rp1_ethernet_post_physical_link_status_idle(nsr: usize, idle_bit: u32) -
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_rgmii_delay_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_candidate",
-    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_master_mode_autoneg_candidate"
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_master_mode_autoneg_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_candidate"
 ))]
 fn poll_rp1_ethernet_bcm54213pe_readonly_preflight_idle(nsr: usize, idle_bit: u32) -> bool {
     poll_rp1_ethernet_mdio_register_vector_idle(nsr, idle_bit)
@@ -22092,7 +22497,8 @@ fn read_rp1_ethernet_post_physical_link_status_phy1_register(
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_rgmii_delay_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_candidate",
-    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_master_mode_autoneg_candidate"
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_master_mode_autoneg_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_candidate"
 ))]
 fn read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
     nsr: usize,
@@ -22114,7 +22520,8 @@ fn read_rp1_ethernet_bcm54213pe_readonly_preflight_phy1_register(
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_rgmii_delay_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_candidate",
-    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_master_mode_autoneg_candidate"
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_master_mode_autoneg_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_candidate"
 ))]
 fn write_rp1_ethernet_bcm54213pe_rgmii_delay_phy1_register(
     nsr: usize,
@@ -25356,6 +25763,8 @@ fn gpio14_ownership_preflight_classification(
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_no_write_control",
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_master_mode_autoneg_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_master_mode_autoneg_no_mdio_control",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_candidate",
+    talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_no_mdio_control",
     talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_candidate",
     talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_control",
     talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",

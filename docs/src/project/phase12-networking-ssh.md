@@ -2574,6 +2574,22 @@ remain rejected. Local/static evidence does not accept link-ready,
 autoneg-complete, packet-readiness, or live RX/TX. selected_next_task is
 phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof-20260621.
 
+phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof-20260621
+accepts bcm54213pe-lifecycle-powerdown-exit-no-change-link-not-ready. The
+serialized Pi 5 proof retained selected-tree identity, same-power-cycle TFTP
+byte evidence, serial nonce freshness, final pre-restore identity, and restore
+to the pre-run boot tree. The no-MDIO/no-Ethernet control classified
+no-mdio-no-ethernet-bcm54213pe-lifecycle-ownership-control. The candidate
+observed BMCR 0x1000 with BMCR_PDOWN already clear, so the selected
+fail-closed gate performed no BMCR clear write; post-sampling retained BMCR
+0x1000, BMSR 0x7949/0x7949, ANAR 0x01e1, ANLPAR 0x0000, MII_CTRL1000 0x0200,
+MII_STAT1000 0x0000, and passive MACB_NSR_LINK=false. This accepts only the
+no-change link-not-ready terminal. It does not accept link-ready,
+autoneg-complete, packet-readiness, live RX/TX, packet I/O, networking, SSH,
+Phase 12.2, or a phase transition. The hardware-visible BCM54213PE frontier is
+now MII_CTRL1000 master-mode write/readback, one BMCR autoneg restart, and a
+BMCR_PDOWN-exit gate observed no-change because PDOWN was already clear.
+
 ## Phase 12.2 Host Network Abstraction Core
 
 phase12-network-device-abstraction-ethernet-arp-ip-host-core-20260618 accepts
