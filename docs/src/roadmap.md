@@ -16072,6 +16072,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   binding, writable persistence, SSH service behavior, live transport, hardware
   reachability, public ABI/POSIX/Linux compatibility, broad expansion, stale
   link-ready discriminator promotion, or phase transition.
+- phase12-shell-ssh-authorized-keydiag-smoke-20260621 accepts retained
+  host/QEMU-substitute smoke evidence for the read-only VFS authorized-key
+  metadata sshkeydiag path. The transcript covers missing, invalid,
+  insufficient, and sufficient public-fixture authorized-key metadata states.
+  Sufficient metadata clears only the authorized-key prerequisite while
+  ssh-ready remains false for persistence/exposure, SSH service behavior, live
+  transport, and reachability. The evidence retains labels and public fixture
+  state names only; it excludes real authorized public keys, operator
+  identities, fingerprints, digests, signatures, key-derived identifiers,
+  private keys, generated keys, and comparable stable identifiers. The selected
+  next bounded task is phase12-ssh-authorized-key-readiness-closeout-20260621.
+  No source behavior, hardware/lab state, boot publication, live transport,
+  reachability, service, ABI, broad expansion, stale link-ready discriminator,
+  or phase-transition claim is accepted.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

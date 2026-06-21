@@ -6644,3 +6644,17 @@ persistence, SSH service behavior, live transport, hardware reachability,
 public ABI/POSIX/Linux compatibility, broad expansion, stale link-ready
 discriminator promotion, or phase transition. The selected next bounded task is
 phase12-shell-ssh-authorized-keydiag-smoke-20260621.
+
+phase12-shell-ssh-authorized-keydiag-smoke-20260621 accepts retained
+host/QEMU-substitute smoke evidence for the read-only VFS authorized-key
+metadata sshkeydiag path. The retained transcript covers missing, invalid,
+insufficient, and sufficient public-fixture authorized-key metadata states.
+Missing metadata keeps sshkeydiag-missing-authorized-key; invalid metadata
+reports sshkeydiag-authorized-key-invalid; insufficient metadata reports
+sshkeydiag-authorized-key-insufficient; and sufficient public-fixture metadata
+clears only the authorized-key prerequisite while ssh-ready remains false. The
+evidence retains labels and public fixture state names only; it excludes real
+authorized public keys, operator identities, fingerprints, digests, signatures,
+key-derived identifiers, private keys, generated keys, and comparable stable
+identifiers. The selected next bounded task is
+phase12-ssh-authorized-key-readiness-closeout-20260621.
