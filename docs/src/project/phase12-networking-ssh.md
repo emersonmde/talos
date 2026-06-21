@@ -5371,3 +5371,33 @@ I/O, hardware reachability, SSH, public stable socket ABI acceptance, broad
 socket expansion, signals/restart semantics, arbitrary cancellation, or phase
 transition. The selected next bounded task is
 phase12-network-socket-blocking-poll-wait-core-20260621.
+
+phase12-network-socket-blocking-poll-wait-core-20260621 accepts
+phase12-network-socket-blocking-poll-wait-core-accepted. The runtime core now
+implements the private TALOS_POLL_WAIT_SYSCALL = 14 path selected by the
+contract while leaving TALOS_POLL_SYSCALL = 13 unchanged as the accepted
+nonblocking readiness query. Scalar/default dispatch still fails closed with
+ENOTSUP unless the explicit socket-table wait-aware dispatch boundary supplies
+the current task, current scheduler tick, user mappings, descriptor store,
+socket table, and bounded SocketPollWaitTable.
+
+The accepted behavior reuses the fixed 16-byte poll-entry array and accepts
+finite relative timeouts from 1 through 1024 scheduler ticks. Immediate-ready
+entries return without sleeping and write the same revents bits as TALOS_POLL.
+When no requested entry is ready, the kernel records one wait for the current
+task, snapshots process-local socket descriptors and requested readiness bits,
+records the deadline tick, transitions the task to TaskState::Blocked, and
+resumes it through SingleCoreScheduler::make_runnable when accepted local
+socket readiness appears or the timeout expires. Timeout writes zero revents
+and returns success value 0.
+
+Source/unit tests cover immediate readiness, local send/recv wake, listener
+pending-accept wake, peer close/hangup wake, timeout, malformed arguments,
+scalar fail-closed behavior, and nonblocking TALOS_POLL compatibility. This
+accepts only private process-local bounded blocking waits over local sockets.
+It does not accept /bin/sockdiag blocking wait output, retained smoke evidence,
+cross-process/global poll sets, UDP/TCP payload transport, smoltcp
+integration, live packet I/O, hardware reachability, SSH, public socket ABI
+acceptance, broad socket expansion, or phase transition. The selected next
+bounded task is
+phase12-network-shell-sockdiag-blocking-poll-wait-core-20260621.

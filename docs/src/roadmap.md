@@ -15155,6 +15155,27 @@ Milestone 12.3: IP Stack
   stable socket ABI acceptance, broad socket expansion, signals/restart
   semantics, and phase transition remain rejected. The selected next bounded
   task is phase12-network-socket-blocking-poll-wait-core-20260621.
+- The socket blocking poll wait core accepts source/unit evidence for private
+  process-local bounded blocking waits over accepted local socket readiness.
+  The implementation adds TALOS_POLL_WAIT_SYSCALL = 14 to the private stable
+  syscall vocabulary and exposes it only through an explicit wait-aware
+  socket-table dispatch boundary carrying current task, current tick, user
+  mappings, socket table, and a bounded SocketPollWaitTable. Scalar/default
+  dispatch remains ENOTSUP, and TALOS_POLL_SYSCALL = 13 remains unchanged.
+  Immediate-ready calls write revents and return without sleeping. If no entry
+  is ready, the kernel snapshots process-local socket descriptors and requested
+  events, records one wait for the current task with a finite deadline,
+  transitions that task to TaskState::Blocked, and later resumes it through
+  SingleCoreScheduler::make_runnable on local socket readiness or timeout.
+  Source/unit tests cover immediate readiness, local payload wake, listener
+  pending-accept wake, peer close/hangup wake, timeout, malformed arguments,
+  scalar fail-closed behavior, and nonblocking TALOS_POLL compatibility.
+  Shell /bin/sockdiag blocking wait output, retained smoke evidence,
+  cross-process/global poll sets, UDP/TCP payload transport, smoltcp
+  integration, live packet I/O, hardware reachability, SSH, public socket ABI
+  acceptance, broad socket expansion, and phase transition remain rejected.
+  The selected next bounded task is
+  phase12-network-shell-sockdiag-blocking-poll-wait-core-20260621.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
