@@ -15695,6 +15695,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   is phase12-entropy-ssh-strategy-contract-20260621. This checkpoint does not
   accept live packet I/O, hardware reachability, SSH service acceptance, public
   ABI/POSIX/Linux compatibility, broad socket expansion, or a phase transition.
+- phase12-entropy-ssh-strategy-contract-20260621 accepts a prerequisite-first
+  SSH-enabling strategy. The next bounded step is a Talos-owned entropy source
+  contract and diagnostic frontier before crypto dependency adoption, host key
+  generation, SSH server implementation/porting, or SSH service acceptance.
+  OpenSSH remains the compatibility target, while a future existing-server port
+  is preferred only after entropy, key storage/provisioning, crypto
+  dependencies, process/service plumbing, and libc/std constraints are clear.
+  A smaller Talos-first Rust SSH service remains deferred as a practical first
+  service option if OpenSSH assumptions are still too large. The selected next
+  bounded task is phase12-entropy-source-contract-20260621. This contract does
+  not accept runtime implementation, dependency adoption, crypto
+  implementation, host key generation, SSH service, live packet I/O, hardware
+  reachability, public ABI/POSIX/Linux compatibility, broad socket expansion,
+  or phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

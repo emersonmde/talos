@@ -6128,3 +6128,23 @@ selects phase12-entropy-ssh-strategy-contract-20260621 and rejects stale
 generic link-ready discriminator promotion, live link-ready, packet I/O,
 hardware reachability, SSH service acceptance, public ABI/POSIX/Linux
 compatibility, broad socket expansion, and phase transition.
+
+phase12-entropy-ssh-strategy-contract-20260621 accepts
+phase12-entropy-ssh-strategy-contract-accepted. The selected SSH-enabling
+strategy is prerequisite-first: establish a Talos-owned entropy source contract
+and diagnostic frontier before adopting crypto dependencies, generating host
+keys, porting an SSH server, or accepting any SSH service behavior.
+
+OpenSSH remains the long-term compatibility target, but it is not the near-term
+first implementation target. A future existing-server port is preferred once
+entropy, key storage/provisioning, crypto dependencies, process/service
+plumbing, and libc/std constraints are clear; a smaller Talos-first Rust SSH
+service remains deferred as a practical first service option if OpenSSH's
+assumptions are still too large.
+
+The next bounded task is phase12-entropy-source-contract-20260621. That task
+must name accepted/rejected entropy input classes, deterministic controls, and
+fail-closed labels for a later diagnostic. This strategy contract accepts no
+runtime implementation, dependency adoption, crypto implementation, host key
+generation, SSH service, live packet I/O, hardware reachability, public
+ABI/POSIX/Linux compatibility, broad socket expansion, or phase transition.
