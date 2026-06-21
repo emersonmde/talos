@@ -6325,3 +6325,33 @@ adoption, SSH service behavior, live packet I/O, hardware reachability, public
 ABI/POSIX/Linux compatibility, broad expansion, stale link-ready discriminator
 promotion, or phase transition. The selected next bounded task is
 phase12-operator-seed-vfs-core-20260621.
+
+phase12-operator-seed-vfs-core-20260621 accepts
+phase12-operator-seed-vfs-core-accepted. Talos now has source/unit
+VFS-backed operator seed material classification for the accepted
+/etc/talos/operator-seed.bin contract. The implementation exposes only
+metadata: missing, invalid, insufficient, or sufficient state plus byte length.
+It does not read, print, retain, digest, fingerprint, or otherwise expose seed
+bytes. The default Phase 8 initramfs fixture remains missing and preserves the
+existing fail-closed entropydiag and sshkeydiag command outputs.
+
+The entropy classifier can build a snapshot from read-only initramfs metadata:
+missing and invalid seed material keep entropydiag-operator-seed-required,
+lengths 1 through 31 are present but insufficient, and lengths 32 through 4096
+clear only the operator-seed-required indication while cryptographic-strength
+and ssh-ready remain false. The SSH key-readiness classifier maps missing seed
+metadata to sshkeydiag-seed-material-missing, invalid or insufficient metadata
+to sshkeydiag-seed-material-insufficient, and sufficient metadata to clearing
+only the seed-material label. Host-key, authorized-key, persistence/exposure,
+cryptographic entropy, crypto/SSH service, and reachability prerequisites
+remain unaccepted.
+
+The accepted evidence level is source/unit tests plus the full no_std suite:
+operator seed focused tests and cargo -Zjson-target-spec test both passed with
+717 tests. This implementation does not accept random-byte generation,
+CSPRNG/conditioning, cryptographic-strength, host-key generation or
+provisioning, authorized-key storage, writable seed persistence, crypto/SSH
+dependency adoption, SSH service behavior, live packet I/O, hardware
+reachability, public ABI/POSIX/Linux compatibility, broad expansion, stale
+link-ready discriminator promotion, or phase transition. The selected next
+bounded task is phase12-shell-operator-seed-diag-smoke-20260621.

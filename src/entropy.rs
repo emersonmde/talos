@@ -2,7 +2,16 @@
 //!
 //! This module deliberately classifies caller-supplied observations. It does
 //! not sample hardware, generate random bytes, derive keys, persist seed
-//! material, or assert SSH readiness.
+//! material, print seed bytes, or assert SSH readiness.
+
+use crate::{
+    initramfs::{ReadOnlyInitramfs, VfsNodeKind},
+    posix::PosixError,
+};
+
+pub(crate) const OPERATOR_SEED_PATH: &[u8] = b"/etc/talos/operator-seed.bin";
+pub(crate) const OPERATOR_SEED_MIN_SUFFICIENT_BYTES: usize = 32;
+pub(crate) const OPERATOR_SEED_MAX_DIAGNOSTIC_BYTES: usize = 4096;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct EntropyObservation {
@@ -19,14 +28,76 @@ impl EntropyObservation {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct OperatorSeedObservation {
     byte_len: usize,
-    fingerprint: u64,
 }
 
 impl OperatorSeedObservation {
-    pub(crate) const fn new(byte_len: usize, fingerprint: u64) -> Self {
+    pub(crate) const fn new(byte_len: usize) -> Self {
+        Self { byte_len }
+    }
+
+    pub(crate) const fn byte_len(self) -> usize {
+        self.byte_len
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum OperatorSeedMaterialState {
+    Missing,
+    Invalid,
+    Insufficient,
+    Sufficient,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct OperatorSeedMaterialMetadata {
+    state: OperatorSeedMaterialState,
+    byte_len: Option<usize>,
+}
+
+impl OperatorSeedMaterialMetadata {
+    pub(crate) const fn missing() -> Self {
         Self {
+            state: OperatorSeedMaterialState::Missing,
+            byte_len: None,
+        }
+    }
+
+    pub(crate) const fn invalid(byte_len: Option<usize>) -> Self {
+        Self {
+            state: OperatorSeedMaterialState::Invalid,
             byte_len,
-            fingerprint,
+        }
+    }
+
+    pub(crate) const fn insufficient(byte_len: usize) -> Self {
+        Self {
+            state: OperatorSeedMaterialState::Insufficient,
+            byte_len: Some(byte_len),
+        }
+    }
+
+    pub(crate) const fn sufficient(byte_len: usize) -> Self {
+        Self {
+            state: OperatorSeedMaterialState::Sufficient,
+            byte_len: Some(byte_len),
+        }
+    }
+
+    pub(crate) const fn state(self) -> OperatorSeedMaterialState {
+        self.state
+    }
+
+    pub(crate) const fn byte_len(self) -> Option<usize> {
+        self.byte_len
+    }
+
+    pub(crate) const fn entropy_observation(self) -> Option<OperatorSeedObservation> {
+        match (self.state, self.byte_len) {
+            (OperatorSeedMaterialState::Insufficient, Some(byte_len))
+            | (OperatorSeedMaterialState::Sufficient, Some(byte_len)) => {
+                Some(OperatorSeedObservation::new(byte_len))
+            }
+            _ => None,
         }
     }
 }
@@ -172,6 +243,40 @@ impl EntropyDiagnosticReport {
     }
 }
 
+pub(crate) fn classify_operator_seed_material(
+    initramfs: ReadOnlyInitramfs,
+) -> OperatorSeedMaterialMetadata {
+    let handle = match initramfs.lookup_default(OPERATOR_SEED_PATH) {
+        Ok(handle) => handle,
+        Err(PosixError::NoEntry) => return OperatorSeedMaterialMetadata::missing(),
+        Err(_) => return OperatorSeedMaterialMetadata::invalid(None),
+    };
+
+    let metadata = handle.metadata();
+    if metadata.kind() != VfsNodeKind::RegularFile {
+        return OperatorSeedMaterialMetadata::invalid(Some(metadata.len()));
+    }
+
+    let byte_len = metadata.len();
+    if byte_len == 0 || byte_len > OPERATOR_SEED_MAX_DIAGNOSTIC_BYTES {
+        OperatorSeedMaterialMetadata::invalid(Some(byte_len))
+    } else if byte_len < OPERATOR_SEED_MIN_SUFFICIENT_BYTES {
+        OperatorSeedMaterialMetadata::insufficient(byte_len)
+    } else {
+        OperatorSeedMaterialMetadata::sufficient(byte_len)
+    }
+}
+
+pub(crate) fn entropy_snapshot_with_operator_seed_material(
+    initramfs: ReadOnlyInitramfs,
+) -> EntropyDiagnosticSnapshot {
+    let metadata = classify_operator_seed_material(initramfs);
+    match metadata.entropy_observation() {
+        Some(observation) => EntropyDiagnosticSnapshot::empty().with_operator_seed(observation),
+        None => EntropyDiagnosticSnapshot::empty(),
+    }
+}
+
 pub(crate) const fn classify_entropy_snapshot(
     snapshot: EntropyDiagnosticSnapshot,
 ) -> EntropyDiagnosticReport {
@@ -206,6 +311,7 @@ pub(crate) const fn classify_entropy_snapshot(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::initramfs::{DirectoryEntry, InitramfsNode, phase8_readonly_initramfs_fixture};
 
     #[test_case]
     fn no_input_fails_closed_without_crypto_or_ssh_readiness() {
@@ -273,7 +379,7 @@ mod tests {
     #[test_case]
     fn fixed_deterministic_test_seed_uses_deterministic_control_label() {
         let snapshot = EntropyDiagnosticSnapshot::empty()
-            .with_operator_seed(OperatorSeedObservation::new(32, 0xfeed_cafe))
+            .with_operator_seed(OperatorSeedObservation::new(32))
             .as_deterministic_control();
 
         let report = classify_entropy_snapshot(snapshot);
@@ -303,5 +409,129 @@ mod tests {
         );
         assert!(!report.cryptographic_strength());
         assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn default_initramfs_reports_operator_seed_missing_without_reading_secret_bytes() {
+        let metadata = classify_operator_seed_material(phase8_readonly_initramfs_fixture());
+        let report = classify_entropy_snapshot(entropy_snapshot_with_operator_seed_material(
+            phase8_readonly_initramfs_fixture(),
+        ));
+
+        assert_eq!(metadata, OperatorSeedMaterialMetadata::missing());
+        assert_eq!(
+            report.operator_seed_label(),
+            Some(EntropyDiagnosticLabel::OperatorSeedRequired)
+        );
+        assert!(!report.cryptographic_strength());
+        assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn vfs_operator_seed_metadata_distinguishes_insufficient_and_sufficient_lengths() {
+        let insufficient = classify_operator_seed_material(insufficient_seed_initramfs());
+        let sufficient = classify_operator_seed_material(sufficient_seed_initramfs());
+
+        assert_eq!(
+            insufficient,
+            OperatorSeedMaterialMetadata::insufficient(OPERATOR_SEED_MIN_SUFFICIENT_BYTES - 1)
+        );
+        assert_eq!(
+            sufficient,
+            OperatorSeedMaterialMetadata::sufficient(OPERATOR_SEED_MIN_SUFFICIENT_BYTES)
+        );
+        assert_eq!(
+            insufficient.byte_len(),
+            Some(OPERATOR_SEED_MIN_SUFFICIENT_BYTES - 1)
+        );
+        assert_eq!(
+            sufficient.byte_len(),
+            Some(OPERATOR_SEED_MIN_SUFFICIENT_BYTES)
+        );
+        assert_eq!(
+            insufficient
+                .entropy_observation()
+                .map(|observation| observation.byte_len()),
+            Some(OPERATOR_SEED_MIN_SUFFICIENT_BYTES - 1)
+        );
+        assert_eq!(
+            classify_entropy_snapshot(entropy_snapshot_with_operator_seed_material(
+                sufficient_seed_initramfs()
+            ))
+            .operator_seed_label(),
+            None
+        );
+    }
+
+    #[test_case]
+    fn invalid_operator_seed_paths_do_not_clear_required_seed_diagnostic() {
+        let directory = classify_operator_seed_material(directory_seed_initramfs());
+        let oversized = classify_operator_seed_material(oversized_seed_initramfs());
+
+        assert_eq!(directory, OperatorSeedMaterialMetadata::invalid(Some(0)));
+        assert_eq!(
+            oversized,
+            OperatorSeedMaterialMetadata::invalid(Some(OPERATOR_SEED_MAX_DIAGNOSTIC_BYTES + 1))
+        );
+        assert_eq!(directory.entropy_observation(), None);
+        assert_eq!(oversized.entropy_observation(), None);
+    }
+
+    const ROOT_INDEX: usize = 0;
+    const ETC_INDEX: usize = 1;
+    const TALOS_INDEX: usize = 2;
+    const SEED_INDEX: usize = 3;
+
+    static ROOT_ENTRIES: [DirectoryEntry; 1] = [DirectoryEntry::new(b"etc", ETC_INDEX)];
+    static ETC_ENTRIES: [DirectoryEntry; 1] = [DirectoryEntry::new(b"talos", TALOS_INDEX)];
+    static TALOS_ENTRIES: [DirectoryEntry; 1] =
+        [DirectoryEntry::new(b"operator-seed.bin", SEED_INDEX)];
+    static EMPTY_ENTRIES: [DirectoryEntry; 0] = [];
+    static SUFFICIENT_BYTES: [u8; OPERATOR_SEED_MIN_SUFFICIENT_BYTES] =
+        [0; OPERATOR_SEED_MIN_SUFFICIENT_BYTES];
+    static INSUFFICIENT_BYTES: [u8; OPERATOR_SEED_MIN_SUFFICIENT_BYTES - 1] =
+        [0; OPERATOR_SEED_MIN_SUFFICIENT_BYTES - 1];
+    static OVERSIZED_BYTES: [u8; OPERATOR_SEED_MAX_DIAGNOSTIC_BYTES + 1] =
+        [0; OPERATOR_SEED_MAX_DIAGNOSTIC_BYTES + 1];
+
+    static INSUFFICIENT_SEED_NODES: [InitramfsNode; 4] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
+        InitramfsNode::regular_file(SEED_INDEX, &INSUFFICIENT_BYTES),
+    ];
+    static SUFFICIENT_SEED_NODES: [InitramfsNode; 4] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
+        InitramfsNode::regular_file(SEED_INDEX, &SUFFICIENT_BYTES),
+    ];
+    static DIRECTORY_SEED_NODES: [InitramfsNode; 4] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
+        InitramfsNode::directory(SEED_INDEX, &EMPTY_ENTRIES),
+    ];
+    static OVERSIZED_SEED_NODES: [InitramfsNode; 4] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
+        InitramfsNode::regular_file(SEED_INDEX, &OVERSIZED_BYTES),
+    ];
+
+    const fn insufficient_seed_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&INSUFFICIENT_SEED_NODES, ROOT_INDEX)
+    }
+
+    const fn sufficient_seed_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&SUFFICIENT_SEED_NODES, ROOT_INDEX)
+    }
+
+    const fn directory_seed_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&DIRECTORY_SEED_NODES, ROOT_INDEX)
+    }
+
+    const fn oversized_seed_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&OVERSIZED_SEED_NODES, ROOT_INDEX)
     }
 }

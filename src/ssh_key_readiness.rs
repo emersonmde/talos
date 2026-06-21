@@ -5,7 +5,10 @@
 //! sample hardware, import crypto/SSH dependencies, or accept SSH service
 //! readiness.
 
-use crate::entropy::{self, EntropyDiagnosticReport, EntropyDiagnosticSnapshot};
+use crate::entropy::{
+    self, EntropyDiagnosticReport, EntropyDiagnosticSnapshot, OperatorSeedMaterialMetadata,
+    OperatorSeedMaterialState,
+};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum HostKeyState {
@@ -82,6 +85,20 @@ impl SshKeyReadinessSnapshot {
 
     pub(crate) const fn with_seed_material_metadata(mut self) -> Self {
         self.seed_material = SeedMaterialState::MetadataPresent;
+        self
+    }
+
+    pub(crate) const fn with_operator_seed_material(
+        mut self,
+        metadata: OperatorSeedMaterialMetadata,
+    ) -> Self {
+        self.seed_material = match metadata.state() {
+            OperatorSeedMaterialState::Missing => SeedMaterialState::Missing,
+            OperatorSeedMaterialState::Invalid | OperatorSeedMaterialState::Insufficient => {
+                SeedMaterialState::Insufficient
+            }
+            OperatorSeedMaterialState::Sufficient => SeedMaterialState::MetadataPresent,
+        };
         self
     }
 
@@ -225,7 +242,7 @@ mod tests {
     fn deterministic_entropy_control_keeps_ssh_key_readiness_false() {
         let entropy = entropy::classify_entropy_snapshot(
             EntropyDiagnosticSnapshot::empty()
-                .with_operator_seed(OperatorSeedObservation::new(32, 0x1234))
+                .with_operator_seed(OperatorSeedObservation::new(32))
                 .as_deterministic_control(),
         );
         let report = classify_ssh_key_readiness(
@@ -325,8 +342,7 @@ mod tests {
     #[test_case]
     fn persistence_and_exposure_independently_keep_readiness_false() {
         let entropy = entropy::classify_entropy_snapshot(
-            EntropyDiagnosticSnapshot::empty()
-                .with_operator_seed(OperatorSeedObservation::new(32, 0x5678)),
+            EntropyDiagnosticSnapshot::empty().with_operator_seed(OperatorSeedObservation::new(32)),
         );
         let persistence_unavailable = classify_ssh_key_readiness(
             SshKeyReadinessSnapshot::fail_closed_default()
@@ -394,5 +410,60 @@ mod tests {
                 .contains(&SshKeyReadinessLabel::ExposureDisabled)
         );
         assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn operator_seed_vfs_metadata_maps_to_missing_insufficient_and_present_states() {
+        let missing = classify_ssh_key_readiness(
+            SshKeyReadinessSnapshot::fail_closed_default()
+                .with_host_key_metadata()
+                .with_authorized_key_metadata()
+                .with_operator_seed_material(OperatorSeedMaterialMetadata::missing()),
+        );
+        let invalid = classify_ssh_key_readiness(
+            SshKeyReadinessSnapshot::fail_closed_default()
+                .with_host_key_metadata()
+                .with_authorized_key_metadata()
+                .with_operator_seed_material(OperatorSeedMaterialMetadata::invalid(Some(0))),
+        );
+        let insufficient = classify_ssh_key_readiness(
+            SshKeyReadinessSnapshot::fail_closed_default()
+                .with_host_key_metadata()
+                .with_authorized_key_metadata()
+                .with_operator_seed_material(OperatorSeedMaterialMetadata::insufficient(31)),
+        );
+        let sufficient = classify_ssh_key_readiness(
+            SshKeyReadinessSnapshot::fail_closed_default()
+                .with_host_key_metadata()
+                .with_authorized_key_metadata()
+                .with_operator_seed_material(OperatorSeedMaterialMetadata::sufficient(32)),
+        );
+
+        assert!(
+            missing
+                .labels()
+                .contains(&SshKeyReadinessLabel::SeedMaterialMissing)
+        );
+        assert!(
+            invalid
+                .labels()
+                .contains(&SshKeyReadinessLabel::SeedMaterialInsufficient)
+        );
+        assert!(
+            insufficient
+                .labels()
+                .contains(&SshKeyReadinessLabel::SeedMaterialInsufficient)
+        );
+        assert!(
+            !sufficient
+                .labels()
+                .contains(&SshKeyReadinessLabel::SeedMaterialMissing)
+        );
+        assert!(
+            !sufficient
+                .labels()
+                .contains(&SshKeyReadinessLabel::SeedMaterialInsufficient)
+        );
+        assert!(!sufficient.ssh_ready());
     }
 }

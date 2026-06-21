@@ -15835,6 +15835,26 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   packet I/O, hardware reachability, public ABI/POSIX/Linux compatibility,
   broad expansion, stale link-ready discriminator promotion, or phase
   transition.
+- phase12-operator-seed-vfs-core-20260621 accepts source/unit VFS-backed
+  operator seed metadata classification for /etc/talos/operator-seed.bin. The
+  implementation exposes only missing, invalid, insufficient, or sufficient
+  state plus byte length; it does not read, print, retain, digest, fingerprint,
+  or otherwise expose seed bytes. Missing and invalid material keep
+  entropydiag-operator-seed-required; lengths 1 through 31 are insufficient;
+  lengths 32 through 4096 clear only the operator-seed-required indication.
+  sshkeydiag maps missing to sshkeydiag-seed-material-missing, invalid or
+  insufficient to sshkeydiag-seed-material-insufficient, and sufficient
+  metadata to clearing only the seed-material label. The default Phase 8
+  initramfs fixture remains missing and preserves the accepted fail-closed
+  shell command output. Focused operator seed tests and the full no_std suite
+  passed with 717 tests. The selected next bounded task is
+  phase12-shell-operator-seed-diag-smoke-20260621. This source/unit
+  implementation does not accept random-byte generation, CSPRNG/conditioning,
+  cryptographic-strength, host-key generation or provisioning, authorized-key
+  storage, writable seed persistence, crypto/SSH dependency adoption, SSH
+  service behavior, live packet I/O, hardware reachability, public
+  ABI/POSIX/Linux compatibility, broad expansion, stale link-ready
+  discriminator promotion, or phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
