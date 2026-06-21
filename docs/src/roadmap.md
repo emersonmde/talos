@@ -15709,6 +15709,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   implementation, host key generation, SSH service, live packet I/O, hardware
   reachability, public ABI/POSIX/Linux compatibility, broad socket expansion,
   or phase transition.
+- phase12-entropy-source-contract-20260621 accepts a contract-only entropy
+  diagnostic frontier. The next implementation may classify source-grounded
+  local input candidates such as generic timer samples, scheduler/process event
+  observations once explicitly exposed, console/serial timing deltas paired with
+  timer samples, and future operator-provisioned seed material. It must reject
+  deterministic boot constants, fixed diagnostic payloads, lab metadata, TFTP or
+  serial transcripts, external randomness services, and hardware RNG claims
+  without later source-grounded proof. Required fail-closed/control labels are
+  entropydiag-fail-closed-no-input, entropydiag-deterministic-control,
+  entropydiag-untrusted-timer-only, entropydiag-untrusted-local-mix,
+  entropydiag-operator-seed-required, and
+  entropydiag-hardware-rng-unaccepted. The selected next bounded task is
+  phase12-entropydiag-core-20260621. This contract does not accept
+  cryptographic strength, SSH readiness, hardware randomness, live packet I/O,
+  reachability, public ABI/POSIX/Linux compatibility, broad expansion, or phase
+  transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

@@ -6148,3 +6148,24 @@ fail-closed labels for a later diagnostic. This strategy contract accepts no
 runtime implementation, dependency adoption, crypto implementation, host key
 generation, SSH service, live packet I/O, hardware reachability, public
 ABI/POSIX/Linux compatibility, broad socket expansion, or phase transition.
+
+phase12-entropy-source-contract-20260621 accepts
+phase12-entropy-source-contract-accepted. The accepted entropy frontier is a
+diagnostic/classification contract, not a random-byte generator. The next
+implementation may classify source-grounded local input candidates: generic
+timer counter/tick samples, scheduler or process event observations once
+explicitly exposed to the diagnostic, console/serial input timing deltas when
+paired with timer samples, and future operator-provisioned seed material.
+
+The contract rejects deterministic boot constants, DTB addresses, kernel
+layout, initramfs contents, generated-root manifests, fixed task IDs, fixed
+socket diagnostic payloads, lab API metadata, TFTP byte counts, serial
+transcripts, lab-provided randomness, external randomness services, and
+hardware RNG claims without source-grounded proof. The required diagnostic
+labels are entropydiag-fail-closed-no-input,
+entropydiag-deterministic-control, entropydiag-untrusted-timer-only,
+entropydiag-untrusted-local-mix, entropydiag-operator-seed-required, and
+entropydiag-hardware-rng-unaccepted. The selected next bounded task is
+phase12-entropydiag-core-20260621. This contract accepts no cryptographic
+strength, SSH readiness, hardware randomness, live packet I/O, reachability,
+public ABI/POSIX/Linux compatibility, broad expansion, or phase transition.
