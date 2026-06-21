@@ -6379,3 +6379,25 @@ behavior, live packet I/O, hardware reachability, public ABI/POSIX/Linux
 compatibility, broad expansion, stale link-ready discriminator promotion, or
 phase transition. The selected next bounded task is
 phase12-operator-seed-vfs-closeout-20260621.
+
+phase12-operator-seed-vfs-closeout-20260621 accepts
+phase12-operator-seed-vfs-closeout-accepted. The operator seed material slice is
+now closed at the read-only diagnostic metadata boundary. Talos can classify
+/etc/talos/operator-seed.bin as missing, invalid, insufficient, or
+sufficient-length metadata for entropydiag and sshkeydiag without exposing seed
+bytes, digests, fingerprints, derived material, or cross-boot comparable secret
+identifiers.
+
+This closeout reconciles the accepted contract, source/unit implementation,
+retained shell-visible smoke transcript, docs, deferred work, and rejected
+claims. The accepted frontier remains diagnostic-only: sufficient operator seed
+metadata can clear only the operator-seed-required and seed-material diagnostic
+labels while cryptographic-strength and ssh-ready remain false. Talos still
+does not accept random-byte generation, CSPRNG/conditioning, host-key
+generation or provisioning, authorized-key storage, writable seed persistence,
+crypto/SSH dependency adoption, SSH service behavior, live transport, hardware
+reachability, public ABI/POSIX/Linux compatibility, broad expansion, stale
+link-ready discriminator promotion, or phase transition. No explicit queued
+Phase 12.5 prerequisite task is mechanically unblocked after this closeout;
+supervisor planning is required before the next crypto, host-key, persistence,
+SSH service, live transport, hardware reachability, or phase-transition task.

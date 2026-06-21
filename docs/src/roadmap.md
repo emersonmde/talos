@@ -15872,6 +15872,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   persistence, crypto/SSH dependency adoption, SSH service behavior, live packet
   I/O, hardware reachability, public ABI/POSIX/Linux compatibility, broad
   expansion, stale link-ready discriminator promotion, or phase transition.
+- phase12-operator-seed-vfs-closeout-20260621 accepts the operator seed
+  material closeout at the read-only diagnostic metadata boundary. The accepted
+  slice now covers the contract, source/unit VFS metadata classification, and
+  retained shell-visible smoke transcript for missing, insufficient, and
+  sufficient operator seed metadata. Diagnostics may clear only
+  entropydiag-operator-seed-required and the sshkeydiag seed-material label
+  when sufficient metadata is present; cryptographic-strength and ssh-ready
+  remain false. No explicit queued Phase 12.5 prerequisite task is mechanically
+  unblocked after this closeout, so supervisor planning is required before
+  crypto dependency evaluation/adoption, host-key generation or provisioning,
+  authorized-key storage, writable seed persistence, SSH service behavior, live
+  transport, hardware reachability, stale link-ready discriminator work, broad
+  expansion, or phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
