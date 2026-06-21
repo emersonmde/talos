@@ -1,0 +1,27 @@
+{
+  "task_id": "phase12-network-shell-sockdiag-send-recv-smoke-20260620",
+  "classification": "phase12-network-shell-sockdiag-send-recv-smoke-accepted",
+  "evidence_level": "host/QEMU-substitute smoke",
+  "result": "passed",
+  "smoke_classification": "host-substitute-shell-sockdiag-send-recv-smoke-complete",
+  "accepted_boundary": "shell-visible VFS/userspace /bin/sockdiag execution of descriptor-backed local socket open/bind/listen/connect/accept/send/recv/close, payload bytes, deterministic controls, waitpid, and laststatus",
+  "rejected_claims": [
+    "Pi 5 hardware behavior",
+    "hardwareTestLock acquisition",
+    "lab mutation",
+    "boot publication",
+    "generated-root publication",
+    "live driver adapters",
+    "live packet I/O",
+    "hardware reachability",
+    "poll/blocking network I/O",
+    "readiness or wait queues",
+    "UDP/TCP payload transport",
+    "smoltcp integration",
+    "cross-process/global port semantics",
+    "SSH",
+    "broad socket expansion",
+    "public stable socket ABI acceptance",
+    "phase transition"
+  ]
+}

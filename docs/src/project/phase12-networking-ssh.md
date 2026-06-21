@@ -5162,3 +5162,28 @@ reachability, lab mutation, boot publication, generated-root publication, SSH,
 smoltcp, broad socket expansion, public stable socket ABI acceptance, and
 phase transition remain rejected. The selected next bounded task is
 phase12-network-shell-sockdiag-send-recv-smoke-20260620.
+
+phase12-network-shell-sockdiag-send-recv-smoke-20260620 accepts
+phase12-network-shell-sockdiag-send-recv-smoke-accepted. The retained
+host/QEMU-substitute smoke evidence records shell-visible /bin/sockdiag local
+send/recv over the accepted private socket path. The transcript covers VFS
+executable lookup/open/read for /bin/sockdiag, startup ABI, TALOS_SOCKET,
+TALOS_BIND, TALOS_LISTEN, TALOS_CONNECT, TALOS_ACCEPT, TALOS_SEND,
+TALOS_RECV, TALOS_CLOSE, waitpid, laststatus, and socket-table-aware process
+descriptor dispatch.
+
+The retained smoke proves bidirectional local payload bytes
+(client->server and server->client) between connected client and accepted
+server descriptors, plus deterministic controls for malformed arguments,
+missing executable identity, unsupported socket parameters, bind/listen and
+connect/accept controls, empty recv, invalid send/recv flags, payload queue
+backpressure, send after peer close, non-socket descriptors, invalid/closed
+descriptors, descriptor/backing capacity, scalar dispatch ENOTSUP, unchanged
+socket open/close behavior, unchanged bind/listen behavior, unchanged
+connect/accept behavior, and unchanged /bin/pingdiag behavior. It does not
+accept poll/blocking I/O, readiness/wait queues, UDP/TCP payload transport,
+cross-process sockets, live driver adapters, live packet I/O, hardware
+reachability, lab mutation, boot publication, generated-root publication, SSH,
+smoltcp, broad socket expansion, public stable socket ABI acceptance, or phase
+transition. The selected next bounded task is
+phase12-network-shell-sockdiag-send-recv-closeout-20260620.

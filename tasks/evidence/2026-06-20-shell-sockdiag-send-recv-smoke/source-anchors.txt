@@ -1,0 +1,50 @@
+Task: phase12-network-shell-sockdiag-send-recv-smoke-20260620
+
+Shell-visible VFS/userspace anchors:
+- src/initramfs.rs:49 PHASE12_SOCKDIAG_PATH = /bin/sockdiag
+- src/local_command_loop.rs:121 command manifest includes sockdiag
+- src/local_command_loop.rs:706 LocalCommandSockdiagRecord records descriptor/lifecycle/send/recv result fields
+- src/local_command_loop.rs:737 LocalCommandSockdiagControlRecord records deterministic controls
+- src/local_command_loop.rs:943 trait boundary for exec_shell_sockdiag_diagnostic
+- src/local_command_loop.rs:1616 /bin/sockdiag selection after VFS executable lookup/open/read
+- src/local_command_loop.rs:1695 DescriptorBackedLocalCommandIo::exec_shell_sockdiag_diagnostic
+- src/local_command_loop.rs:2216 empty recv control through TALOS_RECV
+- src/local_command_loop.rs:2237 invalid send flags control through TALOS_SEND
+- src/local_command_loop.rs:2258 invalid recv flags control through TALOS_RECV
+- src/local_command_loop.rs:2282 client->server TALOS_SEND
+- src/local_command_loop.rs:2300 server TALOS_RECV of client payload
+- src/local_command_loop.rs:2323 server->client TALOS_SEND
+- src/local_command_loop.rs:2341 client TALOS_RECV of server payload
+- src/local_command_loop.rs:2367 payload queue backpressure control
+- src/local_command_loop.rs:2435 send after peer close control
+- src/local_command_loop.rs:2502 LocalCommandSockdiagRecord construction
+- src/local_command_loop.rs:6086 write_exec_sockdiag_line shell output
+- src/local_command_loop.rs:6155 write_exec_sockdiag_controls_line shell output
+- src/local_command_loop.rs:7102 local_command_loop_execs_shell_visible_sockdiag_through_vfs_socket_syscalls
+
+Private socket syscall anchors:
+- src/syscall.rs:17 TALOS_SOCKET_SYSCALL = 6
+- src/syscall.rs:18 TALOS_BIND_SYSCALL = 7
+- src/syscall.rs:19 TALOS_LISTEN_SYSCALL = 8
+- src/syscall.rs:20 TALOS_CONNECT_SYSCALL = 9
+- src/syscall.rs:21 TALOS_ACCEPT_SYSCALL = 10
+- src/syscall.rs:22 TALOS_SEND_SYSCALL = 11
+- src/syscall.rs:23 TALOS_RECV_SYSCALL = 12
+- src/syscall.rs:524 dispatch_process_descriptor_with_socket_table
+- src/syscall.rs:2857 dispatch_talos_send
+- src/syscall.rs:2922 dispatch_talos_recv
+- src/syscall.rs:8565 talos_send_recv_moves_local_payload_bytes_bidirectionally
+- src/syscall.rs:8644 talos_send_recv_errors_are_deterministic_and_all_or_nothing
+- src/syscall.rs:8814 talos_send_recv_reports_disconnected_peer_after_queue_drain
+
+Socket backing anchors:
+- src/network.rs:1838 NetworkSocketPendingQueue
+- src/network.rs:1892 NetworkSocketPayloadQueue
+- src/network.rs:1941 NetworkSocketState
+- src/network.rs:2010 NetworkSocketDescriptorTable
+- src/network.rs:2243 NetworkSocketDescriptorTable::send
+- src/network.rs:2290 NetworkSocketDescriptorTable::recv_peek
+- src/network.rs:2314 NetworkSocketDescriptorTable::recv_commit
+- src/network.rs:2401 connected_recv_queue
+- src/network.rs:2413 connected_recv_queue_mut
+- src/posix.rs:1254 DescriptorObjectKind::Socket display contract
