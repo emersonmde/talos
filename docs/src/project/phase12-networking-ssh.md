@@ -6558,3 +6558,19 @@ bytes or stable secret identifiers. ssh-ready remains false until authorized-key
 metadata, persistence/exposure, SSH service behavior, live transport, and
 reachability prerequisites are separately accepted. The selected next bounded
 task is phase12-ssh-host-key-vfs-metadata-core-20260621.
+
+phase12-ssh-host-key-vfs-metadata-core-20260621 accepts the metadata-only
+read-only VFS implementation for that host-key path. Talos now classifies
+/etc/talos/ssh/ssh_host_ed25519_key by VFS metadata only: missing path keeps
+sshkeydiag-missing-host-key; non-regular, unreadable, zero-length, or
+greater-than-4096-byte material reports sshkeydiag-host-key-invalid; regular
+readable length 1 through 63 reports sshkeydiag-host-key-insufficient; and
+regular readable length 64 through 4096 clears only the host-key metadata
+prerequisite. sshkeydiag combines that host-key metadata with accepted operator
+seed and entropy metadata, but ssh-ready remains false until authorized-key
+metadata, persistence/exposure, SSH service behavior, live transport, and
+reachability prerequisites are separately accepted. Retained source/unit
+evidence uses public byte-count fixtures only and excludes real private-key
+bytes, generated keys, public-key derivation, fingerprints, digests,
+signatures, and stable secret identifiers. The selected next bounded task is
+phase12-shell-ssh-host-keydiag-smoke-20260621.

@@ -9,10 +9,20 @@ use crate::entropy::{
     self, EntropyDiagnosticReport, EntropyDiagnosticSnapshot, OperatorSeedMaterialMetadata,
     OperatorSeedMaterialState,
 };
+use crate::{
+    initramfs::{ReadOnlyInitramfs, VfsNodeKind},
+    posix::PosixError,
+};
+
+pub(crate) const HOST_KEY_PATH: &[u8] = b"/etc/talos/ssh/ssh_host_ed25519_key";
+pub(crate) const HOST_KEY_MIN_METADATA_BYTES: usize = 64;
+pub(crate) const HOST_KEY_MAX_METADATA_BYTES: usize = 4096;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum HostKeyState {
     Missing,
+    Invalid,
+    Insufficient,
     MetadataPresent,
 }
 
@@ -27,6 +37,58 @@ pub(crate) enum SeedMaterialState {
     Missing,
     Insufficient,
     MetadataPresent,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum HostKeyMaterialState {
+    Missing,
+    Invalid,
+    Insufficient,
+    Sufficient,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct HostKeyMaterialMetadata {
+    state: HostKeyMaterialState,
+    byte_len: Option<usize>,
+}
+
+impl HostKeyMaterialMetadata {
+    pub(crate) const fn missing() -> Self {
+        Self {
+            state: HostKeyMaterialState::Missing,
+            byte_len: None,
+        }
+    }
+
+    pub(crate) const fn invalid(byte_len: Option<usize>) -> Self {
+        Self {
+            state: HostKeyMaterialState::Invalid,
+            byte_len,
+        }
+    }
+
+    pub(crate) const fn insufficient(byte_len: usize) -> Self {
+        Self {
+            state: HostKeyMaterialState::Insufficient,
+            byte_len: Some(byte_len),
+        }
+    }
+
+    pub(crate) const fn sufficient(byte_len: usize) -> Self {
+        Self {
+            state: HostKeyMaterialState::Sufficient,
+            byte_len: Some(byte_len),
+        }
+    }
+
+    pub(crate) const fn state(self) -> HostKeyMaterialState {
+        self.state
+    }
+
+    pub(crate) const fn byte_len(self) -> Option<usize> {
+        self.byte_len
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -65,6 +127,19 @@ impl SshKeyReadinessSnapshot {
 
     pub(crate) const fn with_host_key_metadata(mut self) -> Self {
         self.host_key = HostKeyState::MetadataPresent;
+        self
+    }
+
+    pub(crate) const fn with_host_key_material(
+        mut self,
+        metadata: HostKeyMaterialMetadata,
+    ) -> Self {
+        self.host_key = match metadata.state() {
+            HostKeyMaterialState::Missing => HostKeyState::Missing,
+            HostKeyMaterialState::Invalid => HostKeyState::Invalid,
+            HostKeyMaterialState::Insufficient => HostKeyState::Insufficient,
+            HostKeyMaterialState::Sufficient => HostKeyState::MetadataPresent,
+        };
         self
     }
 
@@ -116,6 +191,8 @@ impl SshKeyReadinessSnapshot {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum SshKeyReadinessLabel {
     MissingHostKey,
+    InvalidHostKey,
+    InsufficientHostKey,
     MissingAuthorizedKey,
     EntropyUnready,
     SeedMaterialMissing,
@@ -129,6 +206,8 @@ impl SshKeyReadinessLabel {
     pub(crate) const fn name(self) -> &'static str {
         match self {
             Self::MissingHostKey => "sshkeydiag-missing-host-key",
+            Self::InvalidHostKey => "sshkeydiag-host-key-invalid",
+            Self::InsufficientHostKey => "sshkeydiag-host-key-insufficient",
             Self::MissingAuthorizedKey => "sshkeydiag-missing-authorized-key",
             Self::EntropyUnready => "sshkeydiag-entropy-unready",
             Self::SeedMaterialMissing => "sshkeydiag-seed-material-missing",
@@ -140,7 +219,7 @@ impl SshKeyReadinessLabel {
     }
 }
 
-pub(crate) const MAX_SSH_KEY_READINESS_LABELS: usize = 8;
+pub(crate) const MAX_SSH_KEY_READINESS_LABELS: usize = 10;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct SshKeyReadinessReport {
@@ -180,6 +259,12 @@ pub(crate) fn classify_ssh_key_readiness(
     if snapshot.host_key == HostKeyState::Missing {
         report.push(SshKeyReadinessLabel::MissingHostKey);
     }
+    if snapshot.host_key == HostKeyState::Invalid {
+        report.push(SshKeyReadinessLabel::InvalidHostKey);
+    }
+    if snapshot.host_key == HostKeyState::Insufficient {
+        report.push(SshKeyReadinessLabel::InsufficientHostKey);
+    }
     if snapshot.authorized_key == AuthorizedKeyState::Missing {
         report.push(SshKeyReadinessLabel::MissingAuthorizedKey);
     }
@@ -204,10 +289,33 @@ pub(crate) fn classify_ssh_key_readiness(
     report
 }
 
+pub(crate) fn classify_host_key_material(initramfs: ReadOnlyInitramfs) -> HostKeyMaterialMetadata {
+    let handle = match initramfs.lookup_default(HOST_KEY_PATH) {
+        Ok(handle) => handle,
+        Err(PosixError::NoEntry) => return HostKeyMaterialMetadata::missing(),
+        Err(_) => return HostKeyMaterialMetadata::invalid(None),
+    };
+
+    let metadata = handle.metadata();
+    if metadata.kind() != VfsNodeKind::RegularFile {
+        return HostKeyMaterialMetadata::invalid(Some(metadata.len()));
+    }
+
+    let byte_len = metadata.len();
+    if byte_len == 0 || byte_len > HOST_KEY_MAX_METADATA_BYTES {
+        HostKeyMaterialMetadata::invalid(Some(byte_len))
+    } else if byte_len < HOST_KEY_MIN_METADATA_BYTES {
+        HostKeyMaterialMetadata::insufficient(byte_len)
+    } else {
+        HostKeyMaterialMetadata::sufficient(byte_len)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::entropy::{EntropyObservation, OperatorSeedObservation};
+    use crate::initramfs::{DirectoryEntry, InitramfsNode, phase8_readonly_initramfs_fixture};
 
     fn label_names(report: &SshKeyReadinessReport) -> [&'static str; MAX_SSH_KEY_READINESS_LABELS] {
         let mut labels = [""; MAX_SSH_KEY_READINESS_LABELS];
@@ -233,6 +341,8 @@ mod tests {
                 "sshkeydiag-persistence-unavailable",
                 "sshkeydiag-exposure-disabled",
                 "sshkeydiag-not-ready",
+                "",
+                "",
                 "",
             ]
         );
@@ -267,6 +377,8 @@ mod tests {
                 "",
                 "",
                 "",
+                "",
+                "",
             ]
         );
     }
@@ -294,6 +406,8 @@ mod tests {
                 "sshkeydiag-entropy-unready",
                 "sshkeydiag-seed-material-missing",
                 "sshkeydiag-not-ready",
+                "",
+                "",
                 "",
                 "",
                 "",
@@ -413,6 +527,88 @@ mod tests {
     }
 
     #[test_case]
+    fn host_key_vfs_metadata_maps_to_fail_closed_states_without_reading_key_bytes() {
+        let missing = classify_host_key_material(phase8_readonly_initramfs_fixture());
+        let directory = classify_host_key_material(directory_host_key_initramfs());
+        let empty = classify_host_key_material(empty_host_key_initramfs());
+        let oversized = classify_host_key_material(oversized_host_key_initramfs());
+        let insufficient = classify_host_key_material(insufficient_host_key_initramfs());
+        let sufficient = classify_host_key_material(sufficient_host_key_initramfs());
+
+        assert_eq!(missing, HostKeyMaterialMetadata::missing());
+        assert_eq!(missing.byte_len(), None);
+        assert_eq!(directory, HostKeyMaterialMetadata::invalid(Some(0)));
+        assert_eq!(empty, HostKeyMaterialMetadata::invalid(Some(0)));
+        assert_eq!(
+            oversized,
+            HostKeyMaterialMetadata::invalid(Some(HOST_KEY_MAX_METADATA_BYTES + 1))
+        );
+        assert_eq!(
+            insufficient,
+            HostKeyMaterialMetadata::insufficient(HOST_KEY_MIN_METADATA_BYTES - 1)
+        );
+        assert_eq!(
+            sufficient,
+            HostKeyMaterialMetadata::sufficient(HOST_KEY_MIN_METADATA_BYTES)
+        );
+    }
+
+    #[test_case]
+    fn host_key_vfs_metadata_clears_only_host_key_prerequisite() {
+        let invalid = classify_ssh_key_readiness(
+            SshKeyReadinessSnapshot::fail_closed_default()
+                .with_host_key_material(classify_host_key_material(empty_host_key_initramfs())),
+        );
+        let insufficient = classify_ssh_key_readiness(
+            SshKeyReadinessSnapshot::fail_closed_default().with_host_key_material(
+                classify_host_key_material(insufficient_host_key_initramfs()),
+            ),
+        );
+        let sufficient = classify_ssh_key_readiness(
+            SshKeyReadinessSnapshot::fail_closed_default().with_host_key_material(
+                classify_host_key_material(sufficient_host_key_initramfs()),
+            ),
+        );
+
+        assert!(
+            invalid
+                .labels()
+                .contains(&SshKeyReadinessLabel::InvalidHostKey)
+        );
+        assert!(
+            insufficient
+                .labels()
+                .contains(&SshKeyReadinessLabel::InsufficientHostKey)
+        );
+        assert!(
+            !sufficient
+                .labels()
+                .contains(&SshKeyReadinessLabel::MissingHostKey)
+        );
+        assert!(
+            !sufficient
+                .labels()
+                .contains(&SshKeyReadinessLabel::InvalidHostKey)
+        );
+        assert!(
+            !sufficient
+                .labels()
+                .contains(&SshKeyReadinessLabel::InsufficientHostKey)
+        );
+        assert!(
+            sufficient
+                .labels()
+                .contains(&SshKeyReadinessLabel::MissingAuthorizedKey)
+        );
+        assert!(
+            sufficient
+                .labels()
+                .contains(&SshKeyReadinessLabel::EntropyUnready)
+        );
+        assert!(!sufficient.ssh_ready());
+    }
+
+    #[test_case]
     fn operator_seed_vfs_metadata_maps_to_missing_insufficient_and_present_states() {
         let missing = classify_ssh_key_readiness(
             SshKeyReadinessSnapshot::fail_closed_default()
@@ -491,5 +687,80 @@ mod tests {
         );
         assert_eq!(report.labels(), &[SshKeyReadinessLabel::NotReady]);
         assert!(!report.ssh_ready());
+    }
+
+    const ROOT_INDEX: usize = 0;
+    const ETC_INDEX: usize = 1;
+    const TALOS_INDEX: usize = 2;
+    const SSH_INDEX: usize = 3;
+    const HOST_KEY_INDEX: usize = 4;
+
+    static ROOT_ENTRIES: [DirectoryEntry; 1] = [DirectoryEntry::new(b"etc", ETC_INDEX)];
+    static ETC_ENTRIES: [DirectoryEntry; 1] = [DirectoryEntry::new(b"talos", TALOS_INDEX)];
+    static TALOS_ENTRIES: [DirectoryEntry; 1] = [DirectoryEntry::new(b"ssh", SSH_INDEX)];
+    static SSH_ENTRIES: [DirectoryEntry; 1] =
+        [DirectoryEntry::new(b"ssh_host_ed25519_key", HOST_KEY_INDEX)];
+    static EMPTY_ENTRIES: [DirectoryEntry; 0] = [];
+    static INSUFFICIENT_HOST_KEY_BYTES: [u8; HOST_KEY_MIN_METADATA_BYTES - 1] =
+        [0; HOST_KEY_MIN_METADATA_BYTES - 1];
+    static SUFFICIENT_HOST_KEY_BYTES: [u8; HOST_KEY_MIN_METADATA_BYTES] =
+        [0; HOST_KEY_MIN_METADATA_BYTES];
+    static OVERSIZED_HOST_KEY_BYTES: [u8; HOST_KEY_MAX_METADATA_BYTES + 1] =
+        [0; HOST_KEY_MAX_METADATA_BYTES + 1];
+
+    static DIRECTORY_HOST_KEY_NODES: [InitramfsNode; 5] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
+        InitramfsNode::directory(SSH_INDEX, &SSH_ENTRIES),
+        InitramfsNode::directory(HOST_KEY_INDEX, &EMPTY_ENTRIES),
+    ];
+    static EMPTY_HOST_KEY_NODES: [InitramfsNode; 5] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
+        InitramfsNode::directory(SSH_INDEX, &SSH_ENTRIES),
+        InitramfsNode::regular_file(HOST_KEY_INDEX, b""),
+    ];
+    static INSUFFICIENT_HOST_KEY_NODES: [InitramfsNode; 5] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
+        InitramfsNode::directory(SSH_INDEX, &SSH_ENTRIES),
+        InitramfsNode::regular_file(HOST_KEY_INDEX, &INSUFFICIENT_HOST_KEY_BYTES),
+    ];
+    static SUFFICIENT_HOST_KEY_NODES: [InitramfsNode; 5] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
+        InitramfsNode::directory(SSH_INDEX, &SSH_ENTRIES),
+        InitramfsNode::regular_file(HOST_KEY_INDEX, &SUFFICIENT_HOST_KEY_BYTES),
+    ];
+    static OVERSIZED_HOST_KEY_NODES: [InitramfsNode; 5] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
+        InitramfsNode::directory(SSH_INDEX, &SSH_ENTRIES),
+        InitramfsNode::regular_file(HOST_KEY_INDEX, &OVERSIZED_HOST_KEY_BYTES),
+    ];
+
+    const fn directory_host_key_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&DIRECTORY_HOST_KEY_NODES, ROOT_INDEX)
+    }
+
+    const fn empty_host_key_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&EMPTY_HOST_KEY_NODES, ROOT_INDEX)
+    }
+
+    const fn insufficient_host_key_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&INSUFFICIENT_HOST_KEY_NODES, ROOT_INDEX)
+    }
+
+    const fn sufficient_host_key_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&SUFFICIENT_HOST_KEY_NODES, ROOT_INDEX)
+    }
+
+    const fn oversized_host_key_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&OVERSIZED_HOST_KEY_NODES, ROOT_INDEX)
     }
 }

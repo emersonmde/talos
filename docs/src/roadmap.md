@@ -15998,6 +15998,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   behavior, live transport, hardware reachability, public ABI/POSIX/Linux
   compatibility, broad expansion, stale link-ready discriminator promotion, or
   phase transition.
+- phase12-ssh-host-key-vfs-metadata-core-20260621 accepts the metadata-only
+  read-only VFS implementation for /etc/talos/ssh/ssh_host_ed25519_key.
+  sshkeydiag now classifies missing host-key material as
+  sshkeydiag-missing-host-key, invalid/non-regular/zero-length/oversized
+  metadata as sshkeydiag-host-key-invalid, insufficient 1 through 63 byte
+  metadata as sshkeydiag-host-key-insufficient, and sufficient 64 through 4096
+  byte metadata as clearing only the host-key prerequisite. It also combines
+  this host-key metadata with accepted operator seed and entropy metadata.
+  ssh-ready remains false until authorized-key, persistence/exposure, SSH
+  service behavior, live transport, and reachability prerequisites are
+  separately accepted. The selected next bounded task is
+  phase12-shell-ssh-host-keydiag-smoke-20260621. This implementation does not
+  accept host-key generation, key parsing, public-key derivation,
+  fingerprinting, authorized-key storage, writable persistence, SSH service
+  behavior, live transport, hardware reachability, public ABI/POSIX/Linux
+  compatibility, broad expansion, stale link-ready discriminator promotion, or
+  phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
