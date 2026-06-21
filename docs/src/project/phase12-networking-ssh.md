@@ -6574,3 +6574,16 @@ evidence uses public byte-count fixtures only and excludes real private-key
 bytes, generated keys, public-key derivation, fingerprints, digests,
 signatures, and stable secret identifiers. The selected next bounded task is
 phase12-shell-ssh-host-keydiag-smoke-20260621.
+
+phase12-shell-ssh-host-keydiag-smoke-20260621 accepts retained
+host/QEMU-substitute smoke evidence for the read-only VFS host-key metadata
+sshkeydiag path. The retained transcript covers missing, invalid,
+insufficient, and sufficient public-fixture host-key metadata states. Missing
+metadata keeps sshkeydiag-missing-host-key; invalid metadata reports
+sshkeydiag-host-key-invalid; insufficient metadata reports
+sshkeydiag-host-key-insufficient; and sufficient public-fixture metadata clears
+only the host-key prerequisite while ssh-ready remains false. The evidence
+retains labels and public fixture state names only; it excludes real private-key
+bytes, generated keys, derived public keys, digests, fingerprints, signatures,
+and comparable stable secret identifiers. The selected next bounded task is
+phase12-ssh-host-key-readiness-closeout-20260621.
