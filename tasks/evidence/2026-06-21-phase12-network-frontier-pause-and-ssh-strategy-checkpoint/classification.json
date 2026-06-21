@@ -1,0 +1,55 @@
+{
+  "task_id": "phase12-network-frontier-pause-and-ssh-strategy-checkpoint-20260621",
+  "classification": "phase12-network-frontier-pause-and-ssh-strategy-checkpoint-accepted",
+  "status": "accepted",
+  "evidence_level": [
+    "static task/docs/evidence review",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_hardware_terminal": {
+    "task_id": "phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-closeout-20260621",
+    "commit": "abf0533810e9c8ce59d82cef50e7aad1ab43600e",
+    "classification": "bcm54213pe-lifecycle-ownership-closeout-no-link-ready-planning-needed",
+    "pi5_terminal": "bcm54213pe-lifecycle-powerdown-exit-no-change-link-not-ready",
+    "link_ready_accepted": false
+  },
+  "blocked_link_ready_discriminator": {
+    "task_id": "phase12-rp1-ethernet-link-ready-discriminator-source-contract-20260621",
+    "commit": "a4048ba329affda79f8506dba3c166242fdbdcbf",
+    "selected_discriminator": null,
+    "selected_next_task": null
+  },
+  "accepted_host_only_network_frontier": {
+    "task_id": "phase12-network-driver-packet-adapter-closeout-20260621",
+    "commit": "11bf998d51a180e47afb7cba0bc76092c974eb1f",
+    "classification": "phase12-network-driver-packet-adapter-closeout-accepted",
+    "evidence_level": "source/unit plus retained host/QEMU-substitute only",
+    "live_packet_io_accepted": false
+  },
+  "decision": {
+    "live_ethernet_hardware_expansion": "paused",
+    "selected_next_task": "phase12-entropy-ssh-strategy-contract-20260621",
+    "planningNeeded": false
+  },
+  "rejected_claims": [
+    "live link-ready",
+    "autoneg-complete",
+    "packet-readiness",
+    "live RX/TX",
+    "packet I/O",
+    "ping/hardware reachability",
+    "SSH service acceptance",
+    "UDP/raw sockets",
+    "libc/std socket wrappers",
+    "public ABI/POSIX/Linux compatibility",
+    "broad socket expansion",
+    "phase transition"
+  ],
+  "hardwareTestLock": {
+    "acquired_by_checkpoint": false,
+    "locked_after_checkpoint": false,
+    "restored": true
+  }
+}

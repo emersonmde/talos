@@ -15685,6 +15685,16 @@ Acceptance criteria:
 
 Milestone 12.5: Entropy, Crypto, and SSH Strategy
 
+- The network frontier pause and SSH strategy checkpoint accepts the transition
+  from continued live Ethernet hardware attempts to strategy-first SSH
+  prerequisites. It reconciles the no-change link-not-ready BCM54213PE
+  lifecycle closeout, the blocked/no-defensible-discriminator link-ready source
+  contract, and the accepted host-only DriverPacketAdapter/socket substrate.
+  Live Ethernet hardware expansion is paused, stale generic link-ready
+  discriminator promotion remains rejected, and the selected next bounded task
+  is phase12-entropy-ssh-strategy-contract-20260621. This checkpoint does not
+  accept live packet I/O, hardware reachability, SSH service acceptance, public
+  ABI/POSIX/Linux compatibility, broad socket expansion, or a phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

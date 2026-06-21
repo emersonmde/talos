@@ -6109,3 +6109,22 @@ sockets, libc/std wrappers, POSIX/Linux compatibility, public stable socket ABI
 acceptance, broad socket expansion, and phase transition remain rejected.
 selected_next_task=null and planningNeeded=true pending supervisor planning for
 any next bounded socket/network task.
+
+phase12-network-frontier-pause-and-ssh-strategy-checkpoint-20260621 accepts
+phase12-network-frontier-pause-and-ssh-strategy-checkpoint-accepted. This
+checkpoint pauses live Ethernet hardware expansion after the accepted
+BCM54213PE lifecycle proof terminal remained no-change link-not-ready and the
+link-ready discriminator source contract selected no defensible discriminator.
+
+The accepted host-only frontier remains the descriptor-backed socket substrate,
+private userspace_socket_abi helpers, host-only smoltcp TCP bridge diagnostics,
+and deterministic DriverPacketAdapter evidence through shell-visible
+/bin/sockdiag. That evidence is still source/unit plus retained
+host/QEMU-substitute only, not live packet I/O or hardware reachability.
+
+The next bounded frontier moves to SSH-enabling strategy prerequisites:
+entropy, key management, service shape, and exposure controls. This checkpoint
+selects phase12-entropy-ssh-strategy-contract-20260621 and rejects stale
+generic link-ready discriminator promotion, live link-ready, packet I/O,
+hardware reachability, SSH service acceptance, public ABI/POSIX/Linux
+compatibility, broad socket expansion, and phase transition.

@@ -1,0 +1,68 @@
+{
+  "task_id": "phase12-network-frontier-pause-and-ssh-strategy-checkpoint-20260621",
+  "classification": "phase12-network-frontier-pause-and-ssh-strategy-checkpoint-accepted",
+  "evidence": [
+    {
+      "label": "checkpoint-task-record",
+      "level": "static task/docs/evidence review",
+      "path": "tasks/2026-06-21-phase12-network-frontier-pause-and-ssh-strategy-checkpoint.md"
+    },
+    {
+      "label": "checkpoint-classification",
+      "level": "task-owned JSON evidence",
+      "path": "tasks/evidence/2026-06-21-phase12-network-frontier-pause-and-ssh-strategy-checkpoint/classification.json"
+    },
+    {
+      "label": "accepted-bcm54213pe-lifecycle-closeout",
+      "level": "static task/docs/evidence review and retained Pi 5 proof reference",
+      "path": "tasks/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-closeout.md",
+      "commit": "abf0533810e9c8ce59d82cef50e7aad1ab43600e"
+    },
+    {
+      "label": "blocked-link-ready-discriminator-source-contract",
+      "level": "static source/task/docs/evidence review",
+      "path": "tasks/2026-06-21-phase12-rp1-ethernet-link-ready-discriminator-source-contract.md",
+      "commit": "a4048ba329affda79f8506dba3c166242fdbdcbf"
+    },
+    {
+      "label": "accepted-driver-packet-adapter-closeout",
+      "level": "source/unit plus retained host/QEMU-substitute evidence",
+      "path": "tasks/2026-06-21-phase12-network-driver-packet-adapter-closeout.md",
+      "commit": "11bf998d51a180e47afb7cba0bc76092c974eb1f"
+    },
+    {
+      "label": "phase12-doc",
+      "level": "architecture/current-frontier documentation",
+      "path": "docs/src/project/phase12-networking-ssh.md"
+    },
+    {
+      "label": "roadmap",
+      "level": "roadmap/frontier documentation",
+      "path": "docs/src/roadmap.md"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "static task/docs/evidence review",
+      "result": "pass"
+    },
+    {
+      "gate": "jq empty on task-owned JSON evidence",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "mdbook build",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check before commit",
+      "result": "pass"
+    }
+  ],
+  "selected_next_task": "phase12-entropy-ssh-strategy-contract-20260621",
+  "planningNeeded": false
+}
