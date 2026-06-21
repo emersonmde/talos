@@ -220,7 +220,7 @@ mod tests {
             Some(EntropyDiagnosticLabel::OperatorSeedRequired)
         );
         assert_eq!(
-            report.input_label(),
+            report.hardware_rng_label(),
             EntropyDiagnosticLabel::HardwareRngUnaccepted
         );
         assert_eq!(

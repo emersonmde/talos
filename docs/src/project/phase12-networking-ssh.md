@@ -6204,8 +6204,26 @@ accepted cryptographic entropy, random-byte generation, seed persistence,
 host-key generation, crypto dependency integration, SSH service, live transport
 reachability, public ABI/POSIX/Linux compatibility, or phase transition.
 
-No follow-up task is mechanically unblocked from the existing queue: the
-remaining link-ready discriminator chain still depends on a selected
-discriminator and selected_next_task that were not provided, and no explicit
-Phase 12.5 key-management, crypto, seed, or service-shape task has been queued
-with objective gates. Supervisor planning is required before continuing.
+Supervisor planning selected the next bounded Phase 12.5 task:
+phase12-ssh-key-management-readiness-contract-20260621. The stale link-ready
+discriminator chain remains blocked by missing selected discriminator and
+selected_next_task evidence.
+
+phase12-ssh-key-management-readiness-contract-20260621 accepts
+phase12-ssh-key-management-readiness-contract-accepted. The contract defines a
+fail-closed SSH key-management readiness classifier boundary over explicit
+prerequisite states. It preserves the accepted entropy diagnostic baseline and
+names the next diagnostic labels: sshkeydiag-missing-host-key,
+sshkeydiag-missing-authorized-key, sshkeydiag-entropy-unready,
+sshkeydiag-seed-material-missing, sshkeydiag-seed-material-insufficient,
+sshkeydiag-persistence-unavailable, sshkeydiag-exposure-disabled, and
+sshkeydiag-not-ready.
+
+The default aggregate result remains not ready. The future implementation may
+only prove deterministic negative controls over supplied metadata; it may not
+read or persist secret material, generate keys, derive keys, import crypto/SSH
+dependencies, inspect ambient hardware/lab state, expose a public ABI, or start
+an SSH service. A narrow entropy test assertion was corrected so the no-input
+case checks the hardware-RNG rejection through hardware_rng_label() while
+preserving entropydiag-fail-closed-no-input as the input label. The selected
+next bounded task is phase12-sshkeydiag-core-20260621.

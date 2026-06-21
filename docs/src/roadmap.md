@@ -15747,11 +15747,27 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   seed persistence, host-key generation, crypto dependency integration, SSH
   service behavior, live packet I/O, hardware reachability, public
   ABI/POSIX/Linux compatibility, broad expansion, or phase transition. No
-  mechanically unblocked follow-up exists in the current queue: remaining
-  link-ready discriminator tasks are still blocked by missing selected
-  discriminator/selected_next_task evidence, and no explicit Phase 12.5
-  key-management, crypto, seed, or service-shape task has been queued with
-  objective gates. Supervisor planning is required before continuing.
+  follow-up required supervisor planning; the selected next bounded task is
+  phase12-ssh-key-management-readiness-contract-20260621. Remaining link-ready
+  discriminator tasks are still blocked by missing selected
+  discriminator/selected_next_task evidence.
+- phase12-ssh-key-management-readiness-contract-20260621 accepts a fail-closed
+  SSH key-management readiness contract over explicit prerequisite states. It
+  preserves the accepted entropy diagnostic boundary and names deterministic
+  not-ready labels for missing host key, missing authorized key, entropy
+  unready, seed material missing, seed material insufficient, persistence
+  unavailable, exposure disabled, and aggregate not ready:
+  sshkeydiag-missing-host-key, sshkeydiag-missing-authorized-key,
+  sshkeydiag-entropy-unready, sshkeydiag-seed-material-missing,
+  sshkeydiag-seed-material-insufficient,
+  sshkeydiag-persistence-unavailable, sshkeydiag-exposure-disabled, and
+  sshkeydiag-not-ready. It also corrects a narrow entropy no-input test
+  assertion so hardware RNG rejection is checked through hardware_rng_label().
+  The selected next bounded task is phase12-sshkeydiag-core-20260621. This
+  contract does not accept key generation, secret persistence, crypto
+  dependency adoption, SSH service behavior, live packet I/O, hardware
+  reachability, public ABI/POSIX/Linux compatibility, broad expansion, or
+  phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
