@@ -6355,3 +6355,27 @@ dependency adoption, SSH service behavior, live packet I/O, hardware
 reachability, public ABI/POSIX/Linux compatibility, broad expansion, stale
 link-ready discriminator promotion, or phase transition. The selected next
 bounded task is phase12-shell-operator-seed-diag-smoke-20260621.
+
+phase12-shell-operator-seed-diag-smoke-20260621 accepts
+phase12-shell-operator-seed-diag-smoke-accepted. Talos now retains
+host/QEMU-substitute shell-visible diagnostic evidence for the read-only VFS
+operator seed metadata path. A metadata-aware diagnostic dispatch helper can
+format entropydiag and sshkeydiag output from an explicit initramfs fixture
+while the default diagnostic command path remains fail-closed for the Phase 8
+fixture.
+
+The retained transcript covers missing, insufficient, and sufficient operator
+seed metadata without printing seed bytes, digests, fingerprints, or derived
+material. Missing seed material reports entropydiag-operator-seed-required and
+sshkeydiag-seed-material-missing. Insufficient seed material reports
+sshkeydiag-seed-material-insufficient. Sufficient metadata clears only the
+seed-material label; cryptographic-strength and ssh-ready remain false because
+cryptographic entropy, host-key metadata, authorized-key metadata, persistence,
+exposure, crypto/SSH service, and reachability prerequisites remain
+unaccepted. This smoke does not accept random-byte generation,
+CSPRNG/conditioning, host-key generation or provisioning, authorized-key
+storage, writable seed persistence, crypto/SSH dependency adoption, SSH service
+behavior, live packet I/O, hardware reachability, public ABI/POSIX/Linux
+compatibility, broad expansion, stale link-ready discriminator promotion, or
+phase transition. The selected next bounded task is
+phase12-operator-seed-vfs-closeout-20260621.

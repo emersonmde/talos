@@ -1,5 +1,6 @@
 use crate::{
     entropy::{self, EntropyDiagnosticSnapshot},
+    initramfs::ReadOnlyInitramfs,
     runtime_console::{self, ConsoleBackend, DEFAULT_RUNTIME_CONSOLE},
     ssh_key_readiness::{self, SshKeyReadinessSnapshot},
     tty::CANONICAL_LINE_CAPACITY,
@@ -125,6 +126,32 @@ pub fn dispatch_default_diagnostic_command(
     line: &[u8],
     sink: &mut impl DiagnosticResponseSink,
 ) -> Result<DiagnosticDispatchResult, DiagnosticDispatchError> {
+    dispatch_diagnostic_command(line, DiagnosticContext::FailClosedDefault, sink)
+}
+
+pub(crate) fn dispatch_diagnostic_command_with_operator_seed_material(
+    line: &[u8],
+    initramfs: ReadOnlyInitramfs,
+    sink: &mut impl DiagnosticResponseSink,
+) -> Result<DiagnosticDispatchResult, DiagnosticDispatchError> {
+    dispatch_diagnostic_command(
+        line,
+        DiagnosticContext::OperatorSeedMaterial(initramfs),
+        sink,
+    )
+}
+
+#[derive(Clone, Copy, Debug)]
+enum DiagnosticContext {
+    FailClosedDefault,
+    OperatorSeedMaterial(ReadOnlyInitramfs),
+}
+
+fn dispatch_diagnostic_command(
+    line: &[u8],
+    context: DiagnosticContext,
+    sink: &mut impl DiagnosticResponseSink,
+) -> Result<DiagnosticDispatchResult, DiagnosticDispatchError> {
     let command = match parse_diagnostic_command_line(line) {
         Ok(command) => command,
         Err(error) => {
@@ -147,10 +174,10 @@ pub fn dispatch_default_diagnostic_command(
     }
 
     match command.name() {
-        "entropy" => write_entropy_response(sink),
+        "entropy" => write_entropy_response(context, sink),
         "help" => write_help_response(sink),
         "list" => write_list_response(sink),
-        "sshkeydiag" => write_ssh_key_readiness_response(sink),
+        "sshkeydiag" => write_ssh_key_readiness_response(context, sink),
         "status" => write_status_response(sink),
         _ => {
             let mut responses = 0usize;
@@ -234,9 +261,16 @@ fn write_status_response(
 }
 
 fn write_entropy_response(
+    context: DiagnosticContext,
     sink: &mut impl DiagnosticResponseSink,
 ) -> Result<DiagnosticDispatchResult, DiagnosticDispatchError> {
-    let report = entropy::classify_entropy_snapshot(EntropyDiagnosticSnapshot::empty());
+    let snapshot = match context {
+        DiagnosticContext::FailClosedDefault => EntropyDiagnosticSnapshot::empty(),
+        DiagnosticContext::OperatorSeedMaterial(initramfs) => {
+            entropy::entropy_snapshot_with_operator_seed_material(initramfs)
+        }
+    };
+    let report = entropy::classify_entropy_snapshot(snapshot);
     let mut responses = 0usize;
     write_line(sink, &mut responses, "diag: ok entropy")?;
     write_parts_line(
@@ -270,11 +304,22 @@ fn write_entropy_response(
 }
 
 fn write_ssh_key_readiness_response(
+    context: DiagnosticContext,
     sink: &mut impl DiagnosticResponseSink,
 ) -> Result<DiagnosticDispatchResult, DiagnosticDispatchError> {
-    let report = ssh_key_readiness::classify_ssh_key_readiness(
-        SshKeyReadinessSnapshot::fail_closed_default(),
-    );
+    let snapshot = match context {
+        DiagnosticContext::FailClosedDefault => SshKeyReadinessSnapshot::fail_closed_default(),
+        DiagnosticContext::OperatorSeedMaterial(initramfs) => {
+            let metadata = entropy::classify_operator_seed_material(initramfs);
+            let entropy = entropy::classify_entropy_snapshot(
+                entropy::entropy_snapshot_with_operator_seed_material(initramfs),
+            );
+            SshKeyReadinessSnapshot::fail_closed_default()
+                .with_operator_seed_material(metadata)
+                .with_entropy_report(entropy)
+        }
+    };
+    let report = ssh_key_readiness::classify_ssh_key_readiness(snapshot);
     let mut responses = 0usize;
     write_line(sink, &mut responses, "diag: ok sshkeydiag")?;
     write_parts_line(
@@ -396,6 +441,10 @@ fn write_bool_line(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::{
+        entropy::OPERATOR_SEED_MIN_SUFFICIENT_BYTES,
+        initramfs::{DirectoryEntry, InitramfsNode, phase8_readonly_initramfs_fixture},
+    };
 
     struct CaptureSink {
         bytes: [u8; 768],
@@ -523,6 +572,105 @@ mod tests {
     }
 
     #[test_case]
+    fn dispatcher_reports_operator_seed_missing_from_vfs_without_secret_material() {
+        let mut entropy_sink = CaptureSink::new();
+        let entropy_result = dispatch_diagnostic_command_with_operator_seed_material(
+            b"entropy",
+            phase8_readonly_initramfs_fixture(),
+            &mut entropy_sink,
+        )
+        .unwrap();
+
+        assert_eq!(entropy_result.status, DiagnosticDispatchStatus::Handled);
+        assert_eq!(entropy_result.response_lines, 6);
+        assert_eq!(
+            entropy_sink.as_str(),
+            "diag: ok entropy\ndiag: entropy-label entropydiag-fail-closed-no-input\ndiag: hardware-rng entropydiag-hardware-rng-unaccepted\ndiag: operator-seed entropydiag-operator-seed-required\ndiag: cryptographic-strength false\ndiag: ssh-ready false\n"
+        );
+
+        let mut ssh_sink = CaptureSink::new();
+        let ssh_result = dispatch_diagnostic_command_with_operator_seed_material(
+            b"sshkeydiag",
+            phase8_readonly_initramfs_fixture(),
+            &mut ssh_sink,
+        )
+        .unwrap();
+
+        assert_eq!(ssh_result.status, DiagnosticDispatchStatus::Handled);
+        assert_eq!(ssh_result.response_lines, 10);
+        assert_eq!(
+            ssh_sink.as_str(),
+            "diag: ok sshkeydiag\ndiag: sshkey-readiness sshkeydiag-not-ready\ndiag: sshkey-label sshkeydiag-missing-host-key\ndiag: sshkey-label sshkeydiag-missing-authorized-key\ndiag: sshkey-label sshkeydiag-entropy-unready\ndiag: sshkey-label sshkeydiag-seed-material-missing\ndiag: sshkey-label sshkeydiag-persistence-unavailable\ndiag: sshkey-label sshkeydiag-exposure-disabled\ndiag: sshkey-label sshkeydiag-not-ready\ndiag: ssh-ready false\n"
+        );
+    }
+
+    #[test_case]
+    fn dispatcher_reports_operator_seed_insufficient_from_vfs_without_secret_material() {
+        let mut entropy_sink = CaptureSink::new();
+        let entropy_result = dispatch_diagnostic_command_with_operator_seed_material(
+            b"entropy",
+            insufficient_seed_initramfs(),
+            &mut entropy_sink,
+        )
+        .unwrap();
+
+        assert_eq!(entropy_result.status, DiagnosticDispatchStatus::Handled);
+        assert_eq!(entropy_result.response_lines, 5);
+        assert_eq!(
+            entropy_sink.as_str(),
+            "diag: ok entropy\ndiag: entropy-label entropydiag-untrusted-local-mix\ndiag: hardware-rng entropydiag-hardware-rng-unaccepted\ndiag: cryptographic-strength false\ndiag: ssh-ready false\n"
+        );
+
+        let mut ssh_sink = CaptureSink::new();
+        let ssh_result = dispatch_diagnostic_command_with_operator_seed_material(
+            b"sshkeydiag",
+            insufficient_seed_initramfs(),
+            &mut ssh_sink,
+        )
+        .unwrap();
+
+        assert_eq!(ssh_result.status, DiagnosticDispatchStatus::Handled);
+        assert_eq!(ssh_result.response_lines, 10);
+        assert_eq!(
+            ssh_sink.as_str(),
+            "diag: ok sshkeydiag\ndiag: sshkey-readiness sshkeydiag-not-ready\ndiag: sshkey-label sshkeydiag-missing-host-key\ndiag: sshkey-label sshkeydiag-missing-authorized-key\ndiag: sshkey-label sshkeydiag-entropy-unready\ndiag: sshkey-label sshkeydiag-seed-material-insufficient\ndiag: sshkey-label sshkeydiag-persistence-unavailable\ndiag: sshkey-label sshkeydiag-exposure-disabled\ndiag: sshkey-label sshkeydiag-not-ready\ndiag: ssh-ready false\n"
+        );
+    }
+
+    #[test_case]
+    fn dispatcher_reports_operator_seed_sufficient_from_vfs_without_secret_material() {
+        let mut entropy_sink = CaptureSink::new();
+        let entropy_result = dispatch_diagnostic_command_with_operator_seed_material(
+            b"entropy",
+            sufficient_seed_initramfs(),
+            &mut entropy_sink,
+        )
+        .unwrap();
+
+        assert_eq!(entropy_result.status, DiagnosticDispatchStatus::Handled);
+        assert_eq!(entropy_result.response_lines, 5);
+        assert_eq!(
+            entropy_sink.as_str(),
+            "diag: ok entropy\ndiag: entropy-label entropydiag-untrusted-local-mix\ndiag: hardware-rng entropydiag-hardware-rng-unaccepted\ndiag: cryptographic-strength false\ndiag: ssh-ready false\n"
+        );
+
+        let mut ssh_sink = CaptureSink::new();
+        let ssh_result = dispatch_diagnostic_command_with_operator_seed_material(
+            b"sshkeydiag",
+            sufficient_seed_initramfs(),
+            &mut ssh_sink,
+        )
+        .unwrap();
+
+        assert_eq!(ssh_result.status, DiagnosticDispatchStatus::Handled);
+        assert_eq!(ssh_result.response_lines, 9);
+        assert_eq!(
+            ssh_sink.as_str(),
+            "diag: ok sshkeydiag\ndiag: sshkey-readiness sshkeydiag-not-ready\ndiag: sshkey-label sshkeydiag-missing-host-key\ndiag: sshkey-label sshkeydiag-missing-authorized-key\ndiag: sshkey-label sshkeydiag-entropy-unready\ndiag: sshkey-label sshkeydiag-persistence-unavailable\ndiag: sshkey-label sshkeydiag-exposure-disabled\ndiag: sshkey-label sshkeydiag-not-ready\ndiag: ssh-ready false\n"
+        );
+    }
+
+    #[test_case]
     fn dispatcher_reports_unknown_parse_and_argument_errors() {
         let mut unknown = CaptureSink::new();
         let unknown_result = dispatch_default_diagnostic_command(b"ticks", &mut unknown).unwrap();
@@ -559,5 +707,40 @@ mod tests {
             dispatch_default_diagnostic_command(b"list", &mut sink).unwrap_err(),
             DiagnosticDispatchError::ResponseWriteFailed
         );
+    }
+
+    const ROOT_INDEX: usize = 0;
+    const ETC_INDEX: usize = 1;
+    const TALOS_INDEX: usize = 2;
+    const SEED_INDEX: usize = 3;
+
+    static ROOT_ENTRIES: [DirectoryEntry; 1] = [DirectoryEntry::new(b"etc", ETC_INDEX)];
+    static ETC_ENTRIES: [DirectoryEntry; 1] = [DirectoryEntry::new(b"talos", TALOS_INDEX)];
+    static TALOS_ENTRIES: [DirectoryEntry; 1] =
+        [DirectoryEntry::new(b"operator-seed.bin", SEED_INDEX)];
+    static INSUFFICIENT_SEED_BYTES: [u8; OPERATOR_SEED_MIN_SUFFICIENT_BYTES - 1] =
+        [0; OPERATOR_SEED_MIN_SUFFICIENT_BYTES - 1];
+    static SUFFICIENT_SEED_BYTES: [u8; OPERATOR_SEED_MIN_SUFFICIENT_BYTES] =
+        [0; OPERATOR_SEED_MIN_SUFFICIENT_BYTES];
+
+    static INSUFFICIENT_SEED_NODES: [InitramfsNode; 4] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
+        InitramfsNode::regular_file(SEED_INDEX, &INSUFFICIENT_SEED_BYTES),
+    ];
+    static SUFFICIENT_SEED_NODES: [InitramfsNode; 4] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
+        InitramfsNode::regular_file(SEED_INDEX, &SUFFICIENT_SEED_BYTES),
+    ];
+
+    const fn insufficient_seed_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&INSUFFICIENT_SEED_NODES, ROOT_INDEX)
+    }
+
+    const fn sufficient_seed_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&SUFFICIENT_SEED_NODES, ROOT_INDEX)
     }
 }

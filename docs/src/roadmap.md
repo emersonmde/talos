@@ -15855,6 +15855,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   service behavior, live packet I/O, hardware reachability, public
   ABI/POSIX/Linux compatibility, broad expansion, stale link-ready
   discriminator promotion, or phase transition.
+- phase12-shell-operator-seed-diag-smoke-20260621 accepts retained
+  host/QEMU-substitute shell-visible diagnostic evidence for the read-only VFS
+  operator seed metadata path. A metadata-aware diagnostic dispatch helper
+  formats entropydiag and sshkeydiag output from an explicit initramfs fixture
+  while the default diagnostic command path remains fail-closed. The retained
+  transcript covers missing, insufficient, and sufficient operator seed
+  metadata without seed bytes, digest, fingerprint, or derived material.
+  Missing seed material reports entropydiag-operator-seed-required and
+  sshkeydiag-seed-material-missing; insufficient material reports
+  sshkeydiag-seed-material-insufficient; sufficient metadata clears only the
+  seed-material label. Cryptographic-strength and ssh-ready remain false. The
+  selected next bounded task is phase12-operator-seed-vfs-closeout-20260621.
+  This smoke does not accept random-byte generation, CSPRNG/conditioning, host
+  key generation or provisioning, authorized-key storage, writable seed
+  persistence, crypto/SSH dependency adoption, SSH service behavior, live packet
+  I/O, hardware reachability, public ABI/POSIX/Linux compatibility, broad
+  expansion, stale link-ready discriminator promotion, or phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
