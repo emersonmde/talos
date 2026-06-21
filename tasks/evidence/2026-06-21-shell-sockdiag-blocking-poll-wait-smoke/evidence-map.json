@@ -1,0 +1,43 @@
+{
+  "task_id": "phase12-network-shell-sockdiag-blocking-poll-wait-smoke-20260621",
+  "classification": "phase12-network-shell-sockdiag-blocking-poll-wait-smoke-accepted",
+  "evidence_dir": "tasks/evidence/2026-06-21-shell-sockdiag-blocking-poll-wait-smoke",
+  "artifacts": {
+    "smoke_command": "scripts/qemu-shell-sockdiag-blocking-poll-wait-smoke.sh",
+    "qemu_substitute_log": "qemu-shell-sockdiag-blocking-poll-wait-smoke.log",
+    "source_anchors": "source-anchors.txt",
+    "smoke_transcript": "smoke-transcript.md",
+    "classification": "classification.json"
+  },
+  "source_tests": [
+    "src/local_command_loop.rs::local_command_loop_execs_shell_visible_sockdiag_through_vfs_socket_syscalls",
+    "src/syscall.rs::talos_poll_wait_fast_path_preserves_nonblocking_poll_readiness",
+    "src/syscall.rs::talos_poll_wait_blocks_and_wakes_on_local_socket_payload_readiness",
+    "src/syscall.rs::talos_poll_wait_wakes_listener_accept_and_peer_hangup",
+    "src/syscall.rs::talos_poll_wait_timeout_and_malformed_calls_are_bounded",
+    "src/local_command_loop.rs::local_command_loop_execs_shell_visible_pingdiag_through_vfs_diagnostic_layers"
+  ],
+  "source_components": [
+    "src/initramfs.rs::PHASE12_SOCKDIAG_PATH",
+    "src/local_command_loop.rs::DescriptorBackedLocalCommandIo::exec_shell_sockdiag_diagnostic",
+    "src/local_command_loop.rs::local_sockdiag_poll_wait_task",
+    "src/local_command_loop.rs::write_exec_sockdiag_line",
+    "src/local_command_loop.rs::write_exec_sockdiag_controls_line",
+    "src/syscall.rs::TALOS_POLL_WAIT_SYSCALL",
+    "src/syscall.rs::dispatch_process_descriptor_with_socket_table_and_poll_wait",
+    "src/syscall.rs::SocketPollWaitTable",
+    "src/syscall.rs::dispatch_talos_poll_wait",
+    "src/scheduler.rs::TaskState::Blocked",
+    "src/scheduler.rs::SingleCoreScheduler::make_runnable",
+    "src/network.rs::NetworkSocketDescriptorTable",
+    "src/posix.rs::DescriptorObjectKind::Socket"
+  ],
+  "smoke_result": {
+    "command": "scripts/qemu-shell-sockdiag-blocking-poll-wait-smoke.sh",
+    "result": "passed",
+    "filtered_invocations": 6,
+    "tests_per_invocation": 683,
+    "final_log_line": "qemu-shell-sockdiag-blocking-poll-wait-smoke: PASS classification=host-substitute-shell-sockdiag-blocking-poll-wait-smoke-complete"
+  },
+  "selected_next_task": "phase12-network-shell-sockdiag-blocking-poll-wait-closeout-20260621"
+}

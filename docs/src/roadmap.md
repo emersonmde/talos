@@ -15186,6 +15186,19 @@ Milestone 12.3: IP Stack
   I/O, hardware reachability, SSH, public socket ABI acceptance, broad socket
   expansion, and phase transition remain rejected. The selected next bounded
   task is phase12-network-shell-sockdiag-blocking-poll-wait-smoke-20260621.
+- phase12-network-shell-sockdiag-blocking-poll-wait-smoke-20260621 accepts
+  retained host/QEMU-substitute smoke evidence for shell-visible
+  VFS/userspace /bin/sockdiag execution of the accepted private process-local
+  bounded blocking poll wait. The retained smoke records immediate-ready,
+  pending-listener wake after local connect, payload-read wake after local
+  send, finite timeout/no-false-ready, peer hangup wake, deterministic
+  malformed/error controls, waitpid, laststatus, unchanged accepted socket
+  diagnostics, unchanged nonblocking TALOS_POLL, unchanged /bin/pingdiag, and
+  bounded syscall vocabulary. UDP/TCP payload transport, smoltcp integration,
+  cross-process/global poll sets, live packet I/O, hardware reachability, SSH,
+  public socket ABI acceptance, broad socket expansion, and phase transition
+  remain rejected. The selected next bounded task is
+  phase12-network-shell-sockdiag-blocking-poll-wait-closeout-20260621.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

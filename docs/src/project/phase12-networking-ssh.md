@@ -5423,3 +5423,22 @@ integration, live packet I/O, hardware reachability, SSH, public stable socket
 ABI acceptance, broad socket expansion, or phase transition. The selected next
 bounded task is
 phase12-network-shell-sockdiag-blocking-poll-wait-smoke-20260621.
+
+phase12-network-shell-sockdiag-blocking-poll-wait-smoke-20260621 accepts
+phase12-network-shell-sockdiag-blocking-poll-wait-smoke-accepted. The retained
+host/QEMU-substitute smoke evidence records shell-visible /bin/sockdiag
+execution through VFS/userspace lookup/open/read, startup ABI, the accepted
+private local socket open/bind/listen/connect/accept/send/recv/poll/wait/close
+path, scheduler-visible blocked/resume state, waitpid, and laststatus.
+
+The retained smoke covers immediate-ready wait completion, pending-listener
+wake after local connect, payload-read wake after local send, finite timeout
+with zero revents, peer close/hangup wake, scalar fail-closed ENOTSUP, invalid
+timeout EINVAL, unsupported events EINVAL, unchanged accepted socket
+diagnostics, unchanged nonblocking TALOS_POLL, unchanged /bin/pingdiag, and
+bounded syscall vocabulary. This remains host/QEMU-substitute smoke evidence
+only. It does not accept UDP/TCP payload transport, smoltcp integration,
+cross-process/global poll sets, live packet I/O, hardware reachability, SSH,
+public stable socket ABI acceptance, broad socket expansion, or phase
+transition. The selected next bounded task is
+phase12-network-shell-sockdiag-blocking-poll-wait-closeout-20260621.

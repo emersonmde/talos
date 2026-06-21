@@ -1,0 +1,44 @@
+Task: phase12-network-shell-sockdiag-blocking-poll-wait-smoke-20260621
+
+Shell-visible VFS/userspace anchors:
+- src/initramfs.rs:49 PHASE12_SOCKDIAG_PATH = /bin/sockdiag
+- src/local_command_loop.rs:36 LOCAL_COMMAND_BUILTIN_BOUNDARY includes sockdiag socket diagnostics
+- src/local_command_loop.rs:41 LOCAL_COMMAND_BUILTIN_BOUNDARY includes shell-sockdiag-vfs-userspace-socket-blocking-poll-wait
+- src/local_command_loop.rs:124 command manifest maps /bin/sockdiag to sockdiag
+- src/local_command_loop.rs:722 LocalCommandSockdiagRecord records poll-wait revents, blocked/resume states, ready count, and timeout tick
+- src/local_command_loop.rs:782 LocalCommandSockdiagControlRecord records poll-wait deterministic controls
+- src/local_command_loop.rs:1737 DescriptorBackedLocalCommandIo::exec_shell_sockdiag_diagnostic
+- src/local_command_loop.rs:2090 task-owned SocketPollWaitTable and SingleCoreScheduler setup
+- src/local_command_loop.rs:2113 scalar TALOS_POLL_WAIT dispatch fail-closed control
+- src/local_command_loop.rs:2123 invalid timeout TALOS_POLL_WAIT control
+- src/local_command_loop.rs:2144 unsupported event TALOS_POLL_WAIT control
+- src/local_command_loop.rs:2164 pending-listener wait registration and blocked-state capture
+- src/local_command_loop.rs:2249 pending-listener wake/resume after local connect
+- src/local_command_loop.rs:2288 immediate-ready fast-path TALOS_POLL_WAIT observation
+- src/local_command_loop.rs:2506 timeout/no-false-ready TALOS_POLL_WAIT observation
+- src/local_command_loop.rs:2609 payload-read wait and wake after local send
+- src/local_command_loop.rs:2827 peer close/hangup wait and wake observation
+- src/local_command_loop.rs:6644 write_exec_sockdiag_line poll-wait shell output
+- src/local_command_loop.rs:6771 write_exec_sockdiag_controls_line poll-wait control output
+- src/local_command_loop.rs:7681 local_command_loop_execs_shell_visible_sockdiag_through_vfs_socket_syscalls
+
+Private socket blocking poll-wait syscall anchors:
+- src/syscall.rs:25 TALOS_POLL_WAIT_SYSCALL = 14
+- src/syscall.rs:28 TALOS_POLL_WAIT_MAX_TICKS = 1024
+- src/syscall.rs:810 dispatch_process_descriptor_with_socket_table_and_poll_wait
+- src/syscall.rs:827 SocketPollWaitTable input to wait-aware dispatch
+- src/syscall.rs:3346 dispatch_talos_poll_wait
+- src/syscall.rs:3375 timeout bounds reject zero and too-large waits
+- src/syscall.rs:3497 wait registration path after immediate readiness fails
+- src/syscall.rs:4265 dispatch_socket_case covers TALOS_POLL_WAIT test dispatch
+- src/syscall.rs:9997 talos_poll_wait_fast_path_preserves_nonblocking_poll_readiness
+- src/syscall.rs:10069 talos_poll_wait_blocks_and_wakes_on_local_socket_payload_readiness
+- src/syscall.rs:10153 talos_poll_wait_wakes_listener_accept_and_peer_hangup
+- src/syscall.rs:10359 talos_poll_wait_timeout_and_malformed_calls_are_bounded
+
+Scheduler and socket backing anchors:
+- src/scheduler.rs: TaskState::Blocked records the sleeping task state used by wait registration
+- src/scheduler.rs: SingleCoreScheduler::make_runnable is the accepted wake/resume surface
+- src/network.rs: NetworkSocketDescriptorTable local AF_INET stream socket backing
+- src/network.rs: readiness and peer lookup report READ, WRITE, HANGUP, and ERROR readiness
+- src/posix.rs: DescriptorObjectKind::Socket display and descriptor object identity
