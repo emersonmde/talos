@@ -15557,6 +15557,21 @@ Milestone 12.3: IP Stack
   ABI acceptance, broad socket expansion, and phase transition remain rejected.
   The selected next bounded task is
   phase12-network-shell-sockdiag-driver-packet-adapter-smoke-20260621.
+- The retained shell sockdiag driver packet adapter smoke accepts
+  host/QEMU-substitute evidence for shell-visible /bin/sockdiag over the
+  deterministic DriverPacketAdapter substrate through the accepted
+  VFS/userspace/private socket ABI path. The smoke archives VFS executable
+  lookup/open/read, startup ABI, userspace_socket_abi wrapper dispatch,
+  descriptor-backed socket dispatch, private smoltcp TCP bridge continuity,
+  deterministic driver RX consumption, smoltcp TX observation and driver-side
+  pop, TX backpressure preserving queued RX, capacity/error controls, waitpid,
+  laststatus, malformed/missing executable controls, unchanged local socket
+  diagnostics, unchanged /bin/pingdiag behavior, and bounded syscall
+  vocabulary. Evidence remains retained host/QEMU-substitute only; live driver
+  programming, live packet I/O, hardware reachability, SSH, UDP/raw sockets,
+  libc/std wrappers, POSIX/Linux compatibility, public stable ABI acceptance,
+  broad socket expansion, and phase transition remain rejected. The selected
+  next bounded task is phase12-network-driver-packet-adapter-closeout-20260621.
 
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning

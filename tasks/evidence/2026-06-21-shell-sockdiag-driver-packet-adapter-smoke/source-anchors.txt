@@ -1,0 +1,15 @@
+Task: phase12-network-shell-sockdiag-driver-packet-adapter-smoke-20260621
+Evidence level: host/QEMU-substitute
+
+- src/initramfs.rs:49 PHASE12_SOCKDIAG_PATH = /bin/sockdiag
+- src/local_command_loop.rs:127 command manifest maps /bin/sockdiag to sockdiag
+- src/local_command_loop.rs:1691 /bin/sockdiag selection after VFS executable lookup/open/read
+- src/local_command_loop.rs:1776 DescriptorBackedLocalCommandIo::exec_shell_sockdiag_diagnostic
+- src/local_command_loop.rs:7087 write_exec_sockdiag_line shell output
+- src/local_command_loop.rs:7280 write_exec_sockdiag_controls_line shell controls output
+- src/local_command_loop.rs:8184 local_command_loop_execs_shell_visible_pingdiag_through_vfs_diagnostic_layers
+- src/local_command_loop.rs:8239 local_command_loop_execs_shell_visible_sockdiag_through_userspace_socket_abi
+- src/network.rs:5734 driver_packet_adapter_moves_driver_rx_and_smoltcp_tx_with_copied_frames
+- src/network.rs:5763 driver_packet_adapter_preserves_rx_when_tx_backpressure_blocks_smoltcp_receive
+- src/network.rs:5797 driver_packet_adapter_maps_capacity_and_device_errors_deterministically
+- src/userspace_socket_abi.rs:278 userspace_socket_abi_wrappers_reach_smoltcp_tcp_socket_bridge

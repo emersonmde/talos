@@ -1,0 +1,40 @@
+{
+  "task_id": "phase12-network-shell-sockdiag-driver-packet-adapter-smoke-20260621",
+  "classification": "phase12-network-shell-sockdiag-driver-packet-adapter-smoke-accepted",
+  "evidence_dir": "tasks/evidence/2026-06-21-shell-sockdiag-driver-packet-adapter-smoke",
+  "artifacts": {
+    "smoke_command": "scripts/qemu-shell-sockdiag-driver-packet-adapter-smoke.sh",
+    "qemu_substitute_log": "qemu-shell-sockdiag-driver-packet-adapter-smoke.log",
+    "source_anchors": "source-anchors.txt",
+    "smoke_transcript": "smoke-transcript.md",
+    "classification": "classification.json"
+  },
+  "source_tests": [
+    "src/local_command_loop.rs::local_command_loop_execs_shell_visible_sockdiag_through_userspace_socket_abi",
+    "src/network.rs::driver_packet_adapter_moves_driver_rx_and_smoltcp_tx_with_copied_frames",
+    "src/network.rs::driver_packet_adapter_preserves_rx_when_tx_backpressure_blocks_smoltcp_receive",
+    "src/network.rs::driver_packet_adapter_maps_capacity_and_device_errors_deterministically",
+    "src/userspace_socket_abi.rs::userspace_socket_abi_wrappers_reach_smoltcp_tcp_socket_bridge",
+    "src/local_command_loop.rs::local_command_loop_execs_shell_visible_pingdiag_through_vfs_diagnostic_layers"
+  ],
+  "source_components": [
+    "src/initramfs.rs::PHASE12_SOCKDIAG_PATH",
+    "src/local_command_loop.rs::DescriptorBackedLocalCommandIo::exec_shell_sockdiag_diagnostic",
+    "src/local_command_loop.rs::write_exec_sockdiag_line",
+    "src/local_command_loop.rs::write_exec_sockdiag_controls_line",
+    "src/network.rs::DriverPacketAdapter",
+    "src/network.rs::SmoltcpPacketDeviceAdapter",
+    "src/network.rs::PacketQueueNetworkDevice",
+    "src/userspace_socket_abi.rs",
+    "src/syscall.rs::dispatch_process_descriptor_with_socket_table_and_poll_wait",
+    "src/posix.rs::ProcessDescriptorStore"
+  ],
+  "smoke_result": {
+    "command": "scripts/qemu-shell-sockdiag-driver-packet-adapter-smoke.sh",
+    "result": "passed",
+    "filtered_invocations": 6,
+    "tests_per_invocation": 698,
+    "final_log_line": "qemu-shell-sockdiag-driver-packet-adapter-smoke: PASS classification=host-substitute-shell-sockdiag-driver-packet-adapter-smoke-complete"
+  },
+  "selected_next_task": "phase12-network-driver-packet-adapter-closeout-20260621"
+}

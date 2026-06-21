@@ -5995,3 +5995,25 @@ hardware reachability, SSH, UDP/raw sockets, libc/std socket wrappers,
 POSIX/Linux compatibility, public stable ABI acceptance, broad socket
 expansion, and phase transition remain rejected. The selected next bounded task
 is phase12-network-shell-sockdiag-driver-packet-adapter-smoke-20260621.
+
+phase12-network-shell-sockdiag-driver-packet-adapter-smoke-20260621 accepts
+phase12-network-shell-sockdiag-driver-packet-adapter-smoke-accepted. Retained
+host/QEMU-substitute smoke evidence now archives shell-visible /bin/sockdiag
+execution over the deterministic DriverPacketAdapter substrate through the
+accepted VFS/userspace/private socket ABI path.
+
+The smoke records VFS executable lookup/open/read, startup ABI,
+userspace_socket_abi wrapper dispatch, descriptor-backed socket dispatch,
+private smoltcp TCP bridge continuity, deterministic driver RX consumption,
+smoltcp TX observation and driver-side pop, TX backpressure preserving queued
+RX, capacity/error controls, waitpid, laststatus, malformed/missing executable
+controls, unchanged local socket diagnostics, unchanged /bin/pingdiag
+behavior, and bounded syscall vocabulary.
+
+The accepted evidence level remains retained host/QEMU-substitute only. This
+task rejects source behavior changes, live driver programming, live packet I/O,
+Pi 5 hardware behavior, lab mutation, boot publication, generated-root
+publication, hardware reachability, SSH, UDP/raw sockets, libc/std socket
+wrappers, POSIX/Linux compatibility, public stable ABI acceptance, broad socket
+expansion, and phase transition. The selected next bounded task is
+phase12-network-driver-packet-adapter-closeout-20260621.

@@ -1,0 +1,29 @@
+{
+  "task_id": "phase12-network-shell-sockdiag-driver-packet-adapter-smoke-20260621",
+  "classification": "phase12-network-shell-sockdiag-driver-packet-adapter-smoke-accepted",
+  "evidence_level": "host-qemu-substitute",
+  "smoke_classification": "host-substitute-shell-sockdiag-driver-packet-adapter-smoke-complete",
+  "accepted_boundary": "shell-visible VFS/userspace /bin/sockdiag execution of deterministic DriverPacketAdapter substrate observations through private userspace_socket_abi wrappers, descriptor-backed socket dispatch, smoltcp TCP bridge continuity, waitpid, and laststatus",
+  "accepted_claims": [
+    "exec /bin/sockdiag resolves through VFS executable lookup/open/read",
+    "userspace_socket_abi wrappers reach descriptor-backed socket dispatch for socket, bind, listen, connect, accept, send, recv, poll, poll_wait, and close",
+    "private smoltcp TCP bridge continuity remains visible through sockdiag records",
+    "DriverPacketAdapter moves copied driver RX into the smoltcp packet-device path and exposes smoltcp TX to the driver side",
+    "DriverPacketAdapter TX backpressure preserves a queued RX frame",
+    "capacity and DeviceError mapping remain deterministic",
+    "malformed arguments, missing executable identity, pingdiag, waitpid, laststatus, and existing sockdiag controls remain covered"
+  ],
+  "rejected_claims": [
+    "live packet I/O",
+    "Pi 5 hardware behavior",
+    "hardware reachability",
+    "lab mutation or boot publication",
+    "SSH",
+    "UDP/raw sockets",
+    "libc/std wrappers",
+    "public ABI/POSIX/Linux compatibility",
+    "broad socket expansion",
+    "phase transition"
+  ],
+  "selected_next_task": "phase12-network-driver-packet-adapter-closeout-20260621"
+}
