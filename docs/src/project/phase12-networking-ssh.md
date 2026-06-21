@@ -5644,3 +5644,27 @@ Pi 5 hardware behavior, lab mutation, boot publication, hardware reachability,
 SSH, public stable socket ABI acceptance, broad socket expansion, or phase
 transition. The selected next bounded task is
 phase12-network-smoltcp-loopback-tcp-handshake-core-20260621.
+
+phase12-network-smoltcp-loopback-tcp-handshake-core-20260621 accepts
+phase12-network-smoltcp-loopback-tcp-handshake-core-accepted. src/network.rs
+now has host-only source/unit evidence that two smoltcp Ethernet interfaces,
+TCP sockets, and the accepted SmoltcpPacketDeviceAdapter boundary can complete
+one deterministic TCP three-way handshake over fixed packet queues.
+
+The accepted handshake test owns both endpoints' MAC/IP configuration, socket
+storage, TCP buffers, packet queues, and time progression explicitly. It
+records a bounded two-step path with three client-to-server frames and two
+server-to-client frames, ending with both sockets in Established. A companion
+backpressure test proves that a zero-capacity client transmit queue leaves the
+client in SynSent, the server in Listen, moves no frames, and records
+TransmitQueueFull instead of claiming connection establishment.
+
+The accepted evidence level is source/unit plus host/QEMU-substitute only:
+cargo fmt and the full cargo -Zjson-target-spec test suite passed with the
+project QEMU path. This task does not accept Talos socket syscall bridging,
+/bin/sockdiag TCP diagnostics, retained smoke evidence, UDP/TCP payload
+transport beyond the handshake state transition, live driver adapters, live
+packet I/O, Pi 5 hardware behavior, lab mutation, boot publication, hardware
+reachability, SSH, public stable socket ABI acceptance, broad socket expansion,
+or phase transition. The selected next bounded task is
+phase12-network-smoltcp-tcp-frontier-closeout-20260621.

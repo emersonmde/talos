@@ -5154,6 +5154,305 @@ mod tests {
         assert_eq!(adapter.transmitted_len(), 0);
     }
 
+    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+    enum SmoltcpHandshakeOutcome {
+        Established,
+        TimedOut,
+        ClientTransmitBackpressure,
+    }
+
+    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+    struct SmoltcpHandshakeObservation {
+        outcome: SmoltcpHandshakeOutcome,
+        client_state: smoltcp::socket::tcp::State,
+        server_state: smoltcp::socket::tcp::State,
+        client_to_server_frames: usize,
+        server_to_client_frames: usize,
+        poll_steps: usize,
+    }
+
+    fn make_smoltcp_interface<
+        const RX_CAPACITY: usize,
+        const TX_CAPACITY: usize,
+        const FRAME_CAPACITY: usize,
+    >(
+        mac: [u8; ETHERNET_ADDR_LEN],
+        ipv4: [u8; 4],
+        adapter: &mut SmoltcpPacketDeviceAdapter<RX_CAPACITY, TX_CAPACITY, FRAME_CAPACITY>,
+    ) -> smoltcp::iface::Interface {
+        let mut config = smoltcp::iface::Config::new(smoltcp::wire::EthernetAddress(mac).into());
+        config.random_seed = 0x5441_4c4f_5300_0001;
+        let mut iface =
+            smoltcp::iface::Interface::new(config, adapter, smoltcp::time::Instant::ZERO);
+        iface.update_ip_addrs(|ip_addrs| {
+            ip_addrs
+                .push(smoltcp::wire::IpCidr::new(
+                    smoltcp::wire::IpAddress::v4(ipv4[0], ipv4[1], ipv4[2], ipv4[3]),
+                    24,
+                ))
+                .expect("single smoltcp IPv4 address slot remains available");
+        });
+        iface
+    }
+
+    fn move_smoltcp_frames<
+        const FROM_RX_CAPACITY: usize,
+        const FROM_TX_CAPACITY: usize,
+        const TO_RX_CAPACITY: usize,
+        const TO_TX_CAPACITY: usize,
+        const FRAME_CAPACITY: usize,
+    >(
+        from: &mut SmoltcpPacketDeviceAdapter<FROM_RX_CAPACITY, FROM_TX_CAPACITY, FRAME_CAPACITY>,
+        to: &mut SmoltcpPacketDeviceAdapter<TO_RX_CAPACITY, TO_TX_CAPACITY, FRAME_CAPACITY>,
+    ) -> Result<usize, PacketQueueError> {
+        let mut moved = 0;
+        while let Some(frame) = from.pop_transmitted() {
+            to.inject_received(frame.as_bytes())?;
+            moved += 1;
+        }
+        Ok(moved)
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn drive_smoltcp_handshake<
+        const CLIENT_RX_CAPACITY: usize,
+        const CLIENT_TX_CAPACITY: usize,
+        const SERVER_RX_CAPACITY: usize,
+        const SERVER_TX_CAPACITY: usize,
+        const FRAME_CAPACITY: usize,
+    >(
+        client_adapter: &mut SmoltcpPacketDeviceAdapter<
+            CLIENT_RX_CAPACITY,
+            CLIENT_TX_CAPACITY,
+            FRAME_CAPACITY,
+        >,
+        server_adapter: &mut SmoltcpPacketDeviceAdapter<
+            SERVER_RX_CAPACITY,
+            SERVER_TX_CAPACITY,
+            FRAME_CAPACITY,
+        >,
+        client_iface: &mut smoltcp::iface::Interface,
+        server_iface: &mut smoltcp::iface::Interface,
+        client_sockets: &mut smoltcp::iface::SocketSet<'_>,
+        server_sockets: &mut smoltcp::iface::SocketSet<'_>,
+        client_handle: smoltcp::iface::SocketHandle,
+        server_handle: smoltcp::iface::SocketHandle,
+        max_poll_steps: usize,
+    ) -> SmoltcpHandshakeObservation {
+        let mut client_to_server_frames = 0;
+        let mut server_to_client_frames = 0;
+
+        for step in 0..max_poll_steps {
+            let now = smoltcp::time::Instant::from_millis(step as i64);
+
+            client_iface.poll(now, client_adapter, client_sockets);
+            if client_adapter.last_transmit_result()
+                == SmoltcpPacketDeviceAdapterTransmitResult::TransmitQueueFull
+            {
+                return SmoltcpHandshakeObservation {
+                    outcome: SmoltcpHandshakeOutcome::ClientTransmitBackpressure,
+                    client_state: client_sockets
+                        .get::<smoltcp::socket::tcp::Socket>(client_handle)
+                        .state(),
+                    server_state: server_sockets
+                        .get::<smoltcp::socket::tcp::Socket>(server_handle)
+                        .state(),
+                    client_to_server_frames,
+                    server_to_client_frames,
+                    poll_steps: step + 1,
+                };
+            }
+            client_to_server_frames += move_smoltcp_frames(client_adapter, server_adapter)
+                .expect("server rx has capacity");
+
+            server_iface.poll(now, server_adapter, server_sockets);
+            server_to_client_frames += move_smoltcp_frames(server_adapter, client_adapter)
+                .expect("client rx has capacity");
+
+            client_iface.poll(now, client_adapter, client_sockets);
+            client_to_server_frames += move_smoltcp_frames(client_adapter, server_adapter)
+                .expect("server rx has capacity");
+
+            server_iface.poll(now, server_adapter, server_sockets);
+
+            let client_state = client_sockets
+                .get::<smoltcp::socket::tcp::Socket>(client_handle)
+                .state();
+            let server_state = server_sockets
+                .get::<smoltcp::socket::tcp::Socket>(server_handle)
+                .state();
+            if client_state == smoltcp::socket::tcp::State::Established
+                && server_state == smoltcp::socket::tcp::State::Established
+            {
+                return SmoltcpHandshakeObservation {
+                    outcome: SmoltcpHandshakeOutcome::Established,
+                    client_state,
+                    server_state,
+                    client_to_server_frames,
+                    server_to_client_frames,
+                    poll_steps: step + 1,
+                };
+            }
+        }
+
+        SmoltcpHandshakeObservation {
+            outcome: SmoltcpHandshakeOutcome::TimedOut,
+            client_state: client_sockets
+                .get::<smoltcp::socket::tcp::Socket>(client_handle)
+                .state(),
+            server_state: server_sockets
+                .get::<smoltcp::socket::tcp::Socket>(server_handle)
+                .state(),
+            client_to_server_frames,
+            server_to_client_frames,
+            poll_steps: max_poll_steps,
+        }
+    }
+
+    #[test_case]
+    fn smoltcp_loopback_tcp_handshake_establishes_over_packet_device_adapters() {
+        let mut client_adapter = SmoltcpPacketDeviceAdapter::<8, 8, 1536>::new();
+        let mut server_adapter = SmoltcpPacketDeviceAdapter::<8, 8, 1536>::new();
+        let mut client_iface = make_smoltcp_interface(
+            [0x02, 0x00, 0x00, 0x00, 0x00, 0x11],
+            [192, 0, 2, 11],
+            &mut client_adapter,
+        );
+        let mut server_iface = make_smoltcp_interface(
+            [0x02, 0x00, 0x00, 0x00, 0x00, 0x22],
+            [192, 0, 2, 22],
+            &mut server_adapter,
+        );
+
+        let mut client_rx_storage = [0u8; 256];
+        let mut client_tx_storage = [0u8; 256];
+        let mut server_rx_storage = [0u8; 256];
+        let mut server_tx_storage = [0u8; 256];
+        let client_socket = smoltcp::socket::tcp::Socket::new(
+            smoltcp::socket::tcp::SocketBuffer::new(&mut client_rx_storage[..]),
+            smoltcp::socket::tcp::SocketBuffer::new(&mut client_tx_storage[..]),
+        );
+        let server_socket = smoltcp::socket::tcp::Socket::new(
+            smoltcp::socket::tcp::SocketBuffer::new(&mut server_rx_storage[..]),
+            smoltcp::socket::tcp::SocketBuffer::new(&mut server_tx_storage[..]),
+        );
+        let mut client_socket_storage = [smoltcp::iface::SocketStorage::EMPTY];
+        let mut server_socket_storage = [smoltcp::iface::SocketStorage::EMPTY];
+        let mut client_sockets = smoltcp::iface::SocketSet::new(&mut client_socket_storage[..]);
+        let mut server_sockets = smoltcp::iface::SocketSet::new(&mut server_socket_storage[..]);
+        let client_handle = client_sockets.add(client_socket);
+        let server_handle = server_sockets.add(server_socket);
+
+        server_sockets
+            .get_mut::<smoltcp::socket::tcp::Socket>(server_handle)
+            .listen(8080)
+            .expect("server listen succeeds");
+        client_sockets
+            .get_mut::<smoltcp::socket::tcp::Socket>(client_handle)
+            .connect(
+                client_iface.context(),
+                (smoltcp::wire::IpAddress::v4(192, 0, 2, 22), 8080),
+                49152,
+            )
+            .expect("client connect enters SYN-SENT");
+
+        let observation = drive_smoltcp_handshake(
+            &mut client_adapter,
+            &mut server_adapter,
+            &mut client_iface,
+            &mut server_iface,
+            &mut client_sockets,
+            &mut server_sockets,
+            client_handle,
+            server_handle,
+            8,
+        );
+
+        assert_eq!(
+            observation,
+            SmoltcpHandshakeObservation {
+                outcome: SmoltcpHandshakeOutcome::Established,
+                client_state: smoltcp::socket::tcp::State::Established,
+                server_state: smoltcp::socket::tcp::State::Established,
+                client_to_server_frames: 3,
+                server_to_client_frames: 2,
+                poll_steps: 2,
+            }
+        );
+    }
+
+    #[test_case]
+    fn smoltcp_loopback_tcp_handshake_reports_client_transmit_backpressure() {
+        let mut client_adapter = SmoltcpPacketDeviceAdapter::<4, 0, 1536>::new();
+        let mut server_adapter = SmoltcpPacketDeviceAdapter::<4, 4, 1536>::new();
+        let mut client_iface = make_smoltcp_interface(
+            [0x02, 0x00, 0x00, 0x00, 0x00, 0x31],
+            [192, 0, 2, 31],
+            &mut client_adapter,
+        );
+        let mut server_iface = make_smoltcp_interface(
+            [0x02, 0x00, 0x00, 0x00, 0x00, 0x32],
+            [192, 0, 2, 32],
+            &mut server_adapter,
+        );
+
+        let mut client_rx_storage = [0u8; 128];
+        let mut client_tx_storage = [0u8; 128];
+        let mut server_rx_storage = [0u8; 128];
+        let mut server_tx_storage = [0u8; 128];
+        let client_socket = smoltcp::socket::tcp::Socket::new(
+            smoltcp::socket::tcp::SocketBuffer::new(&mut client_rx_storage[..]),
+            smoltcp::socket::tcp::SocketBuffer::new(&mut client_tx_storage[..]),
+        );
+        let server_socket = smoltcp::socket::tcp::Socket::new(
+            smoltcp::socket::tcp::SocketBuffer::new(&mut server_rx_storage[..]),
+            smoltcp::socket::tcp::SocketBuffer::new(&mut server_tx_storage[..]),
+        );
+        let mut client_socket_storage = [smoltcp::iface::SocketStorage::EMPTY];
+        let mut server_socket_storage = [smoltcp::iface::SocketStorage::EMPTY];
+        let mut client_sockets = smoltcp::iface::SocketSet::new(&mut client_socket_storage[..]);
+        let mut server_sockets = smoltcp::iface::SocketSet::new(&mut server_socket_storage[..]);
+        let client_handle = client_sockets.add(client_socket);
+        let server_handle = server_sockets.add(server_socket);
+
+        server_sockets
+            .get_mut::<smoltcp::socket::tcp::Socket>(server_handle)
+            .listen(8081)
+            .expect("server listen succeeds");
+        client_sockets
+            .get_mut::<smoltcp::socket::tcp::Socket>(client_handle)
+            .connect(
+                client_iface.context(),
+                (smoltcp::wire::IpAddress::v4(192, 0, 2, 32), 8081),
+                49153,
+            )
+            .expect("client connect enters SYN-SENT");
+
+        let observation = drive_smoltcp_handshake(
+            &mut client_adapter,
+            &mut server_adapter,
+            &mut client_iface,
+            &mut server_iface,
+            &mut client_sockets,
+            &mut server_sockets,
+            client_handle,
+            server_handle,
+            1,
+        );
+
+        assert_eq!(
+            observation,
+            SmoltcpHandshakeObservation {
+                outcome: SmoltcpHandshakeOutcome::ClientTransmitBackpressure,
+                client_state: smoltcp::socket::tcp::State::SynSent,
+                server_state: smoltcp::socket::tcp::State::Listen,
+                client_to_server_frames: 0,
+                server_to_client_frames: 0,
+                poll_steps: 1,
+            }
+        );
+    }
+
     #[test_case]
     fn packet_queue_driver_pump_drains_outbound_before_polling_receive_fifo() {
         let mut queue = PacketQueueNetworkDevice::<2, 2, 64>::new();

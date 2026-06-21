@@ -15316,6 +15316,22 @@ Milestone 12.3: IP Stack
   reachability, SSH, public stable socket ABI acceptance, broad socket
   expansion, and phase transition remain rejected. The selected next bounded
   task is phase12-network-smoltcp-loopback-tcp-handshake-core-20260621.
+- phase12-network-smoltcp-loopback-tcp-handshake-core-20260621 accepts a
+  host-only deterministic smoltcp TCP handshake over the accepted packet-device
+  adapter boundary. Source/unit tests in src/network.rs drive two smoltcp
+  Ethernet interfaces and TCP sockets over fixed packet queues with explicit
+  MAC/IP configuration, socket storage, TCP buffers, and one-millisecond time
+  steps. The accepted path reaches Established on both sockets after two poll
+  steps, three client-to-server frames, and two server-to-client frames. A
+  companion backpressure case with a zero-capacity client transmit queue
+  records TransmitQueueFull, SynSent/Listen states, and zero moved frames.
+  Source/unit plus host/QEMU-substitute evidence passes cargo fmt and the full
+  cargo -Zjson-target-spec test suite. Talos socket syscall bridging,
+  /bin/sockdiag TCP diagnostics, retained smoke evidence, UDP/TCP payload
+  transport beyond the handshake state transition, live packet I/O, hardware
+  reachability, SSH, public stable socket ABI acceptance, broad socket
+  expansion, and phase transition remain rejected. The selected next bounded
+  task is phase12-network-smoltcp-tcp-frontier-closeout-20260621.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
