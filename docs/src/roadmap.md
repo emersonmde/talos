@@ -15784,6 +15784,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   key generation, secret persistence, crypto dependency adoption, SSH service
   behavior, live packet I/O, hardware reachability, public ABI/POSIX/Linux
   compatibility, broad expansion, or phase transition.
+- phase12-shell-sshkeydiag-smoke-20260621 accepts retained
+  host/QEMU-substitute smoke evidence for the sshkeydiag diagnostic surface.
+  The smoke records the accepted metadata-only fail-closed baseline:
+  sshkeydiag-not-ready, sshkeydiag-missing-host-key,
+  sshkeydiag-missing-authorized-key, sshkeydiag-entropy-unready,
+  sshkeydiag-seed-material-missing, sshkeydiag-persistence-unavailable,
+  sshkeydiag-exposure-disabled, and ssh-ready false. It also preserves the
+  entropy diagnostic boundary: entropydiag-fail-closed-no-input,
+  entropydiag-hardware-rng-unaccepted,
+  entropydiag-operator-seed-required, cryptographic-strength false, and
+  ssh-ready false. The selected next bounded task is
+  phase12-ssh-key-management-readiness-closeout-20260621. This smoke does not
+  accept key generation, secret persistence, crypto dependency adoption, SSH
+  service behavior, live packet I/O, hardware reachability, public
+  ABI/POSIX/Linux compatibility, broad expansion, or phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

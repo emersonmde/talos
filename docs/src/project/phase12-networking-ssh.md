@@ -6255,3 +6255,23 @@ lifecycle, authentication policy, live packet I/O, hardware reachability,
 public ABI/POSIX/Linux compatibility, broad expansion, and phase transition
 remain rejected. The selected next bounded task is
 phase12-shell-sshkeydiag-smoke-20260621.
+
+phase12-shell-sshkeydiag-smoke-20260621 accepts
+phase12-shell-sshkeydiag-smoke-accepted. Talos now retains
+host/QEMU-substitute smoke evidence for the shell-visible/internal diagnostic
+path to sshkeydiag. The retained transcript exercises the accepted
+metadata-only fail-closed SSH key-readiness surface and records the default
+not-ready labels: sshkeydiag-not-ready, sshkeydiag-missing-host-key,
+sshkeydiag-missing-authorized-key, sshkeydiag-entropy-unready,
+sshkeydiag-seed-material-missing, sshkeydiag-persistence-unavailable,
+sshkeydiag-exposure-disabled, and ssh-ready false.
+
+The smoke also preserves the accepted entropy diagnostic boundary:
+entropydiag-fail-closed-no-input, entropydiag-hardware-rng-unaccepted,
+entropydiag-operator-seed-required, cryptographic-strength false, and
+ssh-ready false. The accepted evidence level remains retained
+host/QEMU-substitute only. It does not accept host key generation, secret
+persistence, crypto/SSH dependency adoption, SSH service behavior, live packet
+I/O, hardware reachability, public ABI/POSIX/Linux compatibility, broad
+expansion, or phase transition. The selected next bounded task is
+phase12-ssh-key-management-readiness-closeout-20260621.
