@@ -15906,6 +15906,25 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   storage, writable persistence, SSH service, live transport, hardware
   reachability, public ABI/POSIX/Linux compatibility, broad expansion, stale
   link-ready discriminator promotion, or phase transition.
+- phase12-csprng-dependency-selection-contract-20260621 accepts the no_std
+  dependency/API strategy for a later operator-seeded CSPRNG core. The selected
+  dependencies are RustCrypto chacha20 0.10.0 with default-features=false,
+  features=rng,zeroize and direct zeroize 1.8.1 with default-features=false.
+  The future implementation must wrap chacha20::ChaCha20Rng privately, seed it
+  only from accepted bounded operator seed material after Talos-owned
+  conditioning, clear Talos-owned temporary seed/output buffers, and expose
+  only fail-closed readiness/error states plus metadata-only diagnostics until
+  CSPRNG readiness is separately proven. The strategy rejects std/default
+  features, host OS RNG, network or lab randomness, getrandom/SysRng, serde,
+  general stream-cipher exposure, public seed/state getters, serialized RNG
+  state, shell/serial/task evidence byte streams, generated-byte evidence, and
+  comparable secret identifiers. The selected next bounded task is
+  phase12-operator-seeded-csprng-core-20260621. This contract does not accept
+  random-byte generation implementation, cryptographic-strength, host-key
+  generation/provisioning, authorized-key storage, writable persistence, SSH
+  service, live transport, hardware reachability, public ABI/POSIX/Linux
+  compatibility, broad expansion, stale link-ready discriminator promotion, or
+  phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
