@@ -5820,3 +5820,24 @@ reachability, SSH, UDP/raw sockets, libc/std socket wrappers, POSIX/Linux
 compatibility, public stable socket ABI acceptance, broad socket expansion,
 and phase transition. The selected next bounded task is
 phase12-network-socket-userspace-abi-core-20260621.
+
+phase12-network-socket-userspace-abi-core-20260621 accepts
+phase12-network-socket-userspace-abi-core-accepted. src/userspace_socket_abi.rs
+now compiles the private Talos no_std socket ABI helper surface against the
+accepted contract. The helper mirrors the private selector vocabulary,
+AF_INET/SOCK_STREAM/protocol constants, bounded poll entry layout, poll/wait
+limits, and errno values, and provides const wrapper constructors for socket,
+bind, listen, connect, accept, send, recv, poll, poll_wait, and close.
+
+Focused source/unit evidence routes wrapper-built calls through the accepted
+socket-table-aware dispatch and reaches the host-only SmoltcpSocketBridgeRecord
+path: connect records Established client/server handshake state, accept records
+accepted descriptor attachment, send records one bounded smoltcp payload
+transfer, and recv returns the payload through the descriptor-backed queue. The
+accepted evidence level remains source/unit plus host/QEMU-substitute only.
+This task rejects live driver adapters, live packet I/O, Pi 5 hardware
+behavior, lab mutation, boot publication, generated-root publication, hardware
+reachability, SSH, UDP/raw sockets, libc/std socket wrappers, POSIX/Linux
+compatibility, public stable socket ABI acceptance, broad socket expansion,
+and phase transition. The selected next bounded task is
+phase12-network-shell-sockdiag-userspace-abi-core-20260621.

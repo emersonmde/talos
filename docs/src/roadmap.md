@@ -15433,6 +15433,21 @@ Milestone 12.3: IP Stack
   compatibility, public stable ABI acceptance, broad socket expansion, and
   phase transition remain rejected. The selected next bounded task is
   phase12-network-socket-userspace-abi-core-20260621.
+- phase12-network-socket-userspace-abi-core-20260621 accepts the private
+  Talos no_std socket ABI helper surface in src/userspace_socket_abi.rs. The
+  helper mirrors the accepted selector vocabulary, AF_INET/SOCK_STREAM subset,
+  poll entry layout, poll/wait limits, and errno constants, and provides const
+  wrapper constructors for socket, bind, listen, connect, accept, send, recv,
+  poll, poll_wait, and close. Focused source/unit evidence routes wrapper-built
+  calls through the accepted socket-table-aware dispatch and reaches the
+  host-only SmoltcpSocketBridgeRecord path: Established handshake, accepted
+  descriptor attachment, one bounded payload-transfer observation, and recv
+  delivery. Evidence is source/unit plus host/QEMU-substitute only; live
+  driver adapters, live packet I/O, hardware reachability, SSH, UDP/raw
+  sockets, libc/std, POSIX/Linux compatibility, public stable ABI acceptance,
+  broad socket expansion, and phase transition remain rejected. The selected
+  next bounded task is
+  phase12-network-shell-sockdiag-userspace-abi-core-20260621.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

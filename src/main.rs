@@ -285,6 +285,8 @@ mod target;
     allow(dead_code)
 )]
 mod tty;
+#[cfg_attr(not(test), allow(dead_code))]
+mod userspace_socket_abi;
 
 use core::panic::PanicInfo;
 #[cfg(talos_target_rpi5_bcm2712)]
