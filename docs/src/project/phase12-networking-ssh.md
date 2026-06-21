@@ -5945,3 +5945,28 @@ reachability, SSH, UDP/raw sockets, libc/std socket wrappers, POSIX/Linux
 compatibility, public stable ABI acceptance, broad socket expansion, and phase
 transition remain rejected. The selected next bounded task is
 phase12-network-driver-packet-adapter-core-20260621.
+
+phase12-network-driver-packet-adapter-core-20260621 accepts
+phase12-network-driver-packet-adapter-core-accepted. The source/unit core adds
+DriverPacketAdapter as the host-only driver packet adapter substrate over the
+accepted SmoltcpPacketDeviceAdapter and PacketQueueNetworkDevice boundaries.
+
+DriverPacketAdapter keeps copied fixed-capacity PacketQueueFrame records as
+the only frame ownership boundary. Driver RX input enters through
+inject_driver_rx, smoltcp consumes at most one RX token through
+receive_one_for_smoltcp with a caller-supplied smoltcp::time::Instant, smoltcp
+TX output enters through transmit_one_from_smoltcp, and driver-visible TX
+records leave through pop_driver_tx. Source/unit coverage proves copied RX/TX
+movement, TX backpressure preserving a queued RX frame, Full and FrameTooLarge
+capacity behavior, and deterministic DeviceError mapping.
+
+The accepted evidence level remains source/unit plus host/QEMU-substitute only.
+This core preserves the accepted local socket, smoltcp TCP bridge, poll/wait,
+userspace_socket_abi, /bin/pingdiag, and /bin/sockdiag regression surfaces
+through the full cargo test gate. Shell diagnostic observation, retained smoke
+evidence, live driver programming, live packet I/O, Pi 5 hardware behavior,
+lab mutation, boot publication, generated-root publication, hardware
+reachability, SSH, UDP/raw sockets, libc/std socket wrappers, POSIX/Linux
+compatibility, public stable ABI acceptance, broad socket expansion, and phase
+transition remain rejected. The selected next bounded task is
+phase12-network-shell-sockdiag-driver-packet-adapter-core-20260621.

@@ -144,6 +144,144 @@ impl<const RX_CAPACITY: usize, const TX_CAPACITY: usize, const FRAME_CAPACITY: u
     }
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum DriverPacketAdapterReceiveStep {
+    NoFrame,
+    Received { frame_len: usize },
+    TransmitQueueFull,
+    ReceiveBufferTooSmall,
+    ReceiveError(DeviceError),
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum DriverPacketAdapterTransmitStep {
+    Transmitted { frame_len: usize },
+    TransmitQueueFull,
+    FrameTooLarge { required_len: usize, max_len: usize },
+    TransmitError(DeviceError),
+}
+
+pub(crate) struct DriverPacketAdapter<
+    const RX_CAPACITY: usize,
+    const TX_CAPACITY: usize,
+    const FRAME_CAPACITY: usize,
+> {
+    smoltcp_device: SmoltcpPacketDeviceAdapter<RX_CAPACITY, TX_CAPACITY, FRAME_CAPACITY>,
+}
+
+impl<const RX_CAPACITY: usize, const TX_CAPACITY: usize, const FRAME_CAPACITY: usize>
+    DriverPacketAdapter<RX_CAPACITY, TX_CAPACITY, FRAME_CAPACITY>
+{
+    pub(crate) const fn new() -> Self {
+        Self {
+            smoltcp_device: SmoltcpPacketDeviceAdapter::new(),
+        }
+    }
+
+    pub(crate) fn inject_driver_rx(&mut self, frame: &[u8]) -> Result<(), PacketQueueError> {
+        self.smoltcp_device.inject_received(frame)
+    }
+
+    pub(crate) fn pop_driver_tx(&mut self) -> Option<PacketQueueFrame<FRAME_CAPACITY>> {
+        self.smoltcp_device.pop_transmitted()
+    }
+
+    pub(crate) fn driver_rx_len(&self) -> usize {
+        self.smoltcp_device.received_len()
+    }
+
+    pub(crate) fn driver_tx_len(&self) -> usize {
+        self.smoltcp_device.transmitted_len()
+    }
+
+    pub(crate) fn set_receive_error(&mut self, error: Option<DeviceError>) {
+        self.smoltcp_device.set_receive_error(error);
+    }
+
+    pub(crate) fn set_transmit_error(&mut self, error: Option<DeviceError>) {
+        self.smoltcp_device.set_transmit_error(error);
+    }
+
+    pub(crate) fn receive_one_for_smoltcp(
+        &mut self,
+        timestamp: smoltcp::time::Instant,
+    ) -> DriverPacketAdapterReceiveStep {
+        match <SmoltcpPacketDeviceAdapter<RX_CAPACITY, TX_CAPACITY, FRAME_CAPACITY> as smoltcp::phy::Device>::receive(
+            &mut self.smoltcp_device,
+            timestamp,
+        ) {
+            Some((rx, _tx)) => {
+                let frame_len = smoltcp::phy::RxToken::consume(rx, |frame| frame.len());
+                DriverPacketAdapterReceiveStep::Received { frame_len }
+            }
+            None => match self.smoltcp_device.last_receive_result() {
+                SmoltcpPacketDeviceAdapterReceiveResult::Idle
+                | SmoltcpPacketDeviceAdapterReceiveResult::NoFrame => {
+                    DriverPacketAdapterReceiveStep::NoFrame
+                }
+                SmoltcpPacketDeviceAdapterReceiveResult::Received { frame_len } => {
+                    DriverPacketAdapterReceiveStep::Received { frame_len }
+                }
+                SmoltcpPacketDeviceAdapterReceiveResult::TransmitQueueFull => {
+                    DriverPacketAdapterReceiveStep::TransmitQueueFull
+                }
+                SmoltcpPacketDeviceAdapterReceiveResult::ReceiveBufferTooSmall => {
+                    DriverPacketAdapterReceiveStep::ReceiveBufferTooSmall
+                }
+                SmoltcpPacketDeviceAdapterReceiveResult::ReceiveError(error) => {
+                    DriverPacketAdapterReceiveStep::ReceiveError(error)
+                }
+            },
+        }
+    }
+
+    pub(crate) fn transmit_one_from_smoltcp(
+        &mut self,
+        timestamp: smoltcp::time::Instant,
+        frame: &[u8],
+    ) -> DriverPacketAdapterTransmitStep {
+        match <SmoltcpPacketDeviceAdapter<RX_CAPACITY, TX_CAPACITY, FRAME_CAPACITY> as smoltcp::phy::Device>::transmit(
+            &mut self.smoltcp_device,
+            timestamp,
+        ) {
+            Some(tx) => {
+                smoltcp::phy::TxToken::consume(tx, frame.len(), |tx_buffer| {
+                    if tx_buffer.len() == frame.len() {
+                        tx_buffer.copy_from_slice(frame);
+                    }
+                });
+                self.last_transmit_step()
+            }
+            None => self.last_transmit_step(),
+        }
+    }
+
+    fn last_transmit_step(&self) -> DriverPacketAdapterTransmitStep {
+        match self.smoltcp_device.last_transmit_result() {
+            SmoltcpPacketDeviceAdapterTransmitResult::Idle
+            | SmoltcpPacketDeviceAdapterTransmitResult::Ready => {
+                DriverPacketAdapterTransmitStep::TransmitQueueFull
+            }
+            SmoltcpPacketDeviceAdapterTransmitResult::Transmitted { frame_len } => {
+                DriverPacketAdapterTransmitStep::Transmitted { frame_len }
+            }
+            SmoltcpPacketDeviceAdapterTransmitResult::TransmitQueueFull => {
+                DriverPacketAdapterTransmitStep::TransmitQueueFull
+            }
+            SmoltcpPacketDeviceAdapterTransmitResult::FrameTooLarge {
+                required_len,
+                max_len,
+            } => DriverPacketAdapterTransmitStep::FrameTooLarge {
+                required_len,
+                max_len,
+            },
+            SmoltcpPacketDeviceAdapterTransmitResult::TransmitError(error) => {
+                DriverPacketAdapterTransmitStep::TransmitError(error)
+            }
+        }
+    }
+}
+
 pub(crate) struct SmoltcpPacketDeviceRxToken<const FRAME_CAPACITY: usize> {
     frame: PacketQueueFrame<FRAME_CAPACITY>,
 }
@@ -5590,6 +5728,109 @@ mod tests {
             }
         );
         assert_eq!(adapter.transmitted_len(), 0);
+    }
+
+    #[test_case]
+    fn driver_packet_adapter_moves_driver_rx_and_smoltcp_tx_with_copied_frames() {
+        let mut adapter = DriverPacketAdapter::<2, 2, 64>::new();
+        adapter
+            .inject_driver_rx(ETHERNET_IPV4_FRAME)
+            .expect("inject driver rx frame");
+
+        assert_eq!(
+            adapter.receive_one_for_smoltcp(smoltcp::time::Instant::from_millis(10)),
+            DriverPacketAdapterReceiveStep::Received {
+                frame_len: ETHERNET_IPV4_FRAME.len()
+            }
+        );
+        assert_eq!(adapter.driver_rx_len(), 0);
+
+        assert_eq!(
+            adapter.transmit_one_from_smoltcp(
+                smoltcp::time::Instant::from_millis(11),
+                &[0xde, 0xad, 0xbe, 0xef],
+            ),
+            DriverPacketAdapterTransmitStep::Transmitted { frame_len: 4 }
+        );
+        assert_eq!(adapter.driver_tx_len(), 1);
+        assert_eq!(
+            adapter.pop_driver_tx().expect("driver tx frame").as_bytes(),
+            &[0xde, 0xad, 0xbe, 0xef]
+        );
+    }
+
+    #[test_case]
+    fn driver_packet_adapter_preserves_rx_when_tx_backpressure_blocks_smoltcp_receive() {
+        let mut adapter = DriverPacketAdapter::<1, 1, 64>::new();
+
+        assert_eq!(
+            adapter
+                .transmit_one_from_smoltcp(smoltcp::time::Instant::from_millis(20), &[0xaa, 0xbb],),
+            DriverPacketAdapterTransmitStep::Transmitted { frame_len: 2 }
+        );
+        adapter
+            .inject_driver_rx(&[0x10, 0x20, 0x30])
+            .expect("inject driver rx behind full tx queue");
+
+        assert_eq!(
+            adapter.receive_one_for_smoltcp(smoltcp::time::Instant::from_millis(21)),
+            DriverPacketAdapterReceiveStep::TransmitQueueFull
+        );
+        assert_eq!(adapter.driver_rx_len(), 1);
+        assert_eq!(adapter.driver_tx_len(), 1);
+
+        assert_eq!(
+            adapter
+                .pop_driver_tx()
+                .expect("first driver tx frame")
+                .as_bytes(),
+            &[0xaa, 0xbb]
+        );
+        assert_eq!(
+            adapter.receive_one_for_smoltcp(smoltcp::time::Instant::from_millis(22)),
+            DriverPacketAdapterReceiveStep::Received { frame_len: 3 }
+        );
+        assert_eq!(adapter.driver_rx_len(), 0);
+    }
+
+    #[test_case]
+    fn driver_packet_adapter_maps_capacity_and_device_errors_deterministically() {
+        let mut adapter = DriverPacketAdapter::<1, 1, 4>::new();
+
+        assert_eq!(
+            adapter.inject_driver_rx(&[1, 2, 3, 4, 5]),
+            Err(PacketQueueError::FrameTooLarge {
+                required_len: 5,
+                max_len: 4,
+            })
+        );
+        assert_eq!(
+            adapter.transmit_one_from_smoltcp(
+                smoltcp::time::Instant::from_millis(30),
+                &[1, 2, 3, 4, 5],
+            ),
+            DriverPacketAdapterTransmitStep::FrameTooLarge {
+                required_len: 5,
+                max_len: 4,
+            }
+        );
+        assert_eq!(adapter.driver_tx_len(), 0);
+
+        adapter.set_transmit_error(Some(DeviceError::Io));
+        assert_eq!(
+            adapter.transmit_one_from_smoltcp(smoltcp::time::Instant::from_millis(31), &[9]),
+            DriverPacketAdapterTransmitStep::TransmitError(DeviceError::Io)
+        );
+        assert_eq!(adapter.driver_tx_len(), 0);
+        adapter.set_transmit_error(None);
+
+        adapter.inject_driver_rx(&[7]).expect("inject one rx frame");
+        adapter.set_receive_error(Some(DeviceError::Io));
+        assert_eq!(
+            adapter.receive_one_for_smoltcp(smoltcp::time::Instant::from_millis(32)),
+            DriverPacketAdapterReceiveStep::ReceiveError(DeviceError::Io)
+        );
+        assert_eq!(adapter.driver_rx_len(), 1);
     }
 
     #[derive(Clone, Copy, Debug, Eq, PartialEq)]

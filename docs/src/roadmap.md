@@ -15521,6 +15521,24 @@ Milestone 12.3: IP Stack
   broad socket expansion, and phase transition remain rejected. The selected
   next bounded task is
   phase12-network-driver-packet-adapter-core-20260621.
+- phase12-network-driver-packet-adapter-core-20260621 accepts the first
+  source/unit host-only DriverPacketAdapter substrate over the accepted
+  SmoltcpPacketDeviceAdapter and PacketQueueNetworkDevice boundaries. It keeps
+  copied fixed-capacity PacketQueueFrame records as the only frame ownership
+  boundary, accepts driver RX input through inject_driver_rx, consumes at most
+  one smoltcp RX token through receive_one_for_smoltcp with a caller-supplied
+  Instant, records smoltcp TX output through transmit_one_from_smoltcp, and
+  exposes driver TX records through pop_driver_tx. Focused source/unit tests
+  prove copied RX/TX movement, TX backpressure preserving queued RX state, Full
+  and FrameTooLarge capacity behavior, and deterministic DeviceError mapping.
+  The full cargo gate preserves accepted local socket, smoltcp TCP bridge,
+  poll/wait, userspace_socket_abi, /bin/pingdiag, and /bin/sockdiag regression
+  surfaces. Evidence remains source/unit plus host/QEMU-substitute only; shell
+  diagnostic observation, retained smoke, live packet I/O, hardware
+  reachability, SSH, UDP/raw sockets, libc/std wrappers, POSIX/Linux
+  compatibility, public stable ABI acceptance, broad socket expansion, and
+  phase transition remain rejected. The selected next bounded task is
+  phase12-network-shell-sockdiag-driver-packet-adapter-core-20260621.
 
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
