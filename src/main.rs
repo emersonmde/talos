@@ -259,6 +259,8 @@ mod smp;
 // Phase 6.2 accepts narrow SMP-safe primitives before scheduler sharing.
 #[cfg_attr(not(test), allow(dead_code))]
 mod smp_sync;
+#[cfg_attr(not(test), allow(dead_code))]
+mod ssh_key_readiness;
 // Phase 4.3 accepts scheduler data structures before wiring boot-time use.
 #[cfg_attr(not(test), allow(dead_code))]
 mod scheduler;

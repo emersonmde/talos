@@ -1,13 +1,14 @@
 use crate::{
     entropy::{self, EntropyDiagnosticSnapshot},
     runtime_console::{self, ConsoleBackend, DEFAULT_RUNTIME_CONSOLE},
+    ssh_key_readiness::{self, SshKeyReadinessSnapshot},
     tty::CANONICAL_LINE_CAPACITY,
 };
 
 pub const DIAGNOSTIC_COMMAND_CHANNEL_VERSION: &str = "phase5.3-contract-v1";
 pub const MAX_COMMAND_TOKEN_BYTES: usize = 16;
 pub const MAX_COMMAND_ARGUMENTS: usize = 2;
-pub const DEFAULT_COMMAND_COUNT: usize = 4;
+pub const DEFAULT_COMMAND_COUNT: usize = 5;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum DiagnosticParseError {
@@ -149,6 +150,7 @@ pub fn dispatch_default_diagnostic_command(
         "entropy" => write_entropy_response(sink),
         "help" => write_help_response(sink),
         "list" => write_list_response(sink),
+        "sshkeydiag" => write_ssh_key_readiness_response(sink),
         "status" => write_status_response(sink),
         _ => {
             let mut responses = 0usize;
@@ -169,7 +171,7 @@ fn write_help_response(
     write_line(
         sink,
         &mut responses,
-        "diag: commands entropy help list status",
+        "diag: commands entropy help list sshkeydiag status",
     )?;
     Ok(DiagnosticDispatchResult {
         status: DiagnosticDispatchStatus::Handled,
@@ -185,7 +187,7 @@ fn write_list_response(
     write_line(
         sink,
         &mut responses,
-        "diag: commands entropy help list status",
+        "diag: commands entropy help list sshkeydiag status",
     )?;
     Ok(DiagnosticDispatchResult {
         status: DiagnosticDispatchStatus::Handled,
@@ -223,7 +225,7 @@ fn write_status_response(
     write_line(
         sink,
         &mut responses,
-        "diag: commands entropy help list status",
+        "diag: commands entropy help list sshkeydiag status",
     )?;
     Ok(DiagnosticDispatchResult {
         status: DiagnosticDispatchStatus::Handled,
@@ -260,6 +262,29 @@ fn write_entropy_response(
         "diag: cryptographic-strength ",
         report.cryptographic_strength(),
     )?;
+    write_bool_line(sink, &mut responses, "diag: ssh-ready ", report.ssh_ready())?;
+    Ok(DiagnosticDispatchResult {
+        status: DiagnosticDispatchStatus::Handled,
+        response_lines: responses,
+    })
+}
+
+fn write_ssh_key_readiness_response(
+    sink: &mut impl DiagnosticResponseSink,
+) -> Result<DiagnosticDispatchResult, DiagnosticDispatchError> {
+    let report = ssh_key_readiness::classify_ssh_key_readiness(
+        SshKeyReadinessSnapshot::fail_closed_default(),
+    );
+    let mut responses = 0usize;
+    write_line(sink, &mut responses, "diag: ok sshkeydiag")?;
+    write_parts_line(
+        sink,
+        &mut responses,
+        &["diag: sshkey-readiness ", report.primary_label().name()],
+    )?;
+    for label in report.labels() {
+        write_parts_line(sink, &mut responses, &["diag: sshkey-label ", label.name()])?;
+    }
     write_bool_line(sink, &mut responses, "diag: ssh-ready ", report.ssh_ready())?;
     Ok(DiagnosticDispatchResult {
         status: DiagnosticDispatchStatus::Handled,
@@ -373,7 +398,7 @@ mod tests {
     use super::*;
 
     struct CaptureSink {
-        bytes: [u8; 384],
+        bytes: [u8; 768],
         len: usize,
         fail_after: usize,
         writes: usize,
@@ -382,7 +407,7 @@ mod tests {
     impl CaptureSink {
         const fn new() -> Self {
             Self {
-                bytes: [0; 384],
+                bytes: [0; 768],
                 len: 0,
                 fail_after: usize::MAX,
                 writes: 0,
@@ -391,7 +416,7 @@ mod tests {
 
         const fn failing_after(fail_after: usize) -> Self {
             Self {
-                bytes: [0; 384],
+                bytes: [0; 768],
                 len: 0,
                 fail_after,
                 writes: 0,
@@ -454,7 +479,7 @@ mod tests {
         assert_eq!(result.response_lines, 2);
         assert_eq!(
             sink.as_str(),
-            "diag: ok help\ndiag: commands entropy help list status\n"
+            "diag: ok help\ndiag: commands entropy help list sshkeydiag status\n"
         );
     }
 
@@ -467,7 +492,7 @@ mod tests {
         assert_eq!(result.response_lines, 6);
         assert_eq!(
             sink.as_str(),
-            "diag: ok status\ndiag: version phase5.3-contract-v1\ndiag: runtime-console runtime-console0\ndiag: tty canonical-lite line-capacity 64\ndiag: command-count 4\ndiag: commands entropy help list status\n"
+            "diag: ok status\ndiag: version phase5.3-contract-v1\ndiag: runtime-console runtime-console0\ndiag: tty canonical-lite line-capacity 64\ndiag: command-count 5\ndiag: commands entropy help list sshkeydiag status\n"
         );
     }
 
@@ -481,6 +506,19 @@ mod tests {
         assert_eq!(
             sink.as_str(),
             "diag: ok entropy\ndiag: entropy-label entropydiag-fail-closed-no-input\ndiag: hardware-rng entropydiag-hardware-rng-unaccepted\ndiag: operator-seed entropydiag-operator-seed-required\ndiag: cryptographic-strength false\ndiag: ssh-ready false\n"
+        );
+    }
+
+    #[test_case]
+    fn dispatcher_reports_ssh_key_readiness_fail_closed_without_secret_material() {
+        let mut sink = CaptureSink::new();
+        let result = dispatch_default_diagnostic_command(b"sshkeydiag", &mut sink).unwrap();
+
+        assert_eq!(result.status, DiagnosticDispatchStatus::Handled);
+        assert_eq!(result.response_lines, 10);
+        assert_eq!(
+            sink.as_str(),
+            "diag: ok sshkeydiag\ndiag: sshkey-readiness sshkeydiag-not-ready\ndiag: sshkey-label sshkeydiag-missing-host-key\ndiag: sshkey-label sshkeydiag-missing-authorized-key\ndiag: sshkey-label sshkeydiag-entropy-unready\ndiag: sshkey-label sshkeydiag-seed-material-missing\ndiag: sshkey-label sshkeydiag-persistence-unavailable\ndiag: sshkey-label sshkeydiag-exposure-disabled\ndiag: sshkey-label sshkeydiag-not-ready\ndiag: ssh-ready false\n"
         );
     }
 

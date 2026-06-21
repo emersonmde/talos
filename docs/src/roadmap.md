@@ -15768,6 +15768,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   dependency adoption, SSH service behavior, live packet I/O, hardware
   reachability, public ABI/POSIX/Linux compatibility, broad expansion, or
   phase transition.
+- phase12-sshkeydiag-core-20260621 accepts a source/unit SSH key-readiness
+  classifier and internal diagnostic command surface. The classifier consumes
+  only explicit caller-supplied prerequisite metadata for host keys, authorized
+  keys, entropy diagnostics, seed material, persistence, and exposure state.
+  The sshkeydiag command reports the default fail-closed baseline:
+  sshkeydiag-not-ready, sshkeydiag-missing-host-key,
+  sshkeydiag-missing-authorized-key, sshkeydiag-entropy-unready,
+  sshkeydiag-seed-material-missing, sshkeydiag-persistence-unavailable,
+  sshkeydiag-exposure-disabled, and ssh-ready false. Focused source/unit tests
+  and the full host/QEMU-substitute no_std suite cover deterministic controls
+  and negative controls without secret material, randomness, hardware, or lab
+  state. The selected next bounded task is
+  phase12-shell-sshkeydiag-smoke-20260621. This implementation does not accept
+  key generation, secret persistence, crypto dependency adoption, SSH service
+  behavior, live packet I/O, hardware reachability, public ABI/POSIX/Linux
+  compatibility, broad expansion, or phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

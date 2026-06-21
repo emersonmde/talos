@@ -6227,3 +6227,31 @@ an SSH service. A narrow entropy test assertion was corrected so the no-input
 case checks the hardware-RNG rejection through hardware_rng_label() while
 preserving entropydiag-fail-closed-no-input as the input label. The selected
 next bounded task is phase12-sshkeydiag-core-20260621.
+
+phase12-sshkeydiag-core-20260621 accepts
+phase12-sshkeydiag-core-accepted. Talos now has a source/unit SSH
+key-readiness classifier over explicit caller-supplied prerequisite metadata:
+host-key metadata, authorized-key metadata, entropy diagnostic report, seed
+material metadata, persistence metadata, and exposure state.
+
+The internal diagnostic command channel now includes sshkeydiag, which reports
+the default fail-closed baseline:
+sshkeydiag-not-ready, sshkeydiag-missing-host-key,
+sshkeydiag-missing-authorized-key, sshkeydiag-entropy-unready,
+sshkeydiag-seed-material-missing, sshkeydiag-persistence-unavailable,
+sshkeydiag-exposure-disabled, and ssh-ready false. Focused source/unit tests
+prove all-missing defaults, deterministic-control entropy rejection, untrusted
+local entropy without seed material, missing versus insufficient seed material,
+independent persistence and exposure blockers, and key-metadata negative
+controls.
+
+The accepted evidence level is source/unit plus full host/QEMU-substitute
+no_std test coverage. The implementation does not read or persist secret
+material, generate keys, derive keys, parse authorized key material, import
+crypto/SSH dependencies, inspect ambient hardware or lab state, expose a public
+ABI, or start/accept an SSH service. Host-key generation or provisioning,
+authorized-key storage, seed persistence, crypto RNG/DRBG selection, service
+lifecycle, authentication policy, live packet I/O, hardware reachability,
+public ABI/POSIX/Linux compatibility, broad expansion, and phase transition
+remain rejected. The selected next bounded task is
+phase12-shell-sshkeydiag-smoke-20260621.
