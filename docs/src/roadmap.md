@@ -15261,6 +15261,20 @@ Milestone 12.3: IP Stack
   stable socket ABI acceptance, broad socket expansion, and phase transition
   remain rejected. The selected next bounded task is
   phase12-network-shell-sockdiag-cross-process-local-socket-closeout-20260621.
+- phase12-network-shell-sockdiag-cross-process-local-socket-closeout-20260621
+  accepts the cross-process local socket rendezvous frontier only as
+  source/unit plus host/QEMU-substitute evidence over shell-visible
+  VFS/userspace /bin/sockdiag execution and private local rendezvous across
+  distinct ProcessOwnerId descriptor stores. The closed boundary includes
+  server-owned listener/accepted descriptors, a client-owned connected
+  descriptor, cross-process connect/accept, bidirectional local payload
+  transfer, listener and payload bounded wait wakeups, peer-close hangup
+  readiness, cleanup release, waitpid, laststatus, deterministic controls, and
+  unchanged prior diagnostics. Public stable socket ABI acceptance, UDP/TCP
+  payload transport, smoltcp integration, live driver adapters, live packet
+  I/O, hardware reachability, SSH, broad socket expansion, and phase transition
+  remain rejected. selected_next_task is null and planningNeeded=true pending
+  supervisor planning for any next bounded Phase 12.4 or network task.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

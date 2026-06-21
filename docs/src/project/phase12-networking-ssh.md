@@ -5563,3 +5563,22 @@ hardware runs, lab mutation, boot publication, hardware reachability, SSH,
 public stable socket ABI acceptance, broad socket expansion, and phase
 transition remain rejected. The selected next bounded task is
 phase12-network-shell-sockdiag-cross-process-local-socket-closeout-20260621.
+
+phase12-network-shell-sockdiag-cross-process-local-socket-closeout-20260621
+accepts
+phase12-network-shell-sockdiag-cross-process-local-socket-closeout-accepted.
+The cross-process local socket frontier is now closed at source/unit plus
+host/QEMU-substitute evidence over shell-visible VFS/userspace /bin/sockdiag
+and private local rendezvous only. The accepted boundary covers distinct
+server/client ProcessOwnerId descriptor owners, server-owned listener and
+accepted descriptors, client-owned connected descriptor, cross-process
+connect/accept, bidirectional local payload transfer, listener and payload
+bounded wait wakeups, peer-close hangup readiness, cleanup release, waitpid,
+laststatus, deterministic controls, and unchanged prior diagnostics.
+
+This closeout rejects public stable socket ABI acceptance, UDP/TCP payload
+transport, smoltcp integration, live driver adapters, live packet I/O, Pi 5
+hardware behavior, lab mutation, boot publication, generated-root publication,
+hardware reachability, SSH, broad socket expansion, and phase transition.
+planningNeeded=true; no later bounded Phase 12.4 or network task is
+mechanically unblocked without supervisor planning.
