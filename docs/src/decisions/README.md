@@ -12,6 +12,51 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-21 - Phase 12 Blocking Poll Wait Uses Separate Private Selector
+
+- Status: accepted as the bounded socket blocking poll wait contract in
+  phase12-network-socket-blocking-poll-wait-contract-20260621. No runtime
+  source implementation, shell diagnostic behavior, retained smoke evidence,
+  UDP/TCP payload transport, live packet I/O, hardware work, SSH, public stable
+  socket ABI acceptance, broad socket expansion, or phase transition is
+  accepted here.
+- Context: The accepted shell-visible readiness/poll closeout proves private
+  nonblocking TALOS_POLL readiness over process-local socket descriptors
+  through VFS/userspace /bin/sockdiag execution, but explicitly rejects
+  blocking waits, scheduler wait queues, and timeout handling. The next bounded
+  feature step needs a scheduler-visible sleep/wake contract without changing
+  the accepted nonblocking poll ABI.
+- Decision: Reserve future private experimental TALOS_POLL_WAIT_SYSCALL = 14
+  on the existing STABLE_SVC_IMMEDIATE = 0 path. The selector reuses the
+  accepted 16-byte poll-entry layout, takes x0 as the entry array, x1 as a
+  bounded entry count, x2 as a relative timeout of 1 through 1024 scheduler
+  ticks, x3 as flags=0, and x4=x5 as reserved zero registers. If no entry is
+  immediately ready, the implementation must register one wait object tied to
+  the current task, process owner, descriptor snapshot, requested readiness
+  bits, and deadline tick; transition that task to TaskState::Blocked; and
+  wake only on accepted local socket readiness transitions, descriptor
+  invalidation/error, or timeout expiration. TALOS_POLL_SYSCALL = 13 remains
+  unchanged and nonblocking.
+- Evidence level: static source/task/evidence review of src/syscall.rs,
+  src/network.rs, src/scheduler.rs, src/arch/aarch64/generic_timer.rs, the
+  accepted nonblocking readiness/poll task records, and the retained
+  shell-visible readiness smoke/closeout evidence. The task record is
+  tasks/2026-06-21-phase12-network-socket-blocking-poll-wait-contract.md.
+- Consequences: The follow-up core task can implement only the private
+  process-local blocked/runnable wait path, immediate-ready fast path, wake
+  sources, timeout return of success 0 with zero revents, and deterministic
+  error behavior. A busy-loop, task-local retry loop, or diagnostic-only shim
+  cannot satisfy the follow-up acceptance gate. Signals, restart semantics,
+  arbitrary cancellation, cross-process/global poll sets, TCP/smoltcp, packet
+  readiness, live driver readiness, hardware reachability, SSH, and public ABI
+  stability remain outside this decision.
+- Alternatives considered: overload TALOS_POLL flags/reserved registers, model
+  timeout zero as blocking, or keep using shell diagnostics and host retries.
+  Overloading TALOS_POLL would risk regressing the accepted nonblocking
+  readiness surface, timeout-zero blocking would blur the existing immediate
+  query, and shell/host retries would repeat diagnostic-only progress instead
+  of proving scheduler-owned blocking behavior.
+
 ## 2026-06-20 - Phase 12 Socket Send/Recv Uses Local Descriptor Queues
 
 - Status: accepted as the bounded socket send/recv ABI contract in

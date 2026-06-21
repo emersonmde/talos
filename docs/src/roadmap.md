@@ -15138,6 +15138,23 @@ Milestone 12.3: IP Stack
   expansion, and phase transition remain rejected. selected_next_task is null
   and planningNeeded=true pending supervisor planning for any next bounded
   Phase 12.4 socket or network task.
+- The socket blocking poll wait contract accepts the next bounded Phase 12.4
+  socket integration boundary as a private process-local scheduler wait over
+  the accepted local socket readiness states. It reserves future
+  TALOS_POLL_WAIT_SYSCALL = 14 while leaving accepted nonblocking
+  TALOS_POLL_SYSCALL = 13 unchanged. The selector reuses the fixed 16-byte
+  poll-entry layout, takes a finite timeout of 1 through 1024 scheduler ticks,
+  registers at most one wait for the current task, transitions the task to
+  TaskState::Blocked when no entry is immediately ready, and wakes only on
+  listener pending accept, inbound payload bytes, peer FIFO write capacity,
+  peer close/hangup, descriptor error/invalidation, or timeout expiration.
+  Timeout returns success value 0 with zero revents. Runtime implementation,
+  shell /bin/sockdiag blocking wait output, retained smoke evidence, busy-loop
+  acceptance, cross-process/global poll sets, UDP/TCP payload transport,
+  smoltcp integration, live packet I/O, hardware reachability, SSH, public
+  stable socket ABI acceptance, broad socket expansion, signals/restart
+  semantics, and phase transition remain rejected. The selected next bounded
+  task is phase12-network-socket-blocking-poll-wait-core-20260621.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

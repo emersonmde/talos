@@ -5337,3 +5337,37 @@ mutation, boot publication, generated-root publication, SSH, broad socket
 expansion, public stable socket ABI acceptance, and phase transition.
 selected_next_task is null and planningNeeded=true pending supervisor planning
 for any next bounded Phase 12.4 socket or network task.
+
+phase12-network-socket-blocking-poll-wait-contract-20260621 accepts
+phase12-network-socket-blocking-poll-wait-contract-accepted. Supervisor
+planning after the nonblocking readiness/poll closeout selected the next
+bounded socket integration boundary: one private process-local blocking wait
+over accepted local socket readiness states.
+
+The accepted contract reserves future private TALOS_POLL_WAIT_SYSCALL = 14 on
+the existing STABLE_SVC_IMMEDIATE = 0 path. The syscall reuses the accepted
+16-byte TALOS_POLL entry layout, takes x0 as a caller-owned user poll-entry
+array, x1 as an entry count from 1 through 8, x2 as a finite relative timeout
+from 1 through 1024 scheduler ticks, x3 as flags=0, and x4=x5 as reserved zero
+registers. TALOS_POLL_SYSCALL = 13 remains the unchanged nonblocking readiness
+query; zero-timeout behavior stays there rather than being folded into the
+blocking selector.
+
+The accepted wait model is scheduler-owned rather than a diagnostic retry
+loop. If any requested entry is immediately ready, TALOS_POLL_WAIT returns
+without sleeping. If no entry is ready, the kernel records one wait object tied
+to the current task, process owner, descriptor snapshot, requested readiness
+bits, and deadline tick; transitions that task to TaskState::Blocked; and
+resumes it only through listener pending-accept enqueue, inbound payload bytes,
+peer FIFO write capacity becoming available, peer close/hangup, descriptor
+invalidation/error, or timeout expiration. Timeout returns success value 0 with
+all revents zero. Invalid, closed, wrong-owner, non-socket, missing-backing, or
+locally invalidated descriptors report per-entry ERROR where possible.
+
+The contract does not accept runtime implementation, /bin/sockdiag blocking
+wait output, retained smoke evidence, busy-loop acceptance, cross-process or
+global poll sets, UDP/TCP payload transport, smoltcp integration, live packet
+I/O, hardware reachability, SSH, public stable socket ABI acceptance, broad
+socket expansion, signals/restart semantics, arbitrary cancellation, or phase
+transition. The selected next bounded task is
+phase12-network-socket-blocking-poll-wait-core-20260621.
