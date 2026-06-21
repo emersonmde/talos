@@ -5683,3 +5683,28 @@ Pi 5 hardware behavior, lab mutation, boot publication, hardware reachability,
 SSH, public stable socket ABI acceptance, broad socket expansion, and phase
 transition. planningNeeded=true; no later bounded bridge, socket, or network
 task is mechanically unblocked without supervisor planning.
+
+phase12-network-smoltcp-socket-bridge-contract-20260621 accepts
+phase12-network-smoltcp-socket-bridge-contract-accepted. Supervisor planning
+after the smoltcp/TCP frontier closeout selected the first private bridge from
+descriptor-backed AF_INET stream sockets to the accepted host-only smoltcp TCP
+frontier.
+
+The contract keeps process-visible sockets as normal
+DescriptorObjectKind::Socket entries owned by ProcessOwnerId descriptor
+tables, preserves the accepted local socket rendezvous and poll-wait surfaces
+as regression controls, and assigns bridge state to fixed-capacity
+kernel-owned smoltcp Interface, SocketSet, TCP buffer, TCP handle, and packet
+queue records. Time progression remains explicit and deterministic, and
+SmoltcpPacketDeviceAdapter remains the only accepted smoltcp phy boundary for
+this slice.
+
+The selected implementation boundary is host-only/source-unit TCP behavior
+through the existing private socket syscall dispatch for socket, bind, listen,
+connect, accept, send, recv, poll, poll-wait, and close. It is private
+experimental Talos behavior, not Linux syscall-number compatibility and not a
+public stable socket ABI. Runtime implementation, shell-visible /bin/sockdiag
+TCP diagnostics, retained smoke evidence, live driver adapters, live packet
+I/O, hardware reachability, SSH, public stable socket ABI acceptance, broad
+socket expansion, and phase transition remain rejected. The selected next
+bounded task is phase12-network-smoltcp-socket-bridge-core-20260621.

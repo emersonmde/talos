@@ -15344,6 +15344,23 @@ Milestone 12.3: IP Stack
   transition remain rejected. selected_next_task is null and
   planningNeeded=true pending supervisor planning for any next bounded bridge,
   socket, or network task.
+- phase12-network-smoltcp-socket-bridge-contract-20260621 accepts the first
+  private bridge contract from descriptor-backed AF_INET stream sockets to the
+  accepted host-only smoltcp TCP frontier. The contract keeps process-visible
+  sockets as DescriptorObjectKind::Socket entries owned by ProcessOwnerId
+  descriptor tables, preserves accepted local socket rendezvous and poll-wait
+  behavior as regression controls, and assigns bridge state to fixed-capacity
+  kernel-owned smoltcp Interface, SocketSet, TCP buffers, TCP handles, and
+  packet queues. Time progression is explicit and deterministic, packet
+  ownership remains Talos-owned through SmoltcpPacketDeviceAdapter, and the
+  syscall subset is limited to the existing private socket, bind, listen,
+  connect, accept, send, recv, poll, poll-wait, and close dispatch surfaces.
+  This is static source/task/docs contract evidence only. Runtime bridge
+  implementation, shell-visible /bin/sockdiag TCP diagnostics, retained smoke
+  evidence, live driver adapters, live packet I/O, hardware reachability, SSH,
+  public stable socket ABI acceptance, broad socket expansion, and phase
+  transition remain rejected. The selected next bounded task is
+  phase12-network-smoltcp-socket-bridge-core-20260621.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
