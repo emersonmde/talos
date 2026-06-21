@@ -16025,6 +16025,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   real private key, generated key, derived public key, digest, fingerprint,
   signature, or stable secret identifier. The selected next bounded task is
   phase12-ssh-host-key-readiness-closeout-20260621.
+- phase12-ssh-host-key-readiness-closeout-20260621 accepts closeout for the
+  host-key metadata readiness slice. The accepted frontier covers the
+  operator-provisioned read-only VFS host-key policy, metadata-only
+  classification for /etc/talos/ssh/ssh_host_ed25519_key, and retained
+  host/QEMU-substitute sshkeydiag smoke evidence. Sufficient public-fixture
+  metadata clears only the host-key prerequisite while ssh-ready remains false
+  because authorized-key metadata, persistence/exposure, SSH service behavior,
+  live transport, and reachability remain unaccepted. No authorized-key
+  storage, writable persistence, SSH service behavior, live transport,
+  hardware reachability, public ABI/POSIX/Linux compatibility, broad
+  expansion, stale link-ready discriminator promotion, or phase transition is
+  accepted. selected_next_task is null and planningNeeded=true because no
+  later queued Phase 12.5 prerequisite task has complete objective
+  dependencies and gates.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

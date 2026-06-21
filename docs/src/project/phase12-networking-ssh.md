@@ -6587,3 +6587,18 @@ retains labels and public fixture state names only; it excludes real private-key
 bytes, generated keys, derived public keys, digests, fingerprints, signatures,
 and comparable stable secret identifiers. The selected next bounded task is
 phase12-ssh-host-key-readiness-closeout-20260621.
+
+phase12-ssh-host-key-readiness-closeout-20260621 accepts the host-key metadata
+readiness closeout. The accepted slice now covers the operator-provisioned
+read-only VFS host-key policy, metadata-only classification for
+/etc/talos/ssh/ssh_host_ed25519_key, and retained host/QEMU-substitute
+sshkeydiag smoke evidence. The current frontier clears only the host-key
+metadata prerequisite when sufficient public-fixture metadata is present;
+ssh-ready remains false because authorized-key metadata, persistence/exposure,
+SSH service behavior, live transport, and reachability remain unaccepted. No
+authorized-key storage, writable persistence, SSH service behavior, live
+transport, hardware reachability, public ABI/POSIX/Linux compatibility, broad
+expansion, stale link-ready discriminator promotion, or phase transition is
+accepted. selected_next_task is null and planningNeeded=true because no later
+queued Phase 12.5 prerequisite task has complete objective dependencies and
+gates.
