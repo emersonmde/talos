@@ -15094,6 +15094,21 @@ Milestone 12.3: IP Stack
   reachability, SSH, public socket ABI acceptance, broad socket expansion, and
   phase transition remain rejected. The selected next bounded task is
   phase12-network-shell-sockdiag-readiness-poll-core-20260621.
+- The shell sockdiag readiness/poll core accepts source/unit
+  host/QEMU-substitute evidence for shell-visible /bin/sockdiag output over
+  the accepted private TALOS_POLL_SYSCALL = 13 readiness path. The diagnostic
+  still executes through VFS executable lookup/open/read, startup ABI,
+  descriptor-backed socket open/bind/listen/connect/accept, send/recv, poll,
+  close, waitpid, and laststatus. It records listener pending accept READ,
+  empty recv queue zero readiness, queued payload READ, writable peer FIFO
+  WRITE, full peer FIFO zero write readiness, peer close READ | HANGUP,
+  invalid descriptor ERROR, and non-socket descriptor ERROR, plus
+  unsupported poll events as EINVAL in controls. Retained smoke evidence,
+  blocking waits, scheduler wait queues, timeout handling, UDP/TCP payload
+  transport, cross-process/global poll sets, live packet I/O, hardware
+  reachability, SSH, public socket ABI acceptance, broad socket expansion, and
+  phase transition remain rejected. The selected next bounded task is
+  phase12-network-shell-sockdiag-readiness-poll-smoke-20260621.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

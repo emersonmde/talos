@@ -5274,3 +5274,25 @@ sets, live packet I/O, hardware reachability, SSH, public socket ABI
 acceptance, broad socket expansion, and phase transition remain rejected. The
 selected next bounded task is
 phase12-network-shell-sockdiag-readiness-poll-core-20260621.
+
+phase12-network-shell-sockdiag-readiness-poll-core-20260621 accepts
+phase12-network-shell-sockdiag-readiness-poll-core-accepted. The shell-visible
+/bin/sockdiag diagnostic now exercises the accepted private
+TALOS_POLL_SYSCALL = 13 readiness path through VFS executable lookup/open/read,
+startup ABI, descriptor-backed socket open/bind/listen/connect/accept,
+send/recv, poll, close, waitpid, and laststatus. The transcript records
+poll-empty-listener=0, poll-pending-listener=READ, poll-empty-recv=0,
+poll-payload-recv=READ, poll-write-ready=WRITE, poll-write-backpressure=0,
+poll-peer-hangup=READ | HANGUP, poll-invalid-descriptor=ERROR, and
+poll-non-socket-descriptor=ERROR. Controls also exercise unsupported poll
+events as EINVAL while preserving existing socket open/close, bind/listen,
+connect/accept, send/recv, malformed argument, missing executable, non-socket,
+and invalid/closed descriptor regressions.
+
+The accepted evidence level is source/unit host/QEMU-substitute only and the
+diagnostic remains private, nonblocking, descriptor-backed, and process-local.
+Retained smoke evidence, blocking waits, scheduler wait queues, timeout
+handling, UDP/TCP payload transport, cross-process/global poll sets, live
+packet I/O, hardware reachability, SSH, public socket ABI acceptance, broad
+socket expansion, and phase transition remain rejected. The selected next
+bounded task is phase12-network-shell-sockdiag-readiness-poll-smoke-20260621.
