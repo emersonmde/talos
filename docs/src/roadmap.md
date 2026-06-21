@@ -15199,6 +15199,18 @@ Milestone 12.3: IP Stack
   public socket ABI acceptance, broad socket expansion, and phase transition
   remain rejected. The selected next bounded task is
   phase12-network-shell-sockdiag-blocking-poll-wait-closeout-20260621.
+- phase12-network-shell-sockdiag-blocking-poll-wait-closeout-20260621 accepts
+  the blocking poll-wait frontier only as source/unit plus
+  host/QEMU-substitute evidence over shell-visible VFS/userspace /bin/sockdiag
+  execution and private process-local bounded blocking local socket waits. The
+  accepted boundary includes scheduler-visible blocked/resume state, waitpid,
+  laststatus, deterministic controls, unchanged socket diagnostics, unchanged
+  nonblocking TALOS_POLL, unchanged /bin/pingdiag, and unchanged bounded
+  syscall vocabulary. Cross-process/global poll sets, UDP/TCP payload
+  transport, smoltcp integration, live packet I/O, hardware reachability, SSH,
+  public socket ABI acceptance, broad socket expansion, and phase transition
+  remain rejected. selected_next_task is null and planningNeeded=true pending
+  supervisor planning for any next bounded Phase 12.4 socket or network task.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

@@ -5442,3 +5442,24 @@ cross-process/global poll sets, live packet I/O, hardware reachability, SSH,
 public stable socket ABI acceptance, broad socket expansion, or phase
 transition. The selected next bounded task is
 phase12-network-shell-sockdiag-blocking-poll-wait-closeout-20260621.
+
+phase12-network-shell-sockdiag-blocking-poll-wait-closeout-20260621 accepts
+phase12-network-shell-sockdiag-blocking-poll-wait-closeout-accepted. The
+closeout reconciles the accepted blocking poll-wait contract, runtime core,
+shell-visible /bin/sockdiag source/unit diagnostic, retained smoke evidence,
+architecture status, roadmap status, and durable state as a source/unit plus
+host/QEMU-substitute frontier only.
+
+The accepted boundary is private process-local bounded blocking waits over
+descriptor-backed local socket readiness through VFS/userspace /bin/sockdiag
+execution: executable lookup/open/read, startup ABI, local socket
+open/bind/listen/connect/accept/send/recv/poll/wait/close, scheduler-visible
+TaskState::Blocked and SingleCoreScheduler::make_runnable resume, waitpid,
+laststatus, deterministic controls, unchanged accepted socket diagnostics,
+unchanged nonblocking TALOS_POLL, unchanged /bin/pingdiag, and unchanged
+bounded syscall vocabulary. Cross-process/global poll sets, UDP/TCP payload
+transport, smoltcp integration, live driver adapters, live packet I/O,
+hardware reachability, SSH, public stable socket ABI acceptance, broad socket
+expansion, and phase transition remain rejected. selected_next_task is null
+and planningNeeded=true pending supervisor planning for any next bounded
+Phase 12.4 socket or network task.
