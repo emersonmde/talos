@@ -5582,3 +5582,25 @@ hardware behavior, lab mutation, boot publication, generated-root publication,
 hardware reachability, SSH, broad socket expansion, and phase transition.
 planningNeeded=true; no later bounded Phase 12.4 or network task is
 mechanically unblocked without supervisor planning.
+
+phase12-network-smoltcp-adoption-contract-20260621 accepts
+phase12-network-smoltcp-adoption-contract-accepted. Supervisor planning after
+the cross-process local socket closeout selected smoltcp adoption as the next
+bounded network feature path, but only as a contract and dependency-core
+boundary before packet movement or TCP behavior.
+
+The accepted contract adopts smoltcp 0.13.1 for a future host-only TCP
+frontier using default-features=false, medium-ethernet, proto-ipv4, socket-tcp,
+and only the smallest bounded count/buffer features required by compilation.
+The contract rejects std, host OS phy backends, DHCP/DNS, IPv6, fragmentation,
+UDP, raw/ICMP sockets, async, multicast, auto ICMP reply, defmt, live packet
+I/O, hardware reachability, SSH, socket syscall bridging, public stable socket
+ABI acceptance, broad socket expansion, and phase transition.
+
+State ownership remains Talos-first. NetworkDevice, PacketQueueNetworkDevice,
+process descriptors, NetworkSocketDescriptorTable, SocketPollWaitTable,
+/bin/pingdiag, and /bin/sockdiag remain separate accepted surfaces until later
+tasks explicitly adapt them to smoltcp. The selected next bounded task is
+phase12-network-smoltcp-no-std-dependency-core-20260621, which may add the
+dependency and minimal fail-closed source boundary but may not accept UDP/TCP
+payload transport.

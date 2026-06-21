@@ -15275,6 +15275,20 @@ Milestone 12.3: IP Stack
   I/O, hardware reachability, SSH, broad socket expansion, and phase transition
   remain rejected. selected_next_task is null and planningNeeded=true pending
   supervisor planning for any next bounded Phase 12.4 or network task.
+- phase12-network-smoltcp-adoption-contract-20260621 accepts smoltcp 0.13.1
+  as the next bounded TCP/IP stack dependency contract for Phase 12.4. The
+  accepted first implementation boundary is no_std dependency-core work only:
+  default-features=false with medium-ethernet, proto-ipv4, socket-tcp, and the
+  smallest bounded count/buffer features required by compilation. Talos keeps
+  NetworkDevice, PacketQueueNetworkDevice, process descriptors, socket backing
+  tables, scheduler waits, /bin/pingdiag, and /bin/sockdiag as separate owned
+  surfaces until later explicit adapter or bridge tasks. This contract does not
+  edit dependencies or accept packet movement, UDP/TCP payload transport,
+  smoltcp device adapter behavior, host-only TCP handshake evidence, live
+  packet I/O, hardware reachability, SSH, socket syscall bridging, public
+  stable socket ABI acceptance, broad socket expansion, or phase transition.
+  The selected next bounded task is
+  phase12-network-smoltcp-no-std-dependency-core-20260621.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

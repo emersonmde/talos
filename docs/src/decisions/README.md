@@ -12,6 +12,43 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-21 - Phase 12 Adopts smoltcp Behind a No-Std Dependency Boundary
+
+- Status: accepted as the bounded smoltcp adoption contract in
+  phase12-network-smoltcp-adoption-contract-20260621. No Cargo dependency edit,
+  runtime source implementation, packet movement, TCP/UDP payload transport,
+  live packet I/O, hardware work, SSH, socket syscall bridge, public stable
+  socket ABI acceptance, broad socket expansion, or phase transition is
+  accepted here.
+- Context: The accepted Phase 12.4 frontier proves private cross-process local
+  socket rendezvous through VFS/userspace /bin/sockdiag, while earlier Phase
+  12.3 work proves Talos-owned host-only frame, packet pump, packet queue, and
+  ping diagnostic control surfaces. The next feature-led step needs a real
+  TCP/IP stack boundary instead of extending fake shell diagnostics or
+  hand-rolling TCP.
+- Decision: Adopt smoltcp 0.13.1 first through a no_std dependency-core task
+  with default-features=false, medium-ethernet, proto-ipv4, socket-tcp, and
+  only the smallest bounded count/buffer features needed to compile and test
+  the boundary. Reject smoltcp default features for this slice, including std,
+  host OS phy backends, DHCP/DNS, IPv6, fragmentation, UDP, raw/ICMP sockets,
+  async, multicast, auto ICMP reply, defmt, and packet metadata extras.
+- Evidence level: static source/task/docs/dependency review of src/network.rs,
+  src/syscall.rs, src/posix.rs, accepted packet pump, packet queue, pingdiag,
+  sockdiag, and cross-process local socket task records, plus cargo
+  search/info and local registry inspection of smoltcp 0.13.1. The task record
+  is tasks/2026-06-21-phase12-network-smoltcp-adoption-contract.md.
+- Consequences: The follow-up core may edit Cargo.toml/Cargo.lock and add a
+  minimal Talos-owned fail-closed source boundary for smoltcp, but it may not
+  drive frames through smoltcp or expose smoltcp through Talos socket syscalls.
+  Packet-device adapter behavior, host-only TCP handshake proof, socket bridge,
+  live driver adapters, hardware reachability, SSH, and public ABI stability
+  require later explicit tasks.
+- Alternatives considered: continue expanding local socket diagnostics, write
+  a bespoke TCP stack immediately, or adopt smoltcp with default features.
+  Diagnostic expansion would not test the real feature, bespoke TCP is too much
+  risk before a host-only proof, and default smoltcp features would pull in std
+  and host OS phy behavior outside the Talos kernel boundary.
+
 ## 2026-06-21 - Phase 12 Blocking Poll Wait Uses Separate Private Selector
 
 - Status: accepted as the bounded socket blocking poll wait contract in
