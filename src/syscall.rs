@@ -21,6 +21,15 @@ pub(crate) const TALOS_CONNECT_SYSCALL: u64 = 9;
 pub(crate) const TALOS_ACCEPT_SYSCALL: u64 = 10;
 pub(crate) const TALOS_SEND_SYSCALL: u64 = 11;
 pub(crate) const TALOS_RECV_SYSCALL: u64 = 12;
+pub(crate) const TALOS_POLL_SYSCALL: u64 = 13;
+pub(crate) const TALOS_POLL_ENTRY_SIZE: usize = 16;
+pub(crate) const TALOS_POLL_MAX_ENTRIES: usize = 8;
+pub(crate) const TALOS_POLL_READ: u32 = crate::network::NetworkSocketReadiness::READ.bits();
+pub(crate) const TALOS_POLL_WRITE: u32 = crate::network::NetworkSocketReadiness::WRITE.bits();
+pub(crate) const TALOS_POLL_HANGUP: u32 = crate::network::NetworkSocketReadiness::HANGUP.bits();
+pub(crate) const TALOS_POLL_ERROR: u32 = crate::network::NetworkSocketReadiness::ERROR.bits();
+pub(crate) const TALOS_POLL_SUPPORTED_EVENTS: u32 =
+    TALOS_POLL_READ | TALOS_POLL_WRITE | TALOS_POLL_HANGUP | TALOS_POLL_ERROR;
 #[cfg(any(
     test,
     talos_boot_scenario = "qemu_pointer_copy_smoke",
@@ -50,6 +59,7 @@ pub(crate) enum SyscallNumber {
     TalosAccept,
     TalosSend,
     TalosRecv,
+    TalosPoll,
     Unknown(u64),
 }
 
@@ -69,6 +79,7 @@ impl SyscallNumber {
             TALOS_ACCEPT_SYSCALL => Self::TalosAccept,
             TALOS_SEND_SYSCALL => Self::TalosSend,
             TALOS_RECV_SYSCALL => Self::TalosRecv,
+            TALOS_POLL_SYSCALL => Self::TalosPoll,
             unknown => Self::Unknown(unknown),
         }
     }
@@ -88,6 +99,7 @@ impl SyscallNumber {
             Self::TalosAccept => TALOS_ACCEPT_SYSCALL,
             Self::TalosSend => TALOS_SEND_SYSCALL,
             Self::TalosRecv => TALOS_RECV_SYSCALL,
+            Self::TalosPoll => TALOS_POLL_SYSCALL,
             Self::Unknown(raw) => raw,
         }
     }
@@ -245,7 +257,8 @@ pub(crate) const fn dispatch(
         | SyscallNumber::TalosConnect
         | SyscallNumber::TalosAccept
         | SyscallNumber::TalosSend
-        | SyscallNumber::TalosRecv => SyscallReturn::error(PosixError::NotSupported),
+        | SyscallNumber::TalosRecv
+        | SyscallNumber::TalosPoll => SyscallReturn::error(PosixError::NotSupported),
         SyscallNumber::Unknown(_) => SyscallReturn::error(PosixError::NotImplemented),
     };
 
@@ -292,6 +305,7 @@ where
         | SyscallNumber::TalosAccept
         | SyscallNumber::TalosSend
         | SyscallNumber::TalosRecv
+        | SyscallNumber::TalosPoll
         | SyscallNumber::Unknown(_) => dispatch(raw_number, arguments).return_value(),
     };
 
@@ -351,6 +365,7 @@ where
         | SyscallNumber::TalosAccept
         | SyscallNumber::TalosSend
         | SyscallNumber::TalosRecv
+        | SyscallNumber::TalosPoll
         | SyscallNumber::TalosNop
         | SyscallNumber::Unknown(_) => dispatch(raw_number, arguments).return_value(),
     };
@@ -424,6 +439,7 @@ where
         | SyscallNumber::TalosAccept
         | SyscallNumber::TalosSend
         | SyscallNumber::TalosRecv
+        | SyscallNumber::TalosPoll
         | SyscallNumber::TalosNop
         | SyscallNumber::Unknown(_) => dispatch(raw_number, arguments).return_value(),
     };
@@ -510,6 +526,7 @@ where
         | SyscallNumber::TalosAccept
         | SyscallNumber::TalosSend
         | SyscallNumber::TalosRecv
+        | SyscallNumber::TalosPoll
         | SyscallNumber::TalosNop
         | SyscallNumber::Unknown(_) => dispatch(raw_number, arguments).return_value(),
     };
@@ -592,6 +609,16 @@ where
             kernel_scratch,
         ),
         SyscallNumber::TalosRecv => dispatch_talos_recv(
+            arguments,
+            current_owner,
+            descriptor_store,
+            socket_table,
+            mappings,
+            user_memory_start,
+            user_memory,
+            kernel_scratch,
+        ),
+        SyscallNumber::TalosPoll => dispatch_talos_poll(
             arguments,
             current_owner,
             descriptor_store,
@@ -700,6 +727,7 @@ where
         | SyscallNumber::TalosAccept
         | SyscallNumber::TalosSend
         | SyscallNumber::TalosRecv
+        | SyscallNumber::TalosPoll
         | SyscallNumber::TalosNop
         | SyscallNumber::Unknown(_) => dispatch(raw_number, arguments).return_value(),
     };
@@ -2980,6 +3008,124 @@ fn dispatch_talos_recv<
     }
 }
 
+fn dispatch_talos_poll<
+    const OWNER_CAPACITY: usize,
+    const DESCRIPTOR_CAPACITY: usize,
+    const SOCKET_CAPACITY: usize,
+>(
+    arguments: SyscallArguments,
+    current_owner: Option<crate::scheduler::ProcessOwnerId>,
+    descriptor_store: &crate::posix::ProcessDescriptorStore<OWNER_CAPACITY, DESCRIPTOR_CAPACITY>,
+    socket_table: &crate::network::NetworkSocketDescriptorTable<SOCKET_CAPACITY>,
+    mappings: &[crate::posix::UserMapping],
+    user_memory_start: u64,
+    user_memory: &mut [u8],
+    kernel_scratch: &mut [u8],
+) -> SyscallReturn {
+    let [
+        entries_start,
+        entry_count,
+        flags,
+        reserved0,
+        reserved1,
+        reserved2,
+    ] = arguments.values();
+    if flags != 0 || reserved0 != 0 || reserved1 != 0 || reserved2 != 0 {
+        return SyscallReturn::error(PosixError::InvalidArgument);
+    }
+    if entry_count == 0 || entry_count > TALOS_POLL_MAX_ENTRIES as u64 {
+        return SyscallReturn::error(PosixError::InvalidArgument);
+    }
+    let Ok(entry_count) = usize::try_from(entry_count) else {
+        return SyscallReturn::error(PosixError::InvalidArgument);
+    };
+    let byte_len = entry_count * TALOS_POLL_ENTRY_SIZE;
+    if kernel_scratch.len() < byte_len {
+        return SyscallReturn::error(PosixError::InvalidArgument);
+    }
+
+    if let Err(error) = crate::posix::copy_from_user(
+        mappings,
+        user_memory_start,
+        user_memory,
+        entries_start,
+        byte_len,
+        &mut kernel_scratch[..byte_len],
+    ) {
+        return SyscallReturn::error(error);
+    }
+
+    let mut index = 0usize;
+    while index < entry_count {
+        let offset = index * TALOS_POLL_ENTRY_SIZE;
+        let events = poll_entry_get_u32(kernel_scratch, offset + 8);
+        if events & !TALOS_POLL_SUPPORTED_EVENTS != 0 {
+            return SyscallReturn::error(PosixError::InvalidArgument);
+        }
+        index += 1;
+    }
+
+    let mut ready_count = 0u64;
+    index = 0;
+    while index < entry_count {
+        let offset = index * TALOS_POLL_ENTRY_SIZE;
+        let fd = poll_entry_get_u64(kernel_scratch, offset);
+        let events = poll_entry_get_u32(kernel_scratch, offset + 8);
+        let revents = match usize::try_from(fd) {
+            Ok(process_descriptor) => match current_socket_descriptor(
+                current_owner,
+                descriptor_store,
+                socket_table,
+                process_descriptor,
+            ) {
+                Ok((owner, socket_descriptor)) => {
+                    let requested = crate::network::NetworkSocketReadiness::from_bits(events);
+                    match socket_table.readiness(owner, socket_descriptor, requested) {
+                        Ok(readiness) => readiness.bits(),
+                        Err(_) => TALOS_POLL_ERROR,
+                    }
+                }
+                Err(_) => TALOS_POLL_ERROR,
+            },
+            Err(_) => TALOS_POLL_ERROR,
+        };
+        poll_entry_put_u32(kernel_scratch, offset + 12, revents);
+        if revents != 0 {
+            ready_count += 1;
+        }
+        index += 1;
+    }
+
+    if let Err(error) = crate::posix::copy_to_user(
+        mappings,
+        user_memory_start,
+        user_memory,
+        entries_start,
+        byte_len,
+        &kernel_scratch[..byte_len],
+    ) {
+        return SyscallReturn::error(error);
+    }
+
+    SyscallReturn::success(ready_count)
+}
+
+fn poll_entry_get_u64(src: &[u8], offset: usize) -> u64 {
+    let mut raw = [0u8; 8];
+    raw.copy_from_slice(&src[offset..offset + 8]);
+    u64::from_le_bytes(raw)
+}
+
+fn poll_entry_get_u32(src: &[u8], offset: usize) -> u32 {
+    let mut raw = [0u8; 4];
+    raw.copy_from_slice(&src[offset..offset + 4]);
+    u32::from_le_bytes(raw)
+}
+
+fn poll_entry_put_u32(dst: &mut [u8], offset: usize, value: u32) {
+    dst[offset..offset + 4].copy_from_slice(&value.to_le_bytes());
+}
+
 fn dispatch_talos_close<const OWNER_CAPACITY: usize, const DESCRIPTOR_CAPACITY: usize>(
     arguments: SyscallArguments,
     current_owner: Option<crate::scheduler::ProcessOwnerId>,
@@ -3533,7 +3679,7 @@ mod tests {
             crate::posix::UserMappingPermissions::USER_DATA,
         )
         .expect("user data mapping")];
-        let mut scratch = [0u8; 64];
+        let mut scratch = [0u8; TALOS_POLL_ENTRY_SIZE * TALOS_POLL_MAX_ENTRIES];
         let mut console = CaptureConsole::new();
         dispatch_process_descriptor_with_fixed_stdin(
             TALOS_READ_SYSCALL,
@@ -7298,6 +7444,29 @@ mod tests {
         u64::from_le_bytes(raw)
     }
 
+    fn read_test_le_u32(bytes: &[u8], offset: usize) -> u32 {
+        let mut raw = [0u8; 4];
+        raw.copy_from_slice(&bytes[offset..offset + 4]);
+        u32::from_le_bytes(raw)
+    }
+
+    fn write_poll_entry(
+        user_memory: &mut [u8; 128],
+        index: usize,
+        fd: u64,
+        events: u32,
+        revents: u32,
+    ) {
+        let offset = index * TALOS_POLL_ENTRY_SIZE;
+        user_memory[offset..offset + 8].copy_from_slice(&fd.to_le_bytes());
+        user_memory[offset + 8..offset + 12].copy_from_slice(&events.to_le_bytes());
+        user_memory[offset + 12..offset + 16].copy_from_slice(&revents.to_le_bytes());
+    }
+
+    fn read_poll_revents(user_memory: &[u8; 128], index: usize) -> u32 {
+        read_test_le_u32(user_memory, index * TALOS_POLL_ENTRY_SIZE + 12)
+    }
+
     #[test_case]
     fn talos_write_stdout_copies_user_bytes_before_runtime_console_output() {
         let mut console = CaptureConsole::new();
@@ -8887,6 +9056,422 @@ mod tests {
             .return_value()
             .x0(),
             (EPIPE as u64).wrapping_neg()
+        );
+    }
+
+    #[test_case]
+    fn talos_poll_reports_listener_local_payload_and_peer_hangup_readiness() {
+        let owner = crate::scheduler::ProcessOwnerId::new(31).expect("owner id");
+        let mut store = crate::posix::ProcessDescriptorStore::<2, 8>::new_empty();
+        store
+            .create_owner_with_inherited_stdio(owner)
+            .expect("create owner");
+        let mut sockets = crate::network::NetworkSocketDescriptorTable::<4>::new();
+        let mut user_memory = [0u8; 128];
+        let endpoint = crate::network::Ipv4Endpoint::new(0x7f00_0001, 8080);
+
+        let listener = dispatch_socket_case(
+            TALOS_SOCKET_SYSCALL,
+            SyscallArguments::new([
+                crate::network::SOCKET_DOMAIN_AF_INET,
+                crate::network::SOCKET_TYPE_STREAM,
+                crate::network::SOCKET_PROTOCOL_DEFAULT,
+                0,
+                0,
+                0,
+            ]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        assert_eq!(listener.return_value().x0(), 3);
+        assert_eq!(
+            dispatch_socket_case(
+                TALOS_BIND_SYSCALL,
+                SyscallArguments::new([
+                    3,
+                    endpoint.ipv4_be() as u64,
+                    endpoint.port() as u64,
+                    0,
+                    0,
+                    0,
+                ]),
+                Some(owner),
+                &mut store,
+                &mut sockets,
+                &mut user_memory,
+            )
+            .return_value()
+            .x0(),
+            0
+        );
+        assert_eq!(
+            dispatch_socket_case(
+                TALOS_LISTEN_SYSCALL,
+                SyscallArguments::new([3, 2, 0, 0, 0, 0]),
+                Some(owner),
+                &mut store,
+                &mut sockets,
+                &mut user_memory,
+            )
+            .return_value()
+            .x0(),
+            0
+        );
+
+        write_poll_entry(&mut user_memory, 0, 3, TALOS_POLL_READ, 0xffff_ffff);
+        let empty_listener = dispatch_socket_case(
+            TALOS_POLL_SYSCALL,
+            SyscallArguments::new([0x0000_0000_0011_0000, 1, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        assert_eq!(empty_listener.number(), SyscallNumber::TalosPoll);
+        assert_eq!(empty_listener.return_value().x0(), 0);
+        assert_eq!(read_poll_revents(&user_memory, 0), 0);
+
+        let client = dispatch_socket_case(
+            TALOS_SOCKET_SYSCALL,
+            SyscallArguments::new([
+                crate::network::SOCKET_DOMAIN_AF_INET,
+                crate::network::SOCKET_TYPE_STREAM,
+                crate::network::SOCKET_PROTOCOL_DEFAULT,
+                0,
+                0,
+                0,
+            ]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        assert_eq!(client.return_value().x0(), 4);
+        assert_eq!(
+            dispatch_socket_case(
+                TALOS_CONNECT_SYSCALL,
+                SyscallArguments::new([
+                    4,
+                    endpoint.ipv4_be() as u64,
+                    endpoint.port() as u64,
+                    0,
+                    0,
+                    0,
+                ]),
+                Some(owner),
+                &mut store,
+                &mut sockets,
+                &mut user_memory,
+            )
+            .return_value()
+            .x0(),
+            0
+        );
+
+        write_poll_entry(&mut user_memory, 0, 3, TALOS_POLL_READ, 0);
+        let pending_listener = dispatch_socket_case(
+            TALOS_POLL_SYSCALL,
+            SyscallArguments::new([0x0000_0000_0011_0000, 1, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        assert_eq!(pending_listener.return_value().x0(), 1);
+        assert_eq!(read_poll_revents(&user_memory, 0), TALOS_POLL_READ);
+
+        let accepted = dispatch_socket_case(
+            TALOS_ACCEPT_SYSCALL,
+            SyscallArguments::new([3, 0, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        assert_eq!(accepted.return_value().x0(), 5);
+
+        write_poll_entry(
+            &mut user_memory,
+            0,
+            4,
+            TALOS_POLL_READ | TALOS_POLL_WRITE,
+            0,
+        );
+        write_poll_entry(
+            &mut user_memory,
+            1,
+            5,
+            TALOS_POLL_READ | TALOS_POLL_WRITE,
+            0,
+        );
+        let writable_pair = dispatch_socket_case(
+            TALOS_POLL_SYSCALL,
+            SyscallArguments::new([0x0000_0000_0011_0000, 2, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        assert_eq!(writable_pair.return_value().x0(), 2);
+        assert_eq!(read_poll_revents(&user_memory, 0), TALOS_POLL_WRITE);
+        assert_eq!(read_poll_revents(&user_memory, 1), TALOS_POLL_WRITE);
+
+        user_memory[0x40..0x42].copy_from_slice(b"hi");
+        assert_eq!(
+            dispatch_socket_case(
+                TALOS_SEND_SYSCALL,
+                SyscallArguments::new([4, 0x0000_0000_0011_0040, 2, 0, 0, 0]),
+                Some(owner),
+                &mut store,
+                &mut sockets,
+                &mut user_memory,
+            )
+            .return_value()
+            .x0(),
+            2
+        );
+        write_poll_entry(
+            &mut user_memory,
+            0,
+            5,
+            TALOS_POLL_READ | TALOS_POLL_WRITE,
+            0,
+        );
+        let accepted_readable = dispatch_socket_case(
+            TALOS_POLL_SYSCALL,
+            SyscallArguments::new([0x0000_0000_0011_0000, 1, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        assert_eq!(accepted_readable.return_value().x0(), 1);
+        assert_eq!(
+            read_poll_revents(&user_memory, 0),
+            TALOS_POLL_READ | TALOS_POLL_WRITE
+        );
+
+        assert_eq!(
+            dispatch_socket_case(
+                TALOS_CLOSE_SYSCALL,
+                SyscallArguments::new([4, 0, 0, 0, 0, 0]),
+                Some(owner),
+                &mut store,
+                &mut sockets,
+                &mut user_memory,
+            )
+            .return_value()
+            .x0(),
+            0
+        );
+        write_poll_entry(
+            &mut user_memory,
+            0,
+            5,
+            TALOS_POLL_READ | TALOS_POLL_WRITE,
+            0,
+        );
+        let accepted_after_peer_close = dispatch_socket_case(
+            TALOS_POLL_SYSCALL,
+            SyscallArguments::new([0x0000_0000_0011_0000, 1, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        assert_eq!(accepted_after_peer_close.return_value().x0(), 1);
+        assert_eq!(
+            read_poll_revents(&user_memory, 0),
+            TALOS_POLL_READ | TALOS_POLL_HANGUP
+        );
+        assert_eq!(
+            dispatch_socket_case(
+                TALOS_RECV_SYSCALL,
+                SyscallArguments::new([5, 0x0000_0000_0011_0060, 8, 0, 0, 0]),
+                Some(owner),
+                &mut store,
+                &mut sockets,
+                &mut user_memory,
+            )
+            .return_value()
+            .x0(),
+            2
+        );
+        write_poll_entry(&mut user_memory, 0, 5, TALOS_POLL_READ, 0);
+        let drained_after_peer_close = dispatch_socket_case(
+            TALOS_POLL_SYSCALL,
+            SyscallArguments::new([0x0000_0000_0011_0000, 1, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        assert_eq!(drained_after_peer_close.return_value().x0(), 1);
+        assert_eq!(
+            read_poll_revents(&user_memory, 0),
+            TALOS_POLL_READ | TALOS_POLL_HANGUP
+        );
+    }
+
+    #[test_case]
+    fn talos_poll_reports_write_backpressure_and_deterministic_entry_errors() {
+        let owner = crate::scheduler::ProcessOwnerId::new(31).expect("owner id");
+        let mut store = crate::posix::ProcessDescriptorStore::<2, 8>::new_empty();
+        store
+            .create_owner_with_inherited_stdio(owner)
+            .expect("create owner");
+        let mut sockets = crate::network::NetworkSocketDescriptorTable::<4>::new();
+        let mut user_memory = [0u8; 128];
+        let (client_fd, accepted_fd) =
+            create_socket_pair(owner, &mut store, &mut sockets, &mut user_memory);
+
+        let mut index = 0usize;
+        while index < crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY {
+            user_memory[index] = index as u8;
+            index += 1;
+        }
+        assert_eq!(
+            dispatch_socket_case(
+                TALOS_SEND_SYSCALL,
+                SyscallArguments::new([
+                    client_fd,
+                    0x0000_0000_0011_0000,
+                    crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY as u64,
+                    0,
+                    0,
+                    0,
+                ]),
+                Some(owner),
+                &mut store,
+                &mut sockets,
+                &mut user_memory,
+            )
+            .return_value()
+            .x0(),
+            crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY as u64
+        );
+
+        write_poll_entry(&mut user_memory, 0, client_fd, TALOS_POLL_WRITE, 0);
+        write_poll_entry(&mut user_memory, 1, accepted_fd, TALOS_POLL_WRITE, 0);
+        write_poll_entry(&mut user_memory, 2, 1, TALOS_POLL_READ, 0);
+        write_poll_entry(&mut user_memory, 3, 99, TALOS_POLL_READ, 0);
+        let poll = dispatch_socket_case(
+            TALOS_POLL_SYSCALL,
+            SyscallArguments::new([0x0000_0000_0011_0000, 4, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        assert_eq!(poll.return_value().x0(), 3);
+        assert_eq!(read_poll_revents(&user_memory, 0), 0);
+        assert_eq!(read_poll_revents(&user_memory, 1), TALOS_POLL_WRITE);
+        assert_eq!(read_poll_revents(&user_memory, 2), TALOS_POLL_ERROR);
+        assert_eq!(read_poll_revents(&user_memory, 3), TALOS_POLL_ERROR);
+
+        write_poll_entry(&mut user_memory, 0, client_fd, TALOS_POLL_READ, 0);
+        let no_owner = dispatch_socket_case(
+            TALOS_POLL_SYSCALL,
+            SyscallArguments::new([0x0000_0000_0011_0000, 1, 0, 0, 0, 0]),
+            None,
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        assert_eq!(no_owner.return_value().x0(), 1);
+        assert_eq!(read_poll_revents(&user_memory, 0), TALOS_POLL_ERROR);
+    }
+
+    #[test_case]
+    fn talos_poll_rejects_malformed_calls_and_scalar_dispatch_fails_closed() {
+        let owner = crate::scheduler::ProcessOwnerId::new(31).expect("owner id");
+        let mut store = crate::posix::ProcessDescriptorStore::<1, 5>::new_empty();
+        store
+            .create_owner_with_inherited_stdio(owner)
+            .expect("create owner");
+        let mut sockets = crate::network::NetworkSocketDescriptorTable::<1>::new();
+        let mut user_memory = [0u8; 128];
+
+        assert_eq!(
+            dispatch(TALOS_POLL_SYSCALL, SyscallArguments::empty()).number(),
+            SyscallNumber::TalosPoll
+        );
+        assert_eq!(
+            dispatch(TALOS_POLL_SYSCALL, SyscallArguments::empty())
+                .return_value()
+                .x0(),
+            (ENOTSUP as u64).wrapping_neg()
+        );
+
+        write_poll_entry(&mut user_memory, 0, 3, TALOS_POLL_READ | 0x10, 0x1234);
+        let unsupported_events = dispatch_socket_case(
+            TALOS_POLL_SYSCALL,
+            SyscallArguments::new([0x0000_0000_0011_0000, 1, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        assert_eq!(
+            unsupported_events.return_value().x0(),
+            (EINVAL as u64).wrapping_neg()
+        );
+        assert_eq!(read_poll_revents(&user_memory, 0), 0x1234);
+
+        let bad_flags = dispatch_socket_case(
+            TALOS_POLL_SYSCALL,
+            SyscallArguments::new([0x0000_0000_0011_0000, 1, 1, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        let zero_count = dispatch_socket_case(
+            TALOS_POLL_SYSCALL,
+            SyscallArguments::new([0x0000_0000_0011_0000, 0, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        let too_many = dispatch_socket_case(
+            TALOS_POLL_SYSCALL,
+            SyscallArguments::new([
+                0x0000_0000_0011_0000,
+                TALOS_POLL_MAX_ENTRIES as u64 + 1,
+                0,
+                0,
+                0,
+                0,
+            ]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+        let bad_buffer = dispatch_socket_case(
+            TALOS_POLL_SYSCALL,
+            SyscallArguments::new([0, 1, 0, 0, 0, 0]),
+            Some(owner),
+            &mut store,
+            &mut sockets,
+            &mut user_memory,
+        );
+
+        assert_eq!(
+            bad_flags.return_value().x0(),
+            (EINVAL as u64).wrapping_neg()
+        );
+        assert_eq!(
+            zero_count.return_value().x0(),
+            (EINVAL as u64).wrapping_neg()
+        );
+        assert_eq!(too_many.return_value().x0(), (EINVAL as u64).wrapping_neg());
+        assert_eq!(
+            bad_buffer.return_value().x0(),
+            (EFAULT as u64).wrapping_neg()
         );
     }
 

@@ -5245,3 +5245,32 @@ transport, cross-process/global poll sets, live packet I/O, hardware
 reachability, SSH, public stable socket ABI acceptance, broad socket
 expansion, or phase transition. The selected next bounded task is
 phase12-network-socket-readiness-poll-core-20260621.
+
+phase12-network-socket-readiness-poll-core-20260621 accepts
+phase12-network-socket-readiness-poll-core-accepted. The implementation adds
+private TALOS_POLL_SYSCALL = 13 only to the socket-table-aware process
+descriptor dispatch path while scalar/default dispatch still fails closed with
+ENOTSUP. The accepted behavior is a bounded nonblocking user poll-entry array:
+x0 points to 1 through 8 fixed 16-byte entries, x1 is the entry count, x2 and
+x3 through x5 must be zero, and each entry carries fd, events, and overwritten
+revents. Unsupported event bits or malformed scalar arguments fail the whole
+call with EINVAL; copy faults fail with EFAULT; per-entry bad descriptors,
+non-socket descriptors, wrong-owner or missing-backing relationships, and
+oversized fd values report ERROR in revents.
+
+The accepted readiness model remains process-local and descriptor-backed only.
+Listening sockets report READ for a nonempty pending accept queue. Connected
+and Accepted sockets report READ for queued inbound bytes, WRITE when the
+unique local peer has at least one byte of inbound FIFO capacity, and HANGUP
+after peer close/drop. Queued bytes after peer close report READ | HANGUP when
+READ was requested, and an empty queue after peer close still reports
+READ | HANGUP so the accepted recv path can expose EPIPE. Source/unit tests
+cover listener readiness, local read/write readiness, peer FIFO backpressure,
+peer close/hangup, invalid and non-socket descriptors, malformed user buffers,
+unsupported flags/events, count bounds, and scalar dispatch. Shell /bin/sockdiag
+readiness output, retained smoke evidence, blocking waits, scheduler wait
+queues, timeout handling, UDP/TCP payload transport, cross-process/global poll
+sets, live packet I/O, hardware reachability, SSH, public socket ABI
+acceptance, broad socket expansion, and phase transition remain rejected. The
+selected next bounded task is
+phase12-network-shell-sockdiag-readiness-poll-core-20260621.

@@ -1961,6 +1961,35 @@ pub(crate) enum NetworkSocketState {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct NetworkSocketReadiness {
+    bits: u32,
+}
+
+impl NetworkSocketReadiness {
+    pub(crate) const EMPTY: Self = Self { bits: 0 };
+    pub(crate) const READ: Self = Self { bits: 0x01 };
+    pub(crate) const WRITE: Self = Self { bits: 0x02 };
+    pub(crate) const HANGUP: Self = Self { bits: 0x04 };
+    pub(crate) const ERROR: Self = Self { bits: 0x08 };
+
+    pub(crate) const fn from_bits(bits: u32) -> Self {
+        Self { bits }
+    }
+
+    pub(crate) const fn bits(self) -> u32 {
+        self.bits
+    }
+
+    pub(crate) const fn contains(self, other: Self) -> bool {
+        self.bits & other.bits != 0
+    }
+
+    fn insert(&mut self, other: Self) {
+        self.bits |= other.bits;
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct NetworkSocket {
     owner: crate::scheduler::ProcessOwnerId,
     domain: u64,
@@ -2322,6 +2351,59 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
         connected_recv_queue_mut(&mut socket.state)?.consume(count);
         self.entries[descriptor.raw()] = Some(socket);
         Ok(())
+    }
+
+    pub(crate) fn readiness(
+        &self,
+        owner: crate::scheduler::ProcessOwnerId,
+        descriptor: NetworkSocketDescriptor,
+        requested: NetworkSocketReadiness,
+    ) -> Result<NetworkSocketReadiness, crate::posix::PosixError> {
+        self.require_owner(owner, descriptor)?;
+        let socket = self.socket(descriptor)?;
+        let mut readiness = NetworkSocketReadiness::EMPTY;
+
+        match socket.state {
+            NetworkSocketState::OpenUnbound | NetworkSocketState::Bound { .. } => {}
+            NetworkSocketState::Listening { pending, .. } => {
+                if pending.len() != 0 && requested.contains(NetworkSocketReadiness::READ) {
+                    readiness.insert(NetworkSocketReadiness::READ);
+                }
+            }
+            NetworkSocketState::Connected {
+                local_endpoint,
+                remote_endpoint,
+                recv_queue,
+            }
+            | NetworkSocketState::Accepted {
+                local_endpoint,
+                remote_endpoint,
+                recv_queue,
+            } => {
+                let peer_descriptor =
+                    self.unique_peer_descriptor(owner, local_endpoint, remote_endpoint);
+                if recv_queue.len() != 0 || peer_descriptor.is_err() {
+                    if requested.contains(NetworkSocketReadiness::READ) {
+                        readiness.insert(NetworkSocketReadiness::READ);
+                    }
+                }
+
+                match peer_descriptor {
+                    Ok(peer_descriptor) => {
+                        if requested.contains(NetworkSocketReadiness::WRITE) {
+                            let peer = self.socket(peer_descriptor)?;
+                            let peer_recv_queue = connected_recv_queue(peer.state)?;
+                            if peer_recv_queue.remaining_capacity() != 0 {
+                                readiness.insert(NetworkSocketReadiness::WRITE);
+                            }
+                        }
+                    }
+                    Err(_) => readiness.insert(NetworkSocketReadiness::HANGUP),
+                }
+            }
+        }
+
+        Ok(readiness)
     }
 
     pub(crate) fn socket(

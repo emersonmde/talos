@@ -15075,6 +15075,25 @@ Milestone 12.3: IP Stack
   public stable socket ABI acceptance, broad socket expansion, and phase
   transition remain rejected. The selected next bounded task is
   phase12-network-socket-readiness-poll-core-20260621.
+- The socket readiness/poll core accepts source/unit evidence for private
+  nonblocking readiness over accepted process-local socket states. The
+  implementation adds TALOS_POLL_SYSCALL = 13 only to the socket-table-aware
+  process descriptor dispatch path, keeps scalar/default dispatch at ENOTSUP,
+  and uses the accepted fixed 16-byte poll-entry array with bounded 1 through
+  8 entry count. Whole-call failures cover unsupported event bits, unsupported
+  flags, nonzero reserved registers, invalid count, and user-memory copy
+  faults. Per-entry bad descriptors, non-socket descriptors, wrong-owner or
+  missing-backing relationships, and oversized fd values report ERROR in
+  revents. Readiness remains local and descriptor-backed: listeners report READ
+  for pending accept queues; connected/accepted sockets report READ for inbound
+  bytes, WRITE for peer FIFO capacity, and HANGUP after peer close/drop,
+  including READ | HANGUP after close when READ was requested so recv can
+  expose EPIPE. Shell /bin/sockdiag readiness output, retained smoke evidence,
+  blocking waits, scheduler wait queues, timeout handling, UDP/TCP payload
+  transport, cross-process/global poll sets, live packet I/O, hardware
+  reachability, SSH, public socket ABI acceptance, broad socket expansion, and
+  phase transition remain rejected. The selected next bounded task is
+  phase12-network-shell-sockdiag-readiness-poll-core-20260621.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
