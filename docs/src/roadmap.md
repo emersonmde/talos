@@ -15979,6 +15979,25 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   hardware reachability, public ABI/POSIX/Linux compatibility, broad expansion,
   stale link-ready discriminator promotion, and phase transition remain
   rejected.
+- phase12-ssh-host-key-provisioning-policy-contract-20260621 accepts the first
+  host-key source policy after operator-seeded CSPRNG readiness. Talos selects
+  operator-provisioned read-only VFS material as the reversible first policy,
+  with reserved path /etc/talos/ssh/ssh_host_ed25519_key. The next
+  implementation may classify only regular-file presence and byte length:
+  missing preserves sshkeydiag-missing-host-key, invalid covers non-regular,
+  unreadable, zero-length, or oversized files with
+  sshkeydiag-host-key-invalid, insufficient covers lengths 1 through 63 with
+  sshkeydiag-host-key-insufficient, and metadata-present covers lengths 64
+  through 4096 while clearing only the host-key metadata prerequisite. SSH
+  readiness remains false until authorized-key metadata, persistence/exposure,
+  SSH service behavior, live transport, and reachability are accepted
+  separately. The selected next bounded task is
+  phase12-ssh-host-key-vfs-metadata-core-20260621. This contract does not
+  accept host-key generation, key parsing, public-key derivation,
+  fingerprinting, authorized-key storage, writable persistence, SSH service
+  behavior, live transport, hardware reachability, public ABI/POSIX/Linux
+  compatibility, broad expansion, stale link-ready discriminator promotion, or
+  phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

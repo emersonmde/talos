@@ -6534,3 +6534,27 @@ ABI/POSIX/Linux compatibility, broad expansion, stale link-ready discriminator
 promotion, and phase transition remain rejected. selected_next_task is null and
 planningNeeded=true because no later queued Phase 12.5 prerequisite task has
 complete objective dependencies and gates.
+
+phase12-ssh-host-key-provisioning-policy-contract-20260621 accepts
+phase12-ssh-host-key-provisioning-policy-contract-accepted. Talos selects
+operator-provisioned read-only VFS host-key material as the first reversible
+host-key policy after accepted operator-seeded CSPRNG readiness. The reserved
+path is /etc/talos/ssh/ssh_host_ed25519_key. The path is intended for a future
+OpenSSH-format Ed25519 private host key, but this contract accepts no key
+parsing, public-key derivation, fingerprinting, generation, writable
+persistence, authorized-key storage, SSH service behavior, live transport,
+hardware reachability, public ABI/POSIX/Linux compatibility, broad expansion,
+or phase transition.
+
+The next implementation may expose only metadata for that read-only VFS file:
+missing path preserves sshkeydiag-missing-host-key; non-regular, unreadable,
+zero-length, or greater-than-4096-byte material reports
+sshkeydiag-host-key-invalid; regular readable length 1 through 63 reports
+sshkeydiag-host-key-insufficient; and regular readable length 64 through 4096
+clears only the host-key metadata prerequisite. Diagnostics, shell output,
+serial logs, docs, task evidence, and public surfaces must not retain, print,
+digest, fingerprint, derive from, compare, or otherwise expose private-key
+bytes or stable secret identifiers. ssh-ready remains false until authorized-key
+metadata, persistence/exposure, SSH service behavior, live transport, and
+reachability prerequisites are separately accepted. The selected next bounded
+task is phase12-ssh-host-key-vfs-metadata-core-20260621.

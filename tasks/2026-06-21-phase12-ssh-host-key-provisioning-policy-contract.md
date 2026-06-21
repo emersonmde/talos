@@ -1,0 +1,135 @@
+# Phase 12.5 SSH host-key provisioning policy contract
+
+Task id: phase12-ssh-host-key-provisioning-policy-contract-20260621
+
+Status: accepted.
+
+Classification: phase12-ssh-host-key-provisioning-policy-contract-accepted.
+
+## Goal
+
+Choose the smallest reversible host-key provisioning policy that can advance
+SSH readiness after accepted operator-seeded CSPRNG readiness, without
+generating, parsing, fingerprinting, storing, or exposing key material.
+
+## Scope
+
+- Reviewed the accepted sshkeydiag fail-closed readiness slice, operator seed
+  VFS and secret-material boundaries, CSPRNG dependency/API contract,
+  operator-seeded CSPRNG core, retained CSPRNG readiness smoke evidence, Phase
+  12 architecture notes, roadmap notes, and ADR index.
+- Selected operator-provisioned read-only VFS host-key material as the next
+  smallest policy. The first reserved path is
+  /etc/talos/ssh/ssh_host_ed25519_key.
+- Defined a metadata-only diagnostic boundary for the next implementation:
+  regular-file presence and byte length only, with no key parsing, public-key
+  derivation, digest, fingerprint, stable identifier, or retained private-key
+  bytes.
+- Recorded deferred prerequisites and rejected claims.
+
+## Policy
+
+Talos will first accept host-key readiness through operator-provisioned
+read-only VFS material, not ephemeral generation and not writable persistent
+generation. The reserved first host-key path is:
+
+    /etc/talos/ssh/ssh_host_ed25519_key
+
+The path is intended for an OpenSSH-format Ed25519 private host key in a later
+parser/service slice, but this contract does not accept format parsing,
+cryptographic validation, public-key derivation, or fingerprinting.
+
+The next metadata implementation may classify only the VFS file object:
+
+- missing: path absent, preserving sshkeydiag-missing-host-key.
+- invalid: path exists but is not a regular readable file, has length zero, or
+  exceeds 4096 bytes, reporting sshkeydiag-host-key-invalid in addition to the
+  aggregate not-ready state.
+- insufficient: regular readable file length 1 through 63 bytes, reporting
+  sshkeydiag-host-key-insufficient in addition to the aggregate not-ready state.
+- metadata-present: regular readable file length 64 through 4096 bytes,
+  clearing only the host-key metadata prerequisite.
+
+Only a future accepted host-key parser or SSH service may read private-key
+bytes for cryptographic use. The metadata diagnostic core should use VFS file
+metadata/length and must not retain, print, digest, fingerprint, derive from,
+or compare private-key bytes. Retained evidence may name the path, state, byte
+length, length bucket, public fixture labels, and validation commands only.
+
+SSH readiness remains false after host-key metadata is present until
+authorized-key metadata, persistence/exposure, SSH service behavior, live
+transport, and reachability are separately accepted.
+
+## Findings
+
+- fixed: selected a reversible host-key source policy that matches the
+  accepted read-only VFS/generated-root model and avoids accepting writable
+  persistence or unstable ephemeral host identity.
+- fixed: reserved the first host-key path and metadata states for the next
+  bounded implementation task.
+- fixed: docs now state that host-key readiness may clear only the metadata
+  prerequisite; ssh-ready remains false until authorized-key,
+  persistence/exposure, service, transport, and reachability prerequisites are
+  accepted separately.
+- deferred: host-key parsing, public-key derivation, fingerprinting,
+  generation, writable persistent storage, authorized-key storage, SSH service
+  behavior, live transport, hardware reachability, public ABI/POSIX/Linux
+  compatibility, stale link-ready discriminator work, broad expansion, and
+  phase transition.
+- not-an-issue: no Rust source behavior, JSON evidence, Pi 5 hardware run,
+  boot archive publication, hardware lock, or external action is required for
+  this policy-only task.
+
+## Evidence Reviewed
+
+- tasks/2026-06-21-phase12-ssh-key-management-readiness-contract.md
+- tasks/2026-06-21-phase12-sshkeydiag-core.md
+- tasks/2026-06-21-phase12-shell-sshkeydiag-smoke.md
+- tasks/2026-06-21-phase12-ssh-key-management-readiness-closeout.md
+- tasks/2026-06-21-phase12-operator-seed-vfs-contract.md
+- tasks/2026-06-21-phase12-operator-seed-secret-material-contract.md
+- tasks/2026-06-21-phase12-csprng-dependency-selection-contract.md
+- tasks/2026-06-21-phase12-operator-seeded-csprng-core.md
+- tasks/2026-06-21-phase12-shell-csprng-readiness-smoke.md
+- tasks/2026-06-21-phase12-operator-seeded-csprng-closeout.md
+- tasks/evidence/2026-06-21-shell-csprng-readiness-smoke/qemu-shell-csprng-readiness-smoke.log
+- docs/src/project/phase12-networking-ssh.md
+- docs/src/roadmap.md
+- docs/src/decisions/README.md
+
+The retained CSPRNG smoke transcript records missing, insufficient, and
+sufficient public fixture seed cases only by labels and readiness metadata. It
+does not contain seed bytes, generated bytes, digests, fingerprints, stream
+identifiers, RNG state, serialized state, real operator secret, or comparable
+secret identifier. This task creates no host-key byte evidence.
+
+## Validation
+
+- static source/task/docs/evidence review: pass.
+- git diff --check: pass.
+- /home/node/.cargo/bin/mdbook build: pass; existing large-search-index
+  warning.
+- git diff --cached --check: pass.
+
+## Acceptance
+
+- accepted: operator-provisioned read-only VFS material is the selected first
+  host-key provisioning policy.
+- accepted: the first reserved host-key path is
+  /etc/talos/ssh/ssh_host_ed25519_key.
+- accepted: the next bounded implementation may classify only regular-file
+  presence and byte length metadata with missing, invalid, insufficient, and
+  metadata-present states.
+- accepted: host-key metadata may clear only the host-key prerequisite; ssh-ready
+  remains false until authorized-key, persistence/exposure, SSH service,
+  transport, and reachability prerequisites are separately accepted.
+- accepted: no host-key generation, key parsing, key fingerprinting,
+  authorized-key storage, writable persistence, SSH service behavior, live
+  transport, hardware reachability, public ABI/POSIX/Linux compatibility,
+  broad expansion, stale link-ready discriminator promotion, or phase-transition
+  claim is accepted.
+- accepted: no real private key, generated key, derived public key, digest,
+  fingerprint, stable key identifier, or comparable secret identifier is
+  retained in evidence.
+
+selected_next_task=phase12-ssh-host-key-vfs-metadata-core-20260621.

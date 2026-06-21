@@ -12,6 +12,46 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-21 - Phase 12 Host Keys Are Operator-Provisioned Read-Only VFS Material First
+
+- Status: accepted as the bounded host-key provisioning policy contract in
+  phase12-ssh-host-key-provisioning-policy-contract-20260621. No runtime
+  implementation, host-key generation, key parsing, public-key derivation,
+  fingerprinting, authorized-key storage, writable persistence, SSH service,
+  live transport, hardware reachability, public ABI/POSIX/Linux compatibility,
+  broad expansion, stale link-ready discriminator promotion, or phase
+  transition is accepted here.
+- Context: Talos now has accepted operator-seeded CSPRNG readiness and
+  metadata-only cryptographic-strength reporting, but ssh-ready remains false
+  because host-key, authorized-key, persistence/exposure, service, transport,
+  and reachability prerequisites are still unaccepted. Choosing host-key source
+  policy is expensive to reverse once clients trust a server identity.
+- Decision: Use operator-provisioned read-only VFS material as the first
+  host-key source policy. Reserve /etc/talos/ssh/ssh_host_ed25519_key as the
+  first host-key path. The next implementation may classify only regular-file
+  presence and byte length: missing, invalid, insufficient, or
+  metadata-present. Metadata-present clears only the host-key prerequisite;
+  ssh-ready remains false until authorized-key, persistence/exposure, service,
+  transport, and reachability work is separately accepted.
+- Evidence level: static source/task/docs/evidence review of accepted
+  sshkeydiag readiness records, operator seed secret-material records,
+  CSPRNG dependency/core/smoke records, Phase 12 architecture notes, roadmap,
+  and this ADR index. The task record is
+  tasks/2026-06-21-phase12-ssh-host-key-provisioning-policy-contract.md.
+- Consequences: The follow-up core task can add only VFS metadata ingestion,
+  labels for invalid/insufficient host-key metadata, focused source/unit tests,
+  and retained metadata-only evidence. A future parser/service may later read
+  private-key bytes for cryptographic use, but diagnostics and task evidence
+  must not retain, print, digest, fingerprint, derive from, compare, or expose
+  private-key bytes or stable secret identifiers.
+- Alternatives considered: generate an ephemeral host key from the accepted
+  CSPRNG, generate and persist a key to writable storage, hardcode a test key
+  in source, or skip host-key policy until SSH service work. Ephemeral keys
+  break stable SSH server identity across boots; writable persistence is not
+  accepted; hardcoded source keys are not operator-provisioned secrets; and
+  skipping the policy would leave the next host-key metadata task without a
+  defensible source boundary.
+
 ## 2026-06-21 - Phase 12 Operator Seed Material Enters Through Read-Only VFS
 
 - Status: accepted as the bounded operator seed VFS contract in
