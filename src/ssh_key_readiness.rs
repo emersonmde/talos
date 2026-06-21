@@ -17,6 +17,9 @@ use crate::{
 pub(crate) const HOST_KEY_PATH: &[u8] = b"/etc/talos/ssh/ssh_host_ed25519_key";
 pub(crate) const HOST_KEY_MIN_METADATA_BYTES: usize = 64;
 pub(crate) const HOST_KEY_MAX_METADATA_BYTES: usize = 4096;
+pub(crate) const AUTHORIZED_KEY_PATH: &[u8] = b"/etc/talos/ssh/authorized_keys";
+pub(crate) const AUTHORIZED_KEY_MIN_METADATA_BYTES: usize = 64;
+pub(crate) const AUTHORIZED_KEY_MAX_METADATA_BYTES: usize = 4096;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum HostKeyState {
@@ -29,6 +32,8 @@ pub(crate) enum HostKeyState {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum AuthorizedKeyState {
     Missing,
+    Invalid,
+    Insufficient,
     MetadataPresent,
 }
 
@@ -83,6 +88,58 @@ impl HostKeyMaterialMetadata {
     }
 
     pub(crate) const fn state(self) -> HostKeyMaterialState {
+        self.state
+    }
+
+    pub(crate) const fn byte_len(self) -> Option<usize> {
+        self.byte_len
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum AuthorizedKeyMaterialState {
+    Missing,
+    Invalid,
+    Insufficient,
+    Sufficient,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct AuthorizedKeyMaterialMetadata {
+    state: AuthorizedKeyMaterialState,
+    byte_len: Option<usize>,
+}
+
+impl AuthorizedKeyMaterialMetadata {
+    pub(crate) const fn missing() -> Self {
+        Self {
+            state: AuthorizedKeyMaterialState::Missing,
+            byte_len: None,
+        }
+    }
+
+    pub(crate) const fn invalid(byte_len: Option<usize>) -> Self {
+        Self {
+            state: AuthorizedKeyMaterialState::Invalid,
+            byte_len,
+        }
+    }
+
+    pub(crate) const fn insufficient(byte_len: usize) -> Self {
+        Self {
+            state: AuthorizedKeyMaterialState::Insufficient,
+            byte_len: Some(byte_len),
+        }
+    }
+
+    pub(crate) const fn sufficient(byte_len: usize) -> Self {
+        Self {
+            state: AuthorizedKeyMaterialState::Sufficient,
+            byte_len: Some(byte_len),
+        }
+    }
+
+    pub(crate) const fn state(self) -> AuthorizedKeyMaterialState {
         self.state
     }
 
@@ -148,6 +205,19 @@ impl SshKeyReadinessSnapshot {
         self
     }
 
+    pub(crate) const fn with_authorized_key_material(
+        mut self,
+        metadata: AuthorizedKeyMaterialMetadata,
+    ) -> Self {
+        self.authorized_key = match metadata.state() {
+            AuthorizedKeyMaterialState::Missing => AuthorizedKeyState::Missing,
+            AuthorizedKeyMaterialState::Invalid => AuthorizedKeyState::Invalid,
+            AuthorizedKeyMaterialState::Insufficient => AuthorizedKeyState::Insufficient,
+            AuthorizedKeyMaterialState::Sufficient => AuthorizedKeyState::MetadataPresent,
+        };
+        self
+    }
+
     pub(crate) const fn with_entropy_report(mut self, entropy: EntropyDiagnosticReport) -> Self {
         self.entropy = entropy;
         self
@@ -194,6 +264,8 @@ pub(crate) enum SshKeyReadinessLabel {
     InvalidHostKey,
     InsufficientHostKey,
     MissingAuthorizedKey,
+    InvalidAuthorizedKey,
+    InsufficientAuthorizedKey,
     EntropyUnready,
     SeedMaterialMissing,
     SeedMaterialInsufficient,
@@ -209,6 +281,8 @@ impl SshKeyReadinessLabel {
             Self::InvalidHostKey => "sshkeydiag-host-key-invalid",
             Self::InsufficientHostKey => "sshkeydiag-host-key-insufficient",
             Self::MissingAuthorizedKey => "sshkeydiag-missing-authorized-key",
+            Self::InvalidAuthorizedKey => "sshkeydiag-authorized-key-invalid",
+            Self::InsufficientAuthorizedKey => "sshkeydiag-authorized-key-insufficient",
             Self::EntropyUnready => "sshkeydiag-entropy-unready",
             Self::SeedMaterialMissing => "sshkeydiag-seed-material-missing",
             Self::SeedMaterialInsufficient => "sshkeydiag-seed-material-insufficient",
@@ -268,6 +342,12 @@ pub(crate) fn classify_ssh_key_readiness(
     if snapshot.authorized_key == AuthorizedKeyState::Missing {
         report.push(SshKeyReadinessLabel::MissingAuthorizedKey);
     }
+    if snapshot.authorized_key == AuthorizedKeyState::Invalid {
+        report.push(SshKeyReadinessLabel::InvalidAuthorizedKey);
+    }
+    if snapshot.authorized_key == AuthorizedKeyState::Insufficient {
+        report.push(SshKeyReadinessLabel::InsufficientAuthorizedKey);
+    }
     if !snapshot.entropy.cryptographic_strength() {
         report.push(SshKeyReadinessLabel::EntropyUnready);
     }
@@ -308,6 +388,30 @@ pub(crate) fn classify_host_key_material(initramfs: ReadOnlyInitramfs) -> HostKe
         HostKeyMaterialMetadata::insufficient(byte_len)
     } else {
         HostKeyMaterialMetadata::sufficient(byte_len)
+    }
+}
+
+pub(crate) fn classify_authorized_key_material(
+    initramfs: ReadOnlyInitramfs,
+) -> AuthorizedKeyMaterialMetadata {
+    let handle = match initramfs.lookup_default(AUTHORIZED_KEY_PATH) {
+        Ok(handle) => handle,
+        Err(PosixError::NoEntry) => return AuthorizedKeyMaterialMetadata::missing(),
+        Err(_) => return AuthorizedKeyMaterialMetadata::invalid(None),
+    };
+
+    let metadata = handle.metadata();
+    if metadata.kind() != VfsNodeKind::RegularFile {
+        return AuthorizedKeyMaterialMetadata::invalid(Some(metadata.len()));
+    }
+
+    let byte_len = metadata.len();
+    if byte_len == 0 || byte_len > AUTHORIZED_KEY_MAX_METADATA_BYTES {
+        AuthorizedKeyMaterialMetadata::invalid(Some(byte_len))
+    } else if byte_len < AUTHORIZED_KEY_MIN_METADATA_BYTES {
+        AuthorizedKeyMaterialMetadata::insufficient(byte_len)
+    } else {
+        AuthorizedKeyMaterialMetadata::sufficient(byte_len)
     }
 }
 
@@ -609,6 +713,90 @@ mod tests {
     }
 
     #[test_case]
+    fn authorized_key_vfs_metadata_maps_to_fail_closed_states_without_reading_key_bytes() {
+        let missing = classify_authorized_key_material(phase8_readonly_initramfs_fixture());
+        let directory = classify_authorized_key_material(directory_authorized_key_initramfs());
+        let empty = classify_authorized_key_material(empty_authorized_key_initramfs());
+        let oversized = classify_authorized_key_material(oversized_authorized_key_initramfs());
+        let insufficient =
+            classify_authorized_key_material(insufficient_authorized_key_initramfs());
+        let sufficient = classify_authorized_key_material(sufficient_authorized_key_initramfs());
+
+        assert_eq!(missing, AuthorizedKeyMaterialMetadata::missing());
+        assert_eq!(missing.byte_len(), None);
+        assert_eq!(directory, AuthorizedKeyMaterialMetadata::invalid(Some(0)));
+        assert_eq!(empty, AuthorizedKeyMaterialMetadata::invalid(Some(0)));
+        assert_eq!(
+            oversized,
+            AuthorizedKeyMaterialMetadata::invalid(Some(AUTHORIZED_KEY_MAX_METADATA_BYTES + 1))
+        );
+        assert_eq!(
+            insufficient,
+            AuthorizedKeyMaterialMetadata::insufficient(AUTHORIZED_KEY_MIN_METADATA_BYTES - 1)
+        );
+        assert_eq!(
+            sufficient,
+            AuthorizedKeyMaterialMetadata::sufficient(AUTHORIZED_KEY_MIN_METADATA_BYTES)
+        );
+    }
+
+    #[test_case]
+    fn authorized_key_vfs_metadata_clears_only_authorized_key_prerequisite() {
+        let invalid = classify_ssh_key_readiness(
+            SshKeyReadinessSnapshot::fail_closed_default().with_authorized_key_material(
+                classify_authorized_key_material(empty_authorized_key_initramfs()),
+            ),
+        );
+        let insufficient = classify_ssh_key_readiness(
+            SshKeyReadinessSnapshot::fail_closed_default().with_authorized_key_material(
+                classify_authorized_key_material(insufficient_authorized_key_initramfs()),
+            ),
+        );
+        let sufficient = classify_ssh_key_readiness(
+            SshKeyReadinessSnapshot::fail_closed_default().with_authorized_key_material(
+                classify_authorized_key_material(sufficient_authorized_key_initramfs()),
+            ),
+        );
+
+        assert!(
+            invalid
+                .labels()
+                .contains(&SshKeyReadinessLabel::InvalidAuthorizedKey)
+        );
+        assert!(
+            insufficient
+                .labels()
+                .contains(&SshKeyReadinessLabel::InsufficientAuthorizedKey)
+        );
+        assert!(
+            !sufficient
+                .labels()
+                .contains(&SshKeyReadinessLabel::MissingAuthorizedKey)
+        );
+        assert!(
+            !sufficient
+                .labels()
+                .contains(&SshKeyReadinessLabel::InvalidAuthorizedKey)
+        );
+        assert!(
+            !sufficient
+                .labels()
+                .contains(&SshKeyReadinessLabel::InsufficientAuthorizedKey)
+        );
+        assert!(
+            sufficient
+                .labels()
+                .contains(&SshKeyReadinessLabel::MissingHostKey)
+        );
+        assert!(
+            sufficient
+                .labels()
+                .contains(&SshKeyReadinessLabel::EntropyUnready)
+        );
+        assert!(!sufficient.ssh_ready());
+    }
+
+    #[test_case]
     fn operator_seed_vfs_metadata_maps_to_missing_insufficient_and_present_states() {
         let missing = classify_ssh_key_readiness(
             SshKeyReadinessSnapshot::fail_closed_default()
@@ -694,12 +882,17 @@ mod tests {
     const TALOS_INDEX: usize = 2;
     const SSH_INDEX: usize = 3;
     const HOST_KEY_INDEX: usize = 4;
+    const AUTHORIZED_KEY_INDEX: usize = 5;
 
     static ROOT_ENTRIES: [DirectoryEntry; 1] = [DirectoryEntry::new(b"etc", ETC_INDEX)];
     static ETC_ENTRIES: [DirectoryEntry; 1] = [DirectoryEntry::new(b"talos", TALOS_INDEX)];
     static TALOS_ENTRIES: [DirectoryEntry; 1] = [DirectoryEntry::new(b"ssh", SSH_INDEX)];
     static SSH_ENTRIES: [DirectoryEntry; 1] =
         [DirectoryEntry::new(b"ssh_host_ed25519_key", HOST_KEY_INDEX)];
+    static SSH_AUTHORIZED_KEY_ENTRIES: [DirectoryEntry; 1] = [DirectoryEntry::new(
+        b"authorized_keys",
+        AUTHORIZED_KEY_INDEX,
+    )];
     static EMPTY_ENTRIES: [DirectoryEntry; 0] = [];
     static INSUFFICIENT_HOST_KEY_BYTES: [u8; HOST_KEY_MIN_METADATA_BYTES - 1] =
         [0; HOST_KEY_MIN_METADATA_BYTES - 1];
@@ -707,6 +900,12 @@ mod tests {
         [0; HOST_KEY_MIN_METADATA_BYTES];
     static OVERSIZED_HOST_KEY_BYTES: [u8; HOST_KEY_MAX_METADATA_BYTES + 1] =
         [0; HOST_KEY_MAX_METADATA_BYTES + 1];
+    static INSUFFICIENT_AUTHORIZED_KEY_BYTES: [u8; AUTHORIZED_KEY_MIN_METADATA_BYTES - 1] =
+        [0; AUTHORIZED_KEY_MIN_METADATA_BYTES - 1];
+    static SUFFICIENT_AUTHORIZED_KEY_BYTES: [u8; AUTHORIZED_KEY_MIN_METADATA_BYTES] =
+        [0; AUTHORIZED_KEY_MIN_METADATA_BYTES];
+    static OVERSIZED_AUTHORIZED_KEY_BYTES: [u8; AUTHORIZED_KEY_MAX_METADATA_BYTES + 1] =
+        [0; AUTHORIZED_KEY_MAX_METADATA_BYTES + 1];
 
     static DIRECTORY_HOST_KEY_NODES: [InitramfsNode; 5] = [
         InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
@@ -743,6 +942,46 @@ mod tests {
         InitramfsNode::directory(SSH_INDEX, &SSH_ENTRIES),
         InitramfsNode::regular_file(HOST_KEY_INDEX, &OVERSIZED_HOST_KEY_BYTES),
     ];
+    static DIRECTORY_AUTHORIZED_KEY_NODES: [InitramfsNode; 6] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
+        InitramfsNode::directory(SSH_INDEX, &SSH_AUTHORIZED_KEY_ENTRIES),
+        InitramfsNode::regular_file(HOST_KEY_INDEX, b"unused"),
+        InitramfsNode::directory(AUTHORIZED_KEY_INDEX, &EMPTY_ENTRIES),
+    ];
+    static EMPTY_AUTHORIZED_KEY_NODES: [InitramfsNode; 6] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
+        InitramfsNode::directory(SSH_INDEX, &SSH_AUTHORIZED_KEY_ENTRIES),
+        InitramfsNode::regular_file(HOST_KEY_INDEX, b"unused"),
+        InitramfsNode::regular_file(AUTHORIZED_KEY_INDEX, b""),
+    ];
+    static INSUFFICIENT_AUTHORIZED_KEY_NODES: [InitramfsNode; 6] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
+        InitramfsNode::directory(SSH_INDEX, &SSH_AUTHORIZED_KEY_ENTRIES),
+        InitramfsNode::regular_file(HOST_KEY_INDEX, b"unused"),
+        InitramfsNode::regular_file(AUTHORIZED_KEY_INDEX, &INSUFFICIENT_AUTHORIZED_KEY_BYTES),
+    ];
+    static SUFFICIENT_AUTHORIZED_KEY_NODES: [InitramfsNode; 6] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
+        InitramfsNode::directory(SSH_INDEX, &SSH_AUTHORIZED_KEY_ENTRIES),
+        InitramfsNode::regular_file(HOST_KEY_INDEX, b"unused"),
+        InitramfsNode::regular_file(AUTHORIZED_KEY_INDEX, &SUFFICIENT_AUTHORIZED_KEY_BYTES),
+    ];
+    static OVERSIZED_AUTHORIZED_KEY_NODES: [InitramfsNode; 6] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
+        InitramfsNode::directory(SSH_INDEX, &SSH_AUTHORIZED_KEY_ENTRIES),
+        InitramfsNode::regular_file(HOST_KEY_INDEX, b"unused"),
+        InitramfsNode::regular_file(AUTHORIZED_KEY_INDEX, &OVERSIZED_AUTHORIZED_KEY_BYTES),
+    ];
 
     const fn directory_host_key_initramfs() -> ReadOnlyInitramfs {
         ReadOnlyInitramfs::new(&DIRECTORY_HOST_KEY_NODES, ROOT_INDEX)
@@ -762,5 +1001,25 @@ mod tests {
 
     const fn oversized_host_key_initramfs() -> ReadOnlyInitramfs {
         ReadOnlyInitramfs::new(&OVERSIZED_HOST_KEY_NODES, ROOT_INDEX)
+    }
+
+    const fn directory_authorized_key_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&DIRECTORY_AUTHORIZED_KEY_NODES, ROOT_INDEX)
+    }
+
+    const fn empty_authorized_key_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&EMPTY_AUTHORIZED_KEY_NODES, ROOT_INDEX)
+    }
+
+    const fn insufficient_authorized_key_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&INSUFFICIENT_AUTHORIZED_KEY_NODES, ROOT_INDEX)
+    }
+
+    const fn sufficient_authorized_key_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&SUFFICIENT_AUTHORIZED_KEY_NODES, ROOT_INDEX)
+    }
+
+    const fn oversized_authorized_key_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&OVERSIZED_AUTHORIZED_KEY_NODES, ROOT_INDEX)
     }
 }

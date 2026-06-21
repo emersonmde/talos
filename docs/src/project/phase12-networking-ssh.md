@@ -6626,3 +6626,21 @@ identity, key-derived identifiers, or comparable stable identifiers. ssh-ready
 remains false until persistence/exposure, SSH service behavior, live transport,
 and reachability prerequisites are separately accepted. The selected next
 bounded task is phase12-ssh-authorized-key-vfs-metadata-core-20260621.
+
+phase12-ssh-authorized-key-vfs-metadata-core-20260621 accepts the
+metadata-only read-only VFS implementation for /etc/talos/ssh/authorized_keys.
+Talos now classifies missing authorized-key material as
+sshkeydiag-missing-authorized-key; non-regular, unreadable, zero-length, or
+greater-than-4096-byte material reports sshkeydiag-authorized-key-invalid;
+regular readable length 1 through 63 reports
+sshkeydiag-authorized-key-insufficient; and regular readable length 64 through
+4096 clears only the authorized-key metadata prerequisite. sshkeydiag combines
+that authorized-key metadata with accepted host-key, operator seed, and entropy
+metadata, but ssh-ready remains false until persistence/exposure, SSH service
+behavior, live transport, and reachability prerequisites are separately
+accepted. This implementation does not accept authorized-key parsing, key
+validation, fingerprinting, user/account modeling, authentication, writable
+persistence, SSH service behavior, live transport, hardware reachability,
+public ABI/POSIX/Linux compatibility, broad expansion, stale link-ready
+discriminator promotion, or phase transition. The selected next bounded task is
+phase12-shell-ssh-authorized-keydiag-smoke-20260621.
