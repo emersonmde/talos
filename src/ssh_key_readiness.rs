@@ -183,7 +183,7 @@ pub(crate) fn classify_ssh_key_readiness(
     if snapshot.authorized_key == AuthorizedKeyState::Missing {
         report.push(SshKeyReadinessLabel::MissingAuthorizedKey);
     }
-    if !snapshot.entropy.cryptographic_strength() || !snapshot.entropy.ssh_ready() {
+    if !snapshot.entropy.cryptographic_strength() {
         report.push(SshKeyReadinessLabel::EntropyUnready);
     }
     match snapshot.seed_material {
@@ -465,5 +465,31 @@ mod tests {
                 .contains(&SshKeyReadinessLabel::SeedMaterialInsufficient)
         );
         assert!(!sufficient.ssh_ready());
+    }
+
+    #[test_case]
+    fn csprng_ready_entropy_clears_only_entropy_prerequisite() {
+        let entropy = entropy::classify_entropy_snapshot(
+            EntropyDiagnosticSnapshot::empty()
+                .with_operator_seed(OperatorSeedObservation::new(32))
+                .with_csprng_ready(),
+        );
+        let report = classify_ssh_key_readiness(
+            SshKeyReadinessSnapshot::fail_closed_default()
+                .with_host_key_metadata()
+                .with_authorized_key_metadata()
+                .with_seed_material_metadata()
+                .with_persistence_metadata()
+                .with_exposure_enabled()
+                .with_entropy_report(entropy),
+        );
+
+        assert!(
+            !report
+                .labels()
+                .contains(&SshKeyReadinessLabel::EntropyUnready)
+        );
+        assert_eq!(report.labels(), &[SshKeyReadinessLabel::NotReady]);
+        assert!(!report.ssh_ready());
     }
 }

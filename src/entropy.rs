@@ -110,6 +110,7 @@ pub(crate) struct EntropyDiagnosticSnapshot {
     operator_seed: Option<OperatorSeedObservation>,
     deterministic_control: bool,
     hardware_rng_observed: bool,
+    csprng_ready: bool,
 }
 
 impl EntropyDiagnosticSnapshot {
@@ -121,6 +122,7 @@ impl EntropyDiagnosticSnapshot {
             operator_seed: None,
             deterministic_control: false,
             hardware_rng_observed: false,
+            csprng_ready: false,
         }
     }
 
@@ -151,6 +153,11 @@ impl EntropyDiagnosticSnapshot {
 
     pub(crate) const fn with_hardware_rng_observed(mut self) -> Self {
         self.hardware_rng_observed = true;
+        self
+    }
+
+    pub(crate) const fn with_csprng_ready(mut self) -> Self {
+        self.csprng_ready = true;
         self
     }
 
@@ -303,7 +310,7 @@ pub(crate) const fn classify_entropy_snapshot(
         input_label,
         hardware_rng_label: EntropyDiagnosticLabel::HardwareRngUnaccepted,
         operator_seed_required: !snapshot.has_operator_seed(),
-        cryptographic_strength: false,
+        cryptographic_strength: snapshot.has_operator_seed() && snapshot.csprng_ready,
         ssh_ready: false,
     }
 }
@@ -390,6 +397,19 @@ mod tests {
         );
         assert_eq!(report.operator_seed_label(), None);
         assert!(!report.cryptographic_strength());
+        assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn ready_csprng_metadata_sets_crypto_strength_without_ssh_readiness() {
+        let snapshot = EntropyDiagnosticSnapshot::empty()
+            .with_operator_seed(OperatorSeedObservation::new(32))
+            .with_csprng_ready();
+
+        let report = classify_entropy_snapshot(snapshot);
+
+        assert_eq!(report.operator_seed_label(), None);
+        assert!(report.cryptographic_strength());
         assert!(!report.ssh_ready());
     }
 

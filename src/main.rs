@@ -199,6 +199,8 @@ extern crate alloc;
 mod allocator;
 mod arch;
 mod boot;
+#[cfg_attr(not(test), allow(dead_code))]
+mod csprng;
 mod device_tree;
 #[cfg_attr(
     all(
