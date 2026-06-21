@@ -15332,6 +15332,18 @@ Milestone 12.3: IP Stack
   reachability, SSH, public stable socket ABI acceptance, broad socket
   expansion, and phase transition remain rejected. The selected next bounded
   task is phase12-network-smoltcp-tcp-frontier-closeout-20260621.
+- phase12-network-smoltcp-tcp-frontier-closeout-20260621 accepts the initial
+  smoltcp/TCP host-only frontier only as source/unit plus host/QEMU-substitute
+  evidence. The accepted boundary includes smoltcp 0.13.1 with no default
+  features, Talos-owned fixed packet queues, SmoltcpPacketDeviceAdapter,
+  explicit MAC/IP/time/socket storage ownership, deterministic TCP Established
+  handshake evidence, and a deterministic transmit-backpressure control.
+  Talos socket syscall bridging, /bin/sockdiag TCP diagnostics, retained smoke
+  evidence, live driver adapters, live packet I/O, hardware reachability, SSH,
+  public stable socket ABI acceptance, broad socket expansion, and phase
+  transition remain rejected. selected_next_task is null and
+  planningNeeded=true pending supervisor planning for any next bounded bridge,
+  socket, or network task.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

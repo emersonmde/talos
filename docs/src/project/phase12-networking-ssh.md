@@ -5668,3 +5668,18 @@ packet I/O, Pi 5 hardware behavior, lab mutation, boot publication, hardware
 reachability, SSH, public stable socket ABI acceptance, broad socket expansion,
 or phase transition. The selected next bounded task is
 phase12-network-smoltcp-tcp-frontier-closeout-20260621.
+
+phase12-network-smoltcp-tcp-frontier-closeout-20260621 accepts
+phase12-network-smoltcp-tcp-frontier-closeout-accepted. The initial smoltcp/TCP
+host-only frontier is now closed at source/unit plus host/QEMU-substitute
+evidence only. The accepted boundary includes smoltcp 0.13.1 with no default
+features, Talos-owned fixed packet queues, SmoltcpPacketDeviceAdapter, explicit
+MAC/IP/time/socket storage ownership, deterministic TCP Established handshake
+evidence, and a deterministic transmit-backpressure control.
+
+This closeout rejects Talos socket syscall bridging, /bin/sockdiag TCP
+diagnostics, retained smoke evidence, live driver adapters, live packet I/O,
+Pi 5 hardware behavior, lab mutation, boot publication, hardware reachability,
+SSH, public stable socket ABI acceptance, broad socket expansion, and phase
+transition. planningNeeded=true; no later bounded bridge, socket, or network
+task is mechanically unblocked without supervisor planning.
