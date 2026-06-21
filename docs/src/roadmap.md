@@ -15229,6 +15229,21 @@ Milestone 12.3: IP Stack
   socket expansion, and phase transition remain rejected. The selected next
   bounded task is
   phase12-network-cross-process-local-socket-rendezvous-core-20260621.
+- phase12-network-cross-process-local-socket-rendezvous-core-20260621 accepts
+  private source/unit runtime evidence for cross-process local socket
+  rendezvous across distinct process descriptor stores. The socket backing
+  table now records pending client owner/backing descriptors and private
+  connection ids, lets connect target a listener owned by another process,
+  creates only server-owned descriptors on accept, preserves per-process fd
+  ownership, and supports bidirectional payload transfer, readiness,
+  scheduler-owned bounded poll-wait wakeups, stale pending cleanup, owner-wide
+  process-exit style cleanup, peer hangup, queued-byte drain, and deterministic
+  capacity/error behavior. Shell /bin/sockdiag cross-process output, retained
+  smoke, UDP/TCP payload transport, smoltcp integration, live packet I/O,
+  hardware reachability, SSH, public stable socket ABI acceptance, broad
+  socket expansion, and phase transition remain rejected. The selected next
+  bounded task is
+  phase12-network-shell-sockdiag-cross-process-local-socket-core-20260621.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not

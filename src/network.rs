@@ -1772,6 +1772,7 @@ pub(crate) const SOCKET_LISTEN_BACKLOG_CAPACITY: usize = 4;
 pub(crate) const SOCKET_SYNTHETIC_LOCAL_IPV4_BE: u32 = 0x7f00_0001;
 pub(crate) const SOCKET_SYNTHETIC_CLIENT_PORT_BASE: u16 = 49152;
 pub(crate) const SOCKET_PAYLOAD_QUEUE_CAPACITY: usize = 64;
+pub(crate) const SOCKET_CONNECTION_ID_START: u64 = 1;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct NetworkSocketDescriptor {
@@ -1810,19 +1811,29 @@ impl Ipv4Endpoint {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct NetworkSocketPendingLocalPeer {
+    client_owner: crate::scheduler::ProcessOwnerId,
     client_descriptor: NetworkSocketDescriptor,
     client_endpoint: Ipv4Endpoint,
+    connection_id: u64,
 }
 
 impl NetworkSocketPendingLocalPeer {
     pub(crate) const fn new(
+        client_owner: crate::scheduler::ProcessOwnerId,
         client_descriptor: NetworkSocketDescriptor,
         client_endpoint: Ipv4Endpoint,
+        connection_id: u64,
     ) -> Self {
         Self {
+            client_owner,
             client_descriptor,
             client_endpoint,
+            connection_id,
         }
+    }
+
+    pub(crate) const fn client_owner(self) -> crate::scheduler::ProcessOwnerId {
+        self.client_owner
     }
 
     pub(crate) const fn client_descriptor(self) -> NetworkSocketDescriptor {
@@ -1831,6 +1842,10 @@ impl NetworkSocketPendingLocalPeer {
 
     pub(crate) const fn client_endpoint(self) -> Ipv4Endpoint {
         self.client_endpoint
+    }
+
+    pub(crate) const fn connection_id(self) -> u64 {
+        self.connection_id
     }
 }
 
@@ -1951,11 +1966,13 @@ pub(crate) enum NetworkSocketState {
     Connected {
         local_endpoint: Ipv4Endpoint,
         remote_endpoint: Ipv4Endpoint,
+        connection_id: u64,
         recv_queue: NetworkSocketPayloadQueue,
     },
     Accepted {
         local_endpoint: Ipv4Endpoint,
         remote_endpoint: Ipv4Endpoint,
+        connection_id: u64,
         recv_queue: NetworkSocketPayloadQueue,
     },
 }
@@ -2038,12 +2055,14 @@ impl NetworkSocket {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct NetworkSocketDescriptorTable<const CAPACITY: usize> {
     entries: [Option<NetworkSocket>; CAPACITY],
+    next_connection_id: u64,
 }
 
 impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
     pub(crate) const fn new() -> Self {
         Self {
             entries: [None; CAPACITY],
+            next_connection_id: SOCKET_CONNECTION_ID_START,
         }
     }
 
@@ -2081,6 +2100,21 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
         self.require_owner(owner, descriptor)?;
         self.entries[descriptor.raw()] = None;
         Ok(())
+    }
+
+    pub(crate) fn close_owner(&mut self, owner: crate::scheduler::ProcessOwnerId) -> usize {
+        let mut closed = 0usize;
+        let mut raw = 0usize;
+        while raw < CAPACITY {
+            if let Some(socket) = self.entries[raw] {
+                if socket.owner == owner {
+                    self.entries[raw] = None;
+                    closed += 1;
+                }
+            }
+            raw += 1;
+        }
+        closed
     }
 
     pub(crate) fn bind(
@@ -2121,6 +2155,9 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
             .ok_or(crate::posix::PosixError::BadDescriptor)?;
         match socket.state {
             NetworkSocketState::Bound { local_endpoint } => {
+                if self.active_listener_endpoint_in_use(descriptor, local_endpoint) {
+                    return Err(crate::posix::PosixError::Exists);
+                }
                 socket.state = NetworkSocketState::Listening {
                     local_endpoint,
                     backlog,
@@ -2135,6 +2172,9 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
             } => {
                 if pending.len() > backlog {
                     return Err(crate::posix::PosixError::InvalidArgument);
+                }
+                if self.active_listener_endpoint_in_use(descriptor, local_endpoint) {
+                    return Err(crate::posix::PosixError::Exists);
                 }
                 socket.state = NetworkSocketState::Listening {
                     local_endpoint,
@@ -2169,12 +2209,10 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
         let mut raw = 0;
         while raw < CAPACITY {
             if let Some(socket) = self.entries[raw] {
-                if socket.owner == owner {
-                    if let NetworkSocketState::Listening { local_endpoint, .. } = socket.state {
-                        if local_endpoint == remote_endpoint {
-                            listener_descriptor = Some(NetworkSocketDescriptor::from_raw(raw));
-                            match_count += 1;
-                        }
+                if let NetworkSocketState::Listening { local_endpoint, .. } = socket.state {
+                    if local_endpoint == remote_endpoint {
+                        listener_descriptor = Some(NetworkSocketDescriptor::from_raw(raw));
+                        match_count += 1;
                     }
                 }
             }
@@ -2195,9 +2233,15 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
         else {
             return Err(crate::posix::PosixError::InvalidArgument);
         };
+        let connection_id = self.allocate_connection_id()?;
         pending.push(
             backlog,
-            NetworkSocketPendingLocalPeer::new(client_descriptor, client_endpoint),
+            NetworkSocketPendingLocalPeer::new(
+                owner,
+                client_descriptor,
+                client_endpoint,
+                connection_id,
+            ),
         )?;
 
         listener.state = NetworkSocketState::Listening {
@@ -2211,6 +2255,7 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
         connected_client.state = NetworkSocketState::Connected {
             local_endpoint: client_endpoint,
             remote_endpoint,
+            connection_id,
             recv_queue: NetworkSocketPayloadQueue::new(),
         };
         self.entries[client_descriptor.raw()] = Some(connected_client);
@@ -2235,7 +2280,6 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
         if pending.len() == 0 {
             return Err(crate::posix::PosixError::Again);
         }
-
         let mut accepted_raw = None;
         let mut raw = 0;
         while raw < CAPACITY {
@@ -2246,8 +2290,14 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
             raw += 1;
         }
         let accepted_raw = accepted_raw.ok_or(crate::posix::PosixError::NoSpace)?;
-        let peer = pending.pop()?;
-        let _client_descriptor = peer.client_descriptor();
+        let mut selected_peer = None;
+        while pending.len() != 0 {
+            let peer = pending.pop()?;
+            if self.pending_peer_is_connected(peer) {
+                selected_peer = Some(peer);
+                break;
+            }
+        }
 
         listener.state = NetworkSocketState::Listening {
             local_endpoint,
@@ -2255,6 +2305,7 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
             pending,
         };
         self.entries[listener_descriptor.raw()] = Some(listener);
+        let peer = selected_peer.ok_or(crate::posix::PosixError::Again)?;
         self.entries[accepted_raw] = Some(NetworkSocket {
             owner,
             domain: SOCKET_DOMAIN_AF_INET,
@@ -2263,6 +2314,7 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
             state: NetworkSocketState::Accepted {
                 local_endpoint,
                 remote_endpoint: peer.client_endpoint(),
+                connection_id: peer.connection_id(),
                 recv_queue: NetworkSocketPayloadQueue::new(),
             },
         });
@@ -2281,9 +2333,9 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
         }
 
         let socket = self.socket(descriptor)?;
-        let (local_endpoint, remote_endpoint) = connected_endpoints(socket.state)?;
+        let (local_endpoint, remote_endpoint, connection_id) = connected_endpoints(socket.state)?;
         let peer_descriptor =
-            self.unique_peer_descriptor(owner, local_endpoint, remote_endpoint)?;
+            self.unique_peer_descriptor(connection_id, local_endpoint, remote_endpoint)?;
         let mut peer = self.socket(peer_descriptor)?;
         connected_recv_queue_mut(&mut peer.state)?.push_all(payload)?;
         self.entries[peer_descriptor.raw()] = Some(peer);
@@ -2298,7 +2350,7 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
     ) -> Result<(), crate::posix::PosixError> {
         self.require_owner(owner, descriptor)?;
         let socket = self.socket(descriptor)?;
-        let (local_endpoint, remote_endpoint) = connected_endpoints(socket.state)?;
+        let (local_endpoint, remote_endpoint, connection_id) = connected_endpoints(socket.state)?;
         if len == 0 {
             return Ok(());
         }
@@ -2307,7 +2359,7 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
         }
 
         let peer_descriptor =
-            self.unique_peer_descriptor(owner, local_endpoint, remote_endpoint)?;
+            self.unique_peer_descriptor(connection_id, local_endpoint, remote_endpoint)?;
         let peer = self.socket(peer_descriptor)?;
         let recv_queue = connected_recv_queue(peer.state)?;
         if len > recv_queue.remaining_capacity() {
@@ -2324,7 +2376,7 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
     ) -> Result<usize, crate::posix::PosixError> {
         self.require_owner(owner, descriptor)?;
         let socket = self.socket(descriptor)?;
-        let (local_endpoint, remote_endpoint) = connected_endpoints(socket.state)?;
+        let (local_endpoint, remote_endpoint, connection_id) = connected_endpoints(socket.state)?;
         if dst.is_empty() {
             return Ok(0);
         }
@@ -2333,7 +2385,7 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
         if recv_queue.len() != 0 {
             return Ok(recv_queue.peek(dst));
         }
-        match self.unique_peer_descriptor(owner, local_endpoint, remote_endpoint) {
+        match self.unique_peer_descriptor(connection_id, local_endpoint, remote_endpoint) {
             Ok(_) => Err(crate::posix::PosixError::Again),
             Err(crate::posix::PosixError::Pipe) => Err(crate::posix::PosixError::Pipe),
             Err(error) => Err(error),
@@ -2366,22 +2418,26 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
         match socket.state {
             NetworkSocketState::OpenUnbound | NetworkSocketState::Bound { .. } => {}
             NetworkSocketState::Listening { pending, .. } => {
-                if pending.len() != 0 && requested.contains(NetworkSocketReadiness::READ) {
+                if self.pending_queue_has_connected_peer(pending)
+                    && requested.contains(NetworkSocketReadiness::READ)
+                {
                     readiness.insert(NetworkSocketReadiness::READ);
                 }
             }
             NetworkSocketState::Connected {
                 local_endpoint,
                 remote_endpoint,
+                connection_id,
                 recv_queue,
             }
             | NetworkSocketState::Accepted {
                 local_endpoint,
                 remote_endpoint,
+                connection_id,
                 recv_queue,
             } => {
                 let peer_descriptor =
-                    self.unique_peer_descriptor(owner, local_endpoint, remote_endpoint);
+                    self.unique_peer_descriptor(connection_id, local_endpoint, remote_endpoint);
                 if recv_queue.len() != 0 || peer_descriptor.is_err() {
                     if requested.contains(NetworkSocketReadiness::READ) {
                         readiness.insert(NetworkSocketReadiness::READ);
@@ -2431,7 +2487,7 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
 
     fn unique_peer_descriptor(
         &self,
-        owner: crate::scheduler::ProcessOwnerId,
+        connection_id: u64,
         local_endpoint: Ipv4Endpoint,
         remote_endpoint: Ipv4Endpoint,
     ) -> Result<NetworkSocketDescriptor, crate::posix::PosixError> {
@@ -2440,12 +2496,15 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
         let mut raw = 0;
         while raw < CAPACITY {
             if let Some(socket) = self.entries[raw] {
-                if socket.owner == owner {
-                    if let Ok((peer_local, peer_remote)) = connected_endpoints(socket.state) {
-                        if peer_local == remote_endpoint && peer_remote == local_endpoint {
-                            peer_descriptor = Some(NetworkSocketDescriptor::from_raw(raw));
-                            match_count += 1;
-                        }
+                if let Ok((peer_local, peer_remote, peer_connection_id)) =
+                    connected_endpoints(socket.state)
+                {
+                    if peer_connection_id == connection_id
+                        && peer_local == remote_endpoint
+                        && peer_remote == local_endpoint
+                    {
+                        peer_descriptor = Some(NetworkSocketDescriptor::from_raw(raw));
+                        match_count += 1;
                     }
                 }
             }
@@ -2458,22 +2517,80 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
             Err(crate::posix::PosixError::Pipe)
         }
     }
+
+    fn allocate_connection_id(&mut self) -> Result<u64, crate::posix::PosixError> {
+        let connection_id = self.next_connection_id;
+        self.next_connection_id = self
+            .next_connection_id
+            .checked_add(1)
+            .ok_or(crate::posix::PosixError::NoSpace)?;
+        Ok(connection_id)
+    }
+
+    fn active_listener_endpoint_in_use(
+        &self,
+        descriptor: NetworkSocketDescriptor,
+        endpoint: Ipv4Endpoint,
+    ) -> bool {
+        let mut raw = 0usize;
+        while raw < CAPACITY {
+            if raw != descriptor.raw() {
+                if let Some(socket) = self.entries[raw] {
+                    if let NetworkSocketState::Listening { local_endpoint, .. } = socket.state {
+                        if local_endpoint == endpoint {
+                            return true;
+                        }
+                    }
+                }
+            }
+            raw += 1;
+        }
+        false
+    }
+
+    fn pending_peer_is_connected(&self, peer: NetworkSocketPendingLocalPeer) -> bool {
+        match self.socket(peer.client_descriptor()) {
+            Ok(socket) if socket.owner() == peer.client_owner() => {
+                matches!(
+                    socket.state(),
+                    NetworkSocketState::Connected { connection_id, .. }
+                        if connection_id == peer.connection_id()
+                )
+            }
+            _ => false,
+        }
+    }
+
+    fn pending_queue_has_connected_peer(&self, pending: NetworkSocketPendingQueue) -> bool {
+        let mut index = 0usize;
+        while index < pending.len() as usize {
+            if let Some(peer) = pending.peers[index] {
+                if self.pending_peer_is_connected(peer) {
+                    return true;
+                }
+            }
+            index += 1;
+        }
+        false
+    }
 }
 
 fn connected_endpoints(
     state: NetworkSocketState,
-) -> Result<(Ipv4Endpoint, Ipv4Endpoint), crate::posix::PosixError> {
+) -> Result<(Ipv4Endpoint, Ipv4Endpoint, u64), crate::posix::PosixError> {
     match state {
         NetworkSocketState::Connected {
             local_endpoint,
             remote_endpoint,
+            connection_id,
             ..
         }
         | NetworkSocketState::Accepted {
             local_endpoint,
             remote_endpoint,
+            connection_id,
             ..
-        } => Ok((local_endpoint, remote_endpoint)),
+        } => Ok((local_endpoint, remote_endpoint, connection_id)),
         NetworkSocketState::OpenUnbound
         | NetworkSocketState::Bound { .. }
         | NetworkSocketState::Listening { .. } => Err(crate::posix::PosixError::InvalidArgument),

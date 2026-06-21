@@ -5495,3 +5495,28 @@ adapters, live packet I/O, hardware reachability, SSH, public stable socket
 ABI acceptance, broad socket expansion, and phase transition remain rejected.
 The selected next bounded task is
 phase12-network-cross-process-local-socket-rendezvous-core-20260621.
+
+phase12-network-cross-process-local-socket-rendezvous-core-20260621 accepts
+phase12-network-cross-process-local-socket-rendezvous-core-accepted. The
+private socket backing table now supports cross-process local rendezvous for
+distinct ProcessOwnerId descriptor stores while keeping process-visible file
+descriptors in their owning descriptor tables. Listener discovery is global to
+the bounded socket table, pending peers record the client owner and backing
+descriptor, and connected/accepted sockets share a private connection id so
+same-number descriptors in different processes cannot collapse ownership.
+
+The accepted source/unit behavior covers cross-process bind/listen/connect/
+accept, bidirectional send/recv, nonblocking readiness, bounded poll-wait
+wakeups for listener readiness, payload readiness, and peer hangup, stale
+pending-client cleanup, owner-wide socket cleanup for process-exit style
+teardown, queued-byte drain after peer close, EPIPE after drain, duplicate
+active-listener rejection, and bounded capacity errors. This is still private
+source/unit evidence through the socket-table-aware syscall dispatch and
+SocketPollWaitTable; no shell-visible /bin/sockdiag cross-process diagnostic
+or retained smoke is accepted by this task.
+
+UDP/TCP payload transport, smoltcp integration, live driver adapters, live
+packet I/O, Pi 5 hardware runs, lab mutation, boot publication, hardware
+reachability, SSH, public stable socket ABI acceptance, broad socket
+expansion, and phase transition remain rejected. The selected next bounded
+task is phase12-network-shell-sockdiag-cross-process-local-socket-core-20260621.
