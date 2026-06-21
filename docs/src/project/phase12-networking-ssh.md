@@ -5970,3 +5970,28 @@ reachability, SSH, UDP/raw sockets, libc/std socket wrappers, POSIX/Linux
 compatibility, public stable ABI acceptance, broad socket expansion, and phase
 transition remain rejected. The selected next bounded task is
 phase12-network-shell-sockdiag-driver-packet-adapter-core-20260621.
+
+phase12-network-shell-sockdiag-driver-packet-adapter-core-20260621 accepts
+phase12-network-shell-sockdiag-driver-packet-adapter-core-accepted. The
+shell-visible /bin/sockdiag VFS/userspace diagnostic now reports deterministic
+DriverPacketAdapter state through the accepted private userspace_socket_abi and
+descriptor-backed socket dispatch path.
+
+The diagnostic records one driver RX frame consumed by the smoltcp packet-device
+boundary, one smoltcp-produced TX frame observed by the driver side, the
+post-pop TX queue state, and a separate TX-queue-full backpressure step that
+preserves one queued RX frame. The same /bin/sockdiag line still reports VFS
+executable lookup/open/read, startup ABI, private socket/bind/listen/connect/
+accept/send/recv/poll/poll-wait/close behavior, cross-process local rendezvous,
+private smoltcp TCP bridge continuity, waitpid, laststatus, malformed argument
+and missing executable controls, unchanged local socket diagnostics, unchanged
+/bin/pingdiag behavior, and bounded syscall vocabulary.
+
+The accepted evidence level remains source/unit plus host/QEMU-substitute cargo
+test only and is explicitly labeled host-qemu-substitute-not-live-packet-io.
+Retained smoke evidence, live driver programming, live packet I/O, Pi 5
+hardware behavior, lab mutation, boot publication, generated-root publication,
+hardware reachability, SSH, UDP/raw sockets, libc/std socket wrappers,
+POSIX/Linux compatibility, public stable ABI acceptance, broad socket
+expansion, and phase transition remain rejected. The selected next bounded task
+is phase12-network-shell-sockdiag-driver-packet-adapter-smoke-20260621.

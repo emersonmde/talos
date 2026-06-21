@@ -781,6 +781,16 @@ pub struct LocalCommandSockdiagRecord {
     smoltcp_payload_len: usize,
     smoltcp_payload_client_state: &'static str,
     smoltcp_payload_server_state: &'static str,
+    driver_packet_rx_step: &'static str,
+    driver_packet_rx_frame_len: usize,
+    driver_packet_tx_step: &'static str,
+    driver_packet_tx_frame_len: usize,
+    driver_packet_tx_observed_len: usize,
+    driver_packet_tx_queued_after_pop: usize,
+    driver_packet_backpressure_step: &'static str,
+    driver_packet_backpressure_rx_queued: usize,
+    driver_packet_backpressure_tx_queued: usize,
+    driver_packet_evidence: &'static str,
     source: &'static str,
 }
 
@@ -2697,6 +2707,36 @@ where
         {
             return Err(LocalCommandExecError::SyscallFailed);
         }
+        let mut driver_packet_adapter = crate::network::DriverPacketAdapter::<1, 1, 64>::new();
+        driver_packet_adapter
+            .inject_driver_rx(&[0xde, 0xad, 0xbe, 0xef])
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let driver_packet_rx =
+            driver_packet_adapter.receive_one_for_smoltcp(smoltcp::time::Instant::from_micros(1));
+        let driver_packet_tx = driver_packet_adapter
+            .transmit_one_from_smoltcp(smoltcp::time::Instant::from_micros(2), &[0xca, 0xfe, 0xba]);
+        let driver_packet_tx_observed = driver_packet_adapter
+            .pop_driver_tx()
+            .ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
+        let driver_packet_tx_observed_len = driver_packet_tx_observed.len();
+        if driver_packet_tx_observed.as_bytes() != [0xca, 0xfe, 0xba] {
+            return Err(LocalCommandExecError::LaunchPipelineFailed);
+        }
+        let driver_packet_tx_queued_after_pop = driver_packet_adapter.driver_tx_len();
+        let mut backpressure_adapter = crate::network::DriverPacketAdapter::<1, 1, 64>::new();
+        if backpressure_adapter
+            .transmit_one_from_smoltcp(smoltcp::time::Instant::from_micros(3), &[0x01, 0x02])
+            != (crate::network::DriverPacketAdapterTransmitStep::Transmitted { frame_len: 2 })
+        {
+            return Err(LocalCommandExecError::LaunchPipelineFailed);
+        }
+        backpressure_adapter
+            .inject_driver_rx(&[0x03, 0x04, 0x05])
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let driver_packet_backpressure =
+            backpressure_adapter.receive_one_for_smoltcp(smoltcp::time::Instant::from_micros(4));
+        let driver_packet_backpressure_rx_queued = backpressure_adapter.driver_rx_len();
+        let driver_packet_backpressure_tx_queued = backpressure_adapter.driver_tx_len();
 
         let mut index = 0usize;
         while index < crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY {
@@ -3385,7 +3425,19 @@ where
             smoltcp_payload_server_state: local_smoltcp_tcp_state_name(
                 smoltcp_payload.server_state(),
             ),
-            source: "vfs-userspace-sockdiag+userspace-socket-abi-v1+talos-socket-bind-listen-connect-accept-send-recv-poll-wait-close+process-descriptor+cross-process-local-rendezvous+private-smoltcp-tcp-bridge",
+            driver_packet_rx_step: local_driver_packet_rx_step_name(driver_packet_rx),
+            driver_packet_rx_frame_len: local_driver_packet_rx_frame_len(driver_packet_rx),
+            driver_packet_tx_step: local_driver_packet_tx_step_name(driver_packet_tx),
+            driver_packet_tx_frame_len: local_driver_packet_tx_frame_len(driver_packet_tx),
+            driver_packet_tx_observed_len,
+            driver_packet_tx_queued_after_pop,
+            driver_packet_backpressure_step: local_driver_packet_rx_step_name(
+                driver_packet_backpressure,
+            ),
+            driver_packet_backpressure_rx_queued,
+            driver_packet_backpressure_tx_queued,
+            driver_packet_evidence: "host-qemu-substitute-not-live-packet-io",
+            source: "vfs-userspace-sockdiag+userspace-socket-abi-v1+talos-socket-bind-listen-connect-accept-send-recv-poll-wait-close+process-descriptor+cross-process-local-rendezvous+private-smoltcp-tcp-bridge+driver-packet-adapter-substrate",
         })
     }
 
@@ -5226,6 +5278,49 @@ const fn local_smoltcp_tcp_state_name(state: smoltcp::socket::tcp::State) -> &'s
         smoltcp::socket::tcp::State::Closing => "closing",
         smoltcp::socket::tcp::State::LastAck => "last-ack",
         smoltcp::socket::tcp::State::TimeWait => "time-wait",
+    }
+}
+
+const fn local_driver_packet_rx_step_name(
+    step: crate::network::DriverPacketAdapterReceiveStep,
+) -> &'static str {
+    match step {
+        crate::network::DriverPacketAdapterReceiveStep::NoFrame => "no-frame",
+        crate::network::DriverPacketAdapterReceiveStep::Received { .. } => "received",
+        crate::network::DriverPacketAdapterReceiveStep::TransmitQueueFull => "tx-queue-full",
+        crate::network::DriverPacketAdapterReceiveStep::ReceiveBufferTooSmall => {
+            "rx-buffer-too-small"
+        }
+        crate::network::DriverPacketAdapterReceiveStep::ReceiveError(_) => "rx-error",
+    }
+}
+
+const fn local_driver_packet_rx_frame_len(
+    step: crate::network::DriverPacketAdapterReceiveStep,
+) -> usize {
+    match step {
+        crate::network::DriverPacketAdapterReceiveStep::Received { frame_len } => frame_len,
+        _ => 0,
+    }
+}
+
+const fn local_driver_packet_tx_step_name(
+    step: crate::network::DriverPacketAdapterTransmitStep,
+) -> &'static str {
+    match step {
+        crate::network::DriverPacketAdapterTransmitStep::Transmitted { .. } => "transmitted",
+        crate::network::DriverPacketAdapterTransmitStep::TransmitQueueFull => "tx-queue-full",
+        crate::network::DriverPacketAdapterTransmitStep::FrameTooLarge { .. } => "frame-too-large",
+        crate::network::DriverPacketAdapterTransmitStep::TransmitError(_) => "tx-error",
+    }
+}
+
+const fn local_driver_packet_tx_frame_len(
+    step: crate::network::DriverPacketAdapterTransmitStep,
+) -> usize {
+    match step {
+        crate::network::DriverPacketAdapterTransmitStep::Transmitted { frame_len } => frame_len,
+        _ => 0,
     }
 }
 
@@ -7157,6 +7252,26 @@ fn write_exec_sockdiag_line(
     write_str_part(sink, record.smoltcp_payload_client_state)?;
     write_str_part(sink, " smoltcp-payload-server=")?;
     write_str_part(sink, record.smoltcp_payload_server_state)?;
+    write_str_part(sink, " driver-packet-rx=")?;
+    write_str_part(sink, record.driver_packet_rx_step)?;
+    write_str_part(sink, " driver-packet-rx-len=")?;
+    write_hex_usize_part(sink, record.driver_packet_rx_frame_len)?;
+    write_str_part(sink, " driver-packet-tx=")?;
+    write_str_part(sink, record.driver_packet_tx_step)?;
+    write_str_part(sink, " driver-packet-tx-len=")?;
+    write_hex_usize_part(sink, record.driver_packet_tx_frame_len)?;
+    write_str_part(sink, " driver-packet-tx-observed-len=")?;
+    write_hex_usize_part(sink, record.driver_packet_tx_observed_len)?;
+    write_str_part(sink, " driver-packet-tx-queued-after-pop=")?;
+    write_hex_usize_part(sink, record.driver_packet_tx_queued_after_pop)?;
+    write_str_part(sink, " driver-packet-backpressure=")?;
+    write_str_part(sink, record.driver_packet_backpressure_step)?;
+    write_str_part(sink, " driver-packet-backpressure-rx-queued=")?;
+    write_hex_usize_part(sink, record.driver_packet_backpressure_rx_queued)?;
+    write_str_part(sink, " driver-packet-backpressure-tx-queued=")?;
+    write_hex_usize_part(sink, record.driver_packet_backpressure_tx_queued)?;
+    write_str_part(sink, " driver-packet-evidence=")?;
+    write_str_part(sink, record.driver_packet_evidence)?;
     write_str_part(sink, " source=")?;
     write_str_part(sink, record.source)?;
     finish_dynamic_line(sink, response_lines)
@@ -8188,7 +8303,10 @@ talos> Talos initramfs fixture\n"
             "smoltcp-accepted-attached=true smoltcp-payload-transfers=0x0000000000000001 smoltcp-payload-len=0x000000000000000e smoltcp-payload-client=established smoltcp-payload-server=established "
         ));
         assert!(output.contains(
-            "source=vfs-userspace-sockdiag+userspace-socket-abi-v1+talos-socket-bind-listen-connect-accept-send-recv-poll-wait-close+process-descriptor+cross-process-local-rendezvous+private-smoltcp-tcp-bridge\n"
+            "driver-packet-rx=received driver-packet-rx-len=0x0000000000000004 driver-packet-tx=transmitted driver-packet-tx-len=0x0000000000000003 driver-packet-tx-observed-len=0x0000000000000003 driver-packet-tx-queued-after-pop=0x0000000000000000 driver-packet-backpressure=tx-queue-full driver-packet-backpressure-rx-queued=0x0000000000000001 driver-packet-backpressure-tx-queued=0x0000000000000001 driver-packet-evidence=host-qemu-substitute-not-live-packet-io "
+        ));
+        assert!(output.contains(
+            "source=vfs-userspace-sockdiag+userspace-socket-abi-v1+talos-socket-bind-listen-connect-accept-send-recv-poll-wait-close+process-descriptor+cross-process-local-rendezvous+private-smoltcp-tcp-bridge+driver-packet-adapter-substrate\n"
         ));
         assert!(output.contains(concat!(
             "talos: sockdiag-controls malformed-arguments=exec-invalid-path missing-executable=exec-not-found ",
