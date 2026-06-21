@@ -64,6 +64,14 @@ syscall boundary now maps every current PosixError variant to an explicit
 errno number. Future PosixError additions should add syscall encoding tests
 with the new variant instead of relying on a fallback such as ENOSYS.
 
+Phase 12.4 now has a private socket ABI contract for the accepted
+descriptor-backed AF_INET/SOCK_STREAM surface. It uses the stable Talos syscall
+trap shape (svc #0, x8 selector, x0 through x5 scalar arguments, x0 return,
+negative x0 errno) and records the current private socket selector vocabulary
+before adding no_std/userspace wrappers. That contract is not POSIX/Linux
+compatibility and does not accept libc/std sockets, UDP/raw sockets, live packet
+I/O, hardware reachability, SSH, or a public stable socket ABI.
+
 ## Spawn, Exec, Exit, and Wait
 
 The first implementation can choose a small subset, but it should keep these concepts separate:

@@ -5794,3 +5794,29 @@ reachability, SSH, public stable socket ABI acceptance, broad socket
 expansion, UDP/raw sockets, and phase transition. planningNeeded=true; no
 later bounded socket/network task is mechanically unblocked without supervisor
 planning.
+
+phase12-network-socket-userspace-abi-contract-20260621 accepts
+phase12-network-socket-userspace-abi-contract-accepted. Supervisor planning
+after the shell-visible smoltcp TCP closeout selected a documentation-only
+contract for the private Talos userspace socket ABI before any wrapper or
+runtime expansion.
+
+The accepted contract records the stable trap shape svc #0, x8 selector,
+x0 through x5 scalar arguments, x0 return, and negative x0 errno encoding for
+the current socket surface. The private selector vocabulary is TALOS_CLOSE=2,
+TALOS_SOCKET=6, TALOS_BIND=7, TALOS_LISTEN=8, TALOS_CONNECT=9,
+TALOS_ACCEPT=10, TALOS_SEND=11, TALOS_RECV=12, TALOS_POLL=13, and
+TALOS_POLL_WAIT=14. The accepted socket subset remains AF_INET=2,
+SOCK_STREAM=1, protocol=0, backlog 1..=4, 64-byte bounded payload queues, and
+16-byte little-endian poll entries carrying fd/events/revents with at most
+eight entries and a 1024-tick bounded wait. send, recv, poll, and poll_wait
+use the accepted user-memory copy helpers.
+
+The evidence level is static source/task/docs/evidence review tied to prior
+source/unit and retained host/QEMU-substitute evidence. The contract rejects
+runtime implementation, live driver adapters, live packet I/O, Pi 5 hardware
+behavior, lab mutation, boot publication, generated-root publication, hardware
+reachability, SSH, UDP/raw sockets, libc/std socket wrappers, POSIX/Linux
+compatibility, public stable socket ABI acceptance, broad socket expansion,
+and phase transition. The selected next bounded task is
+phase12-network-socket-userspace-abi-core-20260621.

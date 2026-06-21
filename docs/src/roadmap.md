@@ -15417,6 +15417,22 @@ Milestone 12.3: IP Stack
   transition remain rejected. selected_next_task is null and
   planningNeeded=true pending supervisor planning for any next bounded
   socket/network task.
+- phase12-network-socket-userspace-abi-contract-20260621 accepts a static
+  source/task/docs/evidence contract for the current private Talos userspace
+  socket ABI. The contract records the stable trap shape svc #0, x8 selector,
+  x0 through x5 scalar arguments, x0 return, negative x0 errno encoding, and
+  the private selector vocabulary TALOS_CLOSE=2, TALOS_SOCKET=6, TALOS_BIND=7,
+  TALOS_LISTEN=8, TALOS_CONNECT=9, TALOS_ACCEPT=10, TALOS_SEND=11,
+  TALOS_RECV=12, TALOS_POLL=13, and TALOS_POLL_WAIT=14. The accepted socket
+  subset remains AF_INET=2, SOCK_STREAM=1, protocol=0, backlog 1..=4,
+  64-byte bounded payload queues, and 16-byte little-endian poll entries with
+  at most eight entries and a 1024-tick bounded wait. This contract ties the
+  ABI claims to prior source/unit and retained host/QEMU-substitute evidence
+  only; runtime implementation, live driver adapters, live packet I/O,
+  hardware reachability, SSH, UDP/raw sockets, libc/std, POSIX/Linux
+  compatibility, public stable ABI acceptance, broad socket expansion, and
+  phase transition remain rejected. The selected next bounded task is
+  phase12-network-socket-userspace-abi-core-20260621.
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning
   before the outbound request-selection task was added. That closeout did not
