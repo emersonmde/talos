@@ -13613,6 +13613,22 @@ autoneg-complete, packet-readiness, live RX/TX, packet I/O, networking, SSH,
 Phase 12.2, or a phase transition. selected_next_task is
 phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-closeout-20260621.
 
+phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-closeout-20260621
+accepts
+bcm54213pe-lifecycle-ownership-closeout-no-link-ready-planning-needed. The
+closeout freezes the lifecycle ownership slice at the accepted no-change
+link-not-ready terminal: BMCR_PDOWN was already clear, no BMCR clear write was
+performed, BMSR link/autoneg-complete remained false, and passive
+MACB_NSR_LINK remained false. The hardware-visible BCM54213PE frontier remains
+MII_CTRL1000 master-mode write/readback, one BMCR autoneg restart, and the
+BMCR_PDOWN-exit gate observed no-change. Link-ready, autoneg-complete,
+packet-readiness, live RX/TX, packet I/O, ping/hardware reachability, Ethernet
+driver readiness, networking, sockets, SSH, Phase 12.2, public ABI/POSIX/Linux
+compatibility, broad socket expansion, and phase transition remain unaccepted.
+selected_next_task=null and planningNeeded=true because the queued generic
+link-ready discriminator chain depends on accepted link-ready evidence this
+proof did not produce.
+
 - Study RP1 Ethernet as exposed by Linux device tree: rp1_eth is compatible with raspberrypi,rp1-gem and cdns,macb, behind RP1 PCIe address space.
 - Decide whether to implement the Cadence GEM path directly, reuse a no_std driver if viable, or stage networking through a simpler transport first.
 - Capture RP1 PCIe, RP1 interrupt routing, clocks, DMA, IOMMU, PHY reset, and cache-coherency implications. RP1 is not a simple fixed MMIO block from the CPU's point of view.

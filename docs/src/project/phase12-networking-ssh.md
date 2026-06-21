@@ -2590,6 +2590,24 @@ Phase 12.2, or a phase transition. The hardware-visible BCM54213PE frontier is
 now MII_CTRL1000 master-mode write/readback, one BMCR autoneg restart, and a
 BMCR_PDOWN-exit gate observed no-change because PDOWN was already clear.
 
+phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-closeout-20260621
+accepts
+bcm54213pe-lifecycle-ownership-closeout-no-link-ready-planning-needed. The
+closeout reconciles the accepted source/core and serialized Pi 5 proof as a
+no-change link-not-ready Phase 12.1 frontier. The selected BMCR_PDOWN exit gate
+did not issue a clear write because BMCR_PDOWN was already clear, while BMSR
+link, BMSR autoneg-complete, and passive MACB_NSR_LINK all remained false.
+
+No queued link-ready discriminator core/proof/closeout task is mechanically
+unblocked by this terminal, because those tasks require accepted selected
+link-ready evidence that the lifecycle proof rejected. Link-ready,
+autoneg-complete, packet-readiness, live RX/TX, packet I/O, ping/hardware
+reachability, Ethernet driver readiness, networking, sockets, SSH, Phase 12.2,
+public ABI/POSIX/Linux compatibility, broad socket expansion, and phase
+transition remain unaccepted. selected_next_task=null and planningNeeded=true
+pending supervisor planning for any further Phase 12.1 hardware strategy or
+return to host-only network work.
+
 ## Phase 12.2 Host Network Abstraction Core
 
 phase12-network-device-abstraction-ethernet-arp-ip-host-core-20260618 accepts

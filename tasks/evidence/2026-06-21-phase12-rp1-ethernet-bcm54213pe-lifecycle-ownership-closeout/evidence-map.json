@@ -1,0 +1,77 @@
+{
+  "task_id": "phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-closeout-20260621",
+  "classification": "bcm54213pe-lifecycle-ownership-closeout-no-link-ready-planning-needed",
+  "evidence": [
+    {
+      "label": "closeout-task-record",
+      "level": "static task/docs/evidence review",
+      "path": "tasks/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-closeout.md"
+    },
+    {
+      "label": "closeout-classification",
+      "level": "task-owned JSON evidence",
+      "path": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-closeout/classification.json"
+    },
+    {
+      "label": "accepted-source-core",
+      "level": "static source/task/docs/evidence review and focused Rust tests",
+      "path": "tasks/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-source-core.md",
+      "commit": "b4a6d3fe862fb12e7a2cf58be68c2f75ba020877"
+    },
+    {
+      "label": "accepted-pi5-proof",
+      "level": "lab-controller API, same-power-cycle TFTP, serial hardware boot/output, task-owned JSON evidence",
+      "path": "tasks/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof.md",
+      "commit": "294358f83b438320cddee66a7a6427070e513ad6"
+    },
+    {
+      "label": "proof-classification",
+      "level": "task-owned JSON evidence",
+      "path": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/classification.json"
+    },
+    {
+      "label": "proof-hardware-summary",
+      "level": "lab-controller API, same-power-cycle TFTP, serial hardware boot/output",
+      "path": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/hardware-run-summary.json"
+    },
+    {
+      "label": "proof-restore",
+      "level": "lab-controller API restore evidence",
+      "path": "tasks/evidence/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-pi5-proof/final-post-restore-boot-files.json"
+    },
+    {
+      "label": "phase12-doc",
+      "level": "architecture/current-frontier documentation",
+      "path": "docs/src/project/phase12-networking-ssh.md"
+    },
+    {
+      "label": "roadmap",
+      "level": "roadmap/frontier documentation",
+      "path": "docs/src/roadmap.md"
+    }
+  ],
+  "validation": [
+    {
+      "gate": "static task/docs/evidence review",
+      "result": "pass"
+    },
+    {
+      "gate": "jq empty on task-owned JSON evidence",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "mdbook build",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --cached --check before commit",
+      "result": "pass"
+    }
+  ],
+  "selected_next_task": null,
+  "planningNeeded": true
+}
