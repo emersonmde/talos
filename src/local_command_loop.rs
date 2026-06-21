@@ -38,7 +38,8 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+shell-sockdiag-vfs-userspace-socket-connect-accept",
     "+shell-sockdiag-vfs-userspace-socket-send-recv",
     "+shell-sockdiag-vfs-userspace-socket-readiness-poll",
-    "+shell-sockdiag-vfs-userspace-socket-blocking-poll-wait"
+    "+shell-sockdiag-vfs-userspace-socket-blocking-poll-wait",
+    "+shell-sockdiag-vfs-userspace-cross-process-local-socket"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -752,6 +753,21 @@ pub struct LocalCommandSockdiagRecord {
     descriptor_access: &'static str,
     close_return: u64,
     backing_closed: bool,
+    cross_process_server_owner: u64,
+    cross_process_client_owner: u64,
+    cross_process_server_descriptor: usize,
+    cross_process_client_descriptor: usize,
+    cross_process_accepted_descriptor: usize,
+    cross_process_listener_revents: u32,
+    cross_process_payload_revents: u32,
+    cross_process_hangup_revents: u32,
+    cross_process_accept_wait_revents: u32,
+    cross_process_payload_wait_revents: u32,
+    cross_process_cleanup_close_return: u64,
+    cross_process_payload: &'static str,
+    cross_process_reply: &'static str,
+    cross_process_descriptor_ownership: &'static str,
+    cross_process_backing_closed: bool,
     source: &'static str,
 }
 
@@ -1243,7 +1259,7 @@ impl AppliedLocalCommandExecRedirections {
     }
 }
 
-impl<I, O> DescriptorBackedLocalCommandIo<I, O, 1, 7>
+impl<I, O> DescriptorBackedLocalCommandIo<I, O, 2, 7>
 where
     I: ConsoleInputBackend,
     O: ConsoleBackend,
@@ -1253,7 +1269,7 @@ where
         output_backend: O,
     ) -> Result<Self, posix::PosixError> {
         let current_owner = ProcessOwnerId::new(1).expect("local command owner id is nonzero");
-        let mut descriptor_store = posix::ProcessDescriptorStore::<1, 7>::new_empty();
+        let mut descriptor_store = posix::ProcessDescriptorStore::<2, 7>::new_empty();
         descriptor_store.create_owner_with_inherited_stdio(current_owner)?;
         Ok(Self {
             descriptor_store,
@@ -2968,6 +2984,448 @@ where
         {
             return Err(LocalCommandExecError::SyscallFailed);
         }
+        drop(socket_dispatch);
+
+        let cross_process_server_owner = owner;
+        let cross_process_client_owner =
+            ProcessOwnerId::new(2).ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
+        match self
+            .descriptor_store
+            .create_owner_with_inherited_stdio(cross_process_client_owner)
+        {
+            Ok(()) | Err(posix::PosixError::InvalidArgument) => {}
+            Err(_) => return Err(LocalCommandExecError::LaunchPipelineFailed),
+        }
+        let mut cross_process_console = LocalCommandDiscardConsole;
+        macro_rules! cross_process_socket_dispatch {
+            ($raw_number:expr, $arguments:expr, $owner:expr) => {
+                syscall::dispatch_process_descriptor_with_socket_table(
+                    $raw_number,
+                    $arguments,
+                    Some($owner),
+                    &mut self.descriptor_store,
+                    &mut self.socket_descriptors,
+                    &mappings,
+                    LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+                    &mut user_memory,
+                    &mut kernel_scratch,
+                    &mut cross_process_console,
+                )
+            };
+        }
+
+        const CROSS_PROCESS_LOCAL_IPV4_BE: u32 = 0x7f00_0002;
+        const CROSS_PROCESS_LOCAL_PORT: u16 = 9090;
+        const CROSS_PROCESS_CLIENT_PAYLOAD: &[u8] = b"cross-client";
+        const CROSS_PROCESS_SERVER_PAYLOAD: &[u8] = b"cross-server";
+        let cross_server_open = cross_process_socket_dispatch!(
+            syscall::TALOS_SOCKET_SYSCALL,
+            syscall::SyscallArguments::new([
+                crate::network::SOCKET_DOMAIN_AF_INET,
+                crate::network::SOCKET_TYPE_STREAM,
+                crate::network::SOCKET_PROTOCOL_DEFAULT,
+                0,
+                0,
+                0,
+            ]),
+            cross_process_server_owner
+        );
+        let cross_process_server_descriptor =
+            syscall_success_usize(cross_server_open.return_value().x0())
+                .map_err(|_| LocalCommandExecError::SyscallFailed)?;
+        let cross_server_entry = self
+            .descriptor_store
+            .descriptor_table(cross_process_server_owner)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?
+            .get(cross_process_server_descriptor)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let cross_server_socket_reference = crate::network::NetworkSocketDescriptor::from_raw(
+            cross_server_entry.object().reference(),
+        );
+        if cross_server_entry.object().kind() != posix::DescriptorObjectKind::Socket {
+            return Err(LocalCommandExecError::LaunchPipelineFailed);
+        }
+        if cross_process_socket_dispatch!(
+            syscall::TALOS_BIND_SYSCALL,
+            syscall::SyscallArguments::new([
+                cross_process_server_descriptor as u64,
+                CROSS_PROCESS_LOCAL_IPV4_BE as u64,
+                CROSS_PROCESS_LOCAL_PORT as u64,
+                0,
+                0,
+                0,
+            ]),
+            cross_process_server_owner
+        )
+        .return_value()
+        .x0()
+            != 0
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        if cross_process_socket_dispatch!(
+            syscall::TALOS_LISTEN_SYSCALL,
+            syscall::SyscallArguments::new([cross_process_server_descriptor as u64, 1, 0, 0, 0, 0]),
+            cross_process_server_owner
+        )
+        .return_value()
+        .x0()
+            != 0
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+
+        let mut cross_process_accept_wait_task = local_sockdiag_poll_wait_task(7)?;
+        local_write_poll_entry(
+            &mut user_memory,
+            0,
+            cross_process_server_descriptor as u64,
+            syscall::TALOS_POLL_READ,
+        );
+        let cross_process_accept_wait =
+            syscall::dispatch_process_descriptor_with_socket_table_and_poll_wait(
+                syscall::TALOS_POLL_WAIT_SYSCALL,
+                syscall::SyscallArguments::new([LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 5, 0, 0, 0]),
+                Some(cross_process_server_owner),
+                &mut cross_process_accept_wait_task,
+                50,
+                &mut self.descriptor_store,
+                &mut self.socket_descriptors,
+                &mut poll_waits,
+                &mappings,
+                LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+                &mut user_memory,
+                &mut kernel_scratch,
+                &mut cross_process_console,
+            );
+        if !matches!(
+            cross_process_accept_wait.outcome(),
+            syscall::SocketPollWaitOutcome::Blocked {
+                deadline_tick: 55,
+                ..
+            }
+        ) {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+
+        let cross_client_open = cross_process_socket_dispatch!(
+            syscall::TALOS_SOCKET_SYSCALL,
+            syscall::SyscallArguments::new([
+                crate::network::SOCKET_DOMAIN_AF_INET,
+                crate::network::SOCKET_TYPE_STREAM,
+                crate::network::SOCKET_PROTOCOL_DEFAULT,
+                0,
+                0,
+                0,
+            ]),
+            cross_process_client_owner
+        );
+        let cross_process_client_descriptor =
+            syscall_success_usize(cross_client_open.return_value().x0())
+                .map_err(|_| LocalCommandExecError::SyscallFailed)?;
+        let cross_client_entry = self
+            .descriptor_store
+            .descriptor_table(cross_process_client_owner)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?
+            .get(cross_process_client_descriptor)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let cross_client_socket_reference = crate::network::NetworkSocketDescriptor::from_raw(
+            cross_client_entry.object().reference(),
+        );
+        if cross_process_socket_dispatch!(
+            syscall::TALOS_CONNECT_SYSCALL,
+            syscall::SyscallArguments::new([
+                cross_process_client_descriptor as u64,
+                CROSS_PROCESS_LOCAL_IPV4_BE as u64,
+                CROSS_PROCESS_LOCAL_PORT as u64,
+                0,
+                0,
+                0,
+            ]),
+            cross_process_client_owner
+        )
+        .return_value()
+        .x0()
+            != 0
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        if !matches!(
+            poll_waits
+                .resume_ready_or_expired(
+                    &mut cross_process_accept_wait_task,
+                    &mut poll_wait_scheduler,
+                    &self.socket_descriptors,
+                    51,
+                    &mappings,
+                    LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+                    &mut user_memory,
+                    &mut kernel_scratch,
+                )
+                .map_err(local_exec_error_from_posix)?,
+            Some(syscall::SocketPollWaitResume::Ready { ready_count: 1, .. })
+        ) {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let cross_process_accept_wait_revents = local_read_poll_revents(&user_memory, 0);
+
+        local_write_poll_entry(
+            &mut user_memory,
+            0,
+            cross_process_server_descriptor as u64,
+            syscall::TALOS_POLL_READ,
+        );
+        if cross_process_socket_dispatch!(
+            syscall::TALOS_POLL_SYSCALL,
+            syscall::SyscallArguments::new([LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 0, 0, 0, 0]),
+            cross_process_server_owner
+        )
+        .return_value()
+        .x0()
+            != 1
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let cross_process_listener_revents = local_read_poll_revents(&user_memory, 0);
+        let cross_accept = cross_process_socket_dispatch!(
+            syscall::TALOS_ACCEPT_SYSCALL,
+            syscall::SyscallArguments::new([cross_process_server_descriptor as u64, 0, 0, 0, 0, 0]),
+            cross_process_server_owner
+        );
+        let cross_process_accepted_descriptor =
+            syscall_success_usize(cross_accept.return_value().x0())
+                .map_err(|_| LocalCommandExecError::SyscallFailed)?;
+        if self
+            .descriptor_store
+            .descriptor_table(cross_process_client_owner)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?
+            .get(cross_process_accepted_descriptor)
+            .is_ok()
+        {
+            return Err(LocalCommandExecError::LaunchPipelineFailed);
+        }
+        let cross_accepted_entry = self
+            .descriptor_store
+            .descriptor_table(cross_process_server_owner)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?
+            .get(cross_process_accepted_descriptor)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let cross_accepted_socket_reference = crate::network::NetworkSocketDescriptor::from_raw(
+            cross_accepted_entry.object().reference(),
+        );
+
+        let mut cross_process_payload_wait_task = local_sockdiag_poll_wait_task(8)?;
+        local_write_poll_entry(
+            &mut user_memory,
+            0,
+            cross_process_accepted_descriptor as u64,
+            syscall::TALOS_POLL_READ,
+        );
+        let cross_process_payload_wait =
+            syscall::dispatch_process_descriptor_with_socket_table_and_poll_wait(
+                syscall::TALOS_POLL_WAIT_SYSCALL,
+                syscall::SyscallArguments::new([LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 5, 0, 0, 0]),
+                Some(cross_process_server_owner),
+                &mut cross_process_payload_wait_task,
+                60,
+                &mut self.descriptor_store,
+                &mut self.socket_descriptors,
+                &mut poll_waits,
+                &mappings,
+                LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+                &mut user_memory,
+                &mut kernel_scratch,
+                &mut cross_process_console,
+            );
+        if !matches!(
+            cross_process_payload_wait.outcome(),
+            syscall::SocketPollWaitOutcome::Blocked {
+                deadline_tick: 65,
+                ..
+            }
+        ) {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        user_memory[..CROSS_PROCESS_CLIENT_PAYLOAD.len()]
+            .copy_from_slice(CROSS_PROCESS_CLIENT_PAYLOAD);
+        if cross_process_socket_dispatch!(
+            syscall::TALOS_SEND_SYSCALL,
+            syscall::SyscallArguments::new([
+                cross_process_client_descriptor as u64,
+                LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+                CROSS_PROCESS_CLIENT_PAYLOAD.len() as u64,
+                0,
+                0,
+                0,
+            ]),
+            cross_process_client_owner
+        )
+        .return_value()
+        .x0()
+            != CROSS_PROCESS_CLIENT_PAYLOAD.len() as u64
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        if !matches!(
+            poll_waits
+                .resume_ready_or_expired(
+                    &mut cross_process_payload_wait_task,
+                    &mut poll_wait_scheduler,
+                    &self.socket_descriptors,
+                    61,
+                    &mappings,
+                    LOCAL_COMMAND_SOCKDIAG_USER_BASE,
+                    &mut user_memory,
+                    &mut kernel_scratch,
+                )
+                .map_err(local_exec_error_from_posix)?,
+            Some(syscall::SocketPollWaitResume::Ready { ready_count: 1, .. })
+        ) {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let cross_process_payload_wait_revents = local_read_poll_revents(&user_memory, 0);
+        local_write_poll_entry(
+            &mut user_memory,
+            0,
+            cross_process_accepted_descriptor as u64,
+            syscall::TALOS_POLL_READ,
+        );
+        if cross_process_socket_dispatch!(
+            syscall::TALOS_POLL_SYSCALL,
+            syscall::SyscallArguments::new([LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 0, 0, 0, 0]),
+            cross_process_server_owner
+        )
+        .return_value()
+        .x0()
+            != 1
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let cross_process_payload_revents = local_read_poll_revents(&user_memory, 0);
+        let cross_server_recv = cross_process_socket_dispatch!(
+            syscall::TALOS_RECV_SYSCALL,
+            syscall::SyscallArguments::new([
+                cross_process_accepted_descriptor as u64,
+                LOCAL_COMMAND_SOCKDIAG_USER_BASE + 0x40,
+                32,
+                0,
+                0,
+                0,
+            ]),
+            cross_process_server_owner
+        );
+        if cross_server_recv.return_value().x0() != CROSS_PROCESS_CLIENT_PAYLOAD.len() as u64
+            || &user_memory[0x40..0x40 + CROSS_PROCESS_CLIENT_PAYLOAD.len()]
+                != CROSS_PROCESS_CLIENT_PAYLOAD
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        user_memory[0x20..0x20 + CROSS_PROCESS_SERVER_PAYLOAD.len()]
+            .copy_from_slice(CROSS_PROCESS_SERVER_PAYLOAD);
+        if cross_process_socket_dispatch!(
+            syscall::TALOS_SEND_SYSCALL,
+            syscall::SyscallArguments::new([
+                cross_process_accepted_descriptor as u64,
+                LOCAL_COMMAND_SOCKDIAG_USER_BASE + 0x20,
+                CROSS_PROCESS_SERVER_PAYLOAD.len() as u64,
+                0,
+                0,
+                0,
+            ]),
+            cross_process_server_owner
+        )
+        .return_value()
+        .x0()
+            != CROSS_PROCESS_SERVER_PAYLOAD.len() as u64
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let cross_client_recv = cross_process_socket_dispatch!(
+            syscall::TALOS_RECV_SYSCALL,
+            syscall::SyscallArguments::new([
+                cross_process_client_descriptor as u64,
+                LOCAL_COMMAND_SOCKDIAG_USER_BASE + 0x60,
+                32,
+                0,
+                0,
+                0,
+            ]),
+            cross_process_client_owner
+        );
+        if cross_client_recv.return_value().x0() != CROSS_PROCESS_SERVER_PAYLOAD.len() as u64
+            || &user_memory[0x60..0x60 + CROSS_PROCESS_SERVER_PAYLOAD.len()]
+                != CROSS_PROCESS_SERVER_PAYLOAD
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        if cross_process_socket_dispatch!(
+            syscall::TALOS_CLOSE_SYSCALL,
+            syscall::SyscallArguments::new([cross_process_client_descriptor as u64, 0, 0, 0, 0, 0]),
+            cross_process_client_owner
+        )
+        .return_value()
+        .x0()
+            != 0
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        local_write_poll_entry(
+            &mut user_memory,
+            0,
+            cross_process_accepted_descriptor as u64,
+            syscall::TALOS_POLL_READ | syscall::TALOS_POLL_WRITE,
+        );
+        if cross_process_socket_dispatch!(
+            syscall::TALOS_POLL_SYSCALL,
+            syscall::SyscallArguments::new([LOCAL_COMMAND_SOCKDIAG_USER_BASE, 1, 0, 0, 0, 0]),
+            cross_process_server_owner
+        )
+        .return_value()
+        .x0()
+            != 1
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let cross_process_hangup_revents = local_read_poll_revents(&user_memory, 0);
+        let cross_process_cleanup_close = cross_process_socket_dispatch!(
+            syscall::TALOS_CLOSE_SYSCALL,
+            syscall::SyscallArguments::new([
+                cross_process_accepted_descriptor as u64,
+                0,
+                0,
+                0,
+                0,
+                0
+            ]),
+            cross_process_server_owner
+        );
+        let cross_process_cleanup_close_return = cross_process_cleanup_close.return_value().x0();
+        if cross_process_cleanup_close_return != 0 {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        if cross_process_socket_dispatch!(
+            syscall::TALOS_CLOSE_SYSCALL,
+            syscall::SyscallArguments::new([cross_process_server_descriptor as u64, 0, 0, 0, 0, 0]),
+            cross_process_server_owner
+        )
+        .return_value()
+        .x0()
+            != 0
+        {
+            return Err(LocalCommandExecError::SyscallFailed);
+        }
+        let cross_process_backing_closed = self
+            .socket_descriptors
+            .socket(cross_server_socket_reference)
+            .is_err()
+            && self
+                .socket_descriptors
+                .socket(cross_client_socket_reference)
+                .is_err()
+            && self
+                .socket_descriptors
+                .socket(cross_accepted_socket_reference)
+                .is_err();
 
         Ok(LocalCommandSockdiagRecord {
             process_descriptor,
@@ -3027,7 +3485,22 @@ where
                     .socket_descriptors
                     .socket(accepted_socket_reference)
                     .is_err(),
-            source: "vfs-userspace-sockdiag+talos-socket-bind-listen-connect-accept-send-recv-poll-wait-close+process-descriptor",
+            cross_process_server_owner: cross_process_server_owner.raw(),
+            cross_process_client_owner: cross_process_client_owner.raw(),
+            cross_process_server_descriptor,
+            cross_process_client_descriptor,
+            cross_process_accepted_descriptor,
+            cross_process_listener_revents,
+            cross_process_payload_revents,
+            cross_process_hangup_revents,
+            cross_process_accept_wait_revents,
+            cross_process_payload_wait_revents,
+            cross_process_cleanup_close_return,
+            cross_process_payload: "cross-client",
+            cross_process_reply: "cross-server",
+            cross_process_descriptor_ownership: "server-owner-listener-accepted+client-owner-connected",
+            cross_process_backing_closed,
+            source: "vfs-userspace-sockdiag+talos-socket-bind-listen-connect-accept-send-recv-poll-wait-close+process-descriptor+cross-process-local-rendezvous",
         })
     }
 
@@ -6714,6 +7187,43 @@ fn write_exec_sockdiag_line(
             "false"
         },
     )?;
+    write_str_part(sink, " cross-process-server-owner=")?;
+    write_hex_u64_part(sink, record.cross_process_server_owner)?;
+    write_str_part(sink, " cross-process-client-owner=")?;
+    write_hex_u64_part(sink, record.cross_process_client_owner)?;
+    write_str_part(sink, " cross-process-server-fd=")?;
+    write_hex_usize_part(sink, record.cross_process_server_descriptor)?;
+    write_str_part(sink, " cross-process-client-fd=")?;
+    write_hex_usize_part(sink, record.cross_process_client_descriptor)?;
+    write_str_part(sink, " cross-process-accepted-fd=")?;
+    write_hex_usize_part(sink, record.cross_process_accepted_descriptor)?;
+    write_str_part(sink, " cross-process-listener=")?;
+    write_hex_u64_part(sink, record.cross_process_listener_revents as u64)?;
+    write_str_part(sink, " cross-process-payload=")?;
+    write_hex_u64_part(sink, record.cross_process_payload_revents as u64)?;
+    write_str_part(sink, " cross-process-hangup=")?;
+    write_hex_u64_part(sink, record.cross_process_hangup_revents as u64)?;
+    write_str_part(sink, " cross-process-accept-wait=")?;
+    write_hex_u64_part(sink, record.cross_process_accept_wait_revents as u64)?;
+    write_str_part(sink, " cross-process-payload-wait=")?;
+    write_hex_u64_part(sink, record.cross_process_payload_wait_revents as u64)?;
+    write_str_part(sink, " cross-process-cleanup-close=")?;
+    write_hex_u64_part(sink, record.cross_process_cleanup_close_return)?;
+    write_str_part(sink, " cross-process-payload-text=")?;
+    write_str_part(sink, record.cross_process_payload)?;
+    write_str_part(sink, " cross-process-reply=")?;
+    write_str_part(sink, record.cross_process_reply)?;
+    write_str_part(sink, " cross-process-ownership=")?;
+    write_str_part(sink, record.cross_process_descriptor_ownership)?;
+    write_str_part(sink, " cross-process-backing-closed=")?;
+    write_str_part(
+        sink,
+        if record.cross_process_backing_closed {
+            "true"
+        } else {
+            "false"
+        },
+    )?;
     write_str_part(sink, " source=")?;
     write_str_part(sink, record.source)?;
     finish_dynamic_line(sink, response_lines)
@@ -7728,7 +8238,16 @@ talos> Talos initramfs fixture\n"
             "accept-return=0x0000000000000006 socket-state=listening client-state=connected ",
             "accepted-state=accepted descriptor-kind=socket descriptor-access=read-write ",
             "close-return=0x0000000000000000 backing-closed=true ",
-            "source=vfs-userspace-sockdiag+talos-socket-bind-listen-connect-accept-send-recv-poll-wait-close+process-descriptor\n"
+            "cross-process-server-owner=0x0000000000000001 cross-process-client-owner=0x0000000000000002 ",
+            "cross-process-server-fd=0x0000000000000003 cross-process-client-fd=0x0000000000000003 ",
+            "cross-process-accepted-fd=0x0000000000000004 cross-process-listener=0x0000000000000001 ",
+            "cross-process-payload=0x0000000000000001 cross-process-hangup=0x0000000000000005 ",
+            "cross-process-accept-wait=0x0000000000000001 cross-process-payload-wait=0x0000000000000001 ",
+            "cross-process-cleanup-close=0x0000000000000000 cross-process-payload-text=cross-client ",
+            "cross-process-reply=cross-server ",
+            "cross-process-ownership=server-owner-listener-accepted+client-owner-connected ",
+            "cross-process-backing-closed=true ",
+            "source=vfs-userspace-sockdiag+talos-socket-bind-listen-connect-accept-send-recv-poll-wait-close+process-descriptor+cross-process-local-rendezvous\n"
         )));
         assert!(output.contains(concat!(
             "talos: sockdiag-controls malformed-arguments=exec-invalid-path missing-executable=exec-not-found ",

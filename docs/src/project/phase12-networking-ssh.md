@@ -5520,3 +5520,23 @@ packet I/O, Pi 5 hardware runs, lab mutation, boot publication, hardware
 reachability, SSH, public stable socket ABI acceptance, broad socket
 expansion, and phase transition remain rejected. The selected next bounded
 task is phase12-network-shell-sockdiag-cross-process-local-socket-core-20260621.
+
+phase12-network-shell-sockdiag-cross-process-local-socket-core-20260621
+accepts
+phase12-network-shell-sockdiag-cross-process-local-socket-core-accepted. The
+existing shell-visible `/bin/sockdiag` VFS/userspace diagnostic now exercises
+the accepted private cross-process local socket rendezvous core through two
+distinct `ProcessOwnerId` descriptor tables. The local command harness can
+hold a shell/server owner and a client owner, while the diagnostic reports
+server-owned listener/accepted descriptors, a client-owned connected
+descriptor, cross-process connect/accept, bidirectional payload transfer,
+listener and payload poll-wait wakeups, peer-close hangup readiness, and
+deterministic cleanup.
+
+This remains source/unit evidence through `/bin/sockdiag` and the
+socket-table-aware syscall dispatch only. Retained smoke evidence, UDP/TCP
+payload transport, smoltcp integration, live driver adapters, live packet I/O,
+Pi 5 hardware runs, lab mutation, boot publication, hardware reachability,
+SSH, public stable socket ABI acceptance, broad socket expansion, and phase
+transition remain rejected. The selected next bounded task is
+phase12-network-shell-sockdiag-cross-process-local-socket-smoke-20260621.
