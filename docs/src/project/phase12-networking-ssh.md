@@ -6401,3 +6401,30 @@ link-ready discriminator promotion, or phase transition. No explicit queued
 Phase 12.5 prerequisite task is mechanically unblocked after this closeout;
 supervisor planning is required before the next crypto, host-key, persistence,
 SSH service, live transport, hardware reachability, or phase-transition task.
+
+phase12-operator-seed-secret-material-contract-20260621 accepts
+phase12-operator-seed-secret-material-contract-accepted. The operator seed path
+remains /etc/talos/operator-seed.bin in the accepted read-only
+VFS/generated-root model, but the secret-material boundary is now narrower than
+the diagnostic metadata path. Only a future Talos-owned CSPRNG
+seed-conditioning/internal RNG component may read seed bytes, and only as
+bounded seed input from a regular file of 32 through 4096 bytes.
+
+Diagnostics, shell output, serial logs, task evidence, and public surfaces stay
+metadata-only: path, missing/invalid/insufficient/sufficient state, byte
+length, length bucket, redaction labels, and fail-closed readiness labels.
+They must not expose seed bytes, partial bytes, generated random bytes, CSPRNG
+state, actual digests, actual fingerprints, key-derivation output, or any
+stable identifier that can compare real operator secrets across boots. Missing,
+invalid, insufficient, zero-length, unreadable, malformed, or oversized inputs
+fail closed. Source/unit tests may use deterministic public fixtures for length
+and redaction behavior, but real operator seed bytes must not be retained in
+repository evidence.
+
+This contract still does not accept crypto dependency adoption, random-byte
+generation, cryptographic-strength, host-key generation or provisioning,
+authorized-key storage, writable persistence, SSH service behavior, live
+transport, hardware reachability, public ABI/POSIX/Linux compatibility, broad
+expansion, stale link-ready discriminator promotion, or phase transition. The
+selected next bounded task is
+phase12-csprng-dependency-selection-contract-20260621.

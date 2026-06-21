@@ -15885,6 +15885,27 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   authorized-key storage, writable seed persistence, SSH service behavior, live
   transport, hardware reachability, stale link-ready discriminator work, broad
   expansion, or phase transition.
+- phase12-operator-seed-secret-material-contract-20260621 accepts the
+  secret-material boundary for /etc/talos/operator-seed.bin. The accepted path
+  remains read-only VFS/generated-root input, but only a future Talos-owned
+  CSPRNG seed-conditioning/internal RNG component may read seed bytes, and only
+  as bounded seed input from a regular file of 32 through 4096 bytes.
+  entropydiag, sshkeydiag, shell diagnostics, serial logs, task evidence, and
+  public surfaces remain metadata-only: path, missing/invalid/insufficient/
+  sufficient state, byte length, length bucket, redaction labels, and
+  fail-closed readiness labels. Real operator seed bytes, partial bytes,
+  generated random bytes, CSPRNG state, actual digests/fingerprints,
+  key-derivation output, and cross-boot comparable secret identifiers are
+  rejected from logs and evidence. Missing, invalid, insufficient, zero-length,
+  unreadable, malformed, or oversized inputs fail closed; deterministic public
+  fixtures are allowed only for source/unit tests and retained redaction
+  evidence. The selected next bounded task is
+  phase12-csprng-dependency-selection-contract-20260621. This contract does
+  not accept crypto dependency adoption, random-byte generation,
+  cryptographic-strength, host-key generation/provisioning, authorized-key
+  storage, writable persistence, SSH service, live transport, hardware
+  reachability, public ABI/POSIX/Linux compatibility, broad expansion, stale
+  link-ready discriminator promotion, or phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

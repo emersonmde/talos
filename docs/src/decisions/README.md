@@ -44,6 +44,15 @@ ADR template:
   seed-material prerequisite; cryptographic-strength and ssh-ready remain
   false until later CSPRNG/conditioning, host-key, authorized-key, persistence,
   exposure, crypto dependency, and service tasks are accepted.
+- Secret-material update: phase12-operator-seed-secret-material-contract-20260621
+  narrows the future byte-read boundary. Only a Talos-owned CSPRNG
+  seed-conditioning/internal RNG component may read /etc/talos/operator-seed.bin
+  bytes, and only as bounded seed input from a regular file of 32 through 4096
+  bytes. Diagnostics, shell output, serial logs, task evidence, and public
+  surfaces remain metadata-only. Real operator seed bytes, generated random
+  bytes, CSPRNG state, actual digests/fingerprints, key-derivation output, and
+  cross-boot comparable secret identifiers remain rejected from retained
+  evidence.
 - Alternatives considered: treat lab randomness or generated-root manifests as
   entropy, hardcode a seed constant in Rust source, store a seed in writable
   persistence, or log a digest/fingerprint for evidence. Lab metadata and
