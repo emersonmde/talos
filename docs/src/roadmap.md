@@ -15572,6 +15572,23 @@ Milestone 12.3: IP Stack
   libc/std wrappers, POSIX/Linux compatibility, public stable ABI acceptance,
   broad socket expansion, and phase transition remain rejected. The selected
   next bounded task is phase12-network-driver-packet-adapter-closeout-20260621.
+- The driver packet adapter closeout freezes the accepted adapter slice at
+  source/unit plus retained host/QEMU-substitute evidence over the accepted
+  VFS/userspace/private socket ABI path. The accepted boundary is deterministic
+  copied PacketQueueFrame ownership through inject_driver_rx,
+  receive_one_for_smoltcp with caller-supplied smoltcp time,
+  transmit_one_from_smoltcp, pop_driver_tx, explicit capacity/error outcomes,
+  and /bin/sockdiag observation labeled
+  host-qemu-substitute-not-live-packet-io. Remaining gaps are real hardware
+  RX/TX coupling, packet scheduling/backpressure on live hardware, Pi 5
+  reachability evidence, SSH strategy, entropy, host keys, service shape,
+  exposure controls, libc/std socket wrappers, UDP/raw sockets, and any public
+  ABI/POSIX/Linux compatibility claim. Live driver programming, live packet
+  I/O, hardware reachability, SSH, UDP/raw sockets, libc/std wrappers,
+  POSIX/Linux compatibility, public stable socket ABI acceptance, broad socket
+  expansion, and phase transition remain rejected. selected_next_task=null and
+  planningNeeded=true pending supervisor planning for any next bounded
+  socket/network task.
 
 - The earlier ARP request emission closeout froze its host-only
   caller-buffered ARP construction frontier and required supervisor planning

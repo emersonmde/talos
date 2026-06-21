@@ -6017,3 +6017,29 @@ publication, hardware reachability, SSH, UDP/raw sockets, libc/std socket
 wrappers, POSIX/Linux compatibility, public stable ABI acceptance, broad socket
 expansion, and phase transition. The selected next bounded task is
 phase12-network-driver-packet-adapter-closeout-20260621.
+
+phase12-network-driver-packet-adapter-closeout-20260621 accepts
+phase12-network-driver-packet-adapter-closeout-accepted. The closeout freezes
+the driver packet adapter slice at source/unit plus retained
+host/QEMU-substitute evidence over the accepted VFS/userspace/private socket
+ABI path.
+
+The accepted boundary is deterministic copied PacketQueueFrame ownership:
+inject_driver_rx supplies adapter RX input, receive_one_for_smoltcp consumes at
+most one RX token with caller-supplied smoltcp time, transmit_one_from_smoltcp
+records at most one smoltcp-produced TX frame, and pop_driver_tx exposes the
+driver-visible TX record. /bin/sockdiag observes that substrate through VFS
+executable lookup/open/read, startup ABI, userspace_socket_abi wrappers,
+descriptor-backed socket dispatch, private smoltcp TCP bridge continuity,
+waitpid, laststatus, deterministic controls, unchanged local socket
+diagnostics, unchanged /bin/pingdiag behavior, and bounded syscall vocabulary.
+
+The remaining gaps are real hardware RX/TX coupling, packet scheduling and
+backpressure on live hardware, Pi 5 reachability evidence, SSH strategy,
+entropy, host keys, service shape, exposure controls, libc/std socket wrappers,
+UDP/raw sockets, and any public ABI/POSIX/Linux compatibility claim. Live
+driver programming, live packet I/O, hardware reachability, SSH, UDP/raw
+sockets, libc/std wrappers, POSIX/Linux compatibility, public stable socket ABI
+acceptance, broad socket expansion, and phase transition remain rejected.
+selected_next_task=null and planningNeeded=true pending supervisor planning for
+any next bounded socket/network task.
