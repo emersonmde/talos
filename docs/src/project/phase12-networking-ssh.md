@@ -7114,3 +7114,26 @@ exchange, encryption/MAC, NEWKEYS, host-key signing, authentication/session
 success, shell attachment, hardware reachability, public
 OpenSSH/POSIX/Linux compatibility, broad expansion, and phase transition remain
 unaccepted. selected_next_task is null and planningNeeded=true.
+
+phase12-ssh-host-key-private-material-contract-20260622 accepts the first
+host-key private-material parsing/signing boundary after supervisor planning
+resolved the runtime KEX blocker. Talos keeps the operator-provisioned
+read-only VFS path /etc/talos/ssh/ssh_host_ed25519_key and narrows the first
+runtime format to unencrypted OpenSSH ssh-ed25519 private-key material in an
+openssh-key-v1 envelope: ciphername none, kdfname none, empty kdfoptions,
+exactly one key, internally consistent public/private Ed25519 material, and
+ignored non-retained comment text. Encrypted keys, passphrases, generated keys,
+ambient host randomness, non-Ed25519 formats, certificates, PPK/PKCS/SEC1
+formats, multi-key material, malformed input, and oversized material remain
+rejected. The selected follow-up dependency boundary is ssh-key 0.7.0-rc.10
+with default-features=false and only alloc plus ed25519, plus existing zeroize
+behavior; std, encryption, default features, broad crypto, RSA/ECDSA/DSA/P-curve
+features, ppk, serde, getrandom, private-key generation, and host OS randomness
+remain rejected. Durable evidence must not retain private bytes, public-key
+blobs, signatures, fingerprints, digests, comments, operator identity,
+key-derived identifiers, or stable session/transport identifiers. This
+contract does not accept actual parsing, signing, runtime KEX, encryption/MAC,
+NEWKEYS, authentication/session success, shell attachment, hardware
+reachability, public compatibility, broad expansion, or phase transition.
+ssh-ready remains false. The selected next bounded task is
+phase12-ssh-host-key-private-material-core-20260622.

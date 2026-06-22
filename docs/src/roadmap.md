@@ -16425,6 +16425,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   SHA-256/HMAC, ChaCha20-Poly1305, SSH KDF, or encrypted packet state.
   selected_next_task is null and planningNeeded=true for supervisor planning
   before any runtime KEX implementation.
+- phase12-ssh-host-key-private-material-contract-20260622 accepts the first
+  host-key private-material parsing/signing boundary. The selected input is
+  operator-provisioned unencrypted OpenSSH ssh-ed25519 private-key material at
+  /etc/talos/ssh/ssh_host_ed25519_key, in an openssh-key-v1 envelope with
+  ciphername none, kdfname none, empty kdfoptions, exactly one key, internally
+  consistent Ed25519 public/private material, and ignored non-retained comment
+  text. The selected follow-up dependency boundary is ssh-key 0.7.0-rc.10 with
+  default-features=false and only alloc plus ed25519, plus existing zeroize
+  behavior. Encrypted keys, passphrases, generated keys, ambient host
+  randomness, non-Ed25519 formats, broad ssh-key feature sets, durable public
+  key/signature/fingerprint/digest retention, actual parsing/signing, runtime
+  KEX, encryption/MAC, NEWKEYS, authentication/session success, shell
+  attachment, hardware reachability, public compatibility, broad expansion,
+  and phase transition remain unaccepted. ssh-ready remains false. The
+  selected next bounded task is
+  phase12-ssh-host-key-private-material-core-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

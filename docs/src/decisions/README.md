@@ -12,6 +12,52 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-22 - Phase 12 Uses Unencrypted OpenSSH Ed25519 Host Keys First
+
+- Status: accepted as the bounded host-key private-material contract in
+  phase12-ssh-host-key-private-material-contract-20260622. No code
+  implementation, Cargo dependency adoption, actual private-key parsing,
+  signing, runtime KEX, encryption/MAC, NEWKEYS, authentication/session
+  behavior, shell attachment, hardware reachability, public
+  OpenSSH/POSIX/Linux compatibility, broad expansion, or phase transition is
+  accepted here.
+- Context: Talos already selected operator-provisioned read-only VFS host-key
+  material at /etc/talos/ssh/ssh_host_ed25519_key and later accepted only
+  metadata readiness. The modeled KEXINIT slice selects ssh-ed25519 as the
+  host-key algorithm, but the runtime KEX/crypto contract blocked because no
+  private host-key parsing/signing boundary existed.
+- Decision: The first private host-key runtime format is unencrypted OpenSSH
+  ssh-ed25519 private-key material in an openssh-key-v1 envelope at the
+  existing read-only VFS path. The accepted envelope has ciphername none,
+  kdfname none, empty kdfoptions, exactly one key, internally consistent
+  Ed25519 public/private material, and ignored non-retained comment text. The
+  selected follow-up dependency boundary is ssh-key 0.7.0-rc.10 with
+  default-features=false and exactly alloc plus ed25519, plus existing zeroize
+  behavior. Encrypted keys, passphrases, broad ssh-key default/crypto feature
+  sets, non-Ed25519 key formats, generated keys, and ambient host randomness
+  are rejected for the first implementation slice.
+- Evidence level: static task/docs/source review of accepted host-key metadata
+  readiness, KEXINIT closeout, runtime KEX/crypto blocker evidence, CSPRNG and
+  persistence/exposure readiness, Cargo.toml, local registry metadata/source
+  for ssh-key 0.7.0-rc.10, ed25519-dalek 3.0.0-rc.0, base64ct 1.8.3, and
+  zeroize 1.8.1. The task record is
+  tasks/2026-06-22-phase12-ssh-host-key-private-material-contract.md.
+- Consequences: The follow-up implementation may add only the selected narrow
+  dependency feature set, fail-closed parsing/classification, in-memory
+  Ed25519 signing readiness, zeroization, and focused public-fixture evidence.
+  It must keep ssh-ready false and must not retain private bytes, public-key
+  blobs, signatures, fingerprints, digests, comments, operator identity,
+  key-derived identifiers, or stable session/transport identifiers in durable
+  evidence.
+- Alternatives considered: encrypted OpenSSH private keys, generated host
+  keys, PKCS/PPK/SEC1/legacy formats, RSA/ECDSA/DSA/FIDO/certificate formats,
+  broad ssh-key default/crypto features, and a Talos-owned parser/signing stack
+  without ssh-key. They are deferred or rejected because they either require
+  passphrase/KDF/decryption policy, ambient or persisted generation policy,
+  broader algorithm surfaces, less direct compatibility with the existing
+  OpenSSH path, or more hand-rolled SSH parsing before the narrow dependency
+  boundary is tested.
+
 ## 2026-06-22 - Phase 12 Evaluates russh Before Writing a Talos SSH Server
 
 - Status: accepted as the bounded SSH implementation strategy ADR in
