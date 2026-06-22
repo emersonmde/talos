@@ -16342,6 +16342,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   shell attachment, hardware reachability, OpenSSH/POSIX/Linux compatibility,
   broad expansion, and phase transition remain unaccepted. The selected next
   task is phase12-ssh-listener-transport-closeout-20260622.
+- phase12-ssh-listener-transport-closeout-20260622 accepts the bounded local
+  listener/transport closeout at static task/docs/evidence review level. The
+  accepted slice now covers the listener/transport contract, local modeled
+  implementation core, retained host/QEMU-substitute smoke transcript, and
+  redaction review. The current frontier remains local and fail-closed:
+  sshservicediag can report the modeled pre-KEX listener/transport exchange
+  through fixed labels/counters, but ssh-ready remains false and runtime SSH
+  crypto, key exchange, authentication/session success, shell attachment,
+  hardware reachability, public OpenSSH/POSIX/Linux compatibility, broad
+  expansion, and phase transition remain unaccepted. selected_next_task is
+  null and planningNeeded=true because no queued or ready task exists after
+  this closeout; supervisor planning is required before the next SSH service
+  slice.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
