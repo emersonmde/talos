@@ -12,6 +12,49 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-22 - Phase 12 Publickey Verification Is a Prerequisite-Only ssh-ed25519 Check
+
+- Status: accepted as the bounded publickey signature-verification contract in
+  phase12-ssh-publickey-verification-contract-20260622. No Rust
+  implementation, authentication response emission, authentication success,
+  account/user authorization, sessions/channels, shell attachment, live
+  reachability, hardware action, OpenSSH/POSIX/Linux compatibility, broad
+  expansion, or phase transition is accepted here.
+- Context: Publickey authentication now has the prerequisite pieces that were
+  previously missing: pre-authentication service/userauth request recognition,
+  a private userauth session-id handle, and an in-memory authorized_keys
+  key-match boundary. The next slice needs a precise signature-verification
+  contract before implementation can safely combine those inputs.
+- Decision: The first verifier is ssh-ed25519 only. It may verify only when
+  the same decrypted SSH_MSG_USERAUTH_REQUEST/publickey payload has
+  signature-present=true, service ssh-connection, algorithm ssh-ed25519, a
+  parsed ssh-ed25519 request public-key blob, an accepted
+  authorized-keys-match-prerequisite-only result for that same request public
+  key, and an available private SshUserauthSessionIdentifier handle. The
+  signed data is the RFC 4252 publickey payload: SSH string-wrapped session
+  identifier, byte SSH_MSG_USERAUTH_REQUEST, original user-name, service,
+  method, boolean true, algorithm, and public-key blob strings. Verification
+  success remains prerequisite-only and does not emit any authentication
+  response or authorize a user.
+- Evidence level: static task/docs/source review plus local registry source
+  review for ssh-key 0.7.0-rc.10, ed25519-dalek 3.0.0-rc.0, and signature
+  3.0.0. The task record is
+  tasks/2026-06-22-phase12-ssh-publickey-verification-contract.md.
+- Consequences: A later implementation task has objective verifier inputs,
+  failure-label families, redaction boundaries, and lifetime rules. ssh-ready
+  remains false; service success, authentication success, sessions/channels,
+  shell attachment, and reachability remain false/zero. Durable evidence must
+  not retain session-id bytes, authorized-key bytes, public-key blobs,
+  signature bytes, signed-data bytes, fingerprints, digests, user names,
+  comments, operator identity, stable identifiers, exchange hashes, hardware
+  data, or boot artifacts.
+- Alternatives considered: accepting PK_OK for signature-present=false,
+  accepting authentication success on signature verification, broadening to
+  certificates or non-Ed25519 algorithms, retaining signed-data/signature
+  material in evidence, or combining verifier implementation with response
+  policy. These are deferred because they broaden protocol/account semantics
+  or evidence risk beyond the prerequisite-only verifier slice.
+
 ## 2026-06-22 - Phase 12 authorized_keys Parsing Starts With Option-Free ssh-ed25519 Key Matching
 
 - Status: accepted as the bounded authorized_keys parser/key-match policy

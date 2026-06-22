@@ -16840,6 +16840,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   compatibility, broad expansion, or phase transition is accepted; ssh-ready
   remains false. The selected next bounded task is
   phase12-ssh-publickey-verification-contract-20260622.
+- phase12-ssh-publickey-verification-contract-20260622 accepts the bounded
+  publickey signature-verification contract. The next implementation must use
+  the same decrypted SSH_MSG_USERAUTH_REQUEST/publickey payload, an available
+  private SshUserauthSessionIdentifier handle, and an
+  authorized-keys-match-prerequisite-only result for the same request public
+  key. The first accepted algorithm is ssh-ed25519 only, and signed data is
+  the RFC 4252 publickey payload: SSH string-wrapped session identifier, byte
+  SSH_MSG_USERAUTH_REQUEST, original user-name, service, method, boolean true,
+  algorithm, and public-key blob strings. This remains prerequisite-only:
+  signature-present=false does not authorize PK_OK, and successful signature
+  verification does not authorize authentication responses, account binding,
+  authentication success, sessions/channels, shell attachment, live
+  reachability, compatibility, broad expansion, or phase transition; ssh-ready
+  remains false. The selected next bounded task is
+  phase12-ssh-publickey-verification-core-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

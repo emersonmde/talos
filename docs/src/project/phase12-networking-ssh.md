@@ -7689,3 +7689,27 @@ hardware data, and boot artifacts. ssh-ready, service-success,
 authentication-success, session/channel counts, shell attachment, and
 reachability remain false/zero. The selected next bounded task is
 phase12-ssh-publickey-verification-contract-20260622.
+
+phase12-ssh-publickey-verification-contract-20260622 accepts the bounded
+publickey signature-verification contract. The first verifier implementation
+must use the same decrypted SSH_MSG_USERAUTH_REQUEST/publickey payload, an
+available private SshUserauthSessionIdentifier handle, and an
+authorized-keys-match-prerequisite-only result for the same request public key.
+The accepted algorithm is ssh-ed25519 only. The signed data is the RFC 4252
+publickey verification payload: SSH string-wrapped session identifier, byte
+SSH_MSG_USERAUTH_REQUEST, original user-name string, original service string,
+original method string, boolean true, original public-key algorithm string, and
+original public-key blob string.
+
+The contract is still prerequisite-only. signature-present=false does not
+authorize USERAUTH_PK_OK, and signature verification success does not authorize
+authentication responses, account/user authorization, authentication success,
+sessions/channels, shell attachment, live reachability, compatibility, broad
+expansion, or phase transition. Durable evidence remains fixed-label/public-
+length/field-count/task-id/command/classification only and excludes session-id
+bytes, authorized-key bytes, public-key blobs, signature bytes, signed-data
+bytes, fingerprints, digests, user names, comments, user/operator identity,
+stable identifiers, exchange hashes, hardware data, and boot artifacts.
+ssh-ready, service-success, authentication-success, session/channel counts,
+shell attachment, and reachability remain false/zero. The selected next
+bounded task is phase12-ssh-publickey-verification-core-20260622.
