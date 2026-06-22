@@ -7599,13 +7599,34 @@ retain and expose the first exchange hash through a private ready-KEX
 session-id handle for later userauth verification, while diagnostics remain
 fixed-label and redacted. This closes only the session-id prerequisite slice.
 
-The next smallest prerequisite is authorized_keys parser/key-match policy, but
-no supervisor-owned queued task exists with explicit gates and evidence. No
+The next smallest prerequisite is authorized_keys parser/key-match policy. No
 authorized-key parsing, publickey matching, signature verification,
 authentication response emission, authentication success, service success,
 session/channel allocation, shell attachment, live reachability, hardware
 action, compatibility claim, broad expansion, or phase transition is accepted.
 ssh-ready, service-success, authentication-success, session/channel counts,
-shell attachment, and reachability remain false/zero. selected_next_task is
-null and planningNeeded=true pending supervisor planning for the authorized_keys
-parser/key-match policy slice.
+shell attachment, and reachability remain false/zero.
+
+phase12-ssh-authorized-keys-parser-policy-contract-20260622 accepts the
+bounded authorized_keys parser/key-match policy for the next implementation
+slice. The first accepted format is a narrow OpenSSH-style option-free
+ssh-ed25519 line in /etc/talos/ssh/authorized_keys, read through the accepted
+read-only VFS boundary: optional leading whitespace, literal ssh-ed25519,
+base64 public-key blob text, and optional trailing comment text. Blank lines
+and leading-# comment lines are ignored. Key options, certificates,
+non-ed25519 algorithms, malformed base64/blobs, invalid metadata, and
+unsupported line forms fail closed.
+
+The accepted key-match boundary is in-memory only: a later implementation may
+decode accepted ssh-ed25519 lines and compare the decoded publickey blob
+byte-for-byte with the caller-owned publickey request blob. Durable evidence
+remains fixed-label/count/length/task-id/command/classification only and must
+not retain authorized-key bytes, decoded blobs, request blobs, comments,
+fingerprints, digests, signatures, user/operator identity, key-derived
+identifiers, stable identifiers, session-id bytes, hardware data, or boot
+artifacts. User/account binding remains unaccepted; a key match is only a
+prerequisite for later signature verification, not account authorization,
+response emission, authentication success, or session readiness. ssh-ready,
+service-success, authentication-success, session/channel counts, shell
+attachment, and reachability remain false/zero. The selected next bounded task
+is phase12-ssh-authorized-keys-parser-core-20260622.

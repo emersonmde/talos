@@ -16774,9 +16774,26 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   publickey matching, signature verification, authentication responses,
   authentication success, service success, session/channel allocation, shell
   attachment, live reachability, hardware, compatibility, broad expansion, or
-  phase transition; ssh-ready remains false. selected_next_task is null and
-  planningNeeded=true pending supervisor planning for the authorized_keys
-  parser/key-match policy prerequisite.
+  phase transition; ssh-ready remains false. The next bounded prerequisite is
+  authorized_keys parser/key-match policy.
+- phase12-ssh-authorized-keys-parser-policy-contract-20260622 accepts that
+  bounded authorized_keys parser/key-match policy. The first accepted file
+  format is a narrow OpenSSH-style option-free ssh-ed25519 public-key line in
+  /etc/talos/ssh/authorized_keys, consumed through the accepted read-only VFS
+  boundary. Blank lines and leading-# comments are ignored; trailing comments
+  are ignored; key options, certificates, non-ed25519 algorithms, malformed
+  base64/blobs, invalid metadata, and unsupported line forms fail closed. The
+  first key-match boundary may compare decoded ssh-ed25519 publickey blobs
+  against the caller-owned publickey request blob in memory only. Durable
+  evidence remains fixed-label/count/length/command/task-id/classification
+  only and excludes authorized-key bytes, publickey blobs, fingerprints,
+  digests, signatures, comments, user/operator identity, stable identifiers,
+  session-id bytes, hardware data, and boot artifacts. A key match is only a
+  prerequisite for future signature verification, not account authorization,
+  response emission, authentication success, session/channel allocation, shell
+  attachment, live reachability, compatibility, broad expansion, or phase
+  transition; ssh-ready remains false. The selected next bounded task is
+  phase12-ssh-authorized-keys-parser-core-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

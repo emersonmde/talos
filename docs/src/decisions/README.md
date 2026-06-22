@@ -12,6 +12,45 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-22 - Phase 12 authorized_keys Parsing Starts With Option-Free ssh-ed25519 Key Matching
+
+- Status: accepted as the bounded authorized_keys parser/key-match policy
+  contract in phase12-ssh-authorized-keys-parser-policy-contract-20260622. No
+  Rust implementation, signature verification, authentication response
+  emission, authentication success, account database, sessions/channels, shell
+  attachment, live reachability, hardware action, OpenSSH/POSIX/Linux
+  compatibility, broad expansion, or phase transition is accepted here.
+- Context: Publickey authentication now has an accepted private session-id
+  prerequisite, but authorized-key material is still metadata-only at
+  /etc/talos/ssh/authorized_keys. The next implementation needs a parser and
+  key-match policy before signature verification can be planned safely.
+- Decision: The first parser/key-match slice reads
+  /etc/talos/ssh/authorized_keys only through the accepted read-only VFS
+  boundary and accepts only narrow OpenSSH-style option-free ssh-ed25519
+  public-key lines: optional leading whitespace, literal ssh-ed25519, base64
+  public-key blob text, and optional trailing comment text. Blank and leading-#
+  comment lines are ignored. Key options, certificates, non-ed25519
+  algorithms, malformed base64/blobs, invalid metadata, and unsupported line
+  forms fail closed. A later implementation may decode accepted lines and
+  compare decoded publickey blobs against the caller-owned publickey request
+  blob in memory only.
+- Evidence level: static task/docs/source review. The task record is
+  tasks/2026-06-22-phase12-ssh-authorized-keys-parser-policy-contract.md.
+- Consequences: A future parser implementation has an objective narrow policy,
+  but key match remains a prerequisite only. User/account binding, response
+  emission, signature verification, authentication success, sessions, shell
+  attachment, and reachability remain unaccepted; ssh-ready remains false.
+  Durable evidence must not retain authorized-key bytes, decoded blobs,
+  request blobs, fingerprints, digests, signatures, comments, user/operator
+  identity, key-derived identifiers, stable identifiers, session identifiers,
+  hardware data, or boot artifacts.
+- Alternatives considered: full OpenSSH authorized_keys options, certificate
+  keys, multiple algorithms, writable per-user files, or immediate
+  authentication response behavior. They are deferred because options and
+  per-user files imply account/authorization policy, certificates and more
+  algorithms broaden the crypto surface, writable files are not accepted, and
+  responses require signature verification plus account/session decisions.
+
 ## 2026-06-22 - Phase 12 Userauth Session ID Uses a Private Ready-KEX Handle
 
 - Status: accepted as the bounded session-identifier prerequisite in
