@@ -16624,6 +16624,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   task is phase12-ssh-encrypted-transport-dispatch-core-20260622, but
   supervisor planning must enqueue it with explicit gates before worker
   promotion.
+- phase12-ssh-encrypted-transport-dispatch-core-20260622 accepts the local
+  pre-authentication encrypted transport dispatch classifier. It consumes
+  caller-owned decrypted payload bytes only after the accepted encrypted-packet
+  state is active, inspects only the first public SSH message-number byte, and
+  emits fixed diagnostics for service-request (5), userauth-request (50),
+  unsupported message numbers, empty payloads, inactive encrypted state,
+  post-NEWKEYS plaintext rejection, and packet crypto failure. Positive
+  dispatch remains pre-authentication and not-ready:
+  authentication-success=false, session-count=0, channel-count=0,
+  shell-attached=false, and ssh-ready=false remain authoritative. Durable
+  evidence remains fixed-label/public-message-number/counter/command/task-id
+  only and excludes packet payload, secret, peer, operator, session, hardware,
+  and boot material. The selected next bounded task is
+  phase12-shell-ssh-encrypted-transport-dispatch-smoke-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

@@ -73,6 +73,13 @@ pub(crate) enum SshServiceReadinessLabel {
     EncryptedPacketSequenceOverflow,
     EncryptedPacketCryptoFailed,
     EncryptedPacketDiagnosticReady,
+    EncryptedTransportDispatchModeled,
+    EncryptedTransportPreauthState,
+    EncryptedTransportServiceRequest,
+    EncryptedTransportUserauthRequest,
+    EncryptedTransportMessageUnsupported,
+    EncryptedTransportPacketMalformed,
+    EncryptedTransportPlaintextRejected,
     TransportClosedBeforeKex,
     AuthenticationUnimplemented,
     SessionUnimplemented,
@@ -147,6 +154,27 @@ impl SshServiceReadinessLabel {
             Self::EncryptedPacketDiagnosticReady => {
                 "sshservicediag-encrypted-packet-diagnostic-ready"
             }
+            Self::EncryptedTransportDispatchModeled => {
+                "sshservicediag-encrypted-transport-dispatch-modeled"
+            }
+            Self::EncryptedTransportPreauthState => {
+                "sshservicediag-encrypted-transport-preauth-state"
+            }
+            Self::EncryptedTransportServiceRequest => {
+                "sshservicediag-encrypted-transport-service-request"
+            }
+            Self::EncryptedTransportUserauthRequest => {
+                "sshservicediag-encrypted-transport-userauth-request"
+            }
+            Self::EncryptedTransportMessageUnsupported => {
+                "sshservicediag-encrypted-transport-message-unsupported"
+            }
+            Self::EncryptedTransportPacketMalformed => {
+                "sshservicediag-encrypted-transport-packet-malformed"
+            }
+            Self::EncryptedTransportPlaintextRejected => {
+                "sshservicediag-encrypted-transport-plaintext-rejected"
+            }
             Self::TransportClosedBeforeKex => "sshservicediag-transport-closed-before-kex",
             Self::AuthenticationUnimplemented => "sshservicediag-authentication-unimplemented",
             Self::SessionUnimplemented => "sshservicediag-session-unimplemented",
@@ -171,11 +199,15 @@ const SSH_LOCAL_TRANSPORT_SOCKET_CAPACITY: usize = 4;
 const SSH_LOCAL_TRANSPORT_REMOTE_IDENTIFICATION: &[u8] = b"SSH-2.0-local-model\r\n";
 const SSH_LOCAL_TRANSPORT_OWNER_RAW: u64 = 0x5353_4801;
 const SSH_LOCAL_TRANSPORT_CLIENT_OWNER_RAW: u64 = 0x5353_4802;
+const SSH_MSG_SERVICE_REQUEST: u8 = 5;
 const SSH_MSG_KEXINIT: u8 = 20;
+const SSH_MSG_USERAUTH_REQUEST: u8 = 50;
 const SSH_KEXINIT_COOKIE_BYTES: usize = 16;
 const SSH_KEXINIT_LIST_COUNT: usize = 10;
 const SSH_KEXINIT_REQUIRED_LIST_COUNT: usize = 8;
 const SSH_KEXINIT_CLIENT_PACKET_BUFFER_BYTES: usize = SSH_KEXINIT_PACKET_MAX_BYTES + 4;
+const SSH_ENCRYPTED_TRANSPORT_DISPATCH_MIN_PAYLOAD_BYTES: usize = 1;
+const MAX_SSH_ENCRYPTED_TRANSPORT_DISPATCH_LABELS: usize = 6;
 const SSH_KEXINIT_MODELED_COOKIE_SEED: [u8; crate::csprng::CSPRNG_SEED_BYTES] =
     *b"Talos-kexinit-cookie-redacted!!!";
 
@@ -471,6 +503,173 @@ pub(crate) fn classify_ssh_service_readiness_with_runtime_kex(
             peer_public_key,
         }),
     )
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SshEncryptedTransportDispatchResult {
+    ServiceRequest,
+    UserauthRequest,
+    UnsupportedMessage,
+    MalformedPacket,
+    InactiveEncryptedPacketState,
+    PlaintextRejected,
+    PacketCryptoFailed,
+}
+
+pub(crate) struct SshEncryptedTransportDispatchInput<'a> {
+    pub(crate) encrypted_packet_state_active: bool,
+    pub(crate) post_newkeys_plaintext_attempted: bool,
+    pub(crate) packet_crypto_failed: bool,
+    pub(crate) decrypted_payload: &'a [u8],
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SshEncryptedTransportDispatchReport {
+    labels: [SshServiceReadinessLabel; MAX_SSH_ENCRYPTED_TRANSPORT_DISPATCH_LABELS],
+    label_count: usize,
+    result: SshEncryptedTransportDispatchResult,
+    message_number: Option<u8>,
+    encrypted_packet_state_active: bool,
+}
+
+impl SshEncryptedTransportDispatchReport {
+    fn new(
+        result: SshEncryptedTransportDispatchResult,
+        primary_label: SshServiceReadinessLabel,
+        message_number: Option<u8>,
+        encrypted_packet_state_active: bool,
+    ) -> Self {
+        let mut report = Self {
+            labels: [SshServiceReadinessLabel::NotReady;
+                MAX_SSH_ENCRYPTED_TRANSPORT_DISPATCH_LABELS],
+            label_count: 0,
+            result,
+            message_number,
+            encrypted_packet_state_active,
+        };
+        match result {
+            SshEncryptedTransportDispatchResult::ServiceRequest
+            | SshEncryptedTransportDispatchResult::UserauthRequest
+            | SshEncryptedTransportDispatchResult::UnsupportedMessage => {
+                report.push(SshServiceReadinessLabel::EncryptedTransportDispatchModeled);
+                report.push(SshServiceReadinessLabel::EncryptedTransportPreauthState);
+                report.push(primary_label);
+            }
+            SshEncryptedTransportDispatchResult::PlaintextRejected => {
+                report.push(primary_label);
+                report.push(SshServiceReadinessLabel::EncryptedPacketCryptoFailed);
+            }
+            SshEncryptedTransportDispatchResult::PacketCryptoFailed
+            | SshEncryptedTransportDispatchResult::MalformedPacket
+            | SshEncryptedTransportDispatchResult::InactiveEncryptedPacketState => {
+                report.push(primary_label);
+            }
+        }
+        report.push(SshServiceReadinessLabel::AuthenticationUnimplemented);
+        report.push(SshServiceReadinessLabel::SessionUnimplemented);
+        report.push(SshServiceReadinessLabel::NotReady);
+        report
+    }
+
+    fn push(&mut self, label: SshServiceReadinessLabel) {
+        self.labels[self.label_count] = label;
+        self.label_count += 1;
+    }
+
+    pub(crate) fn labels(&self) -> &[SshServiceReadinessLabel] {
+        &self.labels[..self.label_count]
+    }
+
+    pub(crate) const fn result(self) -> SshEncryptedTransportDispatchResult {
+        self.result
+    }
+
+    pub(crate) const fn message_number(self) -> Option<u8> {
+        self.message_number
+    }
+
+    pub(crate) const fn encrypted_packet_state_active(self) -> bool {
+        self.encrypted_packet_state_active
+    }
+
+    pub(crate) const fn authentication_success(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn session_count(self) -> usize {
+        0
+    }
+
+    pub(crate) const fn channel_count(self) -> usize {
+        0
+    }
+
+    pub(crate) const fn shell_attached(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn ssh_ready(self) -> bool {
+        false
+    }
+}
+
+pub(crate) fn classify_ssh_encrypted_transport_dispatch(
+    input: SshEncryptedTransportDispatchInput<'_>,
+) -> SshEncryptedTransportDispatchReport {
+    if input.packet_crypto_failed {
+        return SshEncryptedTransportDispatchReport::new(
+            SshEncryptedTransportDispatchResult::PacketCryptoFailed,
+            SshServiceReadinessLabel::EncryptedPacketCryptoFailed,
+            None,
+            input.encrypted_packet_state_active,
+        );
+    }
+    if input.post_newkeys_plaintext_attempted {
+        return SshEncryptedTransportDispatchReport::new(
+            SshEncryptedTransportDispatchResult::PlaintextRejected,
+            SshServiceReadinessLabel::EncryptedTransportPlaintextRejected,
+            None,
+            input.encrypted_packet_state_active,
+        );
+    }
+    if !input.encrypted_packet_state_active {
+        return SshEncryptedTransportDispatchReport::new(
+            SshEncryptedTransportDispatchResult::InactiveEncryptedPacketState,
+            SshServiceReadinessLabel::NewkeysNotReady,
+            None,
+            false,
+        );
+    }
+    if input.decrypted_payload.len() < SSH_ENCRYPTED_TRANSPORT_DISPATCH_MIN_PAYLOAD_BYTES {
+        return SshEncryptedTransportDispatchReport::new(
+            SshEncryptedTransportDispatchResult::MalformedPacket,
+            SshServiceReadinessLabel::EncryptedTransportPacketMalformed,
+            None,
+            true,
+        );
+    }
+
+    let message_number = input.decrypted_payload[0];
+    match message_number {
+        SSH_MSG_SERVICE_REQUEST => SshEncryptedTransportDispatchReport::new(
+            SshEncryptedTransportDispatchResult::ServiceRequest,
+            SshServiceReadinessLabel::EncryptedTransportServiceRequest,
+            Some(message_number),
+            true,
+        ),
+        SSH_MSG_USERAUTH_REQUEST => SshEncryptedTransportDispatchReport::new(
+            SshEncryptedTransportDispatchResult::UserauthRequest,
+            SshServiceReadinessLabel::EncryptedTransportUserauthRequest,
+            Some(message_number),
+            true,
+        ),
+        _ => SshEncryptedTransportDispatchReport::new(
+            SshEncryptedTransportDispatchResult::UnsupportedMessage,
+            SshServiceReadinessLabel::EncryptedTransportMessageUnsupported,
+            Some(message_number),
+            true,
+        ),
+    }
 }
 
 struct RuntimeKexAttempt<'a> {
@@ -1006,6 +1205,16 @@ mod tests {
         labels
     }
 
+    fn dispatch_label_names(
+        report: &SshEncryptedTransportDispatchReport,
+    ) -> [&'static str; MAX_SSH_ENCRYPTED_TRANSPORT_DISPATCH_LABELS] {
+        let mut labels = [""; MAX_SSH_ENCRYPTED_TRANSPORT_DISPATCH_LABELS];
+        for (index, label) in report.labels().iter().enumerate() {
+            labels[index] = label.name();
+        }
+        labels
+    }
+
     fn shape_modeled_key_report() -> SshKeyReadinessReport {
         let entropy = entropy::classify_entropy_snapshot(
             EntropyDiagnosticSnapshot::empty()
@@ -1409,6 +1618,183 @@ mod tests {
         );
         assert_eq!(invalid_host_report.runtime_kex_result(), None);
         assert!(!invalid_host_report.ssh_ready());
+    }
+
+    #[test_case]
+    fn encrypted_transport_dispatch_routes_preauth_message_numbers_only_when_active() {
+        let service =
+            classify_ssh_encrypted_transport_dispatch(SshEncryptedTransportDispatchInput {
+                encrypted_packet_state_active: true,
+                post_newkeys_plaintext_attempted: false,
+                packet_crypto_failed: false,
+                decrypted_payload: &[SSH_MSG_SERVICE_REQUEST, 0, 0, 0],
+            });
+        assert_eq!(
+            service.result(),
+            SshEncryptedTransportDispatchResult::ServiceRequest
+        );
+        assert_eq!(service.message_number(), Some(SSH_MSG_SERVICE_REQUEST));
+        assert_eq!(
+            &dispatch_label_names(&service)[..service.labels().len()],
+            &[
+                "sshservicediag-encrypted-transport-dispatch-modeled",
+                "sshservicediag-encrypted-transport-preauth-state",
+                "sshservicediag-encrypted-transport-service-request",
+                "sshservicediag-authentication-unimplemented",
+                "sshservicediag-session-unimplemented",
+                "sshservicediag-not-ready",
+            ]
+        );
+        assert!(service.encrypted_packet_state_active());
+        assert!(!service.authentication_success());
+        assert_eq!(service.session_count(), 0);
+        assert_eq!(service.channel_count(), 0);
+        assert!(!service.shell_attached());
+        assert!(!service.ssh_ready());
+
+        let userauth =
+            classify_ssh_encrypted_transport_dispatch(SshEncryptedTransportDispatchInput {
+                encrypted_packet_state_active: true,
+                post_newkeys_plaintext_attempted: false,
+                packet_crypto_failed: false,
+                decrypted_payload: &[SSH_MSG_USERAUTH_REQUEST, 0, 0, 0],
+            });
+        assert_eq!(
+            userauth.result(),
+            SshEncryptedTransportDispatchResult::UserauthRequest
+        );
+        assert_eq!(userauth.message_number(), Some(SSH_MSG_USERAUTH_REQUEST));
+        assert_eq!(
+            &dispatch_label_names(&userauth)[..userauth.labels().len()],
+            &[
+                "sshservicediag-encrypted-transport-dispatch-modeled",
+                "sshservicediag-encrypted-transport-preauth-state",
+                "sshservicediag-encrypted-transport-userauth-request",
+                "sshservicediag-authentication-unimplemented",
+                "sshservicediag-session-unimplemented",
+                "sshservicediag-not-ready",
+            ]
+        );
+        assert!(!userauth.authentication_success());
+        assert_eq!(userauth.session_count(), 0);
+        assert_eq!(userauth.channel_count(), 0);
+        assert!(!userauth.shell_attached());
+        assert!(!userauth.ssh_ready());
+    }
+
+    #[test_case]
+    fn encrypted_transport_dispatch_fails_closed_without_retaining_payload_material() {
+        let empty = classify_ssh_encrypted_transport_dispatch(SshEncryptedTransportDispatchInput {
+            encrypted_packet_state_active: true,
+            post_newkeys_plaintext_attempted: false,
+            packet_crypto_failed: false,
+            decrypted_payload: &[],
+        });
+        assert_eq!(
+            empty.result(),
+            SshEncryptedTransportDispatchResult::MalformedPacket
+        );
+        assert_eq!(empty.message_number(), None);
+        assert_eq!(
+            &dispatch_label_names(&empty)[..empty.labels().len()],
+            &[
+                "sshservicediag-encrypted-transport-packet-malformed",
+                "sshservicediag-authentication-unimplemented",
+                "sshservicediag-session-unimplemented",
+                "sshservicediag-not-ready",
+            ]
+        );
+
+        let unsupported =
+            classify_ssh_encrypted_transport_dispatch(SshEncryptedTransportDispatchInput {
+                encrypted_packet_state_active: true,
+                post_newkeys_plaintext_attempted: false,
+                packet_crypto_failed: false,
+                decrypted_payload: &[99, 1, 2, 3],
+            });
+        assert_eq!(
+            unsupported.result(),
+            SshEncryptedTransportDispatchResult::UnsupportedMessage
+        );
+        assert_eq!(unsupported.message_number(), Some(99));
+        assert_eq!(
+            &dispatch_label_names(&unsupported)[..unsupported.labels().len()],
+            &[
+                "sshservicediag-encrypted-transport-dispatch-modeled",
+                "sshservicediag-encrypted-transport-preauth-state",
+                "sshservicediag-encrypted-transport-message-unsupported",
+                "sshservicediag-authentication-unimplemented",
+                "sshservicediag-session-unimplemented",
+                "sshservicediag-not-ready",
+            ]
+        );
+
+        let inactive =
+            classify_ssh_encrypted_transport_dispatch(SshEncryptedTransportDispatchInput {
+                encrypted_packet_state_active: false,
+                post_newkeys_plaintext_attempted: false,
+                packet_crypto_failed: false,
+                decrypted_payload: &[SSH_MSG_SERVICE_REQUEST],
+            });
+        assert_eq!(
+            inactive.result(),
+            SshEncryptedTransportDispatchResult::InactiveEncryptedPacketState
+        );
+        assert_eq!(inactive.message_number(), None);
+        assert_eq!(
+            &dispatch_label_names(&inactive)[..inactive.labels().len()],
+            &[
+                "sshservicediag-newkeys-not-ready",
+                "sshservicediag-authentication-unimplemented",
+                "sshservicediag-session-unimplemented",
+                "sshservicediag-not-ready",
+            ]
+        );
+
+        let plaintext =
+            classify_ssh_encrypted_transport_dispatch(SshEncryptedTransportDispatchInput {
+                encrypted_packet_state_active: true,
+                post_newkeys_plaintext_attempted: true,
+                packet_crypto_failed: false,
+                decrypted_payload: &[SSH_MSG_SERVICE_REQUEST],
+            });
+        assert_eq!(
+            plaintext.result(),
+            SshEncryptedTransportDispatchResult::PlaintextRejected
+        );
+        assert_eq!(
+            &dispatch_label_names(&plaintext)[..plaintext.labels().len()],
+            &[
+                "sshservicediag-encrypted-transport-plaintext-rejected",
+                "sshservicediag-encrypted-packet-crypto-failed",
+                "sshservicediag-authentication-unimplemented",
+                "sshservicediag-session-unimplemented",
+                "sshservicediag-not-ready",
+            ]
+        );
+
+        let crypto_failed =
+            classify_ssh_encrypted_transport_dispatch(SshEncryptedTransportDispatchInput {
+                encrypted_packet_state_active: true,
+                post_newkeys_plaintext_attempted: false,
+                packet_crypto_failed: true,
+                decrypted_payload: &[SSH_MSG_USERAUTH_REQUEST],
+            });
+        assert_eq!(
+            crypto_failed.result(),
+            SshEncryptedTransportDispatchResult::PacketCryptoFailed
+        );
+        assert_eq!(crypto_failed.message_number(), None);
+        assert_eq!(
+            &dispatch_label_names(&crypto_failed)[..crypto_failed.labels().len()],
+            &[
+                "sshservicediag-encrypted-packet-crypto-failed",
+                "sshservicediag-authentication-unimplemented",
+                "sshservicediag-session-unimplemented",
+                "sshservicediag-not-ready",
+            ]
+        );
+        assert!(!crypto_failed.ssh_ready());
     }
 
     #[test_case]

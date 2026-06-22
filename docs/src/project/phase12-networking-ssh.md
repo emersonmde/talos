@@ -7395,3 +7395,23 @@ broad expansion, and phase transition remain unaccepted. The selected next
 bounded implementation is
 phase12-ssh-encrypted-transport-dispatch-core-20260622, but supervisor planning
 must enqueue it with explicit scope and gates before worker promotion.
+
+phase12-ssh-encrypted-transport-dispatch-core-20260622 accepts the local
+pre-authentication encrypted transport dispatch classifier. The classifier
+consumes caller-owned decrypted payload bytes only when the accepted encrypted
+packet state is active, inspects only the first public SSH message-number byte,
+and reports fixed diagnostics for SSH_MSG_SERVICE_REQUEST (5),
+SSH_MSG_USERAUTH_REQUEST (50), unsupported message numbers, empty payloads,
+inactive encrypted state, post-NEWKEYS plaintext rejection, and packet crypto
+failure. Positive dispatch remains pre-authentication and not-ready:
+authentication-success=false, session-count=0, channel-count=0,
+shell-attached=false, and ssh-ready=false remain authoritative.
+
+Durable evidence for this core remains limited to fixed labels, public message
+numbers, small false/zero counters, validation commands, task ids, and
+classifications. It excludes packet payload bytes, ciphertext, plaintext, keys,
+IV bytes, tags, exchange hashes, shared secrets, signatures, service/user/auth
+strings, peer material, operator identity, key-derived identifiers, stable
+transport/session identifiers, live hardware data, and boot artifacts. The
+selected next bounded task is
+phase12-shell-ssh-encrypted-transport-dispatch-smoke-20260622.
