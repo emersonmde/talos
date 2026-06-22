@@ -1054,8 +1054,15 @@ mod tests {
         [0; OPERATOR_SEED_MIN_SUFFICIENT_BYTES];
     static INSUFFICIENT_HOST_KEY_BYTES: [u8; HOST_KEY_MIN_METADATA_BYTES - 1] =
         [0; HOST_KEY_MIN_METADATA_BYTES - 1];
-    static SUFFICIENT_HOST_KEY_BYTES: [u8; HOST_KEY_MIN_METADATA_BYTES] =
-        [0; HOST_KEY_MIN_METADATA_BYTES];
+    static SUFFICIENT_HOST_KEY_BYTES: &[u8] = br#"
+-----BEGIN OPENSSH PRIVATE KEY-----
+b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+QyNTUxOQAAACCzPq7zfqLffKoBDe/eo04kH2XxtSmk9D7RQyf1xUqrYgAAAJgAIAxdACAM
+XQAAAAtzc2gtZWQyNTUxOQAAACCzPq7zfqLffKoBDe/eo04kH2XxtSmk9D7RQyf1xUqrYg
+AAAEC2BsIi0QwW2uFscKTUUXNHLsYX4FxlaSDSblbAj7WR7bM+rvN+ot98qgEN796jTiQf
+ZfG1KaT0PtFDJ/XFSqtiAAAAEHVzZXJAZXhhbXBsZS5jb20BAgMEBQ==
+-----END OPENSSH PRIVATE KEY-----
+"#;
     static OVERSIZED_HOST_KEY_BYTES: [u8; HOST_KEY_MAX_METADATA_BYTES + 1] =
         [0; HOST_KEY_MAX_METADATA_BYTES + 1];
     static INSUFFICIENT_AUTHORIZED_KEY_BYTES: [u8; AUTHORIZED_KEY_MIN_METADATA_BYTES - 1] =
@@ -1110,7 +1117,7 @@ mod tests {
         InitramfsNode::regular_file(SEED_INDEX, &SUFFICIENT_SEED_BYTES),
         InitramfsNode::directory(SSH_INDEX, &SSH_WITH_SEED_ENTRIES),
         InitramfsNode::regular_file(HOST_KEY_INDEX, b"unused"),
-        InitramfsNode::regular_file(HOST_KEY_AND_SEED_INDEX, &SUFFICIENT_HOST_KEY_BYTES),
+        InitramfsNode::regular_file(HOST_KEY_AND_SEED_INDEX, SUFFICIENT_HOST_KEY_BYTES),
     ];
     static EMPTY_AUTHORIZED_KEY_NODES: [InitramfsNode; 8] = [
         InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
@@ -1119,7 +1126,7 @@ mod tests {
         InitramfsNode::regular_file(SEED_INDEX, &SUFFICIENT_SEED_BYTES),
         InitramfsNode::directory(SSH_INDEX, &SSH_WITH_AUTHORIZED_KEY_ENTRIES),
         InitramfsNode::regular_file(HOST_KEY_INDEX, b"unused"),
-        InitramfsNode::regular_file(HOST_KEY_AND_SEED_INDEX, &SUFFICIENT_HOST_KEY_BYTES),
+        InitramfsNode::regular_file(HOST_KEY_AND_SEED_INDEX, SUFFICIENT_HOST_KEY_BYTES),
         InitramfsNode::regular_file(AUTHORIZED_KEY_INDEX, b""),
     ];
     static INSUFFICIENT_AUTHORIZED_KEY_NODES: [InitramfsNode; 8] = [
@@ -1129,7 +1136,7 @@ mod tests {
         InitramfsNode::regular_file(SEED_INDEX, &SUFFICIENT_SEED_BYTES),
         InitramfsNode::directory(SSH_INDEX, &SSH_WITH_AUTHORIZED_KEY_ENTRIES),
         InitramfsNode::regular_file(HOST_KEY_INDEX, b"unused"),
-        InitramfsNode::regular_file(HOST_KEY_AND_SEED_INDEX, &SUFFICIENT_HOST_KEY_BYTES),
+        InitramfsNode::regular_file(HOST_KEY_AND_SEED_INDEX, SUFFICIENT_HOST_KEY_BYTES),
         InitramfsNode::regular_file(AUTHORIZED_KEY_INDEX, &INSUFFICIENT_AUTHORIZED_KEY_BYTES),
     ];
     static SUFFICIENT_HOST_KEY_SEED_AND_AUTHORIZED_KEY_NODES: [InitramfsNode; 8] = [
@@ -1139,7 +1146,7 @@ mod tests {
         InitramfsNode::regular_file(SEED_INDEX, &SUFFICIENT_SEED_BYTES),
         InitramfsNode::directory(SSH_INDEX, &SSH_WITH_AUTHORIZED_KEY_ENTRIES),
         InitramfsNode::regular_file(HOST_KEY_INDEX, b"unused"),
-        InitramfsNode::regular_file(HOST_KEY_AND_SEED_INDEX, &SUFFICIENT_HOST_KEY_BYTES),
+        InitramfsNode::regular_file(HOST_KEY_AND_SEED_INDEX, SUFFICIENT_HOST_KEY_BYTES),
         InitramfsNode::regular_file(AUTHORIZED_KEY_INDEX, &SUFFICIENT_AUTHORIZED_KEY_BYTES),
     ];
     static OVERSIZED_AUTHORIZED_KEY_NODES: [InitramfsNode; 8] = [
@@ -1149,7 +1156,7 @@ mod tests {
         InitramfsNode::regular_file(SEED_INDEX, &SUFFICIENT_SEED_BYTES),
         InitramfsNode::directory(SSH_INDEX, &SSH_WITH_AUTHORIZED_KEY_ENTRIES),
         InitramfsNode::regular_file(HOST_KEY_INDEX, b"unused"),
-        InitramfsNode::regular_file(HOST_KEY_AND_SEED_INDEX, &SUFFICIENT_HOST_KEY_BYTES),
+        InitramfsNode::regular_file(HOST_KEY_AND_SEED_INDEX, SUFFICIENT_HOST_KEY_BYTES),
         InitramfsNode::regular_file(AUTHORIZED_KEY_INDEX, &OVERSIZED_AUTHORIZED_KEY_BYTES),
     ];
     static INVALID_EXPOSURE_MARKER_NODES: [InitramfsNode; 9] = [
@@ -1159,7 +1166,7 @@ mod tests {
         InitramfsNode::regular_file(SEED_INDEX, &SUFFICIENT_SEED_BYTES),
         InitramfsNode::directory(SSH_INDEX, &SSH_WITH_AUTHORIZED_KEY_AND_EXPOSURE_ENTRIES),
         InitramfsNode::regular_file(HOST_KEY_INDEX, b"unused"),
-        InitramfsNode::regular_file(HOST_KEY_AND_SEED_INDEX, &SUFFICIENT_HOST_KEY_BYTES),
+        InitramfsNode::regular_file(HOST_KEY_AND_SEED_INDEX, SUFFICIENT_HOST_KEY_BYTES),
         InitramfsNode::regular_file(AUTHORIZED_KEY_INDEX, &SUFFICIENT_AUTHORIZED_KEY_BYTES),
         InitramfsNode::regular_file(EXPOSURE_MARKER_INDEX, &OVERSIZED_EXPOSURE_MARKER_BYTES),
     ];
@@ -1170,7 +1177,7 @@ mod tests {
         InitramfsNode::regular_file(SEED_INDEX, &SUFFICIENT_SEED_BYTES),
         InitramfsNode::directory(SSH_INDEX, &SSH_WITH_AUTHORIZED_KEY_AND_EXPOSURE_ENTRIES),
         InitramfsNode::regular_file(HOST_KEY_INDEX, b"unused"),
-        InitramfsNode::regular_file(HOST_KEY_AND_SEED_INDEX, &SUFFICIENT_HOST_KEY_BYTES),
+        InitramfsNode::regular_file(HOST_KEY_AND_SEED_INDEX, SUFFICIENT_HOST_KEY_BYTES),
         InitramfsNode::regular_file(AUTHORIZED_KEY_INDEX, &SUFFICIENT_AUTHORIZED_KEY_BYTES),
         InitramfsNode::regular_file(EXPOSURE_MARKER_INDEX, b""),
     ];

@@ -49,6 +49,12 @@ ADR template:
   blobs, signatures, fingerprints, digests, comments, operator identity,
   key-derived identifiers, or stable session/transport identifiers in durable
   evidence.
+- Implementation update: phase12-ssh-host-key-private-material-core-20260622
+  adopted that ssh-key feature boundary and a direct no-default signature
+  dependency only as trait glue for ssh-key's raw signing API. This does not
+  select a broader crypto backend, generation policy, host randomness source,
+  runtime KEX, encryption/MAC, NEWKEYS, authentication/session behavior,
+  hardware reachability, compatibility, broad expansion, or phase transition.
 - Alternatives considered: encrypted OpenSSH private keys, generated host
   keys, PKCS/PPK/SEC1/legacy formats, RSA/ECDSA/DSA/FIDO/certificate formats,
   broad ssh-key default/crypto features, and a Talos-owned parser/signing stack

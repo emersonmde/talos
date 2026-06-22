@@ -1,9 +1,8 @@
 //! SSH key-management readiness classification.
 //!
-//! This module classifies caller-supplied prerequisite metadata only. It does
-//! not generate host keys, parse authorized keys, read or persist secrets,
-//! sample hardware, import crypto/SSH dependencies, or accept SSH service
-//! readiness.
+//! This module classifies caller-supplied prerequisite material only. It does
+//! not generate host keys, parse authorized keys, persist secrets, sample
+//! hardware, or accept SSH service readiness.
 
 use crate::entropy::{
     self, EntropyDiagnosticReport, EntropyDiagnosticSnapshot, OperatorSeedMaterialMetadata,
@@ -13,6 +12,8 @@ use crate::{
     initramfs::{ReadOnlyInitramfs, VfsNodeKind},
     posix::PosixError,
 };
+use signature::Signer;
+use ssh_key::{Algorithm, Cipher, Kdf, PrivateKey, Signature};
 
 pub(crate) const HOST_KEY_PATH: &[u8] = b"/etc/talos/ssh/ssh_host_ed25519_key";
 pub(crate) const HOST_KEY_MIN_METADATA_BYTES: usize = 64;
@@ -95,6 +96,49 @@ impl HostKeyMaterialMetadata {
 
     pub(crate) const fn byte_len(self) -> Option<usize> {
         self.byte_len
+    }
+}
+
+pub(crate) struct HostKeyPrivateMaterial {
+    private_key: PrivateKey,
+    byte_len: usize,
+}
+
+impl HostKeyPrivateMaterial {
+    pub(crate) const fn byte_len(&self) -> usize {
+        self.byte_len
+    }
+
+    pub(crate) fn sign_exchange_hash(
+        &self,
+        exchange_hash: &[u8],
+    ) -> Result<HostKeyExchangeSignature, HostKeyMaterialMetadata> {
+        let signature = self
+            .private_key
+            .try_sign(exchange_hash)
+            .map_err(|_| HostKeyMaterialMetadata::invalid(Some(self.byte_len)))?;
+        if signature.algorithm() != Algorithm::Ed25519 {
+            return Err(HostKeyMaterialMetadata::invalid(Some(self.byte_len)));
+        }
+        Ok(HostKeyExchangeSignature { signature })
+    }
+}
+
+pub(crate) struct HostKeyExchangeSignature {
+    signature: Signature,
+}
+
+impl HostKeyExchangeSignature {
+    pub(crate) const fn algorithm_name(&self) -> &'static str {
+        "ssh-ed25519"
+    }
+
+    pub(crate) fn byte_len(&self) -> usize {
+        self.signature.as_bytes().len()
+    }
+
+    pub(crate) const fn as_ssh_signature(&self) -> &Signature {
+        &self.signature
     }
 }
 
@@ -382,25 +426,55 @@ pub(crate) fn classify_ssh_key_readiness(
 }
 
 pub(crate) fn classify_host_key_material(initramfs: ReadOnlyInitramfs) -> HostKeyMaterialMetadata {
+    match load_host_key_private_material(initramfs) {
+        Ok(material) => HostKeyMaterialMetadata::sufficient(material.byte_len()),
+        Err(metadata) => metadata,
+    }
+}
+
+pub(crate) fn load_host_key_private_material(
+    initramfs: ReadOnlyInitramfs,
+) -> Result<HostKeyPrivateMaterial, HostKeyMaterialMetadata> {
     let handle = match initramfs.lookup_default(HOST_KEY_PATH) {
         Ok(handle) => handle,
-        Err(PosixError::NoEntry) => return HostKeyMaterialMetadata::missing(),
-        Err(_) => return HostKeyMaterialMetadata::invalid(None),
+        Err(PosixError::NoEntry) => return Err(HostKeyMaterialMetadata::missing()),
+        Err(_) => return Err(HostKeyMaterialMetadata::invalid(None)),
     };
 
     let metadata = handle.metadata();
     if metadata.kind() != VfsNodeKind::RegularFile {
-        return HostKeyMaterialMetadata::invalid(Some(metadata.len()));
+        return Err(HostKeyMaterialMetadata::invalid(Some(metadata.len())));
     }
 
     let byte_len = metadata.len();
     if byte_len == 0 || byte_len > HOST_KEY_MAX_METADATA_BYTES {
-        HostKeyMaterialMetadata::invalid(Some(byte_len))
+        return Err(HostKeyMaterialMetadata::invalid(Some(byte_len)));
     } else if byte_len < HOST_KEY_MIN_METADATA_BYTES {
-        HostKeyMaterialMetadata::insufficient(byte_len)
-    } else {
-        HostKeyMaterialMetadata::sufficient(byte_len)
+        return Err(HostKeyMaterialMetadata::insufficient(byte_len));
     }
+
+    let bytes = initramfs
+        .regular_file_bytes(HOST_KEY_PATH)
+        .map_err(|_| HostKeyMaterialMetadata::invalid(Some(byte_len)))?;
+    let private_key = parse_host_key_private_material(bytes)
+        .map_err(|_| HostKeyMaterialMetadata::invalid(Some(byte_len)))?;
+    Ok(HostKeyPrivateMaterial {
+        private_key,
+        byte_len,
+    })
+}
+
+fn parse_host_key_private_material(bytes: &[u8]) -> Result<PrivateKey, ()> {
+    let private_key = PrivateKey::from_openssh(bytes).map_err(|_| ())?;
+    if private_key.cipher() != Cipher::None
+        || private_key.kdf() != &Kdf::None
+        || private_key.is_encrypted()
+        || private_key.algorithm() != Algorithm::Ed25519
+        || private_key.key_data().ed25519().is_none()
+    {
+        return Err(());
+    }
+    Ok(private_key)
 }
 
 pub(crate) fn classify_authorized_key_material(
@@ -473,6 +547,15 @@ mod tests {
             labels[index] = label.name();
         }
         labels
+    }
+
+    fn load_host_key_private_material_error(
+        initramfs: ReadOnlyInitramfs,
+    ) -> HostKeyMaterialMetadata {
+        match load_host_key_private_material(initramfs) {
+            Ok(_) => panic!("public fixture host key unexpectedly loaded"),
+            Err(metadata) => metadata,
+        }
     }
 
     #[test_case]
@@ -677,12 +760,14 @@ mod tests {
     }
 
     #[test_case]
-    fn host_key_vfs_metadata_maps_to_fail_closed_states_without_reading_key_bytes() {
+    fn host_key_private_material_maps_to_fail_closed_states() {
         let missing = classify_host_key_material(phase8_readonly_initramfs_fixture());
         let directory = classify_host_key_material(directory_host_key_initramfs());
         let empty = classify_host_key_material(empty_host_key_initramfs());
         let oversized = classify_host_key_material(oversized_host_key_initramfs());
         let insufficient = classify_host_key_material(insufficient_host_key_initramfs());
+        let malformed = classify_host_key_material(malformed_host_key_initramfs());
+        let encrypted = classify_host_key_material(encrypted_host_key_initramfs());
         let sufficient = classify_host_key_material(sufficient_host_key_initramfs());
 
         assert_eq!(missing, HostKeyMaterialMetadata::missing());
@@ -698,16 +783,24 @@ mod tests {
             HostKeyMaterialMetadata::insufficient(HOST_KEY_MIN_METADATA_BYTES - 1)
         );
         assert_eq!(
+            malformed,
+            HostKeyMaterialMetadata::invalid(Some(HOST_KEY_MIN_METADATA_BYTES))
+        );
+        assert_eq!(
+            encrypted,
+            HostKeyMaterialMetadata::invalid(Some(ENCRYPTED_OPENSSH_HOST_KEY_BYTES.len()))
+        );
+        assert_eq!(
             sufficient,
-            HostKeyMaterialMetadata::sufficient(HOST_KEY_MIN_METADATA_BYTES)
+            HostKeyMaterialMetadata::sufficient(VALID_OPENSSH_ED25519_HOST_KEY_BYTES.len())
         );
     }
 
     #[test_case]
-    fn host_key_vfs_metadata_clears_only_host_key_prerequisite() {
+    fn host_key_private_material_clears_only_host_key_prerequisite() {
         let invalid = classify_ssh_key_readiness(
             SshKeyReadinessSnapshot::fail_closed_default()
-                .with_host_key_material(classify_host_key_material(empty_host_key_initramfs())),
+                .with_host_key_material(classify_host_key_material(malformed_host_key_initramfs())),
         );
         let insufficient = classify_ssh_key_readiness(
             SshKeyReadinessSnapshot::fail_closed_default().with_host_key_material(
@@ -756,6 +849,43 @@ mod tests {
                 .contains(&SshKeyReadinessLabel::EntropyUnready)
         );
         assert!(!sufficient.ssh_ready());
+    }
+
+    #[test_case]
+    fn host_key_private_material_loads_and_signs_public_fixture() {
+        let material = load_host_key_private_material(sufficient_host_key_initramfs())
+            .expect("public fixture host key loads");
+        let signature = material
+            .sign_exchange_hash(b"talos-public-test-exchange-hash")
+            .expect("public fixture host key signs");
+
+        assert_eq!(
+            material.byte_len(),
+            VALID_OPENSSH_ED25519_HOST_KEY_BYTES.len()
+        );
+        assert_eq!(signature.algorithm_name(), "ssh-ed25519");
+        assert_eq!(signature.byte_len(), 64);
+        assert_eq!(signature.as_ssh_signature().algorithm(), Algorithm::Ed25519);
+    }
+
+    #[test_case]
+    fn host_key_private_material_loader_rejects_nonaccepted_inputs() {
+        assert_eq!(
+            load_host_key_private_material_error(phase8_readonly_initramfs_fixture()),
+            HostKeyMaterialMetadata::missing()
+        );
+        assert_eq!(
+            load_host_key_private_material_error(insufficient_host_key_initramfs()),
+            HostKeyMaterialMetadata::insufficient(HOST_KEY_MIN_METADATA_BYTES - 1)
+        );
+        assert_eq!(
+            load_host_key_private_material_error(malformed_host_key_initramfs()),
+            HostKeyMaterialMetadata::invalid(Some(HOST_KEY_MIN_METADATA_BYTES))
+        );
+        assert_eq!(
+            load_host_key_private_material_error(encrypted_host_key_initramfs()),
+            HostKeyMaterialMetadata::invalid(Some(ENCRYPTED_OPENSSH_HOST_KEY_BYTES.len()))
+        );
     }
 
     #[test_case]
@@ -1038,10 +1168,29 @@ mod tests {
     static EMPTY_ENTRIES: [DirectoryEntry; 0] = [];
     static INSUFFICIENT_HOST_KEY_BYTES: [u8; HOST_KEY_MIN_METADATA_BYTES - 1] =
         [0; HOST_KEY_MIN_METADATA_BYTES - 1];
-    static SUFFICIENT_HOST_KEY_BYTES: [u8; HOST_KEY_MIN_METADATA_BYTES] =
+    static MALFORMED_HOST_KEY_BYTES: [u8; HOST_KEY_MIN_METADATA_BYTES] =
         [0; HOST_KEY_MIN_METADATA_BYTES];
     static OVERSIZED_HOST_KEY_BYTES: [u8; HOST_KEY_MAX_METADATA_BYTES + 1] =
         [0; HOST_KEY_MAX_METADATA_BYTES + 1];
+    static VALID_OPENSSH_ED25519_HOST_KEY_BYTES: &[u8] = br#"
+-----BEGIN OPENSSH PRIVATE KEY-----
+b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+QyNTUxOQAAACCzPq7zfqLffKoBDe/eo04kH2XxtSmk9D7RQyf1xUqrYgAAAJgAIAxdACAM
+XQAAAAtzc2gtZWQyNTUxOQAAACCzPq7zfqLffKoBDe/eo04kH2XxtSmk9D7RQyf1xUqrYg
+AAAEC2BsIi0QwW2uFscKTUUXNHLsYX4FxlaSDSblbAj7WR7bM+rvN+ot98qgEN796jTiQf
+ZfG1KaT0PtFDJ/XFSqtiAAAAEHVzZXJAZXhhbXBsZS5jb20BAgMEBQ==
+-----END OPENSSH PRIVATE KEY-----
+"#;
+    static ENCRYPTED_OPENSSH_HOST_KEY_BYTES: &[u8] = br#"
+-----BEGIN OPENSSH PRIVATE KEY-----
+b3BlbnNzaC1rZXktdjEAAAAACmFlczI1Ni1jdHIAAAAGYmNyeXB0AAAAGAAAABBKH96ujW
+umB6/WnTNPjTeaAAAAEAAAAAEAAAAzAAAAC3NzaC1lZDI1NTE5AAAAILM+rvN+ot98qgEN
+796jTiQfZfG1KaT0PtFDJ/XFSqtiAAAAoFzvbvyFMhAiwBOXF0mhUUacPUCMZXivG2up2c
+hEnAw1b6BLRPyWbY5cC2n9ggD4ivJ1zSts6sBgjyiXQAReyrP35myYvT/OIB/NpwZM/xIJ
+N7MHSUzlkX4adBrga3f7GS4uv4ChOoxC4XsE5HsxtGsq1X8jzqLlZTmOcxkcEneYQexrUc
+bQP0o+gL5aKK8cQgiIlXeDbRjqhc4+h4EF6lY=
+-----END OPENSSH PRIVATE KEY-----
+"#;
     static INSUFFICIENT_AUTHORIZED_KEY_BYTES: [u8; AUTHORIZED_KEY_MIN_METADATA_BYTES - 1] =
         [0; AUTHORIZED_KEY_MIN_METADATA_BYTES - 1];
     static SUFFICIENT_AUTHORIZED_KEY_BYTES: [u8; AUTHORIZED_KEY_MIN_METADATA_BYTES] =
@@ -1077,7 +1226,21 @@ mod tests {
         InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
         InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
         InitramfsNode::directory(SSH_INDEX, &SSH_ENTRIES),
-        InitramfsNode::regular_file(HOST_KEY_INDEX, &SUFFICIENT_HOST_KEY_BYTES),
+        InitramfsNode::regular_file(HOST_KEY_INDEX, VALID_OPENSSH_ED25519_HOST_KEY_BYTES),
+    ];
+    static MALFORMED_HOST_KEY_NODES: [InitramfsNode; 5] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
+        InitramfsNode::directory(SSH_INDEX, &SSH_ENTRIES),
+        InitramfsNode::regular_file(HOST_KEY_INDEX, &MALFORMED_HOST_KEY_BYTES),
+    ];
+    static ENCRYPTED_HOST_KEY_NODES: [InitramfsNode; 5] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
+        InitramfsNode::directory(SSH_INDEX, &SSH_ENTRIES),
+        InitramfsNode::regular_file(HOST_KEY_INDEX, ENCRYPTED_OPENSSH_HOST_KEY_BYTES),
     ];
     static OVERSIZED_HOST_KEY_NODES: [InitramfsNode; 5] = [
         InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
@@ -1162,6 +1325,14 @@ mod tests {
 
     const fn sufficient_host_key_initramfs() -> ReadOnlyInitramfs {
         ReadOnlyInitramfs::new(&SUFFICIENT_HOST_KEY_NODES, ROOT_INDEX)
+    }
+
+    const fn malformed_host_key_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&MALFORMED_HOST_KEY_NODES, ROOT_INDEX)
+    }
+
+    const fn encrypted_host_key_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&ENCRYPTED_HOST_KEY_NODES, ROOT_INDEX)
     }
 
     const fn oversized_host_key_initramfs() -> ReadOnlyInitramfs {

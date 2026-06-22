@@ -7137,3 +7137,24 @@ NEWKEYS, authentication/session success, shell attachment, hardware
 reachability, public compatibility, broad expansion, or phase transition.
 ssh-ready remains false. The selected next bounded task is
 phase12-ssh-host-key-private-material-core-20260622.
+
+phase12-ssh-host-key-private-material-core-20260622 accepts the bounded
+host-key private-material parsing/signing implementation. Talos now uses the
+accepted ssh-key 0.7.0-rc.10 default-features=false alloc+ed25519 boundary,
+plus the no-default signature trait crate needed to call ssh-key's raw signing
+API, to parse the existing read-only VFS host-key path as unencrypted OpenSSH
+ssh-ed25519 private material. Missing, non-regular, empty, oversized,
+insufficient, malformed, encrypted, unsupported, and non-Ed25519 material stay
+fail-closed. Only accepted public-fixture OpenSSH Ed25519 material clears the
+host-key private-material prerequisite, and it clears only that prerequisite.
+An in-memory host-key handle can produce an ephemeral ssh-ed25519 Signature for
+caller-owned exchange-hash bytes, but diagnostics and retained evidence do not
+retain private bytes, public-key blobs, signatures, fingerprints, digests,
+comments, operator identity, random bytes, shared secrets, key-derived
+identifiers, or stable transport/session identifiers. The no_std test harness
+now initializes the existing bump allocator so the allocating parser can run in
+QEMU tests. ssh-ready remains false and runtime KEX, encryption/MAC, NEWKEYS,
+authentication/session success, shell attachment, hardware reachability,
+public compatibility, broad expansion, and phase transition remain unaccepted.
+The selected next bounded task is
+phase12-shell-ssh-host-key-private-material-smoke-20260622.

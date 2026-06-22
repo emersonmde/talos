@@ -16441,6 +16441,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   and phase transition remain unaccepted. ssh-ready remains false. The
   selected next bounded task is
   phase12-ssh-host-key-private-material-core-20260622.
+- phase12-ssh-host-key-private-material-core-20260622 accepts the bounded
+  host-key private-material parsing/signing implementation. Talos now parses
+  /etc/talos/ssh/ssh_host_ed25519_key as unencrypted OpenSSH ssh-ed25519
+  private material using ssh-key 0.7.0-rc.10 with default-features=false and
+  alloc plus ed25519, plus the no-default signature trait crate needed for
+  ssh-key's raw signing API. Missing, invalid, insufficient, unsupported, and
+  encrypted host-key material stays fail-closed. Accepted public-fixture
+  material clears only the host-key private-material prerequisite and can
+  produce an ephemeral in-memory ssh-ed25519 Signature for caller-owned
+  exchange-hash bytes. Diagnostics and retained evidence still exclude private
+  bytes, public-key blobs, signatures, fingerprints, digests, comments,
+  operator identity, random bytes, shared secrets, key-derived identifiers, and
+  stable transport/session identifiers. ssh-ready remains false and runtime
+  KEX, encryption/MAC, NEWKEYS, authentication/session success, shell
+  attachment, hardware reachability, public compatibility, broad expansion,
+  and phase transition remain unaccepted. The selected next bounded task is
+  phase12-shell-ssh-host-key-private-material-smoke-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

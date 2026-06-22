@@ -306,10 +306,17 @@ pub(crate) struct PanicInProgress(AtomicUsize);
 
 use boot::BootInfo;
 
-#[cfg_attr(not(test), global_allocator)]
+#[global_allocator]
 #[cfg_attr(not(talos_target_rpi5_bcm2712), allow(dead_code))]
 pub(crate) static KERNEL_GLOBAL_ALLOCATOR: allocator::BumpAllocator =
     allocator::BumpAllocator::new();
+
+#[cfg(test)]
+#[repr(align(4096))]
+struct TestAllocatorHeap([u8; 8 * 1024 * 1024]);
+
+#[cfg(test)]
+static mut TEST_ALLOCATOR_HEAP: TestAllocatorHeap = TestAllocatorHeap([0; 8 * 1024 * 1024]);
 
 #[cfg(talos_target_rpi5_bcm2712)]
 impl PanicInProgress {
@@ -1948,6 +1955,7 @@ where
 
 #[cfg(test)]
 fn test_runner(tests: &[&dyn Testable]) {
+    init_test_allocator();
     println!();
     target::console::write_static("running ");
     target::console::write_dec_usize(tests.len());
@@ -1958,6 +1966,26 @@ fn test_runner(tests: &[&dyn Testable]) {
     target::console::write_static("test result: ok. ");
     target::console::write_dec_usize(tests.len());
     target::console::write_static(" passed\n");
+}
+
+#[cfg(test)]
+fn init_test_allocator() {
+    if KERNEL_GLOBAL_ALLOCATOR.state().is_some() {
+        return;
+    }
+
+    let start = unsafe { core::ptr::addr_of_mut!(TEST_ALLOCATOR_HEAP.0) as *mut u8 as usize };
+    let size = core::mem::size_of::<TestAllocatorHeap>();
+    let plan = memory_map::EarlyBootstrapAllocatorPlan {
+        start: start as u64,
+        end: (start + size) as u64,
+        page_size: memory_map::EARLY_PAGE_SIZE,
+        page_count: (size as u64) / memory_map::EARLY_PAGE_SIZE,
+        size: size as u64,
+    };
+    KERNEL_GLOBAL_ALLOCATOR
+        .init_from_plan(plan)
+        .expect("test allocator init");
 }
 
 #[cfg(test)]
