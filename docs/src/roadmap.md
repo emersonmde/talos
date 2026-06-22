@@ -16881,6 +16881,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   sessions/channels, shell attachment, live reachability, compatibility, broad
   expansion, phase transition, or ssh-ready=true is accepted. The selected
   next bounded task is phase12-ssh-publickey-verification-closeout-20260622.
+- phase12-ssh-publickey-verification-closeout-20260622 accepts the reconciled
+  prerequisite-only publickey signature-verification frontier. The contract,
+  source implementation, and retained smoke evidence agree that Talos can
+  locally verify only ssh-ed25519 signatures for modeled decrypted
+  SSH_MSG_USERAUTH_REQUEST/publickey payloads after the accepted private
+  session-id and authorized_keys key-match prerequisites. This remains only a
+  cryptographic prerequisite: no authentication response emission,
+  USERAUTH_PK_OK, USERAUTH_FAILURE, USERAUTH_SUCCESS, account binding,
+  authentication success, sessions/channels, shell attachment, live
+  reachability, hardware proof, OpenSSH/POSIX/Linux compatibility, broad
+  expansion, phase transition, or ssh-ready=true is accepted. The selected
+  next bounded task id for supervisor planning is
+  phase12-ssh-publickey-auth-response-policy-contract-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

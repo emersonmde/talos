@@ -7752,3 +7752,20 @@ USERAUTH_FAILURE, USERAUTH_SUCCESS, account binding, authentication success,
 sessions/channels, shell attachment, live reachability, compatibility, broad
 expansion, phase transition, or ssh-ready=true is accepted. The selected next
 bounded task is phase12-ssh-publickey-verification-closeout-20260622.
+
+phase12-ssh-publickey-verification-closeout-20260622 accepts the reconciled
+prerequisite-only publickey signature-verification frontier. The accepted
+contract, source implementation, and retained smoke evidence now agree: Talos
+can locally verify only ssh-ed25519 signatures for modeled decrypted
+SSH_MSG_USERAUTH_REQUEST/publickey payloads after the private
+SshUserauthSessionIdentifier and authorized_keys key-match prerequisites.
+
+This frontier is cryptographic-prerequisite-only. It does not authorize
+authentication response emission, USERAUTH_PK_OK, USERAUTH_FAILURE,
+USERAUTH_SUCCESS, partial success, account binding, authentication success,
+sessions/channels, shell attachment, live reachability, hardware proof,
+OpenSSH/POSIX/Linux compatibility, broad expansion, phase transition, or
+ssh-ready=true. service-success, authentication-success, session/channel
+counts, shell attachment, reachability, and readiness remain false/zero. The
+selected next bounded task id for supervisor planning is
+phase12-ssh-publickey-auth-response-policy-contract-20260622.
