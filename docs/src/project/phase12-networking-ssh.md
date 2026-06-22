@@ -6747,3 +6747,22 @@ ABI/POSIX/Linux compatibility, broad expansion, stale link-ready discriminator
 promotion, or phase transition is accepted. selected_next_task is null and
 planningNeeded=true because no later queued Phase 12.5/12.6 prerequisite task
 has complete objective dependencies and gates.
+
+phase12-ssh-implementation-strategy-adr-20260622 accepts the first SSH
+implementation strategy decision after the Phase 12.5 readiness prerequisites.
+OpenSSH remains the compatibility target and later behavior oracle, but it is
+deferred as the first implementation port because OpenSSH portable assumes a C
+build, privilege separation, libcrypto/zlib, POSIX files/users, sessions, PTYs,
+sockets, and process behavior that Talos has not accepted as a service runtime.
+
+The selected strategy is to evaluate a smaller Rust SSH server/library path
+before writing a Talos-owned protocol implementation. russh 0.61.2 is the first
+feasibility candidate because it is a maintained Rust client/server SSH library
+with server examples and a narrower integration surface than OpenSSH portable.
+The accepted strategy does not adopt russh, alter Cargo metadata, implement
+service behavior, open a listener, accept transport/reachability, make
+ssh-ready true, or accept public ABI/POSIX/Linux compatibility. The next
+bounded task is
+phase12-ssh-implementation-dependency-feasibility-contract-20260622, which must
+define the allowed dependency/source boundary or block with a concrete missing
+prerequisite.

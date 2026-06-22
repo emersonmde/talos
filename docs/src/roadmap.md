@@ -16172,6 +16172,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   phase transition is accepted. selected_next_task is null and
   planningNeeded=true because no later queued Phase 12.5/12.6 prerequisite task
   has complete objective dependencies and gates.
+- phase12-ssh-implementation-strategy-adr-20260622 accepts the first SSH
+  implementation strategy decision after the accepted readiness prerequisites.
+  OpenSSH remains the compatibility target and future behavior oracle, but a
+  direct OpenSSH portable port is deferred because it assumes a C build,
+  privilege separation, libcrypto/zlib, POSIX files/users, sessions, PTYs,
+  sockets, and process behavior that Talos has not accepted as a service
+  runtime. The selected first strategy is a smaller Rust SSH server/library
+  feasibility path, with russh 0.61.2 as the first candidate. The next bounded
+  task is phase12-ssh-implementation-dependency-feasibility-contract-20260622.
+  This ADR does not accept Cargo dependency adoption, SSH service behavior,
+  listener/session/authentication plumbing, live transport, hardware
+  reachability, public ABI/POSIX/Linux compatibility, broad expansion, stale
+  link-ready discriminator promotion, or phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

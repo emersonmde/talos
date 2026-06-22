@@ -12,6 +12,49 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-22 - Phase 12 Evaluates russh Before Writing a Talos SSH Server
+
+- Status: accepted as the bounded SSH implementation strategy ADR in
+  phase12-ssh-implementation-strategy-adr-20260622. No Cargo dependency edit,
+  source implementation, SSH listener, handshake, authentication,
+  channel/session handling, PTY plumbing, live transport, hardware
+  reachability, public ABI/POSIX/Linux compatibility, broad expansion, stale
+  link-ready discriminator promotion, or phase transition is accepted here.
+- Context: Talos now has accepted metadata-only readiness for operator seed
+  material, CSPRNG/cryptographic-strength, host-key metadata, authorized-key
+  metadata, and persistence/exposure opt-in metadata. ssh-ready remains false
+  because SSH service behavior, live transport, and reachability remain
+  unaccepted. The roadmap requires evaluating an existing SSH server before
+  writing one.
+- Decision: Keep OpenSSH as the compatibility target and future
+  client-visible behavior oracle, but do not select a direct OpenSSH portable
+  port as the first implementation path. Select russh 0.61.2 as the first
+  dependency feasibility candidate because it is a maintained Rust client and
+  server SSH library with server examples and a narrower integration surface
+  than OpenSSH portable. The next task must define whether Talos can carve a
+  safe no-ambient-host boundary from russh before any dependency adoption or
+  service implementation.
+- Evidence level: static source/task/docs/evidence review of accepted Phase
+  12.5 readiness closeouts, Phase 10 process/TTY/VFS shell docs, accepted
+  smoltcp docs, crates.io cargo info for russh 0.61.2 and thrussh 0.41.0,
+  local registry Cargo.toml metadata for both crates, russh public
+  README/Cargo.toml metadata, and OpenSSH portable INSTALL metadata. The task
+  record is tasks/2026-06-22-phase12-ssh-implementation-strategy-adr.md.
+- Consequences: The follow-up feasibility contract may inspect only the
+  selected russh dependency/source boundary, allowed features, rejected
+  host-runtime backends, crypto/RNG assumptions, heap-pressure expectations,
+  and failure modes. It must not add dependencies, implement service behavior,
+  accept live transport, or make ssh-ready true unless separately planned and
+  accepted later.
+- Alternatives considered: direct OpenSSH portable port, thrussh 0.41.0, and a
+  minimal Talos-owned SSH service. OpenSSH is deferred because it assumes a C
+  build, privilege separation, libcrypto/zlib, mature POSIX files/users,
+  sessions, PTYs, sockets, and process behavior. thrussh is deferred because
+  its metadata shows older and broader host-runtime dependencies than russh,
+  including tokio net/process/runtime features. A Talos-owned protocol is
+  deferred until the existing-library feasibility check blocks or proves an
+  unusable boundary.
+
 ## 2026-06-21 - Phase 12 Authorized Keys Are Operator-Provisioned Read-Only VFS Metadata First
 
 - Status: accepted as the bounded authorized-key policy contract in
