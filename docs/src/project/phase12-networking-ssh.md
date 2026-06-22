@@ -7735,3 +7735,20 @@ expansion, phase transition, or ssh-ready=true is accepted. service-success,
 authentication-success, session/channel counts, shell attachment, and
 reachability remain false/zero. The selected next bounded task is
 phase12-shell-ssh-publickey-verification-smoke-20260622.
+
+phase12-shell-ssh-publickey-verification-smoke-20260622 accepts retained
+source/unit smoke evidence for the prerequisite-only publickey verifier. The
+retained coverage includes verifier prerequisite-only success, signature
+rejected, malformed signature, unsupported algorithm, malformed key blob,
+authorized-key missing/no-match, missing session-id, signature-present=false,
+and malformed signed-data paths. Durable evidence is limited to fixed labels,
+public byte-length fields, false/zero readiness counters, validation commands,
+test names, paths, task ids, and classifications. It retains no session-id
+bytes, authorized-key bytes, request/decoded public-key blobs, signature bytes,
+signed-data bytes, fingerprints, digests, user names, comments,
+user/operator identity, key-derived identifiers, stable identifiers, hardware
+data, or boot artifacts. No authentication response emission, USERAUTH_PK_OK,
+USERAUTH_FAILURE, USERAUTH_SUCCESS, account binding, authentication success,
+sessions/channels, shell attachment, live reachability, compatibility, broad
+expansion, phase transition, or ssh-ready=true is accepted. The selected next
+bounded task is phase12-ssh-publickey-verification-closeout-20260622.

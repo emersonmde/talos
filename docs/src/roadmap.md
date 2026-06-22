@@ -16869,6 +16869,18 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   reachability, compatibility, broad expansion, or phase transition; ssh-ready
   remains false. The selected next bounded task is
   phase12-shell-ssh-publickey-verification-smoke-20260622.
+- phase12-shell-ssh-publickey-verification-smoke-20260622 accepts retained
+  source/unit smoke evidence for the prerequisite-only publickey verifier. The
+  retained coverage covers verifier prerequisite-only success, signature
+  rejected, malformed signature, unsupported algorithm, malformed key blob,
+  authorized-key missing/no-match, missing session-id, signature-present=false,
+  and malformed signed-data paths. Durable evidence is limited to fixed
+  labels, public byte-length fields, false/zero readiness counters,
+  validation commands, test names, paths, task ids, and classifications. No
+  authentication responses, account binding, authentication success,
+  sessions/channels, shell attachment, live reachability, compatibility, broad
+  expansion, phase transition, or ssh-ready=true is accepted. The selected
+  next bounded task is phase12-ssh-publickey-verification-closeout-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
