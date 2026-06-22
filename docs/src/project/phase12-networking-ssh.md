@@ -7534,3 +7534,24 @@ and bounds, validation commands, task ids, and classifications; packet payloads,
 peer strings, keys, signatures, secrets, stable identifiers, hardware data, and
 boot artifacts remain excluded. The selected next bounded task is
 phase12-ssh-publickey-auth-contract-20260622.
+
+phase12-ssh-publickey-auth-contract-20260622 accepts the publickey
+authentication contract as prerequisite-blocked rather than implementing
+authentication success. The accepted service/userauth parser can reach the
+ssh-connection/publickey method shape, but that shape remains diagnostic-only.
+Runtime KEX currently computes the exchange hash for host-key signing and key
+derivation, then zeroizes it; no accepted contract exposes the session
+identifier needed for userauth signature verification. Authorized-key material
+also remains metadata-only at /etc/talos/ssh/authorized_keys, with no accepted
+parser, key-match policy, operator/user binding, or account model.
+
+The next worker task is therefore not mechanically unblocked. Supervisor
+planning must choose one explicit prerequisite slice, such as bounded
+session-identifier retention/redaction or authorized_keys parsing/key-match
+policy, before any publickey-auth implementation can start. No
+SSH_MSG_USERAUTH_SUCCESS, USERAUTH_FAILURE, PK_OK, partial-success behavior,
+authorized-key parsing, signature verification, authentication success,
+session/channel allocation, shell attachment, live reachability, hardware,
+compatibility, broad expansion, or phase transition is accepted. ssh-ready,
+service-success, authentication-success, sessions/channels, shell attachment,
+and reachability remain false/zero.

@@ -16726,6 +16726,18 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   and ssh-ready, service-success, authentication-success, sessions/channels,
   shell attachment, and reachability remain false/zero. The selected next
   bounded task is phase12-ssh-publickey-auth-contract-20260622.
+- phase12-ssh-publickey-auth-contract-20260622 accepts the publickey
+  authentication contract as prerequisite-blocked. The current parser can
+  recognize ssh-connection/publickey shape only as a diagnostic. A real
+  publickey authentication implementation is blocked because runtime KEX does
+  not expose an accepted session identifier for userauth signature
+  verification, and authorized-key material is still metadata-only with no
+  parser/key-match or user/account policy. Supervisor planning must enqueue one
+  explicit prerequisite task before implementation. No authentication
+  responses, authentication success, authorized-key parsing, signature
+  verification, session/channel allocation, shell attachment, live
+  reachability, hardware, compatibility, broad expansion, or phase transition
+  is accepted; ssh-ready remains false.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

@@ -12,6 +12,48 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-22 - Phase 12 Publickey Authentication Is Blocked on Session ID and Authorized-Key Parsing
+
+- Status: accepted as the bounded publickey authentication contract in
+  phase12-ssh-publickey-auth-contract-20260622. No implementation,
+  authentication response emission, authorized-key parsing, signature
+  verification, authentication success, account/user model, session/channel
+  allocation, shell attachment, live reachability, hardware action,
+  OpenSSH/POSIX/Linux compatibility, broad expansion, or phase transition is
+  accepted here.
+- Context: The accepted pre-authentication service/userauth parser can
+  recognize SSH_MSG_USERAUTH_REQUEST with service ssh-connection and method
+  publickey after the modeled ssh-userauth service prerequisite. That
+  recognition is diagnostic-only. Existing authorized-key work is metadata-only
+  for /etc/talos/ssh/authorized_keys, and runtime KEX currently computes and
+  zeroizes the exchange hash without exposing an accepted session identifier
+  for userauth signature verification.
+- Decision: Do not implement or accept publickey authentication from parser
+  recognition alone. A later implementation requires at least one accepted
+  prerequisite slice first: either bounded session-identifier
+  retention/redaction for userauth verification or authorized_keys
+  parser/key-match policy with redaction and account/user boundaries. The
+  supervisor must enqueue one explicit prerequisite task before worker
+  promotion.
+- Evidence level: static task/docs/source review of accepted service/userauth
+  parser closeout, authorized-key policy/core tasks, runtime KEX source, host
+  key private-material tasks, service readiness docs, roadmap, and this ADR
+  index. The task record is
+  tasks/2026-06-22-phase12-ssh-publickey-auth-contract.md.
+- Consequences: ssh-ready remains false; service success, authentication
+  success, session/channel counts, shell attachment, and reachability remain
+  false/zero. Durable evidence must not retain public-key blobs, signatures,
+  authorized-key bytes, fingerprints, digests, session identifiers, exchange
+  hashes, user names, peer-selected strings, operator identity, key-derived
+  identifiers, stable transport/session identifiers, hardware data, or boot
+  artifacts.
+- Alternatives considered: treating the existing publickey parser shape as
+  authentication readiness, implementing signature verification before session
+  identifier policy, parsing authorized_keys before redaction/key-match policy,
+  or emitting USERAUTH responses before account/session rules. They are
+  rejected because each would accept authentication semantics without required
+  cryptographic, key-source, response-policy, and redaction prerequisites.
+
 ## 2026-06-22 - Phase 12 Uses a Narrow no_std Runtime SSH Crypto Backend
 
 - Status: accepted as the bounded runtime crypto backend contract in
