@@ -1,8 +1,8 @@
 //! SSH service readiness diagnostic shape.
 //!
 //! This module models fixed fail-closed service lifecycle diagnostics only. It
-//! does not adopt an SSH dependency, open a listener, process transport,
-//! authenticate users, attach a shell, inspect hardware, or expose secrets.
+//! does not adopt an SSH dependency, perform SSH crypto, authenticate users,
+//! attach a shell, inspect hardware, or expose secrets.
 
 use crate::ssh_key_readiness::{SshKeyReadinessLabel, SshKeyReadinessReport};
 
@@ -28,6 +28,8 @@ pub(crate) enum SshServiceReadinessLabel {
     DependencyUnaccepted,
     CryptoBackendUnaccepted,
     TransportUnaccepted,
+    LocalListenerModeled,
+    LocalTransportModeled,
     IdentificationBannerModeled,
     LocalIdentificationLiteral,
     RemoteIdentificationValid,
@@ -48,6 +50,8 @@ impl SshServiceReadinessLabel {
             Self::DependencyUnaccepted => "sshservicediag-dependency-unaccepted",
             Self::CryptoBackendUnaccepted => "sshservicediag-crypto-backend-unaccepted",
             Self::TransportUnaccepted => "sshservicediag-transport-unaccepted",
+            Self::LocalListenerModeled => "sshservicediag-local-listener-modeled",
+            Self::LocalTransportModeled => "sshservicediag-local-transport-modeled",
             Self::IdentificationBannerModeled => "sshservicediag-identification-banner-modeled",
             Self::LocalIdentificationLiteral => "sshservicediag-local-identification-literal",
             Self::RemoteIdentificationValid => "sshservicediag-remote-identification-valid",
@@ -66,10 +70,15 @@ impl SshServiceReadinessLabel {
     }
 }
 
-pub(crate) const MAX_SSH_SERVICE_READINESS_LABELS: usize = 15;
+pub(crate) const MAX_SSH_SERVICE_READINESS_LABELS: usize = 16;
 pub(crate) const SSH_LOCAL_IDENTIFICATION: &str = "SSH-2.0-Talos_0.1\r\n";
 pub(crate) const SSH_REMOTE_IDENTIFICATION_MAX_BYTES: usize = 255;
 const SSH_REMOTE_IDENTIFICATION_PREFIX: &[u8] = b"SSH-2.0-";
+const SSH_LOCAL_MODELED_ENDPOINT_PORT: u16 = 22;
+const SSH_LOCAL_TRANSPORT_SOCKET_CAPACITY: usize = 4;
+const SSH_LOCAL_TRANSPORT_REMOTE_IDENTIFICATION: &[u8] = b"SSH-2.0-local-model\r\n";
+const SSH_LOCAL_TRANSPORT_OWNER_RAW: u64 = 0x5353_4801;
+const SSH_LOCAL_TRANSPORT_CLIENT_OWNER_RAW: u64 = 0x5353_4802;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum SshRemoteIdentificationInputState {
@@ -197,6 +206,10 @@ pub(crate) struct SshServiceReadinessReport {
     labels: [SshServiceReadinessLabel; MAX_SSH_SERVICE_READINESS_LABELS],
     label_count: usize,
     lifecycle: SshServiceLifecycleState,
+    listener_count: usize,
+    transport_enabled: bool,
+    accepted_connection_count: usize,
+    remote_identification: Option<SshRemoteIdentificationResult>,
 }
 
 impl SshServiceReadinessReport {
@@ -213,11 +226,11 @@ impl SshServiceReadinessReport {
     }
 
     pub(crate) const fn listener_count(self) -> usize {
-        0
+        self.listener_count
     }
 
     pub(crate) const fn transport_enabled(self) -> bool {
-        false
+        self.transport_enabled
     }
 
     pub(crate) const fn local_identification(self) -> &'static str {
@@ -225,7 +238,7 @@ impl SshServiceReadinessReport {
     }
 
     pub(crate) const fn accepted_connection_count(self) -> usize {
-        0
+        self.accepted_connection_count
     }
 
     pub(crate) const fn session_count(self) -> usize {
@@ -256,10 +269,26 @@ impl SshServiceReadinessReport {
         self.labels[self.label_count] = label;
         self.label_count += 1;
     }
+
+    pub(crate) const fn remote_identification(self) -> Option<SshRemoteIdentificationResult> {
+        self.remote_identification
+    }
 }
 
 pub(crate) fn classify_ssh_service_readiness(
     key_report: SshKeyReadinessReport,
+) -> SshServiceReadinessReport {
+    classify_ssh_service_readiness_with_remote_identification(
+        key_report,
+        SSH_LOCAL_TRANSPORT_REMOTE_IDENTIFICATION,
+        SshRemoteIdentificationInputState::Complete,
+    )
+}
+
+pub(crate) fn classify_ssh_service_readiness_with_remote_identification(
+    key_report: SshKeyReadinessReport,
+    remote_input: &[u8],
+    input_state: SshRemoteIdentificationInputState,
 ) -> SshServiceReadinessReport {
     let exposure_disabled = key_report
         .labels()
@@ -282,6 +311,10 @@ pub(crate) fn classify_ssh_service_readiness(
         labels: [SshServiceReadinessLabel::NotReady; MAX_SSH_SERVICE_READINESS_LABELS],
         label_count: 0,
         lifecycle,
+        listener_count: 0,
+        transport_enabled: false,
+        accepted_connection_count: 0,
+        remote_identification: None,
     };
 
     if exposure_disabled {
@@ -291,19 +324,114 @@ pub(crate) fn classify_ssh_service_readiness(
         report.push(SshServiceReadinessLabel::PrerequisitesMissing);
     }
     if lifecycle == SshServiceLifecycleState::ShapeModeled {
+        let transport = model_local_ssh_listener_transport(remote_input, input_state);
         report.push(SshServiceReadinessLabel::ShapeModeled);
-        report.push(SshServiceReadinessLabel::IdentificationBannerModeled);
-        report.push(SshServiceReadinessLabel::LocalIdentificationLiteral);
-        report.push(SshServiceReadinessLabel::TransportClosedBeforeKex);
+        match transport {
+            Ok(banner) => {
+                report.listener_count = 1;
+                report.transport_enabled = true;
+                report.accepted_connection_count = 1;
+                report.remote_identification = Some(banner.remote_identification());
+                report.push(SshServiceReadinessLabel::LocalListenerModeled);
+                report.push(SshServiceReadinessLabel::LocalTransportModeled);
+                report.push(SshServiceReadinessLabel::IdentificationBannerModeled);
+                report.push(SshServiceReadinessLabel::LocalIdentificationLiteral);
+                report.push(banner.remote_identification().label());
+                report.push(SshServiceReadinessLabel::TransportClosedBeforeKex);
+            }
+            Err(()) => {
+                report.push(SshServiceReadinessLabel::TransportUnaccepted);
+            }
+        }
+    } else {
+        report.push(SshServiceReadinessLabel::TransportUnaccepted);
     }
 
     report.push(SshServiceReadinessLabel::DependencyUnaccepted);
     report.push(SshServiceReadinessLabel::CryptoBackendUnaccepted);
-    report.push(SshServiceReadinessLabel::TransportUnaccepted);
     report.push(SshServiceReadinessLabel::AuthenticationUnimplemented);
     report.push(SshServiceReadinessLabel::SessionUnimplemented);
     report.push(SshServiceReadinessLabel::NotReady);
     report
+}
+
+fn model_local_ssh_listener_transport(
+    remote_input: &[u8],
+    input_state: SshRemoteIdentificationInputState,
+) -> Result<SshIdentificationBannerReport, ()> {
+    let server_owner =
+        crate::scheduler::ProcessOwnerId::new(SSH_LOCAL_TRANSPORT_OWNER_RAW).ok_or(())?;
+    let client_owner =
+        crate::scheduler::ProcessOwnerId::new(SSH_LOCAL_TRANSPORT_CLIENT_OWNER_RAW).ok_or(())?;
+    let endpoint = crate::network::Ipv4Endpoint::new(
+        crate::network::SOCKET_SYNTHETIC_LOCAL_IPV4_BE,
+        SSH_LOCAL_MODELED_ENDPOINT_PORT,
+    );
+    let mut sockets =
+        crate::network::NetworkSocketDescriptorTable::<SSH_LOCAL_TRANSPORT_SOCKET_CAPACITY>::new();
+
+    let listener = sockets
+        .open(
+            server_owner,
+            crate::network::SOCKET_DOMAIN_AF_INET,
+            crate::network::SOCKET_TYPE_STREAM,
+            crate::network::SOCKET_PROTOCOL_DEFAULT,
+        )
+        .map_err(|_| ())?;
+    sockets
+        .bind(server_owner, listener, endpoint)
+        .map_err(|_| ())?;
+    sockets
+        .listen(
+            server_owner,
+            listener,
+            crate::network::SOCKET_LISTEN_BACKLOG_MIN as u8,
+        )
+        .map_err(|_| ())?;
+
+    let client = sockets
+        .open(
+            client_owner,
+            crate::network::SOCKET_DOMAIN_AF_INET,
+            crate::network::SOCKET_TYPE_STREAM,
+            crate::network::SOCKET_PROTOCOL_DEFAULT,
+        )
+        .map_err(|_| ())?;
+    sockets
+        .connect(client_owner, client, endpoint)
+        .map_err(|_| ())?;
+    let listener_readiness = sockets
+        .readiness(
+            server_owner,
+            listener,
+            crate::network::NetworkSocketReadiness::READ,
+        )
+        .map_err(|_| ())?;
+    if !listener_readiness.contains(crate::network::NetworkSocketReadiness::READ) {
+        return Err(());
+    }
+
+    let accepted = sockets.accept(server_owner, listener).map_err(|_| ())?;
+    sockets
+        .send(server_owner, accepted, SSH_LOCAL_IDENTIFICATION.as_bytes())
+        .map_err(|_| ())?;
+    sockets
+        .send(client_owner, client, remote_input)
+        .map_err(|_| ())?;
+
+    let mut received = [0u8; SSH_REMOTE_IDENTIFICATION_MAX_BYTES];
+    let received_len = sockets
+        .recv_peek(server_owner, accepted, &mut received)
+        .map_err(|_| ())?;
+    sockets
+        .recv_commit(server_owner, accepted, received_len)
+        .map_err(|_| ())?;
+    let banner = classify_ssh_identification_banner(&received[..received_len], input_state);
+
+    sockets.close(server_owner, accepted).map_err(|_| ())?;
+    sockets.close(client_owner, client).map_err(|_| ())?;
+    sockets.close(server_owner, listener).map_err(|_| ())?;
+    Ok(banner)
 }
 
 #[cfg(test)]
@@ -394,7 +522,7 @@ mod tests {
     }
 
     #[test_case]
-    fn prerequisite_satisfied_shape_remains_not_ready_without_transport_or_session() {
+    fn prerequisite_satisfied_shape_models_local_transport_but_remains_not_ready() {
         let entropy = entropy::classify_entropy_snapshot(
             EntropyDiagnosticSnapshot::empty()
                 .with_operator_seed(OperatorSeedObservation::new(32))
@@ -416,12 +544,14 @@ mod tests {
             label_names(&report),
             [
                 "sshservicediag-shape-modeled",
+                "sshservicediag-local-listener-modeled",
+                "sshservicediag-local-transport-modeled",
                 "sshservicediag-identification-banner-modeled",
                 "sshservicediag-local-identification-literal",
+                "sshservicediag-remote-identification-valid",
                 "sshservicediag-transport-closed-before-kex",
                 "sshservicediag-dependency-unaccepted",
                 "sshservicediag-crypto-backend-unaccepted",
-                "sshservicediag-transport-unaccepted",
                 "sshservicediag-authentication-unimplemented",
                 "sshservicediag-session-unimplemented",
                 "sshservicediag-not-ready",
@@ -432,15 +562,103 @@ mod tests {
                 "",
             ]
         );
-        assert_eq!(report.listener_count(), 0);
+        assert_eq!(report.listener_count(), 1);
         assert_eq!(report.local_identification(), "SSH-2.0-Talos_0.1\r\n");
-        assert_eq!(report.accepted_connection_count(), 0);
+        assert_eq!(report.accepted_connection_count(), 1);
         assert_eq!(report.session_count(), 0);
         assert_eq!(report.channel_count(), 0);
-        assert!(!report.transport_enabled());
+        assert!(report.transport_enabled());
+        assert_eq!(
+            report.remote_identification(),
+            Some(SshRemoteIdentificationResult::Valid)
+        );
         assert!(!report.authentication_success());
         assert!(!report.shell_attached());
         assert!(!report.reachability_accepted());
+        assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn local_transport_model_classifies_invalid_remote_identification_fail_closed() {
+        let entropy = entropy::classify_entropy_snapshot(
+            EntropyDiagnosticSnapshot::empty()
+                .with_operator_seed(OperatorSeedObservation::new(32))
+                .with_csprng_ready(),
+        );
+        let key_report = ssh_key_readiness::classify_ssh_key_readiness(
+            SshKeyReadinessSnapshot::fail_closed_default()
+                .with_host_key_metadata()
+                .with_authorized_key_metadata()
+                .with_seed_material_metadata()
+                .with_persistence_metadata()
+                .with_exposure_enabled()
+                .with_entropy_report(entropy),
+        );
+        let report = classify_ssh_service_readiness_with_remote_identification(
+            key_report,
+            b"invalid\r\n",
+            SshRemoteIdentificationInputState::Complete,
+        );
+
+        assert_eq!(report.listener_count(), 1);
+        assert_eq!(report.accepted_connection_count(), 1);
+        assert!(report.transport_enabled());
+        assert_eq!(
+            report.remote_identification(),
+            Some(SshRemoteIdentificationResult::Invalid)
+        );
+        assert!(
+            report
+                .labels()
+                .contains(&SshServiceReadinessLabel::RemoteIdentificationInvalid)
+        );
+        assert!(
+            report
+                .labels()
+                .contains(&SshServiceReadinessLabel::TransportClosedBeforeKex)
+        );
+        assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn local_transport_model_classifies_unterminated_remote_identification_as_over_limit() {
+        let entropy = entropy::classify_entropy_snapshot(
+            EntropyDiagnosticSnapshot::empty()
+                .with_operator_seed(OperatorSeedObservation::new(32))
+                .with_csprng_ready(),
+        );
+        let key_report = ssh_key_readiness::classify_ssh_key_readiness(
+            SshKeyReadinessSnapshot::fail_closed_default()
+                .with_host_key_metadata()
+                .with_authorized_key_metadata()
+                .with_seed_material_metadata()
+                .with_persistence_metadata()
+                .with_exposure_enabled()
+                .with_entropy_report(entropy),
+        );
+        let report = classify_ssh_service_readiness_with_remote_identification(
+            key_report,
+            &[b'a'; crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY],
+            SshRemoteIdentificationInputState::Complete,
+        );
+
+        assert_eq!(report.listener_count(), 1);
+        assert_eq!(report.accepted_connection_count(), 1);
+        assert!(report.transport_enabled());
+        assert_eq!(
+            report.remote_identification(),
+            Some(SshRemoteIdentificationResult::OverLimit)
+        );
+        assert!(
+            report
+                .labels()
+                .contains(&SshServiceReadinessLabel::RemoteIdentificationOverLimit)
+        );
+        assert!(
+            report
+                .labels()
+                .contains(&SshServiceReadinessLabel::TransportClosedBeforeKex)
+        );
         assert!(!report.ssh_ready());
     }
 

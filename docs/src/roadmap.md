@@ -16312,6 +16312,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   exchange, authentication/session success, shell attachment, hardware
   reachability, OpenSSH/POSIX/Linux compatibility, broad expansion, and phase
   transition remain unaccepted.
+- phase12-ssh-listener-transport-core-20260622 accepts the bounded local
+  listener/transport implementation. sshservicediag now composes the accepted
+  private descriptor-backed socket table with the owned banner classifier for
+  one local modeled endpoint exchange: bind/listen, local connect/accept,
+  Talos local identification send, one bounded remote-identification
+  classification, and close-before-KEX. Sufficient shape-modeled prerequisites
+  may report local-listener-modeled, local-transport-modeled, remote
+  valid/invalid/over-limit fixed labels, listener-count=1,
+  transport-enabled=true, and accepted-connection-count=1. Disabled and
+  prerequisite-missing states remain at zero counters and
+  transport-enabled=false. ssh-ready remains false, and runtime SSH crypto,
+  key exchange, authentication/session success, shell attachment, hardware
+  reachability, OpenSSH/POSIX/Linux compatibility, broad expansion, and phase
+  transition remain unaccepted.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

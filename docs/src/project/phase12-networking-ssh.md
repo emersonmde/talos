@@ -6958,3 +6958,20 @@ next bounded task is phase12-ssh-listener-transport-core-20260622. Runtime SSH
 crypto, key exchange, encryption/MAC, authentication/session success, shell
 attachment, hardware reachability, OpenSSH/POSIX/Linux compatibility, broad
 network exposure, broad expansion, and phase transition remain unaccepted.
+
+phase12-ssh-listener-transport-core-20260622 accepts the bounded local
+listener/transport implementation for that contract. sshservicediag now uses
+the accepted private descriptor-backed socket table to model exactly one local
+endpoint exchange when key/CSPRNG/persistence/exposure prerequisites are
+otherwise shape-modeled: bind/listen, local connect/accept, Talos local
+identification send, one bounded remote identification classification, and
+close-before-KEX. The retained diagnostic surface is redacted fixed labels and
+counters only: local-listener-modeled, local-transport-modeled,
+identification-banner-modeled, local-identification-literal, remote
+valid/invalid/over-limit, transport-closed-before-kex, listener-count=1,
+transport-enabled=true, and accepted-connection-count=1 for the modeled
+exchange. Disabled and prerequisite-missing states still report zero listener
+and connection counters and transport-enabled=false. ssh-ready remains false,
+and runtime SSH crypto, key exchange, authentication/session success, shell
+attachment, hardware reachability, OpenSSH/POSIX/Linux compatibility, broad
+network exposure, broad expansion, and phase transition remain unaccepted.
