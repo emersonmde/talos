@@ -7158,3 +7158,31 @@ authentication/session success, shell attachment, hardware reachability,
 public compatibility, broad expansion, and phase transition remain unaccepted.
 The selected next bounded task is
 phase12-shell-ssh-host-key-private-material-smoke-20260622.
+
+phase12-shell-ssh-host-key-private-material-smoke-20260622 accepts retained
+host/QEMU-substitute evidence for the host-key private-material boundary. The
+smoke transcript covers missing, invalid, unsupported/encrypted,
+insufficient, and sufficient public-fixture host-key states; sufficient
+material clears only the host-key private-material prerequisite while
+ssh-ready remains false. The retained signing evidence is limited to a
+caller-owned exchange-hash input and an ephemeral in-memory ssh-ed25519
+Signature object. It retains no private bytes, signature bytes, public-key
+blobs, fingerprints, digests, comments, random bytes, shared secrets, operator
+identity, key-derived identifiers, or stable transport/session identifiers.
+No live SSH transport, actual KEX, encryption/MAC, NEWKEYS,
+authentication/session success, shell attachment, hardware reachability,
+public compatibility, broad expansion, or phase transition is accepted. The
+selected next bounded task is
+phase12-ssh-host-key-private-material-closeout-20260622.
+
+phase12-ssh-host-key-private-material-closeout-20260622 accepts the
+task/docs/evidence closeout for the private-material slice. The accepted
+contract, implementation, and retained smoke evidence are sufficient only for
+later runtime KEX planning; ssh-ready remains false and authentication/session
+behavior, shell attachment, live reachability, compatibility, broad expansion,
+and phase transition remain unaccepted. The remaining runtime KEX blocker is
+now narrowed to the no_std crypto backend/API boundary for X25519,
+SHA-256/HMAC, ChaCha20-Poly1305, SSH KDF, derived key lifetime, zeroization,
+encrypted packet state, and integration with the accepted host-key signing
+handle. The selected next bounded task is
+phase12-ssh-runtime-crypto-backend-contract-20260622.
