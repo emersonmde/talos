@@ -16199,6 +16199,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   shell attachment, live transport, reachability, and ABI/POSIX/Linux
   compatibility. The next bounded task is
   phase12-ssh-service-shape-contract-20260622.
+- phase12-ssh-service-shape-contract-20260622 accepts only the fail-closed SSH
+  service readiness shape. The accepted inputs are the existing source/reference
+  russh boundary, accepted CSPRNG metadata readiness, metadata-only host-key and
+  authorized-key prerequisites, read-only persistence metadata, and explicit
+  exposure opt-in. The lifecycle model records disabled,
+  prerequisites-missing, shape-modeled, dependency-unaccepted,
+  crypto-backend-unaccepted, transport-unaccepted, authentication-unimplemented,
+  and session-unimplemented states. The selected next task may implement only a
+  fixed-label/boolean diagnostic such as sshservicediag, with listener-count=0,
+  transport-enabled=false, authentication-success=false, shell-attached=false,
+  reachability-accepted=false, and ssh-ready false. The next bounded task is
+  phase12-ssh-service-readiness-diagnostic-core-20260622. This contract does
+  not accept dependency adoption, listener/transport behavior, authentication
+  success, session/shell attachment, reachability, public ABI/POSIX/Linux
+  compatibility, writable persistence, stale link-ready discriminator work,
+  broad expansion, or phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

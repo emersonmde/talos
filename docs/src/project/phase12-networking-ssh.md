@@ -6784,3 +6784,27 @@ transport. The next bounded task is
 phase12-ssh-service-shape-contract-20260622, which may model only fail-closed
 service inputs, lifecycle states, diagnostic caps, and failure modes without
 opening a listener or making ssh-ready true.
+
+phase12-ssh-service-shape-contract-20260622 accepts only the fail-closed SSH
+service readiness shape. The accepted inputs are the existing source/reference
+russh boundary, accepted operator-seeded CSPRNG readiness as metadata only, the
+metadata-only host-key and authorized-key prerequisites, read-only
+generated-root/initramfs persistence metadata, and the explicit
+/etc/talos/ssh/exposure-enabled opt-in marker. The lifecycle model has disabled,
+prerequisites-missing, shape-modeled, dependency-unaccepted,
+crypto-backend-unaccepted, transport-unaccepted, authentication-unimplemented,
+and session-unimplemented states.
+
+The selected diagnostic surface for the next implementation is a fail-closed
+service readiness diagnostic that may print only fixed labels and booleans such
+as sshservicediag-not-ready, sshservicediag-dependency-unaccepted,
+sshservicediag-crypto-backend-unaccepted,
+sshservicediag-transport-unaccepted,
+sshservicediag-authentication-unimplemented,
+sshservicediag-session-unimplemented, sshservicediag-exposure-disabled,
+sshservicediag-prerequisites-missing, and sshservicediag-shape-modeled. Even
+with sufficient metadata and exposure opt-in, ssh-ready remains false because
+dependency adoption, runtime SSH crypto, listener/transport, authentication,
+session execution, shell attachment, reachability, and public
+ABI/POSIX/Linux compatibility remain unaccepted. The next bounded task is
+phase12-ssh-service-readiness-diagnostic-core-20260622.
