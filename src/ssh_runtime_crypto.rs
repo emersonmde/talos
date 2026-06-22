@@ -1084,4 +1084,116 @@ mod tests {
         assert_eq!(overflow.sequence_after(), u32::MAX);
         assert_eq!(states.client_to_server().sequence_number(), u32::MAX);
     }
+
+    #[test_case]
+    fn newkeys_packet_crypto_smoke_retains_fixed_label_evidence() {
+        let host_key = ssh_key_readiness::public_fixture_host_key_private_material();
+        let mut not_ready_csprng = OperatorSeededCsprng::from_seed_bytes(b"short");
+        let mut client_kexinit = [0u8; 1028];
+        let mut server_kexinit = [0u8; 1028];
+        let client_len =
+            build_modeled_client_kexinit_packet_for_runtime_test(&mut client_kexinit, false);
+        let server_len =
+            build_modeled_client_kexinit_packet_for_runtime_test(&mut server_kexinit, false);
+        let missing_kex = perform_runtime_kex(SshRuntimeKexInput {
+            client_identification: CLIENT_IDENTIFICATION,
+            server_identification: SSH_LOCAL_IDENTIFICATION.as_bytes(),
+            client_kexinit_packet: &client_kexinit[..client_len],
+            server_kexinit_packet: &server_kexinit[..server_len],
+            peer_public_key: &PEER_PUBLIC_KEY,
+            host_key: Some(&host_key),
+            csprng: &mut not_ready_csprng,
+        });
+        assert_eq!(
+            missing_kex.label().name(),
+            "sshservicediag-kex-csprng-not-ready"
+        );
+        assert!(!missing_kex.encrypted_packet_state_ready());
+
+        let mut ready = runtime_kex_ready();
+        let states = ready.packet_states_mut();
+        let mut packet = public_fixture_packet();
+        let missing_both =
+            states.run_diagnostic(SshEncryptedPacketDirection::Send, packet.as_mut_slice());
+        assert_label_names(missing_both.labels(), &["sshservicediag-newkeys-not-ready"]);
+        assert_eq!(missing_both.sequence_before(), 0);
+        assert_eq!(missing_both.sequence_after(), 0);
+
+        let send = states.activate_send_newkeys();
+        assert_eq!(send.label().name(), "sshservicediag-newkeys-send-active");
+        assert!(send.send_active());
+        assert!(!send.receive_active());
+        assert!(!send.encrypted_packet_state_active());
+
+        let mut packet = public_fixture_packet();
+        let missing_receive =
+            states.run_diagnostic(SshEncryptedPacketDirection::Send, packet.as_mut_slice());
+        assert_label_names(
+            missing_receive.labels(),
+            &["sshservicediag-newkeys-not-ready"],
+        );
+        assert_eq!(missing_receive.sequence_before(), 0);
+        assert_eq!(missing_receive.sequence_after(), 0);
+
+        let receive = states.activate_receive_newkeys();
+        assert_eq!(
+            receive.label().name(),
+            "sshservicediag-newkeys-receive-active"
+        );
+        assert!(receive.send_active());
+        assert!(receive.receive_active());
+        assert!(receive.encrypted_packet_state_active());
+
+        let mut packet = public_fixture_packet();
+        let advanced =
+            states.run_diagnostic(SshEncryptedPacketDirection::Send, packet.as_mut_slice());
+        assert_label_names(
+            advanced.labels(),
+            &[
+                "sshservicediag-encrypted-packet-state-active",
+                "sshservicediag-encrypted-packet-sequence-advanced",
+                "sshservicediag-encrypted-packet-diagnostic-ready",
+            ],
+        );
+        assert_eq!(advanced.sequence_before(), 0);
+        assert_eq!(advanced.sequence_after(), 1);
+        assert_eq!(
+            advanced.cipher_name(),
+            SSH_CIPHER_NAME_CHACHA20_POLY1305_OPENSSH
+        );
+        assert_eq!(advanced.key_len(), CHACHA20_POLY1305_KEY_BYTES);
+        assert_eq!(advanced.iv_len(), CHACHA20_POLY1305_IV_BYTES);
+
+        let mut malformed = [0u8; 5];
+        let malformed_report = states.run_diagnostic(
+            SshEncryptedPacketDirection::Receive,
+            malformed.as_mut_slice(),
+        );
+        assert_label_names(
+            malformed_report.labels(),
+            &["sshservicediag-encrypted-packet-crypto-failed"],
+        );
+        assert_eq!(malformed_report.sequence_before(), 0);
+        assert_eq!(malformed_report.sequence_after(), 0);
+
+        states.force_sequence_number_for_test(SshEncryptedPacketDirection::Receive, u32::MAX);
+        let mut packet = public_fixture_packet();
+        let overflow =
+            states.run_diagnostic(SshEncryptedPacketDirection::Receive, packet.as_mut_slice());
+        assert_label_names(
+            overflow.labels(),
+            &["sshservicediag-encrypted-packet-sequence-overflow"],
+        );
+        assert_eq!(overflow.sequence_before(), u32::MAX);
+        assert_eq!(overflow.sequence_after(), u32::MAX);
+    }
+
+    fn assert_label_names(labels: &[SshRuntimeKexLabel], expected: &[&str]) {
+        assert_eq!(labels.len(), expected.len());
+        let mut index = 0usize;
+        while index < labels.len() {
+            assert_eq!(labels[index].name(), expected[index]);
+            index += 1;
+        }
+    }
 }

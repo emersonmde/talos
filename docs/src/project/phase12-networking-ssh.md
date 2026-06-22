@@ -7300,6 +7300,33 @@ attachment, live reachability, OpenSSH/POSIX/Linux compatibility, hardware/lab
 action, broad expansion, or a phase transition. The selected next bounded task is
 phase12-shell-ssh-newkeys-packet-crypto-smoke-20260622.
 
+phase12-shell-ssh-newkeys-packet-crypto-smoke-20260622 retains focused local
+smoke evidence for the accepted NEWKEYS and encrypted-packet diagnostic core.
+The smoke unit test covers missing KEX readiness, missing both NEWKEYS
+directions, missing receive NEWKEYS after send activation, independent send
+and receive activation labels, encrypted-packet-state-active only after both
+directions, one successful fixed-fixture packet diagnostic, and one private
+send-direction sequence advancement. It also covers deterministic fail-closed
+labels for malformed packet shape/crypto failure and u32 sequence overflow
+without sequence advancement.
+
+The retained smoke evidence is fixed-label only:
+sshservicediag-kex-csprng-not-ready, sshservicediag-newkeys-not-ready,
+sshservicediag-newkeys-send-active,
+sshservicediag-newkeys-receive-active,
+sshservicediag-encrypted-packet-state-active,
+sshservicediag-encrypted-packet-sequence-advanced,
+sshservicediag-encrypted-packet-crypto-failed,
+sshservicediag-encrypted-packet-sequence-overflow, and
+sshservicediag-encrypted-packet-diagnostic-ready. It retains no keys, IV
+bytes, tags, plaintext, ciphertext, exchange hashes, shared secrets,
+signatures, peer raw input, operator identity, key-derived identifiers, stable
+session identifiers, live peer addresses, or hardware data. ssh-ready remains
+false; authentication/session/shell behavior, live reachability, public
+compatibility, hardware, broad expansion, and phase transition remain
+unaccepted. The selected next bounded task is
+phase12-ssh-newkeys-packet-crypto-closeout-20260622.
+
 phase12-ssh-newkeys-packet-crypto-contract-20260622 accepts the first bounded
 NEWKEYS and encrypted-packet contract after the runtime KEX closeout. NEWKEYS
 is defined as a private bidirectional transport-state transition over the

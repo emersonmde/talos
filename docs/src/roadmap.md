@@ -16576,6 +16576,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   compatibility, hardware, broad expansion, and phase transition remain
   unaccepted. The selected next bounded task is
   phase12-shell-ssh-newkeys-packet-crypto-smoke-20260622.
+- phase12-shell-ssh-newkeys-packet-crypto-smoke-20260622 retains local
+  fixed-label smoke evidence for the accepted NEWKEYS/encrypted-packet core.
+  The task-owned unit smoke covers missing KEX readiness, missing both NEWKEYS
+  directions, missing receive NEWKEYS after send activation, independent
+  send/receive activation labels, encrypted-packet-state-active only after
+  both directions, one successful fixed-fixture packet diagnostic, one private
+  send-direction sequence advancement, malformed packet shape/crypto-failed,
+  and u32 sequence overflow with no failed-path sequence advancement. Durable
+  evidence remains fixed-label/counter/length/classification only and excludes
+  packet, key, IV, tag, transcript, peer, operator, session, live reachability,
+  and hardware material. ssh-ready remains false;
+  authentication/session/shell behavior, live reachability, public
+  compatibility, hardware, broad expansion, and phase transition remain
+  unaccepted. The selected next bounded task is
+  phase12-ssh-newkeys-packet-crypto-closeout-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
