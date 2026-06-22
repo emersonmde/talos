@@ -7271,3 +7271,28 @@ Durable evidence remains limited to task ids, file paths, public crate and
 algorithm names, fixed labels, validation commands, and classifications. The
 selected next bounded task is
 phase12-ssh-newkeys-packet-crypto-contract-20260622.
+
+phase12-ssh-newkeys-packet-crypto-contract-20260622 accepts the first bounded
+NEWKEYS and encrypted-packet contract after the runtime KEX closeout. NEWKEYS
+is defined as a private bidirectional transport-state transition over the
+accepted runtime KEX result: send encryption may activate only after local
+outbound NEWKEYS, receive decryption may activate only after inbound peer
+NEWKEYS, and encrypted-packet-state-active requires both directions. The first
+encrypted-packet diagnostic is limited to a task-owned local check over fixed
+public fixture payloads, private chacha20-poly1305@openssh.com packet states,
+private u32 sequence numbers starting at zero, one-direction advancement per
+successful packet operation, and fail-closed overflow/crypto/malformed labels.
+
+The diagnostic surface may retain only fixed labels, booleans, counters,
+public algorithm names, key/IV lengths, sequence transition labels, validation
+commands, and classifications. It must not retain private keys, random bytes,
+shared secrets, exchange hashes, derived keys, signatures, public-key blobs,
+IV material, packet plaintext/ciphertext, tags, peer raw input, operator
+identity, key-derived identifiers, stable session identifiers, live peer
+addresses, or hardware data. hmac-sha2-256 remains a negotiated policy name,
+but the chacha20-poly1305@openssh.com packet path must not emit a standalone
+HMAC. This contract does not accept source behavior change, NEWKEYS
+activation, encrypted packet I/O, authentication/session/shell behavior,
+hardware reachability, public compatibility, broad expansion, or phase
+transition. ssh-ready remains false. The selected next bounded task is
+phase12-ssh-newkeys-packet-crypto-core-20260622.

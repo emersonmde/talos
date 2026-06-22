@@ -16542,6 +16542,25 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   hardware reachability, public compatibility, broad expansion, and phase
   transition remain unaccepted. The selected next bounded task is
   phase12-ssh-newkeys-packet-crypto-contract-20260622.
+- phase12-ssh-newkeys-packet-crypto-contract-20260622 accepts the first
+  bounded NEWKEYS and encrypted-packet contract after the runtime KEX closeout.
+  NEWKEYS is a private bidirectional transport-state transition over the
+  accepted runtime KEX result: send encryption requires local outbound NEWKEYS,
+  receive decryption requires inbound peer NEWKEYS, and
+  encrypted-packet-state-active requires both directions. The first diagnostic
+  is limited to task-owned local packet crypto over fixed public fixture
+  payloads, private chacha20-poly1305@openssh.com packet states, private u32
+  sequence numbers starting at zero, one-direction advancement per successful
+  packet operation, and fail-closed overflow/crypto/malformed labels. Retained
+  evidence may include only fixed labels, booleans, counters, public algorithm
+  names, key/IV lengths, sequence transition labels, validation commands, and
+  classifications. hmac-sha2-256 remains a negotiated policy name, but the
+  chacha20-poly1305@openssh.com packet path must not emit a standalone HMAC.
+  No source behavior change, NEWKEYS activation, encrypted packet I/O,
+  authentication/session/shell behavior, hardware reachability, public
+  compatibility, broad expansion, or phase transition is accepted. ssh-ready
+  remains false. The selected next bounded task is
+  phase12-ssh-newkeys-packet-crypto-core-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
