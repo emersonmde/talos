@@ -17043,6 +17043,26 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   compatibility, broad expansion, phase transition, and ssh-ready=true remain
   unaccepted. The selected next bounded task is
   phase12-ssh-session-channel-open-core-20260622.
+- phase12-ssh-session-channel-open-core-20260622 accepts the bounded local
+  modeled SSH session channel-open source slice. The classifier emits
+  SSH_MSG_CHANNEL_OPEN_CONFIRMATION only after the accepted local publickey
+  USERAUTH_SUCCESS account-policy prerequisite and only for one
+  SSH_MSG_CHANNEL_OPEN request whose channel type is the public SSH string
+  session, whose bounded five-field shape is exact, whose channel-open policy
+  is enabled, where no modeled session/channel already exists, and where the
+  path is not redaction-sensitive. Missing authentication, disabled policy,
+  duplicate/existing channel, redaction-sensitive path, wrong message number,
+  unsupported channel type, malformed packet, over-limit channel type/shape,
+  and trailing data fail closed with SSH_MSG_CHANNEL_OPEN_FAILURE and fixed
+  labels. The accepted channel is local protocol bookkeeping only. The success
+  path may report authentication-success=true, session-count=1, and
+  channel-count=1; shell-attached=false, live-reachability=false, and
+  ssh-ready=false remain authoritative. No channel data, EOF/close/window flow
+  control, shell/pty/exec/subsystem requests, PTY/TTY/process/shell attachment,
+  process launch, filesystem-backed command execution, live reachability,
+  hardware proof, compatibility, broad expansion, phase transition, or
+  ssh-ready=true is accepted. The selected next bounded task is
+  phase12-shell-ssh-session-channel-open-smoke-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
