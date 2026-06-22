@@ -7923,3 +7923,27 @@ source/docs, no key material, no session-id bytes, no signatures, no
 key-derived identifiers, no hardware data, and no boot artifacts. The selected
 next bounded task is
 phase12-shell-ssh-publickey-auth-success-account-smoke-20260622.
+
+phase12-shell-ssh-publickey-auth-success-account-smoke-20260622 accepts
+retained host/QEMU-substitute smoke evidence for the single-account publickey
+USERAUTH_SUCCESS policy boundary. The retained command is
+scripts/qemu-shell-ssh-publickey-auth-success-account-smoke.sh, with transcript
+evidence under
+tasks/evidence/2026-06-22-ssh-publickey-auth-success-account-smoke/. The smoke
+reruns the accepted publickey_auth_success_account source/unit coverage through
+the configured target cargo test runner and records only fixed labels, public
+SSH message numbers, public byte-length/count field names, false/zero
+readiness counters, paths, validation commands, task ids, and classifications.
+
+The smoke covers the modeled signed-valid accepted-account
+SSH_MSG_USERAUTH_SUCCESS result, unsigned probe USERAUTH_PK_OK behavior retained
+from the prior response-policy slice, and USERAUTH_FAILURE for account mismatch,
+disabled account policy, missing account/response prerequisites, invalid
+signature, unauthorized key, malformed request, unsupported algorithm, and
+redaction-sensitive paths. authentication-success=true remains limited to the
+modeled success case; session-count=0, channel-count=0, shell-attached=false,
+live-reachability=false, and ssh-ready=false remain authoritative. No
+session/channel, shell attachment, live reachability, hardware proof,
+OpenSSH/POSIX/Linux compatibility, broad expansion, or phase transition is
+accepted. The selected next bounded task is
+phase12-ssh-publickey-auth-success-account-closeout-20260622.

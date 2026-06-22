@@ -16983,6 +16983,25 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   hardware proof, OpenSSH/POSIX/Linux compatibility, broad expansion, or phase
   transition is accepted. The selected next bounded task is
   phase12-shell-ssh-publickey-auth-success-account-smoke-20260622.
+- phase12-shell-ssh-publickey-auth-success-account-smoke-20260622 accepts
+  retained host/QEMU-substitute smoke evidence for the single-account publickey
+  USERAUTH_SUCCESS policy boundary. The command is
+  scripts/qemu-shell-ssh-publickey-auth-success-account-smoke.sh, with
+  transcript evidence under
+  tasks/evidence/2026-06-22-ssh-publickey-auth-success-account-smoke/. It
+  reruns the accepted publickey_auth_success_account source/unit coverage
+  through the configured target cargo test runner and covers the modeled
+  signed-valid accepted-account USERAUTH_SUCCESS case, unsigned probe PK_OK
+  behavior, and fail-closed account mismatch, disabled account policy, missing
+  account/response prerequisites, invalid signature, unauthorized key,
+  malformed request, unsupported algorithm, and redaction-sensitive paths.
+  authentication-success=true remains limited to the modeled success case;
+  session-count=0, channel-count=0, shell-attached=false,
+  live-reachability=false, and ssh-ready=false remain authoritative. No
+  session/channel, shell attachment, live reachability, hardware proof,
+  compatibility, broad expansion, or phase transition is accepted. The selected
+  next bounded task is
+  phase12-ssh-publickey-auth-success-account-closeout-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
