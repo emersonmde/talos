@@ -16242,6 +16242,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   follow-up listener/transport prerequisite task is mechanically unblocked in
   the queue, so supervisor planning is required before the next SSH service
   implementation slice.
+- phase12-ssh-russh-host-build-probe-20260622 accepts the host-only russh
+  0.61.2 build/API discriminator. The isolated probe uses russh = "=0.61.2"
+  with default-features=false and features=["ring"], leaves the Talos root
+  Cargo graph unchanged, and retains cargo metadata, cargo tree feature output,
+  cargo check output, feature summary, and API notes. The allowed feature set
+  builds/checks and excludes the rejected russh default optional crates
+  aws-lc-rs, flate2, rsa, and pkcs1, but the checked graph and APIs still carry
+  std/Tokio/host-runtime assumptions including tokio net/io-util/rt,
+  russh-util runtime spawning, rand thread_rng, getrandom host/wasm paths,
+  pkcs8 std/encryption, and ring dev_urandom fallback. Classification is
+  russh-host-build-probe-reference-only, so the selected next task is
+  phase12-ssh-owned-transport-banner-contract-20260622. No dependency adoption,
+  runtime SSH crypto, listener/transport behavior, authentication/session
+  success, shell attachment, hardware reachability, public ABI/POSIX/Linux
+  compatibility, broad expansion, or phase transition is accepted.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

@@ -1,0 +1,10 @@
+[package]
+name = "talos-russh-host-build-probe"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[dependencies]
+russh = { version = "=0.61.2", default-features = false, features = ["ring"] }

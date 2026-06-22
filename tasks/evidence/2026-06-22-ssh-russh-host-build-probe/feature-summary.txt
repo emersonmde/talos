@@ -1,0 +1,9 @@
+package_count=174
+russh_version=0.61.2
+probe_dependency=russh = { version = "=0.61.2", default-features = false, features = ["ring"] }
+accepted_probe_root_feature=russh/ring
+rejected_default_optional_crates_absent_from_tree=aws-lc-rs,flate2,rsa,pkcs1
+host_runtime_features_present=tokio/net,tokio/io-util,tokio/rt,tokio/rt-multi-thread,tokio/sync,tokio/time,russh-util/default,rand/thread_rng,getrandom/default,getrandom/sys_rng,getrandom/wasm_js,pkcs8/std,pkcs8/encryption,ring/default,ring/dev_urandom_fallback
+classification=russh-host-build-probe-reference-only
+selected_next_task=phase12-ssh-owned-transport-banner-contract-20260622
+

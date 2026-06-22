@@ -1,0 +1,1203 @@
+talos-russh-host-build-probe v0.0.0 (/opt/strider/openclaw/current/workspace/projects/talos/tasks/evidence/2026-06-22-ssh-russh-host-build-probe/probe)
+└── russh feature "ring"
+    └── russh v0.61.2
+        ├── aes feature "default"
+        │   └── aes v0.9.1
+        │       ├── cipher feature "default"
+        │       │   └── cipher v0.5.2
+        │       │       ├── block-buffer feature "default"
+        │       │       │   └── block-buffer v0.12.1
+        │       │       │       └── hybrid-array feature "default"
+        │       │       │           └── hybrid-array v0.4.12
+        │       │       │               ├── zeroize v1.9.0
+        │       │       │               ├── ctutils feature "default"
+        │       │       │               │   └── ctutils v0.4.2
+        │       │       │               │       ├── subtle v2.6.1
+        │       │       │               │       └── cmov feature "default"
+        │       │       │               │           └── cmov v0.5.4
+        │       │       │               ├── subtle feature "const-generics"
+        │       │       │               │   └── subtle v2.6.1
+        │       │       │               ├── typenum feature "const-generics"
+        │       │       │               │   └── typenum v1.20.1
+        │       │       │               └── typenum feature "default"
+        │       │       │                   └── typenum v1.20.1
+        │       │       ├── crypto-common feature "default"
+        │       │       │   └── crypto-common v0.2.2
+        │       │       │       ├── hybrid-array feature "default" (*)
+        │       │       │       ├── getrandom feature "default"
+        │       │       │       │   └── getrandom v0.4.3
+        │       │       │       │       ├── libc v0.2.186
+        │       │       │       │       ├── cfg-if feature "default"
+        │       │       │       │       │   └── cfg-if v1.0.4
+        │       │       │       │       └── rand_core feature "default"
+        │       │       │       │           └── rand_core v0.10.1
+        │       │       │       ├── getrandom feature "sys_rng"
+        │       │       │       │   └── getrandom v0.4.3 (*)
+        │       │       │       └── rand_core feature "default" (*)
+        │       │       └── inout feature "default"
+        │       │           └── inout v0.2.2
+        │       │               ├── hybrid-array feature "default" (*)
+        │       │               └── block-padding feature "default"
+        │       │                   └── block-padding v0.4.2
+        │       │                       └── hybrid-array feature "default" (*)
+        │       ├── zeroize feature "aarch64"
+        │       │   └── zeroize v1.9.0
+        │       ├── cpubits feature "default"
+        │       │   └── cpubits v0.1.1
+        │       └── cpufeatures feature "default"
+        │           └── cpufeatures v0.3.0
+        ├── cipher feature "default" (*)
+        ├── subtle feature "default"
+        │   ├── subtle v2.6.1
+        │   ├── subtle feature "i128"
+        │   │   └── subtle v2.6.1
+        │   └── subtle feature "std"
+        │       └── subtle v2.6.1
+        ├── typenum feature "default" (*)
+        ├── zeroize feature "default"
+        │   ├── zeroize v1.9.0
+        │   └── zeroize feature "alloc"
+        │       └── zeroize v1.9.0
+        ├── getrandom feature "default" (*)
+        ├── getrandom feature "wasm_js"
+        │   └── getrandom v0.4.3 (*)
+        ├── rand_core feature "default" (*)
+        ├── inout feature "default" (*)
+        ├── block-padding feature "default" (*)
+        ├── bitflags feature "default"
+        │   └── bitflags v2.13.0
+        ├── byteorder feature "default"
+        │   ├── byteorder v1.5.0
+        │   └── byteorder feature "std"
+        │       └── byteorder v1.5.0
+        ├── bytes feature "default"
+        │   ├── bytes v1.12.0
+        │   └── bytes feature "std"
+        │       └── bytes v1.12.0
+        ├── cbc feature "default"
+        │   ├── cbc v0.2.1
+        │   │   └── cipher feature "default" (*)
+        │   └── cbc feature "block-padding"
+        │       ├── cbc v0.2.1 (*)
+        │       └── cipher feature "block-padding"
+        │           ├── cipher v0.5.2 (*)
+        │           └── inout feature "block-padding"
+        │               └── inout v0.2.2 (*)
+        ├── crypto-bigint feature "alloc"
+        │   └── crypto-bigint v0.7.4
+        │       ├── num-traits v0.2.19
+        │       │   [build-dependencies]
+        │       │   └── autocfg feature "default"
+        │       │       └── autocfg v1.5.1
+        │       ├── rand_core v0.10.1
+        │       ├── subtle v2.6.1
+        │       ├── zeroize v1.9.0
+        │       ├── hybrid-array feature "default" (*)
+        │       ├── ctutils feature "default" (*)
+        │       ├── getrandom feature "default" (*)
+        │       ├── getrandom feature "sys_rng" (*)
+        │       └── cpubits feature "default" (*)
+        ├── crypto-bigint feature "default"
+        │   ├── crypto-bigint v0.7.4 (*)
+        │   └── crypto-bigint feature "rand_core"
+        │       └── crypto-bigint v0.7.4 (*)
+        ├── ctr feature "default"
+        │   └── ctr v0.10.1
+        │       ├── cipher feature "default" (*)
+        │       └── cipher feature "stream-wrapper"
+        │           ├── cipher v0.5.2 (*)
+        │           └── cipher feature "block-buffer"
+        │               └── cipher v0.5.2 (*)
+        ├── curve25519-dalek feature "default"
+        │   ├── curve25519-dalek v5.0.0-rc.0
+        │   │   ├── zeroize v1.9.0
+        │   │   ├── subtle feature "const-generics" (*)
+        │   │   ├── cfg-if feature "default" (*)
+        │   │   ├── cpufeatures feature "default" (*)
+        │   │   ├── curve25519-dalek-derive feature "default"
+        │   │   │   └── curve25519-dalek-derive v0.1.1 (proc-macro)
+        │   │   │       ├── proc-macro2 feature "default"
+        │   │   │       │   ├── proc-macro2 v1.0.106
+        │   │   │       │   │   └── unicode-ident feature "default"
+        │   │   │       │   │       └── unicode-ident v1.0.24
+        │   │   │       │   └── proc-macro2 feature "proc-macro"
+        │   │   │       │       └── proc-macro2 v1.0.106 (*)
+        │   │   │       ├── quote feature "default"
+        │   │   │       │   ├── quote v1.0.45
+        │   │   │       │   │   └── proc-macro2 v1.0.106 (*)
+        │   │   │       │   └── quote feature "proc-macro"
+        │   │   │       │       ├── quote v1.0.45 (*)
+        │   │   │       │       └── proc-macro2 feature "proc-macro" (*)
+        │   │   │       ├── syn feature "default"
+        │   │   │       │   ├── syn v2.0.118
+        │   │   │       │   │   ├── proc-macro2 v1.0.106 (*)
+        │   │   │       │   │   ├── quote v1.0.45 (*)
+        │   │   │       │   │   └── unicode-ident feature "default" (*)
+        │   │   │       │   ├── syn feature "clone-impls"
+        │   │   │       │   │   └── syn v2.0.118 (*)
+        │   │   │       │   ├── syn feature "derive"
+        │   │   │       │   │   └── syn v2.0.118 (*)
+        │   │   │       │   ├── syn feature "parsing"
+        │   │   │       │   │   └── syn v2.0.118 (*)
+        │   │   │       │   ├── syn feature "printing"
+        │   │   │       │   │   └── syn v2.0.118 (*)
+        │   │   │       │   └── syn feature "proc-macro"
+        │   │   │       │       ├── syn v2.0.118 (*)
+        │   │   │       │       ├── proc-macro2 feature "proc-macro" (*)
+        │   │   │       │       └── quote feature "proc-macro" (*)
+        │   │   │       └── syn feature "full"
+        │   │   │           └── syn v2.0.118 (*)
+        │   │   └── digest feature "block-api"
+        │   │       └── digest v0.11.3
+        │   │           ├── block-buffer feature "default" (*)
+        │   │           ├── ctutils feature "default" (*)
+        │   │           ├── crypto-common feature "default" (*)
+        │   │           └── const-oid feature "default"
+        │   │               └── const-oid v0.10.2
+        │   │   [build-dependencies]
+        │   │   └── rustc_version feature "default"
+        │   │       └── rustc_version v0.4.1
+        │   │           └── semver feature "default"
+        │   │               ├── semver v1.0.28
+        │   │               └── semver feature "std"
+        │   │                   └── semver v1.0.28
+        │   ├── curve25519-dalek feature "alloc"
+        │   │   ├── curve25519-dalek v5.0.0-rc.0 (*)
+        │   │   └── zeroize feature "alloc" (*)
+        │   ├── curve25519-dalek feature "precomputed-tables"
+        │   │   └── curve25519-dalek v5.0.0-rc.0 (*)
+        │   └── curve25519-dalek feature "zeroize"
+        │       └── curve25519-dalek v5.0.0-rc.0 (*)
+        ├── digest feature "default"
+        │   ├── digest v0.11.3 (*)
+        │   └── digest feature "block-api" (*)
+        ├── data-encoding feature "default"
+        │   ├── data-encoding v2.11.0
+        │   └── data-encoding feature "std"
+        │       ├── data-encoding v2.11.0
+        │       └── data-encoding feature "alloc"
+        │           └── data-encoding v2.11.0
+        ├── delegate feature "default"
+        │   └── delegate v0.13.5 (proc-macro)
+        │       ├── proc-macro2 feature "default" (*)
+        │       ├── quote feature "default" (*)
+        │       ├── syn feature "default" (*)
+        │       ├── syn feature "full" (*)
+        │       └── syn feature "visit-mut"
+        │           └── syn v2.0.118 (*)
+        ├── der feature "default"
+        │   └── der v0.8.0
+        │       ├── zeroize v1.9.0
+        │       ├── const-oid feature "default" (*)
+        │       ├── pem-rfc7468 feature "alloc"
+        │       │   ├── pem-rfc7468 v1.0.0
+        │       │   │   └── base64ct feature "default"
+        │       │   │       └── base64ct v1.8.3
+        │       │   └── base64ct feature "alloc"
+        │       │       └── base64ct v1.8.3
+        │       └── pem-rfc7468 feature "default"
+        │           └── pem-rfc7468 v1.0.0 (*)
+        ├── ecdsa feature "default"
+        │   ├── ecdsa v0.17.0-rc.18
+        │   │   ├── spki v0.8.0
+        │   │   │   ├── der feature "default" (*)
+        │   │   │   └── der feature "oid"
+        │   │   │       └── der v0.8.0 (*)
+        │   │   ├── zeroize v1.9.0
+        │   │   ├── digest feature "oid"
+        │   │   │   └── digest v0.11.3 (*)
+        │   │   ├── der feature "default" (*)
+        │   │   ├── elliptic-curve feature "sec1"
+        │   │   │   └── elliptic-curve v0.14.0-rc.33
+        │   │   │       ├── ff v0.14.0
+        │   │   │       │   ├── rand_core v0.10.1
+        │   │   │       │   └── subtle feature "i128" (*)
+        │   │   │       ├── group v0.14.0
+        │   │   │       │   ├── ff v0.14.0 (*)
+        │   │   │       │   ├── rand_core v0.10.1
+        │   │   │       │   └── subtle v2.6.1
+        │   │   │       ├── hkdf v0.13.0
+        │   │   │       │   └── hmac feature "default"
+        │   │   │       │       └── hmac v0.13.0
+        │   │   │       │           ├── digest feature "default" (*)
+        │   │   │       │           └── digest feature "mac"
+        │   │   │       │               └── digest v0.11.3 (*)
+        │   │   │       ├── pkcs8 v0.11.0
+        │   │   │       │   ├── rand_core v0.10.1
+        │   │   │       │   ├── der feature "default" (*)
+        │   │   │       │   ├── der feature "oid" (*)
+        │   │   │       │   ├── pkcs5 feature "default"
+        │   │   │       │   │   └── pkcs5 v0.8.0
+        │   │   │       │   │       ├── aes v0.9.1 (*)
+        │   │   │       │   │       ├── rand_core v0.10.1
+        │   │   │       │   │       ├── scrypt v0.12.0
+        │   │   │       │   │       │   ├── salsa20 v0.11.0
+        │   │   │       │   │       │   │   ├── cipher feature "default" (*)
+        │   │   │       │   │       │   │   ├── cipher feature "stream-wrapper" (*)
+        │   │   │       │   │       │   │   └── cfg-if feature "default" (*)
+        │   │   │       │   │       │   ├── sha2 v0.11.0
+        │   │   │       │   │       │   │   ├── cfg-if feature "default" (*)
+        │   │   │       │   │       │   │   ├── cpufeatures feature "default" (*)
+        │   │   │       │   │       │   │   └── digest feature "default" (*)
+        │   │   │       │   │       │   ├── cfg-if feature "default" (*)
+        │   │   │       │   │       │   └── pbkdf2 feature "default"
+        │   │   │       │   │       │       ├── pbkdf2 v0.13.0
+        │   │   │       │   │       │       │   ├── hmac v0.13.0 (*)
+        │   │   │       │   │       │       │   ├── digest feature "default" (*)
+        │   │   │       │   │       │       │   └── digest feature "mac" (*)
+        │   │   │       │   │       │       └── pbkdf2 feature "hmac"
+        │   │   │       │   │       │           └── pbkdf2 v0.13.0 (*)
+        │   │   │       │   │       ├── sha2 v0.11.0 (*)
+        │   │   │       │   │       ├── cbc feature "default" (*)
+        │   │   │       │   │       ├── der feature "default" (*)
+        │   │   │       │   │       ├── der feature "oid" (*)
+        │   │   │       │   │       ├── pbkdf2 feature "hmac" (*)
+        │   │   │       │   │       └── spki feature "default"
+        │   │   │       │   │           └── spki v0.8.0 (*)
+        │   │   │       │   ├── pkcs5 feature "rand_core"
+        │   │   │       │   │   └── pkcs5 v0.8.0 (*)
+        │   │   │       │   └── spki feature "default" (*)
+        │   │   │       ├── rand_core v0.10.1
+        │   │   │       ├── subtle v2.6.1
+        │   │   │       ├── zeroize v1.9.0
+        │   │   │       ├── hybrid-array feature "zeroize"
+        │   │   │       │   └── hybrid-array v0.4.12 (*)
+        │   │   │       ├── crypto-common feature "default" (*)
+        │   │   │       ├── crypto-common feature "rand_core"
+        │   │   │       │   └── crypto-common v0.2.2 (*)
+        │   │   │       ├── crypto-bigint feature "hybrid-array"
+        │   │   │       │   └── crypto-bigint v0.7.4 (*)
+        │   │   │       ├── crypto-bigint feature "rand_core" (*)
+        │   │   │       ├── crypto-bigint feature "subtle"
+        │   │   │       │   ├── crypto-bigint v0.7.4 (*)
+        │   │   │       │   ├── hybrid-array feature "subtle"
+        │   │   │       │   │   └── hybrid-array v0.4.12 (*)
+        │   │   │       │   └── ctutils feature "subtle"
+        │   │   │       │       └── ctutils v0.4.2 (*)
+        │   │   │       ├── crypto-bigint feature "zeroize"
+        │   │   │       │   └── crypto-bigint v0.7.4 (*)
+        │   │   │       ├── digest feature "default" (*)
+        │   │   │       ├── pem-rfc7468 feature "alloc" (*)
+        │   │   │       ├── pem-rfc7468 feature "default" (*)
+        │   │   │       ├── base16ct feature "default"
+        │   │   │       │   └── base16ct v1.0.0
+        │   │   │       ├── sec1 feature "ctutils"
+        │   │   │       │   └── sec1 v0.8.1
+        │   │   │       │       ├── base16ct v1.0.0
+        │   │   │       │       ├── hybrid-array v0.4.12 (*)
+        │   │   │       │       ├── subtle v2.6.1
+        │   │   │       │       ├── zeroize v1.9.0
+        │   │   │       │       ├── ctutils feature "default" (*)
+        │   │   │       │       ├── der feature "default" (*)
+        │   │   │       │       └── der feature "oid" (*)
+        │   │   │       ├── sec1 feature "default"
+        │   │   │       │   ├── sec1 v0.8.1 (*)
+        │   │   │       │   ├── sec1 feature "der"
+        │   │   │       │   │   ├── sec1 v0.8.1 (*)
+        │   │   │       │   │   └── sec1 feature "zeroize"
+        │   │   │       │   │       ├── sec1 v0.8.1 (*)
+        │   │   │       │   │       └── der feature "zeroize"
+        │   │   │       │   │           └── der v0.8.0 (*)
+        │   │   │       │   └── sec1 feature "point"
+        │   │   │       │       └── sec1 v0.8.1 (*)
+        │   │   │       ├── sec1 feature "subtle"
+        │   │   │       │   └── sec1 v0.8.1 (*)
+        │   │   │       └── sec1 feature "zeroize" (*)
+        │   │   ├── rfc6979 feature "default"
+        │   │   │   └── rfc6979 v0.5.0
+        │   │   │       ├── hmac v0.13.0 (*)
+        │   │   │       └── subtle v2.6.1
+        │   │   └── signature feature "rand_core"
+        │   │       └── signature v3.0.0
+        │   │           ├── digest v0.11.3 (*)
+        │   │           └── rand_core v0.10.1
+        │   └── ecdsa feature "digest"
+        │       ├── ecdsa v0.17.0-rc.18 (*)
+        │       ├── elliptic-curve feature "digest"
+        │       │   └── elliptic-curve v0.14.0-rc.33 (*)
+        │       └── signature feature "digest"
+        │           └── signature v3.0.0 (*)
+        ├── elliptic-curve feature "default"
+        │   ├── elliptic-curve v0.14.0-rc.33 (*)
+        │   └── elliptic-curve feature "arithmetic"
+        │       ├── elliptic-curve v0.14.0-rc.33 (*)
+        │       └── elliptic-curve feature "group"
+        │           ├── elliptic-curve v0.14.0-rc.33 (*)
+        │           └── elliptic-curve feature "ff"
+        │               └── elliptic-curve v0.14.0-rc.33 (*)
+        ├── elliptic-curve feature "ecdh"
+        │   ├── elliptic-curve v0.14.0-rc.33 (*)
+        │   ├── elliptic-curve feature "arithmetic" (*)
+        │   └── elliptic-curve feature "digest" (*)
+        ├── hmac feature "default" (*)
+        ├── pkcs8 feature "default"
+        │   └── pkcs8 v0.11.0 (*)
+        ├── pkcs8 feature "encryption"
+        │   ├── pkcs8 v0.11.0 (*)
+        │   ├── pkcs8 feature "alloc"
+        │   │   ├── pkcs8 v0.11.0 (*)
+        │   │   ├── der feature "alloc"
+        │   │   │   ├── der v0.8.0 (*)
+        │   │   │   └── zeroize feature "alloc" (*)
+        │   │   ├── der feature "zeroize" (*)
+        │   │   └── spki feature "alloc"
+        │   │       ├── spki v0.8.0 (*)
+        │   │       └── der feature "alloc" (*)
+        │   ├── pkcs8 feature "pkcs5"
+        │   │   └── pkcs8 v0.11.0 (*)
+        │   ├── pkcs5 feature "alloc"
+        │   │   └── pkcs5 v0.8.0 (*)
+        │   └── pkcs5 feature "pbes2"
+        │       └── pkcs5 v0.8.0 (*)
+        ├── pkcs8 feature "std"
+        │   ├── pkcs8 v0.11.0 (*)
+        │   ├── der feature "std"
+        │   │   ├── der v0.8.0 (*)
+        │   │   └── der feature "alloc" (*)
+        │   ├── pkcs8 feature "alloc" (*)
+        │   └── spki feature "std"
+        │       ├── spki v0.8.0 (*)
+        │       ├── der feature "std" (*)
+        │       └── spki feature "alloc" (*)
+        ├── pkcs5 feature "default" (*)
+        ├── pbkdf2 feature "default" (*)
+        ├── scrypt feature "default"
+        │   └── scrypt v0.12.0 (*)
+        ├── salsa20 feature "default"
+        │   └── salsa20 v0.11.0 (*)
+        ├── sha2 feature "default"
+        │   ├── sha2 v0.11.0 (*)
+        │   ├── sha2 feature "alloc"
+        │   │   ├── sha2 v0.11.0 (*)
+        │   │   └── digest feature "alloc"
+        │   │       └── digest v0.11.3 (*)
+        │   └── sha2 feature "oid"
+        │       ├── sha2 v0.11.0 (*)
+        │       └── digest feature "oid" (*)
+        ├── sha2 feature "oid" (*)
+        ├── spki feature "default" (*)
+        ├── sec1 feature "default" (*)
+        ├── sec1 feature "der" (*)
+        ├── signature feature "default"
+        │   └── signature v3.0.0 (*)
+        ├── ed25519-dalek feature "alloc"
+        │   ├── ed25519-dalek v3.0.0-rc.0
+        │   │   ├── ed25519 v3.0.0
+        │   │   │   ├── signature v3.0.0 (*)
+        │   │   │   └── pkcs8 feature "default" (*)
+        │   │   ├── rand_core v0.10.1
+        │   │   ├── sha2 v0.11.0 (*)
+        │   │   ├── signature v3.0.0 (*)
+        │   │   ├── subtle v2.6.1
+        │   │   ├── zeroize v1.9.0
+        │   │   └── curve25519-dalek feature "digest"
+        │   │       └── curve25519-dalek v5.0.0-rc.0 (*)
+        │   ├── zeroize feature "alloc" (*)
+        │   ├── curve25519-dalek feature "alloc" (*)
+        │   ├── signature feature "alloc"
+        │   │   └── signature v3.0.0 (*)
+        │   ├── ed25519-dalek feature "signature"
+        │   │   └── ed25519-dalek v3.0.0-rc.0 (*)
+        │   └── ed25519 feature "alloc"
+        │       ├── ed25519 v3.0.0 (*)
+        │       ├── pkcs8 feature "alloc" (*)
+        │       └── signature feature "alloc" (*)
+        ├── ed25519-dalek feature "default"
+        │   ├── ed25519-dalek v3.0.0-rc.0 (*)
+        │   ├── ed25519-dalek feature "fast"
+        │   │   ├── ed25519-dalek v3.0.0-rc.0 (*)
+        │   │   └── curve25519-dalek feature "precomputed-tables" (*)
+        │   └── ed25519-dalek feature "zeroize"
+        │       ├── ed25519-dalek v3.0.0-rc.0 (*)
+        │       └── curve25519-dalek feature "zeroize" (*)
+        ├── ed25519-dalek feature "pkcs8"
+        │   ├── ed25519-dalek v3.0.0-rc.0 (*)
+        │   └── ed25519 feature "pkcs8"
+        │       └── ed25519 v3.0.0 (*)
+        ├── ed25519-dalek feature "rand_core"
+        │   └── ed25519-dalek v3.0.0-rc.0 (*)
+        ├── enum_dispatch feature "default"
+        │   └── enum_dispatch v0.3.13 (proc-macro)
+        │       ├── proc-macro2 feature "default" (*)
+        │       ├── quote feature "default" (*)
+        │       ├── syn feature "default" (*)
+        │       ├── syn feature "full" (*)
+        │       └── once_cell feature "default"
+        │           ├── once_cell v1.21.4
+        │           └── once_cell feature "std"
+        │               ├── once_cell v1.21.4
+        │               └── once_cell feature "alloc"
+        │                   ├── once_cell v1.21.4
+        │                   └── once_cell feature "race"
+        │                       └── once_cell v1.21.4
+        ├── futures feature "default"
+        │   ├── futures v0.3.32
+        │   │   ├── futures-core v0.3.32
+        │   │   ├── futures-executor v0.3.32
+        │   │   │   ├── futures-core v0.3.32
+        │   │   │   ├── futures-task v0.3.32
+        │   │   │   └── futures-util v0.3.32
+        │   │   │       ├── futures-core v0.3.32
+        │   │   │       ├── futures-macro v0.3.32 (proc-macro)
+        │   │   │       │   ├── proc-macro2 feature "default" (*)
+        │   │   │       │   ├── quote feature "default" (*)
+        │   │   │       │   ├── syn feature "default" (*)
+        │   │   │       │   └── syn feature "full" (*)
+        │   │   │       ├── futures-sink v0.3.32
+        │   │   │       ├── futures-task v0.3.32
+        │   │   │       ├── slab v0.4.12
+        │   │   │       ├── futures-channel feature "std"
+        │   │   │       │   ├── futures-channel v0.3.32
+        │   │   │       │   │   ├── futures-core v0.3.32
+        │   │   │       │   │   └── futures-sink v0.3.32
+        │   │   │       │   ├── futures-channel feature "alloc"
+        │   │   │       │   │   ├── futures-channel v0.3.32 (*)
+        │   │   │       │   │   └── futures-core feature "alloc"
+        │   │   │       │   │       └── futures-core v0.3.32
+        │   │   │       │   └── futures-core feature "std"
+        │   │   │       │       ├── futures-core v0.3.32
+        │   │   │       │       └── futures-core feature "alloc" (*)
+        │   │   │       ├── futures-io feature "std"
+        │   │   │       │   └── futures-io v0.3.32
+        │   │   │       ├── memchr feature "default"
+        │   │   │       │   ├── memchr v2.8.2
+        │   │   │       │   └── memchr feature "std"
+        │   │   │       │       ├── memchr v2.8.2
+        │   │   │       │       └── memchr feature "alloc"
+        │   │   │       │           └── memchr v2.8.2
+        │   │   │       └── pin-project-lite feature "default"
+        │   │   │           └── pin-project-lite v0.2.17
+        │   │   ├── futures-io v0.3.32
+        │   │   ├── futures-sink v0.3.32
+        │   │   ├── futures-task v0.3.32
+        │   │   ├── futures-channel feature "sink"
+        │   │   │   ├── futures-channel v0.3.32 (*)
+        │   │   │   └── futures-channel feature "futures-sink"
+        │   │   │       └── futures-channel v0.3.32 (*)
+        │   │   └── futures-util feature "sink"
+        │   │       ├── futures-util v0.3.32 (*)
+        │   │       └── futures-util feature "futures-sink"
+        │   │           └── futures-util v0.3.32 (*)
+        │   ├── futures feature "async-await"
+        │   │   ├── futures v0.3.32 (*)
+        │   │   ├── futures-util feature "async-await"
+        │   │   │   └── futures-util v0.3.32 (*)
+        │   │   └── futures-util feature "async-await-macro"
+        │   │       ├── futures-util v0.3.32 (*)
+        │   │       ├── futures-util feature "async-await" (*)
+        │   │       └── futures-util feature "futures-macro"
+        │   │           └── futures-util v0.3.32 (*)
+        │   ├── futures feature "executor"
+        │   │   ├── futures v0.3.32 (*)
+        │   │   ├── futures feature "futures-executor"
+        │   │   │   └── futures v0.3.32 (*)
+        │   │   ├── futures feature "std"
+        │   │   │   ├── futures v0.3.32 (*)
+        │   │   │   ├── futures feature "alloc"
+        │   │   │   │   ├── futures v0.3.32 (*)
+        │   │   │   │   ├── futures-channel feature "alloc" (*)
+        │   │   │   │   ├── futures-core feature "alloc" (*)
+        │   │   │   │   ├── futures-sink feature "alloc"
+        │   │   │   │   │   └── futures-sink v0.3.32
+        │   │   │   │   ├── futures-task feature "alloc"
+        │   │   │   │   │   └── futures-task v0.3.32
+        │   │   │   │   └── futures-util feature "alloc"
+        │   │   │   │       ├── futures-util v0.3.32 (*)
+        │   │   │   │       ├── futures-core feature "alloc" (*)
+        │   │   │   │       ├── futures-task feature "alloc" (*)
+        │   │   │   │       └── futures-util feature "slab"
+        │   │   │   │           └── futures-util v0.3.32 (*)
+        │   │   │   ├── futures-core feature "std" (*)
+        │   │   │   ├── futures-sink feature "std"
+        │   │   │   │   ├── futures-sink v0.3.32
+        │   │   │   │   └── futures-sink feature "alloc" (*)
+        │   │   │   ├── futures-task feature "std"
+        │   │   │   │   ├── futures-task v0.3.32
+        │   │   │   │   └── futures-task feature "alloc" (*)
+        │   │   │   ├── futures-util feature "channel"
+        │   │   │   │   ├── futures-util v0.3.32 (*)
+        │   │   │   │   ├── futures-util feature "futures-channel"
+        │   │   │   │   │   └── futures-util v0.3.32 (*)
+        │   │   │   │   └── futures-util feature "std"
+        │   │   │   │       ├── futures-util v0.3.32 (*)
+        │   │   │   │       ├── futures-core feature "std" (*)
+        │   │   │   │       ├── futures-task feature "std" (*)
+        │   │   │   │       ├── futures-util feature "alloc" (*)
+        │   │   │   │       ├── futures-util feature "slab" (*)
+        │   │   │   │       └── slab feature "std"
+        │   │   │   │           └── slab v0.4.12
+        │   │   │   ├── futures-util feature "io"
+        │   │   │   │   ├── futures-util v0.3.32 (*)
+        │   │   │   │   ├── futures-util feature "futures-io"
+        │   │   │   │   │   └── futures-util v0.3.32 (*)
+        │   │   │   │   ├── futures-util feature "memchr"
+        │   │   │   │   │   └── futures-util v0.3.32 (*)
+        │   │   │   │   └── futures-util feature "std" (*)
+        │   │   │   ├── futures-util feature "std" (*)
+        │   │   │   └── futures-io feature "std" (*)
+        │   │   └── futures-executor feature "std"
+        │   │       ├── futures-executor v0.3.32 (*)
+        │   │       ├── futures-core feature "std" (*)
+        │   │       ├── futures-task feature "std" (*)
+        │   │       └── futures-util feature "std" (*)
+        │   └── futures feature "std" (*)
+        ├── generic-array feature "compat-0_14"
+        │   └── generic-array v1.4.3
+        │       ├── generic-array v0.14.9
+        │       │   └── typenum feature "default" (*)
+        │       │   [build-dependencies]
+        │       │   └── version_check feature "default"
+        │       │       └── version_check v0.9.5
+        │       ├── typenum feature "const-generics" (*)
+        │       ├── typenum feature "default" (*)
+        │       └── rustversion feature "default"
+        │           └── rustversion v1.0.22 (proc-macro)
+        ├── generic-array feature "default"
+        │   └── generic-array v1.4.3 (*)
+        ├── ghash feature "default"
+        │   └── ghash v0.6.0
+        │       ├── polyval feature "default"
+        │       │   └── polyval v0.7.1
+        │       │       ├── cpubits feature "default" (*)
+        │       │       ├── cpufeatures feature "default" (*)
+        │       │       └── universal-hash feature "default"
+        │       │           └── universal-hash v0.6.1
+        │       │               ├── ctutils feature "default" (*)
+        │       │               └── crypto-common feature "default" (*)
+        │       └── polyval feature "hazmat"
+        │           └── polyval v0.7.1 (*)
+        ├── polyval feature "default" (*)
+        ├── universal-hash feature "default" (*)
+        ├── hex-literal feature "default"
+        │   └── hex-literal v1.1.0
+        ├── internal-russh-num-bigint feature "default"
+        │   ├── internal-russh-num-bigint v0.5.0
+        │   │   ├── rand v0.10.1
+        │   │   │   ├── rand_core v0.10.1
+        │   │   │   ├── getrandom feature "default" (*)
+        │   │   │   └── chacha20 feature "rng"
+        │   │   │       └── chacha20 v0.10.0
+        │   │   │           ├── rand_core v0.10.1
+        │   │   │           ├── zeroize v1.9.0
+        │   │   │           ├── cipher feature "default" (*)
+        │   │   │           ├── cipher feature "stream-wrapper" (*)
+        │   │   │           ├── cfg-if feature "default" (*)
+        │   │   │           └── cpufeatures feature "default" (*)
+        │   │   ├── rand_core v0.10.1
+        │   │   ├── num-traits feature "i128"
+        │   │   │   └── num-traits v0.2.19 (*)
+        │   │   └── num-integer feature "i128"
+        │   │       └── num-integer v0.1.46
+        │   │           └── num-traits feature "i128" (*)
+        │   └── internal-russh-num-bigint feature "std"
+        │       ├── internal-russh-num-bigint v0.5.0 (*)
+        │       ├── num-traits feature "std"
+        │       │   └── num-traits v0.2.19 (*)
+        │       └── num-integer feature "std"
+        │           ├── num-integer v0.1.46 (*)
+        │           └── num-traits feature "std" (*)
+        ├── internal-russh-num-bigint feature "rand_0_10"
+        │   ├── internal-russh-num-bigint v0.5.0 (*)
+        │   └── internal-russh-num-bigint feature "rand_core_0_10"
+        │       └── internal-russh-num-bigint v0.5.0 (*)
+        ├── rand feature "default"
+        │   ├── rand v0.10.1 (*)
+        │   ├── rand feature "std"
+        │   │   ├── rand v0.10.1 (*)
+        │   │   ├── getrandom feature "std"
+        │   │   │   └── getrandom v0.4.3 (*)
+        │   │   └── rand feature "alloc"
+        │   │       └── rand v0.10.1 (*)
+        │   ├── rand feature "std_rng"
+        │   │   └── rand v0.10.1 (*)
+        │   ├── rand feature "sys_rng"
+        │   │   ├── rand v0.10.1 (*)
+        │   │   ├── getrandom feature "sys_rng" (*)
+        │   │   └── rand feature "getrandom"
+        │   │       └── rand v0.10.1 (*)
+        │   └── rand feature "thread_rng"
+        │       ├── rand v0.10.1 (*)
+        │       ├── rand feature "std" (*)
+        │       ├── rand feature "std_rng" (*)
+        │       └── rand feature "sys_rng" (*)
+        ├── rand feature "thread_rng" (*)
+        ├── keccak feature "default"
+        │   └── keccak v0.2.0
+        │       └── cfg-if feature "default" (*)
+        ├── log feature "default"
+        │   └── log v0.4.33
+        ├── md5 feature "default"
+        │   ├── md5 v0.8.0
+        │   └── md5 feature "std"
+        │       └── md5 v0.8.0
+        ├── ml-kem feature "default"
+        │   ├── ml-kem v0.3.2
+        │   │   ├── sha3 v0.11.0
+        │   │   │   ├── digest feature "default" (*)
+        │   │   │   └── keccak feature "default" (*)
+        │   │   ├── hybrid-array feature "ctutils"
+        │   │   │   └── hybrid-array v0.4.12 (*)
+        │   │   ├── hybrid-array feature "default" (*)
+        │   │   ├── hybrid-array feature "extra-sizes"
+        │   │   │   └── hybrid-array v0.4.12 (*)
+        │   │   ├── rand_core feature "default" (*)
+        │   │   ├── kem feature "default"
+        │   │   │   └── kem v0.3.0
+        │   │   │       ├── crypto-common feature "default" (*)
+        │   │   │       ├── crypto-common feature "rand_core" (*)
+        │   │   │       └── rand_core feature "default" (*)
+        │   │   ├── module-lattice feature "ctutils"
+        │   │   │   ├── module-lattice v0.2.3
+        │   │   │   │   ├── num-traits v0.2.19 (*)
+        │   │   │   │   ├── hybrid-array feature "default" (*)
+        │   │   │   │   ├── hybrid-array feature "extra-sizes" (*)
+        │   │   │   │   └── ctutils feature "default" (*)
+        │   │   │   └── hybrid-array feature "ctutils" (*)
+        │   │   └── module-lattice feature "default"
+        │   │       └── module-lattice v0.2.3 (*)
+        │   └── ml-kem feature "alloc"
+        │       ├── ml-kem v0.3.2 (*)
+        │       └── module-lattice feature "alloc"
+        │           └── module-lattice v0.2.3 (*)
+        ├── module-lattice feature "default" (*)
+        ├── sha3 feature "default"
+        │   ├── sha3 v0.11.0 (*)
+        │   ├── sha3 feature "alloc"
+        │   │   ├── sha3 v0.11.0 (*)
+        │   │   └── digest feature "alloc" (*)
+        │   └── sha3 feature "oid"
+        │       ├── sha3 v0.11.0 (*)
+        │       └── digest feature "oid" (*)
+        ├── num-bigint feature "default"
+        │   ├── num-bigint v0.4.6
+        │   │   ├── num-traits feature "i128" (*)
+        │   │   └── num-integer feature "i128" (*)
+        │   └── num-bigint feature "std"
+        │       ├── num-bigint v0.4.6 (*)
+        │       ├── num-traits feature "std" (*)
+        │       └── num-integer feature "std" (*)
+        ├── p256 feature "default"
+        │   ├── p256 v0.14.0-rc.10
+        │   │   ├── sha2 v0.11.0 (*)
+        │   │   ├── ecdsa feature "der"
+        │   │   │   └── ecdsa v0.17.0-rc.18 (*)
+        │   │   ├── elliptic-curve feature "sec1" (*)
+        │   │   ├── primefield feature "default"
+        │   │   │   └── primefield v0.14.0-rc.12
+        │   │   │       ├── ff v0.14.0 (*)
+        │   │   │       ├── rand_core v0.10.1
+        │   │   │       ├── zeroize v1.9.0
+        │   │   │       ├── subtle feature "const-generics" (*)
+        │   │   │       ├── crypto-common feature "default" (*)
+        │   │   │       ├── crypto-common feature "rand_core" (*)
+        │   │   │       ├── crypto-bigint feature "hybrid-array" (*)
+        │   │   │       ├── crypto-bigint feature "rand_core" (*)
+        │   │   │       └── crypto-bigint feature "subtle" (*)
+        │   │   └── primeorder feature "default"
+        │   │       └── primeorder v0.14.0-rc.10
+        │   │           ├── elliptic-curve feature "arithmetic" (*)
+        │   │           └── elliptic-curve feature "sec1" (*)
+        │   ├── p256 feature "arithmetic"
+        │   │   ├── p256 v0.14.0-rc.10 (*)
+        │   │   └── elliptic-curve feature "arithmetic" (*)
+        │   ├── p256 feature "ecdsa"
+        │   │   ├── p256 v0.14.0-rc.10 (*)
+        │   │   ├── ecdsa feature "algorithm"
+        │   │   │   ├── ecdsa v0.17.0-rc.18 (*)
+        │   │   │   ├── ecdsa feature "digest" (*)
+        │   │   │   ├── ecdsa feature "hazmat"
+        │   │   │   │   └── ecdsa v0.17.0-rc.18 (*)
+        │   │   │   └── elliptic-curve feature "arithmetic" (*)
+        │   │   ├── p256 feature "arithmetic" (*)
+        │   │   ├── p256 feature "ecdsa-core"
+        │   │   │   └── p256 v0.14.0-rc.10 (*)
+        │   │   └── p256 feature "sha256"
+        │   │       ├── p256 v0.14.0-rc.10 (*)
+        │   │       ├── p256 feature "digest"
+        │   │       │   ├── p256 v0.14.0-rc.10 (*)
+        │   │       │   ├── ecdsa feature "digest" (*)
+        │   │       │   ├── ecdsa feature "hazmat" (*)
+        │   │       │   └── p256 feature "ecdsa-core" (*)
+        │   │       └── p256 feature "sha2"
+        │   │           └── p256 v0.14.0-rc.10 (*)
+        │   ├── p256 feature "pem"
+        │   │   ├── p256 v0.14.0-rc.10 (*)
+        │   │   ├── ecdsa feature "pem"
+        │   │   │   ├── ecdsa v0.17.0-rc.18 (*)
+        │   │   │   ├── ecdsa feature "pkcs8"
+        │   │   │   │   ├── ecdsa v0.17.0-rc.18 (*)
+        │   │   │   │   ├── ecdsa feature "der" (*)
+        │   │   │   │   ├── ecdsa feature "digest" (*)
+        │   │   │   │   └── elliptic-curve feature "pkcs8"
+        │   │   │   │       └── elliptic-curve v0.14.0-rc.33 (*)
+        │   │   │   └── elliptic-curve feature "pem"
+        │   │   │       ├── elliptic-curve v0.14.0-rc.33 (*)
+        │   │   │       ├── elliptic-curve feature "alloc"
+        │   │   │       │   ├── elliptic-curve v0.14.0-rc.33 (*)
+        │   │   │       │   ├── hybrid-array feature "alloc"
+        │   │   │       │   │   └── hybrid-array v0.4.12 (*)
+        │   │   │       │   ├── zeroize feature "alloc" (*)
+        │   │   │       │   ├── base16ct feature "alloc"
+        │   │   │       │   │   └── base16ct v1.0.0
+        │   │   │       │   ├── ff feature "alloc"
+        │   │   │       │   │   └── ff v0.14.0 (*)
+        │   │   │       │   ├── group feature "alloc"
+        │   │   │       │   │   └── group v0.14.0 (*)
+        │   │   │       │   ├── pkcs8 feature "alloc" (*)
+        │   │   │       │   └── sec1 feature "alloc"
+        │   │   │       │       ├── sec1 v0.8.1 (*)
+        │   │   │       │       ├── zeroize feature "alloc" (*)
+        │   │   │       │       └── der feature "alloc" (*)
+        │   │   │       ├── elliptic-curve feature "arithmetic" (*)
+        │   │   │       ├── elliptic-curve feature "pkcs8" (*)
+        │   │   │       ├── elliptic-curve feature "sec1" (*)
+        │   │   │       ├── pkcs8 feature "pem"
+        │   │   │       │   ├── pkcs8 v0.11.0 (*)
+        │   │   │       │   ├── der feature "pem"
+        │   │   │       │   │   ├── der v0.8.0 (*)
+        │   │   │       │   │   ├── der feature "alloc" (*)
+        │   │   │       │   │   └── der feature "zeroize" (*)
+        │   │   │       │   ├── pkcs8 feature "alloc" (*)
+        │   │   │       │   └── spki feature "pem"
+        │   │   │       │       ├── spki v0.8.0 (*)
+        │   │   │       │       ├── der feature "pem" (*)
+        │   │   │       │       └── spki feature "alloc" (*)
+        │   │   │       └── sec1 feature "pem"
+        │   │   │           ├── sec1 v0.8.1 (*)
+        │   │   │           ├── der feature "pem" (*)
+        │   │   │           ├── sec1 feature "alloc" (*)
+        │   │   │           └── sec1 feature "der" (*)
+        │   │   ├── elliptic-curve feature "pem" (*)
+        │   │   ├── p256 feature "ecdsa-core" (*)
+        │   │   └── p256 feature "pkcs8"
+        │   │       ├── p256 v0.14.0-rc.10 (*)
+        │   │       ├── ecdsa feature "pkcs8" (*)
+        │   │       └── elliptic-curve feature "pkcs8" (*)
+        │   ├── p256 feature "precomputed-tables"
+        │   │   ├── p256 v0.14.0-rc.10 (*)
+        │   │   ├── p256 feature "arithmetic" (*)
+        │   │   ├── p256 feature "primeorder"
+        │   │   │   └── p256 v0.14.0-rc.10 (*)
+        │   │   └── primeorder feature "basepoint-table"
+        │   │       ├── primeorder v0.14.0-rc.10 (*)
+        │   │       └── elliptic-curve feature "basepoint-table"
+        │   │           ├── elliptic-curve v0.14.0-rc.33 (*)
+        │   │           └── elliptic-curve feature "arithmetic" (*)
+        │   └── p256 feature "std"
+        │       ├── p256 v0.14.0-rc.10 (*)
+        │       ├── ecdsa feature "std"
+        │       │   ├── ecdsa v0.17.0-rc.18 (*)
+        │       │   ├── ecdsa feature "alloc"
+        │       │   │   ├── ecdsa v0.17.0-rc.18 (*)
+        │       │   │   ├── ecdsa feature "spki"
+        │       │   │   │   └── ecdsa v0.17.0-rc.18 (*)
+        │       │   │   ├── elliptic-curve feature "alloc" (*)
+        │       │   │   ├── spki feature "alloc" (*)
+        │       │   │   └── signature feature "alloc" (*)
+        │       │   └── elliptic-curve feature "std"
+        │       │       ├── elliptic-curve v0.14.0-rc.33 (*)
+        │       │       ├── elliptic-curve feature "alloc" (*)
+        │       │       ├── pkcs8 feature "std" (*)
+        │       │       └── sec1 feature "std"
+        │       │           ├── sec1 v0.8.1 (*)
+        │       │           ├── der feature "std" (*)
+        │       │           └── sec1 feature "alloc" (*)
+        │       ├── elliptic-curve feature "std" (*)
+        │       ├── p256 feature "alloc"
+        │       │   ├── p256 v0.14.0-rc.10 (*)
+        │       │   ├── ecdsa feature "alloc" (*)
+        │       │   ├── elliptic-curve feature "alloc" (*)
+        │       │   └── primeorder feature "alloc"
+        │       │       ├── primeorder v0.14.0-rc.10 (*)
+        │       │       └── elliptic-curve feature "alloc" (*)
+        │       └── p256 feature "getrandom"
+        │           ├── p256 v0.14.0-rc.10 (*)
+        │           └── elliptic-curve feature "getrandom"
+        │               ├── elliptic-curve v0.14.0-rc.33 (*)
+        │               ├── crypto-common feature "getrandom"
+        │               │   ├── crypto-common v0.2.2 (*)
+        │               │   └── crypto-common feature "rand_core" (*)
+        │               ├── crypto-bigint feature "getrandom"
+        │               │   ├── crypto-bigint v0.7.4 (*)
+        │               │   └── crypto-bigint feature "rand_core" (*)
+        │               └── elliptic-curve feature "arithmetic" (*)
+        ├── p256 feature "ecdh"
+        │   ├── p256 v0.14.0-rc.10 (*)
+        │   ├── elliptic-curve feature "ecdh" (*)
+        │   └── p256 feature "arithmetic" (*)
+        ├── p384 feature "default"
+        │   ├── p384 v0.14.0-rc.10
+        │   │   ├── fiat-crypto v0.3.0
+        │   │   ├── sha2 v0.11.0 (*)
+        │   │   ├── ecdsa feature "der" (*)
+        │   │   ├── elliptic-curve feature "sec1" (*)
+        │   │   ├── primefield feature "default" (*)
+        │   │   └── primeorder feature "default" (*)
+        │   ├── p384 feature "arithmetic"
+        │   │   ├── p384 v0.14.0-rc.10 (*)
+        │   │   ├── elliptic-curve feature "arithmetic" (*)
+        │   │   └── elliptic-curve feature "digest" (*)
+        │   ├── p384 feature "ecdsa"
+        │   │   ├── p384 v0.14.0-rc.10 (*)
+        │   │   ├── ecdsa feature "algorithm" (*)
+        │   │   ├── p384 feature "arithmetic" (*)
+        │   │   ├── p384 feature "ecdsa-core"
+        │   │   │   └── p384 v0.14.0-rc.10 (*)
+        │   │   └── p384 feature "sha384"
+        │   │       ├── p384 v0.14.0-rc.10 (*)
+        │   │       ├── p384 feature "digest"
+        │   │       │   ├── p384 v0.14.0-rc.10 (*)
+        │   │       │   ├── ecdsa feature "digest" (*)
+        │   │       │   ├── ecdsa feature "hazmat" (*)
+        │   │       │   └── p384 feature "ecdsa-core" (*)
+        │   │       └── p384 feature "sha2"
+        │   │           └── p384 v0.14.0-rc.10 (*)
+        │   ├── p384 feature "pem"
+        │   │   ├── p384 v0.14.0-rc.10 (*)
+        │   │   ├── ecdsa feature "pem" (*)
+        │   │   ├── elliptic-curve feature "pem" (*)
+        │   │   ├── p384 feature "ecdsa-core" (*)
+        │   │   └── p384 feature "pkcs8"
+        │   │       ├── p384 v0.14.0-rc.10 (*)
+        │   │       ├── ecdsa feature "pkcs8" (*)
+        │   │       ├── elliptic-curve feature "pkcs8" (*)
+        │   │       └── p384 feature "ecdsa-core" (*)
+        │   ├── p384 feature "precomputed-tables"
+        │   │   ├── p384 v0.14.0-rc.10 (*)
+        │   │   ├── primeorder feature "basepoint-table" (*)
+        │   │   ├── p384 feature "arithmetic" (*)
+        │   │   └── p384 feature "primeorder"
+        │   │       └── p384 v0.14.0-rc.10 (*)
+        │   └── p384 feature "std"
+        │       ├── p384 v0.14.0-rc.10 (*)
+        │       ├── ecdsa feature "std" (*)
+        │       ├── elliptic-curve feature "std" (*)
+        │       ├── p384 feature "alloc"
+        │       │   ├── p384 v0.14.0-rc.10 (*)
+        │       │   ├── ecdsa feature "alloc" (*)
+        │       │   ├── elliptic-curve feature "alloc" (*)
+        │       │   └── primeorder feature "alloc" (*)
+        │       └── p384 feature "getrandom"
+        │           ├── p384 v0.14.0-rc.10 (*)
+        │           ├── ecdsa feature "getrandom"
+        │           │   ├── ecdsa v0.17.0-rc.18 (*)
+        │           │   └── elliptic-curve feature "getrandom" (*)
+        │           └── elliptic-curve feature "getrandom" (*)
+        ├── p384 feature "ecdh"
+        │   ├── p384 v0.14.0-rc.10 (*)
+        │   ├── elliptic-curve feature "ecdh" (*)
+        │   └── p384 feature "arithmetic" (*)
+        ├── p521 feature "default"
+        │   ├── p521 v0.14.0-rc.10
+        │   │   ├── sha2 v0.11.0 (*)
+        │   │   ├── ecdsa feature "der" (*)
+        │   │   ├── elliptic-curve feature "sec1" (*)
+        │   │   ├── base16ct feature "default" (*)
+        │   │   ├── primefield feature "default" (*)
+        │   │   └── primeorder feature "default" (*)
+        │   ├── p521 feature "arithmetic"
+        │   │   └── p521 v0.14.0-rc.10 (*)
+        │   ├── p521 feature "ecdsa"
+        │   │   ├── p521 v0.14.0-rc.10 (*)
+        │   │   ├── ecdsa feature "algorithm" (*)
+        │   │   ├── p521 feature "arithmetic" (*)
+        │   │   ├── p521 feature "ecdsa-core"
+        │   │   │   └── p521 v0.14.0-rc.10 (*)
+        │   │   └── p521 feature "sha512"
+        │   │       ├── p521 v0.14.0-rc.10 (*)
+        │   │       └── p521 feature "digest"
+        │   │           ├── p521 v0.14.0-rc.10 (*)
+        │   │           ├── ecdsa feature "digest" (*)
+        │   │           ├── ecdsa feature "hazmat" (*)
+        │   │           └── p521 feature "ecdsa-core" (*)
+        │   ├── p521 feature "pem"
+        │   │   ├── p521 v0.14.0-rc.10 (*)
+        │   │   ├── elliptic-curve feature "pem" (*)
+        │   │   └── p521 feature "pkcs8"
+        │   │       ├── p521 v0.14.0-rc.10 (*)
+        │   │       ├── ecdsa feature "pkcs8" (*)
+        │   │       └── elliptic-curve feature "pkcs8" (*)
+        │   ├── p521 feature "precomputed-tables"
+        │   │   ├── p521 v0.14.0-rc.10 (*)
+        │   │   ├── primeorder feature "basepoint-table" (*)
+        │   │   ├── p521 feature "arithmetic" (*)
+        │   │   └── p521 feature "primeorder"
+        │   │       └── p521 v0.14.0-rc.10 (*)
+        │   └── p521 feature "std"
+        │       ├── p521 v0.14.0-rc.10 (*)
+        │       ├── ecdsa feature "std" (*)
+        │       ├── elliptic-curve feature "std" (*)
+        │       ├── p521 feature "alloc"
+        │       │   ├── p521 v0.14.0-rc.10 (*)
+        │       │   ├── ecdsa feature "alloc" (*)
+        │       │   ├── elliptic-curve feature "alloc" (*)
+        │       │   └── primeorder feature "alloc" (*)
+        │       └── p521 feature "getrandom"
+        │           ├── p521 v0.14.0-rc.10 (*)
+        │           ├── ecdsa feature "getrandom" (*)
+        │           └── elliptic-curve feature "getrandom" (*)
+        ├── p521 feature "ecdh"
+        │   ├── p521 v0.14.0-rc.10 (*)
+        │   ├── elliptic-curve feature "ecdh" (*)
+        │   └── p521 feature "arithmetic" (*)
+        ├── ring feature "default"
+        │   ├── ring v0.17.14
+        │   │   ├── cfg-if v1.0.4
+        │   │   ├── getrandom feature "default"
+        │   │   │   └── getrandom v0.2.17
+        │   │   │       ├── libc v0.2.186
+        │   │   │       └── cfg-if feature "default" (*)
+        │   │   └── untrusted feature "default"
+        │   │       └── untrusted v0.9.0
+        │   │   [build-dependencies]
+        │   │   └── cc v1.2.65
+        │   │       ├── find-msvc-tools feature "default"
+        │   │       │   └── find-msvc-tools v0.1.9
+        │   │       └── shlex feature "default"
+        │   │           ├── shlex v2.0.1
+        │   │           └── shlex feature "std"
+        │   │               └── shlex v2.0.1
+        │   ├── ring feature "alloc"
+        │   │   └── ring v0.17.14 (*)
+        │   └── ring feature "dev_urandom_fallback"
+        │       └── ring v0.17.14 (*)
+        ├── russh-cryptovec feature "default"
+        │   └── russh-cryptovec v0.61.0
+        │       ├── log feature "default" (*)
+        │       ├── nix feature "default"
+        │       │   └── nix v0.31.3
+        │       │       ├── cfg-if feature "default" (*)
+        │       │       ├── libc feature "default"
+        │       │       │   ├── libc v0.2.186
+        │       │       │   └── libc feature "std"
+        │       │       │       └── libc v0.2.186
+        │       │       ├── libc feature "extra_traits"
+        │       │       │   └── libc v0.2.186
+        │       │       └── bitflags feature "default" (*)
+        │       │       [build-dependencies]
+        │       │       └── cfg_aliases feature "default"
+        │       │           └── cfg_aliases v0.2.1
+        │       ├── nix feature "mman"
+        │       │   └── nix v0.31.3 (*)
+        │       ├── ssh-encoding feature "bytes"
+        │       │   ├── ssh-encoding v0.3.0-rc.9
+        │       │   │   ├── bytes v1.12.0
+        │       │   │   ├── ctutils v0.4.2 (*)
+        │       │   │   ├── digest v0.11.3 (*)
+        │       │   │   ├── zeroize v1.9.0
+        │       │   │   ├── pem-rfc7468 feature "default" (*)
+        │       │   │   └── base64ct feature "default" (*)
+        │       │   └── ssh-encoding feature "alloc"
+        │       │       ├── ssh-encoding v0.3.0-rc.9 (*)
+        │       │       ├── zeroize feature "alloc" (*)
+        │       │       ├── pem-rfc7468 feature "alloc" (*)
+        │       │       └── base64ct feature "alloc" (*)
+        │       └── ssh-encoding feature "default"
+        │           └── ssh-encoding v0.3.0-rc.9 (*)
+        ├── russh-cryptovec feature "ssh-encoding"
+        │   └── russh-cryptovec v0.61.0 (*)
+        ├── ssh-encoding feature "bytes" (*)
+        ├── ssh-encoding feature "default" (*)
+        ├── russh-util feature "default"
+        │   └── russh-util v0.52.0
+        │       ├── tokio feature "default"
+        │       │   └── tokio v1.52.3
+        │       │       ├── mio v1.2.1
+        │       │       │   └── libc feature "default" (*)
+        │       │       ├── libc feature "default" (*)
+        │       │       ├── bytes feature "default" (*)
+        │       │       ├── pin-project-lite feature "default" (*)
+        │       │       ├── socket2 feature "all"
+        │       │       │   └── socket2 v0.6.4
+        │       │       │       └── libc feature "default" (*)
+        │       │       ├── socket2 feature "default"
+        │       │       │   └── socket2 v0.6.4 (*)
+        │       │       └── tokio-macros feature "default"
+        │       │           └── tokio-macros v2.7.0 (proc-macro)
+        │       │               ├── proc-macro2 feature "default" (*)
+        │       │               ├── quote feature "default" (*)
+        │       │               ├── syn feature "default" (*)
+        │       │               └── syn feature "full" (*)
+        │       ├── tokio feature "io-util"
+        │       │   ├── tokio v1.52.3 (*)
+        │       │   └── tokio feature "bytes"
+        │       │       └── tokio v1.52.3 (*)
+        │       ├── tokio feature "macros"
+        │       │   ├── tokio v1.52.3 (*)
+        │       │   └── tokio feature "tokio-macros"
+        │       │       └── tokio v1.52.3 (*)
+        │       ├── tokio feature "rt"
+        │       │   └── tokio v1.52.3 (*)
+        │       ├── tokio feature "rt-multi-thread"
+        │       │   ├── tokio v1.52.3 (*)
+        │       │   └── tokio feature "rt" (*)
+        │       └── tokio feature "sync"
+        │           └── tokio v1.52.3 (*)
+        ├── tokio feature "default" (*)
+        ├── tokio feature "io-util" (*)
+        ├── tokio feature "net"
+        │   ├── tokio v1.52.3 (*)
+        │   ├── tokio feature "libc"
+        │   │   └── tokio v1.52.3 (*)
+        │   ├── tokio feature "mio"
+        │   │   └── tokio v1.52.3 (*)
+        │   ├── tokio feature "socket2"
+        │   │   └── tokio v1.52.3 (*)
+        │   ├── mio feature "net"
+        │   │   └── mio v1.2.1 (*)
+        │   ├── mio feature "os-ext"
+        │   │   ├── mio v1.2.1 (*)
+        │   │   └── mio feature "os-poll"
+        │   │       └── mio v1.2.1 (*)
+        │   └── mio feature "os-poll" (*)
+        ├── tokio feature "rt-multi-thread" (*)
+        ├── tokio feature "sync" (*)
+        ├── tokio feature "time"
+        │   └── tokio v1.52.3 (*)
+        ├── sha1 feature "default"
+        │   ├── sha1 v0.11.0
+        │   │   ├── cfg-if feature "default" (*)
+        │   │   ├── cpufeatures feature "default" (*)
+        │   │   └── digest feature "default" (*)
+        │   ├── sha1 feature "alloc"
+        │   │   ├── sha1 v0.11.0 (*)
+        │   │   └── digest feature "alloc" (*)
+        │   └── sha1 feature "oid"
+        │       ├── sha1 v0.11.0 (*)
+        │       └── digest feature "oid" (*)
+        ├── sha1 feature "oid" (*)
+        ├── ssh-key feature "default"
+        │   ├── ssh-key v0.7.0-rc.10
+        │   │   ├── ctutils v0.4.2 (*)
+        │   │   ├── ed25519-dalek v3.0.0-rc.0 (*)
+        │   │   ├── rand_core v0.10.1
+        │   │   ├── sha2 v0.11.0 (*)
+        │   │   ├── signature v3.0.0 (*)
+        │   │   ├── zeroize v1.9.0
+        │   │   ├── hmac feature "default" (*)
+        │   │   ├── sec1 feature "point" (*)
+        │   │   ├── p256 feature "ecdsa" (*)
+        │   │   ├── p384 feature "ecdsa" (*)
+        │   │   ├── p521 feature "ecdsa" (*)
+        │   │   ├── ssh-encoding feature "base64"
+        │   │   │   └── ssh-encoding v0.3.0-rc.9 (*)
+        │   │   ├── ssh-encoding feature "ctutils"
+        │   │   │   └── ssh-encoding v0.3.0-rc.9 (*)
+        │   │   ├── ssh-encoding feature "default" (*)
+        │   │   ├── ssh-encoding feature "digest"
+        │   │   │   └── ssh-encoding v0.3.0-rc.9 (*)
+        │   │   ├── ssh-encoding feature "pem"
+        │   │   │   ├── ssh-encoding v0.3.0-rc.9 (*)
+        │   │   │   └── ssh-encoding feature "base64" (*)
+        │   │   ├── ssh-encoding feature "zeroize"
+        │   │   │   └── ssh-encoding v0.3.0-rc.9 (*)
+        │   │   ├── sha1 feature "oid" (*)
+        │   │   ├── argon2 feature "alloc"
+        │   │   │   └── argon2 v0.6.0-rc.8
+        │   │   │       ├── blake2 v0.11.0-rc.6
+        │   │   │       │   ├── digest feature "default" (*)
+        │   │   │       │   └── digest feature "mac" (*)
+        │   │   │       ├── cpufeatures feature "default" (*)
+        │   │   │       └── base64ct feature "default" (*)
+        │   │   ├── bcrypt-pbkdf feature "alloc"
+        │   │   │   └── bcrypt-pbkdf v0.11.0
+        │   │   │       ├── pbkdf2 v0.13.0 (*)
+        │   │   │       ├── sha2 v0.11.0 (*)
+        │   │   │       ├── blowfish feature "bcrypt"
+        │   │   │       │   └── blowfish v0.10.0
+        │   │   │       │       ├── byteorder v1.5.0
+        │   │   │       │       └── cipher feature "default" (*)
+        │   │   │       └── blowfish feature "default"
+        │   │   │           └── blowfish v0.10.0 (*)
+        │   │   ├── hex feature "alloc"
+        │   │   │   └── hex v0.4.3
+        │   │   ├── ssh-cipher feature "default"
+        │   │   │   └── ssh-cipher v0.3.0-rc.9
+        │   │   │       ├── aead v0.6.1
+        │   │   │       │   ├── crypto-common feature "default" (*)
+        │   │   │       │   └── inout feature "default" (*)
+        │   │   │       ├── aes v0.9.1 (*)
+        │   │   │       ├── ctr v0.10.1 (*)
+        │   │   │       ├── ctutils v0.4.2 (*)
+        │   │   │       ├── poly1305 v0.9.0
+        │   │   │       │   ├── zeroize v1.9.0
+        │   │   │       │   ├── cpufeatures feature "default" (*)
+        │   │   │       │   └── universal-hash feature "default" (*)
+        │   │   │       ├── zeroize v1.9.0
+        │   │   │       ├── cipher feature "default" (*)
+        │   │   │       ├── cbc feature "default" (*)
+        │   │   │       ├── chacha20 feature "cipher"
+        │   │   │       │   └── chacha20 v0.10.0 (*)
+        │   │   │       ├── chacha20 feature "legacy"
+        │   │   │       │   ├── chacha20 v0.10.0 (*)
+        │   │   │       │   └── chacha20 feature "cipher" (*)
+        │   │   │       ├── ssh-encoding feature "default" (*)
+        │   │   │       └── aes-gcm feature "aes"
+        │   │   │           └── aes-gcm v0.11.0-rc.4
+        │   │   │               ├── aead v0.6.1 (*)
+        │   │   │               ├── ghash v0.6.0 (*)
+        │   │   │               ├── subtle v2.6.1
+        │   │   │               ├── zeroize v1.9.0
+        │   │   │               ├── aes feature "default" (*)
+        │   │   │               ├── cipher feature "default" (*)
+        │   │   │               └── ctr feature "default" (*)
+        │   │   └── ssh-cipher feature "zeroize"
+        │   │       ├── ssh-cipher v0.3.0-rc.9 (*)
+        │   │       ├── aes feature "zeroize"
+        │   │       │   └── aes v0.9.1 (*)
+        │   │       ├── chacha20 feature "zeroize"
+        │   │       │   └── chacha20 v0.10.0 (*)
+        │   │       ├── aes-gcm feature "zeroize"
+        │   │       │   └── aes-gcm v0.11.0-rc.4 (*)
+        │   │       └── poly1305 feature "zeroize"
+        │   │           └── poly1305 v0.9.0 (*)
+        │   ├── ssh-key feature "ecdsa"
+        │   │   └── ssh-key v0.7.0-rc.10 (*)
+        │   ├── ssh-key feature "rand_core"
+        │   │   └── ssh-key v0.7.0-rc.10 (*)
+        │   └── ssh-key feature "std"
+        │       ├── ssh-key v0.7.0-rc.10 (*)
+        │       └── ssh-key feature "alloc"
+        │           ├── ssh-key v0.7.0-rc.10 (*)
+        │           ├── zeroize feature "alloc" (*)
+        │           ├── signature feature "alloc" (*)
+        │           └── ssh-encoding feature "alloc" (*)
+        ├── ssh-key feature "ed25519"
+        │   ├── ssh-key v0.7.0-rc.10 (*)
+        │   └── ssh-key feature "rand_core" (*)
+        ├── ssh-key feature "encryption"
+        │   ├── ssh-key v0.7.0-rc.10 (*)
+        │   ├── ssh-key feature "alloc" (*)
+        │   ├── ssh-key feature "rand_core" (*)
+        │   ├── ssh-cipher feature "aes-cbc"
+        │   │   └── ssh-cipher v0.3.0-rc.9 (*)
+        │   ├── ssh-cipher feature "aes-ctr"
+        │   │   └── ssh-cipher v0.3.0-rc.9 (*)
+        │   ├── ssh-cipher feature "aes-gcm"
+        │   │   └── ssh-cipher v0.3.0-rc.9 (*)
+        │   └── ssh-cipher feature "chacha20poly1305"
+        │       └── ssh-cipher v0.3.0-rc.9 (*)
+        ├── ssh-key feature "p256"
+        │   ├── ssh-key v0.7.0-rc.10 (*)
+        │   └── ssh-key feature "ecdsa" (*)
+        ├── ssh-key feature "p384"
+        │   ├── ssh-key v0.7.0-rc.10 (*)
+        │   └── ssh-key feature "ecdsa" (*)
+        ├── ssh-key feature "p521"
+        │   ├── ssh-key v0.7.0-rc.10 (*)
+        │   └── ssh-key feature "ecdsa" (*)
+        ├── ssh-key feature "ppk"
+        │   ├── ssh-key v0.7.0-rc.10 (*)
+        │   ├── ssh-key feature "alloc" (*)
+        │   └── ssh-cipher feature "aes-cbc" (*)
+        ├── ssh-key feature "sha1"
+        │   └── ssh-key v0.7.0-rc.10 (*)
+        └── thiserror feature "default"
+            ├── thiserror v2.0.18
+            │   └── thiserror-impl feature "default"
+            │       └── thiserror-impl v2.0.18 (proc-macro)
+            │           ├── proc-macro2 feature "default" (*)
+            │           ├── quote feature "default" (*)
+            │           └── syn feature "default" (*)
+            └── thiserror feature "std"
+                └── thiserror v2.0.18 (*)

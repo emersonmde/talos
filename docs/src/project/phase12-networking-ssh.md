@@ -6850,3 +6850,24 @@ discriminator work, broad expansion, and phase transition remain unaccepted.
 No follow-up listener/transport prerequisite task is mechanically unblocked in
 the queue, so supervisor planning is required before the next SSH service
 implementation slice.
+
+phase12-ssh-russh-host-build-probe-20260622 accepts the host-only russh 0.61.2
+build/API discriminator. The isolated probe uses only russh = "=0.61.2" with
+default-features=false and features=["ring"], leaves the Talos root Cargo graph
+unchanged, and retains cargo metadata, cargo tree feature output, cargo check
+output, a feature summary, and API notes. The probe proves that the allowed
+host-only feature set builds/checks, and the feature tree excludes the rejected
+russh default optional crates aws-lc-rs, flate2, rsa, and pkcs1.
+
+The discriminator classifies russh as reference-only for the next Talos runtime
+step. Even with default features disabled, the checked graph and server APIs
+retain std/Tokio/host-runtime assumptions including tokio net/io-util/rt,
+russh-util runtime spawning, rand thread_rng, getrandom host/wasm paths, pkcs8
+std/encryption, and ring dev_urandom fallback. run_stream remains a useful
+reference seam because it separates the listener from a generic Tokio
+AsyncRead/AsyncWrite stream, but it is not accepted as a Talos runtime adapter.
+No dependency adoption, runtime SSH crypto, listener/transport behavior,
+authentication/session success, shell attachment, hardware reachability,
+public ABI/POSIX/Linux compatibility, broad expansion, or phase transition is
+accepted. The selected next bounded task is
+phase12-ssh-owned-transport-banner-contract-20260622.
