@@ -7064,3 +7064,20 @@ host-key signing, authentication/session success, shell attachment, hardware
 reachability, OpenSSH/POSIX/Linux compatibility, broad expansion, and phase
 transition remain unaccepted. The selected next bounded task is
 phase12-shell-ssh-kexinit-negotiation-smoke-20260622.
+
+phase12-shell-ssh-kexinit-negotiation-smoke-20260622 accepts retained
+host/QEMU-substitute smoke evidence for the bounded local modeled
+KEXINIT/algorithm-negotiation surface. The transcript covers the fixed-policy
+negotiated path, cookie-generation redaction, unsupported-algorithm,
+malformed-packet, packet-over-limit, list-over-limit,
+first-packet-follows-ignored, disabled, and prerequisite-missing states. The
+evidence is still local substitute evidence only: it does not claim hardware
+reachability, OpenSSH compatibility, ssh-ready, actual key exchange,
+encryption/MAC, NEWKEYS, host-key signing, authentication/session success,
+shell attachment, broad expansion, or phase transition. Retained output
+contains fixed labels, counters, booleans, test names, and validation output
+only; generated random bytes, KEX cookie bytes, client packet bytes, client
+algorithm-list text, key material, peer text/address, digests, fingerprints,
+operator identity, key-derived identifiers, and stable transport/session
+identifiers remain excluded. The selected next bounded task is
+phase12-ssh-kexinit-negotiation-closeout-20260622.

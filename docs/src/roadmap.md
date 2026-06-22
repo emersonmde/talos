@@ -16391,6 +16391,17 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   hardware reachability, OpenSSH/POSIX/Linux compatibility, broad expansion,
   and phase transition remain unaccepted. The selected next task is
   phase12-shell-ssh-kexinit-negotiation-smoke-20260622.
+- phase12-shell-ssh-kexinit-negotiation-smoke-20260622 accepts retained
+  host/QEMU-substitute smoke evidence for the bounded local modeled
+  KEXINIT/algorithm-negotiation surface. The transcript covers fixed-policy
+  negotiation, cookie-generation redaction, unsupported-algorithm,
+  malformed-packet, packet-over-limit, list-over-limit,
+  first-packet-follows-ignored, disabled, and prerequisite-missing states.
+  Evidence remains local substitute evidence only and does not claim hardware
+  reachability, OpenSSH compatibility, ssh-ready, actual key exchange,
+  encryption/MAC, NEWKEYS, host-key signing, authentication/session success,
+  shell attachment, broad expansion, or phase transition. The selected next
+  task is phase12-ssh-kexinit-negotiation-closeout-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
