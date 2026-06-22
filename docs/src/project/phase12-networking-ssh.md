@@ -7036,3 +7036,31 @@ digests, fingerprints, key material, peer text/address, operator identity,
 key-derived identifiers, and stable transport/session identifiers remain
 excluded. The selected next bounded task is
 phase12-ssh-kexinit-negotiation-core-20260622.
+
+phase12-ssh-kexinit-negotiation-core-20260622 accepts the local modeled
+KEXINIT/algorithm-negotiation source/unit implementation. sshservicediag now
+extends the accepted listener/transport path so a valid remote identification
+line can be followed by exactly one cleartext SSH_MSG_KEXINIT packet model.
+The model enforces the accepted caps: <= 1024 byte packet_length, <= 768 byte
+payload, <= 256 byte name-list, <= 16 names per list, message number 20, a
+16-byte client cookie field, and fail-closed malformed, oversized, list-limit,
+and unsupported-algorithm classifications. The modeled positive policy is still
+curve25519-sha256, ssh-ed25519, chacha20-poly1305@openssh.com in both
+directions, hmac-sha2-256 in both directions, compression none in both
+directions, and empty language lists.
+
+The implementation uses the accepted operator-seeded CSPRNG boundary only to
+generate and immediately zeroize a modeled server KEXINIT cookie. Diagnostics
+retain fixed labels and booleans only: kexinit-modeled,
+kexinit-cookie-generated-redacted, kexinit-client-packet-valid,
+kexinit-algorithm-negotiated, kexinit-algorithm-unsupported,
+kexinit-packet-malformed, kexinit-packet-over-limit,
+kexinit-list-over-limit, and kexinit-first-packet-follows-ignored. No generated
+bytes, KEX cookie bytes, client packet bytes, client algorithm-list text,
+digests, fingerprints, key material, peer text/address, operator identity,
+key-derived identifiers, or stable transport/session identifiers are retained.
+ssh-ready remains false and runtime crypto, actual key exchange, NEWKEYS,
+host-key signing, authentication/session success, shell attachment, hardware
+reachability, OpenSSH/POSIX/Linux compatibility, broad expansion, and phase
+transition remain unaccepted. The selected next bounded task is
+phase12-shell-ssh-kexinit-negotiation-smoke-20260622.

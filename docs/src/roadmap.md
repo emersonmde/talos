@@ -16373,6 +16373,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   reachability, OpenSSH/POSIX/Linux compatibility, broad expansion, and phase
   transition remain unaccepted. The selected next task is
   phase12-ssh-kexinit-negotiation-core-20260622.
+- phase12-ssh-kexinit-negotiation-core-20260622 accepts the bounded local
+  modeled KEXINIT/algorithm-negotiation source/unit implementation.
+  sshservicediag can now model one cleartext SSH_MSG_KEXINIT packet after the
+  accepted local listener/transport and remote-identification path, enforcing
+  the accepted packet, payload, name-list, and name-count caps. Positive local
+  negotiation is limited to the fixed reversible policy curve25519-sha256,
+  ssh-ed25519, chacha20-poly1305@openssh.com, hmac-sha2-256, compression none,
+  and empty language lists. Unsupported algorithms, malformed packets,
+  oversized packets, oversized/name-count-exceeded lists, disabled or
+  prerequisite-missing states, and first_kex_packet_follows=true remain
+  fail-closed fixed-label classifications. The modeled server KEXINIT cookie
+  is generated through the accepted operator-seeded CSPRNG boundary and
+  immediately redacted/zeroized; diagnostics retain only fixed labels and
+  booleans. ssh-ready remains false and actual key exchange, encryption/MAC,
+  NEWKEYS, host-key signing, authentication/session success, shell attachment,
+  hardware reachability, OpenSSH/POSIX/Linux compatibility, broad expansion,
+  and phase transition remain unaccepted. The selected next task is
+  phase12-shell-ssh-kexinit-negotiation-smoke-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

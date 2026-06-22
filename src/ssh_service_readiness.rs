@@ -4,6 +4,8 @@
 //! does not adopt an SSH dependency, perform SSH crypto, authenticate users,
 //! attach a shell, inspect hardware, or expose secrets.
 
+use zeroize::Zeroize;
+
 use crate::ssh_key_readiness::{SshKeyReadinessLabel, SshKeyReadinessReport};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -35,6 +37,20 @@ pub(crate) enum SshServiceReadinessLabel {
     RemoteIdentificationValid,
     RemoteIdentificationInvalid,
     RemoteIdentificationOverLimit,
+    KexinitModeled,
+    KexinitCookieGeneratedRedacted,
+    KexinitClientPacketValid,
+    KexinitAlgorithmNegotiated,
+    KexinitAlgorithmUnsupported,
+    KexinitPacketMalformed,
+    KexinitPacketOverLimit,
+    KexinitListOverLimit,
+    KexinitFirstPacketFollowsIgnored,
+    KexinitSelectedKexCurve25519Sha256,
+    KexinitSelectedHostKeySshEd25519,
+    KexinitSelectedCipherChacha20Poly1305OpenSsh,
+    KexinitSelectedMacHmacSha2_256,
+    KexinitSelectedCompressionNone,
     TransportClosedBeforeKex,
     AuthenticationUnimplemented,
     SessionUnimplemented,
@@ -59,6 +75,34 @@ impl SshServiceReadinessLabel {
             Self::RemoteIdentificationOverLimit => {
                 "sshservicediag-remote-identification-over-limit"
             }
+            Self::KexinitModeled => "sshservicediag-kexinit-modeled",
+            Self::KexinitCookieGeneratedRedacted => {
+                "sshservicediag-kexinit-cookie-generated-redacted"
+            }
+            Self::KexinitClientPacketValid => "sshservicediag-kexinit-client-packet-valid",
+            Self::KexinitAlgorithmNegotiated => "sshservicediag-kexinit-algorithm-negotiated",
+            Self::KexinitAlgorithmUnsupported => "sshservicediag-kexinit-algorithm-unsupported",
+            Self::KexinitPacketMalformed => "sshservicediag-kexinit-packet-malformed",
+            Self::KexinitPacketOverLimit => "sshservicediag-kexinit-packet-over-limit",
+            Self::KexinitListOverLimit => "sshservicediag-kexinit-list-over-limit",
+            Self::KexinitFirstPacketFollowsIgnored => {
+                "sshservicediag-kexinit-first-packet-follows-ignored"
+            }
+            Self::KexinitSelectedKexCurve25519Sha256 => {
+                "sshservicediag-kexinit-selected-kex-curve25519-sha256"
+            }
+            Self::KexinitSelectedHostKeySshEd25519 => {
+                "sshservicediag-kexinit-selected-hostkey-ssh-ed25519"
+            }
+            Self::KexinitSelectedCipherChacha20Poly1305OpenSsh => {
+                "sshservicediag-kexinit-selected-cipher-chacha20-poly1305-openssh"
+            }
+            Self::KexinitSelectedMacHmacSha2_256 => {
+                "sshservicediag-kexinit-selected-mac-hmac-sha2-256"
+            }
+            Self::KexinitSelectedCompressionNone => {
+                "sshservicediag-kexinit-selected-compression-none"
+            }
             Self::TransportClosedBeforeKex => "sshservicediag-transport-closed-before-kex",
             Self::AuthenticationUnimplemented => "sshservicediag-authentication-unimplemented",
             Self::SessionUnimplemented => "sshservicediag-session-unimplemented",
@@ -70,15 +114,32 @@ impl SshServiceReadinessLabel {
     }
 }
 
-pub(crate) const MAX_SSH_SERVICE_READINESS_LABELS: usize = 16;
+pub(crate) const MAX_SSH_SERVICE_READINESS_LABELS: usize = 32;
 pub(crate) const SSH_LOCAL_IDENTIFICATION: &str = "SSH-2.0-Talos_0.1\r\n";
 pub(crate) const SSH_REMOTE_IDENTIFICATION_MAX_BYTES: usize = 255;
+pub(crate) const SSH_KEXINIT_PACKET_MAX_BYTES: usize = 1024;
+pub(crate) const SSH_KEXINIT_PAYLOAD_MAX_BYTES: usize = 768;
+pub(crate) const SSH_KEXINIT_NAME_LIST_MAX_BYTES: usize = 256;
+pub(crate) const SSH_KEXINIT_NAME_LIST_MAX_NAMES: usize = 16;
 const SSH_REMOTE_IDENTIFICATION_PREFIX: &[u8] = b"SSH-2.0-";
 const SSH_LOCAL_MODELED_ENDPOINT_PORT: u16 = 22;
 const SSH_LOCAL_TRANSPORT_SOCKET_CAPACITY: usize = 4;
 const SSH_LOCAL_TRANSPORT_REMOTE_IDENTIFICATION: &[u8] = b"SSH-2.0-local-model\r\n";
 const SSH_LOCAL_TRANSPORT_OWNER_RAW: u64 = 0x5353_4801;
 const SSH_LOCAL_TRANSPORT_CLIENT_OWNER_RAW: u64 = 0x5353_4802;
+const SSH_MSG_KEXINIT: u8 = 20;
+const SSH_KEXINIT_COOKIE_BYTES: usize = 16;
+const SSH_KEXINIT_LIST_COUNT: usize = 10;
+const SSH_KEXINIT_REQUIRED_LIST_COUNT: usize = 8;
+const SSH_KEXINIT_CLIENT_PACKET_BUFFER_BYTES: usize = SSH_KEXINIT_PACKET_MAX_BYTES + 4;
+const SSH_KEXINIT_MODELED_COOKIE_SEED: [u8; crate::csprng::CSPRNG_SEED_BYTES] =
+    *b"Talos-kexinit-cookie-redacted!!!";
+
+const SSH_KEXINIT_POLICY_KEX: &[u8] = b"curve25519-sha256";
+const SSH_KEXINIT_POLICY_HOST_KEY: &[u8] = b"ssh-ed25519";
+const SSH_KEXINIT_POLICY_CIPHER: &[u8] = b"chacha20-poly1305@openssh.com";
+const SSH_KEXINIT_POLICY_MAC: &[u8] = b"hmac-sha2-256";
+const SSH_KEXINIT_POLICY_COMPRESSION: &[u8] = b"none";
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum SshRemoteIdentificationInputState {
@@ -210,6 +271,7 @@ pub(crate) struct SshServiceReadinessReport {
     transport_enabled: bool,
     accepted_connection_count: usize,
     remote_identification: Option<SshRemoteIdentificationResult>,
+    kexinit_result: Option<SshKexinitNegotiationResult>,
 }
 
 impl SshServiceReadinessReport {
@@ -273,15 +335,40 @@ impl SshServiceReadinessReport {
     pub(crate) const fn remote_identification(self) -> Option<SshRemoteIdentificationResult> {
         self.remote_identification
     }
+
+    pub(crate) const fn kexinit_result(self) -> Option<SshKexinitNegotiationResult> {
+        self.kexinit_result
+    }
+
+    pub(crate) const fn kexinit_modeled(self) -> bool {
+        matches!(
+            self.kexinit_result,
+            Some(SshKexinitNegotiationResult::Negotiated { .. })
+                | Some(SshKexinitNegotiationResult::UnsupportedAlgorithm)
+                | Some(SshKexinitNegotiationResult::MalformedPacket)
+                | Some(SshKexinitNegotiationResult::PacketOverLimit)
+                | Some(SshKexinitNegotiationResult::ListOverLimit)
+        )
+    }
+
+    pub(crate) const fn kexinit_cookie_generated_redacted(self) -> bool {
+        matches!(
+            self.kexinit_result,
+            Some(SshKexinitNegotiationResult::Negotiated { .. })
+        )
+    }
 }
 
 pub(crate) fn classify_ssh_service_readiness(
     key_report: SshKeyReadinessReport,
 ) -> SshServiceReadinessReport {
-    classify_ssh_service_readiness_with_remote_identification(
+    let mut packet = [0u8; SSH_KEXINIT_CLIENT_PACKET_BUFFER_BYTES];
+    let packet_len = build_modeled_client_kexinit_packet(&mut packet, false);
+    classify_ssh_service_readiness_with_remote_identification_and_kexinit(
         key_report,
         SSH_LOCAL_TRANSPORT_REMOTE_IDENTIFICATION,
         SshRemoteIdentificationInputState::Complete,
+        &packet[..packet_len],
     )
 }
 
@@ -289,6 +376,22 @@ pub(crate) fn classify_ssh_service_readiness_with_remote_identification(
     key_report: SshKeyReadinessReport,
     remote_input: &[u8],
     input_state: SshRemoteIdentificationInputState,
+) -> SshServiceReadinessReport {
+    let mut packet = [0u8; SSH_KEXINIT_CLIENT_PACKET_BUFFER_BYTES];
+    let packet_len = build_modeled_client_kexinit_packet(&mut packet, false);
+    classify_ssh_service_readiness_with_remote_identification_and_kexinit(
+        key_report,
+        remote_input,
+        input_state,
+        &packet[..packet_len],
+    )
+}
+
+pub(crate) fn classify_ssh_service_readiness_with_remote_identification_and_kexinit(
+    key_report: SshKeyReadinessReport,
+    remote_input: &[u8],
+    input_state: SshRemoteIdentificationInputState,
+    client_kexinit_packet: &[u8],
 ) -> SshServiceReadinessReport {
     let exposure_disabled = key_report
         .labels()
@@ -315,6 +418,7 @@ pub(crate) fn classify_ssh_service_readiness_with_remote_identification(
         transport_enabled: false,
         accepted_connection_count: 0,
         remote_identification: None,
+        kexinit_result: None,
     };
 
     if exposure_disabled {
@@ -337,6 +441,46 @@ pub(crate) fn classify_ssh_service_readiness_with_remote_identification(
                 report.push(SshServiceReadinessLabel::IdentificationBannerModeled);
                 report.push(SshServiceReadinessLabel::LocalIdentificationLiteral);
                 report.push(banner.remote_identification().label());
+                if banner.remote_identification_valid() {
+                    let kexinit = model_ssh_kexinit_negotiation(client_kexinit_packet);
+                    report.kexinit_result = Some(kexinit);
+                    report.push(SshServiceReadinessLabel::KexinitModeled);
+                    match kexinit {
+                        SshKexinitNegotiationResult::Negotiated {
+                            first_packet_follows,
+                        } => {
+                            report.push(SshServiceReadinessLabel::KexinitCookieGeneratedRedacted);
+                            report.push(SshServiceReadinessLabel::KexinitClientPacketValid);
+                            report.push(SshServiceReadinessLabel::KexinitAlgorithmNegotiated);
+                            if first_packet_follows {
+                                report.push(
+                                    SshServiceReadinessLabel::KexinitFirstPacketFollowsIgnored,
+                                );
+                            }
+                            report
+                                .push(SshServiceReadinessLabel::KexinitSelectedKexCurve25519Sha256);
+                            report.push(SshServiceReadinessLabel::KexinitSelectedHostKeySshEd25519);
+                            report.push(
+                                SshServiceReadinessLabel::KexinitSelectedCipherChacha20Poly1305OpenSsh,
+                            );
+                            report.push(SshServiceReadinessLabel::KexinitSelectedMacHmacSha2_256);
+                            report.push(SshServiceReadinessLabel::KexinitSelectedCompressionNone);
+                        }
+                        SshKexinitNegotiationResult::UnsupportedAlgorithm => {
+                            report.push(SshServiceReadinessLabel::KexinitClientPacketValid);
+                            report.push(SshServiceReadinessLabel::KexinitAlgorithmUnsupported);
+                        }
+                        SshKexinitNegotiationResult::MalformedPacket => {
+                            report.push(SshServiceReadinessLabel::KexinitPacketMalformed);
+                        }
+                        SshKexinitNegotiationResult::PacketOverLimit => {
+                            report.push(SshServiceReadinessLabel::KexinitPacketOverLimit);
+                        }
+                        SshKexinitNegotiationResult::ListOverLimit => {
+                            report.push(SshServiceReadinessLabel::KexinitListOverLimit);
+                        }
+                    }
+                }
                 report.push(SshServiceReadinessLabel::TransportClosedBeforeKex);
             }
             Err(()) => {
@@ -353,6 +497,246 @@ pub(crate) fn classify_ssh_service_readiness_with_remote_identification(
     report.push(SshServiceReadinessLabel::SessionUnimplemented);
     report.push(SshServiceReadinessLabel::NotReady);
     report
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SshKexinitNegotiationResult {
+    Negotiated { first_packet_follows: bool },
+    UnsupportedAlgorithm,
+    MalformedPacket,
+    PacketOverLimit,
+    ListOverLimit,
+}
+
+fn model_ssh_kexinit_negotiation(packet: &[u8]) -> SshKexinitNegotiationResult {
+    let parse = parse_ssh_kexinit_packet(packet);
+    let kexinit = match parse {
+        Ok(kexinit) => kexinit,
+        Err(error) => return error,
+    };
+
+    let mut server_cookie = [0u8; SSH_KEXINIT_COOKIE_BYTES];
+    let mut csprng =
+        crate::csprng::OperatorSeededCsprng::from_seed_bytes(&SSH_KEXINIT_MODELED_COOKIE_SEED);
+    if csprng.fill_bytes(&mut server_cookie).is_err() {
+        server_cookie.zeroize();
+        return SshKexinitNegotiationResult::MalformedPacket;
+    }
+    server_cookie.zeroize();
+
+    if kexinit.negotiates_policy() {
+        SshKexinitNegotiationResult::Negotiated {
+            first_packet_follows: kexinit.first_packet_follows,
+        }
+    } else {
+        SshKexinitNegotiationResult::UnsupportedAlgorithm
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+struct ParsedKexinit<'a> {
+    lists: [&'a [u8]; SSH_KEXINIT_LIST_COUNT],
+    first_packet_follows: bool,
+}
+
+impl ParsedKexinit<'_> {
+    fn negotiates_policy(self) -> bool {
+        name_list_contains(self.lists[0], SSH_KEXINIT_POLICY_KEX)
+            && name_list_contains(self.lists[1], SSH_KEXINIT_POLICY_HOST_KEY)
+            && name_list_contains(self.lists[2], SSH_KEXINIT_POLICY_CIPHER)
+            && name_list_contains(self.lists[3], SSH_KEXINIT_POLICY_CIPHER)
+            && name_list_contains(self.lists[4], SSH_KEXINIT_POLICY_MAC)
+            && name_list_contains(self.lists[5], SSH_KEXINIT_POLICY_MAC)
+            && name_list_contains(self.lists[6], SSH_KEXINIT_POLICY_COMPRESSION)
+            && name_list_contains(self.lists[7], SSH_KEXINIT_POLICY_COMPRESSION)
+            && self.lists[8].is_empty()
+            && self.lists[9].is_empty()
+    }
+}
+
+fn parse_ssh_kexinit_packet(
+    packet: &[u8],
+) -> Result<ParsedKexinit<'_>, SshKexinitNegotiationResult> {
+    if packet.len() < 6 {
+        return Err(SshKexinitNegotiationResult::MalformedPacket);
+    }
+    let packet_length =
+        read_be_u32(packet, 0).ok_or(SshKexinitNegotiationResult::MalformedPacket)? as usize;
+    if packet_length > SSH_KEXINIT_PACKET_MAX_BYTES {
+        return Err(SshKexinitNegotiationResult::PacketOverLimit);
+    }
+    if packet.len() != packet_length + 4 {
+        return Err(SshKexinitNegotiationResult::MalformedPacket);
+    }
+
+    let padding_length = packet[4] as usize;
+    if padding_length < 4 || packet_length <= padding_length + 1 {
+        return Err(SshKexinitNegotiationResult::MalformedPacket);
+    }
+    let payload_len = packet_length - padding_length - 1;
+    if payload_len > SSH_KEXINIT_PAYLOAD_MAX_BYTES {
+        return Err(SshKexinitNegotiationResult::PacketOverLimit);
+    }
+
+    let payload_start = 5usize;
+    let payload_end = payload_start + payload_len;
+    let payload = &packet[payload_start..payload_end];
+    if payload.len() < 1 + SSH_KEXINIT_COOKIE_BYTES + (SSH_KEXINIT_LIST_COUNT * 4) + 5 {
+        return Err(SshKexinitNegotiationResult::MalformedPacket);
+    }
+    if payload[0] != SSH_MSG_KEXINIT {
+        return Err(SshKexinitNegotiationResult::MalformedPacket);
+    }
+
+    let mut cursor = 1 + SSH_KEXINIT_COOKIE_BYTES;
+    let mut lists = [&[][..]; SSH_KEXINIT_LIST_COUNT];
+    let mut index = 0usize;
+    while index < SSH_KEXINIT_LIST_COUNT {
+        if cursor + 4 > payload.len() {
+            return Err(SshKexinitNegotiationResult::MalformedPacket);
+        }
+        let list_len = read_be_u32(payload, cursor)
+            .ok_or(SshKexinitNegotiationResult::MalformedPacket)? as usize;
+        cursor += 4;
+        if list_len > SSH_KEXINIT_NAME_LIST_MAX_BYTES {
+            return Err(SshKexinitNegotiationResult::ListOverLimit);
+        }
+        if cursor + list_len > payload.len() {
+            return Err(SshKexinitNegotiationResult::MalformedPacket);
+        }
+        let list = &payload[cursor..cursor + list_len];
+        cursor += list_len;
+        if index < SSH_KEXINIT_REQUIRED_LIST_COUNT && list.is_empty() {
+            return Err(SshKexinitNegotiationResult::UnsupportedAlgorithm);
+        }
+        if !name_list_shape_valid(list) {
+            return Err(SshKexinitNegotiationResult::ListOverLimit);
+        }
+        lists[index] = list;
+        index += 1;
+    }
+
+    if cursor + 5 != payload.len() {
+        return Err(SshKexinitNegotiationResult::MalformedPacket);
+    }
+    let first_packet_follows = match payload[cursor] {
+        0 => false,
+        1 => true,
+        _ => return Err(SshKexinitNegotiationResult::MalformedPacket),
+    };
+    cursor += 1;
+    let _reserved =
+        read_be_u32(payload, cursor).ok_or(SshKexinitNegotiationResult::MalformedPacket)?;
+
+    Ok(ParsedKexinit {
+        lists,
+        first_packet_follows,
+    })
+}
+
+fn read_be_u32(bytes: &[u8], offset: usize) -> Option<u32> {
+    if offset + 4 > bytes.len() {
+        return None;
+    }
+    Some(
+        ((bytes[offset] as u32) << 24)
+            | ((bytes[offset + 1] as u32) << 16)
+            | ((bytes[offset + 2] as u32) << 8)
+            | (bytes[offset + 3] as u32),
+    )
+}
+
+fn name_list_shape_valid(list: &[u8]) -> bool {
+    if list.is_empty() {
+        return true;
+    }
+    let mut names = 1usize;
+    let mut previous_comma = false;
+    for byte in list {
+        if *byte == b',' {
+            if previous_comma {
+                return false;
+            }
+            names += 1;
+            if names > SSH_KEXINIT_NAME_LIST_MAX_NAMES {
+                return false;
+            }
+            previous_comma = true;
+        } else if matches!(*byte, 0x21..=0x7e) {
+            previous_comma = false;
+        } else {
+            return false;
+        }
+    }
+    !previous_comma
+}
+
+fn name_list_contains(list: &[u8], target: &[u8]) -> bool {
+    let mut start = 0usize;
+    let mut index = 0usize;
+    while index <= list.len() {
+        if index == list.len() || list[index] == b',' {
+            if &list[start..index] == target {
+                return true;
+            }
+            start = index + 1;
+        }
+        index += 1;
+    }
+    false
+}
+
+fn build_modeled_client_kexinit_packet(
+    output: &mut [u8; SSH_KEXINIT_CLIENT_PACKET_BUFFER_BYTES],
+    first_packet_follows: bool,
+) -> usize {
+    let mut cursor = 5usize;
+    output[cursor] = SSH_MSG_KEXINIT;
+    cursor += 1;
+    cursor += SSH_KEXINIT_COOKIE_BYTES;
+    cursor = write_name_list(output, cursor, SSH_KEXINIT_POLICY_KEX);
+    cursor = write_name_list(output, cursor, SSH_KEXINIT_POLICY_HOST_KEY);
+    cursor = write_name_list(output, cursor, SSH_KEXINIT_POLICY_CIPHER);
+    cursor = write_name_list(output, cursor, SSH_KEXINIT_POLICY_CIPHER);
+    cursor = write_name_list(output, cursor, SSH_KEXINIT_POLICY_MAC);
+    cursor = write_name_list(output, cursor, SSH_KEXINIT_POLICY_MAC);
+    cursor = write_name_list(output, cursor, SSH_KEXINIT_POLICY_COMPRESSION);
+    cursor = write_name_list(output, cursor, SSH_KEXINIT_POLICY_COMPRESSION);
+    cursor = write_name_list(output, cursor, b"");
+    cursor = write_name_list(output, cursor, b"");
+    output[cursor] = if first_packet_follows { 1 } else { 0 };
+    cursor += 5;
+
+    let payload_len = cursor - 5;
+    let padding_length = 8usize;
+    let packet_length = 1 + payload_len + padding_length;
+    write_be_u32(output, 0, packet_length as u32);
+    output[4] = padding_length as u8;
+    cursor += padding_length;
+    cursor
+}
+
+fn write_name_list(
+    output: &mut [u8; SSH_KEXINIT_CLIENT_PACKET_BUFFER_BYTES],
+    cursor: usize,
+    name: &[u8],
+) -> usize {
+    write_be_u32(output, cursor, name.len() as u32);
+    let start = cursor + 4;
+    let end = start + name.len();
+    output[start..end].copy_from_slice(name);
+    end
+}
+
+fn write_be_u32(
+    output: &mut [u8; SSH_KEXINIT_CLIENT_PACKET_BUFFER_BYTES],
+    offset: usize,
+    value: u32,
+) {
+    output[offset] = (value >> 24) as u8;
+    output[offset + 1] = (value >> 16) as u8;
+    output[offset + 2] = (value >> 8) as u8;
+    output[offset + 3] = value as u8;
 }
 
 fn model_local_ssh_listener_transport(
@@ -452,6 +836,32 @@ mod tests {
         labels
     }
 
+    fn shape_modeled_key_report() -> SshKeyReadinessReport {
+        let entropy = entropy::classify_entropy_snapshot(
+            EntropyDiagnosticSnapshot::empty()
+                .with_operator_seed(OperatorSeedObservation::new(32))
+                .with_csprng_ready(),
+        );
+        ssh_key_readiness::classify_ssh_key_readiness(
+            SshKeyReadinessSnapshot::fail_closed_default()
+                .with_host_key_metadata()
+                .with_authorized_key_metadata()
+                .with_seed_material_metadata()
+                .with_persistence_metadata()
+                .with_exposure_enabled()
+                .with_entropy_report(entropy),
+        )
+    }
+
+    fn modeled_kexinit_packet(
+        first_packet_follows: bool,
+    ) -> [u8; SSH_KEXINIT_PACKET_MAX_BYTES + 4] {
+        let mut packet = [0u8; SSH_KEXINIT_PACKET_MAX_BYTES + 4];
+        let packet_len = build_modeled_client_kexinit_packet(&mut packet, first_packet_follows);
+        packet[0..4].copy_from_slice(&((packet_len - 4) as u32).to_be_bytes());
+        packet
+    }
+
     #[test_case]
     fn exposure_disabled_state_fails_closed_without_service_caps() {
         let key_report = ssh_key_readiness::classify_ssh_key_readiness(
@@ -462,8 +872,8 @@ mod tests {
         assert_eq!(report.lifecycle(), SshServiceLifecycleState::Disabled);
         assert_eq!(report.primary_label(), SshServiceReadinessLabel::NotReady);
         assert_eq!(
-            label_names(&report),
-            [
+            &label_names(&report)[..report.labels().len()],
+            &[
                 "sshservicediag-exposure-disabled",
                 "sshservicediag-prerequisites-missing",
                 "sshservicediag-transport-unaccepted",
@@ -472,14 +882,6 @@ mod tests {
                 "sshservicediag-authentication-unimplemented",
                 "sshservicediag-session-unimplemented",
                 "sshservicediag-not-ready",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
             ]
         );
         assert_eq!(report.listener_count(), 0);
@@ -524,42 +926,34 @@ mod tests {
 
     #[test_case]
     fn prerequisite_satisfied_shape_models_local_transport_but_remains_not_ready() {
-        let entropy = entropy::classify_entropy_snapshot(
-            EntropyDiagnosticSnapshot::empty()
-                .with_operator_seed(OperatorSeedObservation::new(32))
-                .with_csprng_ready(),
-        );
-        let key_report = ssh_key_readiness::classify_ssh_key_readiness(
-            SshKeyReadinessSnapshot::fail_closed_default()
-                .with_host_key_metadata()
-                .with_authorized_key_metadata()
-                .with_seed_material_metadata()
-                .with_persistence_metadata()
-                .with_exposure_enabled()
-                .with_entropy_report(entropy),
-        );
+        let key_report = shape_modeled_key_report();
         let report = classify_ssh_service_readiness(key_report);
 
         assert_eq!(report.lifecycle(), SshServiceLifecycleState::ShapeModeled);
         assert_eq!(
-            label_names(&report),
-            [
+            &label_names(&report)[..report.labels().len()],
+            &[
                 "sshservicediag-shape-modeled",
                 "sshservicediag-local-listener-modeled",
                 "sshservicediag-local-transport-modeled",
                 "sshservicediag-identification-banner-modeled",
                 "sshservicediag-local-identification-literal",
                 "sshservicediag-remote-identification-valid",
+                "sshservicediag-kexinit-modeled",
+                "sshservicediag-kexinit-cookie-generated-redacted",
+                "sshservicediag-kexinit-client-packet-valid",
+                "sshservicediag-kexinit-algorithm-negotiated",
+                "sshservicediag-kexinit-selected-kex-curve25519-sha256",
+                "sshservicediag-kexinit-selected-hostkey-ssh-ed25519",
+                "sshservicediag-kexinit-selected-cipher-chacha20-poly1305-openssh",
+                "sshservicediag-kexinit-selected-mac-hmac-sha2-256",
+                "sshservicediag-kexinit-selected-compression-none",
                 "sshservicediag-transport-closed-before-kex",
                 "sshservicediag-dependency-unaccepted",
                 "sshservicediag-crypto-backend-unaccepted",
                 "sshservicediag-authentication-unimplemented",
                 "sshservicediag-session-unimplemented",
                 "sshservicediag-not-ready",
-                "",
-                "",
-                "",
-                "",
             ]
         );
         assert_eq!(report.listener_count(), 1);
@@ -572,6 +966,14 @@ mod tests {
             report.remote_identification(),
             Some(SshRemoteIdentificationResult::Valid)
         );
+        assert_eq!(
+            report.kexinit_result(),
+            Some(SshKexinitNegotiationResult::Negotiated {
+                first_packet_follows: false
+            })
+        );
+        assert!(report.kexinit_modeled());
+        assert!(report.kexinit_cookie_generated_redacted());
         assert!(!report.authentication_success());
         assert!(!report.shell_attached());
         assert!(!report.reachability_accepted());
@@ -580,20 +982,7 @@ mod tests {
 
     #[test_case]
     fn local_transport_model_classifies_invalid_remote_identification_fail_closed() {
-        let entropy = entropy::classify_entropy_snapshot(
-            EntropyDiagnosticSnapshot::empty()
-                .with_operator_seed(OperatorSeedObservation::new(32))
-                .with_csprng_ready(),
-        );
-        let key_report = ssh_key_readiness::classify_ssh_key_readiness(
-            SshKeyReadinessSnapshot::fail_closed_default()
-                .with_host_key_metadata()
-                .with_authorized_key_metadata()
-                .with_seed_material_metadata()
-                .with_persistence_metadata()
-                .with_exposure_enabled()
-                .with_entropy_report(entropy),
-        );
+        let key_report = shape_modeled_key_report();
         let report = classify_ssh_service_readiness_with_remote_identification(
             key_report,
             b"invalid\r\n",
@@ -617,25 +1006,13 @@ mod tests {
                 .labels()
                 .contains(&SshServiceReadinessLabel::TransportClosedBeforeKex)
         );
+        assert_eq!(report.kexinit_result(), None);
         assert!(!report.ssh_ready());
     }
 
     #[test_case]
     fn local_transport_model_classifies_unterminated_remote_identification_as_over_limit() {
-        let entropy = entropy::classify_entropy_snapshot(
-            EntropyDiagnosticSnapshot::empty()
-                .with_operator_seed(OperatorSeedObservation::new(32))
-                .with_csprng_ready(),
-        );
-        let key_report = ssh_key_readiness::classify_ssh_key_readiness(
-            SshKeyReadinessSnapshot::fail_closed_default()
-                .with_host_key_metadata()
-                .with_authorized_key_metadata()
-                .with_seed_material_metadata()
-                .with_persistence_metadata()
-                .with_exposure_enabled()
-                .with_entropy_report(entropy),
-        );
+        let key_report = shape_modeled_key_report();
         let report = classify_ssh_service_readiness_with_remote_identification(
             key_report,
             &[b'a'; crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY],
@@ -658,6 +1035,137 @@ mod tests {
             report
                 .labels()
                 .contains(&SshServiceReadinessLabel::TransportClosedBeforeKex)
+        );
+        assert_eq!(report.kexinit_result(), None);
+        assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn kexinit_negotiates_policy_with_redacted_cookie_and_ignored_followup() {
+        let key_report = shape_modeled_key_report();
+        let packet = modeled_kexinit_packet(true);
+        let packet_len = (read_be_u32(&packet, 0).unwrap() as usize) + 4;
+        let report = classify_ssh_service_readiness_with_remote_identification_and_kexinit(
+            key_report,
+            SSH_LOCAL_TRANSPORT_REMOTE_IDENTIFICATION,
+            SshRemoteIdentificationInputState::Complete,
+            &packet[..packet_len],
+        );
+
+        assert_eq!(
+            report.kexinit_result(),
+            Some(SshKexinitNegotiationResult::Negotiated {
+                first_packet_follows: true
+            })
+        );
+        assert!(
+            report
+                .labels()
+                .contains(&SshServiceReadinessLabel::KexinitCookieGeneratedRedacted)
+        );
+        assert!(
+            report
+                .labels()
+                .contains(&SshServiceReadinessLabel::KexinitFirstPacketFollowsIgnored)
+        );
+        assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn kexinit_rejects_unsupported_algorithm_without_retaining_client_text() {
+        let key_report = shape_modeled_key_report();
+        let mut packet = modeled_kexinit_packet(false);
+        let packet_len = (read_be_u32(&packet, 0).unwrap() as usize) + 4;
+        let kex_name_offset = 5 + 1 + SSH_KEXINIT_COOKIE_BYTES + 4;
+        packet[kex_name_offset] = b'x';
+
+        let report = classify_ssh_service_readiness_with_remote_identification_and_kexinit(
+            key_report,
+            SSH_LOCAL_TRANSPORT_REMOTE_IDENTIFICATION,
+            SshRemoteIdentificationInputState::Complete,
+            &packet[..packet_len],
+        );
+
+        assert_eq!(
+            report.kexinit_result(),
+            Some(SshKexinitNegotiationResult::UnsupportedAlgorithm)
+        );
+        assert!(
+            report
+                .labels()
+                .contains(&SshServiceReadinessLabel::KexinitAlgorithmUnsupported)
+        );
+        assert!(!report.kexinit_cookie_generated_redacted());
+        assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn kexinit_rejects_malformed_packet_and_size_limits() {
+        let key_report = shape_modeled_key_report();
+        let malformed = [0u8; 5];
+        let malformed_report =
+            classify_ssh_service_readiness_with_remote_identification_and_kexinit(
+                key_report,
+                SSH_LOCAL_TRANSPORT_REMOTE_IDENTIFICATION,
+                SshRemoteIdentificationInputState::Complete,
+                &malformed,
+            );
+
+        assert_eq!(
+            malformed_report.kexinit_result(),
+            Some(SshKexinitNegotiationResult::MalformedPacket)
+        );
+        assert!(
+            malformed_report
+                .labels()
+                .contains(&SshServiceReadinessLabel::KexinitPacketMalformed)
+        );
+
+        let mut oversized = modeled_kexinit_packet(false);
+        oversized[0..4].copy_from_slice(&((SSH_KEXINIT_PACKET_MAX_BYTES + 1) as u32).to_be_bytes());
+        let oversized_report =
+            classify_ssh_service_readiness_with_remote_identification_and_kexinit(
+                key_report,
+                SSH_LOCAL_TRANSPORT_REMOTE_IDENTIFICATION,
+                SshRemoteIdentificationInputState::Complete,
+                &oversized,
+            );
+
+        assert_eq!(
+            oversized_report.kexinit_result(),
+            Some(SshKexinitNegotiationResult::PacketOverLimit)
+        );
+        assert!(
+            oversized_report
+                .labels()
+                .contains(&SshServiceReadinessLabel::KexinitPacketOverLimit)
+        );
+    }
+
+    #[test_case]
+    fn kexinit_rejects_list_over_limits() {
+        let key_report = shape_modeled_key_report();
+        let mut packet = modeled_kexinit_packet(false);
+        let packet_len = (read_be_u32(&packet, 0).unwrap() as usize) + 4;
+        let first_list_len_offset = 5 + 1 + SSH_KEXINIT_COOKIE_BYTES;
+        packet[first_list_len_offset..first_list_len_offset + 4]
+            .copy_from_slice(&((SSH_KEXINIT_NAME_LIST_MAX_BYTES + 1) as u32).to_be_bytes());
+
+        let report = classify_ssh_service_readiness_with_remote_identification_and_kexinit(
+            key_report,
+            SSH_LOCAL_TRANSPORT_REMOTE_IDENTIFICATION,
+            SshRemoteIdentificationInputState::Complete,
+            &packet[..packet_len],
+        );
+
+        assert_eq!(
+            report.kexinit_result(),
+            Some(SshKexinitNegotiationResult::ListOverLimit)
+        );
+        assert!(
+            report
+                .labels()
+                .contains(&SshServiceReadinessLabel::KexinitListOverLimit)
         );
         assert!(!report.ssh_ready());
     }
