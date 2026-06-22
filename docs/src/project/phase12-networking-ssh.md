@@ -7351,3 +7351,24 @@ activation, encrypted packet I/O, authentication/session/shell behavior,
 hardware reachability, public compatibility, broad expansion, or phase
 transition. ssh-ready remains false. The selected next bounded task is
 phase12-ssh-newkeys-packet-crypto-core-20260622.
+
+phase12-ssh-newkeys-packet-crypto-closeout-20260622 accepts the local
+NEWKEYS/encrypted-packet frontier closeout. The reconciled frontier is
+private local NEWKEYS activation and fixed-fixture encrypted-packet diagnostic
+readiness only: local outbound NEWKEYS and inbound peer NEWKEYS are modeled as
+independent private transport-state transitions, encrypted-packet-state-active
+requires both directions, and one accepted diagnostic advances exactly one
+private direction sequence number. The accepted evidence reconciles the
+contract, core implementation, smoke unit coverage, validation outputs, and
+redaction review.
+
+Durable evidence remains limited to fixed labels, counters, booleans, public
+algorithm names, public key/IV lengths, public test names, validation command
+names, and classifications. It excludes keys, IV bytes, tags, plaintext,
+ciphertext, exchange hashes, shared secrets, signatures, peer raw input,
+operator identity, key-derived identifiers, stable session identifiers, live
+peer addresses, and hardware data. ssh-ready remains false; authentication,
+session/channel success, shell attachment, live reachability, public
+compatibility, hardware/lab action, broad expansion, and phase transition
+remain unaccepted. The selected next bounded task is
+phase12-ssh-encrypted-transport-dispatch-contract-20260622.

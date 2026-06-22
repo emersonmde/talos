@@ -16591,6 +16591,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   compatibility, hardware, broad expansion, and phase transition remain
   unaccepted. The selected next bounded task is
   phase12-ssh-newkeys-packet-crypto-closeout-20260622.
+- phase12-ssh-newkeys-packet-crypto-closeout-20260622 accepts the local
+  NEWKEYS/encrypted-packet frontier closeout. The reconciled frontier is
+  private local NEWKEYS activation and fixed-fixture encrypted-packet
+  diagnostic readiness only: local outbound NEWKEYS and inbound peer NEWKEYS
+  are independent private transport-state transitions,
+  encrypted-packet-state-active requires both directions, and one accepted
+  diagnostic advances exactly one private direction sequence number. Evidence
+  reconciles the accepted contract, core implementation, smoke unit coverage,
+  validation outputs, and redaction review. Durable evidence remains
+  fixed-label/counter/length/command/classification only and excludes packet,
+  key, IV, tag, transcript, peer, operator, session, live reachability, and
+  hardware material. ssh-ready remains false; authentication/session/shell
+  behavior, live reachability, public compatibility, hardware, broad
+  expansion, and phase transition remain unaccepted. The selected next bounded
+  task is phase12-ssh-encrypted-transport-dispatch-contract-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
