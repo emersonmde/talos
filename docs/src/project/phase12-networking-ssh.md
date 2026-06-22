@@ -7591,3 +7591,21 @@ expansion, or phase transition is accepted. ssh-ready, service-success,
 authentication-success, session/channel counts, shell attachment, and
 reachability remain false/zero. The selected next bounded task is
 phase12-ssh-userauth-session-id-closeout-20260622.
+
+phase12-ssh-userauth-session-id-closeout-20260622 accepts the bounded
+session-identifier prerequisite closeout. The accepted publickey-auth contract,
+session-id core, and focused smoke evidence are reconciled: runtime KEX can
+retain and expose the first exchange hash through a private ready-KEX
+session-id handle for later userauth verification, while diagnostics remain
+fixed-label and redacted. This closes only the session-id prerequisite slice.
+
+The next smallest prerequisite is authorized_keys parser/key-match policy, but
+no supervisor-owned queued task exists with explicit gates and evidence. No
+authorized-key parsing, publickey matching, signature verification,
+authentication response emission, authentication success, service success,
+session/channel allocation, shell attachment, live reachability, hardware
+action, compatibility claim, broad expansion, or phase transition is accepted.
+ssh-ready, service-success, authentication-success, session/channel counts,
+shell attachment, and reachability remain false/zero. selected_next_task is
+null and planningNeeded=true pending supervisor planning for the authorized_keys
+parser/key-match policy slice.

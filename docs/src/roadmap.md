@@ -16765,6 +16765,18 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   broad expansion, or phase transition is accepted; ssh-ready remains false.
   The selected next bounded task is
   phase12-ssh-userauth-session-id-closeout-20260622.
+- phase12-ssh-userauth-session-id-closeout-20260622 accepts the bounded
+  session-identifier prerequisite closeout. The accepted publickey-auth
+  contract, session-id core, and smoke evidence are reconciled: runtime KEX can
+  retain and expose the first exchange hash through a private ready-KEX
+  session-id handle for later userauth verification, and diagnostics remain
+  fixed-label and redacted. This does not accept authorized-key parsing,
+  publickey matching, signature verification, authentication responses,
+  authentication success, service success, session/channel allocation, shell
+  attachment, live reachability, hardware, compatibility, broad expansion, or
+  phase transition; ssh-ready remains false. selected_next_task is null and
+  planningNeeded=true pending supervisor planning for the authorized_keys
+  parser/key-match policy prerequisite.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
