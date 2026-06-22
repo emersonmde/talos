@@ -6894,3 +6894,24 @@ sshservicediag-transport-unaccepted, crypto-backend-unaccepted,
 authentication-unimplemented, and session-unimplemented remain present. The
 selected next bounded task is
 phase12-ssh-owned-transport-banner-core-20260622.
+
+phase12-ssh-owned-transport-banner-core-20260622 accepts the first
+Talos-owned SSH identification/banner implementation slice. The implementation
+adds the fixed local identification literal SSH-2.0-Talos_0.1 followed by
+CRLF, a bounded remote identification classifier, fixed diagnostic labels, and
+a fail-closed transport-closed-before-kex outcome. The remote line model
+accepts only one LF-terminated line within 255 bytes, permits an optional CR
+before LF, requires SSH-2.0- plus a non-empty printable-ASCII software version,
+rejects pre-banner comment lines, rejects control and non-ASCII bytes, treats
+EOF before a complete line as invalid, and treats missing LF at the bound as
+over-limit.
+
+The service readiness classifier exposes only fixed labels and booleans: when
+SSH prerequisites are otherwise shape-modeled, sshservicediag may include
+sshservicediag-identification-banner-modeled,
+sshservicediag-local-identification-literal, and
+sshservicediag-transport-closed-before-kex. Remote valid/invalid/over-limit
+results are unit-modeled without retaining peer text. ssh-ready remains false,
+listener-count remains 0, transport-enabled remains false, and transport,
+crypto, authentication, session, shell, reachability, OpenSSH/POSIX/Linux
+compatibility, broad expansion, and phase transition remain unaccepted.
