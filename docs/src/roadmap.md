@@ -16909,6 +16909,18 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   attachment, live reachability, compatibility, broad expansion, phase
   transition, or ssh-ready=true is accepted. The selected next bounded task is
   phase12-ssh-publickey-auth-response-policy-core-20260622.
+- phase12-ssh-publickey-auth-response-policy-core-20260622 accepts the local
+  modeled source implementation for the publickey USERAUTH_PK_OK/USERAUTH_FAILURE
+  response-policy boundary. The classifier emits USERAUTH_PK_OK only for
+  unsigned ssh-ed25519 publickey probes with accepted service/userauth,
+  session-id, parsed-key, and authorized_keys key-match prerequisites; signed
+  valid requests and all malformed, unsupported, unauthorized, disabled,
+  prerequisite-missing, invalid-signature, and redaction-sensitive cases remain
+  USERAUTH_FAILURE. No authentication success, SSH_MSG_USERAUTH_SUCCESS,
+  account binding, sessions/channels, shell attachment, live reachability,
+  compatibility, broad expansion, phase transition, or ssh-ready=true is
+  accepted. The selected next bounded task is
+  phase12-shell-ssh-publickey-auth-response-policy-smoke-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

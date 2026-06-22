@@ -7794,3 +7794,29 @@ compatibility, broad expansion, phase transition, or ssh-ready=true is
 accepted. service-success, authentication-success, session/channel counts,
 shell attachment, reachability, and readiness remain false/zero. The selected
 next bounded task is phase12-ssh-publickey-auth-response-policy-core-20260622.
+
+phase12-ssh-publickey-auth-response-policy-core-20260622 accepts the local
+modeled source implementation for the publickey USERAUTH_PK_OK/USERAUTH_FAILURE
+response-policy boundary. Talos now classifies only two modeled response
+message numbers for this slice: USERAUTH_PK_OK for unsigned ssh-ed25519
+publickey key probes with the accepted service/userauth, private session-id,
+parsed key, and authorized_keys key-match prerequisites, and USERAUTH_FAILURE
+for signed requests and every fail-closed path.
+
+Valid signed publickey requests remain success-deferred USERAUTH_FAILURE until
+account binding and USERAUTH_SUCCESS are explicitly accepted. Invalid or
+malformed signatures, unauthorized keys, malformed requests, unsupported
+algorithms, disabled policy, missing prerequisites, and redaction-sensitive
+cases fail closed with fixed labels only. Durable evidence is limited to fixed
+labels, public byte-length fields, false/zero readiness counters, validation
+commands, source/doc paths, task ids, and classifications. It retains no
+session-id bytes, authorized-key bytes, request/decoded public-key blobs,
+signature bytes, signed-data bytes, fingerprints, digests, user names,
+comments, peer strings, user/operator identity, key-derived identifiers,
+stable identifiers, hardware data, or boot artifacts. Authentication success,
+SSH_MSG_USERAUTH_SUCCESS, account binding, sessions/channels, shell attachment,
+live reachability, compatibility, broad expansion, phase transition, and
+ssh-ready=true remain unaccepted. service-success, authentication-success,
+session/channel counts, shell attachment, reachability, and readiness remain
+false/zero. The selected next bounded task is
+phase12-shell-ssh-publickey-auth-response-policy-smoke-20260622.
