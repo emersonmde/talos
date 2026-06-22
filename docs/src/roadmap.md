@@ -16663,6 +16663,26 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   reachability, hardware, compatibility, broad expansion, and phase transition
   remain unaccepted. The selected next bounded task is
   phase12-ssh-preauth-service-userauth-contract-20260622.
+- phase12-ssh-preauth-service-userauth-contract-20260622 accepts the next
+  private pre-authentication service/userauth contract. The next implementation
+  may parse caller-owned decrypted payloads already classified as
+  service-request message 5 or userauth-request message 50, using SSH binary
+  string framing only. Service-request parsing may compare the service string
+  with the public literal ssh-userauth and emit fixed routing diagnostics
+  without sending SSH_MSG_SERVICE_ACCEPT or accepting service success.
+  Userauth parsing may compare the service string with ssh-connection and the
+  method string with publickey, but must not retain user/service/method bytes,
+  parse keys or signatures, validate authorized keys, or accept
+  authentication. Malformed fields, unsupported service names, unsupported
+  methods, userauth before the modeled service-request prerequisite, and
+  inherited encrypted-transport failures fail closed. Durable evidence remains
+  fixed-label/public-message-number/public-literal/field-order/counter/command
+  only. ssh-ready remains false; service success, authentication success,
+  sessions/channels, shell attachment, live reachability, hardware,
+  compatibility, broad expansion, and phase transition remain unaccepted. The
+  selected next bounded task is
+  phase12-ssh-preauth-service-userauth-core-20260622, but supervisor planning
+  must enqueue it with explicit gates before worker promotion.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

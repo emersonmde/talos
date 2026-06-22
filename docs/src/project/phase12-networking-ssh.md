@@ -7451,3 +7451,28 @@ classifications; packet payloads, secrets, peer/operator material, stable
 transport/session identifiers, hardware data, and boot artifacts remain
 excluded. The selected next bounded task is
 phase12-ssh-preauth-service-userauth-contract-20260622.
+
+phase12-ssh-preauth-service-userauth-contract-20260622 accepts the next private
+pre-authentication service/userauth contract. The next implementation may parse
+caller-owned decrypted payloads that have already been classified as
+service-request message 5 or userauth-request message 50, using SSH binary
+string framing only. Service-request parsing may compare the single service
+string with the public literal ssh-userauth and emit fixed routing diagnostics;
+it must not emit SSH_MSG_SERVICE_ACCEPT or accept service success. Userauth
+parsing may compare the service string with ssh-connection and the method string
+with publickey, but it must not retain user/service/method bytes, parse public
+keys or signatures, validate authorized keys, or accept authentication.
+
+Malformed string lengths, missing or trailing required fields, unsupported
+service names, unsupported methods, userauth before the modeled service-request
+prerequisite, and inherited encrypted-transport failure paths all fail closed
+with fixed labels. Durable evidence remains limited to fixed labels, public SSH
+message numbers, public literal names, public field order, small counters and
+bounds, validation commands, task ids, and classifications. ssh-ready remains
+false; service success, authentication success, account/user model,
+session/channel success, PTY/process/shell attachment, live sockets,
+hardware/lab action, boot publication, live reachability,
+OpenSSH/POSIX/Linux compatibility, broad expansion, and phase transition remain
+unaccepted. The selected next bounded task is
+phase12-ssh-preauth-service-userauth-core-20260622, but supervisor planning must
+enqueue it with explicit scope and gates before worker promotion.
