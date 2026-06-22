@@ -7630,3 +7630,23 @@ response emission, authentication success, or session readiness. ssh-ready,
 service-success, authentication-success, session/channel counts, shell
 attachment, and reachability remain false/zero. The selected next bounded task
 is phase12-ssh-authorized-keys-parser-core-20260622.
+
+phase12-ssh-authorized-keys-parser-core-20260622 accepts the bounded
+authorized_keys parser/key-match implementation. The source now applies the
+accepted read-only VFS metadata guard for /etc/talos/ssh/authorized_keys,
+parses only option-free ssh-ed25519 public-key lines, ignores blank and
+leading-# comment lines, discards trailing comments, and fails closed for
+missing/invalid/oversized metadata, comment-only files, unsupported options,
+unsupported algorithms, malformed lines, and malformed public-key blobs.
+
+The key-match boundary remains in-memory only: accepted decoded ssh-ed25519
+publickey blobs are compared byte-for-byte with the caller-owned request blob,
+and the retained report exposes only fixed labels, line counts, public
+byte-length values, match/non-match state, authentication-success=false, and
+ssh-ready=false. The existing sshkeydiag metadata path remains metadata-only.
+No signature verification, USERAUTH_PK_OK, USERAUTH_SUCCESS, USERAUTH_FAILURE,
+partial-success behavior, account binding, authentication success,
+sessions/channels, shell attachment, live reachability, hardware action,
+compatibility claim, broad expansion, or phase transition is accepted. The
+selected next bounded task is
+phase12-ssh-authorized-keys-parser-smoke-20260622.

@@ -16794,6 +16794,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   attachment, live reachability, compatibility, broad expansion, or phase
   transition; ssh-ready remains false. The selected next bounded task is
   phase12-ssh-authorized-keys-parser-core-20260622.
+- phase12-ssh-authorized-keys-parser-core-20260622 accepts the bounded
+  authorized_keys parser/key-match source implementation. Talos now applies the
+  accepted read-only VFS metadata guard to /etc/talos/ssh/authorized_keys,
+  parses only option-free ssh-ed25519 lines, ignores blank and leading-#
+  comments, discards trailing comments, and fails closed for missing, invalid,
+  or oversized metadata, comment-only files, unsupported options, unsupported
+  algorithms, malformed lines, and malformed public-key blobs. Matching is
+  in-memory only: decoded ssh-ed25519 publickey blobs are compared
+  byte-for-byte with the caller-owned request blob, and retained reporting is
+  limited to fixed labels, counts, public byte-length values, match/non-match
+  state, authentication-success=false, and ssh-ready=false. This clears only
+  the key-match prerequisite for later signature verification; no
+  authentication response, authentication success, account binding,
+  sessions/channels, shell attachment, live reachability, compatibility, broad
+  expansion, or phase transition is accepted. The selected next bounded task is
+  phase12-ssh-authorized-keys-parser-smoke-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

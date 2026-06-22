@@ -1,8 +1,9 @@
 //! SSH key-management readiness classification.
 //!
 //! This module classifies caller-supplied prerequisite material only. It does
-//! not generate host keys, parse authorized keys, persist secrets, sample
-//! hardware, or accept SSH service readiness.
+//! not generate host keys, persist secrets, sample hardware, or accept SSH
+//! service readiness. Authorized-key parsing is limited to the accepted
+//! prerequisite-only key-match boundary.
 
 use crate::entropy::{
     self, EntropyDiagnosticReport, EntropyDiagnosticSnapshot, OperatorSeedMaterialMetadata,
@@ -12,9 +13,9 @@ use crate::{
     initramfs::{ReadOnlyInitramfs, VfsNodeKind},
     posix::PosixError,
 };
-use alloc::vec::Vec;
+use alloc::{string::String, vec::Vec};
 use signature::Signer;
-use ssh_key::{Algorithm, Cipher, Kdf, PrivateKey, Signature, encoding::Encode};
+use ssh_key::{Algorithm, Cipher, Kdf, PrivateKey, PublicKey, Signature, encoding::Encode};
 
 pub(crate) const HOST_KEY_PATH: &[u8] = b"/etc/talos/ssh/ssh_host_ed25519_key";
 pub(crate) const HOST_KEY_MIN_METADATA_BYTES: usize = 64;
@@ -205,6 +206,120 @@ impl AuthorizedKeyMaterialMetadata {
 
     pub(crate) const fn byte_len(self) -> Option<usize> {
         self.byte_len
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum AuthorizedKeyMatchLabel {
+    MissingOrMetadataInvalid,
+    EmptyOrCommentOnly,
+    LineMalformed,
+    LineUnsupported,
+    AlgorithmUnsupported,
+    BlobMalformed,
+    NoMatch,
+    MatchPrerequisiteOnly,
+    AuthenticationUnimplemented,
+    NotReady,
+}
+
+impl AuthorizedKeyMatchLabel {
+    pub(crate) const fn name(self) -> &'static str {
+        match self {
+            Self::MissingOrMetadataInvalid => "authorized-keys-missing-or-metadata-invalid",
+            Self::EmptyOrCommentOnly => "authorized-keys-empty-or-comment-only",
+            Self::LineMalformed => "authorized-keys-line-malformed",
+            Self::LineUnsupported => "authorized-keys-line-unsupported",
+            Self::AlgorithmUnsupported => "authorized-keys-algorithm-unsupported",
+            Self::BlobMalformed => "authorized-keys-blob-malformed",
+            Self::NoMatch => "authorized-keys-no-match",
+            Self::MatchPrerequisiteOnly => "authorized-keys-match-prerequisite-only",
+            Self::AuthenticationUnimplemented => "authentication-unimplemented",
+            Self::NotReady => "not-ready",
+        }
+    }
+}
+
+pub(crate) const MAX_AUTHORIZED_KEY_MATCH_LABELS: usize = 3;
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct AuthorizedKeyMatchReport {
+    labels: [AuthorizedKeyMatchLabel; MAX_AUTHORIZED_KEY_MATCH_LABELS],
+    label_count: usize,
+    accepted_line_count: usize,
+    authorized_key_byte_len: Option<usize>,
+    request_public_key_blob_len: usize,
+    matched_public_key_blob_len: Option<usize>,
+    match_prerequisite_only: bool,
+    authentication_success: bool,
+    ssh_ready: bool,
+}
+
+impl AuthorizedKeyMatchReport {
+    pub(crate) fn labels(&self) -> &[AuthorizedKeyMatchLabel] {
+        &self.labels[..self.label_count]
+    }
+
+    pub(crate) const fn primary_label(self) -> AuthorizedKeyMatchLabel {
+        self.labels[0]
+    }
+
+    pub(crate) const fn accepted_line_count(self) -> usize {
+        self.accepted_line_count
+    }
+
+    pub(crate) const fn authorized_key_byte_len(self) -> Option<usize> {
+        self.authorized_key_byte_len
+    }
+
+    pub(crate) const fn request_public_key_blob_len(self) -> usize {
+        self.request_public_key_blob_len
+    }
+
+    pub(crate) const fn matched_public_key_blob_len(self) -> Option<usize> {
+        self.matched_public_key_blob_len
+    }
+
+    pub(crate) const fn match_prerequisite_only(self) -> bool {
+        self.match_prerequisite_only
+    }
+
+    pub(crate) const fn authentication_success(self) -> bool {
+        self.authentication_success
+    }
+
+    pub(crate) const fn ssh_ready(self) -> bool {
+        self.ssh_ready
+    }
+
+    fn new(
+        primary_label: AuthorizedKeyMatchLabel,
+        accepted_line_count: usize,
+        authorized_key_byte_len: Option<usize>,
+        request_public_key_blob_len: usize,
+        matched_public_key_blob_len: Option<usize>,
+        match_prerequisite_only: bool,
+    ) -> Self {
+        let mut report = Self {
+            labels: [AuthorizedKeyMatchLabel::NotReady; MAX_AUTHORIZED_KEY_MATCH_LABELS],
+            label_count: 0,
+            accepted_line_count,
+            authorized_key_byte_len,
+            request_public_key_blob_len,
+            matched_public_key_blob_len,
+            match_prerequisite_only,
+            authentication_success: false,
+            ssh_ready: false,
+        };
+        report.push(primary_label);
+        report.push(AuthorizedKeyMatchLabel::AuthenticationUnimplemented);
+        report.push(AuthorizedKeyMatchLabel::NotReady);
+        report
+    }
+
+    fn push(&mut self, label: AuthorizedKeyMatchLabel) {
+        self.labels[self.label_count] = label;
+        self.label_count += 1;
     }
 }
 
@@ -537,6 +652,222 @@ pub(crate) fn classify_authorized_key_material(
     }
 }
 
+pub(crate) fn match_authorized_key_public_blob(
+    initramfs: ReadOnlyInitramfs,
+    request_public_key_blob: &[u8],
+) -> AuthorizedKeyMatchReport {
+    let metadata = classify_authorized_key_material(initramfs);
+    let authorized_key_byte_len = metadata.byte_len();
+    if metadata.state() != AuthorizedKeyMaterialState::Sufficient {
+        return AuthorizedKeyMatchReport::new(
+            AuthorizedKeyMatchLabel::MissingOrMetadataInvalid,
+            0,
+            authorized_key_byte_len,
+            request_public_key_blob.len(),
+            None,
+            false,
+        );
+    }
+
+    let request_public_key_blob = match parse_ed25519_public_key_blob(request_public_key_blob) {
+        Ok(blob) => blob,
+        Err(label) => {
+            return AuthorizedKeyMatchReport::new(
+                label,
+                0,
+                authorized_key_byte_len,
+                request_public_key_blob.len(),
+                None,
+                false,
+            );
+        }
+    };
+
+    let bytes = match initramfs.regular_file_bytes(AUTHORIZED_KEY_PATH) {
+        Ok(bytes) => bytes,
+        Err(_) => {
+            return AuthorizedKeyMatchReport::new(
+                AuthorizedKeyMatchLabel::MissingOrMetadataInvalid,
+                0,
+                authorized_key_byte_len,
+                request_public_key_blob.len(),
+                None,
+                false,
+            );
+        }
+    };
+
+    let mut accepted_line_count = 0usize;
+    let mut matched_public_key_blob_len = None;
+
+    for raw_line in bytes.split(|byte| *byte == b'\n') {
+        let line = match strip_crlf(raw_line) {
+            Ok(line) => line,
+            Err(label) => {
+                return AuthorizedKeyMatchReport::new(
+                    label,
+                    accepted_line_count,
+                    authorized_key_byte_len,
+                    request_public_key_blob.len(),
+                    None,
+                    false,
+                );
+            }
+        };
+
+        let authorized_key_blob = match parse_authorized_key_line(line) {
+            Ok(Some(blob)) => blob,
+            Ok(None) => continue,
+            Err(label) => {
+                return AuthorizedKeyMatchReport::new(
+                    label,
+                    accepted_line_count,
+                    authorized_key_byte_len,
+                    request_public_key_blob.len(),
+                    None,
+                    false,
+                );
+            }
+        };
+
+        accepted_line_count += 1;
+        if authorized_key_blob == request_public_key_blob {
+            matched_public_key_blob_len = Some(authorized_key_blob.len());
+        }
+    }
+
+    if accepted_line_count == 0 {
+        return AuthorizedKeyMatchReport::new(
+            AuthorizedKeyMatchLabel::EmptyOrCommentOnly,
+            accepted_line_count,
+            authorized_key_byte_len,
+            request_public_key_blob.len(),
+            None,
+            false,
+        );
+    }
+
+    if let Some(blob_len) = matched_public_key_blob_len {
+        AuthorizedKeyMatchReport::new(
+            AuthorizedKeyMatchLabel::MatchPrerequisiteOnly,
+            accepted_line_count,
+            authorized_key_byte_len,
+            request_public_key_blob.len(),
+            Some(blob_len),
+            true,
+        )
+    } else {
+        AuthorizedKeyMatchReport::new(
+            AuthorizedKeyMatchLabel::NoMatch,
+            accepted_line_count,
+            authorized_key_byte_len,
+            request_public_key_blob.len(),
+            None,
+            false,
+        )
+    }
+}
+
+fn strip_crlf(line: &[u8]) -> Result<&[u8], AuthorizedKeyMatchLabel> {
+    let line = line.strip_suffix(b"\r").unwrap_or(line);
+    if line.contains(&b'\r') {
+        Err(AuthorizedKeyMatchLabel::LineMalformed)
+    } else {
+        Ok(line)
+    }
+}
+
+fn parse_authorized_key_line(line: &[u8]) -> Result<Option<Vec<u8>>, AuthorizedKeyMatchLabel> {
+    let Some(first_token_start) = line.iter().position(|byte| !is_horizontal_space(*byte)) else {
+        return Ok(None);
+    };
+    if line[first_token_start] == b'#' {
+        return Ok(None);
+    }
+
+    if line[..first_token_start]
+        .iter()
+        .any(|byte| !matches!(*byte, b' ' | b'\t'))
+    {
+        return Err(AuthorizedKeyMatchLabel::LineMalformed);
+    }
+
+    let first_token_end = line[first_token_start..]
+        .iter()
+        .position(|byte| is_horizontal_space(*byte))
+        .map(|offset| first_token_start + offset)
+        .ok_or(AuthorizedKeyMatchLabel::LineMalformed)?;
+    let key_type = &line[first_token_start..first_token_end];
+    if key_type != b"ssh-ed25519" {
+        return Err(classify_unsupported_authorized_key_token(key_type));
+    }
+
+    let mut blob_start = first_token_end;
+    while blob_start < line.len() && is_horizontal_space(line[blob_start]) {
+        blob_start += 1;
+    }
+    if blob_start == line.len() {
+        return Err(AuthorizedKeyMatchLabel::LineMalformed);
+    }
+
+    let blob_end = line[blob_start..]
+        .iter()
+        .position(|byte| is_horizontal_space(*byte))
+        .map(|offset| blob_start + offset)
+        .unwrap_or(line.len());
+    if blob_start == blob_end {
+        return Err(AuthorizedKeyMatchLabel::LineMalformed);
+    }
+
+    if line[blob_end..]
+        .iter()
+        .any(|byte| !is_horizontal_space(*byte) && !byte.is_ascii_graphic())
+    {
+        return Err(AuthorizedKeyMatchLabel::LineMalformed);
+    }
+
+    let blob_text = core::str::from_utf8(&line[blob_start..blob_end])
+        .map_err(|_| AuthorizedKeyMatchLabel::BlobMalformed)?;
+    let mut canonical = String::from("ssh-ed25519 ");
+    canonical.push_str(blob_text);
+    parse_ed25519_public_key_line(&canonical).map(Some)
+}
+
+fn classify_unsupported_authorized_key_token(token: &[u8]) -> AuthorizedKeyMatchLabel {
+    if token.starts_with(b"ssh-") || token.ends_with(b"-cert-v01@openssh.com") {
+        AuthorizedKeyMatchLabel::AlgorithmUnsupported
+    } else {
+        AuthorizedKeyMatchLabel::LineUnsupported
+    }
+}
+
+const fn is_horizontal_space(byte: u8) -> bool {
+    matches!(byte, b' ' | b'\t')
+}
+
+fn parse_ed25519_public_key_line(line: &str) -> Result<Vec<u8>, AuthorizedKeyMatchLabel> {
+    let public_key =
+        PublicKey::from_openssh(line).map_err(|_| AuthorizedKeyMatchLabel::BlobMalformed)?;
+    encode_ed25519_public_key_blob(public_key)
+}
+
+fn parse_ed25519_public_key_blob(bytes: &[u8]) -> Result<Vec<u8>, AuthorizedKeyMatchLabel> {
+    let public_key =
+        PublicKey::from_bytes(bytes).map_err(|_| AuthorizedKeyMatchLabel::BlobMalformed)?;
+    encode_ed25519_public_key_blob(public_key)
+}
+
+fn encode_ed25519_public_key_blob(
+    public_key: PublicKey,
+) -> Result<Vec<u8>, AuthorizedKeyMatchLabel> {
+    if public_key.algorithm() != Algorithm::Ed25519 || public_key.key_data().ed25519().is_none() {
+        return Err(AuthorizedKeyMatchLabel::AlgorithmUnsupported);
+    }
+    public_key
+        .to_bytes()
+        .map_err(|_| AuthorizedKeyMatchLabel::BlobMalformed)
+}
+
 pub(crate) const fn classify_persistence_metadata(
     seed_metadata: OperatorSeedMaterialMetadata,
     host_key_metadata: HostKeyMaterialMetadata,
@@ -576,9 +907,20 @@ mod tests {
     use super::*;
     use crate::entropy::{EntropyObservation, OperatorSeedObservation};
     use crate::initramfs::{DirectoryEntry, InitramfsNode, phase8_readonly_initramfs_fixture};
+    use alloc::boxed::Box;
 
     fn label_names(report: &SshKeyReadinessReport) -> [&'static str; MAX_SSH_KEY_READINESS_LABELS] {
         let mut labels = [""; MAX_SSH_KEY_READINESS_LABELS];
+        for (index, label) in report.labels().iter().enumerate() {
+            labels[index] = label.name();
+        }
+        labels
+    }
+
+    fn authorized_key_match_label_names(
+        report: &AuthorizedKeyMatchReport,
+    ) -> [&'static str; MAX_AUTHORIZED_KEY_MATCH_LABELS] {
+        let mut labels = [""; MAX_AUTHORIZED_KEY_MATCH_LABELS];
         for (index, label) in report.labels().iter().enumerate() {
             labels[index] = label.name();
         }
@@ -1009,6 +1351,139 @@ mod tests {
     }
 
     #[test_case]
+    fn authorized_key_parser_matches_only_as_prerequisite() {
+        let request_blob = public_fixture_authorized_key_blob();
+        let report =
+            match_authorized_key_public_blob(valid_authorized_key_initramfs(), &request_blob);
+
+        assert_eq!(
+            report.primary_label(),
+            AuthorizedKeyMatchLabel::MatchPrerequisiteOnly
+        );
+        assert_eq!(
+            authorized_key_match_label_names(&report),
+            [
+                "authorized-keys-match-prerequisite-only",
+                "authentication-unimplemented",
+                "not-ready",
+            ]
+        );
+        assert_eq!(report.accepted_line_count(), 1);
+        assert_eq!(
+            report.authorized_key_byte_len(),
+            Some(valid_authorized_key_byte_len())
+        );
+        assert_eq!(report.request_public_key_blob_len(), request_blob.len());
+        assert_eq!(
+            report.matched_public_key_blob_len(),
+            Some(request_blob.len())
+        );
+        assert!(report.match_prerequisite_only());
+        assert!(!report.authentication_success());
+        assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn authorized_key_parser_reports_no_match_without_readiness() {
+        let request_blob = nonmatching_public_key_blob();
+        let report =
+            match_authorized_key_public_blob(valid_authorized_key_initramfs(), &request_blob);
+
+        assert_eq!(report.primary_label(), AuthorizedKeyMatchLabel::NoMatch);
+        assert_eq!(report.accepted_line_count(), 1);
+        assert_eq!(report.matched_public_key_blob_len(), None);
+        assert!(!report.match_prerequisite_only());
+        assert!(!report.authentication_success());
+        assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn authorized_key_parser_ignores_blank_and_comment_only_files_but_fails_closed() {
+        let request_blob = public_fixture_authorized_key_blob();
+        let report = match_authorized_key_public_blob(
+            comment_only_authorized_key_initramfs(),
+            &request_blob,
+        );
+
+        assert_eq!(
+            report.primary_label(),
+            AuthorizedKeyMatchLabel::EmptyOrCommentOnly
+        );
+        assert_eq!(report.accepted_line_count(), 0);
+        assert!(!report.authentication_success());
+        assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn authorized_key_parser_rejects_missing_invalid_and_oversized_metadata() {
+        let request_blob = public_fixture_authorized_key_blob();
+        let missing =
+            match_authorized_key_public_blob(phase8_readonly_initramfs_fixture(), &request_blob);
+        let directory =
+            match_authorized_key_public_blob(directory_authorized_key_initramfs(), &request_blob);
+        let oversized =
+            match_authorized_key_public_blob(oversized_authorized_key_initramfs(), &request_blob);
+
+        assert_eq!(
+            missing.primary_label(),
+            AuthorizedKeyMatchLabel::MissingOrMetadataInvalid
+        );
+        assert_eq!(
+            directory.primary_label(),
+            AuthorizedKeyMatchLabel::MissingOrMetadataInvalid
+        );
+        assert_eq!(
+            oversized.primary_label(),
+            AuthorizedKeyMatchLabel::MissingOrMetadataInvalid
+        );
+        assert!(!missing.ssh_ready());
+        assert!(!directory.authentication_success());
+        assert!(!oversized.match_prerequisite_only());
+    }
+
+    #[test_case]
+    fn authorized_key_parser_rejects_unsupported_and_malformed_lines() {
+        let request_blob = public_fixture_authorized_key_blob();
+        let unsupported = match_authorized_key_public_blob(
+            unsupported_option_authorized_key_initramfs(),
+            &request_blob,
+        );
+        let unsupported_algorithm = match_authorized_key_public_blob(
+            unsupported_algorithm_authorized_key_initramfs(),
+            &request_blob,
+        );
+        let malformed = match_authorized_key_public_blob(
+            malformed_line_authorized_key_initramfs(),
+            &request_blob,
+        );
+        let malformed_blob = match_authorized_key_public_blob(
+            malformed_blob_authorized_key_initramfs(),
+            &request_blob,
+        );
+
+        assert_eq!(
+            unsupported.primary_label(),
+            AuthorizedKeyMatchLabel::LineUnsupported
+        );
+        assert_eq!(
+            unsupported_algorithm.primary_label(),
+            AuthorizedKeyMatchLabel::AlgorithmUnsupported
+        );
+        assert_eq!(
+            malformed.primary_label(),
+            AuthorizedKeyMatchLabel::LineMalformed
+        );
+        assert_eq!(
+            malformed_blob.primary_label(),
+            AuthorizedKeyMatchLabel::BlobMalformed
+        );
+        assert!(!unsupported.authentication_success());
+        assert!(!unsupported_algorithm.ssh_ready());
+        assert!(!malformed.match_prerequisite_only());
+        assert!(!malformed_blob.ssh_ready());
+    }
+
+    #[test_case]
     fn operator_seed_vfs_metadata_maps_to_missing_insufficient_and_present_states() {
         let missing = classify_ssh_key_readiness(
             SshKeyReadinessSnapshot::fail_closed_default()
@@ -1233,6 +1708,12 @@ bQP0o+gL5aKK8cQgiIlXeDbRjqhc4+h4EF6lY=
         [0; AUTHORIZED_KEY_MIN_METADATA_BYTES];
     static OVERSIZED_AUTHORIZED_KEY_BYTES: [u8; AUTHORIZED_KEY_MAX_METADATA_BYTES + 1] =
         [0; AUTHORIZED_KEY_MAX_METADATA_BYTES + 1];
+    static COMMENT_ONLY_AUTHORIZED_KEY_BYTES: &[u8] =
+        b"# ignored public fixture comment only, intentionally longer than the metadata minimum\n\t\n";
+    static UNSUPPORTED_ALGORITHM_AUTHORIZED_KEY_BYTES: &[u8] =
+        b"ssh-rsa unsupported-algorithm-line-padding-that-is-longer-than-the-metadata-minimum";
+    static MALFORMED_BLOB_AUTHORIZED_KEY_BYTES: &[u8] =
+        b"ssh-ed25519 not-valid-base64-because-this-text-is-long-enough-for-metadata";
     static OVERSIZED_EXPOSURE_MARKER_BYTES: [u8; EXPOSURE_MARKER_MAX_METADATA_BYTES + 1] =
         [0; EXPOSURE_MARKER_MAX_METADATA_BYTES + 1];
 
@@ -1325,6 +1806,33 @@ bQP0o+gL5aKK8cQgiIlXeDbRjqhc4+h4EF6lY=
         InitramfsNode::regular_file(HOST_KEY_INDEX, b"unused"),
         InitramfsNode::regular_file(AUTHORIZED_KEY_INDEX, &OVERSIZED_AUTHORIZED_KEY_BYTES),
     ];
+    static COMMENT_ONLY_AUTHORIZED_KEY_NODES: [InitramfsNode; 6] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
+        InitramfsNode::directory(SSH_INDEX, &SSH_AUTHORIZED_KEY_ENTRIES),
+        InitramfsNode::regular_file(HOST_KEY_INDEX, b"unused"),
+        InitramfsNode::regular_file(AUTHORIZED_KEY_INDEX, COMMENT_ONLY_AUTHORIZED_KEY_BYTES),
+    ];
+    static UNSUPPORTED_ALGORITHM_AUTHORIZED_KEY_NODES: [InitramfsNode; 6] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
+        InitramfsNode::directory(SSH_INDEX, &SSH_AUTHORIZED_KEY_ENTRIES),
+        InitramfsNode::regular_file(HOST_KEY_INDEX, b"unused"),
+        InitramfsNode::regular_file(
+            AUTHORIZED_KEY_INDEX,
+            UNSUPPORTED_ALGORITHM_AUTHORIZED_KEY_BYTES,
+        ),
+    ];
+    static MALFORMED_BLOB_AUTHORIZED_KEY_NODES: [InitramfsNode; 6] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
+        InitramfsNode::directory(SSH_INDEX, &SSH_AUTHORIZED_KEY_ENTRIES),
+        InitramfsNode::regular_file(HOST_KEY_INDEX, b"unused"),
+        InitramfsNode::regular_file(AUTHORIZED_KEY_INDEX, MALFORMED_BLOB_AUTHORIZED_KEY_BYTES),
+    ];
     static DIRECTORY_EXPOSURE_MARKER_NODES: [InitramfsNode; 5] = [
         InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
         InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
@@ -1393,6 +1901,80 @@ bQP0o+gL5aKK8cQgiIlXeDbRjqhc4+h4EF6lY=
 
     const fn oversized_authorized_key_initramfs() -> ReadOnlyInitramfs {
         ReadOnlyInitramfs::new(&OVERSIZED_AUTHORIZED_KEY_NODES, ROOT_INDEX)
+    }
+
+    fn valid_authorized_key_initramfs() -> ReadOnlyInitramfs {
+        generated_authorized_key_initramfs(valid_authorized_key_bytes())
+    }
+
+    const fn comment_only_authorized_key_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&COMMENT_ONLY_AUTHORIZED_KEY_NODES, ROOT_INDEX)
+    }
+
+    fn unsupported_option_authorized_key_initramfs() -> ReadOnlyInitramfs {
+        let mut line = String::from("command=\"ignored\" ");
+        line.push_str(&public_fixture_authorized_key_line());
+        generated_authorized_key_initramfs(line.into_bytes())
+    }
+
+    const fn unsupported_algorithm_authorized_key_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&UNSUPPORTED_ALGORITHM_AUTHORIZED_KEY_NODES, ROOT_INDEX)
+    }
+
+    fn malformed_line_authorized_key_initramfs() -> ReadOnlyInitramfs {
+        let mut bytes = public_fixture_authorized_key_line().into_bytes();
+        bytes.push(b' ');
+        bytes.push(0xff);
+        generated_authorized_key_initramfs(bytes)
+    }
+
+    const fn malformed_blob_authorized_key_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&MALFORMED_BLOB_AUTHORIZED_KEY_NODES, ROOT_INDEX)
+    }
+
+    fn public_fixture_authorized_key_blob() -> Vec<u8> {
+        parse_authorized_key_line(public_fixture_authorized_key_line().as_bytes())
+            .expect("public fixture authorized key parses")
+            .expect("public fixture authorized key is not a comment")
+    }
+
+    fn nonmatching_public_key_blob() -> Vec<u8> {
+        let mut blob = public_fixture_authorized_key_blob();
+        let last = blob.last_mut().expect("public fixture blob is non-empty");
+        *last ^= 1;
+        blob
+    }
+
+    fn valid_authorized_key_byte_len() -> usize {
+        valid_authorized_key_bytes().len()
+    }
+
+    fn valid_authorized_key_bytes() -> Vec<u8> {
+        let mut line = String::from("\t");
+        line.push_str(&public_fixture_authorized_key_line());
+        line.push_str(" public-fixture\r\n# ignored comment line\n\n");
+        line.into_bytes()
+    }
+
+    fn public_fixture_authorized_key_line() -> String {
+        public_fixture_host_key_private_material()
+            .private_key
+            .public_key()
+            .to_openssh()
+            .expect("public fixture public key encodes")
+    }
+
+    fn generated_authorized_key_initramfs(bytes: Vec<u8>) -> ReadOnlyInitramfs {
+        let bytes = Box::leak(bytes.into_boxed_slice());
+        let nodes = Box::leak(Box::new([
+            InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+            InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+            InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
+            InitramfsNode::directory(SSH_INDEX, &SSH_AUTHORIZED_KEY_ENTRIES),
+            InitramfsNode::regular_file(HOST_KEY_INDEX, b"unused"),
+            InitramfsNode::regular_file(AUTHORIZED_KEY_INDEX, bytes),
+        ]));
+        ReadOnlyInitramfs::new(nodes, ROOT_INDEX)
     }
 
     const fn directory_exposure_marker_initramfs() -> ReadOnlyInitramfs {
