@@ -12,6 +12,52 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-22 - Phase 12 Publickey USERAUTH_SUCCESS Starts With One Reserved Account Policy
+
+- Status: accepted as the bounded publickey authentication-success
+  account-policy contract in
+  phase12-ssh-publickey-auth-success-account-policy-contract-20260622. No Rust
+  implementation, sessions/channels, shell attachment, live reachability,
+  hardware action, OpenSSH/POSIX/Linux compatibility, broad expansion, or
+  phase transition is accepted here.
+- Context: Publickey authentication now has prerequisite-only request parsing,
+  private userauth session-id handling, authorized_keys key matching,
+  ssh-ed25519 signature verification, and PK_OK/FAILURE response policy. The
+  next slice needs a narrow account-binding rule before any source code can
+  model USERAUTH_SUCCESS.
+- Decision: The first USERAUTH_SUCCESS policy accepts exactly one local
+  account-binding path: a signed-valid ssh-ed25519 publickey request for the
+  single reserved Talos SSH login account name, the ASCII literal talos, with
+  the accepted encrypted
+  userauth request shape, same-request authorized_keys key-match prerequisite,
+  private session-id handle, verifier prerequisite-only success, and enabled
+  account policy. All account mismatches, disabled policy, missing
+  prerequisites, unsigned probes outside the accepted PK_OK slice, invalid or
+  malformed signatures, unauthorized keys, malformed requests, unsupported
+  algorithms, and redaction-sensitive paths fail closed with
+  USERAUTH_FAILURE. No partial success is accepted.
+- Evidence level: static task/docs/source review. The task record is
+  tasks/2026-06-22-phase12-ssh-publickey-auth-success-account-policy-contract.md.
+- Consequences: A later implementation can model authentication-success=true
+  only for this local success path, while session-count=0, channel-count=0,
+  shell-attached=false, live-reachability=false, and ssh-ready=false remain
+  authoritative. The reserved account is not a POSIX user database, UID/GID
+  model, home directory, shell path, login session, per-user authorized_keys
+  lookup, writable account store, operator identity claim, or OpenSSH
+  compatibility claim. The reserved account name is a public source constant;
+  durable evidence must not retain request user-name
+  strings, operator identity, authorized-key bytes, public-key blobs,
+  signatures, signed-data bytes, fingerprints, digests, session-id bytes,
+  peer strings, key-derived identifiers, stable identifiers, hardware data, or
+  boot artifacts.
+- Alternatives considered: accepting any request user-name, accepting a broad
+  POSIX-like account database, adding per-user authorized_keys paths, accepting
+  partial success, combining authentication success with session/channel/shell
+  allocation, or delaying account policy until live OpenSSH testing. These are
+  deferred or rejected because they broaden account semantics, storage
+  requirements, compatibility claims, and evidence risk beyond the first
+  authentication-success slice.
+
 ## 2026-06-22 - Phase 12 Publickey Responses Start With PK_OK/FAILURE Only
 
 - Status: accepted as the bounded publickey authentication response-policy

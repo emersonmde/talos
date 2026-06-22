@@ -7869,3 +7869,31 @@ public-key blobs, signatures, signed-data bytes, fingerprints, digests,
 user/operator identity, peer strings, key-derived identifiers, stable
 identifiers, hardware data, or boot artifacts. The selected next bounded task
 is phase12-ssh-publickey-auth-success-account-policy-contract-20260622.
+
+phase12-ssh-publickey-auth-success-account-policy-contract-20260622 accepts
+the bounded account-binding and publickey USERAUTH_SUCCESS policy contract.
+The next implementation may model SSH_MSG_USERAUTH_SUCCESS only for a signed
+ssh-ed25519 publickey request that has the accepted encrypted userauth request
+shape, private session-id handle, same-request authorized_keys key-match
+prerequisite, prerequisite-only verifier success, enabled account policy, and
+the single reserved Talos SSH login account name, the ASCII literal talos.
+
+The account policy is deliberately narrow: it is a local Talos management
+account boundary with a public source constant, not a POSIX user database,
+UID/GID model, home directory, shell path, login session, per-user
+authorized_keys lookup, writable account store, operator identity claim, or
+OpenSSH compatibility claim. Account
+mismatch, disabled policy, missing prerequisites, unsigned probes outside the
+accepted PK_OK response slice, malformed requests, unsupported algorithms,
+invalid signatures, unauthorized keys, and redaction-sensitive paths must fail
+closed with USERAUTH_FAILURE and fixed labels. Retained evidence may expose
+only fixed account-policy labels, task/source/doc paths, public message names,
+public byte-length/count fields, validation commands, and classifications; it
+must not retain request user-name strings, operator identity, key material,
+session-id bytes, signatures, signed-data bytes, key-derived identifiers,
+stable identifiers, hardware data, or boot artifacts. Authentication-success
+may become true only for the modeled USERAUTH_SUCCESS result, while
+session-count=0, channel-count=0, shell-attached=false,
+live-reachability=false, and ssh-ready=false remain authoritative. The
+selected next bounded task is
+phase12-ssh-publickey-auth-success-account-core-20260622.

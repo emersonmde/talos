@@ -16946,6 +16946,25 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   proof, compatibility, broad expansion, phase transition, and ssh-ready=true
   remain unaccepted. The selected next bounded task is
   phase12-ssh-publickey-auth-success-account-policy-contract-20260622.
+- phase12-ssh-publickey-auth-success-account-policy-contract-20260622 accepts
+  the bounded account-binding and publickey authentication-success policy
+  contract. The next implementation may model USERAUTH_SUCCESS only for a
+  signed-valid ssh-ed25519 publickey request with the accepted encrypted
+  userauth request shape, private session-id handle, same-request
+  authorized_keys key-match prerequisite, prerequisite-only verifier success,
+  enabled account policy, and the single reserved Talos SSH login account
+  name, the ASCII literal talos. All account mismatches, disabled-policy,
+  missing-prerequisite, malformed, unsupported, unauthorized,
+  invalid-signature, unsigned-probe outside PK_OK, and redaction-sensitive
+  paths fail closed with USERAUTH_FAILURE and fixed labels. This is not a
+  POSIX account database, UID/GID model, home directory, shell path, login
+  session, per-user authorized_keys lookup, writable account store, operator
+  identity claim, or OpenSSH compatibility claim. Authentication-success may
+  become true only for the local modeled USERAUTH_SUCCESS result, while
+  session-count=0, channel-count=0, shell-attached=false,
+  live-reachability=false, and ssh-ready=false remain authoritative. The
+  selected next bounded task is
+  phase12-ssh-publickey-auth-success-account-core-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
