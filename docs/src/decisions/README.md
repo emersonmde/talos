@@ -12,6 +12,55 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-22 - Phase 12 Uses a Narrow no_std Runtime SSH Crypto Backend
+
+- Status: accepted as the bounded runtime crypto backend contract in
+  phase12-ssh-runtime-crypto-backend-contract-20260622. No Rust source
+  implementation, Cargo dependency adoption, actual X25519, transcript
+  hashing, SSH KDF, encryption/MAC, NEWKEYS, authentication/session behavior,
+  shell attachment, hardware reachability, public OpenSSH/POSIX/Linux
+  compatibility, broad expansion, or phase transition is accepted here.
+- Context: Accepted KEXINIT/algorithm negotiation selected curve25519-sha256,
+  ssh-ed25519, chacha20-poly1305@openssh.com, hmac-sha2-256, compression none,
+  and empty language lists, but runtime KEX remained blocked until host-key
+  private-material parsing/signing and no_std runtime crypto boundaries were
+  explicit. The host-key private-material closeout accepted only readiness for
+  later runtime KEX planning.
+- Decision: The first runtime SSH crypto backend is Talos-owned orchestration
+  over x25519-dalek 3.0.0-rc.1 with default-features=false and zeroize,
+  sha2 0.11.0 with default-features=false and zeroize, hmac 0.13.0 with
+  default-features=false and zeroize, and ssh-cipher 0.3.0-rc.10 with
+  default-features=false plus chacha20poly1305 and zeroize. X25519 randomness
+  must come only from the accepted OperatorSeededCsprng through a private
+  rand_core 0.10 CryptoRng adapter. The runtime packet cipher selects
+  ssh-cipher's chacha20-poly1305@openssh.com implementation rather than the
+  RFC8439 chacha20poly1305 crate. The modeled hmac-sha2-256 name remains a
+  bounded MAC surface, but the first AEAD packet path must not emit a
+  standalone HMAC.
+- Evidence level: static task/docs/source review; cargo info for
+  x25519-dalek 3.0.0-rc.1, chacha20poly1305 0.11.0-rc.3, ssh-cipher
+  0.3.0-rc.10, hmac 0.13.0, and sha2 0.11.0; local registry source inspection
+  for x25519-dalek, ssh-cipher, hmac, and sha2; accepted KEXINIT, CSPRNG,
+  host-key private-material, listener/transport, and service-readiness task
+  evidence. The task record is
+  tasks/2026-06-22-phase12-ssh-runtime-crypto-backend-contract.md.
+- Consequences: A later implementation task may add only the selected
+  dependency feature sets and a private runtime module exposing fixed-label
+  readiness and one-shot KEX result state. Durable evidence must not retain
+  private keys, signatures, fingerprints, digests, random bytes, shared
+  secrets, derived keys, packet plaintext/ciphertext, tags, operator identity,
+  key-derived identifiers, or stable transport/session identifiers. ssh-ready
+  remains false until later authentication/session/shell and reachability tasks
+  explicitly accept readiness.
+- Alternatives considered: RFC8439 chacha20poly1305 for packet crypto,
+  ssh-cipher AES/TDES/getrandom/default features, ambient getrandom/host RNG,
+  hand-rolled X25519 or OpenSSH packet cipher code, reusable/static X25519
+  secrets, broader hash/MAC/cipher suites, and accepting runtime KEX before a
+  redaction/zeroization contract. They are rejected or deferred because they
+  either do not match the accepted OpenSSH cipher construction, widen the
+  crypto surface, introduce ambient entropy, or make secret evidence and
+  lifetime rules ambiguous before implementation.
+
 ## 2026-06-22 - Phase 12 Uses Unencrypted OpenSSH Ed25519 Host Keys First
 
 - Status: accepted as the bounded host-key private-material contract in

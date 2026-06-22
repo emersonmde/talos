@@ -16483,6 +16483,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   derived key lifetime, zeroization, encrypted packet state, and integration
   with the accepted host-key signing handle. The selected next bounded task is
   phase12-ssh-runtime-crypto-backend-contract-20260622.
+- phase12-ssh-runtime-crypto-backend-contract-20260622 accepts a static no_std
+  runtime crypto backend/API contract. The selected later-implementation
+  dependency boundary is x25519-dalek 3.0.0-rc.1 with default-features=false
+  and zeroize for one-shot X25519 over the accepted operator-seeded CSPRNG,
+  sha2 0.11.0 with default-features=false and zeroize for SHA-256 exchange
+  hashing and SSH KDF expansion, hmac 0.13.0 with default-features=false and
+  zeroize for the negotiated hmac-sha2-256 surface, and ssh-cipher
+  0.3.0-rc.10 with default-features=false plus chacha20poly1305 and zeroize
+  for chacha20-poly1305@openssh.com encrypted-packet state. The runtime packet
+  cipher uses ssh-cipher's OpenSSH construction rather than the RFC8439
+  chacha20poly1305 crate. The first AEAD encrypted-packet path must not emit a
+  standalone HMAC despite the modeled hmac-sha2-256 negotiation name. No Cargo
+  dependency adoption, runtime KEX implementation, encryption/MAC, NEWKEYS,
+  authentication/session behavior, shell attachment, hardware reachability,
+  public compatibility, broad expansion, or phase transition is accepted.
+  Supervisor planning is required before a bounded runtime KEX implementation
+  task is queued.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
