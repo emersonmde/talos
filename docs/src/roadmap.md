@@ -16119,6 +16119,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   behavior, live transport, hardware reachability, public
   ABI/POSIX/Linux compatibility, broad expansion, stale link-ready discriminator
   promotion, or phase transition.
+- phase12-ssh-persistence-exposure-vfs-core-20260622 accepts the metadata-only
+  read-only VFS persistence/exposure implementation for sshkeydiag. Persistence
+  metadata is present only when /etc/talos/operator-seed.bin,
+  /etc/talos/ssh/ssh_host_ed25519_key, and
+  /etc/talos/ssh/authorized_keys all have sufficient generated-root metadata
+  under their accepted contracts; otherwise sshkeydiag-persistence-unavailable
+  remains present. /etc/talos/ssh/exposure-enabled is now the explicit exposure
+  marker: missing or invalid marker metadata keeps
+  sshkeydiag-exposure-disabled, while a regular readable 0 through 4096 byte
+  marker clears only that label. sshkeydiag-not-ready remains present and
+  ssh-ready remains false until SSH service behavior, live transport, and
+  reachability are accepted separately. The selected next bounded task is
+  phase12-shell-ssh-persistence-exposure-diag-smoke-20260622. This
+  implementation does not accept key parsing, secret retention, writable
+  persistence, SSH service behavior, live transport, hardware reachability,
+  public ABI/POSIX/Linux compatibility, stale link-ready discriminator
+  promotion, broad expansion, or phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

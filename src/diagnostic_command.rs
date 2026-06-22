@@ -314,6 +314,12 @@ fn write_ssh_key_readiness_response(
             let host_key_metadata = ssh_key_readiness::classify_host_key_material(initramfs);
             let authorized_key_metadata =
                 ssh_key_readiness::classify_authorized_key_material(initramfs);
+            let persistence = ssh_key_readiness::classify_persistence_metadata(
+                seed_metadata,
+                host_key_metadata,
+                authorized_key_metadata,
+            );
+            let exposure = ssh_key_readiness::classify_exposure_marker(initramfs);
             let entropy = entropy::classify_entropy_snapshot(
                 entropy::entropy_snapshot_with_operator_seed_material(initramfs),
             );
@@ -321,6 +327,8 @@ fn write_ssh_key_readiness_response(
                 .with_host_key_material(host_key_metadata)
                 .with_authorized_key_material(authorized_key_metadata)
                 .with_operator_seed_material(seed_metadata)
+                .with_persistence_state(persistence)
+                .with_exposure_state(exposure)
                 .with_entropy_report(entropy)
         }
     };
@@ -450,7 +458,10 @@ mod tests {
         entropy::OPERATOR_SEED_MIN_SUFFICIENT_BYTES,
         initramfs::{DirectoryEntry, InitramfsNode, phase8_readonly_initramfs_fixture},
         ssh_key_readiness::{AUTHORIZED_KEY_MAX_METADATA_BYTES, AUTHORIZED_KEY_MIN_METADATA_BYTES},
-        ssh_key_readiness::{HOST_KEY_MAX_METADATA_BYTES, HOST_KEY_MIN_METADATA_BYTES},
+        ssh_key_readiness::{
+            EXPOSURE_MARKER_MAX_METADATA_BYTES, HOST_KEY_MAX_METADATA_BYTES,
+            HOST_KEY_MIN_METADATA_BYTES,
+        },
     };
 
     struct CaptureSink {
@@ -802,10 +813,49 @@ mod tests {
         .unwrap();
 
         assert_eq!(sufficient_result.status, DiagnosticDispatchStatus::Handled);
-        assert_eq!(sufficient_result.response_lines, 7);
+        assert_eq!(sufficient_result.response_lines, 6);
         assert_eq!(
             sufficient_sink.as_str(),
-            "diag: ok sshkeydiag\ndiag: sshkey-readiness sshkeydiag-not-ready\ndiag: sshkey-label sshkeydiag-entropy-unready\ndiag: sshkey-label sshkeydiag-persistence-unavailable\ndiag: sshkey-label sshkeydiag-exposure-disabled\ndiag: sshkey-label sshkeydiag-not-ready\ndiag: ssh-ready false\n"
+            "diag: ok sshkeydiag\ndiag: sshkey-readiness sshkeydiag-not-ready\ndiag: sshkey-label sshkeydiag-entropy-unready\ndiag: sshkey-label sshkeydiag-exposure-disabled\ndiag: sshkey-label sshkeydiag-not-ready\ndiag: ssh-ready false\n"
+        );
+    }
+
+    #[test_case]
+    fn dispatcher_reports_persistence_exposure_metadata_without_secret_material() {
+        let mut invalid_exposure_sink = CaptureSink::new();
+        let invalid_exposure_result = dispatch_diagnostic_command_with_operator_seed_material(
+            b"sshkeydiag",
+            invalid_exposure_marker_initramfs(),
+            &mut invalid_exposure_sink,
+        )
+        .unwrap();
+
+        assert_eq!(
+            invalid_exposure_result.status,
+            DiagnosticDispatchStatus::Handled
+        );
+        assert_eq!(invalid_exposure_result.response_lines, 6);
+        assert_eq!(
+            invalid_exposure_sink.as_str(),
+            "diag: ok sshkeydiag\ndiag: sshkey-readiness sshkeydiag-not-ready\ndiag: sshkey-label sshkeydiag-entropy-unready\ndiag: sshkey-label sshkeydiag-exposure-disabled\ndiag: sshkey-label sshkeydiag-not-ready\ndiag: ssh-ready false\n"
+        );
+
+        let mut enabled_exposure_sink = CaptureSink::new();
+        let enabled_exposure_result = dispatch_diagnostic_command_with_operator_seed_material(
+            b"sshkeydiag",
+            enabled_exposure_marker_initramfs(),
+            &mut enabled_exposure_sink,
+        )
+        .unwrap();
+
+        assert_eq!(
+            enabled_exposure_result.status,
+            DiagnosticDispatchStatus::Handled
+        );
+        assert_eq!(enabled_exposure_result.response_lines, 5);
+        assert_eq!(
+            enabled_exposure_sink.as_str(),
+            "diag: ok sshkeydiag\ndiag: sshkey-readiness sshkeydiag-not-ready\ndiag: sshkey-label sshkeydiag-entropy-unready\ndiag: sshkey-label sshkeydiag-not-ready\ndiag: ssh-ready false\n"
         );
     }
 
@@ -856,6 +906,7 @@ mod tests {
     const HOST_KEY_INDEX: usize = 5;
     const HOST_KEY_AND_SEED_INDEX: usize = 6;
     const AUTHORIZED_KEY_INDEX: usize = 7;
+    const EXPOSURE_MARKER_INDEX: usize = 8;
 
     static ROOT_ENTRIES: [DirectoryEntry; 1] = [DirectoryEntry::new(b"etc", ETC_INDEX)];
     static ETC_ENTRIES: [DirectoryEntry; 1] = [DirectoryEntry::new(b"talos", TALOS_INDEX)];
@@ -876,6 +927,11 @@ mod tests {
         DirectoryEntry::new(b"ssh_host_ed25519_key", HOST_KEY_AND_SEED_INDEX),
         DirectoryEntry::new(b"authorized_keys", AUTHORIZED_KEY_INDEX),
     ];
+    static SSH_WITH_AUTHORIZED_KEY_AND_EXPOSURE_ENTRIES: [DirectoryEntry; 3] = [
+        DirectoryEntry::new(b"ssh_host_ed25519_key", HOST_KEY_AND_SEED_INDEX),
+        DirectoryEntry::new(b"authorized_keys", AUTHORIZED_KEY_INDEX),
+        DirectoryEntry::new(b"exposure-enabled", EXPOSURE_MARKER_INDEX),
+    ];
     static INSUFFICIENT_SEED_BYTES: [u8; OPERATOR_SEED_MIN_SUFFICIENT_BYTES - 1] =
         [0; OPERATOR_SEED_MIN_SUFFICIENT_BYTES - 1];
     static SUFFICIENT_SEED_BYTES: [u8; OPERATOR_SEED_MIN_SUFFICIENT_BYTES] =
@@ -892,6 +948,8 @@ mod tests {
         [0; AUTHORIZED_KEY_MIN_METADATA_BYTES];
     static OVERSIZED_AUTHORIZED_KEY_BYTES: [u8; AUTHORIZED_KEY_MAX_METADATA_BYTES + 1] =
         [0; AUTHORIZED_KEY_MAX_METADATA_BYTES + 1];
+    static OVERSIZED_EXPOSURE_MARKER_BYTES: [u8; EXPOSURE_MARKER_MAX_METADATA_BYTES + 1] =
+        [0; EXPOSURE_MARKER_MAX_METADATA_BYTES + 1];
 
     static INSUFFICIENT_SEED_NODES: [InitramfsNode; 4] = [
         InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
@@ -978,6 +1036,28 @@ mod tests {
         InitramfsNode::regular_file(HOST_KEY_AND_SEED_INDEX, &SUFFICIENT_HOST_KEY_BYTES),
         InitramfsNode::regular_file(AUTHORIZED_KEY_INDEX, &OVERSIZED_AUTHORIZED_KEY_BYTES),
     ];
+    static INVALID_EXPOSURE_MARKER_NODES: [InitramfsNode; 9] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_WITH_SEED_AND_SSH_ENTRIES),
+        InitramfsNode::regular_file(SEED_INDEX, &SUFFICIENT_SEED_BYTES),
+        InitramfsNode::directory(SSH_INDEX, &SSH_WITH_AUTHORIZED_KEY_AND_EXPOSURE_ENTRIES),
+        InitramfsNode::regular_file(HOST_KEY_INDEX, b"unused"),
+        InitramfsNode::regular_file(HOST_KEY_AND_SEED_INDEX, &SUFFICIENT_HOST_KEY_BYTES),
+        InitramfsNode::regular_file(AUTHORIZED_KEY_INDEX, &SUFFICIENT_AUTHORIZED_KEY_BYTES),
+        InitramfsNode::regular_file(EXPOSURE_MARKER_INDEX, &OVERSIZED_EXPOSURE_MARKER_BYTES),
+    ];
+    static ENABLED_EXPOSURE_MARKER_NODES: [InitramfsNode; 9] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_WITH_SEED_AND_SSH_ENTRIES),
+        InitramfsNode::regular_file(SEED_INDEX, &SUFFICIENT_SEED_BYTES),
+        InitramfsNode::directory(SSH_INDEX, &SSH_WITH_AUTHORIZED_KEY_AND_EXPOSURE_ENTRIES),
+        InitramfsNode::regular_file(HOST_KEY_INDEX, b"unused"),
+        InitramfsNode::regular_file(HOST_KEY_AND_SEED_INDEX, &SUFFICIENT_HOST_KEY_BYTES),
+        InitramfsNode::regular_file(AUTHORIZED_KEY_INDEX, &SUFFICIENT_AUTHORIZED_KEY_BYTES),
+        InitramfsNode::regular_file(EXPOSURE_MARKER_INDEX, b""),
+    ];
 
     const fn insufficient_seed_initramfs() -> ReadOnlyInitramfs {
         ReadOnlyInitramfs::new(&INSUFFICIENT_SEED_NODES, ROOT_INDEX)
@@ -1020,5 +1100,13 @@ mod tests {
 
     const fn oversized_authorized_key_initramfs() -> ReadOnlyInitramfs {
         ReadOnlyInitramfs::new(&OVERSIZED_AUTHORIZED_KEY_NODES, ROOT_INDEX)
+    }
+
+    const fn invalid_exposure_marker_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&INVALID_EXPOSURE_MARKER_NODES, ROOT_INDEX)
+    }
+
+    const fn enabled_exposure_marker_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&ENABLED_EXPOSURE_MARKER_NODES, ROOT_INDEX)
     }
 }

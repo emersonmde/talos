@@ -6693,3 +6693,22 @@ sshkeydiag-not-ready remains present and ssh-ready remains false until SSH
 service behavior, live transport, and reachability are accepted separately.
 The selected next bounded task is
 phase12-ssh-persistence-exposure-vfs-core-20260622.
+
+phase12-ssh-persistence-exposure-vfs-core-20260622 implements the
+metadata-only read-only VFS persistence/exposure boundary. sshkeydiag now
+derives persistence metadata from sufficient generated-root metadata for all
+three accepted material paths: /etc/talos/operator-seed.bin,
+/etc/talos/ssh/ssh_host_ed25519_key, and
+/etc/talos/ssh/authorized_keys. Missing, invalid, or insufficient metadata on
+any of those paths keeps sshkeydiag-persistence-unavailable. sshkeydiag also
+classifies /etc/talos/ssh/exposure-enabled as the explicit exposure marker:
+missing, invalid, non-regular, or oversized marker metadata keeps
+sshkeydiag-exposure-disabled, while a regular readable 0 through 4096 byte
+marker clears only that exposure label. Even with sufficient
+persistence/exposure metadata, sshkeydiag-not-ready remains present and
+ssh-ready remains false until SSH service behavior, live transport, and
+reachability are accepted separately. This implementation does not parse keys,
+retain secret material, accept writable persistence, expose SSH service
+behavior, validate hardware reachability, broaden ABI/POSIX/Linux
+compatibility, or create a phase transition. The selected next bounded task is
+phase12-shell-ssh-persistence-exposure-diag-smoke-20260622.

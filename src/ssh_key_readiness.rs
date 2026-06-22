@@ -20,6 +20,8 @@ pub(crate) const HOST_KEY_MAX_METADATA_BYTES: usize = 4096;
 pub(crate) const AUTHORIZED_KEY_PATH: &[u8] = b"/etc/talos/ssh/authorized_keys";
 pub(crate) const AUTHORIZED_KEY_MIN_METADATA_BYTES: usize = 64;
 pub(crate) const AUTHORIZED_KEY_MAX_METADATA_BYTES: usize = 4096;
+pub(crate) const EXPOSURE_MARKER_PATH: &[u8] = b"/etc/talos/ssh/exposure-enabled";
+pub(crate) const EXPOSURE_MARKER_MAX_METADATA_BYTES: usize = 4096;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum HostKeyState {
@@ -252,8 +254,18 @@ impl SshKeyReadinessSnapshot {
         self
     }
 
+    pub(crate) const fn with_persistence_state(mut self, persistence: PersistenceState) -> Self {
+        self.persistence = persistence;
+        self
+    }
+
     pub(crate) const fn with_exposure_enabled(mut self) -> Self {
         self.exposure = ExposureState::ExplicitlyEnabled;
+        self
+    }
+
+    pub(crate) const fn with_exposure_state(mut self, exposure: ExposureState) -> Self {
+        self.exposure = exposure;
         self
     }
 }
@@ -412,6 +424,40 @@ pub(crate) fn classify_authorized_key_material(
         AuthorizedKeyMaterialMetadata::insufficient(byte_len)
     } else {
         AuthorizedKeyMaterialMetadata::sufficient(byte_len)
+    }
+}
+
+pub(crate) const fn classify_persistence_metadata(
+    seed_metadata: OperatorSeedMaterialMetadata,
+    host_key_metadata: HostKeyMaterialMetadata,
+    authorized_key_metadata: AuthorizedKeyMaterialMetadata,
+) -> PersistenceState {
+    if matches!(seed_metadata.state(), OperatorSeedMaterialState::Sufficient)
+        && matches!(host_key_metadata.state(), HostKeyMaterialState::Sufficient)
+        && matches!(
+            authorized_key_metadata.state(),
+            AuthorizedKeyMaterialState::Sufficient
+        )
+    {
+        PersistenceState::MetadataPresent
+    } else {
+        PersistenceState::Unavailable
+    }
+}
+
+pub(crate) fn classify_exposure_marker(initramfs: ReadOnlyInitramfs) -> ExposureState {
+    let handle = match initramfs.lookup_default(EXPOSURE_MARKER_PATH) {
+        Ok(handle) => handle,
+        Err(_) => return ExposureState::Disabled,
+    };
+
+    let metadata = handle.metadata();
+    if metadata.kind() == VfsNodeKind::RegularFile
+        && metadata.len() <= EXPOSURE_MARKER_MAX_METADATA_BYTES
+    {
+        ExposureState::ExplicitlyEnabled
+    } else {
+        ExposureState::Disabled
     }
 }
 
@@ -852,6 +898,97 @@ mod tests {
     }
 
     #[test_case]
+    fn persistence_metadata_requires_all_accepted_material_sources() {
+        let seed = OperatorSeedMaterialMetadata::sufficient(32);
+        let host_key = HostKeyMaterialMetadata::sufficient(HOST_KEY_MIN_METADATA_BYTES);
+        let authorized_key =
+            AuthorizedKeyMaterialMetadata::sufficient(AUTHORIZED_KEY_MIN_METADATA_BYTES);
+
+        assert_eq!(
+            classify_persistence_metadata(seed, host_key, authorized_key),
+            PersistenceState::MetadataPresent
+        );
+        assert_eq!(
+            classify_persistence_metadata(
+                OperatorSeedMaterialMetadata::missing(),
+                host_key,
+                authorized_key
+            ),
+            PersistenceState::Unavailable
+        );
+        assert_eq!(
+            classify_persistence_metadata(
+                seed,
+                HostKeyMaterialMetadata::insufficient(HOST_KEY_MIN_METADATA_BYTES - 1),
+                authorized_key
+            ),
+            PersistenceState::Unavailable
+        );
+        assert_eq!(
+            classify_persistence_metadata(
+                seed,
+                host_key,
+                AuthorizedKeyMaterialMetadata::invalid(Some(0))
+            ),
+            PersistenceState::Unavailable
+        );
+    }
+
+    #[test_case]
+    fn exposure_marker_vfs_metadata_fails_closed_until_explicit_marker_is_valid() {
+        assert_eq!(
+            classify_exposure_marker(phase8_readonly_initramfs_fixture()),
+            ExposureState::Disabled
+        );
+        assert_eq!(
+            classify_exposure_marker(directory_exposure_marker_initramfs()),
+            ExposureState::Disabled
+        );
+        assert_eq!(
+            classify_exposure_marker(oversized_exposure_marker_initramfs()),
+            ExposureState::Disabled
+        );
+        assert_eq!(
+            classify_exposure_marker(empty_exposure_marker_initramfs()),
+            ExposureState::ExplicitlyEnabled
+        );
+    }
+
+    #[test_case]
+    fn persistence_and_exposure_metadata_clear_only_their_prerequisites() {
+        let report = classify_ssh_key_readiness(
+            SshKeyReadinessSnapshot::fail_closed_default()
+                .with_host_key_material(HostKeyMaterialMetadata::sufficient(
+                    HOST_KEY_MIN_METADATA_BYTES,
+                ))
+                .with_authorized_key_material(AuthorizedKeyMaterialMetadata::sufficient(
+                    AUTHORIZED_KEY_MIN_METADATA_BYTES,
+                ))
+                .with_operator_seed_material(OperatorSeedMaterialMetadata::sufficient(32))
+                .with_persistence_state(PersistenceState::MetadataPresent)
+                .with_exposure_state(ExposureState::ExplicitlyEnabled),
+        );
+
+        assert!(
+            !report
+                .labels()
+                .contains(&SshKeyReadinessLabel::PersistenceUnavailable)
+        );
+        assert!(
+            !report
+                .labels()
+                .contains(&SshKeyReadinessLabel::ExposureDisabled)
+        );
+        assert!(
+            report
+                .labels()
+                .contains(&SshKeyReadinessLabel::EntropyUnready)
+        );
+        assert!(report.labels().contains(&SshKeyReadinessLabel::NotReady));
+        assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
     fn csprng_ready_entropy_clears_only_entropy_prerequisite() {
         let entropy = entropy::classify_entropy_snapshot(
             EntropyDiagnosticSnapshot::empty()
@@ -883,6 +1020,7 @@ mod tests {
     const SSH_INDEX: usize = 3;
     const HOST_KEY_INDEX: usize = 4;
     const AUTHORIZED_KEY_INDEX: usize = 5;
+    const EXPOSURE_MARKER_INDEX: usize = 4;
 
     static ROOT_ENTRIES: [DirectoryEntry; 1] = [DirectoryEntry::new(b"etc", ETC_INDEX)];
     static ETC_ENTRIES: [DirectoryEntry; 1] = [DirectoryEntry::new(b"talos", TALOS_INDEX)];
@@ -892,6 +1030,10 @@ mod tests {
     static SSH_AUTHORIZED_KEY_ENTRIES: [DirectoryEntry; 1] = [DirectoryEntry::new(
         b"authorized_keys",
         AUTHORIZED_KEY_INDEX,
+    )];
+    static SSH_EXPOSURE_MARKER_ENTRIES: [DirectoryEntry; 1] = [DirectoryEntry::new(
+        b"exposure-enabled",
+        EXPOSURE_MARKER_INDEX,
     )];
     static EMPTY_ENTRIES: [DirectoryEntry; 0] = [];
     static INSUFFICIENT_HOST_KEY_BYTES: [u8; HOST_KEY_MIN_METADATA_BYTES - 1] =
@@ -906,6 +1048,8 @@ mod tests {
         [0; AUTHORIZED_KEY_MIN_METADATA_BYTES];
     static OVERSIZED_AUTHORIZED_KEY_BYTES: [u8; AUTHORIZED_KEY_MAX_METADATA_BYTES + 1] =
         [0; AUTHORIZED_KEY_MAX_METADATA_BYTES + 1];
+    static OVERSIZED_EXPOSURE_MARKER_BYTES: [u8; EXPOSURE_MARKER_MAX_METADATA_BYTES + 1] =
+        [0; EXPOSURE_MARKER_MAX_METADATA_BYTES + 1];
 
     static DIRECTORY_HOST_KEY_NODES: [InitramfsNode; 5] = [
         InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
@@ -982,6 +1126,27 @@ mod tests {
         InitramfsNode::regular_file(HOST_KEY_INDEX, b"unused"),
         InitramfsNode::regular_file(AUTHORIZED_KEY_INDEX, &OVERSIZED_AUTHORIZED_KEY_BYTES),
     ];
+    static DIRECTORY_EXPOSURE_MARKER_NODES: [InitramfsNode; 5] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
+        InitramfsNode::directory(SSH_INDEX, &SSH_EXPOSURE_MARKER_ENTRIES),
+        InitramfsNode::directory(EXPOSURE_MARKER_INDEX, &EMPTY_ENTRIES),
+    ];
+    static EMPTY_EXPOSURE_MARKER_NODES: [InitramfsNode; 5] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
+        InitramfsNode::directory(SSH_INDEX, &SSH_EXPOSURE_MARKER_ENTRIES),
+        InitramfsNode::regular_file(EXPOSURE_MARKER_INDEX, b""),
+    ];
+    static OVERSIZED_EXPOSURE_MARKER_NODES: [InitramfsNode; 5] = [
+        InitramfsNode::directory(ROOT_INDEX, &ROOT_ENTRIES),
+        InitramfsNode::directory(ETC_INDEX, &ETC_ENTRIES),
+        InitramfsNode::directory(TALOS_INDEX, &TALOS_ENTRIES),
+        InitramfsNode::directory(SSH_INDEX, &SSH_EXPOSURE_MARKER_ENTRIES),
+        InitramfsNode::regular_file(EXPOSURE_MARKER_INDEX, &OVERSIZED_EXPOSURE_MARKER_BYTES),
+    ];
 
     const fn directory_host_key_initramfs() -> ReadOnlyInitramfs {
         ReadOnlyInitramfs::new(&DIRECTORY_HOST_KEY_NODES, ROOT_INDEX)
@@ -1021,5 +1186,17 @@ mod tests {
 
     const fn oversized_authorized_key_initramfs() -> ReadOnlyInitramfs {
         ReadOnlyInitramfs::new(&OVERSIZED_AUTHORIZED_KEY_NODES, ROOT_INDEX)
+    }
+
+    const fn directory_exposure_marker_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&DIRECTORY_EXPOSURE_MARKER_NODES, ROOT_INDEX)
+    }
+
+    const fn empty_exposure_marker_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&EMPTY_EXPOSURE_MARKER_NODES, ROOT_INDEX)
+    }
+
+    const fn oversized_exposure_marker_initramfs() -> ReadOnlyInitramfs {
+        ReadOnlyInitramfs::new(&OVERSIZED_EXPOSURE_MARKER_NODES, ROOT_INDEX)
     }
 }
