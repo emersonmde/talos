@@ -7947,3 +7947,26 @@ session/channel, shell attachment, live reachability, hardware proof,
 OpenSSH/POSIX/Linux compatibility, broad expansion, or phase transition is
 accepted. The selected next bounded task is
 phase12-ssh-publickey-auth-success-account-closeout-20260622.
+
+phase12-ssh-publickey-auth-success-account-closeout-20260622 closes the local
+modeled publickey USERAUTH_SUCCESS account-policy frontier. The accepted chain
+now consists of the account-policy contract, the source classifier, and retained
+host/QEMU-substitute smoke evidence. Talos accepts USERAUTH_SUCCESS only for the
+reserved account policy with accepted encrypted userauth request shape, private
+session-id handle, same-request authorized_keys key-match prerequisite,
+prerequisite-only verifier success, enabled account policy, and signed-valid
+ssh-ed25519 request. Account mismatch, disabled or missing policy, missing
+service/session/key-match/verifier prerequisites, unsigned probes outside the
+PK_OK slice, invalid or malformed signatures, unauthorized keys, malformed
+requests, unsupported algorithms, and redaction-sensitive paths fail closed with
+USERAUTH_FAILURE and fixed labels.
+
+This closeout does not accept sessions, channel allocation, channel-open
+requests, PTY/process/shell attachment, exec/subsystem handling, live sockets,
+hardware proof, OpenSSH/POSIX/Linux compatibility, broad account modeling,
+broad expansion, phase transition, or ssh-ready=true.
+authentication-success=true remains local and modeled only;
+service-success=false, session-count=0, channel-count=0,
+shell-attached=false, live-reachability=false, and ssh-ready=false remain
+authoritative. The next bounded task is
+phase12-ssh-session-channel-open-contract-20260622.
