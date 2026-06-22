@@ -16826,6 +16826,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   reachability, compatibility, broad expansion, or phase transition is
   accepted. The selected next bounded task is
   phase12-ssh-authorized-keys-parser-closeout-20260622.
+- phase12-ssh-authorized-keys-parser-closeout-20260622 accepts the bounded
+  authorized_keys parser/key-match closeout. The accepted policy, source
+  implementation, and smoke evidence are reconciled: Talos can now parse
+  narrow option-free ssh-ed25519 public-key lines from
+  /etc/talos/ssh/authorized_keys through the accepted read-only VFS boundary
+  and compare decoded publickey blobs with caller-owned request blobs in memory
+  only. This closes only the key-match prerequisite. Together with the accepted
+  private userauth session-id handle, the publickey-authentication prerequisites
+  are ready for a bounded signature-verification contract. No signature
+  verification, authentication response, authentication success, account
+  binding, sessions/channels, shell attachment, live reachability,
+  compatibility, broad expansion, or phase transition is accepted; ssh-ready
+  remains false. The selected next bounded task is
+  phase12-ssh-publickey-verification-contract-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

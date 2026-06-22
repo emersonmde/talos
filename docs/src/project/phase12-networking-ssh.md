@@ -7666,3 +7666,26 @@ authentication success, account binding, sessions/channels, shell attachment,
 live reachability, compatibility, broad expansion, or phase transition is
 accepted. The selected next bounded task is
 phase12-ssh-authorized-keys-parser-closeout-20260622.
+
+phase12-ssh-authorized-keys-parser-closeout-20260622 accepts the bounded
+authorized_keys parser/key-match closeout. The accepted policy, source
+implementation, and focused smoke evidence are reconciled: Talos can now read
+operator-provisioned /etc/talos/ssh/authorized_keys through the accepted
+read-only VFS boundary, parse only narrow option-free ssh-ed25519 public-key
+lines, fail closed for unsupported or malformed inputs, and compare decoded
+publickey blobs with caller-owned request blobs in memory only.
+
+The accepted publickey-authentication prerequisites now include a private
+userauth session-id handle and an in-memory authorized_keys key-match
+boundary. They remain prerequisites only for later publickey signature
+verification. No signature verification, authentication response emission,
+authentication success, account binding, sessions/channels, shell attachment,
+live reachability, compatibility, broad expansion, or phase transition is
+accepted. Durable evidence remains fixed-label/file-path/test-name/
+public-length/count/command/task-id/classification only and excludes
+authorized-key bytes, public-key blobs, fingerprints, digests, signatures,
+comments, user/operator identity, stable identifiers, session-id bytes,
+hardware data, and boot artifacts. ssh-ready, service-success,
+authentication-success, session/channel counts, shell attachment, and
+reachability remain false/zero. The selected next bounded task is
+phase12-ssh-publickey-verification-contract-20260622.
