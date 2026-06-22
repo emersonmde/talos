@@ -8014,3 +8014,28 @@ launch, filesystem-backed command execution, live reachability, hardware
 proof, compatibility, broad expansion, phase transition, or ssh-ready=true is
 accepted. The selected next bounded task is
 phase12-shell-ssh-session-channel-open-smoke-20260622.
+
+phase12-shell-ssh-session-channel-open-smoke-20260622 accepts retained
+host/QEMU-substitute smoke evidence for the local modeled SSH session
+channel-open frontier. The retained command is
+scripts/qemu-shell-ssh-session-channel-open-smoke.sh, with transcript evidence
+under tasks/evidence/2026-06-22-ssh-session-channel-open-smoke/. It reruns the
+accepted session_channel_open source/unit coverage and records the modeled
+authenticated SSH_MSG_CHANNEL_OPEN success path, representative fail-closed
+missing-authentication, wrong-message, unsupported-channel-type, malformed,
+duplicate/existing-channel, policy-disabled, and redaction-sensitive paths.
+
+The smoke evidence keeps only fixed labels, public SSH message names/numbers,
+public field-count and public channel-type length categories, readiness
+counters, validation commands, paths, task ids, and classifications. It does
+not retain request payload bytes, channel identifiers, window sizes, packet
+sizes, user/operator identity, key material, session-id bytes, signatures,
+hardware data, or boot artifacts. The accepted frontier remains local protocol
+bookkeeping only: authentication-success=true, session-count=1, and
+channel-count=1 only for the modeled success case; shell-attached=false,
+live-reachability=false, and ssh-ready=false remain authoritative. No channel
+data, EOF/close/window flow control, shell/pty/exec/subsystem requests,
+PTY/TTY/process/shell attachment, live reachability, hardware proof,
+compatibility, broad expansion, phase transition, or ssh-ready=true is
+accepted. The selected next bounded task is
+phase12-ssh-session-channel-open-closeout-20260622.
