@@ -6,9 +6,16 @@
 
 use zeroize::Zeroize;
 
+use alloc::vec::Vec;
+use signature::Verifier;
+use ssh_key::{Algorithm, PublicKey, Signature, encoding::Decode};
+
 use crate::{
     csprng::OperatorSeededCsprng,
-    ssh_key_readiness::{HostKeyPrivateMaterial, SshKeyReadinessLabel, SshKeyReadinessReport},
+    ssh_key_readiness::{
+        AuthorizedKeyMatchReport, HostKeyPrivateMaterial, SshKeyReadinessLabel,
+        SshKeyReadinessReport,
+    },
     ssh_runtime_crypto::{
         SSH_USERAUTH_SESSION_IDENTIFIER_BYTES, SshRuntimeKexInput, SshRuntimeKexLabel,
         SshRuntimeKexResultKind, SshUserauthSessionIdentifier, perform_runtime_kex,
@@ -96,6 +103,15 @@ pub(crate) enum SshServiceReadinessLabel {
     UserauthSessionIdentifierUnavailable,
     UserauthSessionIdentifierMalformed,
     UserauthSessionIdentifierOverLimit,
+    PublickeyVerificationPrerequisiteOnly,
+    PublickeyVerificationSignatureNotPresent,
+    PublickeyVerificationSessionIdentifierMissing,
+    PublickeyVerificationAuthorizedKeyMissingOrNoMatch,
+    PublickeyVerificationAlgorithmUnsupported,
+    PublickeyVerificationKeyBlobMalformed,
+    PublickeyVerificationSignatureMalformed,
+    PublickeyVerificationSignedDataMalformed,
+    PublickeyVerificationSignatureRejected,
     TransportClosedBeforeKex,
     AuthenticationUnimplemented,
     SessionUnimplemented,
@@ -226,6 +242,33 @@ impl SshServiceReadinessLabel {
             Self::UserauthSessionIdentifierOverLimit => {
                 "sshservicediag-userauth-session-identifier-over-limit"
             }
+            Self::PublickeyVerificationPrerequisiteOnly => {
+                "sshservicediag-publickey-verification-prerequisite-only"
+            }
+            Self::PublickeyVerificationSignatureNotPresent => {
+                "sshservicediag-publickey-verification-signature-not-present"
+            }
+            Self::PublickeyVerificationSessionIdentifierMissing => {
+                "sshservicediag-publickey-verification-session-id-missing"
+            }
+            Self::PublickeyVerificationAuthorizedKeyMissingOrNoMatch => {
+                "sshservicediag-publickey-verification-authorized-key-missing-or-no-match"
+            }
+            Self::PublickeyVerificationAlgorithmUnsupported => {
+                "sshservicediag-publickey-verification-algorithm-unsupported"
+            }
+            Self::PublickeyVerificationKeyBlobMalformed => {
+                "sshservicediag-publickey-verification-key-blob-malformed"
+            }
+            Self::PublickeyVerificationSignatureMalformed => {
+                "sshservicediag-publickey-verification-signature-malformed"
+            }
+            Self::PublickeyVerificationSignedDataMalformed => {
+                "sshservicediag-publickey-verification-signed-data-malformed"
+            }
+            Self::PublickeyVerificationSignatureRejected => {
+                "sshservicediag-publickey-verification-signature-rejected"
+            }
             Self::TransportClosedBeforeKex => "sshservicediag-transport-closed-before-kex",
             Self::AuthenticationUnimplemented => "sshservicediag-authentication-unimplemented",
             Self::SessionUnimplemented => "sshservicediag-session-unimplemented",
@@ -261,6 +304,7 @@ const SSH_ENCRYPTED_TRANSPORT_DISPATCH_MIN_PAYLOAD_BYTES: usize = 1;
 const MAX_SSH_ENCRYPTED_TRANSPORT_DISPATCH_LABELS: usize = 6;
 const MAX_SSH_PREAUTH_SERVICE_USERAUTH_LABELS: usize = 10;
 const MAX_SSH_USERAUTH_SESSION_IDENTIFIER_LABELS: usize = 4;
+const MAX_SSH_PUBLICKEY_VERIFICATION_LABELS: usize = 4;
 const SSH_PREAUTH_STRING_MAX_BYTES: usize = 256;
 const SSH_PREAUTH_PUBLIC_KEY_BLOB_MAX_BYTES: usize = 512;
 const SSH_PREAUTH_SIGNATURE_MAX_BYTES: usize = 512;
@@ -1029,6 +1073,372 @@ pub(crate) fn classify_ssh_userauth_session_identifier(
     }
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SshPublickeyVerificationResult {
+    VerifiedPrerequisiteOnly,
+    SignatureNotPresent,
+    SessionIdentifierMissing,
+    AuthorizedKeyMissingOrNoMatch,
+    AlgorithmUnsupported,
+    KeyBlobMalformed,
+    SignatureMalformed,
+    SignedDataMalformed,
+    SignatureRejected,
+}
+
+#[derive(Clone, Copy)]
+pub(crate) enum SshPublickeyVerificationSessionInput<'a> {
+    Available(SshUserauthSessionIdentifier<'a>),
+    Unavailable,
+}
+
+pub(crate) struct SshPublickeyVerificationInput<'a> {
+    pub(crate) decrypted_payload: &'a [u8],
+    pub(crate) service_userauth_requested: bool,
+    pub(crate) session_identifier: SshPublickeyVerificationSessionInput<'a>,
+    pub(crate) authorized_key_match: &'a AuthorizedKeyMatchReport,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SshPublickeyVerificationReport {
+    labels: [SshServiceReadinessLabel; MAX_SSH_PUBLICKEY_VERIFICATION_LABELS],
+    label_count: usize,
+    result: SshPublickeyVerificationResult,
+    request_public_key_blob_len: Option<usize>,
+    signature_blob_len: Option<usize>,
+    signed_data_len: Option<usize>,
+}
+
+impl SshPublickeyVerificationReport {
+    fn new(
+        result: SshPublickeyVerificationResult,
+        label: SshServiceReadinessLabel,
+        request_public_key_blob_len: Option<usize>,
+        signature_blob_len: Option<usize>,
+        signed_data_len: Option<usize>,
+    ) -> Self {
+        let mut report = Self {
+            labels: [SshServiceReadinessLabel::NotReady; MAX_SSH_PUBLICKEY_VERIFICATION_LABELS],
+            label_count: 0,
+            result,
+            request_public_key_blob_len,
+            signature_blob_len,
+            signed_data_len,
+        };
+        report.push(label);
+        report.push(SshServiceReadinessLabel::AuthenticationUnimplemented);
+        report.push(SshServiceReadinessLabel::SessionUnimplemented);
+        report.push(SshServiceReadinessLabel::NotReady);
+        report
+    }
+
+    fn push(&mut self, label: SshServiceReadinessLabel) {
+        self.labels[self.label_count] = label;
+        self.label_count += 1;
+    }
+
+    pub(crate) fn labels(&self) -> &[SshServiceReadinessLabel] {
+        &self.labels[..self.label_count]
+    }
+
+    pub(crate) const fn result(self) -> SshPublickeyVerificationResult {
+        self.result
+    }
+
+    pub(crate) const fn request_public_key_blob_len(self) -> Option<usize> {
+        self.request_public_key_blob_len
+    }
+
+    pub(crate) const fn signature_blob_len(self) -> Option<usize> {
+        self.signature_blob_len
+    }
+
+    pub(crate) const fn signed_data_len(self) -> Option<usize> {
+        self.signed_data_len
+    }
+
+    pub(crate) const fn verified_prerequisite_only(self) -> bool {
+        matches!(
+            self.result,
+            SshPublickeyVerificationResult::VerifiedPrerequisiteOnly
+        )
+    }
+
+    pub(crate) const fn service_success(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn authentication_success(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn session_count(self) -> usize {
+        0
+    }
+
+    pub(crate) const fn channel_count(self) -> usize {
+        0
+    }
+
+    pub(crate) const fn shell_attached(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn reachability_accepted(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn ssh_ready(self) -> bool {
+        false
+    }
+}
+
+pub(crate) fn classify_ssh_publickey_verification(
+    input: SshPublickeyVerificationInput<'_>,
+) -> SshPublickeyVerificationReport {
+    let Some(request) = parse_ssh_publickey_verification_request(
+        input.decrypted_payload,
+        input.service_userauth_requested,
+    ) else {
+        return publickey_verification_report(
+            SshPublickeyVerificationResult::SignedDataMalformed,
+            SshServiceReadinessLabel::PublickeyVerificationSignedDataMalformed,
+            None,
+            None,
+            None,
+        );
+    };
+
+    if !request.signature_present {
+        return publickey_verification_report(
+            SshPublickeyVerificationResult::SignatureNotPresent,
+            SshServiceReadinessLabel::PublickeyVerificationSignatureNotPresent,
+            Some(request.public_key_blob.len()),
+            None,
+            None,
+        );
+    }
+    if request.algorithm != SSH_KEXINIT_POLICY_HOST_KEY {
+        return publickey_verification_report(
+            SshPublickeyVerificationResult::AlgorithmUnsupported,
+            SshServiceReadinessLabel::PublickeyVerificationAlgorithmUnsupported,
+            Some(request.public_key_blob.len()),
+            request.signature.map(<[u8]>::len),
+            None,
+        );
+    }
+
+    let Ok(public_key) = PublicKey::from_bytes(request.public_key_blob) else {
+        return publickey_verification_report(
+            SshPublickeyVerificationResult::KeyBlobMalformed,
+            SshServiceReadinessLabel::PublickeyVerificationKeyBlobMalformed,
+            Some(request.public_key_blob.len()),
+            request.signature.map(<[u8]>::len),
+            None,
+        );
+    };
+    if public_key.algorithm() != Algorithm::Ed25519 || public_key.key_data().ed25519().is_none() {
+        return publickey_verification_report(
+            SshPublickeyVerificationResult::AlgorithmUnsupported,
+            SshServiceReadinessLabel::PublickeyVerificationAlgorithmUnsupported,
+            Some(request.public_key_blob.len()),
+            request.signature.map(<[u8]>::len),
+            None,
+        );
+    }
+
+    if !input.authorized_key_match.match_prerequisite_only()
+        || input.authorized_key_match.request_public_key_blob_len() != request.public_key_blob.len()
+        || input.authorized_key_match.matched_public_key_blob_len()
+            != Some(request.public_key_blob.len())
+    {
+        return publickey_verification_report(
+            SshPublickeyVerificationResult::AuthorizedKeyMissingOrNoMatch,
+            SshServiceReadinessLabel::PublickeyVerificationAuthorizedKeyMissingOrNoMatch,
+            Some(request.public_key_blob.len()),
+            request.signature.map(<[u8]>::len),
+            None,
+        );
+    }
+
+    let session_identifier = match input.session_identifier {
+        SshPublickeyVerificationSessionInput::Available(identifier) => identifier,
+        SshPublickeyVerificationSessionInput::Unavailable => {
+            return publickey_verification_report(
+                SshPublickeyVerificationResult::SessionIdentifierMissing,
+                SshServiceReadinessLabel::PublickeyVerificationSessionIdentifierMissing,
+                Some(request.public_key_blob.len()),
+                request.signature.map(<[u8]>::len),
+                None,
+            );
+        }
+    };
+
+    let Some(signature_blob) = request.signature else {
+        return publickey_verification_report(
+            SshPublickeyVerificationResult::SignatureMalformed,
+            SshServiceReadinessLabel::PublickeyVerificationSignatureMalformed,
+            Some(request.public_key_blob.len()),
+            None,
+            None,
+        );
+    };
+    let mut signature_reader = signature_blob;
+    let Ok(signature) = Signature::decode(&mut signature_reader) else {
+        return publickey_verification_report(
+            SshPublickeyVerificationResult::SignatureMalformed,
+            SshServiceReadinessLabel::PublickeyVerificationSignatureMalformed,
+            Some(request.public_key_blob.len()),
+            Some(signature_blob.len()),
+            None,
+        );
+    };
+    if !signature_reader.is_empty() || signature.algorithm() != Algorithm::Ed25519 {
+        return publickey_verification_report(
+            SshPublickeyVerificationResult::SignatureMalformed,
+            SshServiceReadinessLabel::PublickeyVerificationSignatureMalformed,
+            Some(request.public_key_blob.len()),
+            Some(signature_blob.len()),
+            None,
+        );
+    }
+
+    let signed_data = build_publickey_verification_signed_data(session_identifier, &request);
+    let Ok(mut signed_data) = signed_data else {
+        return publickey_verification_report(
+            SshPublickeyVerificationResult::SignedDataMalformed,
+            SshServiceReadinessLabel::PublickeyVerificationSignedDataMalformed,
+            Some(request.public_key_blob.len()),
+            Some(signature_blob.len()),
+            None,
+        );
+    };
+    let signed_data_len = signed_data.len();
+    let verified = Verifier::<Signature>::verify(&public_key, &signed_data, &signature).is_ok();
+    signed_data.zeroize();
+
+    if verified {
+        publickey_verification_report(
+            SshPublickeyVerificationResult::VerifiedPrerequisiteOnly,
+            SshServiceReadinessLabel::PublickeyVerificationPrerequisiteOnly,
+            Some(request.public_key_blob.len()),
+            Some(signature_blob.len()),
+            Some(signed_data_len),
+        )
+    } else {
+        publickey_verification_report(
+            SshPublickeyVerificationResult::SignatureRejected,
+            SshServiceReadinessLabel::PublickeyVerificationSignatureRejected,
+            Some(request.public_key_blob.len()),
+            Some(signature_blob.len()),
+            Some(signed_data_len),
+        )
+    }
+}
+
+fn publickey_verification_report(
+    result: SshPublickeyVerificationResult,
+    label: SshServiceReadinessLabel,
+    request_public_key_blob_len: Option<usize>,
+    signature_blob_len: Option<usize>,
+    signed_data_len: Option<usize>,
+) -> SshPublickeyVerificationReport {
+    SshPublickeyVerificationReport::new(
+        result,
+        label,
+        request_public_key_blob_len,
+        signature_blob_len,
+        signed_data_len,
+    )
+}
+
+struct ParsedSshPublickeyVerificationRequest<'a> {
+    user_name: &'a [u8],
+    service: &'a [u8],
+    method: &'a [u8],
+    signature_present: bool,
+    algorithm: &'a [u8],
+    public_key_blob: &'a [u8],
+    signature: Option<&'a [u8]>,
+}
+
+fn parse_ssh_publickey_verification_request<'a>(
+    payload: &'a [u8],
+    service_userauth_requested: bool,
+) -> Option<ParsedSshPublickeyVerificationRequest<'a>> {
+    if !service_userauth_requested || payload.first().copied()? != SSH_MSG_USERAUTH_REQUEST {
+        return None;
+    }
+
+    let (user_name, cursor) =
+        parse_ssh_binary_string_bounded(payload, 1, SSH_PREAUTH_STRING_MAX_BYTES)?;
+    let (service, cursor) =
+        parse_ssh_binary_string_bounded(payload, cursor, SSH_PREAUTH_STRING_MAX_BYTES)?;
+    let (method, cursor) =
+        parse_ssh_binary_string_bounded(payload, cursor, SSH_PREAUTH_STRING_MAX_BYTES)?;
+    if service != SSH_SERVICE_CONNECTION || method != SSH_AUTH_METHOD_PUBLICKEY {
+        return None;
+    }
+    let signature_present = payload.get(cursor).copied()?;
+    if !matches!(signature_present, 0 | 1) {
+        return None;
+    }
+    let cursor = cursor + 1;
+    let (algorithm, cursor) =
+        parse_ssh_binary_string_bounded(payload, cursor, SSH_PREAUTH_STRING_MAX_BYTES)?;
+    let (public_key_blob, cursor) =
+        parse_ssh_binary_string_bounded(payload, cursor, SSH_PREAUTH_PUBLIC_KEY_BLOB_MAX_BYTES)?;
+    if algorithm.is_empty() || public_key_blob.is_empty() {
+        return None;
+    }
+    let (signature, cursor) = if signature_present == 1 {
+        let (signature, cursor) =
+            parse_ssh_binary_string_bounded(payload, cursor, SSH_PREAUTH_SIGNATURE_MAX_BYTES)?;
+        if signature.is_empty() {
+            return None;
+        }
+        (Some(signature), cursor)
+    } else {
+        (None, cursor)
+    };
+    if cursor != payload.len() {
+        return None;
+    }
+
+    Some(ParsedSshPublickeyVerificationRequest {
+        user_name,
+        service,
+        method,
+        signature_present: signature_present == 1,
+        algorithm,
+        public_key_blob,
+        signature,
+    })
+}
+
+fn build_publickey_verification_signed_data(
+    session_identifier: SshUserauthSessionIdentifier<'_>,
+    request: &ParsedSshPublickeyVerificationRequest<'_>,
+) -> Result<Vec<u8>, ()> {
+    let mut signed_data = Vec::new();
+    push_ssh_string_to_vec(&mut signed_data, session_identifier.as_bytes())?;
+    signed_data.push(SSH_MSG_USERAUTH_REQUEST);
+    push_ssh_string_to_vec(&mut signed_data, request.user_name)?;
+    push_ssh_string_to_vec(&mut signed_data, request.service)?;
+    push_ssh_string_to_vec(&mut signed_data, request.method)?;
+    signed_data.push(1);
+    push_ssh_string_to_vec(&mut signed_data, request.algorithm)?;
+    push_ssh_string_to_vec(&mut signed_data, request.public_key_blob)?;
+    Ok(signed_data)
+}
+
+fn push_ssh_string_to_vec(output: &mut Vec<u8>, value: &[u8]) -> Result<(), ()> {
+    let len = u32::try_from(value.len()).map_err(|_| ())?;
+    output.extend_from_slice(&len.to_be_bytes());
+    output.extend_from_slice(value);
+    Ok(())
+}
+
 fn classify_ssh_service_request_payload(payload: &[u8]) -> SshPreauthServiceUserauthReport {
     let result = parse_ssh_binary_string_bounded(payload, 1, SSH_PREAUTH_STRING_MAX_BYTES);
     let Some((service, cursor)) = result else {
@@ -1742,7 +2152,9 @@ mod tests {
     use crate::{
         csprng::OperatorSeededCsprng,
         entropy::{self, EntropyDiagnosticSnapshot, OperatorSeedObservation},
-        ssh_key_readiness::{self, HostKeyMaterialMetadata, SshKeyReadinessSnapshot},
+        ssh_key_readiness::{
+            self, AuthorizedKeyMatchReport, HostKeyMaterialMetadata, SshKeyReadinessSnapshot,
+        },
         ssh_runtime_crypto::{SshRuntimeKexReady, SshRuntimeKexResult, SshRuntimeKexResultKind},
     };
 
@@ -1780,6 +2192,16 @@ mod tests {
         report: &SshUserauthSessionIdentifierReport,
     ) -> [&'static str; MAX_SSH_USERAUTH_SESSION_IDENTIFIER_LABELS] {
         let mut labels = [""; MAX_SSH_USERAUTH_SESSION_IDENTIFIER_LABELS];
+        for (index, label) in report.labels().iter().enumerate() {
+            labels[index] = label.name();
+        }
+        labels
+    }
+
+    fn publickey_verification_label_names(
+        report: &SshPublickeyVerificationReport,
+    ) -> [&'static str; MAX_SSH_PUBLICKEY_VERIFICATION_LABELS] {
+        let mut labels = [""; MAX_SSH_PUBLICKEY_VERIFICATION_LABELS];
         for (index, label) in report.labels().iter().enumerate() {
             labels[index] = label.name();
         }
@@ -1848,6 +2270,68 @@ mod tests {
             cursor = write_ssh_string(&mut payload, cursor, b"public-fixture-signature");
         }
         (payload, cursor)
+    }
+
+    fn userauth_publickey_verification_payload(
+        signature_present: bool,
+        algorithm: &[u8],
+        public_key_blob: &[u8],
+        signature_blob: Option<&[u8]>,
+    ) -> Vec<u8> {
+        let mut payload = Vec::new();
+        payload.push(SSH_MSG_USERAUTH_REQUEST);
+        push_ssh_string_to_vec(&mut payload, b"fixture-user").unwrap();
+        push_ssh_string_to_vec(&mut payload, SSH_SERVICE_CONNECTION).unwrap();
+        push_ssh_string_to_vec(&mut payload, SSH_AUTH_METHOD_PUBLICKEY).unwrap();
+        payload.push(u8::from(signature_present));
+        push_ssh_string_to_vec(&mut payload, algorithm).unwrap();
+        push_ssh_string_to_vec(&mut payload, public_key_blob).unwrap();
+        if let Some(signature_blob) = signature_blob {
+            push_ssh_string_to_vec(&mut payload, signature_blob).unwrap();
+        }
+        payload
+    }
+
+    fn signed_publickey_data_for_test(
+        session_identifier: SshUserauthSessionIdentifier<'_>,
+        algorithm: &[u8],
+        public_key_blob: &[u8],
+    ) -> Vec<u8> {
+        let mut signed_data = Vec::new();
+        push_ssh_string_to_vec(&mut signed_data, session_identifier.as_bytes()).unwrap();
+        signed_data.push(SSH_MSG_USERAUTH_REQUEST);
+        push_ssh_string_to_vec(&mut signed_data, b"fixture-user").unwrap();
+        push_ssh_string_to_vec(&mut signed_data, SSH_SERVICE_CONNECTION).unwrap();
+        push_ssh_string_to_vec(&mut signed_data, SSH_AUTH_METHOD_PUBLICKEY).unwrap();
+        signed_data.push(1);
+        push_ssh_string_to_vec(&mut signed_data, algorithm).unwrap();
+        push_ssh_string_to_vec(&mut signed_data, public_key_blob).unwrap();
+        signed_data
+    }
+
+    fn public_fixture_public_key_blob() -> Vec<u8> {
+        ssh_key_readiness::public_fixture_host_key_private_material()
+            .public_key_blob()
+            .expect("public fixture public key blob encodes")
+    }
+
+    fn public_fixture_signature_blob(
+        session_identifier: SshUserauthSessionIdentifier<'_>,
+        public_key_blob: &[u8],
+    ) -> Vec<u8> {
+        let host_key = ssh_key_readiness::public_fixture_host_key_private_material();
+        let mut signed_data = signed_publickey_data_for_test(
+            session_identifier,
+            SSH_KEXINIT_POLICY_HOST_KEY,
+            public_key_blob,
+        );
+        let signature = host_key
+            .sign_exchange_hash(&signed_data)
+            .expect("public fixture signs publickey request data");
+        signed_data.zeroize();
+        signature
+            .encoded_blob()
+            .expect("public fixture signature blob encodes")
     }
 
     fn userauth_unsupported_payload(service: &[u8], method: &[u8]) -> ([u8; 128], usize) {
@@ -2607,6 +3091,269 @@ mod tests {
         );
         assert!(!over_limit.authentication_success());
         assert!(!over_limit.ssh_ready());
+    }
+
+    #[test_case]
+    fn publickey_verification_accepts_valid_signature_as_prerequisite_only() {
+        let ready = runtime_kex_ready_for_userauth();
+        let public_key_blob = public_fixture_public_key_blob();
+        let signature_blob =
+            public_fixture_signature_blob(ready.userauth_session_identifier(), &public_key_blob);
+        let payload = userauth_publickey_verification_payload(
+            true,
+            SSH_KEXINIT_POLICY_HOST_KEY,
+            &public_key_blob,
+            Some(&signature_blob),
+        );
+        let authorized_key_match =
+            AuthorizedKeyMatchReport::prerequisite_only_for_test(public_key_blob.len());
+
+        let report = classify_ssh_publickey_verification(SshPublickeyVerificationInput {
+            decrypted_payload: &payload,
+            service_userauth_requested: true,
+            session_identifier: SshPublickeyVerificationSessionInput::Available(
+                ready.userauth_session_identifier(),
+            ),
+            authorized_key_match: &authorized_key_match,
+        });
+
+        assert_eq!(
+            report.result(),
+            SshPublickeyVerificationResult::VerifiedPrerequisiteOnly
+        );
+        assert_eq!(
+            publickey_verification_label_names(&report),
+            [
+                "sshservicediag-publickey-verification-prerequisite-only",
+                "sshservicediag-authentication-unimplemented",
+                "sshservicediag-session-unimplemented",
+                "sshservicediag-not-ready",
+            ]
+        );
+        assert!(report.verified_prerequisite_only());
+        assert_eq!(
+            report.request_public_key_blob_len(),
+            Some(public_key_blob.len())
+        );
+        assert_eq!(report.signature_blob_len(), Some(signature_blob.len()));
+        assert!(report.signed_data_len().is_some());
+        assert!(!report.service_success());
+        assert!(!report.authentication_success());
+        assert_eq!(report.session_count(), 0);
+        assert_eq!(report.channel_count(), 0);
+        assert!(!report.shell_attached());
+        assert!(!report.reachability_accepted());
+        assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn publickey_verification_rejects_bad_signature_without_authentication_success() {
+        let ready = runtime_kex_ready_for_userauth();
+        let public_key_blob = public_fixture_public_key_blob();
+        let mut signature_blob =
+            public_fixture_signature_blob(ready.userauth_session_identifier(), &public_key_blob);
+        let last = signature_blob
+            .last_mut()
+            .expect("public fixture signature is non-empty");
+        *last ^= 1;
+        let payload = userauth_publickey_verification_payload(
+            true,
+            SSH_KEXINIT_POLICY_HOST_KEY,
+            &public_key_blob,
+            Some(&signature_blob),
+        );
+        let authorized_key_match =
+            AuthorizedKeyMatchReport::prerequisite_only_for_test(public_key_blob.len());
+
+        let report = classify_ssh_publickey_verification(SshPublickeyVerificationInput {
+            decrypted_payload: &payload,
+            service_userauth_requested: true,
+            session_identifier: SshPublickeyVerificationSessionInput::Available(
+                ready.userauth_session_identifier(),
+            ),
+            authorized_key_match: &authorized_key_match,
+        });
+
+        assert_eq!(
+            report.result(),
+            SshPublickeyVerificationResult::SignatureRejected
+        );
+        assert!(
+            report
+                .labels()
+                .contains(&SshServiceReadinessLabel::PublickeyVerificationSignatureRejected)
+        );
+        assert!(!report.authentication_success());
+        assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn publickey_verification_fails_closed_for_malformed_signature() {
+        let ready = runtime_kex_ready_for_userauth();
+        let public_key_blob = public_fixture_public_key_blob();
+        let payload = userauth_publickey_verification_payload(
+            true,
+            SSH_KEXINIT_POLICY_HOST_KEY,
+            &public_key_blob,
+            Some(b"not-a-signature-blob"),
+        );
+        let authorized_key_match =
+            AuthorizedKeyMatchReport::prerequisite_only_for_test(public_key_blob.len());
+
+        let report = classify_ssh_publickey_verification(SshPublickeyVerificationInput {
+            decrypted_payload: &payload,
+            service_userauth_requested: true,
+            session_identifier: SshPublickeyVerificationSessionInput::Available(
+                ready.userauth_session_identifier(),
+            ),
+            authorized_key_match: &authorized_key_match,
+        });
+
+        assert_eq!(
+            report.result(),
+            SshPublickeyVerificationResult::SignatureMalformed
+        );
+        assert!(
+            report
+                .labels()
+                .contains(&SshServiceReadinessLabel::PublickeyVerificationSignatureMalformed)
+        );
+        assert!(!report.authentication_success());
+        assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn publickey_verification_fails_closed_for_unsupported_algorithm_and_key_blob() {
+        let ready = runtime_kex_ready_for_userauth();
+        let public_key_blob = public_fixture_public_key_blob();
+        let authorized_key_match =
+            AuthorizedKeyMatchReport::prerequisite_only_for_test(public_key_blob.len());
+        let unsupported_payload = userauth_publickey_verification_payload(
+            true,
+            b"ssh-rsa",
+            &public_key_blob,
+            Some(b"not-checked"),
+        );
+        let malformed_key_payload = userauth_publickey_verification_payload(
+            true,
+            SSH_KEXINIT_POLICY_HOST_KEY,
+            b"not-a-public-key-blob",
+            Some(b"not-checked"),
+        );
+
+        let unsupported = classify_ssh_publickey_verification(SshPublickeyVerificationInput {
+            decrypted_payload: &unsupported_payload,
+            service_userauth_requested: true,
+            session_identifier: SshPublickeyVerificationSessionInput::Available(
+                ready.userauth_session_identifier(),
+            ),
+            authorized_key_match: &authorized_key_match,
+        });
+        let malformed_key = classify_ssh_publickey_verification(SshPublickeyVerificationInput {
+            decrypted_payload: &malformed_key_payload,
+            service_userauth_requested: true,
+            session_identifier: SshPublickeyVerificationSessionInput::Available(
+                ready.userauth_session_identifier(),
+            ),
+            authorized_key_match: &authorized_key_match,
+        });
+
+        assert_eq!(
+            unsupported.result(),
+            SshPublickeyVerificationResult::AlgorithmUnsupported
+        );
+        assert_eq!(
+            malformed_key.result(),
+            SshPublickeyVerificationResult::KeyBlobMalformed
+        );
+        assert!(!unsupported.authentication_success());
+        assert!(!malformed_key.ssh_ready());
+    }
+
+    #[test_case]
+    fn publickey_verification_requires_authorized_key_match_and_session_identifier() {
+        let ready = runtime_kex_ready_for_userauth();
+        let public_key_blob = public_fixture_public_key_blob();
+        let signature_blob =
+            public_fixture_signature_blob(ready.userauth_session_identifier(), &public_key_blob);
+        let payload = userauth_publickey_verification_payload(
+            true,
+            SSH_KEXINIT_POLICY_HOST_KEY,
+            &public_key_blob,
+            Some(&signature_blob),
+        );
+        let no_match = AuthorizedKeyMatchReport::no_match_for_test(public_key_blob.len());
+        let matched = AuthorizedKeyMatchReport::prerequisite_only_for_test(public_key_blob.len());
+
+        let missing_authorized_key =
+            classify_ssh_publickey_verification(SshPublickeyVerificationInput {
+                decrypted_payload: &payload,
+                service_userauth_requested: true,
+                session_identifier: SshPublickeyVerificationSessionInput::Available(
+                    ready.userauth_session_identifier(),
+                ),
+                authorized_key_match: &no_match,
+            });
+        let missing_session = classify_ssh_publickey_verification(SshPublickeyVerificationInput {
+            decrypted_payload: &payload,
+            service_userauth_requested: true,
+            session_identifier: SshPublickeyVerificationSessionInput::Unavailable,
+            authorized_key_match: &matched,
+        });
+
+        assert_eq!(
+            missing_authorized_key.result(),
+            SshPublickeyVerificationResult::AuthorizedKeyMissingOrNoMatch
+        );
+        assert_eq!(
+            missing_session.result(),
+            SshPublickeyVerificationResult::SessionIdentifierMissing
+        );
+        assert!(!missing_authorized_key.authentication_success());
+        assert!(!missing_session.ssh_ready());
+    }
+
+    #[test_case]
+    fn publickey_verification_fails_closed_without_signature_or_well_formed_signed_data() {
+        let ready = runtime_kex_ready_for_userauth();
+        let public_key_blob = public_fixture_public_key_blob();
+        let authorized_key_match =
+            AuthorizedKeyMatchReport::prerequisite_only_for_test(public_key_blob.len());
+        let unsigned_payload = userauth_publickey_verification_payload(
+            false,
+            SSH_KEXINIT_POLICY_HOST_KEY,
+            &public_key_blob,
+            None,
+        );
+        let malformed_payload = &unsigned_payload[..unsigned_payload.len() - 1];
+
+        let unsigned = classify_ssh_publickey_verification(SshPublickeyVerificationInput {
+            decrypted_payload: &unsigned_payload,
+            service_userauth_requested: true,
+            session_identifier: SshPublickeyVerificationSessionInput::Available(
+                ready.userauth_session_identifier(),
+            ),
+            authorized_key_match: &authorized_key_match,
+        });
+        let malformed = classify_ssh_publickey_verification(SshPublickeyVerificationInput {
+            decrypted_payload: malformed_payload,
+            service_userauth_requested: true,
+            session_identifier: SshPublickeyVerificationSessionInput::Available(
+                ready.userauth_session_identifier(),
+            ),
+            authorized_key_match: &authorized_key_match,
+        });
+
+        assert_eq!(
+            unsigned.result(),
+            SshPublickeyVerificationResult::SignatureNotPresent
+        );
+        assert_eq!(
+            malformed.result(),
+            SshPublickeyVerificationResult::SignedDataMalformed
+        );
+        assert!(!unsigned.authentication_success());
+        assert!(!malformed.ssh_ready());
     }
 
     #[test_case]

@@ -7713,3 +7713,25 @@ stable identifiers, exchange hashes, hardware data, and boot artifacts.
 ssh-ready, service-success, authentication-success, session/channel counts,
 shell attachment, and reachability remain false/zero. The selected next
 bounded task is phase12-ssh-publickey-verification-core-20260622.
+
+phase12-ssh-publickey-verification-core-20260622 accepts the bounded local
+publickey signature-verification implementation. Talos now has a
+prerequisite-only verifier for the modeled decrypted
+SSH_MSG_USERAUTH_REQUEST/publickey payload: it requires signature-present=true,
+service ssh-connection, method publickey, algorithm ssh-ed25519, an
+ssh-ed25519 request public-key blob, an authorized_keys prerequisite-only
+match for the current request public key length, and an available private
+SshUserauthSessionIdentifier handle.
+
+The verifier constructs the RFC 4252 publickey signed-data buffer in memory
+from the private session-id handle and original request fields, verifies an
+ssh-ed25519 signature through the accepted ssh-key/signature surfaces, and
+zeroizes the temporary signed-data buffer before returning. Retained reporting
+is limited to fixed labels and public byte lengths. Even successful signature
+verification is only a prerequisite: no USERAUTH_PK_OK, USERAUTH_FAILURE,
+USERAUTH_SUCCESS, partial success, account binding, authentication success,
+sessions/channels, shell attachment, live reachability, compatibility, broad
+expansion, phase transition, or ssh-ready=true is accepted. service-success,
+authentication-success, session/channel counts, shell attachment, and
+reachability remain false/zero. The selected next bounded task is
+phase12-shell-ssh-publickey-verification-smoke-20260622.

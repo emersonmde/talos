@@ -321,6 +321,30 @@ impl AuthorizedKeyMatchReport {
         self.labels[self.label_count] = label;
         self.label_count += 1;
     }
+
+    #[cfg(test)]
+    pub(crate) fn prerequisite_only_for_test(request_public_key_blob_len: usize) -> Self {
+        Self::new(
+            AuthorizedKeyMatchLabel::MatchPrerequisiteOnly,
+            1,
+            Some(AUTHORIZED_KEY_MIN_METADATA_BYTES),
+            request_public_key_blob_len,
+            Some(request_public_key_blob_len),
+            true,
+        )
+    }
+
+    #[cfg(test)]
+    pub(crate) fn no_match_for_test(request_public_key_blob_len: usize) -> Self {
+        Self::new(
+            AuthorizedKeyMatchLabel::NoMatch,
+            1,
+            Some(AUTHORIZED_KEY_MIN_METADATA_BYTES),
+            request_public_key_blob_len,
+            None,
+            false,
+        )
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
