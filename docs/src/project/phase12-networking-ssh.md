@@ -6871,3 +6871,26 @@ authentication/session success, shell attachment, hardware reachability,
 public ABI/POSIX/Linux compatibility, broad expansion, or phase transition is
 accepted. The selected next bounded task is
 phase12-ssh-owned-transport-banner-contract-20260622.
+
+phase12-ssh-owned-transport-banner-contract-20260622 accepts the Talos-owned
+SSH identification/banner contract for the reference-only russh branch. The
+accepted next implementation may use only host/QEMU-substitute evidence over
+the private descriptor-backed AF_INET/SOCK_STREAM and smoltcp socket bridge
+surfaces already accepted in Phase 12.4. It must not claim live packet I/O,
+hardware reachability, public socket ABI compatibility, or SSH service
+readiness.
+
+The contract fixes the local identification literal as
+SSH-2.0-Talos_0.1 followed by CRLF. The remote identification model reads one
+line only, rejects pre-banner comments for the first slice, limits input to 255
+bytes including LF, accepts optional CR before LF, requires the SSH-2.0- prefix
+with a non-empty printable-ASCII software version, and closes before key
+exchange. Diagnostics may record only fixed labels and booleans for
+identification modeled, local literal, remote valid/invalid/over-limit, and
+transport-closed-before-kex; they must not retain peer identification text,
+peer addresses, hashes, fingerprints, key material, random bytes, operator
+identity, or stable peer/session identifiers. ssh-ready remains false and
+sshservicediag-transport-unaccepted, crypto-backend-unaccepted,
+authentication-unimplemented, and session-unimplemented remain present. The
+selected next bounded task is
+phase12-ssh-owned-transport-banner-core-20260622.

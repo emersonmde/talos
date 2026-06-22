@@ -16257,6 +16257,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   runtime SSH crypto, listener/transport behavior, authentication/session
   success, shell attachment, hardware reachability, public ABI/POSIX/Linux
   compatibility, broad expansion, or phase transition is accepted.
+- phase12-ssh-owned-transport-banner-contract-20260622 accepts the
+  reference-only russh branch contract for a Talos-owned SSH
+  identification/banner model. The next implementation may use only accepted
+  private descriptor-backed AF_INET/SOCK_STREAM and host-only smoltcp socket
+  bridge evidence, with no live packet I/O, hardware reachability, public
+  socket ABI, or SSH service readiness claim. The local identification literal
+  is SSH-2.0-Talos_0.1 followed by CRLF. The remote identification model reads
+  one line only, rejects pre-banner comments, limits input to 255 bytes
+  including LF, accepts optional CR before LF, requires SSH-2.0- plus a
+  non-empty printable-ASCII software version, records only fixed labels and
+  booleans, and closes before key exchange. ssh-ready remains false and
+  transport, crypto, authentication, session, shell, reachability,
+  OpenSSH/POSIX/Linux compatibility, broad expansion, and phase transition
+  remain unaccepted. The selected next task is
+  phase12-ssh-owned-transport-banner-core-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
