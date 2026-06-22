@@ -16229,6 +16229,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   writable persistence, stale link-ready discriminator work, broad expansion,
   or phase transition. The selected next task is
   phase12-ssh-service-readiness-closeout-20260622.
+- phase12-ssh-service-readiness-closeout-20260622 accepts the first SSH service
+  readiness diagnostic closeout. The accepted slice now covers the OpenSSH
+  compatibility target decision, russh 0.61.2 source/reference feasibility
+  boundary, fail-closed service-shape contract, source/unit sshservicediag
+  classifier, retained host/QEMU-substitute smoke evidence, and redaction
+  review. The current frontier remains diagnostic-only: ssh-ready is false and
+  dependency adoption, runtime SSH crypto, listener/transport behavior,
+  authentication/session success, shell attachment, hardware reachability,
+  public ABI/POSIX/Linux compatibility, writable persistence, stale link-ready
+  discriminator work, broad expansion, and phase transition are unaccepted. No
+  follow-up listener/transport prerequisite task is mechanically unblocked in
+  the queue, so supervisor planning is required before the next SSH service
+  implementation slice.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

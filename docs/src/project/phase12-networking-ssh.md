@@ -6835,3 +6835,18 @@ success, shell attachment, hardware reachability, public ABI/POSIX/Linux
 compatibility, writable persistence, stale link-ready discriminator work,
 broad expansion, or phase transition. The selected next bounded task is
 phase12-ssh-service-readiness-closeout-20260622.
+
+phase12-ssh-service-readiness-closeout-20260622 accepts the first SSH service
+readiness diagnostic closeout. The accepted slice now covers the OpenSSH
+compatibility target decision, russh 0.61.2 source/reference feasibility
+boundary, fail-closed service-shape contract, source/unit sshservicediag
+classifier, retained host/QEMU-substitute diagnostic smoke, and redaction
+review. The current frontier is still diagnostic-only: sshservicediag can
+model disabled, prerequisites-missing, and shape-modeled/no-transport states,
+but dependency adoption, runtime SSH crypto, listener/transport behavior,
+authentication/session success, shell attachment, hardware reachability,
+public ABI/POSIX/Linux compatibility, writable persistence, stale link-ready
+discriminator work, broad expansion, and phase transition remain unaccepted.
+No follow-up listener/transport prerequisite task is mechanically unblocked in
+the queue, so supervisor planning is required before the next SSH service
+implementation slice.
