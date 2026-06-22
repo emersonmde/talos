@@ -17022,6 +17022,27 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   proof, compatibility, broad account modeling, broad expansion, phase
   transition, and ssh-ready=true remain unaccepted. The selected next bounded
   task is phase12-ssh-session-channel-open-contract-20260622.
+- phase12-ssh-session-channel-open-contract-20260622 accepts the bounded
+  post-authentication session channel-open contract. The next implementation
+  may model SSH_MSG_CHANNEL_OPEN_CONFIRMATION only after the accepted local
+  publickey USERAUTH_SUCCESS account-policy prerequisite, and only for one
+  SSH_MSG_CHANNEL_OPEN request whose channel type is the public SSH string
+  session, whose bounded field shape passes policy, and where no modeled
+  session or channel is already open in this slice. Missing authentication,
+  wrong message number, unsupported channel type, malformed packets, disabled
+  policy, duplicate channels, over-limit shapes, redaction-sensitive paths, and
+  every other non-success path fail closed with SSH_MSG_CHANNEL_OPEN_FAILURE
+  and fixed labels. The accepted session channel is protocol bookkeeping only,
+  not a PTY, TTY, process owner, scheduler task, login session, shell instance,
+  environment, current working directory, POSIX file descriptor, live socket
+  proof, or OpenSSH compatibility claim. The next source slice may move only
+  session-count to 1 and channel-count to 1 while shell-attached=false,
+  live-reachability=false, and ssh-ready=false remain authoritative. Channel
+  data, EOF/close/window flow control, shell/pty/exec/subsystem requests,
+  process launch, filesystem-backed command execution, hardware proof,
+  compatibility, broad expansion, phase transition, and ssh-ready=true remain
+  unaccepted. The selected next bounded task is
+  phase12-ssh-session-channel-open-core-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

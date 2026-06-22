@@ -12,6 +12,42 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-22 - Phase 12 Session Channels Start As Post-Auth Bookkeeping
+
+- Status: accepted as the bounded SSH session channel-open contract in
+  phase12-ssh-session-channel-open-contract-20260622. No Rust implementation,
+  shell attachment, PTY/process ownership, live reachability, hardware action,
+  OpenSSH/POSIX/Linux compatibility, broad expansion, or phase transition is
+  accepted here.
+- Context: Publickey authentication now has a local modeled
+  USERAUTH_SUCCESS account-policy frontier. The next SSH slice needs a narrow
+  post-authentication channel-open rule before any source code can increase
+  session/channel counters.
+- Decision: The first accepted session/channel policy allows exactly one local
+  modeled SSH_MSG_CHANNEL_OPEN request for channel type session after the
+  accepted account-success prerequisite. A success may model
+  SSH_MSG_CHANNEL_OPEN_CONFIRMATION and move only session-count to 1 and
+  channel-count to 1. Missing authentication, wrong message number,
+  unsupported channel type, malformed packet, disabled policy, duplicate
+  channel, over-limit shape, redaction-sensitive path, and every other
+  non-success case fail closed with SSH_MSG_CHANNEL_OPEN_FAILURE.
+- Evidence level: static task/docs/source review. The task record is
+  tasks/2026-06-22-phase12-ssh-session-channel-open-contract.md.
+- Consequences: The first session channel is protocol bookkeeping only. It is
+  not a PTY, TTY, process owner, scheduler task, login session, shell
+  instance, environment, current working directory, POSIX file descriptor, live
+  socket proof, or OpenSSH compatibility claim. shell-attached=false,
+  live-reachability=false, and ssh-ready=false remain authoritative. Durable
+  evidence must not retain request payload bytes, channel identifiers, window
+  sizes, packet sizes, user/operator identity, key material, session-id bytes,
+  stable identifiers, hardware data, or boot artifacts.
+- Alternatives considered: combining channel-open with shell/PTY/process
+  attachment, accepting multiple sessions/channels immediately, accepting
+  channel data/window/close behavior in the same slice, or waiting for live
+  OpenSSH testing. These are deferred because they mix protocol bookkeeping
+  with process, terminal, filesystem, compatibility, and live reachability
+  commitments that require separate contracts and evidence.
+
 ## 2026-06-22 - Phase 12 Publickey USERAUTH_SUCCESS Starts With One Reserved Account Policy
 
 - Status: accepted as the bounded publickey authentication-success
