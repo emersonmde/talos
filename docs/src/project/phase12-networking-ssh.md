@@ -7574,3 +7574,20 @@ expansion, or phase transition is accepted. ssh-ready, service-success,
 authentication-success, session/channel counts, shell attachment, and
 reachability remain false/zero. The selected next bounded task is
 phase12-ssh-userauth-session-id-smoke-20260622.
+
+phase12-ssh-userauth-session-id-smoke-20260622 accepts focused local smoke and
+regression evidence for the bounded session-identifier prerequisite. The
+retained evidence covers availability only after accepted runtime KEX readiness,
+repeated private-handle access, fail-closed unavailable, malformed, and
+over-limit session-id diagnostics, and false/zero readiness counters. Durable
+evidence keeps only fixed labels, public byte lengths, test names, validation
+commands, task ids, and classifications.
+
+This smoke evidence adds no new protocol behavior. No authorized-key parsing,
+publickey matching, signature verification, authentication response emission,
+authentication success, service success, session/channel allocation, shell
+attachment, live reachability, hardware action, compatibility claim, broad
+expansion, or phase transition is accepted. ssh-ready, service-success,
+authentication-success, session/channel counts, shell attachment, and
+reachability remain false/zero. The selected next bounded task is
+phase12-ssh-userauth-session-id-closeout-20260622.

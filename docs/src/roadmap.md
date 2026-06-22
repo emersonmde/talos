@@ -16752,6 +16752,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   compatibility, broad expansion, or phase transition is accepted; ssh-ready
   remains false. The selected next bounded task is
   phase12-ssh-userauth-session-id-smoke-20260622.
+- phase12-ssh-userauth-session-id-smoke-20260622 accepts focused local smoke
+  and regression evidence for the bounded session-identifier prerequisite. The
+  retained evidence covers availability only after accepted runtime KEX
+  readiness, repeated private-handle access, fail-closed unavailable,
+  malformed, and over-limit diagnostics, and false/zero readiness counters.
+  Durable evidence keeps only fixed labels, public byte lengths, test names,
+  validation commands, task ids, and classifications. No authorized-key
+  parsing, publickey matching, signature verification, authentication
+  responses, authentication success, service success, session/channel
+  allocation, shell attachment, live reachability, hardware, compatibility,
+  broad expansion, or phase transition is accepted; ssh-ready remains false.
+  The selected next bounded task is
+  phase12-ssh-userauth-session-id-closeout-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
