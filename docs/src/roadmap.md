@@ -16086,6 +16086,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   No source behavior, hardware/lab state, boot publication, live transport,
   reachability, service, ABI, broad expansion, stale link-ready discriminator,
   or phase-transition claim is accepted.
+- phase12-ssh-authorized-key-readiness-closeout-20260621 accepts the
+  authorized-key metadata readiness closeout. The accepted slice now covers the
+  operator-provisioned read-only VFS authorized-key policy, metadata-only
+  classification for /etc/talos/ssh/authorized_keys, and retained
+  host/QEMU-substitute sshkeydiag smoke evidence. The current frontier clears
+  only the authorized-key metadata prerequisite when sufficient public-fixture
+  metadata is present; ssh-ready remains false because persistence/exposure,
+  SSH service behavior, live transport, and reachability remain unaccepted. No
+  writable persistence, SSH service behavior, live transport, hardware
+  reachability, public ABI/POSIX/Linux compatibility, broad expansion, stale
+  link-ready discriminator promotion, or phase transition is accepted.
+  selected_next_task is null and planningNeeded=true because no later queued
+  Phase 12.5 prerequisite task has complete objective dependencies and gates.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

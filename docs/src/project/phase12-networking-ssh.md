@@ -6658,3 +6658,17 @@ authorized public keys, operator identities, fingerprints, digests, signatures,
 key-derived identifiers, private keys, generated keys, and comparable stable
 identifiers. The selected next bounded task is
 phase12-ssh-authorized-key-readiness-closeout-20260621.
+
+phase12-ssh-authorized-key-readiness-closeout-20260621 accepts the
+authorized-key metadata readiness closeout. The accepted slice now covers the
+operator-provisioned read-only VFS authorized-key policy, metadata-only
+classification for /etc/talos/ssh/authorized_keys, and retained
+host/QEMU-substitute sshkeydiag smoke evidence. The current frontier clears
+only the authorized-key metadata prerequisite when sufficient public-fixture
+metadata is present; ssh-ready remains false because persistence/exposure, SSH
+service behavior, live transport, and reachability remain unaccepted. No
+writable persistence, SSH service behavior, live transport, hardware
+reachability, public ABI/POSIX/Linux compatibility, broad expansion, stale
+link-ready discriminator promotion, or phase transition is accepted.
+selected_next_task is null and planningNeeded=true because no later queued
+Phase 12.5 prerequisite task has complete objective dependencies and gates.
