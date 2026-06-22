@@ -7094,3 +7094,23 @@ host-key signing, authentication/session success, shell attachment, hardware
 reachability, public OpenSSH/POSIX/Linux compatibility, broad expansion, and
 phase transition remain unaccepted. The selected next bounded task is
 phase12-ssh-runtime-kex-crypto-contract-20260622.
+
+phase12-ssh-runtime-kex-crypto-contract-20260622 accepts a planning-needed
+runtime KEX/crypto contract. The accepted modeled KEXINIT algorithm policy is
+not enough to implement actual SSH key exchange: the host-key and
+authorized-key frontiers are still read-only VFS metadata only, with no private
+host-key parsing, Ed25519 host-key signing, public identity binding, or
+authorized-key parsing accepted. The operator-seeded CSPRNG is an accepted
+prerequisite for private random buffers, but it does not accept ephemeral
+X25519 secret lifetime, transcript hashing, derived key material, packet
+encryption/MAC state, or NEWKEYS. The current Cargo/runtime boundary also has
+no accepted no_std stack for X25519, Ed25519 signing, SHA-256/HMAC,
+ChaCha20-Poly1305, SSH KDF, or encrypted packet state.
+
+The next work requires supervisor planning for host-key private material
+format/parsing/signing and runtime crypto backend/dependency contracts before
+any actual KEX implementation. ssh-ready remains false and actual key
+exchange, encryption/MAC, NEWKEYS, host-key signing, authentication/session
+success, shell attachment, hardware reachability, public
+OpenSSH/POSIX/Linux compatibility, broad expansion, and phase transition remain
+unaccepted. selected_next_task is null and planningNeeded=true.

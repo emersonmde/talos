@@ -16414,6 +16414,17 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   public OpenSSH/POSIX/Linux compatibility, broad expansion, and phase
   transition remain unaccepted. The selected next bounded task is
   phase12-ssh-runtime-kex-crypto-contract-20260622.
+- phase12-ssh-runtime-kex-crypto-contract-20260622 accepts a planning-needed
+  runtime KEX/crypto contract. Actual KEX implementation is blocked on
+  concrete missing prerequisites: accepted host-key and authorized-key work is
+  metadata-only, with no private host-key parsing/signing, public identity
+  binding, or authorized-key parsing; the accepted CSPRNG does not yet define
+  ephemeral X25519 secret lifetime, transcript hashing, derived key material,
+  packet encryption/MAC state, or NEWKEYS; and no no_std runtime crypto
+  backend/dependency boundary is accepted for X25519, Ed25519 signing,
+  SHA-256/HMAC, ChaCha20-Poly1305, SSH KDF, or encrypted packet state.
+  selected_next_task is null and planningNeeded=true for supervisor planning
+  before any runtime KEX implementation.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
