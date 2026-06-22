@@ -6728,3 +6728,22 @@ generated key material, generated random byte streams, private CSPRNG state,
 operator identity, key-derived identifiers, digests, fingerprints, signatures,
 and comparable stable identifiers. The selected next bounded task is
 phase12-ssh-persistence-exposure-readiness-closeout-20260622.
+
+phase12-ssh-persistence-exposure-readiness-closeout-20260622 accepts
+phase12-ssh-persistence-exposure-readiness-closeout-planning-needed. The
+closeout reconciles the accepted persistence/exposure metadata slice: the
+read-only generated-root/initramfs persistence policy, the explicit
+/etc/talos/ssh/exposure-enabled opt-in marker, VFS metadata classification, and
+retained host/QEMU-substitute sshkeydiag smoke evidence.
+
+The accepted frontier remains metadata-only and diagnostic. Sufficient
+generated-root metadata for the operator seed, host key, and authorized keys
+can clear only sshkeydiag-persistence-unavailable. A valid exposure marker can
+clear only sshkeydiag-exposure-disabled. sshkeydiag-not-ready remains present
+and ssh-ready remains false because SSH service behavior, live transport, and
+reachability remain unaccepted. No writable persistence, durable key-store
+semantics, SSH service behavior, live transport, hardware reachability, public
+ABI/POSIX/Linux compatibility, broad expansion, stale link-ready discriminator
+promotion, or phase transition is accepted. selected_next_task is null and
+planningNeeded=true because no later queued Phase 12.5/12.6 prerequisite task
+has complete objective dependencies and gates.

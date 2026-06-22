@@ -16156,6 +16156,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   transport, packet I/O, hardware reachability, writable persistence, public
   ABI/POSIX/Linux compatibility, stale link-ready discriminator promotion,
   broad expansion, or phase transition.
+- phase12-ssh-persistence-exposure-readiness-closeout-20260622 accepts the
+  persistence/exposure metadata readiness closeout. The accepted slice now
+  covers read-only generated-root/initramfs persistence metadata for the
+  operator seed, host key, and authorized keys, the explicit
+  /etc/talos/ssh/exposure-enabled opt-in marker, VFS metadata classification,
+  and retained host/QEMU-substitute sshkeydiag smoke evidence. The current
+  frontier clears only sshkeydiag-persistence-unavailable and
+  sshkeydiag-exposure-disabled when sufficient public-fixture metadata is
+  present; sshkeydiag-not-ready remains present and ssh-ready remains false
+  because SSH service behavior, live transport, and reachability remain
+  unaccepted. No writable persistence, durable key-store semantics, SSH service
+  behavior, live transport, hardware reachability, public ABI/POSIX/Linux
+  compatibility, broad expansion, stale link-ready discriminator promotion, or
+  phase transition is accepted. selected_next_task is null and
+  planningNeeded=true because no later queued Phase 12.5/12.6 prerequisite task
+  has complete objective dependencies and gates.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
