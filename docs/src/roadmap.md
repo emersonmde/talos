@@ -16136,6 +16136,26 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   persistence, SSH service behavior, live transport, hardware reachability,
   public ABI/POSIX/Linux compatibility, stale link-ready discriminator
   promotion, broad expansion, or phase transition.
+- phase12-shell-ssh-persistence-exposure-diag-smoke-20260622 accepts retained
+  host/QEMU-substitute smoke evidence for the read-only VFS
+  persistence/exposure metadata sshkeydiag path. The transcript covers default
+  disabled exposure, missing exposure marker with otherwise sufficient
+  public-fixture persistence metadata, invalid exposure marker metadata, and
+  sufficient public-fixture persistence/exposure metadata. Sufficient metadata
+  clears only sshkeydiag-persistence-unavailable and
+  sshkeydiag-exposure-disabled; sshkeydiag-not-ready remains present and
+  ssh-ready remains false because SSH service behavior, live transport, and
+  reachability remain unaccepted. The evidence retains labels and public
+  fixture state names only; it excludes real operator seed bytes, host private
+  key bytes, authorized public key bytes, generated key material, generated
+  random byte streams, private CSPRNG state, operator identity,
+  key-derived identifiers, digests, fingerprints, signatures, and comparable
+  stable identifiers. The selected next bounded task is
+  phase12-ssh-persistence-exposure-readiness-closeout-20260622. This evidence
+  does not accept SSH service behavior, listener/session handling, live
+  transport, packet I/O, hardware reachability, writable persistence, public
+  ABI/POSIX/Linux compatibility, stale link-ready discriminator promotion,
+  broad expansion, or phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

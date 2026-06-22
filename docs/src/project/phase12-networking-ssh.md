@@ -6712,3 +6712,19 @@ retain secret material, accept writable persistence, expose SSH service
 behavior, validate hardware reachability, broaden ABI/POSIX/Linux
 compatibility, or create a phase transition. The selected next bounded task is
 phase12-shell-ssh-persistence-exposure-diag-smoke-20260622.
+
+phase12-shell-ssh-persistence-exposure-diag-smoke-20260622 accepts retained
+host/QEMU-substitute smoke evidence for the read-only VFS persistence/exposure
+metadata sshkeydiag path. The retained transcript covers default disabled
+exposure, missing exposure marker with otherwise sufficient public-fixture
+persistence metadata, invalid exposure marker metadata, and sufficient
+public-fixture persistence/exposure metadata. Sufficient metadata clears only
+sshkeydiag-persistence-unavailable and sshkeydiag-exposure-disabled;
+sshkeydiag-not-ready remains present and ssh-ready remains false because SSH
+service behavior, live transport, and reachability remain unaccepted. The
+evidence retains labels and public fixture state names only; it excludes real
+operator seed bytes, host private key bytes, authorized public key bytes,
+generated key material, generated random byte streams, private CSPRNG state,
+operator identity, key-derived identifiers, digests, fingerprints, signatures,
+and comparable stable identifiers. The selected next bounded task is
+phase12-ssh-persistence-exposure-readiness-closeout-20260622.
