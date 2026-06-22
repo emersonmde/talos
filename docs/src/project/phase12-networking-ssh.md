@@ -7897,3 +7897,29 @@ session-count=0, channel-count=0, shell-attached=false,
 live-reachability=false, and ssh-ready=false remain authoritative. The
 selected next bounded task is
 phase12-ssh-publickey-auth-success-account-core-20260622.
+
+phase12-ssh-publickey-auth-success-account-core-20260622 accepts the local
+modeled source implementation for the single-account publickey
+USERAUTH_SUCCESS boundary. The new classifier returns SSH_MSG_USERAUTH_SUCCESS
+only for a signed-valid ssh-ed25519 publickey request whose encrypted
+userauth shape, private session-id handle, same-request authorized_keys
+key-match prerequisite, prerequisite-only verifier success, enabled account
+policy, and reserved Talos SSH login account name all match the accepted
+policy. Account mismatch, disabled or missing account policy, missing
+service/session/key-match/verifier prerequisites, unsigned probes after the
+PK_OK slice, invalid or malformed signatures, unauthorized keys, malformed
+requests, unsupported algorithms, and redaction-sensitive paths fail closed
+with SSH_MSG_USERAUTH_FAILURE and fixed labels.
+
+This source slice accepts only local modeled authentication success.
+session-count=0, channel-count=0, shell-attached=false,
+live-reachability=false, and ssh-ready=false remain authoritative; no session,
+channel, shell attachment, live reachability, hardware proof,
+OpenSSH/POSIX/Linux compatibility, broad expansion, or phase transition is
+accepted. Retained evidence remains fixed-label/public-message-number/
+public-length/count/command/path/task-id/classification only and retains no
+request user-name strings except the public literal account constant already in
+source/docs, no key material, no session-id bytes, no signatures, no
+key-derived identifiers, no hardware data, and no boot artifacts. The selected
+next bounded task is
+phase12-shell-ssh-publickey-auth-success-account-smoke-20260622.

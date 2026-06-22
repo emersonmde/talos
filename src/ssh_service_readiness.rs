@@ -123,6 +123,17 @@ pub(crate) enum SshServiceReadinessLabel {
     PublickeyAuthResponseFailurePrerequisiteMissing,
     PublickeyAuthResponseFailurePolicyDisabled,
     PublickeyAuthResponseFailureRedactionSensitive,
+    PublickeyAuthSuccessPrerequisiteOnly,
+    PublickeyAuthSuccessAccountMatch,
+    PublickeyAuthFailureAccountMismatch,
+    PublickeyAuthFailureAccountPolicyDisabled,
+    PublickeyAuthFailureAccountPrerequisiteMissing,
+    PublickeyAuthFailureResponsePrerequisiteMissing,
+    PublickeyAuthFailureSignatureInvalid,
+    PublickeyAuthFailureAuthorizedKeyNoMatch,
+    PublickeyAuthFailureRequestMalformed,
+    PublickeyAuthFailureRedactionSensitive,
+    AuthenticationSuccessLocalOnly,
     TransportClosedBeforeKex,
     AuthenticationUnimplemented,
     SessionUnimplemented,
@@ -313,6 +324,39 @@ impl SshServiceReadinessLabel {
             Self::PublickeyAuthResponseFailureRedactionSensitive => {
                 "sshservicediag-publickey-auth-response-failure-redaction-sensitive"
             }
+            Self::PublickeyAuthSuccessPrerequisiteOnly => {
+                "sshservicediag-publickey-auth-success-prerequisite-only"
+            }
+            Self::PublickeyAuthSuccessAccountMatch => {
+                "sshservicediag-publickey-auth-success-account-match"
+            }
+            Self::PublickeyAuthFailureAccountMismatch => {
+                "sshservicediag-publickey-auth-failure-account-mismatch"
+            }
+            Self::PublickeyAuthFailureAccountPolicyDisabled => {
+                "sshservicediag-publickey-auth-failure-account-policy-disabled"
+            }
+            Self::PublickeyAuthFailureAccountPrerequisiteMissing => {
+                "sshservicediag-publickey-auth-failure-account-prerequisite-missing"
+            }
+            Self::PublickeyAuthFailureResponsePrerequisiteMissing => {
+                "sshservicediag-publickey-auth-failure-response-prerequisite-missing"
+            }
+            Self::PublickeyAuthFailureSignatureInvalid => {
+                "sshservicediag-publickey-auth-failure-signature-invalid"
+            }
+            Self::PublickeyAuthFailureAuthorizedKeyNoMatch => {
+                "sshservicediag-publickey-auth-failure-authorized-key-no-match"
+            }
+            Self::PublickeyAuthFailureRequestMalformed => {
+                "sshservicediag-publickey-auth-failure-request-malformed"
+            }
+            Self::PublickeyAuthFailureRedactionSensitive => {
+                "sshservicediag-publickey-auth-failure-redaction-sensitive"
+            }
+            Self::AuthenticationSuccessLocalOnly => {
+                "sshservicediag-authentication-success-local-only"
+            }
             Self::TransportClosedBeforeKex => "sshservicediag-transport-closed-before-kex",
             Self::AuthenticationUnimplemented => "sshservicediag-authentication-unimplemented",
             Self::SessionUnimplemented => "sshservicediag-session-unimplemented",
@@ -341,6 +385,7 @@ const SSH_MSG_SERVICE_REQUEST: u8 = 5;
 const SSH_MSG_KEXINIT: u8 = 20;
 const SSH_MSG_USERAUTH_REQUEST: u8 = 50;
 const SSH_MSG_USERAUTH_FAILURE: u8 = 51;
+const SSH_MSG_USERAUTH_SUCCESS: u8 = 52;
 const SSH_MSG_USERAUTH_PK_OK: u8 = 60;
 const SSH_KEXINIT_COOKIE_BYTES: usize = 16;
 const SSH_KEXINIT_LIST_COUNT: usize = 10;
@@ -352,6 +397,7 @@ const MAX_SSH_PREAUTH_SERVICE_USERAUTH_LABELS: usize = 10;
 const MAX_SSH_USERAUTH_SESSION_IDENTIFIER_LABELS: usize = 4;
 const MAX_SSH_PUBLICKEY_VERIFICATION_LABELS: usize = 4;
 const MAX_SSH_PUBLICKEY_AUTH_RESPONSE_LABELS: usize = 4;
+const MAX_SSH_PUBLICKEY_AUTH_SUCCESS_ACCOUNT_LABELS: usize = 5;
 const SSH_PREAUTH_STRING_MAX_BYTES: usize = 256;
 const SSH_PREAUTH_PUBLIC_KEY_BLOB_MAX_BYTES: usize = 512;
 const SSH_PREAUTH_SIGNATURE_MAX_BYTES: usize = 512;
@@ -366,6 +412,7 @@ const SSH_KEXINIT_POLICY_COMPRESSION: &[u8] = b"none";
 const SSH_SERVICE_USERAUTH: &[u8] = b"ssh-userauth";
 const SSH_SERVICE_CONNECTION: &[u8] = b"ssh-connection";
 const SSH_AUTH_METHOD_PUBLICKEY: &[u8] = b"publickey";
+const SSH_RESERVED_ACCOUNT_TALOS: &[u8] = b"talos";
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum SshRemoteIdentificationInputState {
@@ -1760,6 +1807,356 @@ fn publickey_auth_response_failure(
     )
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SshPublickeyAuthSuccessAccountResult {
+    UserauthSuccessPrerequisiteOnly,
+    UserauthFailureAccountMismatch,
+    UserauthFailureAccountPolicyDisabled,
+    UserauthFailureAccountPrerequisiteMissing,
+    UserauthFailureResponsePrerequisiteMissing,
+    UserauthFailureSignatureInvalid,
+    UserauthFailureAuthorizedKeyNoMatch,
+    UserauthFailureRequestMalformed,
+    UserauthFailureRedactionSensitive,
+}
+
+pub(crate) struct SshPublickeyAuthSuccessAccountInput<'a> {
+    pub(crate) account_policy_enabled: bool,
+    pub(crate) account_prerequisite_available: bool,
+    pub(crate) redaction_sensitive: bool,
+    pub(crate) decrypted_payload: &'a [u8],
+    pub(crate) service_userauth_requested: bool,
+    pub(crate) session_identifier: SshPublickeyVerificationSessionInput<'a>,
+    pub(crate) authorized_key_match: &'a AuthorizedKeyMatchReport,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SshPublickeyAuthSuccessAccountReport {
+    labels: [SshServiceReadinessLabel; MAX_SSH_PUBLICKEY_AUTH_SUCCESS_ACCOUNT_LABELS],
+    label_count: usize,
+    result: SshPublickeyAuthSuccessAccountResult,
+    response_message_number: u8,
+    request_public_key_blob_len: Option<usize>,
+    signature_blob_len: Option<usize>,
+    signed_data_len: Option<usize>,
+}
+
+impl SshPublickeyAuthSuccessAccountReport {
+    fn success(
+        request_public_key_blob_len: Option<usize>,
+        signature_blob_len: Option<usize>,
+        signed_data_len: Option<usize>,
+    ) -> Self {
+        let mut report = Self {
+            labels: [SshServiceReadinessLabel::NotReady;
+                MAX_SSH_PUBLICKEY_AUTH_SUCCESS_ACCOUNT_LABELS],
+            label_count: 0,
+            result: SshPublickeyAuthSuccessAccountResult::UserauthSuccessPrerequisiteOnly,
+            response_message_number: SSH_MSG_USERAUTH_SUCCESS,
+            request_public_key_blob_len,
+            signature_blob_len,
+            signed_data_len,
+        };
+        report.push(SshServiceReadinessLabel::PublickeyAuthSuccessPrerequisiteOnly);
+        report.push(SshServiceReadinessLabel::PublickeyAuthSuccessAccountMatch);
+        report.push(SshServiceReadinessLabel::AuthenticationSuccessLocalOnly);
+        report.push(SshServiceReadinessLabel::SessionUnimplemented);
+        report.push(SshServiceReadinessLabel::NotReady);
+        report
+    }
+
+    fn failure(
+        result: SshPublickeyAuthSuccessAccountResult,
+        label: SshServiceReadinessLabel,
+        request_public_key_blob_len: Option<usize>,
+        signature_blob_len: Option<usize>,
+        signed_data_len: Option<usize>,
+    ) -> Self {
+        let mut report = Self {
+            labels: [SshServiceReadinessLabel::NotReady;
+                MAX_SSH_PUBLICKEY_AUTH_SUCCESS_ACCOUNT_LABELS],
+            label_count: 0,
+            result,
+            response_message_number: SSH_MSG_USERAUTH_FAILURE,
+            request_public_key_blob_len,
+            signature_blob_len,
+            signed_data_len,
+        };
+        report.push(label);
+        report.push(SshServiceReadinessLabel::SessionUnimplemented);
+        report.push(SshServiceReadinessLabel::NotReady);
+        report
+    }
+
+    fn push(&mut self, label: SshServiceReadinessLabel) {
+        self.labels[self.label_count] = label;
+        self.label_count += 1;
+    }
+
+    pub(crate) fn labels(&self) -> &[SshServiceReadinessLabel] {
+        &self.labels[..self.label_count]
+    }
+
+    pub(crate) const fn result(self) -> SshPublickeyAuthSuccessAccountResult {
+        self.result
+    }
+
+    pub(crate) const fn response_message_number(self) -> u8 {
+        self.response_message_number
+    }
+
+    pub(crate) const fn userauth_success(self) -> bool {
+        matches!(
+            self.result,
+            SshPublickeyAuthSuccessAccountResult::UserauthSuccessPrerequisiteOnly
+        )
+    }
+
+    pub(crate) const fn userauth_failure(self) -> bool {
+        !self.userauth_success()
+    }
+
+    pub(crate) const fn request_public_key_blob_len(self) -> Option<usize> {
+        self.request_public_key_blob_len
+    }
+
+    pub(crate) const fn signature_blob_len(self) -> Option<usize> {
+        self.signature_blob_len
+    }
+
+    pub(crate) const fn signed_data_len(self) -> Option<usize> {
+        self.signed_data_len
+    }
+
+    pub(crate) const fn service_success(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn authentication_success(self) -> bool {
+        self.userauth_success()
+    }
+
+    pub(crate) const fn session_count(self) -> usize {
+        0
+    }
+
+    pub(crate) const fn channel_count(self) -> usize {
+        0
+    }
+
+    pub(crate) const fn shell_attached(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn reachability_accepted(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn ssh_ready(self) -> bool {
+        false
+    }
+}
+
+pub(crate) fn classify_ssh_publickey_auth_success_account_policy(
+    input: SshPublickeyAuthSuccessAccountInput<'_>,
+) -> SshPublickeyAuthSuccessAccountReport {
+    if input.redaction_sensitive {
+        return publickey_auth_success_account_failure(
+            SshPublickeyAuthSuccessAccountResult::UserauthFailureRedactionSensitive,
+            SshServiceReadinessLabel::PublickeyAuthFailureRedactionSensitive,
+            None,
+            None,
+            None,
+        );
+    }
+    if !input.account_policy_enabled {
+        return publickey_auth_success_account_failure(
+            SshPublickeyAuthSuccessAccountResult::UserauthFailureAccountPolicyDisabled,
+            SshServiceReadinessLabel::PublickeyAuthFailureAccountPolicyDisabled,
+            None,
+            None,
+            None,
+        );
+    }
+    if !input.account_prerequisite_available {
+        return publickey_auth_success_account_failure(
+            SshPublickeyAuthSuccessAccountResult::UserauthFailureAccountPrerequisiteMissing,
+            SshServiceReadinessLabel::PublickeyAuthFailureAccountPrerequisiteMissing,
+            None,
+            None,
+            None,
+        );
+    }
+    if !input.service_userauth_requested {
+        return publickey_auth_success_account_failure(
+            SshPublickeyAuthSuccessAccountResult::UserauthFailureResponsePrerequisiteMissing,
+            SshServiceReadinessLabel::PublickeyAuthFailureResponsePrerequisiteMissing,
+            None,
+            None,
+            None,
+        );
+    }
+
+    let Some(request) = parse_ssh_publickey_verification_request(
+        input.decrypted_payload,
+        input.service_userauth_requested,
+    ) else {
+        return publickey_auth_success_account_failure(
+            SshPublickeyAuthSuccessAccountResult::UserauthFailureRequestMalformed,
+            SshServiceReadinessLabel::PublickeyAuthFailureRequestMalformed,
+            None,
+            None,
+            None,
+        );
+    };
+    let request_public_key_blob_len = Some(request.public_key_blob.len());
+    let signature_blob_len = request.signature.map(<[u8]>::len);
+
+    if request.user_name != SSH_RESERVED_ACCOUNT_TALOS {
+        return publickey_auth_success_account_failure(
+            SshPublickeyAuthSuccessAccountResult::UserauthFailureAccountMismatch,
+            SshServiceReadinessLabel::PublickeyAuthFailureAccountMismatch,
+            request_public_key_blob_len,
+            signature_blob_len,
+            None,
+        );
+    }
+    if !request.signature_present {
+        return publickey_auth_success_account_failure(
+            SshPublickeyAuthSuccessAccountResult::UserauthFailureSignatureInvalid,
+            SshServiceReadinessLabel::PublickeyAuthFailureSignatureInvalid,
+            request_public_key_blob_len,
+            None,
+            None,
+        );
+    }
+    if request.algorithm != SSH_KEXINIT_POLICY_HOST_KEY {
+        return publickey_auth_success_account_failure(
+            SshPublickeyAuthSuccessAccountResult::UserauthFailureRequestMalformed,
+            SshServiceReadinessLabel::PublickeyAuthFailureRequestMalformed,
+            request_public_key_blob_len,
+            signature_blob_len,
+            None,
+        );
+    }
+
+    let Ok(public_key) = PublicKey::from_bytes(request.public_key_blob) else {
+        return publickey_auth_success_account_failure(
+            SshPublickeyAuthSuccessAccountResult::UserauthFailureRequestMalformed,
+            SshServiceReadinessLabel::PublickeyAuthFailureRequestMalformed,
+            request_public_key_blob_len,
+            signature_blob_len,
+            None,
+        );
+    };
+    if public_key.algorithm() != Algorithm::Ed25519 || public_key.key_data().ed25519().is_none() {
+        return publickey_auth_success_account_failure(
+            SshPublickeyAuthSuccessAccountResult::UserauthFailureRequestMalformed,
+            SshServiceReadinessLabel::PublickeyAuthFailureRequestMalformed,
+            request_public_key_blob_len,
+            signature_blob_len,
+            None,
+        );
+    }
+
+    if publickey_auth_authorized_key_failure(input.authorized_key_match, request.public_key_blob)
+        .is_some()
+    {
+        return publickey_auth_success_account_failure(
+            SshPublickeyAuthSuccessAccountResult::UserauthFailureAuthorizedKeyNoMatch,
+            SshServiceReadinessLabel::PublickeyAuthFailureAuthorizedKeyNoMatch,
+            request_public_key_blob_len,
+            signature_blob_len,
+            None,
+        );
+    }
+    if matches!(
+        input.session_identifier,
+        SshPublickeyVerificationSessionInput::Unavailable
+    ) {
+        return publickey_auth_success_account_failure(
+            SshPublickeyAuthSuccessAccountResult::UserauthFailureResponsePrerequisiteMissing,
+            SshServiceReadinessLabel::PublickeyAuthFailureResponsePrerequisiteMissing,
+            request_public_key_blob_len,
+            signature_blob_len,
+            None,
+        );
+    }
+
+    let verification = classify_ssh_publickey_verification(SshPublickeyVerificationInput {
+        decrypted_payload: input.decrypted_payload,
+        service_userauth_requested: input.service_userauth_requested,
+        session_identifier: input.session_identifier,
+        authorized_key_match: input.authorized_key_match,
+    });
+
+    match verification.result() {
+        SshPublickeyVerificationResult::VerifiedPrerequisiteOnly => {
+            SshPublickeyAuthSuccessAccountReport::success(
+                verification.request_public_key_blob_len(),
+                verification.signature_blob_len(),
+                verification.signed_data_len(),
+            )
+        }
+        SshPublickeyVerificationResult::SignatureRejected
+        | SshPublickeyVerificationResult::SignatureMalformed
+        | SshPublickeyVerificationResult::SignedDataMalformed
+        | SshPublickeyVerificationResult::SignatureNotPresent => {
+            publickey_auth_success_account_failure(
+                SshPublickeyAuthSuccessAccountResult::UserauthFailureSignatureInvalid,
+                SshServiceReadinessLabel::PublickeyAuthFailureSignatureInvalid,
+                verification.request_public_key_blob_len(),
+                verification.signature_blob_len(),
+                verification.signed_data_len(),
+            )
+        }
+        SshPublickeyVerificationResult::AuthorizedKeyMissingOrNoMatch => {
+            publickey_auth_success_account_failure(
+                SshPublickeyAuthSuccessAccountResult::UserauthFailureAuthorizedKeyNoMatch,
+                SshServiceReadinessLabel::PublickeyAuthFailureAuthorizedKeyNoMatch,
+                verification.request_public_key_blob_len(),
+                verification.signature_blob_len(),
+                verification.signed_data_len(),
+            )
+        }
+        SshPublickeyVerificationResult::SessionIdentifierMissing => {
+            publickey_auth_success_account_failure(
+                SshPublickeyAuthSuccessAccountResult::UserauthFailureResponsePrerequisiteMissing,
+                SshServiceReadinessLabel::PublickeyAuthFailureResponsePrerequisiteMissing,
+                verification.request_public_key_blob_len(),
+                verification.signature_blob_len(),
+                verification.signed_data_len(),
+            )
+        }
+        SshPublickeyVerificationResult::AlgorithmUnsupported
+        | SshPublickeyVerificationResult::KeyBlobMalformed => {
+            publickey_auth_success_account_failure(
+                SshPublickeyAuthSuccessAccountResult::UserauthFailureRequestMalformed,
+                SshServiceReadinessLabel::PublickeyAuthFailureRequestMalformed,
+                verification.request_public_key_blob_len(),
+                verification.signature_blob_len(),
+                verification.signed_data_len(),
+            )
+        }
+    }
+}
+
+fn publickey_auth_success_account_failure(
+    result: SshPublickeyAuthSuccessAccountResult,
+    label: SshServiceReadinessLabel,
+    request_public_key_blob_len: Option<usize>,
+    signature_blob_len: Option<usize>,
+    signed_data_len: Option<usize>,
+) -> SshPublickeyAuthSuccessAccountReport {
+    SshPublickeyAuthSuccessAccountReport::failure(
+        result,
+        label,
+        request_public_key_blob_len,
+        signature_blob_len,
+        signed_data_len,
+    )
+}
+
 struct ParsedSshPublickeyVerificationRequest<'a> {
     user_name: &'a [u8],
     service: &'a [u8],
@@ -2626,6 +3023,16 @@ mod tests {
         labels
     }
 
+    fn publickey_auth_success_account_label_names(
+        report: &SshPublickeyAuthSuccessAccountReport,
+    ) -> [&'static str; MAX_SSH_PUBLICKEY_AUTH_SUCCESS_ACCOUNT_LABELS] {
+        let mut labels = [""; MAX_SSH_PUBLICKEY_AUTH_SUCCESS_ACCOUNT_LABELS];
+        for (index, label) in report.labels().iter().enumerate() {
+            labels[index] = label.name();
+        }
+        labels
+    }
+
     fn shape_modeled_key_report() -> SshKeyReadinessReport {
         let entropy = entropy::classify_entropy_snapshot(
             EntropyDiagnosticSnapshot::empty()
@@ -2696,9 +3103,25 @@ mod tests {
         public_key_blob: &[u8],
         signature_blob: Option<&[u8]>,
     ) -> Vec<u8> {
+        userauth_publickey_verification_payload_for_user(
+            b"fixture-user",
+            signature_present,
+            algorithm,
+            public_key_blob,
+            signature_blob,
+        )
+    }
+
+    fn userauth_publickey_verification_payload_for_user(
+        user_name: &[u8],
+        signature_present: bool,
+        algorithm: &[u8],
+        public_key_blob: &[u8],
+        signature_blob: Option<&[u8]>,
+    ) -> Vec<u8> {
         let mut payload = Vec::new();
         payload.push(SSH_MSG_USERAUTH_REQUEST);
-        push_ssh_string_to_vec(&mut payload, b"fixture-user").unwrap();
+        push_ssh_string_to_vec(&mut payload, user_name).unwrap();
         push_ssh_string_to_vec(&mut payload, SSH_SERVICE_CONNECTION).unwrap();
         push_ssh_string_to_vec(&mut payload, SSH_AUTH_METHOD_PUBLICKEY).unwrap();
         payload.push(u8::from(signature_present));
@@ -2710,7 +3133,8 @@ mod tests {
         payload
     }
 
-    fn signed_publickey_data_for_test(
+    fn signed_publickey_data_for_user_test(
+        user_name: &[u8],
         session_identifier: SshUserauthSessionIdentifier<'_>,
         algorithm: &[u8],
         public_key_blob: &[u8],
@@ -2718,7 +3142,7 @@ mod tests {
         let mut signed_data = Vec::new();
         push_ssh_string_to_vec(&mut signed_data, session_identifier.as_bytes()).unwrap();
         signed_data.push(SSH_MSG_USERAUTH_REQUEST);
-        push_ssh_string_to_vec(&mut signed_data, b"fixture-user").unwrap();
+        push_ssh_string_to_vec(&mut signed_data, user_name).unwrap();
         push_ssh_string_to_vec(&mut signed_data, SSH_SERVICE_CONNECTION).unwrap();
         push_ssh_string_to_vec(&mut signed_data, SSH_AUTH_METHOD_PUBLICKEY).unwrap();
         signed_data.push(1);
@@ -2737,8 +3161,17 @@ mod tests {
         session_identifier: SshUserauthSessionIdentifier<'_>,
         public_key_blob: &[u8],
     ) -> Vec<u8> {
+        public_fixture_signature_blob_for_user(b"fixture-user", session_identifier, public_key_blob)
+    }
+
+    fn public_fixture_signature_blob_for_user(
+        user_name: &[u8],
+        session_identifier: SshUserauthSessionIdentifier<'_>,
+        public_key_blob: &[u8],
+    ) -> Vec<u8> {
         let host_key = ssh_key_readiness::public_fixture_host_key_private_material();
-        let mut signed_data = signed_publickey_data_for_test(
+        let mut signed_data = signed_publickey_data_for_user_test(
+            user_name,
             session_identifier,
             SSH_KEXINIT_POLICY_HOST_KEY,
             public_key_blob,
@@ -4055,6 +4488,345 @@ mod tests {
             unauthorized.response_message_number(),
             SSH_MSG_USERAUTH_FAILURE
         );
+    }
+
+    #[test_case]
+    fn publickey_auth_success_account_accepts_reserved_account_only() {
+        let ready = runtime_kex_ready_for_userauth();
+        let public_key_blob = public_fixture_public_key_blob();
+        let signature_blob = public_fixture_signature_blob_for_user(
+            SSH_RESERVED_ACCOUNT_TALOS,
+            ready.userauth_session_identifier(),
+            &public_key_blob,
+        );
+        let payload = userauth_publickey_verification_payload_for_user(
+            SSH_RESERVED_ACCOUNT_TALOS,
+            true,
+            SSH_KEXINIT_POLICY_HOST_KEY,
+            &public_key_blob,
+            Some(&signature_blob),
+        );
+        let authorized_key_match =
+            AuthorizedKeyMatchReport::prerequisite_only_for_test(public_key_blob.len());
+
+        let report = classify_ssh_publickey_auth_success_account_policy(
+            SshPublickeyAuthSuccessAccountInput {
+                account_policy_enabled: true,
+                account_prerequisite_available: true,
+                redaction_sensitive: false,
+                decrypted_payload: &payload,
+                service_userauth_requested: true,
+                session_identifier: SshPublickeyVerificationSessionInput::Available(
+                    ready.userauth_session_identifier(),
+                ),
+                authorized_key_match: &authorized_key_match,
+            },
+        );
+
+        assert_eq!(
+            report.result(),
+            SshPublickeyAuthSuccessAccountResult::UserauthSuccessPrerequisiteOnly
+        );
+        assert_eq!(report.response_message_number(), SSH_MSG_USERAUTH_SUCCESS);
+        assert!(report.userauth_success());
+        assert!(!report.userauth_failure());
+        assert_eq!(
+            &publickey_auth_success_account_label_names(&report)[..report.labels().len()],
+            &[
+                "sshservicediag-publickey-auth-success-prerequisite-only",
+                "sshservicediag-publickey-auth-success-account-match",
+                "sshservicediag-authentication-success-local-only",
+                "sshservicediag-session-unimplemented",
+                "sshservicediag-not-ready",
+            ]
+        );
+        assert_eq!(
+            report.request_public_key_blob_len(),
+            Some(public_key_blob.len())
+        );
+        assert_eq!(report.signature_blob_len(), Some(signature_blob.len()));
+        assert!(report.signed_data_len().is_some());
+        assert!(!report.service_success());
+        assert!(report.authentication_success());
+        assert_eq!(report.session_count(), 0);
+        assert_eq!(report.channel_count(), 0);
+        assert!(!report.shell_attached());
+        assert!(!report.reachability_accepted());
+        assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn publickey_auth_success_account_fails_closed_for_account_policy_cases() {
+        let ready = runtime_kex_ready_for_userauth();
+        let public_key_blob = public_fixture_public_key_blob();
+        let signature_blob = public_fixture_signature_blob_for_user(
+            SSH_RESERVED_ACCOUNT_TALOS,
+            ready.userauth_session_identifier(),
+            &public_key_blob,
+        );
+        let matched_payload = userauth_publickey_verification_payload_for_user(
+            SSH_RESERVED_ACCOUNT_TALOS,
+            true,
+            SSH_KEXINIT_POLICY_HOST_KEY,
+            &public_key_blob,
+            Some(&signature_blob),
+        );
+        let mismatch_signature =
+            public_fixture_signature_blob(ready.userauth_session_identifier(), &public_key_blob);
+        let mismatch_payload = userauth_publickey_verification_payload(
+            true,
+            SSH_KEXINIT_POLICY_HOST_KEY,
+            &public_key_blob,
+            Some(&mismatch_signature),
+        );
+        let authorized_key_match =
+            AuthorizedKeyMatchReport::prerequisite_only_for_test(public_key_blob.len());
+
+        let mismatch = classify_ssh_publickey_auth_success_account_policy(
+            SshPublickeyAuthSuccessAccountInput {
+                account_policy_enabled: true,
+                account_prerequisite_available: true,
+                redaction_sensitive: false,
+                decrypted_payload: &mismatch_payload,
+                service_userauth_requested: true,
+                session_identifier: SshPublickeyVerificationSessionInput::Available(
+                    ready.userauth_session_identifier(),
+                ),
+                authorized_key_match: &authorized_key_match,
+            },
+        );
+        let disabled = classify_ssh_publickey_auth_success_account_policy(
+            SshPublickeyAuthSuccessAccountInput {
+                account_policy_enabled: false,
+                account_prerequisite_available: true,
+                redaction_sensitive: false,
+                decrypted_payload: &matched_payload,
+                service_userauth_requested: true,
+                session_identifier: SshPublickeyVerificationSessionInput::Available(
+                    ready.userauth_session_identifier(),
+                ),
+                authorized_key_match: &authorized_key_match,
+            },
+        );
+        let missing = classify_ssh_publickey_auth_success_account_policy(
+            SshPublickeyAuthSuccessAccountInput {
+                account_policy_enabled: true,
+                account_prerequisite_available: false,
+                redaction_sensitive: false,
+                decrypted_payload: &matched_payload,
+                service_userauth_requested: true,
+                session_identifier: SshPublickeyVerificationSessionInput::Available(
+                    ready.userauth_session_identifier(),
+                ),
+                authorized_key_match: &authorized_key_match,
+            },
+        );
+        let redaction = classify_ssh_publickey_auth_success_account_policy(
+            SshPublickeyAuthSuccessAccountInput {
+                account_policy_enabled: true,
+                account_prerequisite_available: true,
+                redaction_sensitive: true,
+                decrypted_payload: &matched_payload,
+                service_userauth_requested: true,
+                session_identifier: SshPublickeyVerificationSessionInput::Available(
+                    ready.userauth_session_identifier(),
+                ),
+                authorized_key_match: &authorized_key_match,
+            },
+        );
+
+        assert_eq!(
+            mismatch.result(),
+            SshPublickeyAuthSuccessAccountResult::UserauthFailureAccountMismatch
+        );
+        assert_eq!(
+            disabled.result(),
+            SshPublickeyAuthSuccessAccountResult::UserauthFailureAccountPolicyDisabled
+        );
+        assert_eq!(
+            missing.result(),
+            SshPublickeyAuthSuccessAccountResult::UserauthFailureAccountPrerequisiteMissing
+        );
+        assert_eq!(
+            redaction.result(),
+            SshPublickeyAuthSuccessAccountResult::UserauthFailureRedactionSensitive
+        );
+        assert!(mismatch.userauth_failure());
+        assert_eq!(mismatch.response_message_number(), SSH_MSG_USERAUTH_FAILURE);
+        assert!(!mismatch.authentication_success());
+        assert!(!disabled.ssh_ready());
+        assert!(
+            redaction
+                .labels()
+                .contains(&SshServiceReadinessLabel::PublickeyAuthFailureRedactionSensitive)
+        );
+    }
+
+    #[test_case]
+    fn publickey_auth_success_account_fails_closed_for_signature_and_prerequisites() {
+        let ready = runtime_kex_ready_for_userauth();
+        let public_key_blob = public_fixture_public_key_blob();
+        let signature_blob = public_fixture_signature_blob_for_user(
+            SSH_RESERVED_ACCOUNT_TALOS,
+            ready.userauth_session_identifier(),
+            &public_key_blob,
+        );
+        let mut rejected_signature = signature_blob.clone();
+        *rejected_signature.last_mut().unwrap() ^= 1;
+        let signed_payload = userauth_publickey_verification_payload_for_user(
+            SSH_RESERVED_ACCOUNT_TALOS,
+            true,
+            SSH_KEXINIT_POLICY_HOST_KEY,
+            &public_key_blob,
+            Some(&signature_blob),
+        );
+        let unsigned_payload = userauth_publickey_verification_payload_for_user(
+            SSH_RESERVED_ACCOUNT_TALOS,
+            false,
+            SSH_KEXINIT_POLICY_HOST_KEY,
+            &public_key_blob,
+            None,
+        );
+        let rejected_payload = userauth_publickey_verification_payload_for_user(
+            SSH_RESERVED_ACCOUNT_TALOS,
+            true,
+            SSH_KEXINIT_POLICY_HOST_KEY,
+            &public_key_blob,
+            Some(&rejected_signature),
+        );
+        let unsupported_payload = userauth_publickey_verification_payload_for_user(
+            SSH_RESERVED_ACCOUNT_TALOS,
+            true,
+            b"ssh-rsa",
+            &public_key_blob,
+            Some(&signature_blob),
+        );
+        let authorized_key_match =
+            AuthorizedKeyMatchReport::prerequisite_only_for_test(public_key_blob.len());
+        let no_match = AuthorizedKeyMatchReport::no_match_for_test(public_key_blob.len());
+
+        let unsigned = classify_ssh_publickey_auth_success_account_policy(
+            SshPublickeyAuthSuccessAccountInput {
+                account_policy_enabled: true,
+                account_prerequisite_available: true,
+                redaction_sensitive: false,
+                decrypted_payload: &unsigned_payload,
+                service_userauth_requested: true,
+                session_identifier: SshPublickeyVerificationSessionInput::Available(
+                    ready.userauth_session_identifier(),
+                ),
+                authorized_key_match: &authorized_key_match,
+            },
+        );
+        let rejected = classify_ssh_publickey_auth_success_account_policy(
+            SshPublickeyAuthSuccessAccountInput {
+                account_policy_enabled: true,
+                account_prerequisite_available: true,
+                redaction_sensitive: false,
+                decrypted_payload: &rejected_payload,
+                service_userauth_requested: true,
+                session_identifier: SshPublickeyVerificationSessionInput::Available(
+                    ready.userauth_session_identifier(),
+                ),
+                authorized_key_match: &authorized_key_match,
+            },
+        );
+        let unauthorized = classify_ssh_publickey_auth_success_account_policy(
+            SshPublickeyAuthSuccessAccountInput {
+                account_policy_enabled: true,
+                account_prerequisite_available: true,
+                redaction_sensitive: false,
+                decrypted_payload: &signed_payload,
+                service_userauth_requested: true,
+                session_identifier: SshPublickeyVerificationSessionInput::Available(
+                    ready.userauth_session_identifier(),
+                ),
+                authorized_key_match: &no_match,
+            },
+        );
+        let missing_service = classify_ssh_publickey_auth_success_account_policy(
+            SshPublickeyAuthSuccessAccountInput {
+                account_policy_enabled: true,
+                account_prerequisite_available: true,
+                redaction_sensitive: false,
+                decrypted_payload: &signed_payload,
+                service_userauth_requested: false,
+                session_identifier: SshPublickeyVerificationSessionInput::Available(
+                    ready.userauth_session_identifier(),
+                ),
+                authorized_key_match: &authorized_key_match,
+            },
+        );
+        let missing_session = classify_ssh_publickey_auth_success_account_policy(
+            SshPublickeyAuthSuccessAccountInput {
+                account_policy_enabled: true,
+                account_prerequisite_available: true,
+                redaction_sensitive: false,
+                decrypted_payload: &signed_payload,
+                service_userauth_requested: true,
+                session_identifier: SshPublickeyVerificationSessionInput::Unavailable,
+                authorized_key_match: &authorized_key_match,
+            },
+        );
+        let unsupported = classify_ssh_publickey_auth_success_account_policy(
+            SshPublickeyAuthSuccessAccountInput {
+                account_policy_enabled: true,
+                account_prerequisite_available: true,
+                redaction_sensitive: false,
+                decrypted_payload: &unsupported_payload,
+                service_userauth_requested: true,
+                session_identifier: SshPublickeyVerificationSessionInput::Available(
+                    ready.userauth_session_identifier(),
+                ),
+                authorized_key_match: &authorized_key_match,
+            },
+        );
+        let malformed = classify_ssh_publickey_auth_success_account_policy(
+            SshPublickeyAuthSuccessAccountInput {
+                account_policy_enabled: true,
+                account_prerequisite_available: true,
+                redaction_sensitive: false,
+                decrypted_payload: &signed_payload[..signed_payload.len() - 1],
+                service_userauth_requested: true,
+                session_identifier: SshPublickeyVerificationSessionInput::Available(
+                    ready.userauth_session_identifier(),
+                ),
+                authorized_key_match: &authorized_key_match,
+            },
+        );
+
+        assert_eq!(
+            unsigned.result(),
+            SshPublickeyAuthSuccessAccountResult::UserauthFailureSignatureInvalid
+        );
+        assert_eq!(
+            rejected.result(),
+            SshPublickeyAuthSuccessAccountResult::UserauthFailureSignatureInvalid
+        );
+        assert_eq!(
+            unauthorized.result(),
+            SshPublickeyAuthSuccessAccountResult::UserauthFailureAuthorizedKeyNoMatch
+        );
+        assert_eq!(
+            missing_service.result(),
+            SshPublickeyAuthSuccessAccountResult::UserauthFailureResponsePrerequisiteMissing
+        );
+        assert_eq!(
+            missing_session.result(),
+            SshPublickeyAuthSuccessAccountResult::UserauthFailureResponsePrerequisiteMissing
+        );
+        assert_eq!(
+            unsupported.result(),
+            SshPublickeyAuthSuccessAccountResult::UserauthFailureRequestMalformed
+        );
+        assert_eq!(
+            malformed.result(),
+            SshPublickeyAuthSuccessAccountResult::UserauthFailureRequestMalformed
+        );
+        assert!(!unsigned.authentication_success());
+        assert!(!rejected.ssh_ready());
+        assert_eq!(unauthorized.session_count(), 0);
+        assert_eq!(unsupported.channel_count(), 0);
     }
 
     #[test_case]

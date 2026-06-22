@@ -16965,6 +16965,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   live-reachability=false, and ssh-ready=false remain authoritative. The
   selected next bounded task is
   phase12-ssh-publickey-auth-success-account-core-20260622.
+- phase12-ssh-publickey-auth-success-account-core-20260622 accepts the local
+  modeled source implementation for the single-account publickey
+  USERAUTH_SUCCESS boundary. The classifier emits SSH_MSG_USERAUTH_SUCCESS
+  only for a signed-valid ssh-ed25519 publickey request satisfying the accepted
+  encrypted userauth shape, private session-id handle, same-request
+  authorized_keys key-match prerequisite, prerequisite-only verifier success,
+  enabled account policy, and reserved Talos SSH login account name. Account
+  mismatch, disabled or missing account policy, missing
+  service/session/key-match/verifier prerequisites, unsigned probes after the
+  PK_OK slice, invalid or malformed signatures, unauthorized keys, malformed
+  requests, unsupported algorithms, and redaction-sensitive paths fail closed
+  with SSH_MSG_USERAUTH_FAILURE and fixed labels. This accepts only local
+  modeled authentication success; session-count=0, channel-count=0,
+  shell-attached=false, live-reachability=false, and ssh-ready=false remain
+  authoritative. No session/channel, shell attachment, live reachability,
+  hardware proof, OpenSSH/POSIX/Linux compatibility, broad expansion, or phase
+  transition is accepted. The selected next bounded task is
+  phase12-shell-ssh-publickey-auth-success-account-smoke-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
