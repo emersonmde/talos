@@ -16516,6 +16516,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   reachability, public compatibility, broad expansion, and phase transition
   remain unaccepted. The selected next bounded task is
   phase12-shell-ssh-runtime-kex-smoke-20260622.
+- phase12-shell-ssh-runtime-kex-smoke-20260622 accepts retained
+  host/QEMU-substitute smoke evidence for the accepted local runtime KEX
+  frontier. The smoke covers sshservicediag over the accepted
+  listener/transport, remote identification, KEXINIT negotiation, host-key
+  private-material readiness, OperatorSeededCsprng readiness, real runtime
+  KEX success, crypto-backend-ready, encrypted-packet-state-ready, and
+  deterministic fail-closed labels for CSPRNG-not-ready, host-key-not-ready,
+  invalid peer public key, invalid host-key prerequisite state,
+  disabled/prerequisite-missing service state, and transcript-invalid focused
+  runtime crypto state. ssh-ready remains false; NEWKEYS activation,
+  encrypted packet I/O, authentication/session/shell behavior, hardware
+  reachability, public compatibility, broad expansion, and phase transition
+  remain unaccepted. The selected next bounded task is
+  phase12-ssh-runtime-kex-closeout-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

@@ -952,7 +952,7 @@ mod tests {
     use crate::{
         csprng::OperatorSeededCsprng,
         entropy::{self, EntropyDiagnosticSnapshot, OperatorSeedObservation},
-        ssh_key_readiness::{self, SshKeyReadinessSnapshot},
+        ssh_key_readiness::{self, HostKeyMaterialMetadata, SshKeyReadinessSnapshot},
         ssh_runtime_crypto::SshRuntimeKexResultKind,
     };
 
@@ -1260,6 +1260,115 @@ mod tests {
                 .contains(&SshServiceReadinessLabel::SessionUnimplemented)
         );
         assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn runtime_kex_integration_reports_fail_closed_labels_without_secret_evidence() {
+        let host_key = ssh_key_readiness::public_fixture_host_key_private_material();
+        let packet = modeled_kexinit_packet(false);
+        let packet_len = (read_be_u32(&packet, 0).unwrap() as usize) + 4;
+        let peer_public_key = [
+            9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0,
+        ];
+
+        let mut not_ready_csprng = OperatorSeededCsprng::from_seed_bytes(b"short");
+        let csprng_report = classify_ssh_service_readiness_with_runtime_kex(
+            shape_modeled_key_report(),
+            SSH_LOCAL_TRANSPORT_REMOTE_IDENTIFICATION,
+            SshRemoteIdentificationInputState::Complete,
+            &packet[..packet_len],
+            Some(&host_key),
+            &mut not_ready_csprng,
+            &peer_public_key,
+        );
+        assert_eq!(
+            csprng_report.runtime_kex_result(),
+            Some(SshRuntimeKexResultKind::Failed(
+                crate::ssh_runtime_crypto::SshRuntimeKexFailure::CsprngNotReady(
+                    not_ready_csprng.readiness().state()
+                )
+            ))
+        );
+        assert!(
+            csprng_report
+                .labels()
+                .contains(&SshServiceReadinessLabel::KexCsprngNotReady)
+        );
+        assert!(!csprng_report.ssh_ready());
+
+        let mut ready_csprng = OperatorSeededCsprng::from_seed_bytes(&PUBLIC_FIXTURE_SEED);
+        let missing_host_report = classify_ssh_service_readiness_with_runtime_kex(
+            shape_modeled_key_report(),
+            SSH_LOCAL_TRANSPORT_REMOTE_IDENTIFICATION,
+            SshRemoteIdentificationInputState::Complete,
+            &packet[..packet_len],
+            None,
+            &mut ready_csprng,
+            &peer_public_key,
+        );
+        assert_eq!(
+            missing_host_report.runtime_kex_result(),
+            Some(SshRuntimeKexResultKind::Failed(
+                crate::ssh_runtime_crypto::SshRuntimeKexFailure::HostKeyNotReady
+            ))
+        );
+        assert!(
+            missing_host_report
+                .labels()
+                .contains(&SshServiceReadinessLabel::KexHostKeyNotReady)
+        );
+        assert!(!missing_host_report.ssh_ready());
+
+        let mut ready_csprng = OperatorSeededCsprng::from_seed_bytes(&PUBLIC_FIXTURE_SEED);
+        let invalid_peer_public_key = [0u8; 32];
+        let peer_report = classify_ssh_service_readiness_with_runtime_kex(
+            shape_modeled_key_report(),
+            SSH_LOCAL_TRANSPORT_REMOTE_IDENTIFICATION,
+            SshRemoteIdentificationInputState::Complete,
+            &packet[..packet_len],
+            Some(&host_key),
+            &mut ready_csprng,
+            &invalid_peer_public_key,
+        );
+        assert_eq!(
+            peer_report.runtime_kex_result(),
+            Some(SshRuntimeKexResultKind::Failed(
+                crate::ssh_runtime_crypto::SshRuntimeKexFailure::InvalidPeerPublicKey
+            ))
+        );
+        assert!(
+            peer_report
+                .labels()
+                .contains(&SshServiceReadinessLabel::KexPeerPublicKeyInvalid)
+        );
+        assert!(!peer_report.ssh_ready());
+
+        let invalid_host_key_report = ssh_key_readiness::classify_ssh_key_readiness(
+            SshKeyReadinessSnapshot::fail_closed_default()
+                .with_host_key_material(HostKeyMaterialMetadata::invalid(Some(0)))
+                .with_authorized_key_metadata()
+                .with_seed_material_metadata()
+                .with_persistence_metadata()
+                .with_exposure_enabled(),
+        );
+        let invalid_host_report = classify_ssh_service_readiness(invalid_host_key_report);
+        assert_eq!(
+            invalid_host_report.lifecycle(),
+            SshServiceLifecycleState::PrerequisitesMissing
+        );
+        assert!(
+            invalid_host_report
+                .labels()
+                .contains(&SshServiceReadinessLabel::PrerequisitesMissing)
+        );
+        assert!(
+            invalid_host_report
+                .labels()
+                .contains(&SshServiceReadinessLabel::CryptoBackendUnaccepted)
+        );
+        assert_eq!(invalid_host_report.runtime_kex_result(), None);
+        assert!(!invalid_host_report.ssh_ready());
     }
 
     #[test_case]

@@ -7235,3 +7235,21 @@ secrets, exchange hashes, derived keys, signature bytes, public-key blobs,
 packet plaintext/ciphertext, tags, peer raw input, operator identity,
 key-derived identifiers, or stable session identifiers. The selected next
 bounded task is phase12-shell-ssh-runtime-kex-smoke-20260622.
+
+phase12-shell-ssh-runtime-kex-smoke-20260622 accepts retained
+host/QEMU-substitute smoke evidence for that local runtime KEX frontier. The
+smoke exercises sshservicediag over the accepted local listener/transport,
+remote identification, KEXINIT negotiation, host-key private-material
+readiness, OperatorSeededCsprng readiness, real runtime KEX core success, and
+private encrypted-packet-state-ready label. It also records deterministic
+fail-closed labels for CSPRNG-not-ready, host-key-not-ready, invalid peer
+public key, invalid host-key prerequisite state, disabled/prerequisite-missing
+service state, and transcript-invalid focused runtime crypto state.
+
+The retained smoke transcript is redacted to fixed labels, counters,
+booleans, public algorithm names, test names, validation command output, and
+non-goal labels only. It does not accept or retain secret/key/packet material,
+activate NEWKEYS, perform encrypted packet I/O, authenticate users, allocate
+sessions/channels, attach a shell, run hardware, claim live reachability,
+claim public compatibility, broaden the phase, or make ssh-ready true. The
+selected next bounded task is phase12-ssh-runtime-kex-closeout-20260622.
