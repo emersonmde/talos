@@ -16698,6 +16698,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   live reachability, hardware, compatibility, broad expansion, and phase
   transition remain unaccepted. The selected next bounded task is
   phase12-shell-ssh-preauth-service-userauth-smoke-20260622.
+- phase12-shell-ssh-preauth-service-userauth-smoke-20260622 accepts focused
+  local smoke/regression evidence for that parser core. The retained
+  preauth_service_userauth transcript covers ssh-userauth service-request
+  recognition, ssh-connection/publickey userauth after the modeled service
+  prerequisite, userauth-before-service, unsupported service/method,
+  malformed/missing/trailing fields, inactive encrypted state, plaintext
+  rejection, crypto failure, unsupported dispatch paths, and false/zero
+  readiness counters. It adds no protocol behavior and retains no packet,
+  peer, key, signature, secret, stable identifier, hardware, or boot material.
+  ssh-ready, service-success, authentication-success, sessions/channels, shell
+  attachment, live reachability, hardware, compatibility, broad expansion, and
+  phase transition remain unaccepted. The selected next bounded task is
+  phase12-ssh-preauth-service-userauth-closeout-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

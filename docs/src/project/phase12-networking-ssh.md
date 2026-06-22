@@ -7498,3 +7498,19 @@ transport/session identifiers, hardware data, or boot artifacts. ssh-ready,
 service-success, authentication-success, session/channel counts, shell
 attachment, and live reachability remain false/zero. The selected next bounded
 task is phase12-shell-ssh-preauth-service-userauth-smoke-20260622.
+
+phase12-shell-ssh-preauth-service-userauth-smoke-20260622 accepts the focused
+local smoke/regression evidence for that parser core. The retained evidence is
+the focused preauth_service_userauth source/unit transcript covering
+ssh-userauth service-request recognition, ssh-connection/publickey userauth
+after the modeled service prerequisite, userauth-before-service, unsupported
+service, unsupported method, malformed/missing/trailing fields, inactive
+encrypted state, post-NEWKEYS plaintext rejection, crypto failure, unsupported
+dispatch paths, and false/zero readiness counters.
+
+The smoke task adds no new protocol behavior and retains no packet payloads,
+peer strings, keys, signatures, secrets, stable identifiers, hardware data, or
+boot artifacts. ssh-ready, service-success, authentication-success,
+session/channel counts, shell attachment, and live reachability remain
+false/zero. The selected next bounded task is
+phase12-ssh-preauth-service-userauth-closeout-20260622.
