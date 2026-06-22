@@ -16099,6 +16099,26 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   link-ready discriminator promotion, or phase transition is accepted.
   selected_next_task is null and planningNeeded=true because no later queued
   Phase 12.5 prerequisite task has complete objective dependencies and gates.
+- phase12-ssh-persistence-exposure-policy-contract-20260622 accepts the first
+  persistence/exposure metadata policy after authorized-key metadata readiness.
+  Talos selects read-only generated-root/initramfs metadata for
+  /etc/talos/operator-seed.bin, /etc/talos/ssh/ssh_host_ed25519_key, and
+  /etc/talos/ssh/authorized_keys as the first persistence boundary: all three
+  paths must be present as sufficient metadata under their accepted contracts
+  before sshkeydiag-persistence-unavailable may be cleared. Talos also selects
+  /etc/talos/ssh/exposure-enabled as the explicit operator exposure opt-in
+  marker; missing or invalid marker metadata keeps
+  sshkeydiag-exposure-disabled, while a regular readable marker of 0 through
+  4096 bytes is explicitly enabled. Sufficient persistence/exposure metadata
+  may clear only sshkeydiag-persistence-unavailable and
+  sshkeydiag-exposure-disabled; sshkeydiag-not-ready remains present and
+  ssh-ready remains false until SSH service behavior, live transport, and
+  reachability are accepted separately. The selected next bounded task is
+  phase12-ssh-persistence-exposure-vfs-core-20260622. This contract does not
+  accept writable persistence, durable key-store semantics, SSH service
+  behavior, live transport, hardware reachability, public
+  ABI/POSIX/Linux compatibility, broad expansion, stale link-ready discriminator
+  promotion, or phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

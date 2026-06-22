@@ -6672,3 +6672,24 @@ reachability, public ABI/POSIX/Linux compatibility, broad expansion, stale
 link-ready discriminator promotion, or phase transition is accepted.
 selected_next_task is null and planningNeeded=true because no later queued
 Phase 12.5 prerequisite task has complete objective dependencies and gates.
+
+phase12-ssh-persistence-exposure-policy-contract-20260622 accepts the first
+persistence/exposure metadata policy after authorized-key metadata readiness.
+Talos selects read-only generated-root/initramfs metadata as the first
+persistence boundary: /etc/talos/operator-seed.bin,
+/etc/talos/ssh/ssh_host_ed25519_key, and /etc/talos/ssh/authorized_keys must
+all be present as sufficient metadata under their accepted contracts before
+sshkeydiag-persistence-unavailable may be cleared. This is not a writable
+persistence claim, durable key-store policy, SSH service behavior, live
+transport, or reachability proof.
+
+Talos also selects /etc/talos/ssh/exposure-enabled as the explicit operator
+exposure opt-in marker. Missing, invalid, non-regular, unreadable, malformed,
+or oversized marker metadata keeps sshkeydiag-exposure-disabled; a regular
+readable marker of 0 through 4096 bytes is explicitly enabled, with contents
+ignored and not retained. Sufficient persistence/exposure metadata may clear
+only sshkeydiag-persistence-unavailable and sshkeydiag-exposure-disabled.
+sshkeydiag-not-ready remains present and ssh-ready remains false until SSH
+service behavior, live transport, and reachability are accepted separately.
+The selected next bounded task is
+phase12-ssh-persistence-exposure-vfs-core-20260622.
