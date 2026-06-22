@@ -16215,6 +16215,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   success, session/shell attachment, reachability, public ABI/POSIX/Linux
   compatibility, writable persistence, stale link-ready discriminator work,
   broad expansion, or phase transition.
+- phase12-ssh-service-readiness-diagnostic-core-20260622 accepts the
+  fail-closed SSH service readiness diagnostic core. Talos now has a
+  source/unit classifier and sshservicediag internal diagnostic command over
+  accepted key/CSPRNG/persistence/exposure readiness metadata. The diagnostic
+  models disabled, prerequisites-missing, and shape-modeled lifecycle states;
+  reports only fixed labels, zero listener/session/channel/connection counters,
+  false transport/authentication/shell/reachability caps, and ssh-ready false;
+  and retains host/QEMU-substitute smoke evidence for the dispatcher path. This
+  task does not accept dependency adoption, runtime SSH crypto,
+  listener/transport behavior, authentication/session success, shell
+  attachment, hardware reachability, public ABI/POSIX/Linux compatibility,
+  writable persistence, stale link-ready discriminator work, broad expansion,
+  or phase transition. The selected next task is
+  phase12-ssh-service-readiness-closeout-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

@@ -6808,3 +6808,30 @@ dependency adoption, runtime SSH crypto, listener/transport, authentication,
 session execution, shell attachment, reachability, and public
 ABI/POSIX/Linux compatibility remain unaccepted. The next bounded task is
 phase12-ssh-service-readiness-diagnostic-core-20260622.
+
+phase12-ssh-service-readiness-diagnostic-core-20260622 accepts the
+fail-closed SSH service readiness diagnostic core. Talos now has a
+source/unit classifier and internal diagnostic command, sshservicediag, that
+models only disabled, prerequisites-missing, and shape-modeled lifecycle
+states over the accepted SSH key/CSPRNG/persistence/exposure readiness inputs.
+The diagnostic reports fixed labels and caps only: dependency-unaccepted,
+crypto-backend-unaccepted, transport-unaccepted,
+authentication-unimplemented, session-unimplemented, exposure-disabled,
+prerequisites-missing, shape-modeled, listener-count=0,
+transport-enabled=false, accepted-connection-count=0, session-count=0,
+channel-count=0, authentication-success=false, shell-attached=false,
+reachability-accepted=false, and ssh-ready false.
+
+The retained host/QEMU-substitute smoke transcript covers the dispatcher path
+for the default disabled state, exposure-enabled/prerequisites-missing state,
+and source-level shape-modeled/no-transport state. The evidence retains only
+labels, booleans, zero counters, task ids, paths, and validation commands; it
+does not retain generated host keys, authorized-key bytes, fingerprints,
+signatures, digests, generated random bytes, private CSPRNG state, operator
+identity, key-derived identifiers, stable transport/session identifiers, or
+comparable stable identifiers. This task does not accept dependency adoption,
+runtime SSH crypto, listener/transport behavior, authentication/session
+success, shell attachment, hardware reachability, public ABI/POSIX/Linux
+compatibility, writable persistence, stale link-ready discriminator work,
+broad expansion, or phase transition. The selected next bounded task is
+phase12-ssh-service-readiness-closeout-20260622.

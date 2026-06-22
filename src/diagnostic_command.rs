@@ -3,13 +3,15 @@ use crate::{
     initramfs::ReadOnlyInitramfs,
     runtime_console::{self, ConsoleBackend, DEFAULT_RUNTIME_CONSOLE},
     ssh_key_readiness::{self, SshKeyReadinessSnapshot},
+    ssh_service_readiness,
     tty::CANONICAL_LINE_CAPACITY,
 };
 
 pub const DIAGNOSTIC_COMMAND_CHANNEL_VERSION: &str = "phase5.3-contract-v1";
 pub const MAX_COMMAND_TOKEN_BYTES: usize = 16;
 pub const MAX_COMMAND_ARGUMENTS: usize = 2;
-pub const DEFAULT_COMMAND_COUNT: usize = 5;
+pub const DEFAULT_COMMAND_COUNT: usize = 6;
+const DIAGNOSTIC_COMMAND_LIST: &str = "entropy help list sshkeydiag sshservicediag status";
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum DiagnosticParseError {
@@ -178,6 +180,7 @@ fn dispatch_diagnostic_command(
         "help" => write_help_response(sink),
         "list" => write_list_response(sink),
         "sshkeydiag" => write_ssh_key_readiness_response(context, sink),
+        "sshservicediag" => write_ssh_service_readiness_response(context, sink),
         "status" => write_status_response(sink),
         _ => {
             let mut responses = 0usize;
@@ -195,10 +198,10 @@ fn write_help_response(
 ) -> Result<DiagnosticDispatchResult, DiagnosticDispatchError> {
     let mut responses = 0usize;
     write_line(sink, &mut responses, "diag: ok help")?;
-    write_line(
+    write_parts_line(
         sink,
         &mut responses,
-        "diag: commands entropy help list sshkeydiag status",
+        &["diag: commands ", DIAGNOSTIC_COMMAND_LIST],
     )?;
     Ok(DiagnosticDispatchResult {
         status: DiagnosticDispatchStatus::Handled,
@@ -211,10 +214,10 @@ fn write_list_response(
 ) -> Result<DiagnosticDispatchResult, DiagnosticDispatchError> {
     let mut responses = 0usize;
     write_line(sink, &mut responses, "diag: ok list")?;
-    write_line(
+    write_parts_line(
         sink,
         &mut responses,
-        "diag: commands entropy help list sshkeydiag status",
+        &["diag: commands ", DIAGNOSTIC_COMMAND_LIST],
     )?;
     Ok(DiagnosticDispatchResult {
         status: DiagnosticDispatchStatus::Handled,
@@ -249,10 +252,10 @@ fn write_status_response(
         "diag: command-count ",
         DEFAULT_COMMAND_COUNT,
     )?;
-    write_line(
+    write_parts_line(
         sink,
         &mut responses,
-        "diag: commands entropy help list sshkeydiag status",
+        &["diag: commands ", DIAGNOSTIC_COMMAND_LIST],
     )?;
     Ok(DiagnosticDispatchResult {
         status: DiagnosticDispatchStatus::Handled,
@@ -307,7 +310,108 @@ fn write_ssh_key_readiness_response(
     context: DiagnosticContext,
     sink: &mut impl DiagnosticResponseSink,
 ) -> Result<DiagnosticDispatchResult, DiagnosticDispatchError> {
-    let snapshot = match context {
+    let snapshot = ssh_key_readiness_snapshot(context);
+    let report = ssh_key_readiness::classify_ssh_key_readiness(snapshot);
+    let mut responses = 0usize;
+    write_line(sink, &mut responses, "diag: ok sshkeydiag")?;
+    write_parts_line(
+        sink,
+        &mut responses,
+        &["diag: sshkey-readiness ", report.primary_label().name()],
+    )?;
+    for label in report.labels() {
+        write_parts_line(sink, &mut responses, &["diag: sshkey-label ", label.name()])?;
+    }
+    write_bool_line(sink, &mut responses, "diag: ssh-ready ", report.ssh_ready())?;
+    Ok(DiagnosticDispatchResult {
+        status: DiagnosticDispatchStatus::Handled,
+        response_lines: responses,
+    })
+}
+
+fn write_ssh_service_readiness_response(
+    context: DiagnosticContext,
+    sink: &mut impl DiagnosticResponseSink,
+) -> Result<DiagnosticDispatchResult, DiagnosticDispatchError> {
+    let key_report =
+        ssh_key_readiness::classify_ssh_key_readiness(ssh_key_readiness_snapshot(context));
+    let report = ssh_service_readiness::classify_ssh_service_readiness(key_report);
+    let mut responses = 0usize;
+    write_line(sink, &mut responses, "diag: ok sshservicediag")?;
+    write_parts_line(
+        sink,
+        &mut responses,
+        &["diag: sshservice-readiness ", report.primary_label().name()],
+    )?;
+    write_parts_line(
+        sink,
+        &mut responses,
+        &["diag: sshservice-lifecycle ", report.lifecycle().name()],
+    )?;
+    for label in report.labels() {
+        write_parts_line(
+            sink,
+            &mut responses,
+            &["diag: sshservice-label ", label.name()],
+        )?;
+    }
+    write_usize_line(
+        sink,
+        &mut responses,
+        "diag: listener-count ",
+        report.listener_count(),
+    )?;
+    write_bool_line(
+        sink,
+        &mut responses,
+        "diag: transport-enabled ",
+        report.transport_enabled(),
+    )?;
+    write_usize_line(
+        sink,
+        &mut responses,
+        "diag: accepted-connection-count ",
+        report.accepted_connection_count(),
+    )?;
+    write_usize_line(
+        sink,
+        &mut responses,
+        "diag: session-count ",
+        report.session_count(),
+    )?;
+    write_usize_line(
+        sink,
+        &mut responses,
+        "diag: channel-count ",
+        report.channel_count(),
+    )?;
+    write_bool_line(
+        sink,
+        &mut responses,
+        "diag: authentication-success ",
+        report.authentication_success(),
+    )?;
+    write_bool_line(
+        sink,
+        &mut responses,
+        "diag: shell-attached ",
+        report.shell_attached(),
+    )?;
+    write_bool_line(
+        sink,
+        &mut responses,
+        "diag: reachability-accepted ",
+        report.reachability_accepted(),
+    )?;
+    write_bool_line(sink, &mut responses, "diag: ssh-ready ", report.ssh_ready())?;
+    Ok(DiagnosticDispatchResult {
+        status: DiagnosticDispatchStatus::Handled,
+        response_lines: responses,
+    })
+}
+
+fn ssh_key_readiness_snapshot(context: DiagnosticContext) -> SshKeyReadinessSnapshot {
+    match context {
         DiagnosticContext::FailClosedDefault => SshKeyReadinessSnapshot::fail_closed_default(),
         DiagnosticContext::ReadOnlyVfsMetadata(initramfs) => {
             let seed_metadata = entropy::classify_operator_seed_material(initramfs);
@@ -331,23 +435,7 @@ fn write_ssh_key_readiness_response(
                 .with_exposure_state(exposure)
                 .with_entropy_report(entropy)
         }
-    };
-    let report = ssh_key_readiness::classify_ssh_key_readiness(snapshot);
-    let mut responses = 0usize;
-    write_line(sink, &mut responses, "diag: ok sshkeydiag")?;
-    write_parts_line(
-        sink,
-        &mut responses,
-        &["diag: sshkey-readiness ", report.primary_label().name()],
-    )?;
-    for label in report.labels() {
-        write_parts_line(sink, &mut responses, &["diag: sshkey-label ", label.name()])?;
     }
-    write_bool_line(sink, &mut responses, "diag: ssh-ready ", report.ssh_ready())?;
-    Ok(DiagnosticDispatchResult {
-        status: DiagnosticDispatchStatus::Handled,
-        response_lines: responses,
-    })
 }
 
 fn skip_token_separators(bytes: &[u8], index: &mut usize) {
@@ -465,7 +553,7 @@ mod tests {
     };
 
     struct CaptureSink {
-        bytes: [u8; 768],
+        bytes: [u8; 2048],
         len: usize,
         fail_after: usize,
         writes: usize,
@@ -474,7 +562,7 @@ mod tests {
     impl CaptureSink {
         const fn new() -> Self {
             Self {
-                bytes: [0; 768],
+                bytes: [0; 2048],
                 len: 0,
                 fail_after: usize::MAX,
                 writes: 0,
@@ -483,7 +571,7 @@ mod tests {
 
         const fn failing_after(fail_after: usize) -> Self {
             Self {
-                bytes: [0; 768],
+                bytes: [0; 2048],
                 len: 0,
                 fail_after,
                 writes: 0,
@@ -546,7 +634,7 @@ mod tests {
         assert_eq!(result.response_lines, 2);
         assert_eq!(
             sink.as_str(),
-            "diag: ok help\ndiag: commands entropy help list sshkeydiag status\n"
+            "diag: ok help\ndiag: commands entropy help list sshkeydiag sshservicediag status\n"
         );
     }
 
@@ -559,7 +647,7 @@ mod tests {
         assert_eq!(result.response_lines, 6);
         assert_eq!(
             sink.as_str(),
-            "diag: ok status\ndiag: version phase5.3-contract-v1\ndiag: runtime-console runtime-console0\ndiag: tty canonical-lite line-capacity 64\ndiag: command-count 5\ndiag: commands entropy help list sshkeydiag status\n"
+            "diag: ok status\ndiag: version phase5.3-contract-v1\ndiag: runtime-console runtime-console0\ndiag: tty canonical-lite line-capacity 64\ndiag: command-count 6\ndiag: commands entropy help list sshkeydiag sshservicediag status\n"
         );
     }
 
@@ -586,6 +674,19 @@ mod tests {
         assert_eq!(
             sink.as_str(),
             "diag: ok sshkeydiag\ndiag: sshkey-readiness sshkeydiag-not-ready\ndiag: sshkey-label sshkeydiag-missing-host-key\ndiag: sshkey-label sshkeydiag-missing-authorized-key\ndiag: sshkey-label sshkeydiag-entropy-unready\ndiag: sshkey-label sshkeydiag-seed-material-missing\ndiag: sshkey-label sshkeydiag-persistence-unavailable\ndiag: sshkey-label sshkeydiag-exposure-disabled\ndiag: sshkey-label sshkeydiag-not-ready\ndiag: ssh-ready false\n"
+        );
+    }
+
+    #[test_case]
+    fn dispatcher_reports_ssh_service_readiness_fail_closed_without_live_service() {
+        let mut sink = CaptureSink::new();
+        let result = dispatch_default_diagnostic_command(b"sshservicediag", &mut sink).unwrap();
+
+        assert_eq!(result.status, DiagnosticDispatchStatus::Handled);
+        assert_eq!(result.response_lines, 20);
+        assert_eq!(
+            sink.as_str(),
+            "diag: ok sshservicediag\ndiag: sshservice-readiness sshservicediag-not-ready\ndiag: sshservice-lifecycle disabled\ndiag: sshservice-label sshservicediag-exposure-disabled\ndiag: sshservice-label sshservicediag-prerequisites-missing\ndiag: sshservice-label sshservicediag-dependency-unaccepted\ndiag: sshservice-label sshservicediag-crypto-backend-unaccepted\ndiag: sshservice-label sshservicediag-transport-unaccepted\ndiag: sshservice-label sshservicediag-authentication-unimplemented\ndiag: sshservice-label sshservicediag-session-unimplemented\ndiag: sshservice-label sshservicediag-not-ready\ndiag: listener-count 0\ndiag: transport-enabled false\ndiag: accepted-connection-count 0\ndiag: session-count 0\ndiag: channel-count 0\ndiag: authentication-success false\ndiag: shell-attached false\ndiag: reachability-accepted false\ndiag: ssh-ready false\n"
         );
     }
 
@@ -856,6 +957,21 @@ mod tests {
         assert_eq!(
             enabled_exposure_sink.as_str(),
             "diag: ok sshkeydiag\ndiag: sshkey-readiness sshkeydiag-not-ready\ndiag: sshkey-label sshkeydiag-entropy-unready\ndiag: sshkey-label sshkeydiag-not-ready\ndiag: ssh-ready false\n"
+        );
+
+        let mut service_sink = CaptureSink::new();
+        let service_result = dispatch_diagnostic_command_with_operator_seed_material(
+            b"sshservicediag",
+            enabled_exposure_marker_initramfs(),
+            &mut service_sink,
+        )
+        .unwrap();
+
+        assert_eq!(service_result.status, DiagnosticDispatchStatus::Handled);
+        assert_eq!(service_result.response_lines, 19);
+        assert_eq!(
+            service_sink.as_str(),
+            "diag: ok sshservicediag\ndiag: sshservice-readiness sshservicediag-not-ready\ndiag: sshservice-lifecycle prerequisites-missing\ndiag: sshservice-label sshservicediag-prerequisites-missing\ndiag: sshservice-label sshservicediag-dependency-unaccepted\ndiag: sshservice-label sshservicediag-crypto-backend-unaccepted\ndiag: sshservice-label sshservicediag-transport-unaccepted\ndiag: sshservice-label sshservicediag-authentication-unimplemented\ndiag: sshservice-label sshservicediag-session-unimplemented\ndiag: sshservice-label sshservicediag-not-ready\ndiag: listener-count 0\ndiag: transport-enabled false\ndiag: accepted-connection-count 0\ndiag: session-count 0\ndiag: channel-count 0\ndiag: authentication-success false\ndiag: shell-attached false\ndiag: reachability-accepted false\ndiag: ssh-ready false\n"
         );
     }
 

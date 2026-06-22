@@ -263,6 +263,8 @@ mod smp;
 mod smp_sync;
 #[cfg_attr(not(test), allow(dead_code))]
 mod ssh_key_readiness;
+#[cfg_attr(not(test), allow(dead_code))]
+mod ssh_service_readiness;
 // Phase 4.3 accepts scheduler data structures before wiring boot-time use.
 #[cfg_attr(not(test), allow(dead_code))]
 mod scheduler;
