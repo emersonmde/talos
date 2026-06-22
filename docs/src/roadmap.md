@@ -16402,6 +16402,18 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   encryption/MAC, NEWKEYS, host-key signing, authentication/session success,
   shell attachment, broad expansion, or phase transition. The selected next
   task is phase12-ssh-kexinit-negotiation-closeout-20260622.
+- phase12-ssh-kexinit-negotiation-closeout-20260622 accepts the bounded local
+  KEXINIT/algorithm-negotiation closeout. The accepted slice now reconciles the
+  contract, source/unit implementation, retained host/QEMU-substitute smoke
+  transcript, docs, and redaction posture. The current frontier remains local
+  and fail-closed: sshservicediag can report one modeled cleartext
+  SSH_MSG_KEXINIT negotiation after the accepted listener/transport and
+  remote-identification path, but ssh-ready remains false and actual key
+  exchange, encryption/MAC, NEWKEYS, host-key signing,
+  authentication/session success, shell attachment, hardware reachability,
+  public OpenSSH/POSIX/Linux compatibility, broad expansion, and phase
+  transition remain unaccepted. The selected next bounded task is
+  phase12-ssh-runtime-kex-crypto-contract-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

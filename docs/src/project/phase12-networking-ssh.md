@@ -7081,3 +7081,16 @@ algorithm-list text, key material, peer text/address, digests, fingerprints,
 operator identity, key-derived identifiers, and stable transport/session
 identifiers remain excluded. The selected next bounded task is
 phase12-ssh-kexinit-negotiation-closeout-20260622.
+
+phase12-ssh-kexinit-negotiation-closeout-20260622 accepts the bounded local
+KEXINIT/algorithm-negotiation closeout at static task/docs/evidence review
+level. The accepted slice now covers the KEXINIT contract, local modeled
+implementation core, retained host/QEMU-substitute smoke transcript, docs, and
+redaction review. The current frontier remains local and fail-closed:
+sshservicediag can report one modeled cleartext SSH_MSG_KEXINIT negotiation
+after the accepted listener/transport and remote-identification path, but
+ssh-ready remains false and actual key exchange, encryption/MAC, NEWKEYS,
+host-key signing, authentication/session success, shell attachment, hardware
+reachability, public OpenSSH/POSIX/Linux compatibility, broad expansion, and
+phase transition remain unaccepted. The selected next bounded task is
+phase12-ssh-runtime-kex-crypto-contract-20260622.
