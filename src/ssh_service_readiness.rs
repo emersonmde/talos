@@ -80,6 +80,17 @@ pub(crate) enum SshServiceReadinessLabel {
     EncryptedTransportMessageUnsupported,
     EncryptedTransportPacketMalformed,
     EncryptedTransportPlaintextRejected,
+    PreauthServiceRequestModeled,
+    PreauthServiceUserauthRecognized,
+    PreauthServiceUnsupported,
+    PreauthServiceMalformed,
+    PreauthUserauthRequestModeled,
+    PreauthUserauthServiceRecognized,
+    PreauthUserauthServiceUnsupported,
+    PreauthUserauthMethodPublickeyModeled,
+    PreauthUserauthMethodUnsupported,
+    PreauthUserauthBeforeService,
+    PreauthUserauthMalformed,
     TransportClosedBeforeKex,
     AuthenticationUnimplemented,
     SessionUnimplemented,
@@ -175,6 +186,29 @@ impl SshServiceReadinessLabel {
             Self::EncryptedTransportPlaintextRejected => {
                 "sshservicediag-encrypted-transport-plaintext-rejected"
             }
+            Self::PreauthServiceRequestModeled => "sshservicediag-preauth-service-request-modeled",
+            Self::PreauthServiceUserauthRecognized => {
+                "sshservicediag-preauth-service-userauth-recognized"
+            }
+            Self::PreauthServiceUnsupported => "sshservicediag-preauth-service-unsupported",
+            Self::PreauthServiceMalformed => "sshservicediag-preauth-service-malformed",
+            Self::PreauthUserauthRequestModeled => {
+                "sshservicediag-preauth-userauth-request-modeled"
+            }
+            Self::PreauthUserauthServiceRecognized => {
+                "sshservicediag-preauth-userauth-service-recognized"
+            }
+            Self::PreauthUserauthServiceUnsupported => {
+                "sshservicediag-preauth-userauth-service-unsupported"
+            }
+            Self::PreauthUserauthMethodPublickeyModeled => {
+                "sshservicediag-preauth-userauth-method-publickey-modeled"
+            }
+            Self::PreauthUserauthMethodUnsupported => {
+                "sshservicediag-preauth-userauth-method-unsupported"
+            }
+            Self::PreauthUserauthBeforeService => "sshservicediag-preauth-userauth-before-service",
+            Self::PreauthUserauthMalformed => "sshservicediag-preauth-userauth-malformed",
             Self::TransportClosedBeforeKex => "sshservicediag-transport-closed-before-kex",
             Self::AuthenticationUnimplemented => "sshservicediag-authentication-unimplemented",
             Self::SessionUnimplemented => "sshservicediag-session-unimplemented",
@@ -208,6 +242,10 @@ const SSH_KEXINIT_REQUIRED_LIST_COUNT: usize = 8;
 const SSH_KEXINIT_CLIENT_PACKET_BUFFER_BYTES: usize = SSH_KEXINIT_PACKET_MAX_BYTES + 4;
 const SSH_ENCRYPTED_TRANSPORT_DISPATCH_MIN_PAYLOAD_BYTES: usize = 1;
 const MAX_SSH_ENCRYPTED_TRANSPORT_DISPATCH_LABELS: usize = 6;
+const MAX_SSH_PREAUTH_SERVICE_USERAUTH_LABELS: usize = 10;
+const SSH_PREAUTH_STRING_MAX_BYTES: usize = 256;
+const SSH_PREAUTH_PUBLIC_KEY_BLOB_MAX_BYTES: usize = 512;
+const SSH_PREAUTH_SIGNATURE_MAX_BYTES: usize = 512;
 const SSH_KEXINIT_MODELED_COOKIE_SEED: [u8; crate::csprng::CSPRNG_SEED_BYTES] =
     *b"Talos-kexinit-cookie-redacted!!!";
 
@@ -216,6 +254,9 @@ const SSH_KEXINIT_POLICY_HOST_KEY: &[u8] = b"ssh-ed25519";
 const SSH_KEXINIT_POLICY_CIPHER: &[u8] = b"chacha20-poly1305@openssh.com";
 const SSH_KEXINIT_POLICY_MAC: &[u8] = b"hmac-sha2-256";
 const SSH_KEXINIT_POLICY_COMPRESSION: &[u8] = b"none";
+const SSH_SERVICE_USERAUTH: &[u8] = b"ssh-userauth";
+const SSH_SERVICE_CONNECTION: &[u8] = b"ssh-connection";
+const SSH_AUTH_METHOD_PUBLICKEY: &[u8] = b"publickey";
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum SshRemoteIdentificationInputState {
@@ -670,6 +711,366 @@ pub(crate) fn classify_ssh_encrypted_transport_dispatch(
             true,
         ),
     }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SshPreauthServiceUserauthResult {
+    ServiceUserauthRecognized,
+    ServiceUnsupported,
+    ServiceMalformed,
+    UserauthPublickeyModeled,
+    UserauthBeforeService,
+    UserauthServiceUnsupported,
+    UserauthMethodUnsupported,
+    UserauthMalformed,
+    DispatchUnsupportedMessage,
+    DispatchMalformedPacket,
+    InactiveEncryptedPacketState,
+    PlaintextRejected,
+    PacketCryptoFailed,
+}
+
+pub(crate) struct SshPreauthServiceUserauthInput<'a> {
+    pub(crate) encrypted_packet_state_active: bool,
+    pub(crate) post_newkeys_plaintext_attempted: bool,
+    pub(crate) packet_crypto_failed: bool,
+    pub(crate) service_userauth_requested: bool,
+    pub(crate) decrypted_payload: &'a [u8],
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SshPreauthServiceUserauthReport {
+    labels: [SshServiceReadinessLabel; MAX_SSH_PREAUTH_SERVICE_USERAUTH_LABELS],
+    label_count: usize,
+    result: SshPreauthServiceUserauthResult,
+    message_number: Option<u8>,
+    service_userauth_requested: bool,
+    parsed_field_count: usize,
+}
+
+impl SshPreauthServiceUserauthReport {
+    fn new(
+        result: SshPreauthServiceUserauthResult,
+        message_number: Option<u8>,
+        service_userauth_requested: bool,
+        parsed_field_count: usize,
+    ) -> Self {
+        Self {
+            labels: [SshServiceReadinessLabel::NotReady; MAX_SSH_PREAUTH_SERVICE_USERAUTH_LABELS],
+            label_count: 0,
+            result,
+            message_number,
+            service_userauth_requested,
+            parsed_field_count,
+        }
+    }
+
+    fn push(&mut self, label: SshServiceReadinessLabel) {
+        self.labels[self.label_count] = label;
+        self.label_count += 1;
+    }
+
+    fn finish(mut self) -> Self {
+        self.push(SshServiceReadinessLabel::AuthenticationUnimplemented);
+        self.push(SshServiceReadinessLabel::SessionUnimplemented);
+        self.push(SshServiceReadinessLabel::NotReady);
+        self
+    }
+
+    fn from_dispatch(dispatch: SshEncryptedTransportDispatchReport) -> Self {
+        let result = match dispatch.result() {
+            SshEncryptedTransportDispatchResult::ServiceRequest
+            | SshEncryptedTransportDispatchResult::UserauthRequest => {
+                SshPreauthServiceUserauthResult::DispatchMalformedPacket
+            }
+            SshEncryptedTransportDispatchResult::UnsupportedMessage => {
+                SshPreauthServiceUserauthResult::DispatchUnsupportedMessage
+            }
+            SshEncryptedTransportDispatchResult::MalformedPacket => {
+                SshPreauthServiceUserauthResult::DispatchMalformedPacket
+            }
+            SshEncryptedTransportDispatchResult::InactiveEncryptedPacketState => {
+                SshPreauthServiceUserauthResult::InactiveEncryptedPacketState
+            }
+            SshEncryptedTransportDispatchResult::PlaintextRejected => {
+                SshPreauthServiceUserauthResult::PlaintextRejected
+            }
+            SshEncryptedTransportDispatchResult::PacketCryptoFailed => {
+                SshPreauthServiceUserauthResult::PacketCryptoFailed
+            }
+        };
+        let mut report = Self::new(
+            result,
+            dispatch.message_number(),
+            false,
+            usize::from(dispatch.message_number().is_some()),
+        );
+        for label in dispatch.labels() {
+            report.push(*label);
+        }
+        report
+    }
+
+    pub(crate) fn labels(&self) -> &[SshServiceReadinessLabel] {
+        &self.labels[..self.label_count]
+    }
+
+    pub(crate) const fn result(self) -> SshPreauthServiceUserauthResult {
+        self.result
+    }
+
+    pub(crate) const fn message_number(self) -> Option<u8> {
+        self.message_number
+    }
+
+    pub(crate) const fn service_userauth_requested(self) -> bool {
+        self.service_userauth_requested
+    }
+
+    pub(crate) const fn parsed_field_count(self) -> usize {
+        self.parsed_field_count
+    }
+
+    pub(crate) const fn service_success(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn authentication_success(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn session_count(self) -> usize {
+        0
+    }
+
+    pub(crate) const fn channel_count(self) -> usize {
+        0
+    }
+
+    pub(crate) const fn shell_attached(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn ssh_ready(self) -> bool {
+        false
+    }
+}
+
+pub(crate) fn classify_ssh_preauth_service_userauth(
+    input: SshPreauthServiceUserauthInput<'_>,
+) -> SshPreauthServiceUserauthReport {
+    let dispatch = classify_ssh_encrypted_transport_dispatch(SshEncryptedTransportDispatchInput {
+        encrypted_packet_state_active: input.encrypted_packet_state_active,
+        post_newkeys_plaintext_attempted: input.post_newkeys_plaintext_attempted,
+        packet_crypto_failed: input.packet_crypto_failed,
+        decrypted_payload: input.decrypted_payload,
+    });
+    match dispatch.result() {
+        SshEncryptedTransportDispatchResult::ServiceRequest => {
+            classify_ssh_service_request_payload(input.decrypted_payload)
+        }
+        SshEncryptedTransportDispatchResult::UserauthRequest => {
+            classify_ssh_userauth_request_payload(
+                input.decrypted_payload,
+                input.service_userauth_requested,
+            )
+        }
+        _ => SshPreauthServiceUserauthReport::from_dispatch(dispatch),
+    }
+}
+
+fn classify_ssh_service_request_payload(payload: &[u8]) -> SshPreauthServiceUserauthReport {
+    let result = parse_ssh_binary_string_bounded(payload, 1, SSH_PREAUTH_STRING_MAX_BYTES);
+    let Some((service, cursor)) = result else {
+        let mut report = SshPreauthServiceUserauthReport::new(
+            SshPreauthServiceUserauthResult::ServiceMalformed,
+            Some(SSH_MSG_SERVICE_REQUEST),
+            false,
+            1,
+        );
+        report.push(SshServiceReadinessLabel::PreauthServiceMalformed);
+        return report.finish();
+    };
+    if cursor != payload.len() {
+        let mut report = SshPreauthServiceUserauthReport::new(
+            SshPreauthServiceUserauthResult::ServiceMalformed,
+            Some(SSH_MSG_SERVICE_REQUEST),
+            false,
+            2,
+        );
+        report.push(SshServiceReadinessLabel::PreauthServiceMalformed);
+        return report.finish();
+    }
+
+    let mut report = if service == SSH_SERVICE_USERAUTH {
+        SshPreauthServiceUserauthReport::new(
+            SshPreauthServiceUserauthResult::ServiceUserauthRecognized,
+            Some(SSH_MSG_SERVICE_REQUEST),
+            true,
+            2,
+        )
+    } else {
+        SshPreauthServiceUserauthReport::new(
+            SshPreauthServiceUserauthResult::ServiceUnsupported,
+            Some(SSH_MSG_SERVICE_REQUEST),
+            false,
+            2,
+        )
+    };
+    report.push(SshServiceReadinessLabel::EncryptedTransportDispatchModeled);
+    report.push(SshServiceReadinessLabel::EncryptedTransportPreauthState);
+    report.push(SshServiceReadinessLabel::PreauthServiceRequestModeled);
+    if service == SSH_SERVICE_USERAUTH {
+        report.push(SshServiceReadinessLabel::PreauthServiceUserauthRecognized);
+    } else {
+        report.push(SshServiceReadinessLabel::PreauthServiceUnsupported);
+    }
+    report.finish()
+}
+
+fn classify_ssh_userauth_request_payload(
+    payload: &[u8],
+    service_userauth_requested: bool,
+) -> SshPreauthServiceUserauthReport {
+    if !service_userauth_requested {
+        let mut report = SshPreauthServiceUserauthReport::new(
+            SshPreauthServiceUserauthResult::UserauthBeforeService,
+            Some(SSH_MSG_USERAUTH_REQUEST),
+            false,
+            1,
+        );
+        report.push(SshServiceReadinessLabel::EncryptedTransportDispatchModeled);
+        report.push(SshServiceReadinessLabel::EncryptedTransportPreauthState);
+        report.push(SshServiceReadinessLabel::PreauthUserauthRequestModeled);
+        report.push(SshServiceReadinessLabel::PreauthUserauthBeforeService);
+        return report.finish();
+    }
+
+    let Some((_user_name, cursor)) =
+        parse_ssh_binary_string_bounded(payload, 1, SSH_PREAUTH_STRING_MAX_BYTES)
+    else {
+        return malformed_userauth_report(service_userauth_requested, 1);
+    };
+    let Some((service, cursor)) =
+        parse_ssh_binary_string_bounded(payload, cursor, SSH_PREAUTH_STRING_MAX_BYTES)
+    else {
+        return malformed_userauth_report(service_userauth_requested, 2);
+    };
+    let Some((method, cursor)) =
+        parse_ssh_binary_string_bounded(payload, cursor, SSH_PREAUTH_STRING_MAX_BYTES)
+    else {
+        return malformed_userauth_report(service_userauth_requested, 3);
+    };
+
+    if service != SSH_SERVICE_CONNECTION {
+        let mut report = SshPreauthServiceUserauthReport::new(
+            SshPreauthServiceUserauthResult::UserauthServiceUnsupported,
+            Some(SSH_MSG_USERAUTH_REQUEST),
+            service_userauth_requested,
+            4,
+        );
+        report.push(SshServiceReadinessLabel::EncryptedTransportDispatchModeled);
+        report.push(SshServiceReadinessLabel::EncryptedTransportPreauthState);
+        report.push(SshServiceReadinessLabel::PreauthUserauthRequestModeled);
+        report.push(SshServiceReadinessLabel::PreauthUserauthServiceUnsupported);
+        return report.finish();
+    }
+
+    if method != SSH_AUTH_METHOD_PUBLICKEY {
+        let mut report = SshPreauthServiceUserauthReport::new(
+            SshPreauthServiceUserauthResult::UserauthMethodUnsupported,
+            Some(SSH_MSG_USERAUTH_REQUEST),
+            service_userauth_requested,
+            4,
+        );
+        report.push(SshServiceReadinessLabel::EncryptedTransportDispatchModeled);
+        report.push(SshServiceReadinessLabel::EncryptedTransportPreauthState);
+        report.push(SshServiceReadinessLabel::PreauthUserauthRequestModeled);
+        report.push(SshServiceReadinessLabel::PreauthUserauthServiceRecognized);
+        report.push(SshServiceReadinessLabel::PreauthUserauthMethodUnsupported);
+        return report.finish();
+    }
+
+    let Some(signature_present) = payload.get(cursor).copied() else {
+        return malformed_userauth_report(service_userauth_requested, 4);
+    };
+    if !matches!(signature_present, 0 | 1) {
+        return malformed_userauth_report(service_userauth_requested, 4);
+    }
+    let cursor = cursor + 1;
+    let Some((algorithm, cursor)) =
+        parse_ssh_binary_string_bounded(payload, cursor, SSH_PREAUTH_STRING_MAX_BYTES)
+    else {
+        return malformed_userauth_report(service_userauth_requested, 5);
+    };
+    let Some((public_key_blob, cursor)) =
+        parse_ssh_binary_string_bounded(payload, cursor, SSH_PREAUTH_PUBLIC_KEY_BLOB_MAX_BYTES)
+    else {
+        return malformed_userauth_report(service_userauth_requested, 6);
+    };
+    if algorithm.is_empty() || public_key_blob.is_empty() {
+        return malformed_userauth_report(service_userauth_requested, 6);
+    }
+    let cursor = if signature_present == 1 {
+        let Some((signature, cursor)) =
+            parse_ssh_binary_string_bounded(payload, cursor, SSH_PREAUTH_SIGNATURE_MAX_BYTES)
+        else {
+            return malformed_userauth_report(service_userauth_requested, 7);
+        };
+        if signature.is_empty() {
+            return malformed_userauth_report(service_userauth_requested, 7);
+        }
+        cursor
+    } else {
+        cursor
+    };
+    if cursor != payload.len() {
+        return malformed_userauth_report(service_userauth_requested, 7);
+    }
+
+    let mut report = SshPreauthServiceUserauthReport::new(
+        SshPreauthServiceUserauthResult::UserauthPublickeyModeled,
+        Some(SSH_MSG_USERAUTH_REQUEST),
+        service_userauth_requested,
+        usize::from(signature_present == 1) + 7,
+    );
+    report.push(SshServiceReadinessLabel::EncryptedTransportDispatchModeled);
+    report.push(SshServiceReadinessLabel::EncryptedTransportPreauthState);
+    report.push(SshServiceReadinessLabel::PreauthUserauthRequestModeled);
+    report.push(SshServiceReadinessLabel::PreauthUserauthServiceRecognized);
+    report.push(SshServiceReadinessLabel::PreauthUserauthMethodPublickeyModeled);
+    report.finish()
+}
+
+fn malformed_userauth_report(
+    service_userauth_requested: bool,
+    parsed_field_count: usize,
+) -> SshPreauthServiceUserauthReport {
+    let mut report = SshPreauthServiceUserauthReport::new(
+        SshPreauthServiceUserauthResult::UserauthMalformed,
+        Some(SSH_MSG_USERAUTH_REQUEST),
+        service_userauth_requested,
+        parsed_field_count,
+    );
+    report.push(SshServiceReadinessLabel::PreauthUserauthMalformed);
+    report.finish()
+}
+
+fn parse_ssh_binary_string_bounded(
+    bytes: &[u8],
+    cursor: usize,
+    max_len: usize,
+) -> Option<(&[u8], usize)> {
+    let len = read_be_u32(bytes, cursor)? as usize;
+    if len > max_len {
+        return None;
+    }
+    let start = cursor + 4;
+    let end = start.checked_add(len)?;
+    if end > bytes.len() {
+        return None;
+    }
+    Some((&bytes[start..end], end))
 }
 
 struct RuntimeKexAttempt<'a> {
@@ -1215,6 +1616,16 @@ mod tests {
         labels
     }
 
+    fn preauth_label_names(
+        report: &SshPreauthServiceUserauthReport,
+    ) -> [&'static str; MAX_SSH_PREAUTH_SERVICE_USERAUTH_LABELS] {
+        let mut labels = [""; MAX_SSH_PREAUTH_SERVICE_USERAUTH_LABELS];
+        for (index, label) in report.labels().iter().enumerate() {
+            labels[index] = label.name();
+        }
+        labels
+    }
+
     fn shape_modeled_key_report() -> SshKeyReadinessReport {
         let entropy = entropy::classify_entropy_snapshot(
             EntropyDiagnosticSnapshot::empty()
@@ -1246,6 +1657,47 @@ mod tests {
         let packet_len = build_modeled_client_kexinit_packet(&mut packet, first_packet_follows);
         packet[0..4].copy_from_slice(&((packet_len - 4) as u32).to_be_bytes());
         packet
+    }
+
+    fn write_ssh_string(output: &mut [u8], cursor: usize, value: &[u8]) -> usize {
+        output[cursor..cursor + 4].copy_from_slice(&(value.len() as u32).to_be_bytes());
+        let start = cursor + 4;
+        output[start..start + value.len()].copy_from_slice(value);
+        start + value.len()
+    }
+
+    fn service_request_payload(service: &[u8]) -> ([u8; 64], usize) {
+        let mut payload = [0u8; 64];
+        payload[0] = SSH_MSG_SERVICE_REQUEST;
+        let cursor = write_ssh_string(&mut payload, 1, service);
+        (payload, cursor)
+    }
+
+    fn userauth_publickey_payload(signature_present: bool) -> ([u8; 192], usize) {
+        let mut payload = [0u8; 192];
+        payload[0] = SSH_MSG_USERAUTH_REQUEST;
+        let mut cursor = 1usize;
+        cursor = write_ssh_string(&mut payload, cursor, b"fixture-user");
+        cursor = write_ssh_string(&mut payload, cursor, SSH_SERVICE_CONNECTION);
+        cursor = write_ssh_string(&mut payload, cursor, SSH_AUTH_METHOD_PUBLICKEY);
+        payload[cursor] = u8::from(signature_present);
+        cursor += 1;
+        cursor = write_ssh_string(&mut payload, cursor, b"ssh-ed25519");
+        cursor = write_ssh_string(&mut payload, cursor, b"public-fixture-key");
+        if signature_present {
+            cursor = write_ssh_string(&mut payload, cursor, b"public-fixture-signature");
+        }
+        (payload, cursor)
+    }
+
+    fn userauth_unsupported_payload(service: &[u8], method: &[u8]) -> ([u8; 128], usize) {
+        let mut payload = [0u8; 128];
+        payload[0] = SSH_MSG_USERAUTH_REQUEST;
+        let mut cursor = 1usize;
+        cursor = write_ssh_string(&mut payload, cursor, b"fixture-user");
+        cursor = write_ssh_string(&mut payload, cursor, service);
+        cursor = write_ssh_string(&mut payload, cursor, method);
+        (payload, cursor)
     }
 
     #[test_case]
@@ -1794,6 +2246,243 @@ mod tests {
                 "sshservicediag-not-ready",
             ]
         );
+        assert!(!crypto_failed.ssh_ready());
+    }
+
+    #[test_case]
+    fn preauth_service_userauth_recognizes_service_request_without_service_success() {
+        let (payload, len) = service_request_payload(SSH_SERVICE_USERAUTH);
+        let report = classify_ssh_preauth_service_userauth(SshPreauthServiceUserauthInput {
+            encrypted_packet_state_active: true,
+            post_newkeys_plaintext_attempted: false,
+            packet_crypto_failed: false,
+            service_userauth_requested: false,
+            decrypted_payload: &payload[..len],
+        });
+
+        assert_eq!(
+            report.result(),
+            SshPreauthServiceUserauthResult::ServiceUserauthRecognized
+        );
+        assert_eq!(report.message_number(), Some(SSH_MSG_SERVICE_REQUEST));
+        assert!(report.service_userauth_requested());
+        assert_eq!(report.parsed_field_count(), 2);
+        assert_eq!(
+            &preauth_label_names(&report)[..report.labels().len()],
+            &[
+                "sshservicediag-encrypted-transport-dispatch-modeled",
+                "sshservicediag-encrypted-transport-preauth-state",
+                "sshservicediag-preauth-service-request-modeled",
+                "sshservicediag-preauth-service-userauth-recognized",
+                "sshservicediag-authentication-unimplemented",
+                "sshservicediag-session-unimplemented",
+                "sshservicediag-not-ready",
+            ]
+        );
+        assert!(!report.service_success());
+        assert!(!report.authentication_success());
+        assert_eq!(report.session_count(), 0);
+        assert_eq!(report.channel_count(), 0);
+        assert!(!report.shell_attached());
+        assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn preauth_service_userauth_models_publickey_after_service_prerequisite() {
+        let (payload, len) = userauth_publickey_payload(false);
+        let report = classify_ssh_preauth_service_userauth(SshPreauthServiceUserauthInput {
+            encrypted_packet_state_active: true,
+            post_newkeys_plaintext_attempted: false,
+            packet_crypto_failed: false,
+            service_userauth_requested: true,
+            decrypted_payload: &payload[..len],
+        });
+
+        assert_eq!(
+            report.result(),
+            SshPreauthServiceUserauthResult::UserauthPublickeyModeled
+        );
+        assert_eq!(report.message_number(), Some(SSH_MSG_USERAUTH_REQUEST));
+        assert!(report.service_userauth_requested());
+        assert_eq!(report.parsed_field_count(), 7);
+        assert_eq!(
+            &preauth_label_names(&report)[..report.labels().len()],
+            &[
+                "sshservicediag-encrypted-transport-dispatch-modeled",
+                "sshservicediag-encrypted-transport-preauth-state",
+                "sshservicediag-preauth-userauth-request-modeled",
+                "sshservicediag-preauth-userauth-service-recognized",
+                "sshservicediag-preauth-userauth-method-publickey-modeled",
+                "sshservicediag-authentication-unimplemented",
+                "sshservicediag-session-unimplemented",
+                "sshservicediag-not-ready",
+            ]
+        );
+        assert!(!report.service_success());
+        assert!(!report.authentication_success());
+        assert_eq!(report.session_count(), 0);
+        assert_eq!(report.channel_count(), 0);
+        assert!(!report.shell_attached());
+        assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn preauth_service_userauth_fails_closed_for_before_service_and_unsupported_shapes() {
+        let (payload, len) = userauth_publickey_payload(true);
+        let before_service =
+            classify_ssh_preauth_service_userauth(SshPreauthServiceUserauthInput {
+                encrypted_packet_state_active: true,
+                post_newkeys_plaintext_attempted: false,
+                packet_crypto_failed: false,
+                service_userauth_requested: false,
+                decrypted_payload: &payload[..len],
+            });
+        assert_eq!(
+            before_service.result(),
+            SshPreauthServiceUserauthResult::UserauthBeforeService
+        );
+        assert!(
+            before_service
+                .labels()
+                .contains(&SshServiceReadinessLabel::PreauthUserauthBeforeService)
+        );
+        assert!(!before_service.authentication_success());
+        assert!(!before_service.ssh_ready());
+
+        let (payload, len) = service_request_payload(b"ssh-connection");
+        let unsupported_service_request =
+            classify_ssh_preauth_service_userauth(SshPreauthServiceUserauthInput {
+                encrypted_packet_state_active: true,
+                post_newkeys_plaintext_attempted: false,
+                packet_crypto_failed: false,
+                service_userauth_requested: false,
+                decrypted_payload: &payload[..len],
+            });
+        assert_eq!(
+            unsupported_service_request.result(),
+            SshPreauthServiceUserauthResult::ServiceUnsupported
+        );
+        assert!(
+            unsupported_service_request
+                .labels()
+                .contains(&SshServiceReadinessLabel::PreauthServiceUnsupported)
+        );
+
+        let (payload, len) = userauth_unsupported_payload(b"ssh-userauth", b"publickey");
+        let unsupported_userauth_service =
+            classify_ssh_preauth_service_userauth(SshPreauthServiceUserauthInput {
+                encrypted_packet_state_active: true,
+                post_newkeys_plaintext_attempted: false,
+                packet_crypto_failed: false,
+                service_userauth_requested: true,
+                decrypted_payload: &payload[..len],
+            });
+        assert_eq!(
+            unsupported_userauth_service.result(),
+            SshPreauthServiceUserauthResult::UserauthServiceUnsupported
+        );
+        assert!(
+            unsupported_userauth_service
+                .labels()
+                .contains(&SshServiceReadinessLabel::PreauthUserauthServiceUnsupported)
+        );
+
+        let (payload, len) = userauth_unsupported_payload(SSH_SERVICE_CONNECTION, b"password");
+        let unsupported_method =
+            classify_ssh_preauth_service_userauth(SshPreauthServiceUserauthInput {
+                encrypted_packet_state_active: true,
+                post_newkeys_plaintext_attempted: false,
+                packet_crypto_failed: false,
+                service_userauth_requested: true,
+                decrypted_payload: &payload[..len],
+            });
+        assert_eq!(
+            unsupported_method.result(),
+            SshPreauthServiceUserauthResult::UserauthMethodUnsupported
+        );
+        assert!(
+            unsupported_method
+                .labels()
+                .contains(&SshServiceReadinessLabel::PreauthUserauthMethodUnsupported)
+        );
+        assert!(!unsupported_method.ssh_ready());
+    }
+
+    #[test_case]
+    fn preauth_service_userauth_rejects_malformed_and_inherited_dispatch_failures() {
+        let (mut payload, len) = service_request_payload(SSH_SERVICE_USERAUTH);
+        payload[len] = 0xff;
+        let malformed_service =
+            classify_ssh_preauth_service_userauth(SshPreauthServiceUserauthInput {
+                encrypted_packet_state_active: true,
+                post_newkeys_plaintext_attempted: false,
+                packet_crypto_failed: false,
+                service_userauth_requested: false,
+                decrypted_payload: &payload[..len + 1],
+            });
+        assert_eq!(
+            malformed_service.result(),
+            SshPreauthServiceUserauthResult::ServiceMalformed
+        );
+        assert!(
+            malformed_service
+                .labels()
+                .contains(&SshServiceReadinessLabel::PreauthServiceMalformed)
+        );
+
+        let (payload, len) = userauth_publickey_payload(false);
+        let malformed_userauth =
+            classify_ssh_preauth_service_userauth(SshPreauthServiceUserauthInput {
+                encrypted_packet_state_active: true,
+                post_newkeys_plaintext_attempted: false,
+                packet_crypto_failed: false,
+                service_userauth_requested: true,
+                decrypted_payload: &payload[..len - 1],
+            });
+        assert_eq!(
+            malformed_userauth.result(),
+            SshPreauthServiceUserauthResult::UserauthMalformed
+        );
+        assert!(
+            malformed_userauth
+                .labels()
+                .contains(&SshServiceReadinessLabel::PreauthUserauthMalformed)
+        );
+
+        let inactive = classify_ssh_preauth_service_userauth(SshPreauthServiceUserauthInput {
+            encrypted_packet_state_active: false,
+            post_newkeys_plaintext_attempted: false,
+            packet_crypto_failed: false,
+            service_userauth_requested: true,
+            decrypted_payload: &[SSH_MSG_USERAUTH_REQUEST],
+        });
+        assert_eq!(
+            inactive.result(),
+            SshPreauthServiceUserauthResult::InactiveEncryptedPacketState
+        );
+        assert!(
+            inactive
+                .labels()
+                .contains(&SshServiceReadinessLabel::NewkeysNotReady)
+        );
+
+        let crypto_failed = classify_ssh_preauth_service_userauth(SshPreauthServiceUserauthInput {
+            encrypted_packet_state_active: true,
+            post_newkeys_plaintext_attempted: false,
+            packet_crypto_failed: true,
+            service_userauth_requested: true,
+            decrypted_payload: &[SSH_MSG_USERAUTH_REQUEST],
+        });
+        assert_eq!(
+            crypto_failed.result(),
+            SshPreauthServiceUserauthResult::PacketCryptoFailed
+        );
+        assert!(
+            crypto_failed
+                .labels()
+                .contains(&SshServiceReadinessLabel::EncryptedPacketCryptoFailed)
+        );
+        assert!(!crypto_failed.authentication_success());
         assert!(!crypto_failed.ssh_ready());
     }
 

@@ -16683,6 +16683,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   selected next bounded task is
   phase12-ssh-preauth-service-userauth-core-20260622, but supervisor planning
   must enqueue it with explicit gates before worker promotion.
+- phase12-ssh-preauth-service-userauth-core-20260622 accepts the private
+  pre-authentication service/userauth parser core. It parses only caller-owned
+  decrypted payloads after the accepted encrypted dispatch classifier.
+  Service-request message 5 recognizes the public literal ssh-userauth as a
+  diagnostic-only modeled prerequisite without service success. Userauth-request
+  message 50 recognizes ssh-connection/publickey shape only after that modeled
+  prerequisite. Userauth-before-service, unsupported service, unsupported
+  method, malformed strings, missing/trailing fields, inactive encrypted state,
+  post-NEWKEYS plaintext, crypto failure, and unsupported dispatch messages all
+  fail closed with fixed labels. Durable evidence remains fixed-label/public
+  message/public-literal/field-order/counter/command only. ssh-ready,
+  service-success, authentication-success, sessions/channels, shell attachment,
+  live reachability, hardware, compatibility, broad expansion, and phase
+  transition remain unaccepted. The selected next bounded task is
+  phase12-shell-ssh-preauth-service-userauth-smoke-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

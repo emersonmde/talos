@@ -7476,3 +7476,25 @@ OpenSSH/POSIX/Linux compatibility, broad expansion, and phase transition remain
 unaccepted. The selected next bounded task is
 phase12-ssh-preauth-service-userauth-core-20260622, but supervisor planning must
 enqueue it with explicit scope and gates before worker promotion.
+
+phase12-ssh-preauth-service-userauth-core-20260622 accepts the private
+pre-authentication service/userauth parser core. The source now parses
+caller-owned decrypted payloads only after the accepted encrypted dispatch
+classifier. Service-request message 5 recognizes only the public literal
+ssh-userauth as a diagnostic-only modeled prerequisite and does not send
+SSH_MSG_SERVICE_ACCEPT or accept service success. Userauth-request message 50
+recognizes only ssh-connection/publickey shape after that modeled prerequisite;
+userauth-before-service, unsupported service, unsupported method, malformed
+strings, missing/trailing fields, inactive encrypted state, post-NEWKEYS
+plaintext, crypto failure, and unsupported dispatch messages all fail closed
+with fixed labels.
+
+Durable evidence remains limited to fixed labels, public SSH message numbers,
+public protocol literals, public field order, small public bounds/counters,
+validation commands, task ids, and classifications. The accepted parser does
+not retain user names, peer-selected service/method strings, public key blobs,
+signatures, packet payload bytes, secrets, peer/operator material, stable
+transport/session identifiers, hardware data, or boot artifacts. ssh-ready,
+service-success, authentication-success, session/channel counts, shell
+attachment, and live reachability remain false/zero. The selected next bounded
+task is phase12-shell-ssh-preauth-service-userauth-smoke-20260622.
