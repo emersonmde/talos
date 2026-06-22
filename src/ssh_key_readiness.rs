@@ -12,8 +12,9 @@ use crate::{
     initramfs::{ReadOnlyInitramfs, VfsNodeKind},
     posix::PosixError,
 };
+use alloc::vec::Vec;
 use signature::Signer;
-use ssh_key::{Algorithm, Cipher, Kdf, PrivateKey, Signature};
+use ssh_key::{Algorithm, Cipher, Kdf, PrivateKey, Signature, encoding::Encode};
 
 pub(crate) const HOST_KEY_PATH: &[u8] = b"/etc/talos/ssh/ssh_host_ed25519_key";
 pub(crate) const HOST_KEY_MIN_METADATA_BYTES: usize = 64;
@@ -122,6 +123,13 @@ impl HostKeyPrivateMaterial {
         }
         Ok(HostKeyExchangeSignature { signature })
     }
+
+    pub(crate) fn public_key_blob(&self) -> Result<Vec<u8>, HostKeyMaterialMetadata> {
+        self.private_key
+            .public_key()
+            .to_bytes()
+            .map_err(|_| HostKeyMaterialMetadata::invalid(Some(self.byte_len)))
+    }
 }
 
 pub(crate) struct HostKeyExchangeSignature {
@@ -139,6 +147,12 @@ impl HostKeyExchangeSignature {
 
     pub(crate) const fn as_ssh_signature(&self) -> &Signature {
         &self.signature
+    }
+
+    pub(crate) fn encoded_blob(&self) -> Result<Vec<u8>, HostKeyMaterialMetadata> {
+        self.signature
+            .encode_vec()
+            .map_err(|_| HostKeyMaterialMetadata::invalid(None))
     }
 }
 
@@ -476,6 +490,28 @@ fn parse_host_key_private_material(bytes: &[u8]) -> Result<PrivateKey, ()> {
     }
     Ok(private_key)
 }
+
+#[cfg(test)]
+pub(crate) fn public_fixture_host_key_private_material() -> HostKeyPrivateMaterial {
+    let private_key =
+        parse_host_key_private_material(PUBLIC_FIXTURE_OPENSSH_ED25519_HOST_KEY_BYTES)
+            .expect("public fixture host key must parse");
+    HostKeyPrivateMaterial {
+        private_key,
+        byte_len: PUBLIC_FIXTURE_OPENSSH_ED25519_HOST_KEY_BYTES.len(),
+    }
+}
+
+#[cfg(test)]
+static PUBLIC_FIXTURE_OPENSSH_ED25519_HOST_KEY_BYTES: &[u8] = br#"
+-----BEGIN OPENSSH PRIVATE KEY-----
+b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+QyNTUxOQAAACCzPq7zfqLffKoBDe/eo04kH2XxtSmk9D7RQyf1xUqrYgAAAJgAIAxdACAM
+XQAAAAtzc2gtZWQyNTUxOQAAACCzPq7zfqLffKoBDe/eo04kH2XxtSmk9D7RQyf1xUqrYg
+AAAEC2BsIi0QwW2uFscKTUUXNHLsYX4FxlaSDSblbAj7WR7bM+rvN+ot98qgEN796jTiQf
+ZfG1KaT0PtFDJ/XFSqtiAAAAEHVzZXJAZXhhbXBsZS5jb20BAgMEBQ==
+-----END OPENSSH PRIVATE KEY-----
+"#;
 
 pub(crate) fn classify_authorized_key_material(
     initramfs: ReadOnlyInitramfs,

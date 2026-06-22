@@ -193,7 +193,6 @@
 #![test_runner(crate::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
-#[cfg(all(not(test), talos_target_rpi5_bcm2712))]
 extern crate alloc;
 
 mod allocator;
@@ -263,6 +262,8 @@ mod smp;
 mod smp_sync;
 #[cfg_attr(not(test), allow(dead_code))]
 mod ssh_key_readiness;
+#[cfg_attr(not(test), allow(dead_code))]
+mod ssh_runtime_crypto;
 #[cfg_attr(not(test), allow(dead_code))]
 mod ssh_service_readiness;
 // Phase 4.3 accepts scheduler data structures before wiring boot-time use.

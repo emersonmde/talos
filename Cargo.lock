@@ -159,6 +159,7 @@ dependencies = [
  "fiat-crypto",
  "rustc_version",
  "subtle",
+ "zeroize",
 ]
 
 [[package]]
@@ -189,6 +190,8 @@ checksum = "f1dd6dbb5841937940781866fa1281a1ff7bd3bf827091440879f9994983d5c2"
 dependencies = [
  "block-buffer",
  "crypto-common",
+ "ctutils",
+ "zeroize",
 ]
 
 [[package]]
@@ -244,6 +247,15 @@ checksum = "25ba4bd83f9415b58b4ed8dc5714c76e626a105be4646c02630ad730ad3b5aa4"
 dependencies = [
  "hash32",
  "stable_deref_trait",
+]
+
+[[package]]
+name = "hmac"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6303bc9732ae41b04cb554b844a762b4115a61bfaa81e3e83050991eeb56863f"
+dependencies = [
+ "digest",
 ]
 
 [[package]]
@@ -383,10 +395,12 @@ version = "0.3.0-rc.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "68126a396f08c64551b44cdb65865ef1d78fdf16ac02b53f78588227f60466fe"
 dependencies = [
+ "aead",
  "aes",
  "aes-gcm",
  "chacha20",
  "cipher",
+ "ctutils",
  "des",
  "poly1305",
  "ssh-encoding",
@@ -450,9 +464,13 @@ name = "talos"
 version = "0.1.0"
 dependencies = [
  "chacha20",
+ "hmac",
+ "sha2",
  "signature",
  "smoltcp",
+ "ssh-cipher",
  "ssh-key",
+ "x25519-dalek",
  "zeroize",
 ]
 
@@ -476,6 +494,17 @@ checksum = "f4987bdc12753382e0bec4a65c50738ffaabc998b9cdd1f952fb5f39b0048a96"
 dependencies = [
  "crypto-common",
  "ctutils",
+]
+
+[[package]]
+name = "x25519-dalek"
+version = "3.0.0-rc.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "eee64e8620caa64914d669b1f68f858aaff54e2d0f9ad3b30a613b58a1baa83e"
+dependencies = [
+ "curve25519-dalek",
+ "rand_core",
+ "zeroize",
 ]
 
 [[package]]

@@ -52,6 +52,14 @@ ADR template:
   key-derived identifiers, or stable transport/session identifiers. ssh-ready
   remains false until later authentication/session/shell and reachability tasks
   explicitly accept readiness.
+- Implementation update: phase12-ssh-runtime-kex-core-20260622 adopted exactly
+  that dependency boundary and added the private ssh_runtime_crypto module.
+  The implementation performs the first local curve25519-sha256 exchange,
+  SHA-256 transcript hash/KDF, accepted host-key signing, and private
+  chacha20-poly1305@openssh.com packet-state construction while keeping
+  ssh-ready false. It does not activate NEWKEYS, encrypted packet I/O,
+  authentication/session/shell behavior, hardware reachability, compatibility,
+  broad expansion, or phase transition.
 - Alternatives considered: RFC8439 chacha20poly1305 for packet crypto,
   ssh-cipher AES/TDES/getrandom/default features, ambient getrandom/host RNG,
   hand-rolled X25519 or OpenSSH packet cipher code, reusable/static X25519

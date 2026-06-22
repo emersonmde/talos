@@ -6,7 +6,13 @@
 
 use zeroize::Zeroize;
 
-use crate::ssh_key_readiness::{SshKeyReadinessLabel, SshKeyReadinessReport};
+use crate::{
+    csprng::OperatorSeededCsprng,
+    ssh_key_readiness::{HostKeyPrivateMaterial, SshKeyReadinessLabel, SshKeyReadinessReport},
+    ssh_runtime_crypto::{
+        SshRuntimeKexInput, SshRuntimeKexLabel, SshRuntimeKexResultKind, perform_runtime_kex,
+    },
+};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum SshServiceLifecycleState {
@@ -51,6 +57,14 @@ pub(crate) enum SshServiceReadinessLabel {
     KexinitSelectedCipherChacha20Poly1305OpenSsh,
     KexinitSelectedMacHmacSha2_256,
     KexinitSelectedCompressionNone,
+    CryptoBackendReady,
+    KexPeerPublicKeyInvalid,
+    KexCsprngNotReady,
+    KexHostKeyNotReady,
+    KexTranscriptInvalid,
+    KexKeyDerivationFailed,
+    EncryptedPacketStateNotReady,
+    EncryptedPacketStateReady,
     TransportClosedBeforeKex,
     AuthenticationUnimplemented,
     SessionUnimplemented,
@@ -103,6 +117,14 @@ impl SshServiceReadinessLabel {
             Self::KexinitSelectedCompressionNone => {
                 "sshservicediag-kexinit-selected-compression-none"
             }
+            Self::CryptoBackendReady => "sshservicediag-crypto-backend-ready",
+            Self::KexPeerPublicKeyInvalid => "sshservicediag-kex-peer-public-key-invalid",
+            Self::KexCsprngNotReady => "sshservicediag-kex-csprng-not-ready",
+            Self::KexHostKeyNotReady => "sshservicediag-kex-host-key-not-ready",
+            Self::KexTranscriptInvalid => "sshservicediag-kex-transcript-invalid",
+            Self::KexKeyDerivationFailed => "sshservicediag-kex-key-derivation-failed",
+            Self::EncryptedPacketStateNotReady => "sshservicediag-encrypted-packet-state-not-ready",
+            Self::EncryptedPacketStateReady => "sshservicediag-encrypted-packet-state-ready",
             Self::TransportClosedBeforeKex => "sshservicediag-transport-closed-before-kex",
             Self::AuthenticationUnimplemented => "sshservicediag-authentication-unimplemented",
             Self::SessionUnimplemented => "sshservicediag-session-unimplemented",
@@ -114,7 +136,7 @@ impl SshServiceReadinessLabel {
     }
 }
 
-pub(crate) const MAX_SSH_SERVICE_READINESS_LABELS: usize = 32;
+pub(crate) const MAX_SSH_SERVICE_READINESS_LABELS: usize = 40;
 pub(crate) const SSH_LOCAL_IDENTIFICATION: &str = "SSH-2.0-Talos_0.1\r\n";
 pub(crate) const SSH_REMOTE_IDENTIFICATION_MAX_BYTES: usize = 255;
 pub(crate) const SSH_KEXINIT_PACKET_MAX_BYTES: usize = 1024;
@@ -272,6 +294,7 @@ pub(crate) struct SshServiceReadinessReport {
     accepted_connection_count: usize,
     remote_identification: Option<SshRemoteIdentificationResult>,
     kexinit_result: Option<SshKexinitNegotiationResult>,
+    runtime_kex_result: Option<SshRuntimeKexResultKind>,
 }
 
 impl SshServiceReadinessReport {
@@ -340,6 +363,10 @@ impl SshServiceReadinessReport {
         self.kexinit_result
     }
 
+    pub(crate) const fn runtime_kex_result(self) -> Option<SshRuntimeKexResultKind> {
+        self.runtime_kex_result
+    }
+
     pub(crate) const fn kexinit_modeled(self) -> bool {
         matches!(
             self.kexinit_result,
@@ -393,6 +420,50 @@ pub(crate) fn classify_ssh_service_readiness_with_remote_identification_and_kexi
     input_state: SshRemoteIdentificationInputState,
     client_kexinit_packet: &[u8],
 ) -> SshServiceReadinessReport {
+    classify_ssh_service_readiness_inner(
+        key_report,
+        remote_input,
+        input_state,
+        client_kexinit_packet,
+        None,
+    )
+}
+
+pub(crate) fn classify_ssh_service_readiness_with_runtime_kex(
+    key_report: SshKeyReadinessReport,
+    remote_input: &[u8],
+    input_state: SshRemoteIdentificationInputState,
+    client_kexinit_packet: &[u8],
+    host_key: Option<&HostKeyPrivateMaterial>,
+    csprng: &mut OperatorSeededCsprng,
+    peer_public_key: &[u8],
+) -> SshServiceReadinessReport {
+    classify_ssh_service_readiness_inner(
+        key_report,
+        remote_input,
+        input_state,
+        client_kexinit_packet,
+        Some(RuntimeKexAttempt {
+            host_key,
+            csprng,
+            peer_public_key,
+        }),
+    )
+}
+
+struct RuntimeKexAttempt<'a> {
+    host_key: Option<&'a HostKeyPrivateMaterial>,
+    csprng: &'a mut OperatorSeededCsprng,
+    peer_public_key: &'a [u8],
+}
+
+fn classify_ssh_service_readiness_inner(
+    key_report: SshKeyReadinessReport,
+    remote_input: &[u8],
+    input_state: SshRemoteIdentificationInputState,
+    client_kexinit_packet: &[u8],
+    mut runtime_kex_attempt: Option<RuntimeKexAttempt<'_>>,
+) -> SshServiceReadinessReport {
     let exposure_disabled = key_report
         .labels()
         .contains(&SshKeyReadinessLabel::ExposureDisabled);
@@ -419,6 +490,7 @@ pub(crate) fn classify_ssh_service_readiness_with_remote_identification_and_kexi
         accepted_connection_count: 0,
         remote_identification: None,
         kexinit_result: None,
+        runtime_kex_result: None,
     };
 
     if exposure_disabled {
@@ -465,6 +537,31 @@ pub(crate) fn classify_ssh_service_readiness_with_remote_identification_and_kexi
                             );
                             report.push(SshServiceReadinessLabel::KexinitSelectedMacHmacSha2_256);
                             report.push(SshServiceReadinessLabel::KexinitSelectedCompressionNone);
+                            if let Some(attempt) = runtime_kex_attempt.as_mut() {
+                                let mut server_kexinit_packet =
+                                    [0u8; SSH_KEXINIT_CLIENT_PACKET_BUFFER_BYTES];
+                                let server_kexinit_len = build_modeled_client_kexinit_packet(
+                                    &mut server_kexinit_packet,
+                                    false,
+                                );
+                                let runtime_kex = perform_runtime_kex(SshRuntimeKexInput {
+                                    client_identification: remote_input,
+                                    server_identification: SSH_LOCAL_IDENTIFICATION.as_bytes(),
+                                    client_kexinit_packet,
+                                    server_kexinit_packet: &server_kexinit_packet
+                                        [..server_kexinit_len],
+                                    peer_public_key: attempt.peer_public_key,
+                                    host_key: attempt.host_key,
+                                    csprng: attempt.csprng,
+                                });
+                                report.runtime_kex_result = Some(runtime_kex.kind());
+                                report.push(runtime_kex_label(runtime_kex.label()));
+                                if runtime_kex.encrypted_packet_state_ready() {
+                                    report.push(runtime_kex_label(
+                                        SshRuntimeKexLabel::EncryptedPacketStateReady,
+                                    ));
+                                }
+                            }
                         }
                         SshKexinitNegotiationResult::UnsupportedAlgorithm => {
                             report.push(SshServiceReadinessLabel::KexinitClientPacketValid);
@@ -491,12 +588,35 @@ pub(crate) fn classify_ssh_service_readiness_with_remote_identification_and_kexi
         report.push(SshServiceReadinessLabel::TransportUnaccepted);
     }
 
-    report.push(SshServiceReadinessLabel::DependencyUnaccepted);
-    report.push(SshServiceReadinessLabel::CryptoBackendUnaccepted);
+    if report.runtime_kex_result.is_none() {
+        report.push(SshServiceReadinessLabel::DependencyUnaccepted);
+        report.push(SshServiceReadinessLabel::CryptoBackendUnaccepted);
+    }
     report.push(SshServiceReadinessLabel::AuthenticationUnimplemented);
     report.push(SshServiceReadinessLabel::SessionUnimplemented);
     report.push(SshServiceReadinessLabel::NotReady);
     report
+}
+
+const fn runtime_kex_label(label: SshRuntimeKexLabel) -> SshServiceReadinessLabel {
+    match label {
+        SshRuntimeKexLabel::CryptoBackendReady => SshServiceReadinessLabel::CryptoBackendReady,
+        SshRuntimeKexLabel::KexPeerPublicKeyInvalid => {
+            SshServiceReadinessLabel::KexPeerPublicKeyInvalid
+        }
+        SshRuntimeKexLabel::KexCsprngNotReady => SshServiceReadinessLabel::KexCsprngNotReady,
+        SshRuntimeKexLabel::KexHostKeyNotReady => SshServiceReadinessLabel::KexHostKeyNotReady,
+        SshRuntimeKexLabel::KexTranscriptInvalid => SshServiceReadinessLabel::KexTranscriptInvalid,
+        SshRuntimeKexLabel::KexKeyDerivationFailed => {
+            SshServiceReadinessLabel::KexKeyDerivationFailed
+        }
+        SshRuntimeKexLabel::EncryptedPacketStateNotReady => {
+            SshServiceReadinessLabel::EncryptedPacketStateNotReady
+        }
+        SshRuntimeKexLabel::EncryptedPacketStateReady => {
+            SshServiceReadinessLabel::EncryptedPacketStateReady
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -739,6 +859,14 @@ fn write_be_u32(
     output[offset + 3] = value as u8;
 }
 
+#[cfg(test)]
+pub(crate) fn build_modeled_client_kexinit_packet_for_runtime_test(
+    output: &mut [u8; SSH_KEXINIT_CLIENT_PACKET_BUFFER_BYTES],
+    first_packet_follows: bool,
+) -> usize {
+    build_modeled_client_kexinit_packet(output, first_packet_follows)
+}
+
 fn model_local_ssh_listener_transport(
     remote_input: &[u8],
     input_state: SshRemoteIdentificationInputState,
@@ -822,8 +950,10 @@ fn model_local_ssh_listener_transport(
 mod tests {
     use super::*;
     use crate::{
+        csprng::OperatorSeededCsprng,
         entropy::{self, EntropyDiagnosticSnapshot, OperatorSeedObservation},
         ssh_key_readiness::{self, SshKeyReadinessSnapshot},
+        ssh_runtime_crypto::SshRuntimeKexResultKind,
     };
 
     fn label_names(
@@ -852,6 +982,13 @@ mod tests {
                 .with_entropy_report(entropy),
         )
     }
+
+    const PUBLIC_FIXTURE_SEED: [u8; crate::csprng::CSPRNG_SEED_BYTES + 16] = [
+        0x70, 0x68, 0x61, 0x73, 0x65, 0x31, 0x32, 0x2d, 0x63, 0x73, 0x70, 0x72, 0x6e, 0x67, 0x2d,
+        0x70, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x2d, 0x66, 0x69, 0x78, 0x74, 0x75, 0x72, 0x65, 0x2d,
+        0x76, 0x31, 0x2d, 0x6e, 0x6f, 0x74, 0x2d, 0x73, 0x65, 0x63, 0x72, 0x65, 0x74, 0x21, 0x21,
+        0x21, 0x21, 0x21,
+    ];
 
     fn modeled_kexinit_packet(
         first_packet_follows: bool,
@@ -1067,6 +1204,60 @@ mod tests {
             report
                 .labels()
                 .contains(&SshServiceReadinessLabel::KexinitFirstPacketFollowsIgnored)
+        );
+        assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn runtime_kex_integration_marks_crypto_ready_without_ssh_readiness() {
+        let key_report = shape_modeled_key_report();
+        let host_key = ssh_key_readiness::public_fixture_host_key_private_material();
+        let mut csprng = OperatorSeededCsprng::from_seed_bytes(&PUBLIC_FIXTURE_SEED);
+        let packet = modeled_kexinit_packet(false);
+        let packet_len = (read_be_u32(&packet, 0).unwrap() as usize) + 4;
+        let peer_public_key = [
+            9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0,
+        ];
+
+        let report = classify_ssh_service_readiness_with_runtime_kex(
+            key_report,
+            SSH_LOCAL_TRANSPORT_REMOTE_IDENTIFICATION,
+            SshRemoteIdentificationInputState::Complete,
+            &packet[..packet_len],
+            Some(&host_key),
+            &mut csprng,
+            &peer_public_key,
+        );
+
+        assert_eq!(
+            report.runtime_kex_result(),
+            Some(SshRuntimeKexResultKind::Ready)
+        );
+        assert!(
+            report
+                .labels()
+                .contains(&SshServiceReadinessLabel::CryptoBackendReady)
+        );
+        assert!(
+            report
+                .labels()
+                .contains(&SshServiceReadinessLabel::EncryptedPacketStateReady)
+        );
+        assert!(
+            !report
+                .labels()
+                .contains(&SshServiceReadinessLabel::CryptoBackendUnaccepted)
+        );
+        assert!(
+            report
+                .labels()
+                .contains(&SshServiceReadinessLabel::AuthenticationUnimplemented)
+        );
+        assert!(
+            report
+                .labels()
+                .contains(&SshServiceReadinessLabel::SessionUnimplemented)
         );
         assert!(!report.ssh_ready());
     }

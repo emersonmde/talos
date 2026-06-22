@@ -7206,3 +7206,32 @@ NEWKEYS, authentication/session behavior, shell attachment, hardware
 reachability, public compatibility, broad expansion, or phase transition is
 accepted. Supervisor planning is required before a bounded runtime KEX
 implementation task is queued.
+
+phase12-ssh-runtime-kex-core-20260622 accepts the bounded local runtime KEX
+core implementation selected by that contract. Talos now adopts only the
+accepted no-default crypto dependency boundary: x25519-dalek 3.0.0-rc.1 with
+zeroize, sha2 0.11.0 with zeroize, hmac 0.13.0 with zeroize for the modeled
+hmac-sha2-256 surface, and ssh-cipher 0.3.0-rc.10 with chacha20poly1305 plus
+zeroize. A private ssh_runtime_crypto module performs one curve25519-sha256
+exchange using EphemeralSecret from the accepted OperatorSeededCsprng through
+a private rand_core 0.10 CryptoRng adapter, computes the SSH binary transcript
+hash with SHA-256, signs the exchange hash through the accepted in-memory
+ssh-ed25519 host-key handle, expands RFC4253-style key material, and builds
+private chacha20-poly1305@openssh.com packet-state handles. sshservicediag can
+compose the result after the accepted listener/transport and KEXINIT path with
+fixed labels such as crypto-backend-ready, kex-csprng-not-ready,
+kex-host-key-not-ready, kex-peer-public-key-invalid,
+kex-transcript-invalid, encrypted-packet-state-not-ready, and
+encrypted-packet-state-ready.
+
+The accepted frontier remains local and pre-NEWKEYS. The implementation does
+not activate NEWKEYS, perform encrypted packet I/O, authenticate users,
+allocate sessions/channels, attach a shell, publish a boot artifact, run
+hardware, claim live reachability, claim OpenSSH/POSIX/Linux compatibility, or
+advance the phase. ssh-ready remains false. Durable evidence may retain only
+fixed labels, counters, booleans, crate names/features, test names, and
+validation commands; it must not retain private keys, random bytes, shared
+secrets, exchange hashes, derived keys, signature bytes, public-key blobs,
+packet plaintext/ciphertext, tags, peer raw input, operator identity,
+key-derived identifiers, or stable session identifiers. The selected next
+bounded task is phase12-shell-ssh-runtime-kex-smoke-20260622.

@@ -16500,6 +16500,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   public compatibility, broad expansion, or phase transition is accepted.
   Supervisor planning is required before a bounded runtime KEX implementation
   task is queued.
+- phase12-ssh-runtime-kex-core-20260622 accepts the bounded local runtime KEX
+  core implementation. Talos now adopts only the accepted no-default crypto
+  dependency boundary: x25519-dalek 3.0.0-rc.1 with zeroize, sha2 0.11.0 with
+  zeroize, hmac 0.13.0 with zeroize for the modeled hmac-sha2-256 surface,
+  and ssh-cipher 0.3.0-rc.10 with chacha20poly1305 plus zeroize. The private
+  ssh_runtime_crypto module performs one real curve25519-sha256 exchange from
+  the accepted OperatorSeededCsprng, computes the SSH binary transcript hash,
+  signs through the accepted in-memory ssh-ed25519 host-key handle, expands
+  RFC4253-style key material, and constructs private
+  chacha20-poly1305@openssh.com packet-state handles. sshservicediag composes
+  that result after the accepted listener/transport and KEXINIT path with only
+  fixed labels/counters. ssh-ready remains false; NEWKEYS activation,
+  encrypted packet I/O, authentication/session/shell behavior, hardware
+  reachability, public compatibility, broad expansion, and phase transition
+  remain unaccepted. The selected next bounded task is
+  phase12-shell-ssh-runtime-kex-smoke-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
