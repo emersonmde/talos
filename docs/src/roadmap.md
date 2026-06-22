@@ -16711,6 +16711,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   attachment, live reachability, hardware, compatibility, broad expansion, and
   phase transition remain unaccepted. The selected next bounded task is
   phase12-ssh-preauth-service-userauth-closeout-20260622.
+- phase12-ssh-preauth-service-userauth-closeout-20260622 accepts the local
+  pre-authentication service/userauth parser frontier closeout. It reconciles
+  the accepted contract, private parser core, retained smoke/regression
+  evidence, validation outputs, redaction posture, and deferred work. The
+  accepted frontier remains local parser modeling only: service-request message
+  5 may recognize ssh-userauth as a diagnostic-only modeled prerequisite, and
+  userauth-request message 50 may recognize ssh-connection/publickey shape
+  after that prerequisite. No SSH_MSG_SERVICE_ACCEPT, authentication response,
+  authorized-key parsing, signature validation, session/channel allocation,
+  shell attachment, live reachability, hardware, compatibility, broad
+  expansion, or phase transition is accepted. Durable evidence remains
+  fixed-label/public-message/public-literal/field-order/counter/command only,
+  and ssh-ready, service-success, authentication-success, sessions/channels,
+  shell attachment, and reachability remain false/zero. The selected next
+  bounded task is phase12-ssh-publickey-auth-contract-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

@@ -7514,3 +7514,23 @@ boot artifacts. ssh-ready, service-success, authentication-success,
 session/channel counts, shell attachment, and live reachability remain
 false/zero. The selected next bounded task is
 phase12-ssh-preauth-service-userauth-closeout-20260622.
+
+phase12-ssh-preauth-service-userauth-closeout-20260622 accepts the local
+pre-authentication service/userauth parser frontier closeout. The closeout
+reconciles the accepted contract, private parser core, retained
+smoke/regression evidence, validation outputs, redaction posture, and deferred
+work. The accepted frontier is local parser modeling only: service-request
+message 5 may recognize ssh-userauth as a diagnostic-only modeled prerequisite,
+and userauth-request message 50 may recognize ssh-connection/publickey shape
+after that prerequisite. Positive paths do not send SSH_MSG_SERVICE_ACCEPT,
+emit authentication responses, parse keys or signatures, validate authorized
+keys, allocate sessions/channels, attach a shell, or claim live reachability.
+
+ssh-ready remains false. service-success=false, authentication-success=false,
+session-count=0, channel-count=0, shell-attached=false, and live reachability
+false remain authoritative. Durable evidence remains limited to fixed labels,
+public SSH message numbers/literals, public field order, small public counters
+and bounds, validation commands, task ids, and classifications; packet payloads,
+peer strings, keys, signatures, secrets, stable identifiers, hardware data, and
+boot artifacts remain excluded. The selected next bounded task is
+phase12-ssh-publickey-auth-contract-20260622.
