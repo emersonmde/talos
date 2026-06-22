@@ -7372,3 +7372,26 @@ session/channel success, shell attachment, live reachability, public
 compatibility, hardware/lab action, broad expansion, and phase transition
 remain unaccepted. The selected next bounded task is
 phase12-ssh-encrypted-transport-dispatch-contract-20260622.
+
+phase12-ssh-encrypted-transport-dispatch-contract-20260622 accepts the narrow
+post-NEWKEYS encrypted transport dispatch contract. The next implementation may
+classify only caller-owned decrypted SSH binary packet payloads after both
+NEWKEYS directions are active and may inspect only the first payload byte as the
+public SSH message number. The first dispatch state is pre-authentication only:
+SSH_MSG_SERVICE_REQUEST (5) and SSH_MSG_USERAUTH_REQUEST (50) may receive fixed
+routing diagnostics, but both remain fail-closed and not-ready. Empty payloads,
+unsupported message numbers, pre-NEWKEYS dispatch attempts, post-NEWKEYS
+plaintext I/O, and packet crypto failures must fail closed with fixed labels.
+
+Durable evidence for this frontier may retain only fixed labels, public message
+numbers, small counters, public bounds, validation commands, task ids, and
+classifications. It must not retain packet payload bytes, ciphertext,
+plaintext, keys, IV bytes, tags, exchange hashes, shared secrets, signatures,
+peer material, operator identity, key-derived identifiers, stable
+transport/session identifiers, live hardware data, or boot artifacts. ssh-ready
+remains false; authentication/session/shell success, authorized-key signature
+validation, live reachability, OpenSSH/POSIX/Linux compatibility, hardware,
+broad expansion, and phase transition remain unaccepted. The selected next
+bounded implementation is
+phase12-ssh-encrypted-transport-dispatch-core-20260622, but supervisor planning
+must enqueue it with explicit scope and gates before worker promotion.
