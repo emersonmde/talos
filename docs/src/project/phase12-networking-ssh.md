@@ -6766,3 +6766,21 @@ bounded task is
 phase12-ssh-implementation-dependency-feasibility-contract-20260622, which must
 define the allowed dependency/source boundary or block with a concrete missing
 prerequisite.
+
+phase12-ssh-implementation-dependency-feasibility-contract-20260622 accepts the
+bounded russh 0.61.2 feasibility contract. Talos keeps russh as the selected
+existing-library candidate only for source/reference inspection and future
+explicitly tasked build probes. It does not adopt russh as a dependency or
+inherit its default features. The only allowed future host-only probe feature
+set is default-features=false with features=["ring"], and even that does not
+accept runtime crypto. The accepted boundary rejects default flate2/aws-lc-rs/rsa
+feature leakage, host tokio::net listener/TcpStream
+integration, tokio runtime/process/dev-test assumptions, rand thread_rng,
+getrandom host or wasm_js backends, generated keys, ambient OS randomness,
+std/pkcs8 key-loading assumptions, CryptoVec/mlock/munlock security claims,
+forwarding, SFTP, agent/Pageant/PPK/cert extras, password or
+keyboard-interactive authentication, PTY allocation, shell attachment, and live
+transport. The next bounded task is
+phase12-ssh-service-shape-contract-20260622, which may model only fail-closed
+service inputs, lifecycle states, diagnostic caps, and failure modes without
+opening a listener or making ssh-ready true.

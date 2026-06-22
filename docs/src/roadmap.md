@@ -16185,6 +16185,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   listener/session/authentication plumbing, live transport, hardware
   reachability, public ABI/POSIX/Linux compatibility, broad expansion, stale
   link-ready discriminator promotion, or phase transition.
+- phase12-ssh-implementation-dependency-feasibility-contract-20260622 accepts
+  the russh 0.61.2 dependency/source feasibility boundary without dependency
+  adoption. The allowed near-term use is source/reference inspection and future
+  explicitly tasked build probes with default-features=false and features=["ring"]
+  only if a later task accepts the probe; this does not accept runtime crypto.
+  The boundary rejects
+  russh default features, host tokio::net listener/TcpStream integration,
+  tokio runtime/process/dev-test assumptions, rand thread_rng/getrandom host
+  backends, generated keys, ambient OS randomness, std/pkcs8 key loading,
+  CryptoVec/mlock/munlock security claims, forwarding, SFTP, agent/Pageant/PPK
+  extras, password or keyboard-interactive authentication, PTY allocation,
+  shell attachment, live transport, reachability, and ABI/POSIX/Linux
+  compatibility. The next bounded task is
+  phase12-ssh-service-shape-contract-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
