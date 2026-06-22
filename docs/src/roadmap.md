@@ -16530,6 +16530,18 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   reachability, public compatibility, broad expansion, and phase transition
   remain unaccepted. The selected next bounded task is
   phase12-ssh-runtime-kex-closeout-20260622.
+- phase12-ssh-runtime-kex-closeout-20260622 accepts the local modeled runtime
+  KEX closeout. It reconciles the accepted runtime crypto backend contract,
+  real runtime KEX core, dependency feature proof, retained smoke transcript,
+  and redaction review. The accepted frontier remains pre-NEWKEYS and local:
+  sshservicediag can report real curve25519-sha256 runtime KEX success,
+  crypto-backend-ready, and private encrypted-packet-state-ready after the
+  accepted listener/transport, identification, KEXINIT, host-key, and
+  OperatorSeededCsprng prerequisites, but ssh-ready remains false. NEWKEYS
+  activation, encrypted packet I/O, authentication/session/shell behavior,
+  hardware reachability, public compatibility, broad expansion, and phase
+  transition remain unaccepted. The selected next bounded task is
+  phase12-ssh-newkeys-packet-crypto-contract-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

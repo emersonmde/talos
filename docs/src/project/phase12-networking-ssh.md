@@ -7253,3 +7253,21 @@ activate NEWKEYS, perform encrypted packet I/O, authenticate users, allocate
 sessions/channels, attach a shell, run hardware, claim live reachability,
 claim public compatibility, broaden the phase, or make ssh-ready true. The
 selected next bounded task is phase12-ssh-runtime-kex-closeout-20260622.
+
+phase12-ssh-runtime-kex-closeout-20260622 accepts the local modeled runtime
+KEX closeout. The accepted evidence now reconciles the static runtime crypto
+backend contract, the real runtime KEX core, the dependency feature proof, the
+retained host/QEMU-substitute smoke transcript, and redaction review. The
+frontier remains pre-NEWKEYS and local: sshservicediag can report real
+curve25519-sha256 runtime KEX success, crypto-backend-ready, and private
+encrypted-packet-state-ready after the accepted listener/transport,
+identification, KEXINIT, host-key, and OperatorSeededCsprng prerequisites, but
+ssh-ready remains false.
+
+The closeout does not accept NEWKEYS activation, encrypted packet I/O,
+authentication/session behavior, shell attachment, hardware/lab action, live
+reachability, public compatibility, broad expansion, or phase transition.
+Durable evidence remains limited to task ids, file paths, public crate and
+algorithm names, fixed labels, validation commands, and classifications. The
+selected next bounded task is
+phase12-ssh-newkeys-packet-crypto-contract-20260622.
