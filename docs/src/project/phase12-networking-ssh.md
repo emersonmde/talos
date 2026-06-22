@@ -7820,3 +7820,27 @@ ssh-ready=true remain unaccepted. service-success, authentication-success,
 session/channel counts, shell attachment, reachability, and readiness remain
 false/zero. The selected next bounded task is
 phase12-shell-ssh-publickey-auth-response-policy-smoke-20260622.
+
+phase12-shell-ssh-publickey-auth-response-policy-smoke-20260622 accepts
+retained host/QEMU-substitute smoke evidence for the publickey
+USERAUTH_PK_OK/USERAUTH_FAILURE response-policy boundary. The retained smoke
+command is scripts/qemu-shell-ssh-publickey-auth-response-policy-smoke.sh, with
+transcript evidence under
+tasks/evidence/2026-06-22-ssh-publickey-auth-response-policy-smoke/. The smoke
+reruns the accepted publickey_auth_response source/unit coverage through the
+configured target cargo test runner.
+
+The retained evidence covers PK_OK for unsigned authorized ssh-ed25519 probes,
+signed-valid success-deferred USERAUTH_FAILURE, invalid and malformed
+signature failures, unauthorized-key failures, malformed request failure,
+unsupported algorithm failure, disabled policy, redaction-sensitive, and
+prerequisite-missing paths. Durable evidence remains fixed-label/public-message
+number/public-length/count/command/path/task-id/classification only and retains
+no session-id bytes, authorized-key bytes, public-key blobs, signatures,
+signed-data bytes, fingerprints, digests, user/operator identity, peer strings,
+key-derived identifiers, stable identifiers, hardware data, or boot artifacts.
+Authentication success, SSH_MSG_USERAUTH_SUCCESS, account binding,
+sessions/channels, shell attachment, live reachability, compatibility, broad
+expansion, phase transition, and ssh-ready=true remain unaccepted. The selected
+next bounded task is
+phase12-ssh-publickey-auth-response-policy-closeout-20260622.
