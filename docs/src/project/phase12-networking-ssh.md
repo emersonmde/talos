@@ -7415,3 +7415,18 @@ strings, peer material, operator identity, key-derived identifiers, stable
 transport/session identifiers, live hardware data, and boot artifacts. The
 selected next bounded task is
 phase12-shell-ssh-encrypted-transport-dispatch-smoke-20260622.
+
+phase12-shell-ssh-encrypted-transport-dispatch-smoke-20260622 accepts retained
+local smoke/regression evidence for the encrypted transport dispatch
+classifier. The targeted command
+`cargo -Zjson-target-spec test encrypted_transport_dispatch --quiet`, run with
+the documented QEMU PATH, passed through the no_std test harness and retained
+coverage for service-request message 5, userauth-request message 50, empty
+payload, unsupported message number, inactive encrypted-packet state,
+post-NEWKEYS plaintext rejection, and packet crypto failure. This smoke task
+adds no new protocol behavior. The accepted frontier remains local
+pre-authentication encrypted transport dispatch classification only, with
+ssh-ready=false and authentication/session/shell/live reachability/hardware/
+compatibility/broad-expansion/phase-transition claims still unaccepted. The
+selected next bounded task is
+phase12-ssh-encrypted-transport-dispatch-closeout-20260622.

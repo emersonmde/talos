@@ -16638,6 +16638,18 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   only and excludes packet payload, secret, peer, operator, session, hardware,
   and boot material. The selected next bounded task is
   phase12-shell-ssh-encrypted-transport-dispatch-smoke-20260622.
+- phase12-shell-ssh-encrypted-transport-dispatch-smoke-20260622 accepts
+  retained local smoke/regression evidence for the encrypted transport dispatch
+  classifier. The targeted command
+  `cargo -Zjson-target-spec test encrypted_transport_dispatch --quiet`, run
+  with the documented QEMU PATH, passed through the no_std harness and retained
+  coverage for service-request message 5, userauth-request message 50, empty
+  payload, unsupported message number, inactive encrypted-packet state,
+  post-NEWKEYS plaintext rejection, and packet crypto failure. This smoke task
+  adds no new protocol behavior; ssh-ready remains false and
+  authentication/session/shell/live reachability/hardware/compatibility/broad
+  expansion/phase-transition claims remain unaccepted. The selected next
+  bounded task is phase12-ssh-encrypted-transport-dispatch-closeout-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
