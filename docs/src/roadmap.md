@@ -16296,6 +16296,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   expansion, or phase transition is accepted. selected_next_task is null and
   planningNeeded=true because no queued or ready task exists after this
   closeout; supervisor planning is required before the next SSH service slice.
+- phase12-ssh-listener-transport-contract-20260622 accepts the bounded local
+  listener/transport contract for the next SSH service slice. The selected
+  implementation boundary is one local modeled Talos SSH service endpoint over
+  accepted private descriptor-backed AF_INET/SOCK_STREAM sockets,
+  send/recv/readiness, host-only smoltcp bridge evidence, fail-closed
+  sshservicediag, and owned banner behavior. Disabled and prerequisite-missing
+  states keep listener-count=0, transport-enabled=false,
+  accepted-connection-count=0, and ssh-ready=false; the shape-modeled local
+  endpoint may raise listener-count to 1, transport-enabled to true, and
+  accepted-connection-count to 1 only for one descriptor-backed exchange that
+  sends SSH-2.0-Talos_0.1 CRLF, classifies one bounded remote identification
+  line, and closes before key exchange. The selected next task is
+  phase12-ssh-listener-transport-core-20260622. Runtime SSH crypto, key
+  exchange, authentication/session success, shell attachment, hardware
+  reachability, OpenSSH/POSIX/Linux compatibility, broad expansion, and phase
+  transition remain unaccepted.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

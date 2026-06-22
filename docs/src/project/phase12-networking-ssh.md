@@ -6930,3 +6930,31 @@ OpenSSH/POSIX/Linux compatibility, broad expansion, and phase transition remain
 unaccepted. selected_next_task is null and planningNeeded=true because no
 queued or ready task exists after this closeout; the next SSH service slice
 requires supervisor planning with explicit gates before work resumes.
+
+phase12-ssh-listener-transport-contract-20260622 accepts the bounded local
+listener/transport contract after supervisor planning resumed the SSH service
+slice. The contract maps the next implementation to the accepted private
+descriptor-backed AF_INET/SOCK_STREAM socket bind/listen/connect/accept,
+send/recv, and poll/readiness substrate, the host-only smoltcp bridge, the
+fail-closed sshservicediag surface, and the owned identification/banner core.
+The selected behavior is one local modeled Talos SSH service endpoint only:
+disabled and prerequisite-missing states keep listener-count=0,
+transport-enabled=false, accepted-connection-count=0, and ssh-ready=false; a
+shape-modeled local endpoint may raise listener-count to 1,
+transport-enabled to true, and accepted-connection-count to 1 only for one
+descriptor-backed pre-KEX exchange.
+
+The exchange order remains fixed: local private bind/listen, local
+connect/accept, send SSH-2.0-Talos_0.1 followed by CRLF, consume exactly one
+remote identification line using the accepted 255-byte banner-core rules, and
+close before key exchange. Diagnostics may retain only fixed labels, counters,
+and booleans such as local-listener-modeled, local-transport-modeled,
+identification-banner-modeled, local-identification-literal, remote
+valid/invalid/over-limit, transport-closed-before-kex, listener-count,
+transport-enabled, and accepted-connection-count. sshservicediag-not-ready,
+crypto-backend-unaccepted, authentication-unimplemented,
+session-unimplemented, and ssh-ready=false remain authoritative. The selected
+next bounded task is phase12-ssh-listener-transport-core-20260622. Runtime SSH
+crypto, key exchange, encryption/MAC, authentication/session success, shell
+attachment, hardware reachability, OpenSSH/POSIX/Linux compatibility, broad
+network exposure, broad expansion, and phase transition remain unaccepted.
