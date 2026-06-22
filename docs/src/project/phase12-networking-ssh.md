@@ -7009,3 +7009,30 @@ hardware reachability, public OpenSSH/POSIX/Linux compatibility, broad
 expansion, and phase transition remain unaccepted. selected_next_task is null
 and planningNeeded=true because no queued or ready task exists after this
 closeout; supervisor planning is required before the next SSH service slice.
+
+phase12-ssh-kexinit-negotiation-contract-20260622 accepts the bounded local
+KEXINIT/algorithm-negotiation contract after supervisor planning resumed the
+SSH service slice. The selected next implementation remains a local modeled
+host/QEMU-substitute path over the accepted private descriptor-backed socket
+listener/transport. After a valid remote identification line, Talos may model
+exactly one cleartext SSH_MSG_KEXINIT packet with a <= 1024 byte packet cap,
+<= 768 byte payload cap, <= 256 byte name-list cap, <= 16 names per list,
+redacted 16-byte cookie handling through the accepted operator-seeded CSPRNG
+boundary, and fail-closed malformed/oversized/unsupported classifications.
+
+The fixed server policy for the modeled negotiation is curve25519-sha256,
+ssh-ed25519, chacha20-poly1305@openssh.com in both directions,
+hmac-sha2-256 in both directions, compression none in both directions, and
+empty language lists. These names are accepted only as reversible local
+negotiation policy; runtime X25519/ECDH, Ed25519 parsing/signing,
+ChaCha20-Poly1305, HMAC, NEWKEYS, authentication/session success, shell
+attachment, hardware reachability, OpenSSH/POSIX/Linux compatibility, broad
+expansion, and phase transition remain unaccepted. Diagnostics may retain only
+fixed labels, booleans, and small counters such as kexinit-modeled,
+cookie-generated-redacted, client-packet-valid, algorithm-negotiated,
+algorithm-unsupported, packet/list-over-limit, and first-packet-follows
+ignored. Client packet bytes, client algorithm-list text, cookie bytes,
+digests, fingerprints, key material, peer text/address, operator identity,
+key-derived identifiers, and stable transport/session identifiers remain
+excluded. The selected next bounded task is
+phase12-ssh-kexinit-negotiation-core-20260622.

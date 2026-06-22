@@ -16355,6 +16355,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   null and planningNeeded=true because no queued or ready task exists after
   this closeout; supervisor planning is required before the next SSH service
   slice.
+- phase12-ssh-kexinit-negotiation-contract-20260622 accepts the bounded local
+  KEXINIT/algorithm-negotiation contract after supervisor planning resumed the
+  SSH service slice. The next implementation may model exactly one cleartext
+  SSH_MSG_KEXINIT packet after the accepted local listener/transport and
+  remote-identification path, with <= 1024 byte packet, <= 768 byte payload,
+  <= 256 byte name-list, and <= 16 names-per-list caps. Server KEXINIT cookie
+  generation is tied to the accepted operator-seeded CSPRNG boundary, but the
+  cookie bytes and derived identifiers are redacted. The reversible modeled
+  server policy is curve25519-sha256, ssh-ed25519,
+  chacha20-poly1305@openssh.com, hmac-sha2-256, compression none, and empty
+  language lists. Diagnostics may retain only fixed labels, booleans, and
+  small counters for modeled/valid/unsupported/oversized/malformed states;
+  client packet bytes and client algorithm-list text remain excluded. ssh-ready
+  remains false and runtime crypto, actual key exchange, NEWKEYS, host-key
+  signing, authentication/session success, shell attachment, hardware
+  reachability, OpenSSH/POSIX/Linux compatibility, broad expansion, and phase
+  transition remain unaccepted. The selected next task is
+  phase12-ssh-kexinit-negotiation-core-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
