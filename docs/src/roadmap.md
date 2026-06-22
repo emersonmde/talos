@@ -16650,6 +16650,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   authentication/session/shell/live reachability/hardware/compatibility/broad
   expansion/phase-transition claims remain unaccepted. The selected next
   bounded task is phase12-ssh-encrypted-transport-dispatch-closeout-20260622.
+- phase12-ssh-encrypted-transport-dispatch-closeout-20260622 accepts the local
+  pre-authentication encrypted transport dispatch frontier closeout. The
+  closeout reconciles the accepted dispatch contract, core implementation,
+  smoke/regression evidence, validation outputs, redaction policy, deferred
+  work, and next planning boundary. Only local classification is accepted:
+  caller-owned decrypted payload bytes may be classified by the first public
+  SSH message-number byte after the accepted encrypted-packet state is active,
+  with service-request message 5 and userauth-request message 50 retained as
+  routing diagnostics only. ssh-ready remains false; service success,
+  authentication success, sessions/channels, shell attachment, live
+  reachability, hardware, compatibility, broad expansion, and phase transition
+  remain unaccepted. The selected next bounded task is
+  phase12-ssh-preauth-service-userauth-contract-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

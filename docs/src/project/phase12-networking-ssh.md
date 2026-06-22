@@ -7430,3 +7430,24 @@ ssh-ready=false and authentication/session/shell/live reachability/hardware/
 compatibility/broad-expansion/phase-transition claims still unaccepted. The
 selected next bounded task is
 phase12-ssh-encrypted-transport-dispatch-closeout-20260622.
+
+phase12-ssh-encrypted-transport-dispatch-closeout-20260622 accepts the local
+pre-authentication encrypted transport dispatch frontier closeout. The closeout
+reconciles the accepted dispatch contract, core implementation, retained
+smoke/regression evidence, validation outputs, redaction policy, and deferred
+work. The accepted frontier is local classification only: caller-owned
+decrypted payload bytes may be classified by the first public SSH message-number
+byte after the accepted encrypted-packet state is active, with service-request
+message 5 and userauth-request message 50 retained as routing diagnostics only.
+
+ssh-ready remains false. No service success, authentication success,
+authorized-key parsing/signature validation, account/user model,
+session/channel success, PTY/process/shell attachment, live sockets,
+hardware/lab action, boot publication, live reachability,
+OpenSSH/POSIX/Linux compatibility, broad expansion, or phase transition is
+accepted. Durable evidence remains limited to fixed labels, public message
+numbers, small false/zero counters, validation commands, task ids, and
+classifications; packet payloads, secrets, peer/operator material, stable
+transport/session identifiers, hardware data, and boot artifacts remain
+excluded. The selected next bounded task is
+phase12-ssh-preauth-service-userauth-contract-20260622.
