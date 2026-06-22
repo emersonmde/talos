@@ -16326,6 +16326,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   key exchange, authentication/session success, shell attachment, hardware
   reachability, OpenSSH/POSIX/Linux compatibility, broad expansion, and phase
   transition remain unaccepted.
+- phase12-shell-ssh-listener-transport-smoke-20260622 accepts retained
+  host/QEMU-substitute smoke evidence for the bounded listener/transport
+  slice. The transcript covers disabled/prerequisite-missing sshservicediag
+  states with zero listener/connection counters and ssh-ready=false, plus
+  source-level local transport-modeled evidence for one descriptor-backed
+  exchange that reports local-listener-modeled, local-transport-modeled,
+  identification-banner-modeled, remote-identification-valid,
+  transport-closed-before-kex, listener-count=1, transport-enabled=true, and
+  accepted-connection-count=1. Valid, invalid, and over-limit remote
+  identification classifications are retained. The shell-visible VFS
+  diagnostic path remains prerequisites-missing until a later accepted
+  crypto/service slice supplies sufficient prerequisites through the diagnostic
+  context. Runtime SSH crypto, key exchange, authentication/session success,
+  shell attachment, hardware reachability, OpenSSH/POSIX/Linux compatibility,
+  broad expansion, and phase transition remain unaccepted. The selected next
+  task is phase12-ssh-listener-transport-closeout-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

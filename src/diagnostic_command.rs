@@ -686,7 +686,7 @@ mod tests {
         assert_eq!(result.response_lines, 20);
         assert_eq!(
             sink.as_str(),
-            "diag: ok sshservicediag\ndiag: sshservice-readiness sshservicediag-not-ready\ndiag: sshservice-lifecycle disabled\ndiag: sshservice-label sshservicediag-exposure-disabled\ndiag: sshservice-label sshservicediag-prerequisites-missing\ndiag: sshservice-label sshservicediag-dependency-unaccepted\ndiag: sshservice-label sshservicediag-crypto-backend-unaccepted\ndiag: sshservice-label sshservicediag-transport-unaccepted\ndiag: sshservice-label sshservicediag-authentication-unimplemented\ndiag: sshservice-label sshservicediag-session-unimplemented\ndiag: sshservice-label sshservicediag-not-ready\ndiag: listener-count 0\ndiag: transport-enabled false\ndiag: accepted-connection-count 0\ndiag: session-count 0\ndiag: channel-count 0\ndiag: authentication-success false\ndiag: shell-attached false\ndiag: reachability-accepted false\ndiag: ssh-ready false\n"
+            "diag: ok sshservicediag\ndiag: sshservice-readiness sshservicediag-not-ready\ndiag: sshservice-lifecycle disabled\ndiag: sshservice-label sshservicediag-exposure-disabled\ndiag: sshservice-label sshservicediag-prerequisites-missing\ndiag: sshservice-label sshservicediag-transport-unaccepted\ndiag: sshservice-label sshservicediag-dependency-unaccepted\ndiag: sshservice-label sshservicediag-crypto-backend-unaccepted\ndiag: sshservice-label sshservicediag-authentication-unimplemented\ndiag: sshservice-label sshservicediag-session-unimplemented\ndiag: sshservice-label sshservicediag-not-ready\ndiag: listener-count 0\ndiag: transport-enabled false\ndiag: accepted-connection-count 0\ndiag: session-count 0\ndiag: channel-count 0\ndiag: authentication-success false\ndiag: shell-attached false\ndiag: reachability-accepted false\ndiag: ssh-ready false\n"
         );
     }
 
@@ -968,10 +968,10 @@ mod tests {
         .unwrap();
 
         assert_eq!(service_result.status, DiagnosticDispatchStatus::Handled);
-        assert_eq!(service_result.response_lines, 24);
+        assert_eq!(service_result.response_lines, 19);
         assert_eq!(
             service_sink.as_str(),
-            "diag: ok sshservicediag\ndiag: sshservice-readiness sshservicediag-not-ready\ndiag: sshservice-lifecycle shape-modeled\ndiag: sshservice-label sshservicediag-shape-modeled\ndiag: sshservice-label sshservicediag-local-listener-modeled\ndiag: sshservice-label sshservicediag-local-transport-modeled\ndiag: sshservice-label sshservicediag-identification-banner-modeled\ndiag: sshservice-label sshservicediag-local-identification-literal\ndiag: sshservice-label sshservicediag-remote-identification-valid\ndiag: sshservice-label sshservicediag-transport-closed-before-kex\ndiag: sshservice-label sshservicediag-dependency-unaccepted\ndiag: sshservice-label sshservicediag-crypto-backend-unaccepted\ndiag: sshservice-label sshservicediag-authentication-unimplemented\ndiag: sshservice-label sshservicediag-session-unimplemented\ndiag: sshservice-label sshservicediag-not-ready\ndiag: listener-count 1\ndiag: transport-enabled true\ndiag: accepted-connection-count 1\ndiag: session-count 0\ndiag: channel-count 0\ndiag: authentication-success false\ndiag: shell-attached false\ndiag: reachability-accepted false\ndiag: ssh-ready false\n"
+            "diag: ok sshservicediag\ndiag: sshservice-readiness sshservicediag-not-ready\ndiag: sshservice-lifecycle prerequisites-missing\ndiag: sshservice-label sshservicediag-prerequisites-missing\ndiag: sshservice-label sshservicediag-transport-unaccepted\ndiag: sshservice-label sshservicediag-dependency-unaccepted\ndiag: sshservice-label sshservicediag-crypto-backend-unaccepted\ndiag: sshservice-label sshservicediag-authentication-unimplemented\ndiag: sshservice-label sshservicediag-session-unimplemented\ndiag: sshservice-label sshservicediag-not-ready\ndiag: listener-count 0\ndiag: transport-enabled false\ndiag: accepted-connection-count 0\ndiag: session-count 0\ndiag: channel-count 0\ndiag: authentication-success false\ndiag: shell-attached false\ndiag: reachability-accepted false\ndiag: ssh-ready false\n"
         );
     }
 

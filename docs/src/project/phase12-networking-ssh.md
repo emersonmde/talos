@@ -6975,3 +6975,24 @@ and connection counters and transport-enabled=false. ssh-ready remains false,
 and runtime SSH crypto, key exchange, authentication/session success, shell
 attachment, hardware reachability, OpenSSH/POSIX/Linux compatibility, broad
 network exposure, broad expansion, and phase transition remain unaccepted.
+
+phase12-shell-ssh-listener-transport-smoke-20260622 accepts retained
+host/QEMU-substitute smoke evidence for the bounded listener/transport slice.
+The transcript covers disabled and prerequisite-missing sshservicediag states
+with zero listener/connection counters and ssh-ready=false, plus source-level
+local transport-modeled evidence for one descriptor-backed listener/connect/
+accept exchange that reports local-listener-modeled, local-transport-modeled,
+identification-banner-modeled, remote-identification-valid,
+transport-closed-before-kex, listener-count=1, transport-enabled=true, and
+accepted-connection-count=1. The smoke also retains valid, invalid, and
+over-limit remote-identification classifications. The shell-visible VFS
+diagnostic path remains prerequisites-missing until a later accepted
+crypto/service slice provides sufficient prerequisites through the diagnostic
+context. Evidence is redacted to fixed labels, counters, booleans, test names,
+and validation output; peer text, peer addresses, key bytes, fingerprints,
+random bytes, operator identity, key-derived identifiers, and stable
+transport/session identifiers are not retained. Runtime SSH crypto, key
+exchange, authentication/session success, shell attachment, hardware
+reachability, OpenSSH/POSIX/Linux compatibility, broad expansion, and phase
+transition remain unaccepted. The selected next bounded task is
+phase12-ssh-listener-transport-closeout-20260622.
