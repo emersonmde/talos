@@ -7844,3 +7844,28 @@ sessions/channels, shell attachment, live reachability, compatibility, broad
 expansion, phase transition, and ssh-ready=true remain unaccepted. The selected
 next bounded task is
 phase12-ssh-publickey-auth-response-policy-closeout-20260622.
+
+phase12-ssh-publickey-auth-response-policy-closeout-20260622 accepts the
+closed publickey USERAUTH_PK_OK/USERAUTH_FAILURE response-policy frontier.
+The closeout reconciles the accepted contract, modeled source implementation,
+and retained host/QEMU-substitute smoke evidence for prerequisite response
+selection. USERAUTH_PK_OK is accepted only for unsigned authorized ssh-ed25519
+key probes after the accepted service/userauth, private session-id,
+authorized_keys key-match, and verifier prerequisites. USERAUTH_FAILURE remains
+the only accepted response for signed-valid success-deferred, invalid
+signature, malformed signature, unauthorized key, malformed request,
+unsupported algorithm, disabled policy, redaction-sensitive, and
+prerequisite-missing paths.
+
+The closeout does not accept account binding, SSH_MSG_USERAUTH_SUCCESS,
+authentication success, sessions/channels, shell attachment, live reachability,
+hardware proof, OpenSSH/POSIX/Linux compatibility, broad expansion, phase
+transition, or ssh-ready=true. The retained evidence keeps
+authentication-success=false, session-count=0, channel-count=0,
+shell-attached=false, live-reachability=false, and ssh-ready=false, and remains
+fixed-label/public-message-number/public-length/count/command/path/task-id/
+classification only. It retains no session-id bytes, authorized-key bytes,
+public-key blobs, signatures, signed-data bytes, fingerprints, digests,
+user/operator identity, peer strings, key-derived identifiers, stable
+identifiers, hardware data, or boot artifacts. The selected next bounded task
+is phase12-ssh-publickey-auth-success-account-policy-contract-20260622.
