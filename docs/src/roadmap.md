@@ -16561,6 +16561,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   compatibility, broad expansion, or phase transition is accepted. ssh-ready
   remains false. The selected next bounded task is
   phase12-ssh-newkeys-packet-crypto-core-20260622.
+- phase12-ssh-newkeys-packet-crypto-core-20260622 accepts the private local
+  NEWKEYS and encrypted-packet diagnostic implementation. Runtime KEX packet
+  states now track independent send and receive NEWKEYS activation; the
+  encrypted-packet-state-active diagnostic becomes true only after both
+  directions are active. A task-owned diagnostic can run one fixed public
+  fixture packet through the accepted chacha20-poly1305@openssh.com packet
+  state, zeroize packet/tag material before returning durable evidence, and
+  advance exactly one private direction sequence number. Missing KEX/NEWKEYS
+  readiness, post-NEWKEYS plaintext I/O attempts, malformed packet shape,
+  crypto failure, and u32 sequence overflow fail closed with fixed labels and
+  no sequence advancement. ssh-ready remains false;
+  authentication/session/shell behavior, live reachability, public
+  compatibility, hardware, broad expansion, and phase transition remain
+  unaccepted. The selected next bounded task is
+  phase12-shell-ssh-newkeys-packet-crypto-smoke-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

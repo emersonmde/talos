@@ -7272,6 +7272,34 @@ algorithm names, fixed labels, validation commands, and classifications. The
 selected next bounded task is
 phase12-ssh-newkeys-packet-crypto-contract-20260622.
 
+phase12-ssh-newkeys-packet-crypto-core-20260622 accepts the private local
+NEWKEYS and encrypted-packet diagnostic core. The accepted runtime KEX packet
+states now model independent send and receive SSH_MSG_NEWKEYS activation.
+Send encryption activates only after local outbound NEWKEYS, receive
+decryption activates only after inbound peer NEWKEYS, and
+encrypted-packet-state-active requires both directions. The first packet
+diagnostic is task-owned and local: it uses caller-owned fixed public fixture
+packet buffers with the accepted chacha20-poly1305@openssh.com packet-state
+handles, zeroizes packet and tag material before returning durable evidence,
+and advances exactly one private direction sequence number per successful
+operation.
+
+The implemented fixed labels are sshservicediag-newkeys-not-ready,
+sshservicediag-newkeys-send-active,
+sshservicediag-newkeys-receive-active,
+sshservicediag-encrypted-packet-state-active,
+sshservicediag-encrypted-packet-sequence-advanced,
+sshservicediag-encrypted-packet-sequence-overflow,
+sshservicediag-encrypted-packet-crypto-failed, and
+sshservicediag-encrypted-packet-diagnostic-ready. Missing NEWKEYS direction,
+post-NEWKEYS plaintext I/O attempts, malformed packet shape, crypto failure,
+and sequence overflow fail closed with fixed labels and no sequence
+advancement. ssh-ready remains false, and this core does not accept user
+authentication, authorized-key parsing, session/channel success, shell
+attachment, live reachability, OpenSSH/POSIX/Linux compatibility, hardware/lab
+action, broad expansion, or a phase transition. The selected next bounded task is
+phase12-shell-ssh-newkeys-packet-crypto-smoke-20260622.
+
 phase12-ssh-newkeys-packet-crypto-contract-20260622 accepts the first bounded
 NEWKEYS and encrypted-packet contract after the runtime KEX closeout. NEWKEYS
 is defined as a private bidirectional transport-state transition over the

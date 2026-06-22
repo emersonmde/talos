@@ -30,6 +30,7 @@ const SSH_KDF_IV_CLIENT_TO_SERVER: u8 = b'A';
 const SSH_KDF_IV_SERVER_TO_CLIENT: u8 = b'B';
 const SSH_KDF_KEY_CLIENT_TO_SERVER: u8 = b'C';
 const SSH_KDF_KEY_SERVER_TO_CLIENT: u8 = b'D';
+const SSH_ENCRYPTED_PACKET_MIN_BYTES: usize = 6;
 
 type NegotiatedHmacSha256 = Hmac<Sha256>;
 
@@ -44,6 +45,14 @@ pub(crate) enum SshRuntimeKexLabel {
     KexKeyDerivationFailed,
     EncryptedPacketStateNotReady,
     EncryptedPacketStateReady,
+    NewkeysNotReady,
+    NewkeysSendActive,
+    NewkeysReceiveActive,
+    EncryptedPacketStateActive,
+    EncryptedPacketSequenceAdvanced,
+    EncryptedPacketSequenceOverflow,
+    EncryptedPacketCryptoFailed,
+    EncryptedPacketDiagnosticReady,
 }
 
 impl SshRuntimeKexLabel {
@@ -58,6 +67,20 @@ impl SshRuntimeKexLabel {
             Self::KexKeyDerivationFailed => "sshservicediag-kex-key-derivation-failed",
             Self::EncryptedPacketStateNotReady => "sshservicediag-encrypted-packet-state-not-ready",
             Self::EncryptedPacketStateReady => "sshservicediag-encrypted-packet-state-ready",
+            Self::NewkeysNotReady => "sshservicediag-newkeys-not-ready",
+            Self::NewkeysSendActive => "sshservicediag-newkeys-send-active",
+            Self::NewkeysReceiveActive => "sshservicediag-newkeys-receive-active",
+            Self::EncryptedPacketStateActive => "sshservicediag-encrypted-packet-state-active",
+            Self::EncryptedPacketSequenceAdvanced => {
+                "sshservicediag-encrypted-packet-sequence-advanced"
+            }
+            Self::EncryptedPacketSequenceOverflow => {
+                "sshservicediag-encrypted-packet-sequence-overflow"
+            }
+            Self::EncryptedPacketCryptoFailed => "sshservicediag-encrypted-packet-crypto-failed",
+            Self::EncryptedPacketDiagnosticReady => {
+                "sshservicediag-encrypted-packet-diagnostic-ready"
+            }
         }
     }
 }
@@ -149,6 +172,10 @@ impl SshRuntimeKexReady {
     pub(crate) const fn packet_states(&self) -> &SshEncryptedPacketStates {
         &self.packet_states
     }
+
+    pub(crate) const fn packet_states_mut(&mut self) -> &mut SshEncryptedPacketStates {
+        &mut self.packet_states
+    }
 }
 
 impl Drop for SshRuntimeKexReady {
@@ -160,6 +187,8 @@ impl Drop for SshRuntimeKexReady {
 pub(crate) struct SshEncryptedPacketStates {
     client_to_server: SshEncryptedPacketState,
     server_to_client: SshEncryptedPacketState,
+    send_newkeys_active: bool,
+    receive_newkeys_active: bool,
 }
 
 impl SshEncryptedPacketStates {
@@ -169,6 +198,137 @@ impl SshEncryptedPacketStates {
 
     pub(crate) const fn server_to_client(&self) -> &SshEncryptedPacketState {
         &self.server_to_client
+    }
+
+    pub(crate) fn activate_send_newkeys(&mut self) -> SshNewkeysActivationReport {
+        self.send_newkeys_active = true;
+        SshNewkeysActivationReport {
+            label: SshRuntimeKexLabel::NewkeysSendActive,
+            send_active: self.send_newkeys_active,
+            receive_active: self.receive_newkeys_active,
+            encrypted_packet_state_active: self.encrypted_packet_state_active(),
+        }
+    }
+
+    pub(crate) fn activate_receive_newkeys(&mut self) -> SshNewkeysActivationReport {
+        self.receive_newkeys_active = true;
+        SshNewkeysActivationReport {
+            label: SshRuntimeKexLabel::NewkeysReceiveActive,
+            send_active: self.send_newkeys_active,
+            receive_active: self.receive_newkeys_active,
+            encrypted_packet_state_active: self.encrypted_packet_state_active(),
+        }
+    }
+
+    pub(crate) const fn send_newkeys_active(&self) -> bool {
+        self.send_newkeys_active
+    }
+
+    pub(crate) const fn receive_newkeys_active(&self) -> bool {
+        self.receive_newkeys_active
+    }
+
+    pub(crate) const fn encrypted_packet_state_active(&self) -> bool {
+        self.send_newkeys_active && self.receive_newkeys_active
+    }
+
+    pub(crate) const fn plaintext_io_label(&self) -> SshRuntimeKexLabel {
+        if self.send_newkeys_active || self.receive_newkeys_active {
+            SshRuntimeKexLabel::EncryptedPacketCryptoFailed
+        } else {
+            SshRuntimeKexLabel::NewkeysNotReady
+        }
+    }
+
+    pub(crate) fn run_diagnostic(
+        &mut self,
+        direction: SshEncryptedPacketDirection,
+        packet: &mut [u8],
+    ) -> SshEncryptedPacketDiagnosticReport {
+        if !self.encrypted_packet_state_active() {
+            return SshEncryptedPacketDiagnosticReport::failed(
+                direction,
+                SshRuntimeKexLabel::NewkeysNotReady,
+                self.direction_state(direction).sequence_number(),
+                self,
+            );
+        }
+
+        let state = self.direction_state_mut(direction);
+        let sequence_before = state.sequence_number;
+        if sequence_before == u32::MAX {
+            return SshEncryptedPacketDiagnosticReport::failed(
+                direction,
+                SshRuntimeKexLabel::EncryptedPacketSequenceOverflow,
+                sequence_before,
+                self,
+            );
+        }
+        if !encrypted_packet_shape_valid(packet) {
+            return SshEncryptedPacketDiagnosticReport::failed(
+                direction,
+                SshRuntimeKexLabel::EncryptedPacketCryptoFailed,
+                sequence_before,
+                self,
+            );
+        }
+
+        let tag = match state.cipher.encrypt(&state.key, &state.iv, packet) {
+            Ok(Some(tag)) => tag,
+            Ok(None) => {
+                return SshEncryptedPacketDiagnosticReport::failed(
+                    direction,
+                    SshRuntimeKexLabel::EncryptedPacketCryptoFailed,
+                    sequence_before,
+                    self,
+                );
+            }
+            Err(_) => {
+                packet.zeroize();
+                return SshEncryptedPacketDiagnosticReport::failed(
+                    direction,
+                    SshRuntimeKexLabel::EncryptedPacketCryptoFailed,
+                    sequence_before,
+                    self,
+                );
+            }
+        };
+        let mut tag = tag;
+        tag.zeroize();
+        packet.zeroize();
+        state.sequence_number = sequence_before + 1;
+        SshEncryptedPacketDiagnosticReport::advanced(
+            direction,
+            sequence_before,
+            state.sequence_number,
+            self,
+        )
+    }
+
+    fn direction_state(&self, direction: SshEncryptedPacketDirection) -> &SshEncryptedPacketState {
+        match direction {
+            SshEncryptedPacketDirection::Send => &self.server_to_client,
+            SshEncryptedPacketDirection::Receive => &self.client_to_server,
+        }
+    }
+
+    fn direction_state_mut(
+        &mut self,
+        direction: SshEncryptedPacketDirection,
+    ) -> &mut SshEncryptedPacketState {
+        match direction {
+            SshEncryptedPacketDirection::Send => &mut self.server_to_client,
+            SshEncryptedPacketDirection::Receive => &mut self.client_to_server,
+        }
+    }
+
+    #[cfg(test)]
+    pub(crate) fn force_sequence_number_for_test(
+        &mut self,
+        direction: SshEncryptedPacketDirection,
+        sequence_number: u32,
+    ) {
+        self.direction_state_mut(direction).sequence_number = sequence_number;
     }
 }
 
@@ -201,6 +361,143 @@ impl Drop for SshEncryptedPacketState {
     fn drop(&mut self) {
         self.key.zeroize();
         self.iv.zeroize();
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SshNewkeysActivationReport {
+    label: SshRuntimeKexLabel,
+    send_active: bool,
+    receive_active: bool,
+    encrypted_packet_state_active: bool,
+}
+
+impl SshNewkeysActivationReport {
+    pub(crate) const fn label(self) -> SshRuntimeKexLabel {
+        self.label
+    }
+
+    pub(crate) const fn send_active(self) -> bool {
+        self.send_active
+    }
+
+    pub(crate) const fn receive_active(self) -> bool {
+        self.receive_active
+    }
+
+    pub(crate) const fn encrypted_packet_state_active(self) -> bool {
+        self.encrypted_packet_state_active
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SshEncryptedPacketDirection {
+    Send,
+    Receive,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SshEncryptedPacketDiagnosticReport {
+    labels: [SshRuntimeKexLabel; 3],
+    label_count: usize,
+    direction: SshEncryptedPacketDirection,
+    sequence_before: u32,
+    sequence_after: u32,
+    send_active: bool,
+    receive_active: bool,
+    encrypted_packet_state_active: bool,
+    cipher_name: &'static str,
+    key_len: usize,
+    iv_len: usize,
+}
+
+impl SshEncryptedPacketDiagnosticReport {
+    fn failed(
+        direction: SshEncryptedPacketDirection,
+        label: SshRuntimeKexLabel,
+        sequence_number: u32,
+        states: &SshEncryptedPacketStates,
+    ) -> Self {
+        let state = states.direction_state(direction);
+        Self {
+            labels: [label; 3],
+            label_count: 1,
+            direction,
+            sequence_before: sequence_number,
+            sequence_after: sequence_number,
+            send_active: states.send_newkeys_active(),
+            receive_active: states.receive_newkeys_active(),
+            encrypted_packet_state_active: states.encrypted_packet_state_active(),
+            cipher_name: state.cipher_name(),
+            key_len: state.key_len(),
+            iv_len: state.iv_len(),
+        }
+    }
+
+    fn advanced(
+        direction: SshEncryptedPacketDirection,
+        sequence_before: u32,
+        sequence_after: u32,
+        states: &SshEncryptedPacketStates,
+    ) -> Self {
+        let state = states.direction_state(direction);
+        Self {
+            labels: [
+                SshRuntimeKexLabel::EncryptedPacketStateActive,
+                SshRuntimeKexLabel::EncryptedPacketSequenceAdvanced,
+                SshRuntimeKexLabel::EncryptedPacketDiagnosticReady,
+            ],
+            label_count: 3,
+            direction,
+            sequence_before,
+            sequence_after,
+            send_active: states.send_newkeys_active(),
+            receive_active: states.receive_newkeys_active(),
+            encrypted_packet_state_active: states.encrypted_packet_state_active(),
+            cipher_name: state.cipher_name(),
+            key_len: state.key_len(),
+            iv_len: state.iv_len(),
+        }
+    }
+
+    pub(crate) fn labels(&self) -> &[SshRuntimeKexLabel] {
+        &self.labels[..self.label_count]
+    }
+
+    pub(crate) const fn direction(self) -> SshEncryptedPacketDirection {
+        self.direction
+    }
+
+    pub(crate) const fn sequence_before(self) -> u32 {
+        self.sequence_before
+    }
+
+    pub(crate) const fn sequence_after(self) -> u32 {
+        self.sequence_after
+    }
+
+    pub(crate) const fn send_active(self) -> bool {
+        self.send_active
+    }
+
+    pub(crate) const fn receive_active(self) -> bool {
+        self.receive_active
+    }
+
+    pub(crate) const fn encrypted_packet_state_active(self) -> bool {
+        self.encrypted_packet_state_active
+    }
+
+    pub(crate) const fn cipher_name(self) -> &'static str {
+        self.cipher_name
+    }
+
+    pub(crate) const fn key_len(self) -> usize {
+        self.key_len
+    }
+
+    pub(crate) const fn iv_len(self) -> usize {
+        self.iv_len
     }
 }
 
@@ -368,7 +665,29 @@ fn derive_packet_states(
             iv: server_to_client_iv,
             sequence_number: 0,
         },
+        send_newkeys_active: false,
+        receive_newkeys_active: false,
     })
+}
+
+fn encrypted_packet_shape_valid(packet: &[u8]) -> bool {
+    if packet.len() < SSH_ENCRYPTED_PACKET_MIN_BYTES {
+        return false;
+    }
+    let Some(length_bytes) = packet.get(0..4) else {
+        return false;
+    };
+    let packet_length = u32::from_be_bytes([
+        length_bytes[0],
+        length_bytes[1],
+        length_bytes[2],
+        length_bytes[3],
+    ]) as usize;
+    if packet_length + 4 != packet.len() {
+        return false;
+    }
+    let padding_length = packet[4] as usize;
+    packet_length > padding_length + 1
 }
 
 fn derive_key_material(
@@ -520,6 +839,37 @@ mod tests {
         0, 0,
     ];
 
+    fn runtime_kex_ready() -> SshRuntimeKexReady {
+        let host_key = ssh_key_readiness::public_fixture_host_key_private_material();
+        let mut csprng = OperatorSeededCsprng::from_seed_bytes(&PUBLIC_FIXTURE_SEED);
+        let mut client_kexinit = [0u8; 1028];
+        let mut server_kexinit = [0u8; 1028];
+        let client_len =
+            build_modeled_client_kexinit_packet_for_runtime_test(&mut client_kexinit, false);
+        let server_len =
+            build_modeled_client_kexinit_packet_for_runtime_test(&mut server_kexinit, false);
+
+        let result = perform_runtime_kex(SshRuntimeKexInput {
+            client_identification: CLIENT_IDENTIFICATION,
+            server_identification: SSH_LOCAL_IDENTIFICATION.as_bytes(),
+            client_kexinit_packet: &client_kexinit[..client_len],
+            server_kexinit_packet: &server_kexinit[..server_len],
+            peer_public_key: &PEER_PUBLIC_KEY,
+            host_key: Some(&host_key),
+            csprng: &mut csprng,
+        });
+        let SshRuntimeKexResult::Ready(ready) = result else {
+            panic!("runtime KEX should produce caller-owned packet material");
+        };
+        ready
+    }
+
+    fn public_fixture_packet() -> [u8; 16] {
+        [
+            0, 0, 0, 12, 4, 0x15, b'T', b'a', b'l', b'o', b's', b'!', 0, 0, 0, 0,
+        ]
+    }
+
     #[test_case]
     fn runtime_kex_success_uses_real_crypto_and_private_packet_state_handles() {
         let host_key = ssh_key_readiness::public_fixture_host_key_private_material();
@@ -641,5 +991,97 @@ mod tests {
             SshRuntimeKexFailure::KeyDerivationFailed.label(),
             SshRuntimeKexLabel::KexKeyDerivationFailed
         );
+    }
+
+    #[test_case]
+    fn newkeys_activation_is_independent_and_diagnostic_advances_one_sequence() {
+        let mut ready = runtime_kex_ready();
+        let states = ready.packet_states_mut();
+        assert!(!states.send_newkeys_active());
+        assert!(!states.receive_newkeys_active());
+        assert!(!states.encrypted_packet_state_active());
+
+        let send = states.activate_send_newkeys();
+        assert_eq!(send.label(), SshRuntimeKexLabel::NewkeysSendActive);
+        assert!(send.send_active());
+        assert!(!send.receive_active());
+        assert!(!send.encrypted_packet_state_active());
+        assert_eq!(
+            states.plaintext_io_label(),
+            SshRuntimeKexLabel::EncryptedPacketCryptoFailed
+        );
+
+        let mut packet = public_fixture_packet();
+        let blocked =
+            states.run_diagnostic(SshEncryptedPacketDirection::Send, packet.as_mut_slice());
+        assert_eq!(blocked.labels(), &[SshRuntimeKexLabel::NewkeysNotReady]);
+        assert_eq!(blocked.sequence_before(), 0);
+        assert_eq!(blocked.sequence_after(), 0);
+        assert!(!blocked.encrypted_packet_state_active());
+
+        let receive = states.activate_receive_newkeys();
+        assert_eq!(receive.label(), SshRuntimeKexLabel::NewkeysReceiveActive);
+        assert!(receive.send_active());
+        assert!(receive.receive_active());
+        assert!(receive.encrypted_packet_state_active());
+
+        let mut packet = public_fixture_packet();
+        let advanced =
+            states.run_diagnostic(SshEncryptedPacketDirection::Send, packet.as_mut_slice());
+        assert_eq!(
+            advanced.labels(),
+            &[
+                SshRuntimeKexLabel::EncryptedPacketStateActive,
+                SshRuntimeKexLabel::EncryptedPacketSequenceAdvanced,
+                SshRuntimeKexLabel::EncryptedPacketDiagnosticReady,
+            ]
+        );
+        assert_eq!(advanced.direction(), SshEncryptedPacketDirection::Send);
+        assert_eq!(advanced.sequence_before(), 0);
+        assert_eq!(advanced.sequence_after(), 1);
+        assert!(advanced.send_active());
+        assert!(advanced.receive_active());
+        assert!(advanced.encrypted_packet_state_active());
+        assert_eq!(
+            advanced.cipher_name(),
+            SSH_CIPHER_NAME_CHACHA20_POLY1305_OPENSSH
+        );
+        assert_eq!(advanced.key_len(), CHACHA20_POLY1305_KEY_BYTES);
+        assert_eq!(advanced.iv_len(), CHACHA20_POLY1305_IV_BYTES);
+        assert_eq!(states.server_to_client().sequence_number(), 1);
+        assert_eq!(states.client_to_server().sequence_number(), 0);
+    }
+
+    #[test_case]
+    fn encrypted_packet_diagnostic_fails_closed_for_overflow_and_malformed_packet() {
+        let mut ready = runtime_kex_ready();
+        let states = ready.packet_states_mut();
+        states.activate_send_newkeys();
+        states.activate_receive_newkeys();
+
+        let mut malformed = [0u8; 5];
+        let malformed_report = states.run_diagnostic(
+            SshEncryptedPacketDirection::Receive,
+            malformed.as_mut_slice(),
+        );
+        assert_eq!(
+            malformed_report.labels(),
+            &[SshRuntimeKexLabel::EncryptedPacketCryptoFailed]
+        );
+        assert_eq!(malformed_report.sequence_before(), 0);
+        assert_eq!(malformed_report.sequence_after(), 0);
+        assert_eq!(states.client_to_server().sequence_number(), 0);
+
+        states.force_sequence_number_for_test(SshEncryptedPacketDirection::Receive, u32::MAX);
+        let mut packet = public_fixture_packet();
+        let overflow =
+            states.run_diagnostic(SshEncryptedPacketDirection::Receive, packet.as_mut_slice());
+        assert_eq!(
+            overflow.labels(),
+            &[SshRuntimeKexLabel::EncryptedPacketSequenceOverflow]
+        );
+        assert_eq!(overflow.sequence_before(), u32::MAX);
+        assert_eq!(overflow.sequence_after(), u32::MAX);
+        assert_eq!(states.client_to_server().sequence_number(), u32::MAX);
     }
 }

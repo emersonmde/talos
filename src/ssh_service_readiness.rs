@@ -65,6 +65,14 @@ pub(crate) enum SshServiceReadinessLabel {
     KexKeyDerivationFailed,
     EncryptedPacketStateNotReady,
     EncryptedPacketStateReady,
+    NewkeysNotReady,
+    NewkeysSendActive,
+    NewkeysReceiveActive,
+    EncryptedPacketStateActive,
+    EncryptedPacketSequenceAdvanced,
+    EncryptedPacketSequenceOverflow,
+    EncryptedPacketCryptoFailed,
+    EncryptedPacketDiagnosticReady,
     TransportClosedBeforeKex,
     AuthenticationUnimplemented,
     SessionUnimplemented,
@@ -125,6 +133,20 @@ impl SshServiceReadinessLabel {
             Self::KexKeyDerivationFailed => "sshservicediag-kex-key-derivation-failed",
             Self::EncryptedPacketStateNotReady => "sshservicediag-encrypted-packet-state-not-ready",
             Self::EncryptedPacketStateReady => "sshservicediag-encrypted-packet-state-ready",
+            Self::NewkeysNotReady => "sshservicediag-newkeys-not-ready",
+            Self::NewkeysSendActive => "sshservicediag-newkeys-send-active",
+            Self::NewkeysReceiveActive => "sshservicediag-newkeys-receive-active",
+            Self::EncryptedPacketStateActive => "sshservicediag-encrypted-packet-state-active",
+            Self::EncryptedPacketSequenceAdvanced => {
+                "sshservicediag-encrypted-packet-sequence-advanced"
+            }
+            Self::EncryptedPacketSequenceOverflow => {
+                "sshservicediag-encrypted-packet-sequence-overflow"
+            }
+            Self::EncryptedPacketCryptoFailed => "sshservicediag-encrypted-packet-crypto-failed",
+            Self::EncryptedPacketDiagnosticReady => {
+                "sshservicediag-encrypted-packet-diagnostic-ready"
+            }
             Self::TransportClosedBeforeKex => "sshservicediag-transport-closed-before-kex",
             Self::AuthenticationUnimplemented => "sshservicediag-authentication-unimplemented",
             Self::SessionUnimplemented => "sshservicediag-session-unimplemented",
@@ -615,6 +637,24 @@ const fn runtime_kex_label(label: SshRuntimeKexLabel) -> SshServiceReadinessLabe
         }
         SshRuntimeKexLabel::EncryptedPacketStateReady => {
             SshServiceReadinessLabel::EncryptedPacketStateReady
+        }
+        SshRuntimeKexLabel::NewkeysNotReady => SshServiceReadinessLabel::NewkeysNotReady,
+        SshRuntimeKexLabel::NewkeysSendActive => SshServiceReadinessLabel::NewkeysSendActive,
+        SshRuntimeKexLabel::NewkeysReceiveActive => SshServiceReadinessLabel::NewkeysReceiveActive,
+        SshRuntimeKexLabel::EncryptedPacketStateActive => {
+            SshServiceReadinessLabel::EncryptedPacketStateActive
+        }
+        SshRuntimeKexLabel::EncryptedPacketSequenceAdvanced => {
+            SshServiceReadinessLabel::EncryptedPacketSequenceAdvanced
+        }
+        SshRuntimeKexLabel::EncryptedPacketSequenceOverflow => {
+            SshServiceReadinessLabel::EncryptedPacketSequenceOverflow
+        }
+        SshRuntimeKexLabel::EncryptedPacketCryptoFailed => {
+            SshServiceReadinessLabel::EncryptedPacketCryptoFailed
+        }
+        SshRuntimeKexLabel::EncryptedPacketDiagnosticReady => {
+            SshServiceReadinessLabel::EncryptedPacketDiagnosticReady
         }
     }
 }
