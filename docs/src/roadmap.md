@@ -16894,6 +16894,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   expansion, phase transition, or ssh-ready=true is accepted. The selected
   next bounded task id for supervisor planning is
   phase12-ssh-publickey-auth-response-policy-contract-20260622.
+- phase12-ssh-publickey-auth-response-policy-contract-20260622 accepts the
+  bounded publickey USERAUTH_PK_OK/USERAUTH_FAILURE response-policy contract.
+  USERAUTH_PK_OK is accepted only for unsigned ssh-ed25519 publickey key
+  probes with the accepted encrypted userauth request, ssh-connection/publickey
+  shape, parsed request key, and authorized_keys key-match prerequisites.
+  Signed requests, including valid verifier-prerequisite-only signatures,
+  remain success-deferred and may only classify USERAUTH_FAILURE until account
+  binding and USERAUTH_SUCCESS are explicitly accepted. Malformed requests,
+  unsupported algorithms, unauthorized keys, invalid or malformed signatures,
+  disabled policy, missing prerequisites, and redaction-sensitive paths fail
+  closed with fixed labels. No response implementation, authentication
+  success, SSH_MSG_USERAUTH_SUCCESS, account binding, sessions/channels, shell
+  attachment, live reachability, compatibility, broad expansion, phase
+  transition, or ssh-ready=true is accepted. The selected next bounded task is
+  phase12-ssh-publickey-auth-response-policy-core-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

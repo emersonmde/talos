@@ -7769,3 +7769,28 @@ ssh-ready=true. service-success, authentication-success, session/channel
 counts, shell attachment, reachability, and readiness remain false/zero. The
 selected next bounded task id for supervisor planning is
 phase12-ssh-publickey-auth-response-policy-contract-20260622.
+
+phase12-ssh-publickey-auth-response-policy-contract-20260622 accepts the
+bounded publickey USERAUTH_PK_OK/USERAUTH_FAILURE response-policy contract.
+The next implementation may classify USERAUTH_PK_OK only for unsigned
+ssh-ed25519 publickey key probes when the accepted encrypted userauth request,
+ssh-connection/publickey shape, parsed request key, and authorized_keys
+key-match prerequisites are present. Signed requests, including valid
+verifier-prerequisite-only signatures, remain success-deferred and may only
+classify SSH_MSG_USERAUTH_FAILURE until account binding and USERAUTH_SUCCESS
+are explicitly accepted.
+
+Malformed requests, unsupported algorithms, unauthorized keys, invalid or
+malformed signatures, disabled policy, missing prerequisites, and redaction-
+sensitive paths fail closed with fixed labels. Durable evidence remains
+fixed-label/public-length/field-count/task-id/path/command/classification only
+and excludes session-id bytes, authorized-key bytes, public-key blobs,
+signature bytes, signed-data bytes, fingerprints, digests, user names,
+comments, peer strings, user/operator identity, key-derived identifiers,
+stable identifiers, hardware data, and boot artifacts. No response
+implementation, authentication success, SSH_MSG_USERAUTH_SUCCESS, account
+binding, sessions/channels, shell attachment, live reachability,
+compatibility, broad expansion, phase transition, or ssh-ready=true is
+accepted. service-success, authentication-success, session/channel counts,
+shell attachment, reachability, and readiness remain false/zero. The selected
+next bounded task is phase12-ssh-publickey-auth-response-policy-core-20260622.

@@ -12,6 +12,44 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-22 - Phase 12 Publickey Responses Start With PK_OK/FAILURE Only
+
+- Status: accepted as the bounded publickey authentication response-policy
+  contract in phase12-ssh-publickey-auth-response-policy-contract-20260622. No
+  Rust implementation, response serialization, authentication success,
+  account/user authorization, sessions/channels, shell attachment, live
+  reachability, hardware action, OpenSSH/POSIX/Linux compatibility, broad
+  expansion, or phase transition is accepted here.
+- Context: Publickey authentication now has prerequisite-only request parsing,
+  a private userauth session-id handle, authorized_keys key matching, and
+  ssh-ed25519 signature verification. The next slice needs a response policy
+  before source code emits USERAUTH_PK_OK or USERAUTH_FAILURE.
+- Decision: The first response policy accepts only two response
+  classifications. USERAUTH_PK_OK is allowed only for signature-present=false
+  ssh-ed25519 publickey probes with the accepted userauth, key-parse, and
+  authorized_keys key-match prerequisites. SSH_MSG_USERAUTH_FAILURE is used for
+  signed requests, including valid verifier-prerequisite-only signatures,
+  until account binding and USERAUTH_SUCCESS are explicitly accepted. Failure
+  is also used for invalid signatures, unauthorized keys, malformed requests,
+  unsupported algorithms, disabled policy, missing prerequisites, and
+  redaction-sensitive paths.
+- Evidence level: static task/docs/source review. The task record is
+  tasks/2026-06-22-phase12-ssh-publickey-auth-response-policy-contract.md.
+- Consequences: A later implementation can model PK_OK/FAILURE without
+  accepting authentication success. ssh-ready remains false; service success,
+  authentication success, sessions/channels, shell attachment, and reachability
+  remain false/zero. Durable evidence must not retain session-id bytes,
+  authorized-key bytes, public-key blobs, signatures, signed-data bytes,
+  fingerprints, digests, user names, comments, peer strings, operator identity,
+  key-derived identifiers, stable identifiers, hardware data, or boot
+  artifacts.
+- Alternatives considered: returning PK_OK for signed valid requests,
+  accepting USERAUTH_SUCCESS after signature verification, silently dropping
+  unsupported or unauthorized publickey requests, retaining user/key material
+  in evidence for debugging, or combining response policy with account binding.
+  These are deferred or rejected because they broaden authentication semantics
+  and evidence risk beyond the response-policy slice.
+
 ## 2026-06-22 - Phase 12 Publickey Verification Is a Prerequisite-Only ssh-ed25519 Check
 
 - Status: accepted as the bounded publickey signature-verification contract in
