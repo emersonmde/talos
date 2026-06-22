@@ -23,6 +23,7 @@ use crate::{
 
 const X25519_PUBLIC_KEY_BYTES: usize = 32;
 const SHA256_BYTES: usize = 32;
+pub(crate) const SSH_USERAUTH_SESSION_IDENTIFIER_BYTES: usize = SHA256_BYTES;
 const CHACHA20_POLY1305_KEY_BYTES: usize = 32;
 const CHACHA20_POLY1305_IV_BYTES: usize = 8;
 const SSH_CIPHER_NAME_CHACHA20_POLY1305_OPENSSH: &str = "chacha20-poly1305@openssh.com";
@@ -153,6 +154,7 @@ pub(crate) struct SshRuntimeKexReady {
     local_public_key: [u8; X25519_PUBLIC_KEY_BYTES],
     host_key_public_blob: Vec<u8>,
     host_key_signature_blob: Vec<u8>,
+    userauth_session_identifier: [u8; SSH_USERAUTH_SESSION_IDENTIFIER_BYTES],
     packet_states: SshEncryptedPacketStates,
 }
 
@@ -169,6 +171,12 @@ impl SshRuntimeKexReady {
         &self.host_key_signature_blob
     }
 
+    pub(crate) const fn userauth_session_identifier(&self) -> SshUserauthSessionIdentifier<'_> {
+        SshUserauthSessionIdentifier {
+            bytes: &self.userauth_session_identifier,
+        }
+    }
+
     pub(crate) const fn packet_states(&self) -> &SshEncryptedPacketStates {
         &self.packet_states
     }
@@ -181,6 +189,22 @@ impl SshRuntimeKexReady {
 impl Drop for SshRuntimeKexReady {
     fn drop(&mut self) {
         self.host_key_signature_blob.zeroize();
+        self.userauth_session_identifier.zeroize();
+    }
+}
+
+#[derive(Clone, Copy)]
+pub(crate) struct SshUserauthSessionIdentifier<'a> {
+    bytes: &'a [u8; SSH_USERAUTH_SESSION_IDENTIFIER_BYTES],
+}
+
+impl SshUserauthSessionIdentifier<'_> {
+    pub(crate) const fn as_bytes(&self) -> &[u8; SSH_USERAUTH_SESSION_IDENTIFIER_BYTES] {
+        self.bytes
+    }
+
+    pub(crate) const fn byte_len(&self) -> usize {
+        SSH_USERAUTH_SESSION_IDENTIFIER_BYTES
     }
 }
 
@@ -576,6 +600,7 @@ pub(crate) fn perform_runtime_kex(input: SshRuntimeKexInput<'_>) -> SshRuntimeKe
         exchange_hash.zeroize();
         return SshRuntimeKexResult::Failed(SshRuntimeKexFailure::EncryptedPacketStateNotReady);
     };
+    let userauth_session_identifier = exchange_hash;
     shared_secret_bytes.zeroize();
     exchange_hash.zeroize();
 
@@ -583,6 +608,7 @@ pub(crate) fn perform_runtime_kex(input: SshRuntimeKexInput<'_>) -> SshRuntimeKe
         local_public_key,
         host_key_public_blob,
         host_key_signature_blob,
+        userauth_session_identifier,
         packet_states,
     })
 }
@@ -898,6 +924,15 @@ mod tests {
         assert_ne!(ready.local_public_key(), &[0u8; X25519_PUBLIC_KEY_BYTES]);
         assert!(!ready.host_key_public_blob().is_empty());
         assert!(!ready.host_key_signature_blob().is_empty());
+        let session_identifier = ready.userauth_session_identifier();
+        assert_eq!(
+            session_identifier.byte_len(),
+            SSH_USERAUTH_SESSION_IDENTIFIER_BYTES
+        );
+        assert_ne!(
+            session_identifier.as_bytes(),
+            &[0u8; SSH_USERAUTH_SESSION_IDENTIFIER_BYTES]
+        );
         assert_eq!(
             ready.packet_states().client_to_server().cipher_name(),
             SSH_CIPHER_NAME_CHACHA20_POLY1305_OPENSSH
@@ -991,6 +1026,41 @@ mod tests {
             SshRuntimeKexFailure::KeyDerivationFailed.label(),
             SshRuntimeKexLabel::KexKeyDerivationFailed
         );
+    }
+
+    #[test_case]
+    fn userauth_session_identifier_handle_is_available_only_on_ready_kex() {
+        let ready = runtime_kex_ready();
+        let first = ready.userauth_session_identifier();
+        let second = ready.userauth_session_identifier();
+
+        assert_eq!(first.byte_len(), SSH_USERAUTH_SESSION_IDENTIFIER_BYTES);
+        assert_eq!(second.byte_len(), SSH_USERAUTH_SESSION_IDENTIFIER_BYTES);
+        assert_eq!(first.as_bytes(), second.as_bytes());
+        assert_ne!(
+            first.as_bytes(),
+            &[0u8; SSH_USERAUTH_SESSION_IDENTIFIER_BYTES]
+        );
+
+        let host_key = ssh_key_readiness::public_fixture_host_key_private_material();
+        let mut not_ready_csprng = OperatorSeededCsprng::from_seed_bytes(b"short");
+        let mut client_kexinit = [0u8; 1028];
+        let mut server_kexinit = [0u8; 1028];
+        let client_len =
+            build_modeled_client_kexinit_packet_for_runtime_test(&mut client_kexinit, false);
+        let server_len =
+            build_modeled_client_kexinit_packet_for_runtime_test(&mut server_kexinit, false);
+        let failed = perform_runtime_kex(SshRuntimeKexInput {
+            client_identification: CLIENT_IDENTIFICATION,
+            server_identification: SSH_LOCAL_IDENTIFICATION.as_bytes(),
+            client_kexinit_packet: &client_kexinit[..client_len],
+            server_kexinit_packet: &server_kexinit[..server_len],
+            peer_public_key: &PEER_PUBLIC_KEY,
+            host_key: Some(&host_key),
+            csprng: &mut not_ready_csprng,
+        });
+        assert!(matches!(failed, SshRuntimeKexResult::Failed(_)));
+        assert!(!failed.encrypted_packet_state_ready());
     }
 
     #[test_case]

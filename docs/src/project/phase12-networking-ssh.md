@@ -7555,3 +7555,22 @@ session/channel allocation, shell attachment, live reachability, hardware,
 compatibility, broad expansion, or phase transition is accepted. ssh-ready,
 service-success, authentication-success, sessions/channels, shell attachment,
 and reachability remain false/zero.
+
+phase12-ssh-userauth-session-id-core-20260622 accepts the bounded local
+session-identifier prerequisite for later publickey authentication. Runtime KEX
+now retains the first exchange hash as a private SshRuntimeKexReady session-id
+value, exposes it to userauth-facing source only through a fixed-size private
+handle, and zeroizes it with the ready KEX state. Userauth-facing diagnostics
+can report only fixed labels for available, unavailable, malformed, and
+over-limit session-id states plus small byte lengths; they do not retain
+session-id bytes, exchange hashes, keys, signatures, packet payloads,
+peer/user strings, stable identifiers, hardware data, or boot artifacts.
+
+This is prerequisite plumbing only. No authorized-key parsing, publickey
+matching, signature verification, authentication response emission,
+authentication success, service success, session/channel allocation, shell
+attachment, live reachability, hardware action, compatibility claim, broad
+expansion, or phase transition is accepted. ssh-ready, service-success,
+authentication-success, session/channel counts, shell attachment, and
+reachability remain false/zero. The selected next bounded task is
+phase12-ssh-userauth-session-id-smoke-20260622.

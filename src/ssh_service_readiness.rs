@@ -10,7 +10,8 @@ use crate::{
     csprng::OperatorSeededCsprng,
     ssh_key_readiness::{HostKeyPrivateMaterial, SshKeyReadinessLabel, SshKeyReadinessReport},
     ssh_runtime_crypto::{
-        SshRuntimeKexInput, SshRuntimeKexLabel, SshRuntimeKexResultKind, perform_runtime_kex,
+        SSH_USERAUTH_SESSION_IDENTIFIER_BYTES, SshRuntimeKexInput, SshRuntimeKexLabel,
+        SshRuntimeKexResultKind, SshUserauthSessionIdentifier, perform_runtime_kex,
     },
 };
 
@@ -91,6 +92,10 @@ pub(crate) enum SshServiceReadinessLabel {
     PreauthUserauthMethodUnsupported,
     PreauthUserauthBeforeService,
     PreauthUserauthMalformed,
+    UserauthSessionIdentifierAvailable,
+    UserauthSessionIdentifierUnavailable,
+    UserauthSessionIdentifierMalformed,
+    UserauthSessionIdentifierOverLimit,
     TransportClosedBeforeKex,
     AuthenticationUnimplemented,
     SessionUnimplemented,
@@ -209,6 +214,18 @@ impl SshServiceReadinessLabel {
             }
             Self::PreauthUserauthBeforeService => "sshservicediag-preauth-userauth-before-service",
             Self::PreauthUserauthMalformed => "sshservicediag-preauth-userauth-malformed",
+            Self::UserauthSessionIdentifierAvailable => {
+                "sshservicediag-userauth-session-identifier-available"
+            }
+            Self::UserauthSessionIdentifierUnavailable => {
+                "sshservicediag-userauth-session-identifier-unavailable"
+            }
+            Self::UserauthSessionIdentifierMalformed => {
+                "sshservicediag-userauth-session-identifier-malformed"
+            }
+            Self::UserauthSessionIdentifierOverLimit => {
+                "sshservicediag-userauth-session-identifier-over-limit"
+            }
             Self::TransportClosedBeforeKex => "sshservicediag-transport-closed-before-kex",
             Self::AuthenticationUnimplemented => "sshservicediag-authentication-unimplemented",
             Self::SessionUnimplemented => "sshservicediag-session-unimplemented",
@@ -243,6 +260,7 @@ const SSH_KEXINIT_CLIENT_PACKET_BUFFER_BYTES: usize = SSH_KEXINIT_PACKET_MAX_BYT
 const SSH_ENCRYPTED_TRANSPORT_DISPATCH_MIN_PAYLOAD_BYTES: usize = 1;
 const MAX_SSH_ENCRYPTED_TRANSPORT_DISPATCH_LABELS: usize = 6;
 const MAX_SSH_PREAUTH_SERVICE_USERAUTH_LABELS: usize = 10;
+const MAX_SSH_USERAUTH_SESSION_IDENTIFIER_LABELS: usize = 4;
 const SSH_PREAUTH_STRING_MAX_BYTES: usize = 256;
 const SSH_PREAUTH_PUBLIC_KEY_BLOB_MAX_BYTES: usize = 512;
 const SSH_PREAUTH_SIGNATURE_MAX_BYTES: usize = 512;
@@ -876,6 +894,138 @@ pub(crate) fn classify_ssh_preauth_service_userauth(
             )
         }
         _ => SshPreauthServiceUserauthReport::from_dispatch(dispatch),
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SshUserauthSessionIdentifierResult {
+    Available,
+    Unavailable,
+    Malformed,
+    OverLimit,
+}
+
+#[derive(Clone, Copy)]
+pub(crate) enum SshUserauthSessionIdentifierInput<'a> {
+    Available(SshUserauthSessionIdentifier<'a>),
+    Unavailable,
+    Malformed { byte_len: usize },
+    OverLimit { byte_len: usize },
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SshUserauthSessionIdentifierReport {
+    labels: [SshServiceReadinessLabel; MAX_SSH_USERAUTH_SESSION_IDENTIFIER_LABELS],
+    label_count: usize,
+    result: SshUserauthSessionIdentifierResult,
+    byte_len: Option<usize>,
+}
+
+impl SshUserauthSessionIdentifierReport {
+    fn new(
+        result: SshUserauthSessionIdentifierResult,
+        label: SshServiceReadinessLabel,
+        byte_len: Option<usize>,
+    ) -> Self {
+        let mut report = Self {
+            labels: [SshServiceReadinessLabel::NotReady;
+                MAX_SSH_USERAUTH_SESSION_IDENTIFIER_LABELS],
+            label_count: 0,
+            result,
+            byte_len,
+        };
+        report.push(label);
+        report.push(SshServiceReadinessLabel::AuthenticationUnimplemented);
+        report.push(SshServiceReadinessLabel::SessionUnimplemented);
+        report.push(SshServiceReadinessLabel::NotReady);
+        report
+    }
+
+    fn push(&mut self, label: SshServiceReadinessLabel) {
+        self.labels[self.label_count] = label;
+        self.label_count += 1;
+    }
+
+    pub(crate) fn labels(&self) -> &[SshServiceReadinessLabel] {
+        &self.labels[..self.label_count]
+    }
+
+    pub(crate) const fn result(self) -> SshUserauthSessionIdentifierResult {
+        self.result
+    }
+
+    pub(crate) const fn byte_len(self) -> Option<usize> {
+        self.byte_len
+    }
+
+    pub(crate) const fn session_identifier_available(self) -> bool {
+        matches!(self.result, SshUserauthSessionIdentifierResult::Available)
+    }
+
+    pub(crate) const fn service_success(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn authentication_success(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn session_count(self) -> usize {
+        0
+    }
+
+    pub(crate) const fn channel_count(self) -> usize {
+        0
+    }
+
+    pub(crate) const fn shell_attached(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn ssh_ready(self) -> bool {
+        false
+    }
+}
+
+pub(crate) fn classify_ssh_userauth_session_identifier(
+    input: SshUserauthSessionIdentifierInput<'_>,
+) -> SshUserauthSessionIdentifierReport {
+    match input {
+        SshUserauthSessionIdentifierInput::Available(identifier) => {
+            let byte_len = identifier.byte_len();
+            if byte_len == SSH_USERAUTH_SESSION_IDENTIFIER_BYTES {
+                SshUserauthSessionIdentifierReport::new(
+                    SshUserauthSessionIdentifierResult::Available,
+                    SshServiceReadinessLabel::UserauthSessionIdentifierAvailable,
+                    Some(byte_len),
+                )
+            } else {
+                SshUserauthSessionIdentifierReport::new(
+                    SshUserauthSessionIdentifierResult::Malformed,
+                    SshServiceReadinessLabel::UserauthSessionIdentifierMalformed,
+                    Some(byte_len),
+                )
+            }
+        }
+        SshUserauthSessionIdentifierInput::Unavailable => SshUserauthSessionIdentifierReport::new(
+            SshUserauthSessionIdentifierResult::Unavailable,
+            SshServiceReadinessLabel::UserauthSessionIdentifierUnavailable,
+            None,
+        ),
+        SshUserauthSessionIdentifierInput::Malformed { byte_len } => {
+            SshUserauthSessionIdentifierReport::new(
+                SshUserauthSessionIdentifierResult::Malformed,
+                SshServiceReadinessLabel::UserauthSessionIdentifierMalformed,
+                Some(byte_len),
+            )
+        }
+        SshUserauthSessionIdentifierInput::OverLimit { byte_len } => {
+            SshUserauthSessionIdentifierReport::new(
+                SshUserauthSessionIdentifierResult::OverLimit,
+                SshServiceReadinessLabel::UserauthSessionIdentifierOverLimit,
+                Some(byte_len),
+            )
+        }
     }
 }
 
@@ -1593,7 +1743,7 @@ mod tests {
         csprng::OperatorSeededCsprng,
         entropy::{self, EntropyDiagnosticSnapshot, OperatorSeedObservation},
         ssh_key_readiness::{self, HostKeyMaterialMetadata, SshKeyReadinessSnapshot},
-        ssh_runtime_crypto::SshRuntimeKexResultKind,
+        ssh_runtime_crypto::{SshRuntimeKexReady, SshRuntimeKexResult, SshRuntimeKexResultKind},
     };
 
     fn label_names(
@@ -1620,6 +1770,16 @@ mod tests {
         report: &SshPreauthServiceUserauthReport,
     ) -> [&'static str; MAX_SSH_PREAUTH_SERVICE_USERAUTH_LABELS] {
         let mut labels = [""; MAX_SSH_PREAUTH_SERVICE_USERAUTH_LABELS];
+        for (index, label) in report.labels().iter().enumerate() {
+            labels[index] = label.name();
+        }
+        labels
+    }
+
+    fn userauth_session_identifier_label_names(
+        report: &SshUserauthSessionIdentifierReport,
+    ) -> [&'static str; MAX_SSH_USERAUTH_SESSION_IDENTIFIER_LABELS] {
+        let mut labels = [""; MAX_SSH_USERAUTH_SESSION_IDENTIFIER_LABELS];
         for (index, label) in report.labels().iter().enumerate() {
             labels[index] = label.name();
         }
@@ -1698,6 +1858,33 @@ mod tests {
         cursor = write_ssh_string(&mut payload, cursor, service);
         cursor = write_ssh_string(&mut payload, cursor, method);
         (payload, cursor)
+    }
+
+    fn runtime_kex_ready_for_userauth() -> SshRuntimeKexReady {
+        let host_key = ssh_key_readiness::public_fixture_host_key_private_material();
+        let mut csprng = OperatorSeededCsprng::from_seed_bytes(&PUBLIC_FIXTURE_SEED);
+        let client_packet = modeled_kexinit_packet(false);
+        let server_packet = modeled_kexinit_packet(false);
+        let client_len = (read_be_u32(&client_packet, 0).unwrap() as usize) + 4;
+        let server_len = (read_be_u32(&server_packet, 0).unwrap() as usize) + 4;
+        let peer_public_key = [
+            9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0,
+        ];
+
+        let result = perform_runtime_kex(SshRuntimeKexInput {
+            client_identification: SSH_LOCAL_TRANSPORT_REMOTE_IDENTIFICATION,
+            server_identification: SSH_LOCAL_IDENTIFICATION.as_bytes(),
+            client_kexinit_packet: &client_packet[..client_len],
+            server_kexinit_packet: &server_packet[..server_len],
+            peer_public_key: &peer_public_key,
+            host_key: Some(&host_key),
+            csprng: &mut csprng,
+        });
+        let SshRuntimeKexResult::Ready(ready) = result else {
+            panic!("runtime KEX should expose a userauth session-id handle");
+        };
+        ready
     }
 
     #[test_case]
@@ -2324,6 +2511,102 @@ mod tests {
         assert_eq!(report.channel_count(), 0);
         assert!(!report.shell_attached());
         assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn userauth_session_identifier_is_available_only_after_runtime_kex() {
+        let ready = runtime_kex_ready_for_userauth();
+        let first = classify_ssh_userauth_session_identifier(
+            SshUserauthSessionIdentifierInput::Available(ready.userauth_session_identifier()),
+        );
+        let second = classify_ssh_userauth_session_identifier(
+            SshUserauthSessionIdentifierInput::Available(ready.userauth_session_identifier()),
+        );
+
+        assert_eq!(
+            first.result(),
+            SshUserauthSessionIdentifierResult::Available
+        );
+        assert!(first.session_identifier_available());
+        assert_eq!(
+            first.byte_len(),
+            Some(SSH_USERAUTH_SESSION_IDENTIFIER_BYTES)
+        );
+        assert_eq!(first.byte_len(), second.byte_len());
+        assert_eq!(
+            &userauth_session_identifier_label_names(&first)[..first.labels().len()],
+            &[
+                "sshservicediag-userauth-session-identifier-available",
+                "sshservicediag-authentication-unimplemented",
+                "sshservicediag-session-unimplemented",
+                "sshservicediag-not-ready",
+            ]
+        );
+        assert!(!first.service_success());
+        assert!(!first.authentication_success());
+        assert_eq!(first.session_count(), 0);
+        assert_eq!(first.channel_count(), 0);
+        assert!(!first.shell_attached());
+        assert!(!first.ssh_ready());
+    }
+
+    #[test_case]
+    fn userauth_session_identifier_fails_closed_when_unavailable_or_malformed() {
+        let unavailable = classify_ssh_userauth_session_identifier(
+            SshUserauthSessionIdentifierInput::Unavailable,
+        );
+        assert_eq!(
+            unavailable.result(),
+            SshUserauthSessionIdentifierResult::Unavailable
+        );
+        assert!(!unavailable.session_identifier_available());
+        assert_eq!(unavailable.byte_len(), None);
+        assert_eq!(
+            &userauth_session_identifier_label_names(&unavailable)[..unavailable.labels().len()],
+            &[
+                "sshservicediag-userauth-session-identifier-unavailable",
+                "sshservicediag-authentication-unimplemented",
+                "sshservicediag-session-unimplemented",
+                "sshservicediag-not-ready",
+            ]
+        );
+        assert!(!unavailable.authentication_success());
+        assert!(!unavailable.ssh_ready());
+
+        let malformed = classify_ssh_userauth_session_identifier(
+            SshUserauthSessionIdentifierInput::Malformed { byte_len: 0 },
+        );
+        assert_eq!(
+            malformed.result(),
+            SshUserauthSessionIdentifierResult::Malformed
+        );
+        assert_eq!(malformed.byte_len(), Some(0));
+        assert!(
+            malformed
+                .labels()
+                .contains(&SshServiceReadinessLabel::UserauthSessionIdentifierMalformed)
+        );
+
+        let over_limit = classify_ssh_userauth_session_identifier(
+            SshUserauthSessionIdentifierInput::OverLimit {
+                byte_len: SSH_USERAUTH_SESSION_IDENTIFIER_BYTES + 1,
+            },
+        );
+        assert_eq!(
+            over_limit.result(),
+            SshUserauthSessionIdentifierResult::OverLimit
+        );
+        assert_eq!(
+            over_limit.byte_len(),
+            Some(SSH_USERAUTH_SESSION_IDENTIFIER_BYTES + 1)
+        );
+        assert!(
+            over_limit
+                .labels()
+                .contains(&SshServiceReadinessLabel::UserauthSessionIdentifierOverLimit)
+        );
+        assert!(!over_limit.authentication_success());
+        assert!(!over_limit.ssh_ready());
     }
 
     #[test_case]

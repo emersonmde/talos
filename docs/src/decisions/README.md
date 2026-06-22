@@ -12,6 +12,38 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-22 - Phase 12 Userauth Session ID Uses a Private Ready-KEX Handle
+
+- Status: accepted as the bounded session-identifier prerequisite in
+  phase12-ssh-userauth-session-id-core-20260622. No authorized-key parsing,
+  publickey matching, signature verification, authentication response emission,
+  authentication success, session/channel allocation, shell attachment, live
+  reachability, hardware action, OpenSSH/POSIX/Linux compatibility, broad
+  expansion, or phase transition is accepted here.
+- Context: Publickey authentication is blocked until userauth signature
+  verification can access the SSH session identifier. The accepted runtime KEX
+  already computes the first exchange hash for host-key signing and key
+  derivation, but the prior contract zeroized it without exposing an accepted
+  userauth-facing handle.
+- Decision: Retain the first runtime KEX exchange hash as a private
+  SshRuntimeKexReady session identifier, expose it to userauth-facing source
+  only through a fixed-size SshUserauthSessionIdentifier handle, and zeroize
+  the value when ready KEX state is dropped. Diagnostics may report only fixed
+  labels and small byte lengths for available, unavailable, malformed, and
+  over-limit session-id states.
+- Evidence level: source/unit tests and static docs review. The task record is
+  tasks/2026-06-22-phase12-ssh-userauth-session-id-core.md.
+- Consequences: Later publickey verification has a bounded source for the SSH
+  session identifier, but authentication remains unimplemented and ssh-ready
+  remains false. Durable evidence must not retain session-id bytes, exchange
+  hashes, key material, public-key blobs, signatures, peer/user strings,
+  ciphertext/plaintext, stable identifiers, hardware data, or boot artifacts.
+- Alternatives considered: continuing to zeroize the exchange hash without a
+  handle, exposing raw bytes through service diagnostics, or moving directly to
+  publickey verification. They are rejected because the first blocks userauth,
+  the second violates redaction rules, and the third skips authorized-key and
+  response-policy prerequisites.
+
 ## 2026-06-22 - Phase 12 Publickey Authentication Is Blocked on Session ID and Authorized-Key Parsing
 
 - Status: accepted as the bounded publickey authentication contract in

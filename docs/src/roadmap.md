@@ -16738,6 +16738,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   verification, session/channel allocation, shell attachment, live
   reachability, hardware, compatibility, broad expansion, or phase transition
   is accepted; ssh-ready remains false.
+- phase12-ssh-userauth-session-id-core-20260622 accepts the bounded
+  userauth-facing session-identifier prerequisite. Runtime KEX now retains the
+  first exchange hash as a private ready-KEX session-id value, exposes a
+  fixed-size private handle for later userauth verification, zeroizes the value
+  with the ready KEX state, and reports only fixed labels plus small byte
+  lengths for available, unavailable, malformed, and over-limit session-id
+  states. No session-id bytes, exchange hashes, key material, peer/user
+  strings, public-key blobs, signatures, hardware data, or boot artifacts are
+  retained in durable evidence. No authorized-key parsing, signature
+  verification, authentication responses, authentication success,
+  session/channel allocation, shell attachment, live reachability,
+  compatibility, broad expansion, or phase transition is accepted; ssh-ready
+  remains false. The selected next bounded task is
+  phase12-ssh-userauth-session-id-smoke-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
