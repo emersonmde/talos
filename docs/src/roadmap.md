@@ -16286,6 +16286,16 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   and transport, crypto, authentication, session, shell, reachability,
   OpenSSH/POSIX/Linux compatibility, broad expansion, and phase transition
   remain unaccepted.
+- phase12-ssh-dependency-path-closeout-20260622 accepts the dependency and
+  transport path closeout for the reference-only russh branch. The reconciled
+  path keeps russh as source/API reference material only and keeps the Talos
+  runtime implementation limited to owned identification/banner modeling plus
+  fail-closed pre-KEX close. No runtime russh adoption, runtime SSH crypto,
+  listener/transport reachability, authentication/session success, shell
+  attachment, hardware reachability, OpenSSH/POSIX/Linux compatibility, broad
+  expansion, or phase transition is accepted. selected_next_task is null and
+  planningNeeded=true because no queued or ready task exists after this
+  closeout; supervisor planning is required before the next SSH service slice.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

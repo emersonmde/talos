@@ -6915,3 +6915,18 @@ results are unit-modeled without retaining peer text. ssh-ready remains false,
 listener-count remains 0, transport-enabled remains false, and transport,
 crypto, authentication, session, shell, reachability, OpenSSH/POSIX/Linux
 compatibility, broad expansion, and phase transition remain unaccepted.
+
+phase12-ssh-dependency-path-closeout-20260622 accepts the dependency/transport
+path closeout for this slice. The reconciled path is Talos-owned banner
+modeling with russh retained as reference-only material: the host-only russh
+probe builds/checks in isolation but still carries std/Tokio/host-runtime
+assumptions, while the owned banner contract and core provide the current
+implemented SSH-shaped behavior. The accepted frontier is limited to fixed
+identification/banner modeling and fail-closed pre-KEX close. ssh-ready remains
+false, listener-count remains 0, transport-enabled remains false, and runtime
+russh adoption, runtime SSH crypto, listener/transport reachability,
+authentication/session success, shell attachment, hardware reachability,
+OpenSSH/POSIX/Linux compatibility, broad expansion, and phase transition remain
+unaccepted. selected_next_task is null and planningNeeded=true because no
+queued or ready task exists after this closeout; the next SSH service slice
+requires supervisor planning with explicit gates before work resumes.
