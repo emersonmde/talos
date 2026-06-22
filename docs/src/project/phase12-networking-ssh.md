@@ -7650,3 +7650,19 @@ sessions/channels, shell attachment, live reachability, hardware action,
 compatibility claim, broad expansion, or phase transition is accepted. The
 selected next bounded task is
 phase12-ssh-authorized-keys-parser-smoke-20260622.
+
+phase12-ssh-authorized-keys-parser-smoke-20260622 accepts focused local
+smoke/regression evidence for the authorized_keys parser/key-match boundary.
+The retained source/unit evidence covers accepted ssh-ed25519 key match,
+fail-closed non-match, missing/invalid/oversized metadata, blank/comment-only
+input, unsupported option or algorithm, malformed line shape, and malformed
+public-key blob. Durable evidence remains fixed-label/file-path/test-name/
+public-length/count/command/task-id/classification only and retains no
+authorized-key bytes, public-key blobs, fingerprints, digests, signatures,
+comments, user/operator identity, key-derived identifiers, stable identifiers,
+session-id bytes, hardware data, or boot artifacts. Key match remains only a
+prerequisite for later signature verification; no authentication response,
+authentication success, account binding, sessions/channels, shell attachment,
+live reachability, compatibility, broad expansion, or phase transition is
+accepted. The selected next bounded task is
+phase12-ssh-authorized-keys-parser-closeout-20260622.

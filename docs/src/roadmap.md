@@ -16810,6 +16810,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   sessions/channels, shell attachment, live reachability, compatibility, broad
   expansion, or phase transition is accepted. The selected next bounded task is
   phase12-ssh-authorized-keys-parser-smoke-20260622.
+- phase12-ssh-authorized-keys-parser-smoke-20260622 accepts focused local
+  smoke/regression evidence for the authorized_keys parser/key-match
+  prerequisite. The retained source/unit evidence covers accepted ssh-ed25519
+  key match, fail-closed non-match, missing/invalid/oversized metadata,
+  blank/comment-only input, unsupported option or algorithm, malformed line
+  shape, and malformed public-key blob. Durable evidence remains limited to
+  fixed labels, file paths, public test names, public byte-length values, line
+  counts, validation commands, task ids, and classifications; it excludes
+  authorized-key bytes, public-key blobs, fingerprints, digests, signatures,
+  comments, user/operator identity, stable identifiers, session-id bytes,
+  hardware data, and boot artifacts. Key match remains only a prerequisite for
+  later signature verification; no authentication response, authentication
+  success, account binding, sessions/channels, shell attachment, live
+  reachability, compatibility, broad expansion, or phase transition is
+  accepted. The selected next bounded task is
+  phase12-ssh-authorized-keys-parser-closeout-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
