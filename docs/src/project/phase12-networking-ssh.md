@@ -8609,3 +8609,22 @@ authoritative. Pi 5 reachability, external OpenSSH, live remote receipt,
 OpenSSH/POSIX/Linux compatibility, PTY/SCP/SFTP, broad command expansion, phase
 transition, and ssh-ready=true remain deferred. The selected next bounded task
 is phase12-ssh-peer-output-receipt-closeout-20260623.
+
+phase12-ssh-peer-output-receipt-closeout-20260623 accepts the bounded local
+modeled SSH peer-output receipt closeout. The reconciled frontier is exactly
+one accepted local connected peer and one accepted service-side SSH connection
+on Talos' descriptor-backed in-kernel stream-socket model, with local
+socket-delivery, authentication/session/channel, shell attachment,
+channel-data/stdio, channel-window, channel-lifecycle, and POSIX EOF/wait
+prerequisites satisfied by the same modeled flow. Accepted service output
+classes remain channel-data stdout/stderr, SSH_MSG_CHANNEL_EOF,
+SSH_MSG_CHANNEL_REQUEST exit-status with request type exit-status and
+want_reply=false, and SSH_MSG_CHANNEL_CLOSE, queued by the service and observed
+by the same modeled peer receive path. peer-output-receipt-local=true is
+accepted only for that local modeled success path; live-reachability=false,
+remote-receipt=false, compatibility=false, and ssh-ready=false remain
+authoritative. Pi 5 reachability, external OpenSSH execution, live remote
+receipt, OpenSSH/POSIX/Linux compatibility, PTY/SCP/SFTP, broad command
+expansion, phase transition, and ssh-ready=true remain deferred. The selected
+next bounded task is
+phase12-ssh-openssh-compat-discriminator-contract-20260623.
