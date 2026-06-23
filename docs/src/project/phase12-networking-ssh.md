@@ -8850,3 +8850,20 @@ OpenSSH retry-v3, live reachability, remote receipt, compatibility,
 PTY/SCP/SFTP, broad command expansion, phase transition, or ssh-ready=true is
 accepted. Supervisor planning is required before any further live OpenSSH or
 selected-candidate retry.
+
+phase12-ssh-selected-candidate-boot-staging-root-cause-contract-20260623
+accepts the static root-cause contract for that blocker. The selected invariant
+is that one chosen archive must agree across archive review, post-publish
+status tree_hash/effective_kernel, post-publish boot/files kernel_2712.img
+size/category, same-run TFTP-served kernel bytes, final pre-restore identity,
+and restore identity unless an explicit restore is recorded. Rerun-v2 violates
+that invariant because status and boot/files exposed the selected
+fe9a0d98... tree with an 87,432-byte kernel, while the retained same-root TFTP
+delta served two 104,136-byte baseline kernels and final pre-restore status was
+already the baseline/control a0452458... tree. The smallest decisive follow-up
+removes power-cycle/OpenSSH from the problem: the no-power publish/root
+discriminator must publish the selected archive, inspect status and boot/files
+root visibility, and restore without power-cycling. Only if it accepts
+selected-root-visible=true may the hardware-backed selected-fetch-v3 task test
+the power/TFTP path. retry-v3 and closeout-v3 remain blocked/superseded, and no
+live OpenSSH task is selected from rerun-v2.

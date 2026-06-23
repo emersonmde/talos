@@ -17799,6 +17799,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   PTY/SCP/SFTP, broad command expansion, phase transition, or ssh-ready=true is
   accepted. Supervisor planning is required before any further live OpenSSH or
   selected-candidate retry.
+- phase12-ssh-selected-candidate-boot-staging-root-cause-contract-20260623
+  accepts the static root-cause contract for the
+  baseline-fetch-after-selected-publish blocker. The selected invariant is that
+  one chosen archive must agree across archive review, post-publish status
+  tree_hash/effective_kernel, post-publish boot/files kernel_2712.img
+  size/category, same-run TFTP-served kernel bytes, final pre-restore identity,
+  and restore identity unless an explicit restore is recorded. Rerun-v2 violated
+  that invariant by reporting the selected fe9a0d98... tree and 87,432-byte
+  kernel through status/boot-files, while same-root TFTP served two
+  104,136-byte baseline kernels and final pre-restore status was already the
+  baseline/control a0452458... tree. The selected next bounded task is the
+  no-power publish/root discriminator, which must prove selected-root-visible
+  through status and boot/files before any hardware-backed selected-fetch-v3 or
+  live OpenSSH retry-v4 can be promoted. retry-v3 and closeout-v3 remain
+  blocked/superseded; no live OpenSSH task is selected from rerun-v2.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
