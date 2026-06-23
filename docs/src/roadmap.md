@@ -17661,6 +17661,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   receipt, OpenSSH/POSIX/Linux compatibility, PTY/SCP/SFTP, broad command
   expansion, phase transition, and ssh-ready=true remain deferred. The selected
   next bounded task is phase12-ssh-live-openssh-client-contract-20260623.
+- phase12-ssh-live-openssh-client-contract-20260623 accepts the first live
+  OpenSSH client discriminator contract. A future evidence task must be a
+  single hardware-serialized discriminator against a selected Talos Pi 5
+  candidate, with hardwareTestLock ownership, pre-run restore/identity state,
+  candidate build identity, boot/TFTP-served kernel hash and size evidence, a
+  fresh serial cursor, public OpenSSH invocation categories, and strict
+  redaction rules recorded before any client attempt. Retained observations are
+  limited to public phase categories such as TCP connect, transport banner,
+  kex/userauth, session channel, shell request, output/EOF/exit-status/close,
+  timeout, or client-exit; sanitized Talos readiness labels; public exit
+  categories; TFTP delta; and final pre-restore candidate identity. This
+  contract does not run OpenSSH, mutate lab or hardware state, publish a boot
+  archive, or accept live-reachability=true, remote-receipt=true,
+  compatibility=true, PTY/SCP/SFTP, broad command expansion, phase transition,
+  or ssh-ready=true. No explicit live-client evidence task is currently queued,
+  so supervisor planning is required before any worker can run the client or
+  touch hardware for this contract.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
