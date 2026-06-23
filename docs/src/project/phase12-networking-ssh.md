@@ -8269,3 +8269,29 @@ OpenSSH/POSIX/Linux compatibility, broad command expansion, phase transition,
 and ssh-ready=true remain deferred. selected_next_task is null and
 planningNeeded=true because no explicit queued/ready follow-up task exists for
 the worker to promote without supervisor planning.
+
+phase12-ssh-channel-window-accounting-contract-20260623 accepts the bounded
+local modeled channel-window accounting contract after the channel-data/stdio
+closeout. The next source task may add per-channel receive-window and
+send-window accounting only for the accepted local modeled session channel,
+shell attachment, stdio ownership, and open lifecycle path.
+
+The contract splits ownership by direction: Talos owns a fixed local modeled
+receive window and max-packet for inbound SSH_MSG_CHANNEL_DATA, while the peer
+advertised initial-window-size and maximum-packet-size from
+SSH_MSG_CHANNEL_OPEN become Talos' outbound stdout/stderr send budget, capped
+by the accepted local data boundary. Accepted inbound data decrements the local
+receive window before stdio delivery and may emit SSH_MSG_CHANNEL_WINDOW_ADJUST
+with message number 93, recipient channel, bytes-to-add, and no trailing fields
+when a named low-water mark is reached. Accepted outbound stdout/stderr reports
+decrement the remote receive-window budget. Inbound WINDOW_ADJUST can only add
+nonzero bytes to that remote budget without overflow.
+
+Malformed, zero, over-limit, overflow, redaction-sensitive, unsupported, or
+lifecycle-invalid data and window-adjust messages fail closed. Oversized data
+does not reach stdio and does not mutate window counters. The next source task
+may move channel-window-management=true only for local modeled paths satisfying
+this contract. Live encrypted socket delivery, remote receipt, hardware
+reachability, OpenSSH/POSIX/Linux compatibility, broad expansion, phase
+transition, and ssh-ready=true remain deferred. The selected next bounded task
+is phase12-ssh-channel-window-accounting-core-20260623.

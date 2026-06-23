@@ -17273,6 +17273,25 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   phase transition, and ssh-ready=true remain deferred. selected_next_task is
   null and planningNeeded=true because no explicit queued/ready follow-up task
   exists for the worker to promote without supervisor planning.
+- phase12-ssh-channel-window-accounting-contract-20260623 accepts the bounded
+  local modeled channel-window accounting contract. The next source task may
+  add per-channel receive-window and send-window accounting only for the
+  accepted local authentication/session/channel/shell/local-stdio/open-lifecycle
+  path. Talos owns a fixed local modeled receive window and max-packet for
+  inbound SSH_MSG_CHANNEL_DATA; the peer-advertised initial-window-size and
+  maximum-packet-size from SSH_MSG_CHANNEL_OPEN become Talos' outbound
+  stdout/stderr send budget, capped by the accepted local data boundary.
+  Accepted inbound data decrements the local receive window and may emit
+  SSH_MSG_CHANNEL_WINDOW_ADJUST as message number 93 with recipient channel and
+  bytes-to-add when a named low-water mark is reached. Accepted outbound
+  stdout/stderr reports decrement the remote receive-window budget, and inbound
+  WINDOW_ADJUST may only add nonzero bytes without overflow. Oversized or
+  invalid data does not reach stdio and does not mutate window counters.
+  channel-window-management may become true only on local modeled paths
+  satisfying this contract; live encrypted socket delivery, remote receipt,
+  hardware reachability, OpenSSH/POSIX/Linux compatibility, broad expansion,
+  phase transition, and ssh-ready=true remain deferred. The selected next
+  bounded task is phase12-ssh-channel-window-accounting-core-20260623.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
