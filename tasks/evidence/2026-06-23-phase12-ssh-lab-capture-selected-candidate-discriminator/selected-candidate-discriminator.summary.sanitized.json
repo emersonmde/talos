@@ -1,0 +1,154 @@
+{
+  "task_id": "phase12-ssh-lab-capture-selected-candidate-discriminator-20260623",
+  "classification": "capture-chain-inconclusive",
+  "reconciliation_task": "phase12-ssh-lab-capture-regression-reconciliation-20260623",
+  "selected_candidate_fetch_observed": false,
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "candidate": {
+    "candidate_kernel": {
+      "size_bytes": 87432,
+      "sha256": "110e66ef6867a70cc8b72f52c0786a8f4037796b4058ee4a27ba1371ba8c12d5"
+    },
+    "tftp_candidate_kernel_fetch_observed": false
+  },
+  "boot_identity": {
+    "pre_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "published_tree_hash": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333",
+    "post_power_tree_hash": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333",
+    "final_pre_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img"
+  },
+  "tftp": {
+    "cursor_start": 4651591,
+    "cursor_end": 4652942,
+    "log_size": 4652942,
+    "tail_mode": false,
+    "truncated": false,
+    "event_count": 13,
+    "events": [
+      {
+        "filename": "da591740/config.txt",
+        "bytes": 118,
+        "status": "served"
+      },
+      {
+        "filename": "da591740/config.txt",
+        "bytes": 118,
+        "status": "served"
+      },
+      {
+        "filename": "da591740/pieeprom.sig",
+        "bytes": null,
+        "status": "not_found"
+      },
+      {
+        "filename": "da591740//config.txt",
+        "bytes": 118,
+        "status": "served"
+      },
+      {
+        "filename": "da591740//config.txt",
+        "bytes": 118,
+        "status": "served"
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "bytes": 104136,
+        "status": "served"
+      },
+      {
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "bytes": 78679,
+        "status": "served"
+      },
+      {
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "bytes": 5971,
+        "status": "served"
+      },
+      {
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "bytes": 1363,
+        "status": "served"
+      },
+      {
+        "filename": "da591740//config.txt",
+        "bytes": 118,
+        "status": "served"
+      },
+      {
+        "filename": "da591740//cmdline.txt",
+        "bytes": 81,
+        "status": "served"
+      },
+      {
+        "filename": "da591740/armstub8-2712.bin",
+        "bytes": null,
+        "status": "not_found"
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "bytes": 104136,
+        "status": "served"
+      }
+    ],
+    "raw_log_retained": false,
+    "client_identity_retained": false
+  },
+  "tftp_stability": {
+    "stable": true,
+    "reason": "stable",
+    "stable_samples": 3,
+    "required_samples": 3
+  },
+  "serial": {
+    "ok": true,
+    "cursor_start": 4194304,
+    "cursor_end": 4194304,
+    "bytes": 0,
+    "truncated": false,
+    "talos_serial_window": {
+      "requested_timeout_seconds": 25,
+      "elapsed_seconds": 25,
+      "settle_ms": 500,
+      "max_bytes": 65536,
+      "observe_attempts": 1,
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+      "capture_mode": "read",
+      "start_cursor_saturated": true,
+      "response_bytes": 0,
+      "has_kernel_main": false,
+      "has_required_marker": false,
+      "has_firmware_network": false,
+      "firmware_network_occurrences": 0,
+      "required_marker_occurrences": 0
+    },
+    "contains_talos": false,
+    "contains_kernel_main": false,
+    "contains_prompt": false,
+    "raw_text_retained": false
+  },
+  "control": {
+    "known_good_control_rerun": false,
+    "control_skip_justification": "The selected-candidate discriminator was decisive under its fail-closed acceptance gate; a restored-control rerun would prove only baseline capture health, already retained by accepted lab-boot-capture-fresh evidence, and would not prove the selected candidate was fetched."
+  },
+  "claims": {
+    "live_reachability_true": false,
+    "remote_receipt_true": false,
+    "compatibility_true": false,
+    "phase_transition": false,
+    "ssh_ready_true": false
+  },
+  "redaction_review": {
+    "result": "pass",
+    "raw_openssh_log_retained": false,
+    "raw_serial_text_retained": false,
+    "raw_tftp_log_retained": false,
+    "key_material_retained": false,
+    "user_or_address_retained": false,
+    "stable_peer_identifier_retained": false,
+    "private_user_data_retained": false
+  }
+}

@@ -8817,3 +8817,20 @@ delta or equivalent lab-controller signal before restore, or fail closed with a
 concrete lab-capture blocker. Live reachability, remote receipt,
 compatibility, PTY/SCP/SFTP, broad command expansion, phase transition, and
 ssh-ready=true remain unaccepted.
+
+phase12-ssh-lab-capture-selected-candidate-discriminator-20260623 accepts the
+no-OpenSSH selected-candidate lab-capture discriminator as
+selected-candidate-fetch-observed=true. The worker reused the exact previously
+reviewed 87,432-byte candidate archive, acquired hardwareTestLock, captured
+fresh serial and TFTP cursors, published the selected candidate, power-cycled
+once, retained stable same-cursor TFTP evidence before restore, and restored
+the pre-run boot tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. The stable
+TFTP delta observed two served da591740/kernel_2712.img fetches at 87,432
+bytes while final pre-restore identity still reported selected tree
+fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333. This
+accepts only the selected-candidate fetch precondition for the next bounded
+live OpenSSH retry-v2. Live reachability, remote receipt, compatibility,
+PTY/SCP/SFTP, broad command expansion, phase transition, and ssh-ready=true
+remain unaccepted. The selected next bounded task is
+phase12-ssh-live-openssh-client-discriminator-retry-v2-20260623.

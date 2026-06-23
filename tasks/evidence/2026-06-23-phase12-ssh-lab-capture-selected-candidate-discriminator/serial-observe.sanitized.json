@@ -1,0 +1,27 @@
+{
+  "ok": true,
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "bytes": 0,
+  "truncated": false,
+  "talos_serial_window": {
+    "requested_timeout_seconds": 25,
+    "elapsed_seconds": 25,
+    "settle_ms": 500,
+    "max_bytes": 65536,
+    "observe_attempts": 1,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "start_cursor_saturated": true,
+    "response_bytes": 0,
+    "has_kernel_main": false,
+    "has_required_marker": false,
+    "has_firmware_network": false,
+    "firmware_network_occurrences": 0,
+    "required_marker_occurrences": 0
+  },
+  "contains_talos": false,
+  "contains_kernel_main": false,
+  "contains_prompt": false,
+  "raw_text_retained": false
+}

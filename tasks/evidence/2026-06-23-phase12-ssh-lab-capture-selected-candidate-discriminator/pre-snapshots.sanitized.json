@@ -1,0 +1,6 @@
+{
+  "ok": true,
+  "action": "boot snapshots",
+  "snapshot_count": 587,
+  "retained_full_snapshot_list": false
+}

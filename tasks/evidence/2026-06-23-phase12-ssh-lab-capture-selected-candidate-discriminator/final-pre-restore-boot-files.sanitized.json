@@ -1,0 +1,87 @@
+{
+  "ok": true,
+  "action": "boot files",
+  "file_count": 16,
+  "files": [
+    {
+      "path": "bcm2712-rpi-5-b.dtb",
+      "size": 78679,
+      "sha256": null
+    },
+    {
+      "path": "cmdline.txt",
+      "size": 81,
+      "sha256": null
+    },
+    {
+      "path": "config.txt",
+      "size": 118,
+      "sha256": null
+    },
+    {
+      "path": "da591740/bcm2712-rpi-5-b.dtb",
+      "size": 78679,
+      "sha256": null
+    },
+    {
+      "path": "da591740/cmdline.txt",
+      "size": 81,
+      "sha256": null
+    },
+    {
+      "path": "da591740/config.txt",
+      "size": 118,
+      "sha256": null
+    },
+    {
+      "path": "da591740/kernel8.img",
+      "size": 104136,
+      "sha256": null
+    },
+    {
+      "path": "da591740/kernel_2712.img",
+      "size": 104136,
+      "sha256": null
+    },
+    {
+      "path": "da591740/overlays/bcm2712d0.dtbo",
+      "size": 1363,
+      "sha256": null
+    },
+    {
+      "path": "da591740/overlays/overlay_map.dtb",
+      "size": 5971,
+      "sha256": null
+    },
+    {
+      "path": "da591740/overlays/uart0-pi5.dtbo",
+      "size": 1071,
+      "sha256": null
+    },
+    {
+      "path": "kernel8.img",
+      "size": 104136,
+      "sha256": null
+    },
+    {
+      "path": "kernel_2712.img",
+      "size": 104136,
+      "sha256": null
+    },
+    {
+      "path": "overlays/bcm2712d0.dtbo",
+      "size": 1363,
+      "sha256": null
+    },
+    {
+      "path": "overlays/overlay_map.dtb",
+      "size": 5971,
+      "sha256": null
+    },
+    {
+      "path": "overlays/uart0-pi5.dtbo",
+      "size": 1071,
+      "sha256": null
+    }
+  ]
+}

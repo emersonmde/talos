@@ -1,0 +1,9 @@
+{
+  "ok": true,
+  "action": "boot snapshot",
+  "snapshot": {
+    "name": "phase12-ssh-selected-candidate-pre-20260623T1935Z",
+    "bytes": 201809
+  },
+  "retained_snapshot_list": false
+}
