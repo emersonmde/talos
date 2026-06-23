@@ -1,0 +1,37 @@
+{
+  "task_id": "phase12-ssh-runner-openssh-client-tooling-preflight-20260623",
+  "classification": "openssh-client-tooling-unavailable",
+  "checks": {
+    "path_scan": {
+      "ssh": "missing",
+      "dbclient": "missing",
+      "dropbear": "missing",
+      "sshpass": "missing",
+      "slogin": "missing",
+      "scp": "missing",
+      "sftp": "missing"
+    },
+    "local_archive_scan": {
+      "openssh_client_deb": "missing",
+      "dropbear_deb": "missing",
+      "ssh_deb": "missing"
+    },
+    "installed_package": {
+      "openssh_client": "not-installed"
+    }
+  },
+  "usable_client_available": false,
+  "provisioning": {
+    "attempted": false,
+    "reason": "No workspace-local or system-installed OpenSSH-compatible client was found, and fetching external packages would violate this task's no network connection to external host non-goal."
+  },
+  "retained_output_policy": {
+    "raw_openssh_logs": "not-retained",
+    "key_material": "not-retained",
+    "user_or_address_identifiers": "not-retained",
+    "stable_peer_identifiers": "not-retained"
+  },
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "Supervisor must provide an OpenSSH-capable runner/tool path or authorize a different recoverable provisioning path before the lab boot-capture preflight or live OpenSSH discriminator retry can be mechanically unblocked."
+}

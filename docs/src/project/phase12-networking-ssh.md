@@ -8738,3 +8738,18 @@ expansion, phase transition, or ssh-ready claim is accepted. Supervisor
 planning is required to decide whether to provision an OpenSSH-capable runner
 or repair the lab boot-capture precondition before any remote-receipt contract
 or compatibility claim.
+
+phase12-ssh-runner-openssh-client-tooling-preflight-20260623 accepts only a
+fail-closed runner/tooling blocker. The worker performed local sanitized
+tooling inspection without connecting to Talos or any external host, mutating
+lab/hardware state, publishing a boot archive, or changing Talos runtime code.
+No ssh executable or alternate OpenSSH-compatible client was present on PATH,
+and no workspace-local or local package archive provisioning path was
+available. Because the task excluded external package fetches and irreversible
+system mutation, no provisioning was attempted. The accepted blocker label is
+openssh-client-tooling-unavailable. The lab boot-capture preflight and live
+OpenSSH discriminator retry remain blocked until the supervisor provides an
+OpenSSH-capable runner/tool path or authorizes a different recoverable
+provisioning path. No live reachability, remote receipt, compatibility,
+PTY/SCP/SFTP, broad command expansion, phase transition, or ssh-ready claim is
+accepted.
