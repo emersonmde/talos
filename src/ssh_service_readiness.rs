@@ -238,6 +238,20 @@ pub(crate) enum SshServiceReadinessLabel {
     SocketDeliveryFailureOverLimit,
     SocketDeliveryFailureLifecycleViolation,
     SocketDeliveryFailureRedactionSensitive,
+    PeerOutputReceiptPrerequisiteOnly,
+    PeerOutputReceiptChannelDataObserved,
+    PeerOutputReceiptEofObserved,
+    PeerOutputReceiptExitStatusObserved,
+    PeerOutputReceiptCloseObserved,
+    PeerOutputReceiptLocal,
+    PeerOutputReceiptFailurePrerequisiteMissing,
+    PeerOutputReceiptFailureWouldBlock,
+    PeerOutputReceiptFailureBackpressure,
+    PeerOutputReceiptFailureClosedPeer,
+    PeerOutputReceiptFailureMalformed,
+    PeerOutputReceiptFailureOverLimit,
+    PeerOutputReceiptFailureLifecycleViolation,
+    PeerOutputReceiptFailureRedactionSensitive,
     TransportClosedBeforeKex,
     AuthenticationUnimplemented,
     SessionUnimplemented,
@@ -730,6 +744,46 @@ impl SshServiceReadinessLabel {
             Self::SocketDeliveryFailureRedactionSensitive => {
                 "sshservicediag-socket-delivery-failure-redaction-sensitive"
             }
+            Self::PeerOutputReceiptPrerequisiteOnly => {
+                "sshservicediag-peer-output-receipt-prerequisite-only"
+            }
+            Self::PeerOutputReceiptChannelDataObserved => {
+                "sshservicediag-peer-output-receipt-channel-data-observed"
+            }
+            Self::PeerOutputReceiptEofObserved => {
+                "sshservicediag-peer-output-receipt-eof-observed"
+            }
+            Self::PeerOutputReceiptExitStatusObserved => {
+                "sshservicediag-peer-output-receipt-exit-status-observed"
+            }
+            Self::PeerOutputReceiptCloseObserved => {
+                "sshservicediag-peer-output-receipt-close-observed"
+            }
+            Self::PeerOutputReceiptLocal => "sshservicediag-peer-output-receipt-local",
+            Self::PeerOutputReceiptFailurePrerequisiteMissing => {
+                "sshservicediag-peer-output-receipt-failure-prerequisite-missing"
+            }
+            Self::PeerOutputReceiptFailureWouldBlock => {
+                "sshservicediag-peer-output-receipt-failure-would-block"
+            }
+            Self::PeerOutputReceiptFailureBackpressure => {
+                "sshservicediag-peer-output-receipt-failure-backpressure"
+            }
+            Self::PeerOutputReceiptFailureClosedPeer => {
+                "sshservicediag-peer-output-receipt-failure-closed-peer"
+            }
+            Self::PeerOutputReceiptFailureMalformed => {
+                "sshservicediag-peer-output-receipt-failure-malformed"
+            }
+            Self::PeerOutputReceiptFailureOverLimit => {
+                "sshservicediag-peer-output-receipt-failure-over-limit"
+            }
+            Self::PeerOutputReceiptFailureLifecycleViolation => {
+                "sshservicediag-peer-output-receipt-failure-lifecycle-violation"
+            }
+            Self::PeerOutputReceiptFailureRedactionSensitive => {
+                "sshservicediag-peer-output-receipt-failure-redaction-sensitive"
+            }
             Self::TransportClosedBeforeKex => "sshservicediag-transport-closed-before-kex",
             Self::AuthenticationUnimplemented => "sshservicediag-authentication-unimplemented",
             Self::SessionUnimplemented => "sshservicediag-session-unimplemented",
@@ -791,6 +845,7 @@ const MAX_SSH_CHANNEL_WINDOW_ACCOUNTING_LABELS: usize = 14;
 const MAX_SSH_CHANNEL_LIFECYCLE_LABELS: usize = 14;
 const MAX_SSH_POSIX_EOF_WAIT_LABELS: usize = 20;
 const MAX_SSH_SOCKET_DELIVERY_LABELS: usize = 16;
+const MAX_SSH_PEER_OUTPUT_RECEIPT_LABELS: usize = 20;
 const SSH_PREAUTH_STRING_MAX_BYTES: usize = 256;
 const SSH_PREAUTH_PUBLIC_KEY_BLOB_MAX_BYTES: usize = 512;
 const SSH_PREAUTH_SIGNATURE_MAX_BYTES: usize = 512;
@@ -7272,6 +7327,819 @@ fn socket_delivery_channel_data_failure(
     }
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SshPeerOutputReceiptOutputShape {
+    Accepted,
+    Malformed,
+}
+
+pub(crate) struct SshPeerOutputReceiptInput {
+    pub(crate) listener_modeled: bool,
+    pub(crate) connection_modeled: bool,
+    pub(crate) socket_delivery_local: bool,
+    pub(crate) authentication_success: bool,
+    pub(crate) open_session_channel: bool,
+    pub(crate) shell_attached: bool,
+    pub(crate) local_process_session_owned: bool,
+    pub(crate) local_stdio_descriptors_owned: bool,
+    pub(crate) channel_lifecycle_open: bool,
+    pub(crate) channel_window_management: bool,
+    pub(crate) posix_eof_wait_local: bool,
+    pub(crate) redaction_sensitive: bool,
+    pub(crate) output_stream: SshChannelDataStdioOutputStream,
+    pub(crate) output_data_len: usize,
+    pub(crate) exit_status: u32,
+    pub(crate) output_shape: SshPeerOutputReceiptOutputShape,
+    pub(crate) force_output_backpressure: bool,
+    pub(crate) peer_closed_before_output: bool,
+    pub(crate) peer_receive_before_output: bool,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SshPeerOutputReceiptResult {
+    LocalPeerOutputReceiptModeled,
+    FailurePrerequisiteMissing,
+    FailureWouldBlock,
+    FailureBackpressure,
+    FailureClosedPeer,
+    FailureMalformedOutput,
+    FailureOutputOverLimit,
+    FailureLifecycleViolation,
+    FailureRedactionSensitive,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SshPeerOutputReceiptReport {
+    labels: [SshServiceReadinessLabel; MAX_SSH_PEER_OUTPUT_RECEIPT_LABELS],
+    label_count: usize,
+    result: SshPeerOutputReceiptResult,
+    peer_readiness_before_recv_bits: u32,
+    observed_message_count: usize,
+    observed_channel_data_len: Option<usize>,
+    observed_exit_status: Option<u32>,
+    channel_data_observed: bool,
+    eof_observed: bool,
+    exit_status_observed: bool,
+    close_observed: bool,
+    socket_delivery_local: bool,
+    posix_eof_wait_local: bool,
+    peer_output_receipt_local: bool,
+}
+
+impl SshPeerOutputReceiptReport {
+    fn success(
+        peer_readiness_before_recv_bits: u32,
+        output_data_len: usize,
+        exit_status: u32,
+    ) -> Self {
+        let mut report = Self::new(
+            SshPeerOutputReceiptResult::LocalPeerOutputReceiptModeled,
+            peer_readiness_before_recv_bits,
+            4,
+            Some(output_data_len),
+            Some(exit_status),
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+        );
+        report.push(SshServiceReadinessLabel::SocketDeliveryLocal);
+        report.push(SshServiceReadinessLabel::AuthenticationSuccessLocalOnly);
+        report.push(SshServiceReadinessLabel::SessionOpenLocalOnly);
+        report.push(SshServiceReadinessLabel::ChannelOpenLocalOnly);
+        report.push(SshServiceReadinessLabel::ShellAttached);
+        report.push(SshServiceReadinessLabel::ChannelDataStdioLocalOnly);
+        report.push(SshServiceReadinessLabel::ChannelWindowAccountingPrerequisiteOnly);
+        report.push(SshServiceReadinessLabel::ChannelLifecyclePrerequisiteOnly);
+        report.push(SshServiceReadinessLabel::PosixEofWaitPrerequisiteOnly);
+        report.push(SshServiceReadinessLabel::PeerOutputReceiptPrerequisiteOnly);
+        report.push(SshServiceReadinessLabel::PeerOutputReceiptChannelDataObserved);
+        report.push(SshServiceReadinessLabel::PeerOutputReceiptEofObserved);
+        report.push(SshServiceReadinessLabel::PeerOutputReceiptExitStatusObserved);
+        report.push(SshServiceReadinessLabel::PeerOutputReceiptCloseObserved);
+        report.push(SshServiceReadinessLabel::PeerOutputReceiptLocal);
+        report.push(SshServiceReadinessLabel::NotReady);
+        report
+    }
+
+    fn failure(
+        result: SshPeerOutputReceiptResult,
+        label: SshServiceReadinessLabel,
+        peer_readiness_before_recv_bits: u32,
+        observed_message_count: usize,
+        socket_delivery_local: bool,
+        posix_eof_wait_local: bool,
+    ) -> Self {
+        let mut report = Self::new(
+            result,
+            peer_readiness_before_recv_bits,
+            observed_message_count,
+            None,
+            None,
+            false,
+            false,
+            false,
+            false,
+            socket_delivery_local,
+            posix_eof_wait_local,
+            false,
+        );
+        report.push(label);
+        report.push(SshServiceReadinessLabel::NotReady);
+        report
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn new(
+        result: SshPeerOutputReceiptResult,
+        peer_readiness_before_recv_bits: u32,
+        observed_message_count: usize,
+        observed_channel_data_len: Option<usize>,
+        observed_exit_status: Option<u32>,
+        channel_data_observed: bool,
+        eof_observed: bool,
+        exit_status_observed: bool,
+        close_observed: bool,
+        socket_delivery_local: bool,
+        posix_eof_wait_local: bool,
+        peer_output_receipt_local: bool,
+    ) -> Self {
+        Self {
+            labels: [SshServiceReadinessLabel::NotReady; MAX_SSH_PEER_OUTPUT_RECEIPT_LABELS],
+            label_count: 0,
+            result,
+            peer_readiness_before_recv_bits,
+            observed_message_count,
+            observed_channel_data_len,
+            observed_exit_status,
+            channel_data_observed,
+            eof_observed,
+            exit_status_observed,
+            close_observed,
+            socket_delivery_local,
+            posix_eof_wait_local,
+            peer_output_receipt_local,
+        }
+    }
+
+    fn push(&mut self, label: SshServiceReadinessLabel) {
+        self.labels[self.label_count] = label;
+        self.label_count += 1;
+    }
+
+    pub(crate) fn labels(&self) -> &[SshServiceReadinessLabel] {
+        &self.labels[..self.label_count]
+    }
+
+    pub(crate) const fn result(self) -> SshPeerOutputReceiptResult {
+        self.result
+    }
+
+    pub(crate) const fn peer_readiness_before_recv_bits(self) -> u32 {
+        self.peer_readiness_before_recv_bits
+    }
+
+    pub(crate) const fn observed_message_count(self) -> usize {
+        self.observed_message_count
+    }
+
+    pub(crate) const fn observed_channel_data_len(self) -> Option<usize> {
+        self.observed_channel_data_len
+    }
+
+    pub(crate) const fn observed_exit_status(self) -> Option<u32> {
+        self.observed_exit_status
+    }
+
+    pub(crate) const fn channel_data_observed(self) -> bool {
+        self.channel_data_observed
+    }
+
+    pub(crate) const fn eof_observed(self) -> bool {
+        self.eof_observed
+    }
+
+    pub(crate) const fn exit_status_observed(self) -> bool {
+        self.exit_status_observed
+    }
+
+    pub(crate) const fn close_observed(self) -> bool {
+        self.close_observed
+    }
+
+    pub(crate) const fn socket_delivery_local(self) -> bool {
+        self.socket_delivery_local
+    }
+
+    pub(crate) const fn posix_eof_wait_local(self) -> bool {
+        self.posix_eof_wait_local
+    }
+
+    pub(crate) const fn peer_output_receipt_local(self) -> bool {
+        self.peer_output_receipt_local
+    }
+
+    pub(crate) const fn live_reachability(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn remote_receipt(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn compatibility(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn ssh_ready(self) -> bool {
+        false
+    }
+}
+
+pub(crate) fn classify_ssh_peer_output_receipt(
+    input: SshPeerOutputReceiptInput,
+) -> SshPeerOutputReceiptReport {
+    if input.redaction_sensitive {
+        return peer_output_receipt_failure(
+            SshPeerOutputReceiptResult::FailureRedactionSensitive,
+            SshServiceReadinessLabel::PeerOutputReceiptFailureRedactionSensitive,
+            0,
+            0,
+            input.socket_delivery_local,
+            input.posix_eof_wait_local,
+        );
+    }
+    if !input.listener_modeled
+        || !input.connection_modeled
+        || !input.socket_delivery_local
+        || !input.authentication_success
+        || !input.open_session_channel
+        || !input.shell_attached
+        || !input.local_process_session_owned
+        || !input.local_stdio_descriptors_owned
+        || !input.channel_window_management
+        || !input.posix_eof_wait_local
+    {
+        return peer_output_receipt_failure(
+            SshPeerOutputReceiptResult::FailurePrerequisiteMissing,
+            SshServiceReadinessLabel::PeerOutputReceiptFailurePrerequisiteMissing,
+            0,
+            0,
+            input.socket_delivery_local,
+            input.posix_eof_wait_local,
+        );
+    }
+    if !input.channel_lifecycle_open {
+        return peer_output_receipt_failure(
+            SshPeerOutputReceiptResult::FailureLifecycleViolation,
+            SshServiceReadinessLabel::PeerOutputReceiptFailureLifecycleViolation,
+            0,
+            0,
+            input.socket_delivery_local,
+            input.posix_eof_wait_local,
+        );
+    }
+    if input.output_data_len == 0 {
+        return peer_output_receipt_failure(
+            SshPeerOutputReceiptResult::FailureMalformedOutput,
+            SshServiceReadinessLabel::PeerOutputReceiptFailureMalformed,
+            0,
+            0,
+            input.socket_delivery_local,
+            input.posix_eof_wait_local,
+        );
+    }
+    if input.output_data_len > SSH_CHANNEL_DATA_MAX_BYTES {
+        return peer_output_receipt_failure(
+            SshPeerOutputReceiptResult::FailureOutputOverLimit,
+            SshServiceReadinessLabel::PeerOutputReceiptFailureOverLimit,
+            0,
+            0,
+            input.socket_delivery_local,
+            input.posix_eof_wait_local,
+        );
+    }
+
+    let Some(server_owner) = crate::scheduler::ProcessOwnerId::new(SSH_LOCAL_TRANSPORT_OWNER_RAW)
+    else {
+        return peer_output_receipt_failure(
+            SshPeerOutputReceiptResult::FailurePrerequisiteMissing,
+            SshServiceReadinessLabel::PeerOutputReceiptFailurePrerequisiteMissing,
+            0,
+            0,
+            input.socket_delivery_local,
+            input.posix_eof_wait_local,
+        );
+    };
+    let Some(client_owner) =
+        crate::scheduler::ProcessOwnerId::new(SSH_LOCAL_TRANSPORT_CLIENT_OWNER_RAW)
+    else {
+        return peer_output_receipt_failure(
+            SshPeerOutputReceiptResult::FailurePrerequisiteMissing,
+            SshServiceReadinessLabel::PeerOutputReceiptFailurePrerequisiteMissing,
+            0,
+            0,
+            input.socket_delivery_local,
+            input.posix_eof_wait_local,
+        );
+    };
+    let endpoint = crate::network::Ipv4Endpoint::new(
+        crate::network::SOCKET_SYNTHETIC_LOCAL_IPV4_BE,
+        SSH_LOCAL_MODELED_ENDPOINT_PORT,
+    );
+    let mut sockets =
+        crate::network::NetworkSocketDescriptorTable::<SSH_LOCAL_TRANSPORT_SOCKET_CAPACITY>::new();
+    let listener = match sockets.open(
+        server_owner,
+        crate::network::SOCKET_DOMAIN_AF_INET,
+        crate::network::SOCKET_TYPE_STREAM,
+        crate::network::SOCKET_PROTOCOL_DEFAULT,
+    ) {
+        Ok(descriptor) => descriptor,
+        Err(_) => {
+            return peer_output_receipt_failure(
+                SshPeerOutputReceiptResult::FailurePrerequisiteMissing,
+                SshServiceReadinessLabel::PeerOutputReceiptFailurePrerequisiteMissing,
+                0,
+                0,
+                input.socket_delivery_local,
+                input.posix_eof_wait_local,
+            );
+        }
+    };
+    if sockets.bind(server_owner, listener, endpoint).is_err()
+        || sockets
+            .listen(
+                server_owner,
+                listener,
+                crate::network::SOCKET_LISTEN_BACKLOG_MIN as u8,
+            )
+            .is_err()
+    {
+        return peer_output_receipt_failure(
+            SshPeerOutputReceiptResult::FailurePrerequisiteMissing,
+            SshServiceReadinessLabel::PeerOutputReceiptFailurePrerequisiteMissing,
+            0,
+            0,
+            input.socket_delivery_local,
+            input.posix_eof_wait_local,
+        );
+    }
+    let client = match sockets.open(
+        client_owner,
+        crate::network::SOCKET_DOMAIN_AF_INET,
+        crate::network::SOCKET_TYPE_STREAM,
+        crate::network::SOCKET_PROTOCOL_DEFAULT,
+    ) {
+        Ok(descriptor) => descriptor,
+        Err(_) => {
+            return peer_output_receipt_failure(
+                SshPeerOutputReceiptResult::FailurePrerequisiteMissing,
+                SshServiceReadinessLabel::PeerOutputReceiptFailurePrerequisiteMissing,
+                0,
+                0,
+                input.socket_delivery_local,
+                input.posix_eof_wait_local,
+            );
+        }
+    };
+    if sockets.connect(client_owner, client, endpoint).is_err() {
+        return peer_output_receipt_failure(
+            SshPeerOutputReceiptResult::FailurePrerequisiteMissing,
+            SshServiceReadinessLabel::PeerOutputReceiptFailurePrerequisiteMissing,
+            0,
+            0,
+            input.socket_delivery_local,
+            input.posix_eof_wait_local,
+        );
+    }
+    let accepted = match sockets.accept(server_owner, listener) {
+        Ok(descriptor) => descriptor,
+        Err(_) => {
+            return peer_output_receipt_failure(
+                SshPeerOutputReceiptResult::FailurePrerequisiteMissing,
+                SshServiceReadinessLabel::PeerOutputReceiptFailurePrerequisiteMissing,
+                0,
+                0,
+                input.socket_delivery_local,
+                input.posix_eof_wait_local,
+            );
+        }
+    };
+
+    let read_write = crate::network::NetworkSocketReadiness::from_bits(
+        crate::network::NetworkSocketReadiness::READ.bits()
+            | crate::network::NetworkSocketReadiness::WRITE.bits(),
+    );
+    if input.peer_receive_before_output {
+        let peer_readiness = socket_readiness_bits(sockets.readiness(client_owner, client, read_write));
+        let mut observed = [0u8; crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY];
+        if matches!(
+            sockets.recv_peek(client_owner, client, &mut observed),
+            Ok(0) | Err(crate::posix::PosixError::Again)
+        ) {
+            return peer_output_receipt_failure(
+                SshPeerOutputReceiptResult::FailureWouldBlock,
+                SshServiceReadinessLabel::PeerOutputReceiptFailureWouldBlock,
+                peer_readiness,
+                0,
+                input.socket_delivery_local,
+                input.posix_eof_wait_local,
+            );
+        }
+    }
+    if input.peer_closed_before_output {
+        let _ = sockets.close(client_owner, client);
+        return peer_output_receipt_failure(
+            SshPeerOutputReceiptResult::FailureClosedPeer,
+            SshServiceReadinessLabel::PeerOutputReceiptFailureClosedPeer,
+            0,
+            0,
+            input.socket_delivery_local,
+            input.posix_eof_wait_local,
+        );
+    }
+    if input.force_output_backpressure {
+        let filler = [0u8; crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY];
+        let _ = sockets.send(server_owner, accepted, &filler);
+    }
+
+    let mut observed_messages = 0usize;
+    let mut packet = Vec::new();
+    if input.output_shape == SshPeerOutputReceiptOutputShape::Malformed {
+        packet.push(SSH_MSG_CHANNEL_DATA);
+        return match send_and_observe_peer_output(
+            &mut sockets,
+            server_owner,
+            accepted,
+            client_owner,
+            client,
+            read_write,
+            &packet,
+            SshPeerOutputReceiptExpected::ChannelData(input.output_stream),
+        ) {
+            Ok(_) => peer_output_receipt_failure(
+                SshPeerOutputReceiptResult::FailureMalformedOutput,
+                SshServiceReadinessLabel::PeerOutputReceiptFailureMalformed,
+                0,
+                1,
+                input.socket_delivery_local,
+                input.posix_eof_wait_local,
+            ),
+            Err((result, label, readiness)) => peer_output_receipt_failure(
+                result,
+                label,
+                readiness,
+                1,
+                input.socket_delivery_local,
+                input.posix_eof_wait_local,
+            ),
+        };
+    }
+
+    build_peer_channel_data_output(&mut packet, input.output_stream, input.output_data_len);
+    match send_and_observe_peer_output(
+        &mut sockets,
+        server_owner,
+        accepted,
+        client_owner,
+        client,
+        read_write,
+        &packet,
+        SshPeerOutputReceiptExpected::ChannelData(input.output_stream),
+    ) {
+        Ok(_) => {
+            observed_messages += 1;
+        }
+        Err((result, label, readiness)) => {
+            return peer_output_receipt_failure(
+                result,
+                label,
+                readiness,
+                observed_messages,
+                input.socket_delivery_local,
+                input.posix_eof_wait_local,
+            );
+        }
+    }
+
+    packet.clear();
+    build_channel_marker_output(&mut packet, SSH_MSG_CHANNEL_EOF);
+    match send_and_observe_peer_output(
+        &mut sockets,
+        server_owner,
+        accepted,
+        client_owner,
+        client,
+        read_write,
+        &packet,
+        SshPeerOutputReceiptExpected::Marker(SSH_MSG_CHANNEL_EOF),
+    ) {
+        Ok(_) => {
+            observed_messages += 1;
+        }
+        Err((result, label, readiness)) => {
+            return peer_output_receipt_failure(
+                result,
+                label,
+                readiness,
+                observed_messages,
+                input.socket_delivery_local,
+                input.posix_eof_wait_local,
+            );
+        }
+    }
+
+    packet.clear();
+    if build_exit_status_output(&mut packet, input.exit_status).is_err() {
+        return peer_output_receipt_failure(
+            SshPeerOutputReceiptResult::FailureMalformedOutput,
+            SshServiceReadinessLabel::PeerOutputReceiptFailureMalformed,
+            0,
+            observed_messages,
+            input.socket_delivery_local,
+            input.posix_eof_wait_local,
+        );
+    }
+    match send_and_observe_peer_output(
+        &mut sockets,
+        server_owner,
+        accepted,
+        client_owner,
+        client,
+        read_write,
+        &packet,
+        SshPeerOutputReceiptExpected::ExitStatus(input.exit_status),
+    ) {
+        Ok(_) => {
+            observed_messages += 1;
+        }
+        Err((result, label, readiness)) => {
+            return peer_output_receipt_failure(
+                result,
+                label,
+                readiness,
+                observed_messages,
+                input.socket_delivery_local,
+                input.posix_eof_wait_local,
+            );
+        }
+    }
+
+    packet.clear();
+    build_channel_marker_output(&mut packet, SSH_MSG_CHANNEL_CLOSE);
+    match send_and_observe_peer_output(
+        &mut sockets,
+        server_owner,
+        accepted,
+        client_owner,
+        client,
+        read_write,
+        &packet,
+        SshPeerOutputReceiptExpected::Marker(SSH_MSG_CHANNEL_CLOSE),
+    ) {
+        Ok(readiness) => SshPeerOutputReceiptReport::success(
+            readiness,
+            input.output_data_len,
+            input.exit_status,
+        ),
+        Err((result, label, readiness)) => peer_output_receipt_failure(
+            result,
+            label,
+            readiness,
+            observed_messages,
+            input.socket_delivery_local,
+            input.posix_eof_wait_local,
+        ),
+    }
+}
+
+fn peer_output_receipt_failure(
+    result: SshPeerOutputReceiptResult,
+    label: SshServiceReadinessLabel,
+    peer_readiness_before_recv_bits: u32,
+    observed_message_count: usize,
+    socket_delivery_local: bool,
+    posix_eof_wait_local: bool,
+) -> SshPeerOutputReceiptReport {
+    SshPeerOutputReceiptReport::failure(
+        result,
+        label,
+        peer_readiness_before_recv_bits,
+        observed_message_count,
+        socket_delivery_local,
+        posix_eof_wait_local,
+    )
+}
+
+#[derive(Clone, Copy)]
+enum SshPeerOutputReceiptExpected {
+    ChannelData(SshChannelDataStdioOutputStream),
+    Marker(u8),
+    ExitStatus(u32),
+}
+
+fn send_and_observe_peer_output<const CAPACITY: usize>(
+    sockets: &mut crate::network::NetworkSocketDescriptorTable<CAPACITY>,
+    server_owner: crate::scheduler::ProcessOwnerId,
+    accepted: crate::network::NetworkSocketDescriptor,
+    client_owner: crate::scheduler::ProcessOwnerId,
+    client: crate::network::NetworkSocketDescriptor,
+    readiness_mask: crate::network::NetworkSocketReadiness,
+    packet: &[u8],
+    expected: SshPeerOutputReceiptExpected,
+) -> Result<u32, (SshPeerOutputReceiptResult, SshServiceReadinessLabel, u32)> {
+    match sockets.send(server_owner, accepted, packet) {
+        Ok(sent_len) if sent_len == packet.len() => {}
+        Ok(_) | Err(crate::posix::PosixError::NoSpace) => {
+            return Err((
+                SshPeerOutputReceiptResult::FailureBackpressure,
+                SshServiceReadinessLabel::PeerOutputReceiptFailureBackpressure,
+                0,
+            ));
+        }
+        Err(crate::posix::PosixError::Pipe) => {
+            return Err((
+                SshPeerOutputReceiptResult::FailureClosedPeer,
+                SshServiceReadinessLabel::PeerOutputReceiptFailureClosedPeer,
+                0,
+            ));
+        }
+        Err(_) => {
+            return Err((
+                SshPeerOutputReceiptResult::FailurePrerequisiteMissing,
+                SshServiceReadinessLabel::PeerOutputReceiptFailurePrerequisiteMissing,
+                0,
+            ));
+        }
+    }
+    let peer_readiness = socket_readiness_bits(sockets.readiness(client_owner, client, readiness_mask));
+    let mut observed = [0u8; crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY];
+    let observed_len = match sockets.recv_peek(client_owner, client, &mut observed) {
+        Ok(0) | Err(crate::posix::PosixError::Again) => {
+            return Err((
+                SshPeerOutputReceiptResult::FailureWouldBlock,
+                SshServiceReadinessLabel::PeerOutputReceiptFailureWouldBlock,
+                peer_readiness,
+            ));
+        }
+        Err(crate::posix::PosixError::Pipe) => {
+            return Err((
+                SshPeerOutputReceiptResult::FailureClosedPeer,
+                SshServiceReadinessLabel::PeerOutputReceiptFailureClosedPeer,
+                peer_readiness,
+            ));
+        }
+        Ok(len) => len,
+        Err(_) => {
+            return Err((
+                SshPeerOutputReceiptResult::FailurePrerequisiteMissing,
+                SshServiceReadinessLabel::PeerOutputReceiptFailurePrerequisiteMissing,
+                peer_readiness,
+            ));
+        }
+    };
+    if classify_peer_output_observation(&observed[..observed_len], expected).is_err() {
+        return Err((
+            SshPeerOutputReceiptResult::FailureMalformedOutput,
+            SshServiceReadinessLabel::PeerOutputReceiptFailureMalformed,
+            peer_readiness,
+        ));
+    }
+    if sockets
+        .recv_commit(client_owner, client, observed_len)
+        .is_err()
+    {
+        return Err((
+            SshPeerOutputReceiptResult::FailurePrerequisiteMissing,
+            SshServiceReadinessLabel::PeerOutputReceiptFailurePrerequisiteMissing,
+            peer_readiness,
+        ));
+    }
+    Ok(peer_readiness)
+}
+
+fn classify_peer_output_observation(
+    packet: &[u8],
+    expected: SshPeerOutputReceiptExpected,
+) -> Result<(), ()> {
+    let Some(message_number) = packet.first().copied() else {
+        return Err(());
+    };
+    match expected {
+        SshPeerOutputReceiptExpected::ChannelData(SshChannelDataStdioOutputStream::Stdout) => {
+            if message_number != SSH_MSG_CHANNEL_DATA {
+                return Err(());
+            }
+            let Some(cursor) = skip_ssh_u32(packet, 1) else {
+                return Err(());
+            };
+            let Some((data, cursor)) =
+                parse_ssh_binary_string_bounded(packet, cursor, SSH_CHANNEL_DATA_MAX_BYTES)
+            else {
+                return Err(());
+            };
+            if data.is_empty() || cursor != packet.len() {
+                return Err(());
+            }
+        }
+        SshPeerOutputReceiptExpected::ChannelData(SshChannelDataStdioOutputStream::Stderr) => {
+            if message_number != SSH_MSG_CHANNEL_EXTENDED_DATA {
+                return Err(());
+            }
+            let Some(cursor) = skip_ssh_u32(packet, 1) else {
+                return Err(());
+            };
+            let Some(extended_data_type) = read_be_u32(packet, cursor) else {
+                return Err(());
+            };
+            if extended_data_type != SSH_EXTENDED_DATA_STDERR {
+                return Err(());
+            }
+            let Some((data, cursor)) =
+                parse_ssh_binary_string_bounded(packet, cursor + 4, SSH_CHANNEL_DATA_MAX_BYTES)
+            else {
+                return Err(());
+            };
+            if data.is_empty() || cursor != packet.len() {
+                return Err(());
+            }
+        }
+        SshPeerOutputReceiptExpected::Marker(expected_message) => {
+            if message_number != expected_message || packet.len() != 5 {
+                return Err(());
+            }
+        }
+        SshPeerOutputReceiptExpected::ExitStatus(expected_status) => {
+            if message_number != SSH_MSG_CHANNEL_REQUEST {
+                return Err(());
+            }
+            let Some(cursor) = skip_ssh_u32(packet, 1) else {
+                return Err(());
+            };
+            let Some((request_type, cursor)) =
+                parse_ssh_binary_string_bounded(packet, cursor, SSH_CHANNEL_REQUEST_TYPE_MAX_BYTES)
+            else {
+                return Err(());
+            };
+            if request_type != SSH_CHANNEL_REQUEST_TYPE_EXIT_STATUS {
+                return Err(());
+            }
+            let Some(want_reply) = packet.get(cursor).copied() else {
+                return Err(());
+            };
+            if want_reply != 0 {
+                return Err(());
+            }
+            let Some(exit_status) = read_be_u32(packet, cursor + 1) else {
+                return Err(());
+            };
+            if exit_status != expected_status || cursor + 5 != packet.len() {
+                return Err(());
+            }
+        }
+    }
+    Ok(())
+}
+
+fn build_peer_channel_data_output(
+    output: &mut Vec<u8>,
+    stream: SshChannelDataStdioOutputStream,
+    data_len: usize,
+) {
+    match stream {
+        SshChannelDataStdioOutputStream::Stdout => {
+            output.push(SSH_MSG_CHANNEL_DATA);
+            output.extend_from_slice(&0u32.to_be_bytes());
+            output.extend_from_slice(&(data_len as u32).to_be_bytes());
+        }
+        SshChannelDataStdioOutputStream::Stderr => {
+            output.push(SSH_MSG_CHANNEL_EXTENDED_DATA);
+            output.extend_from_slice(&0u32.to_be_bytes());
+            output.extend_from_slice(&SSH_EXTENDED_DATA_STDERR.to_be_bytes());
+            output.extend_from_slice(&(data_len as u32).to_be_bytes());
+        }
+    }
+    output.resize(output.len() + data_len, 0);
+}
+
+fn build_channel_marker_output(output: &mut Vec<u8>, message_number: u8) {
+    output.push(message_number);
+    output.extend_from_slice(&0u32.to_be_bytes());
+}
+
+fn build_exit_status_output(output: &mut Vec<u8>, exit_status: u32) -> Result<(), ()> {
+    output.push(SSH_MSG_CHANNEL_REQUEST);
+    output.extend_from_slice(&0u32.to_be_bytes());
+    push_ssh_string_to_vec(output, SSH_CHANNEL_REQUEST_TYPE_EXIT_STATUS)?;
+    output.push(0);
+    output.extend_from_slice(&exit_status.to_be_bytes());
+    Ok(())
+}
+
 fn model_local_ssh_listener_transport(
     remote_input: &[u8],
     input_state: SshRemoteIdentificationInputState,
@@ -7508,6 +8376,16 @@ mod tests {
         report: &SshSocketDeliveryReport,
     ) -> [&'static str; MAX_SSH_SOCKET_DELIVERY_LABELS] {
         let mut labels = [""; MAX_SSH_SOCKET_DELIVERY_LABELS];
+        for (index, label) in report.labels().iter().enumerate() {
+            labels[index] = label.name();
+        }
+        labels
+    }
+
+    fn peer_output_receipt_label_names(
+        report: &SshPeerOutputReceiptReport,
+    ) -> [&'static str; MAX_SSH_PEER_OUTPUT_RECEIPT_LABELS] {
+        let mut labels = [""; MAX_SSH_PEER_OUTPUT_RECEIPT_LABELS];
         for (index, label) in report.labels().iter().enumerate() {
             labels[index] = label.name();
         }
@@ -7789,6 +8667,30 @@ mod tests {
                     42,
                 ),
             ),
+        }
+    }
+
+    fn peer_output_receipt_success_input() -> SshPeerOutputReceiptInput {
+        SshPeerOutputReceiptInput {
+            listener_modeled: true,
+            connection_modeled: true,
+            socket_delivery_local: true,
+            authentication_success: true,
+            open_session_channel: true,
+            shell_attached: true,
+            local_process_session_owned: true,
+            local_stdio_descriptors_owned: true,
+            channel_lifecycle_open: true,
+            channel_window_management: true,
+            posix_eof_wait_local: true,
+            redaction_sensitive: false,
+            output_stream: SshChannelDataStdioOutputStream::Stdout,
+            output_data_len: 8,
+            exit_status: 42,
+            output_shape: SshPeerOutputReceiptOutputShape::Accepted,
+            force_output_backpressure: false,
+            peer_closed_before_output: false,
+            peer_receive_before_output: false,
         }
     }
 
@@ -11360,6 +12262,179 @@ mod tests {
         );
         assert!(!redaction.socket_delivery_local());
         assert!(!lifecycle.ssh_ready());
+    }
+
+    #[test_case]
+    fn ssh_peer_output_receipt_observes_output_lifecycle_on_modeled_peer_socket() {
+        let stdout = classify_ssh_peer_output_receipt(peer_output_receipt_success_input());
+        let stderr = classify_ssh_peer_output_receipt(SshPeerOutputReceiptInput {
+            output_stream: SshChannelDataStdioOutputStream::Stderr,
+            output_data_len: 7,
+            ..peer_output_receipt_success_input()
+        });
+
+        assert_eq!(
+            stdout.result(),
+            SshPeerOutputReceiptResult::LocalPeerOutputReceiptModeled
+        );
+        assert_eq!(
+            &peer_output_receipt_label_names(&stdout)[..stdout.labels().len()],
+            &[
+                "sshservicediag-socket-delivery-local",
+                "sshservicediag-authentication-success-local-only",
+                "sshservicediag-session-open-local-only",
+                "sshservicediag-channel-open-local-only",
+                "sshservicediag-shell-attached",
+                "sshservicediag-channel-data-stdio-local-only",
+                "sshservicediag-channel-window-accounting-prerequisite-only",
+                "sshservicediag-channel-lifecycle-prerequisite-only",
+                "sshservicediag-posix-eof-wait-prerequisite-only",
+                "sshservicediag-peer-output-receipt-prerequisite-only",
+                "sshservicediag-peer-output-receipt-channel-data-observed",
+                "sshservicediag-peer-output-receipt-eof-observed",
+                "sshservicediag-peer-output-receipt-exit-status-observed",
+                "sshservicediag-peer-output-receipt-close-observed",
+                "sshservicediag-peer-output-receipt-local",
+                "sshservicediag-not-ready",
+            ]
+        );
+        assert_ne!(
+            stdout.peer_readiness_before_recv_bits()
+                & crate::network::NetworkSocketReadiness::READ.bits(),
+            0
+        );
+        assert_eq!(stdout.observed_message_count(), 4);
+        assert_eq!(stdout.observed_channel_data_len(), Some(8));
+        assert_eq!(stdout.observed_exit_status(), Some(42));
+        assert!(stdout.channel_data_observed());
+        assert!(stdout.eof_observed());
+        assert!(stdout.exit_status_observed());
+        assert!(stdout.close_observed());
+        assert!(stdout.socket_delivery_local());
+        assert!(stdout.posix_eof_wait_local());
+        assert!(stdout.peer_output_receipt_local());
+        assert_eq!(stderr.observed_channel_data_len(), Some(7));
+        assert!(stderr.peer_output_receipt_local());
+        assert!(!stdout.live_reachability());
+        assert!(!stdout.remote_receipt());
+        assert!(!stdout.compatibility());
+        assert!(!stdout.ssh_ready());
+    }
+
+    #[test_case]
+    fn ssh_peer_output_receipt_fails_closed_for_prerequisites_lifecycle_and_redaction() {
+        let missing_prereq = classify_ssh_peer_output_receipt(SshPeerOutputReceiptInput {
+            socket_delivery_local: false,
+            ..peer_output_receipt_success_input()
+        });
+        let missing_window = classify_ssh_peer_output_receipt(SshPeerOutputReceiptInput {
+            channel_window_management: false,
+            ..peer_output_receipt_success_input()
+        });
+        let lifecycle = classify_ssh_peer_output_receipt(SshPeerOutputReceiptInput {
+            channel_lifecycle_open: false,
+            ..peer_output_receipt_success_input()
+        });
+        let redaction = classify_ssh_peer_output_receipt(SshPeerOutputReceiptInput {
+            redaction_sensitive: true,
+            ..peer_output_receipt_success_input()
+        });
+
+        assert_eq!(
+            missing_prereq.result(),
+            SshPeerOutputReceiptResult::FailurePrerequisiteMissing
+        );
+        assert_eq!(
+            missing_window.result(),
+            SshPeerOutputReceiptResult::FailurePrerequisiteMissing
+        );
+        assert_eq!(
+            lifecycle.result(),
+            SshPeerOutputReceiptResult::FailureLifecycleViolation
+        );
+        assert_eq!(
+            redaction.result(),
+            SshPeerOutputReceiptResult::FailureRedactionSensitive
+        );
+        assert!(!missing_prereq.peer_output_receipt_local());
+        assert!(!missing_window.peer_output_receipt_local());
+        assert!(!lifecycle.peer_output_receipt_local());
+        assert!(!redaction.peer_output_receipt_local());
+        assert!(!redaction.ssh_ready());
+    }
+
+    #[test_case]
+    fn ssh_peer_output_receipt_fails_closed_for_backpressure_closed_peer_and_would_block() {
+        let would_block = classify_ssh_peer_output_receipt(SshPeerOutputReceiptInput {
+            peer_receive_before_output: true,
+            ..peer_output_receipt_success_input()
+        });
+        let backpressure = classify_ssh_peer_output_receipt(SshPeerOutputReceiptInput {
+            force_output_backpressure: true,
+            ..peer_output_receipt_success_input()
+        });
+        let closed_peer = classify_ssh_peer_output_receipt(SshPeerOutputReceiptInput {
+            peer_closed_before_output: true,
+            ..peer_output_receipt_success_input()
+        });
+
+        assert_eq!(
+            would_block.result(),
+            SshPeerOutputReceiptResult::FailureWouldBlock
+        );
+        assert_eq!(
+            backpressure.result(),
+            SshPeerOutputReceiptResult::FailureBackpressure
+        );
+        assert_eq!(
+            closed_peer.result(),
+            SshPeerOutputReceiptResult::FailureClosedPeer
+        );
+        assert!(!would_block.peer_output_receipt_local());
+        assert!(!backpressure.peer_output_receipt_local());
+        assert!(!closed_peer.peer_output_receipt_local());
+        assert!(!would_block.remote_receipt());
+    }
+
+    #[test_case]
+    fn ssh_peer_output_receipt_fails_closed_for_malformed_and_over_limit_output() {
+        let malformed = classify_ssh_peer_output_receipt(SshPeerOutputReceiptInput {
+            output_shape: SshPeerOutputReceiptOutputShape::Malformed,
+            ..peer_output_receipt_success_input()
+        });
+        let zero_len = classify_ssh_peer_output_receipt(SshPeerOutputReceiptInput {
+            output_data_len: 0,
+            ..peer_output_receipt_success_input()
+        });
+        let over_limit = classify_ssh_peer_output_receipt(SshPeerOutputReceiptInput {
+            output_data_len: SSH_CHANNEL_DATA_MAX_BYTES + 1,
+            ..peer_output_receipt_success_input()
+        });
+
+        assert_eq!(
+            malformed.result(),
+            SshPeerOutputReceiptResult::FailureMalformedOutput
+        );
+        assert_eq!(
+            zero_len.result(),
+            SshPeerOutputReceiptResult::FailureMalformedOutput
+        );
+        assert_eq!(
+            over_limit.result(),
+            SshPeerOutputReceiptResult::FailureOutputOverLimit
+        );
+        assert!(
+            malformed
+                .labels()
+                .contains(&SshServiceReadinessLabel::PeerOutputReceiptFailureMalformed)
+        );
+        assert!(
+            over_limit
+                .labels()
+                .contains(&SshServiceReadinessLabel::PeerOutputReceiptFailureOverLimit)
+        );
+        assert!(!malformed.peer_output_receipt_local());
+        assert!(!over_limit.ssh_ready());
     }
 
     #[test_case]

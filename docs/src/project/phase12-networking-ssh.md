@@ -8572,3 +8572,22 @@ ssh-ready=false remain authoritative. Pi 5 reachability, external OpenSSH,
 live remote receipt, OpenSSH/POSIX/Linux compatibility, PTY/SCP/SFTP, broad
 command expansion, phase transition, and ssh-ready=true remain deferred. The
 selected next bounded task is phase12-ssh-peer-output-receipt-core-20260623.
+
+phase12-ssh-peer-output-receipt-core-20260623 accepts the bounded local modeled
+SSH peer-output receipt source behavior. The readiness model now queues accepted
+SSH output classes from the service side and observes them through the same
+accepted connected peer's descriptor-backed stream-socket receive path using
+send, recv_peek, and recv_commit. The accepted observed output classes are
+channel-data stdout/stderr, SSH_MSG_CHANNEL_EOF, SSH_MSG_CHANNEL_REQUEST
+exit-status with request type exit-status and want_reply=false, and
+SSH_MSG_CHANNEL_CLOSE. The source adds fail-closed labels for missing
+listener/connection and SSH prerequisites, missing socket-delivery/POSIX
+EOF-wait prerequisites, missing channel-window prerequisite, would-block peer
+receive, output backpressure, closed peer, malformed or over-limit output,
+lifecycle violation, and redaction-sensitive input. The only new accepted
+counter is peer-output-receipt-local=true for local modeled receipt;
+live-reachability=false, remote-receipt=false, compatibility=false, and
+ssh-ready=false remain authoritative. Pi 5 reachability, external OpenSSH, live
+remote receipt, OpenSSH/POSIX/Linux compatibility, PTY/SCP/SFTP, broad command
+expansion, phase transition, and ssh-ready=true remain deferred. The selected
+next bounded task is phase12-ssh-peer-output-receipt-feature-smoke-20260623.
