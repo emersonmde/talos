@@ -17123,6 +17123,28 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   live reachability, hardware proof, compatibility, broad expansion, phase
   transition, or ssh-ready=true is accepted. The selected next bounded task is
   phase12-ssh-session-shell-request-core-20260622.
+- phase12-ssh-session-shell-request-core-20260622 accepts the bounded local
+  modeled SSH shell-request source slice. The classifier recognizes exactly
+  one SSH_MSG_CHANNEL_REQUEST request type shell after accepted
+  authentication-success and open local session-channel prerequisites, enabled
+  shell-request policy, no previous shell request or attachment, non-sensitive
+  redaction state, exact four-field public shape, and no trailing
+  request-specific payload. Recognized requests remain unattached:
+  want-reply=true records SSH_MSG_CHANNEL_FAILURE and fixed
+  failure/no-attachment labels, while want-reply=false records only no-reply
+  failure/no-attachment labels. Missing authentication, missing open session
+  channel, disabled policy, duplicate/existing shell request or attachment,
+  redaction-sensitive input, wrong message number, unsupported request type,
+  malformed/over-limit shape, and trailing data fail closed.
+  authentication-success=true, session-count=1, channel-count=1, and
+  shell-request-count=1 are accepted only for recognized shell requests;
+  shell-attached=false, live-reachability=false, and ssh-ready=false remain
+  authoritative. No CHANNEL_SUCCESS, PTY/process/shell attachment, descriptor
+  handoff, channel data, EOF/close/window flow control,
+  exec/subsystem/pty/env/signal behavior, live reachability, hardware proof,
+  compatibility, broad expansion, phase transition, or ssh-ready=true is
+  accepted. The selected next bounded task is
+  phase12-shell-ssh-session-shell-request-smoke-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

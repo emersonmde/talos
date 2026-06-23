@@ -146,6 +146,19 @@ pub(crate) enum SshServiceReadinessLabel {
     SessionChannelOpenFailureMalformed,
     SessionChannelOpenFailureDuplicate,
     SessionChannelOpenFailureRedactionSensitive,
+    SessionShellRequestPrerequisiteOnly,
+    SessionShellRequestShellType,
+    SessionShellRequestWantReply,
+    SessionShellRequestNoReply,
+    SessionShellRequestFailureShellUnattached,
+    SessionShellRequestFailureAuthenticationMissing,
+    SessionShellRequestFailureChannelMissing,
+    SessionShellRequestFailurePolicyDisabled,
+    SessionShellRequestFailureDuplicate,
+    SessionShellRequestFailureUnsupportedMessage,
+    SessionShellRequestFailureUnsupportedRequestType,
+    SessionShellRequestFailureRequestMalformed,
+    SessionShellRequestFailureRedactionSensitive,
     TransportClosedBeforeKex,
     AuthenticationUnimplemented,
     SessionUnimplemented,
@@ -399,6 +412,39 @@ impl SshServiceReadinessLabel {
             Self::SessionChannelOpenFailureRedactionSensitive => {
                 "sshservicediag-session-channel-open-failure-redaction-sensitive"
             }
+            Self::SessionShellRequestPrerequisiteOnly => {
+                "sshservicediag-session-shell-request-prerequisite-only"
+            }
+            Self::SessionShellRequestShellType => "sshservicediag-session-shell-request-shell-type",
+            Self::SessionShellRequestWantReply => "sshservicediag-session-shell-request-want-reply",
+            Self::SessionShellRequestNoReply => "sshservicediag-session-shell-request-no-reply",
+            Self::SessionShellRequestFailureShellUnattached => {
+                "sshservicediag-session-shell-request-failure-shell-unattached"
+            }
+            Self::SessionShellRequestFailureAuthenticationMissing => {
+                "sshservicediag-session-shell-request-failure-authentication-missing"
+            }
+            Self::SessionShellRequestFailureChannelMissing => {
+                "sshservicediag-session-shell-request-failure-channel-missing"
+            }
+            Self::SessionShellRequestFailurePolicyDisabled => {
+                "sshservicediag-session-shell-request-failure-policy-disabled"
+            }
+            Self::SessionShellRequestFailureDuplicate => {
+                "sshservicediag-session-shell-request-failure-duplicate"
+            }
+            Self::SessionShellRequestFailureUnsupportedMessage => {
+                "sshservicediag-session-shell-request-failure-unsupported-message"
+            }
+            Self::SessionShellRequestFailureUnsupportedRequestType => {
+                "sshservicediag-session-shell-request-failure-unsupported-request-type"
+            }
+            Self::SessionShellRequestFailureRequestMalformed => {
+                "sshservicediag-session-shell-request-failure-request-malformed"
+            }
+            Self::SessionShellRequestFailureRedactionSensitive => {
+                "sshservicediag-session-shell-request-failure-redaction-sensitive"
+            }
             Self::TransportClosedBeforeKex => "sshservicediag-transport-closed-before-kex",
             Self::AuthenticationUnimplemented => "sshservicediag-authentication-unimplemented",
             Self::SessionUnimplemented => "sshservicediag-session-unimplemented",
@@ -432,6 +478,8 @@ const SSH_MSG_USERAUTH_PK_OK: u8 = 60;
 const SSH_MSG_CHANNEL_OPEN: u8 = 90;
 const SSH_MSG_CHANNEL_OPEN_CONFIRMATION: u8 = 91;
 const SSH_MSG_CHANNEL_OPEN_FAILURE: u8 = 92;
+const SSH_MSG_CHANNEL_REQUEST: u8 = 98;
+const SSH_MSG_CHANNEL_FAILURE: u8 = 100;
 const SSH_KEXINIT_COOKIE_BYTES: usize = 16;
 const SSH_KEXINIT_LIST_COUNT: usize = 10;
 const SSH_KEXINIT_REQUIRED_LIST_COUNT: usize = 8;
@@ -444,11 +492,14 @@ const MAX_SSH_PUBLICKEY_VERIFICATION_LABELS: usize = 4;
 const MAX_SSH_PUBLICKEY_AUTH_RESPONSE_LABELS: usize = 4;
 const MAX_SSH_PUBLICKEY_AUTH_SUCCESS_ACCOUNT_LABELS: usize = 5;
 const MAX_SSH_SESSION_CHANNEL_OPEN_LABELS: usize = 8;
+const MAX_SSH_SESSION_SHELL_REQUEST_LABELS: usize = 10;
 const SSH_PREAUTH_STRING_MAX_BYTES: usize = 256;
 const SSH_PREAUTH_PUBLIC_KEY_BLOB_MAX_BYTES: usize = 512;
 const SSH_PREAUTH_SIGNATURE_MAX_BYTES: usize = 512;
 const SSH_CHANNEL_OPEN_PAYLOAD_MAX_BYTES: usize = 256;
 const SSH_CHANNEL_OPEN_TYPE_MAX_BYTES: usize = 64;
+const SSH_CHANNEL_REQUEST_PAYLOAD_MAX_BYTES: usize = 256;
+const SSH_CHANNEL_REQUEST_TYPE_MAX_BYTES: usize = 64;
 const SSH_KEXINIT_MODELED_COOKIE_SEED: [u8; crate::csprng::CSPRNG_SEED_BYTES] =
     *b"Talos-kexinit-cookie-redacted!!!";
 
@@ -462,6 +513,7 @@ const SSH_SERVICE_CONNECTION: &[u8] = b"ssh-connection";
 const SSH_AUTH_METHOD_PUBLICKEY: &[u8] = b"publickey";
 const SSH_RESERVED_ACCOUNT_TALOS: &[u8] = b"talos";
 const SSH_CHANNEL_TYPE_SESSION: &[u8] = b"session";
+const SSH_CHANNEL_REQUEST_TYPE_SHELL: &[u8] = b"shell";
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum SshRemoteIdentificationInputState {
@@ -2509,6 +2561,364 @@ fn malformed_session_channel_open(
     )
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SshSessionShellRequestResult {
+    ChannelFailureShellUnattachedWantReply,
+    NoReplyShellUnattached,
+    ShellRequestFailureAuthenticationMissing,
+    ShellRequestFailureChannelMissing,
+    ShellRequestFailurePolicyDisabled,
+    ShellRequestFailureDuplicate,
+    ShellRequestFailureUnsupportedMessage,
+    ShellRequestFailureUnsupportedRequestType,
+    ShellRequestFailureMalformed,
+    ShellRequestFailureRedactionSensitive,
+}
+
+pub(crate) struct SshSessionShellRequestInput<'a> {
+    pub(crate) authentication_success: bool,
+    pub(crate) open_session_channel: bool,
+    pub(crate) shell_request_policy_enabled: bool,
+    pub(crate) existing_shell_request_or_attachment: bool,
+    pub(crate) redaction_sensitive: bool,
+    pub(crate) decrypted_payload: &'a [u8],
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SshSessionShellRequestReport {
+    labels: [SshServiceReadinessLabel; MAX_SSH_SESSION_SHELL_REQUEST_LABELS],
+    label_count: usize,
+    result: SshSessionShellRequestResult,
+    request_message_number: Option<u8>,
+    response_message_number: Option<u8>,
+    parsed_field_count: usize,
+    request_type_len: Option<usize>,
+    want_reply: Option<bool>,
+    authentication_success: bool,
+    open_session_channel: bool,
+}
+
+impl SshSessionShellRequestReport {
+    fn recognized(want_reply: bool, request_type_len: usize) -> Self {
+        let mut report = Self {
+            labels: [SshServiceReadinessLabel::NotReady; MAX_SSH_SESSION_SHELL_REQUEST_LABELS],
+            label_count: 0,
+            result: if want_reply {
+                SshSessionShellRequestResult::ChannelFailureShellUnattachedWantReply
+            } else {
+                SshSessionShellRequestResult::NoReplyShellUnattached
+            },
+            request_message_number: Some(SSH_MSG_CHANNEL_REQUEST),
+            response_message_number: if want_reply {
+                Some(SSH_MSG_CHANNEL_FAILURE)
+            } else {
+                None
+            },
+            parsed_field_count: 4,
+            request_type_len: Some(request_type_len),
+            want_reply: Some(want_reply),
+            authentication_success: true,
+            open_session_channel: true,
+        };
+        report.push(SshServiceReadinessLabel::AuthenticationSuccessLocalOnly);
+        report.push(SshServiceReadinessLabel::SessionOpenLocalOnly);
+        report.push(SshServiceReadinessLabel::ChannelOpenLocalOnly);
+        report.push(SshServiceReadinessLabel::SessionShellRequestPrerequisiteOnly);
+        report.push(SshServiceReadinessLabel::SessionShellRequestShellType);
+        if want_reply {
+            report.push(SshServiceReadinessLabel::SessionShellRequestWantReply);
+        } else {
+            report.push(SshServiceReadinessLabel::SessionShellRequestNoReply);
+        }
+        report.push(SshServiceReadinessLabel::SessionShellRequestFailureShellUnattached);
+        report.push(SshServiceReadinessLabel::ShellUnattached);
+        report.push(SshServiceReadinessLabel::NotReady);
+        report
+    }
+
+    fn failure(
+        result: SshSessionShellRequestResult,
+        label: SshServiceReadinessLabel,
+        request_message_number: Option<u8>,
+        parsed_field_count: usize,
+        request_type_len: Option<usize>,
+        want_reply: Option<bool>,
+        authentication_success: bool,
+        open_session_channel: bool,
+    ) -> Self {
+        let mut report = Self {
+            labels: [SshServiceReadinessLabel::NotReady; MAX_SSH_SESSION_SHELL_REQUEST_LABELS],
+            label_count: 0,
+            result,
+            request_message_number,
+            response_message_number: if want_reply == Some(true) {
+                Some(SSH_MSG_CHANNEL_FAILURE)
+            } else {
+                None
+            },
+            parsed_field_count,
+            request_type_len,
+            want_reply,
+            authentication_success,
+            open_session_channel,
+        };
+        if authentication_success {
+            report.push(SshServiceReadinessLabel::AuthenticationSuccessLocalOnly);
+        } else {
+            report.push(SshServiceReadinessLabel::AuthenticationUnimplemented);
+        }
+        if open_session_channel {
+            report.push(SshServiceReadinessLabel::SessionOpenLocalOnly);
+            report.push(SshServiceReadinessLabel::ChannelOpenLocalOnly);
+        }
+        report.push(label);
+        report.push(SshServiceReadinessLabel::ShellUnattached);
+        report.push(SshServiceReadinessLabel::NotReady);
+        report
+    }
+
+    fn push(&mut self, label: SshServiceReadinessLabel) {
+        self.labels[self.label_count] = label;
+        self.label_count += 1;
+    }
+
+    pub(crate) fn labels(&self) -> &[SshServiceReadinessLabel] {
+        &self.labels[..self.label_count]
+    }
+
+    pub(crate) const fn result(self) -> SshSessionShellRequestResult {
+        self.result
+    }
+
+    pub(crate) const fn request_message_number(self) -> Option<u8> {
+        self.request_message_number
+    }
+
+    pub(crate) const fn response_message_number(self) -> Option<u8> {
+        self.response_message_number
+    }
+
+    pub(crate) const fn channel_failure_response(self) -> bool {
+        matches!(self.response_message_number, Some(SSH_MSG_CHANNEL_FAILURE))
+    }
+
+    pub(crate) const fn parsed_field_count(self) -> usize {
+        self.parsed_field_count
+    }
+
+    pub(crate) const fn request_type_len(self) -> Option<usize> {
+        self.request_type_len
+    }
+
+    pub(crate) const fn want_reply(self) -> Option<bool> {
+        self.want_reply
+    }
+
+    pub(crate) const fn authentication_success(self) -> bool {
+        self.authentication_success
+    }
+
+    pub(crate) const fn session_count(self) -> usize {
+        if self.open_session_channel { 1 } else { 0 }
+    }
+
+    pub(crate) const fn channel_count(self) -> usize {
+        if self.open_session_channel { 1 } else { 0 }
+    }
+
+    pub(crate) const fn shell_request_count(self) -> usize {
+        match self.result {
+            SshSessionShellRequestResult::ChannelFailureShellUnattachedWantReply
+            | SshSessionShellRequestResult::NoReplyShellUnattached => 1,
+            _ => 0,
+        }
+    }
+
+    pub(crate) const fn shell_attached(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn reachability_accepted(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn ssh_ready(self) -> bool {
+        false
+    }
+}
+
+pub(crate) fn classify_ssh_session_shell_request(
+    input: SshSessionShellRequestInput<'_>,
+) -> SshSessionShellRequestReport {
+    if input.redaction_sensitive {
+        return session_shell_request_failure(
+            SshSessionShellRequestResult::ShellRequestFailureRedactionSensitive,
+            SshServiceReadinessLabel::SessionShellRequestFailureRedactionSensitive,
+            None,
+            0,
+            None,
+            None,
+            input.authentication_success,
+            input.open_session_channel,
+        );
+    }
+    if !input.authentication_success {
+        return session_shell_request_failure(
+            SshSessionShellRequestResult::ShellRequestFailureAuthenticationMissing,
+            SshServiceReadinessLabel::SessionShellRequestFailureAuthenticationMissing,
+            None,
+            0,
+            None,
+            None,
+            false,
+            input.open_session_channel,
+        );
+    }
+    if !input.open_session_channel {
+        return session_shell_request_failure(
+            SshSessionShellRequestResult::ShellRequestFailureChannelMissing,
+            SshServiceReadinessLabel::SessionShellRequestFailureChannelMissing,
+            None,
+            0,
+            None,
+            None,
+            true,
+            false,
+        );
+    }
+    if !input.shell_request_policy_enabled {
+        return session_shell_request_failure(
+            SshSessionShellRequestResult::ShellRequestFailurePolicyDisabled,
+            SshServiceReadinessLabel::SessionShellRequestFailurePolicyDisabled,
+            None,
+            0,
+            None,
+            None,
+            true,
+            true,
+        );
+    }
+    if input.existing_shell_request_or_attachment {
+        return session_shell_request_failure(
+            SshSessionShellRequestResult::ShellRequestFailureDuplicate,
+            SshServiceReadinessLabel::SessionShellRequestFailureDuplicate,
+            None,
+            0,
+            None,
+            None,
+            true,
+            true,
+        );
+    }
+    if input.decrypted_payload.len() > SSH_CHANNEL_REQUEST_PAYLOAD_MAX_BYTES {
+        return malformed_session_shell_request(
+            input.decrypted_payload.first().copied(),
+            usize::from(!input.decrypted_payload.is_empty()),
+            None,
+            None,
+        );
+    }
+    let Some(message_number) = input.decrypted_payload.first().copied() else {
+        return malformed_session_shell_request(None, 0, None, None);
+    };
+    if message_number != SSH_MSG_CHANNEL_REQUEST {
+        return session_shell_request_failure(
+            SshSessionShellRequestResult::ShellRequestFailureUnsupportedMessage,
+            SshServiceReadinessLabel::SessionShellRequestFailureUnsupportedMessage,
+            Some(message_number),
+            1,
+            None,
+            None,
+            true,
+            true,
+        );
+    }
+
+    let Some(cursor) = skip_ssh_u32(input.decrypted_payload, 1) else {
+        return malformed_session_shell_request(Some(message_number), 1, None, None);
+    };
+    let Some((request_type, cursor)) = parse_ssh_binary_string_bounded(
+        input.decrypted_payload,
+        cursor,
+        SSH_CHANNEL_REQUEST_TYPE_MAX_BYTES,
+    ) else {
+        return malformed_session_shell_request(Some(message_number), 2, None, None);
+    };
+    let request_type_len = Some(request_type.len());
+    if request_type != SSH_CHANNEL_REQUEST_TYPE_SHELL {
+        return session_shell_request_failure(
+            SshSessionShellRequestResult::ShellRequestFailureUnsupportedRequestType,
+            SshServiceReadinessLabel::SessionShellRequestFailureUnsupportedRequestType,
+            Some(message_number),
+            3,
+            request_type_len,
+            None,
+            true,
+            true,
+        );
+    }
+    let Some(want_reply_byte) = input.decrypted_payload.get(cursor).copied() else {
+        return malformed_session_shell_request(Some(message_number), 3, request_type_len, None);
+    };
+    if !matches!(want_reply_byte, 0 | 1) {
+        return malformed_session_shell_request(Some(message_number), 3, request_type_len, None);
+    }
+    let cursor = cursor + 1;
+    if cursor != input.decrypted_payload.len() {
+        return malformed_session_shell_request(
+            Some(message_number),
+            4,
+            request_type_len,
+            Some(want_reply_byte == 1),
+        );
+    }
+
+    SshSessionShellRequestReport::recognized(
+        want_reply_byte == 1,
+        SSH_CHANNEL_REQUEST_TYPE_SHELL.len(),
+    )
+}
+
+fn session_shell_request_failure(
+    result: SshSessionShellRequestResult,
+    label: SshServiceReadinessLabel,
+    request_message_number: Option<u8>,
+    parsed_field_count: usize,
+    request_type_len: Option<usize>,
+    want_reply: Option<bool>,
+    authentication_success: bool,
+    open_session_channel: bool,
+) -> SshSessionShellRequestReport {
+    SshSessionShellRequestReport::failure(
+        result,
+        label,
+        request_message_number,
+        parsed_field_count,
+        request_type_len,
+        want_reply,
+        authentication_success,
+        open_session_channel,
+    )
+}
+
+fn malformed_session_shell_request(
+    request_message_number: Option<u8>,
+    parsed_field_count: usize,
+    request_type_len: Option<usize>,
+    want_reply: Option<bool>,
+) -> SshSessionShellRequestReport {
+    session_shell_request_failure(
+        SshSessionShellRequestResult::ShellRequestFailureMalformed,
+        SshServiceReadinessLabel::SessionShellRequestFailureRequestMalformed,
+        request_message_number,
+        parsed_field_count,
+        request_type_len,
+        want_reply,
+        true,
+        true,
+    )
+}
+
 struct ParsedSshPublickeyVerificationRequest<'a> {
     user_name: &'a [u8],
     service: &'a [u8],
@@ -3403,6 +3813,16 @@ mod tests {
         labels
     }
 
+    fn session_shell_request_label_names(
+        report: &SshSessionShellRequestReport,
+    ) -> [&'static str; MAX_SSH_SESSION_SHELL_REQUEST_LABELS] {
+        let mut labels = [""; MAX_SSH_SESSION_SHELL_REQUEST_LABELS];
+        for (index, label) in report.labels().iter().enumerate() {
+            labels[index] = label.name();
+        }
+        labels
+    }
+
     fn shape_modeled_key_report() -> SshKeyReadinessReport {
         let entropy = entropy::classify_entropy_snapshot(
             EntropyDiagnosticSnapshot::empty()
@@ -3572,6 +3992,15 @@ mod tests {
         payload.extend_from_slice(&0u32.to_be_bytes());
         payload.extend_from_slice(&4096u32.to_be_bytes());
         payload.extend_from_slice(&1024u32.to_be_bytes());
+        payload
+    }
+
+    fn session_shell_request_payload(request_type: &[u8], want_reply: bool) -> Vec<u8> {
+        let mut payload = Vec::new();
+        payload.push(SSH_MSG_CHANNEL_REQUEST);
+        payload.extend_from_slice(&0u32.to_be_bytes());
+        push_ssh_string_to_vec(&mut payload, request_type).unwrap();
+        payload.push(u8::from(want_reply));
         payload
     }
 
@@ -5386,6 +5815,246 @@ mod tests {
         assert_eq!(over_limit.parsed_field_count(), 1);
         assert_eq!(wrong.session_count(), 0);
         assert_eq!(unsupported.channel_count(), 0);
+        assert!(!malformed.shell_attached());
+        assert!(!over_limit.ssh_ready());
+    }
+
+    #[test_case]
+    fn session_shell_request_recognizes_shell_but_returns_failure_or_no_reply() {
+        let want_reply = classify_ssh_session_shell_request(SshSessionShellRequestInput {
+            authentication_success: true,
+            open_session_channel: true,
+            shell_request_policy_enabled: true,
+            existing_shell_request_or_attachment: false,
+            redaction_sensitive: false,
+            decrypted_payload: &session_shell_request_payload(SSH_CHANNEL_REQUEST_TYPE_SHELL, true),
+        });
+        let no_reply = classify_ssh_session_shell_request(SshSessionShellRequestInput {
+            authentication_success: true,
+            open_session_channel: true,
+            shell_request_policy_enabled: true,
+            existing_shell_request_or_attachment: false,
+            redaction_sensitive: false,
+            decrypted_payload: &session_shell_request_payload(
+                SSH_CHANNEL_REQUEST_TYPE_SHELL,
+                false,
+            ),
+        });
+
+        assert_eq!(
+            want_reply.result(),
+            SshSessionShellRequestResult::ChannelFailureShellUnattachedWantReply
+        );
+        assert_eq!(
+            no_reply.result(),
+            SshSessionShellRequestResult::NoReplyShellUnattached
+        );
+        assert_eq!(
+            &session_shell_request_label_names(&want_reply)[..want_reply.labels().len()],
+            &[
+                "sshservicediag-authentication-success-local-only",
+                "sshservicediag-session-open-local-only",
+                "sshservicediag-channel-open-local-only",
+                "sshservicediag-session-shell-request-prerequisite-only",
+                "sshservicediag-session-shell-request-shell-type",
+                "sshservicediag-session-shell-request-want-reply",
+                "sshservicediag-session-shell-request-failure-shell-unattached",
+                "sshservicediag-shell-unattached",
+                "sshservicediag-not-ready",
+            ]
+        );
+        assert_eq!(
+            want_reply.request_message_number(),
+            Some(SSH_MSG_CHANNEL_REQUEST)
+        );
+        assert_eq!(
+            want_reply.response_message_number(),
+            Some(SSH_MSG_CHANNEL_FAILURE)
+        );
+        assert!(want_reply.channel_failure_response());
+        assert_eq!(no_reply.response_message_number(), None);
+        assert!(!no_reply.channel_failure_response());
+        assert_eq!(want_reply.parsed_field_count(), 4);
+        assert_eq!(
+            want_reply.request_type_len(),
+            Some(SSH_CHANNEL_REQUEST_TYPE_SHELL.len())
+        );
+        assert_eq!(want_reply.want_reply(), Some(true));
+        assert_eq!(no_reply.want_reply(), Some(false));
+        assert!(want_reply.authentication_success());
+        assert_eq!(want_reply.session_count(), 1);
+        assert_eq!(want_reply.channel_count(), 1);
+        assert_eq!(want_reply.shell_request_count(), 1);
+        assert!(!want_reply.shell_attached());
+        assert!(!want_reply.reachability_accepted());
+        assert!(!want_reply.ssh_ready());
+        assert_eq!(no_reply.shell_request_count(), 1);
+        assert!(!no_reply.shell_attached());
+        assert!(!no_reply.ssh_ready());
+    }
+
+    #[test_case]
+    fn session_shell_request_fails_closed_for_prerequisites_and_policy() {
+        let payload = session_shell_request_payload(SSH_CHANNEL_REQUEST_TYPE_SHELL, true);
+
+        let missing_auth = classify_ssh_session_shell_request(SshSessionShellRequestInput {
+            authentication_success: false,
+            open_session_channel: true,
+            shell_request_policy_enabled: true,
+            existing_shell_request_or_attachment: false,
+            redaction_sensitive: false,
+            decrypted_payload: &payload,
+        });
+        let missing_channel = classify_ssh_session_shell_request(SshSessionShellRequestInput {
+            authentication_success: true,
+            open_session_channel: false,
+            shell_request_policy_enabled: true,
+            existing_shell_request_or_attachment: false,
+            redaction_sensitive: false,
+            decrypted_payload: &payload,
+        });
+        let disabled = classify_ssh_session_shell_request(SshSessionShellRequestInput {
+            authentication_success: true,
+            open_session_channel: true,
+            shell_request_policy_enabled: false,
+            existing_shell_request_or_attachment: false,
+            redaction_sensitive: false,
+            decrypted_payload: &payload,
+        });
+        let duplicate = classify_ssh_session_shell_request(SshSessionShellRequestInput {
+            authentication_success: true,
+            open_session_channel: true,
+            shell_request_policy_enabled: true,
+            existing_shell_request_or_attachment: true,
+            redaction_sensitive: false,
+            decrypted_payload: &payload,
+        });
+        let redaction = classify_ssh_session_shell_request(SshSessionShellRequestInput {
+            authentication_success: true,
+            open_session_channel: true,
+            shell_request_policy_enabled: true,
+            existing_shell_request_or_attachment: false,
+            redaction_sensitive: true,
+            decrypted_payload: &payload,
+        });
+
+        assert_eq!(
+            missing_auth.result(),
+            SshSessionShellRequestResult::ShellRequestFailureAuthenticationMissing
+        );
+        assert_eq!(
+            missing_channel.result(),
+            SshSessionShellRequestResult::ShellRequestFailureChannelMissing
+        );
+        assert_eq!(
+            disabled.result(),
+            SshSessionShellRequestResult::ShellRequestFailurePolicyDisabled
+        );
+        assert_eq!(
+            duplicate.result(),
+            SshSessionShellRequestResult::ShellRequestFailureDuplicate
+        );
+        assert_eq!(
+            redaction.result(),
+            SshSessionShellRequestResult::ShellRequestFailureRedactionSensitive
+        );
+        assert!(!missing_auth.authentication_success());
+        assert_eq!(missing_channel.channel_count(), 0);
+        assert_eq!(disabled.session_count(), 1);
+        assert_eq!(duplicate.shell_request_count(), 0);
+        assert!(!redaction.ssh_ready());
+    }
+
+    #[test_case]
+    fn session_shell_request_fails_closed_for_message_type_and_shape() {
+        let wrong_message = [SSH_MSG_CHANNEL_OPEN];
+        let unsupported_type = session_shell_request_payload(b"exec", true);
+        let malformed_missing_bool = {
+            let mut payload = Vec::new();
+            payload.push(SSH_MSG_CHANNEL_REQUEST);
+            payload.extend_from_slice(&0u32.to_be_bytes());
+            push_ssh_string_to_vec(&mut payload, SSH_CHANNEL_REQUEST_TYPE_SHELL).unwrap();
+            payload
+        };
+        let mut trailing = session_shell_request_payload(SSH_CHANNEL_REQUEST_TYPE_SHELL, true);
+        trailing.push(0);
+        let mut over_limit = Vec::new();
+        over_limit.push(SSH_MSG_CHANNEL_REQUEST);
+        over_limit.extend_from_slice(&0u32.to_be_bytes());
+        over_limit
+            .extend_from_slice(&((SSH_CHANNEL_REQUEST_TYPE_MAX_BYTES + 1) as u32).to_be_bytes());
+        over_limit.extend_from_slice(&[b'a'; SSH_CHANNEL_REQUEST_TYPE_MAX_BYTES + 1]);
+        over_limit.push(1);
+
+        let wrong = classify_ssh_session_shell_request(SshSessionShellRequestInput {
+            authentication_success: true,
+            open_session_channel: true,
+            shell_request_policy_enabled: true,
+            existing_shell_request_or_attachment: false,
+            redaction_sensitive: false,
+            decrypted_payload: &wrong_message,
+        });
+        let unsupported = classify_ssh_session_shell_request(SshSessionShellRequestInput {
+            authentication_success: true,
+            open_session_channel: true,
+            shell_request_policy_enabled: true,
+            existing_shell_request_or_attachment: false,
+            redaction_sensitive: false,
+            decrypted_payload: &unsupported_type,
+        });
+        let malformed = classify_ssh_session_shell_request(SshSessionShellRequestInput {
+            authentication_success: true,
+            open_session_channel: true,
+            shell_request_policy_enabled: true,
+            existing_shell_request_or_attachment: false,
+            redaction_sensitive: false,
+            decrypted_payload: &malformed_missing_bool,
+        });
+        let trailing = classify_ssh_session_shell_request(SshSessionShellRequestInput {
+            authentication_success: true,
+            open_session_channel: true,
+            shell_request_policy_enabled: true,
+            existing_shell_request_or_attachment: false,
+            redaction_sensitive: false,
+            decrypted_payload: &trailing,
+        });
+        let over_limit = classify_ssh_session_shell_request(SshSessionShellRequestInput {
+            authentication_success: true,
+            open_session_channel: true,
+            shell_request_policy_enabled: true,
+            existing_shell_request_or_attachment: false,
+            redaction_sensitive: false,
+            decrypted_payload: &over_limit,
+        });
+
+        assert_eq!(
+            wrong.result(),
+            SshSessionShellRequestResult::ShellRequestFailureUnsupportedMessage
+        );
+        assert_eq!(
+            unsupported.result(),
+            SshSessionShellRequestResult::ShellRequestFailureUnsupportedRequestType
+        );
+        assert_eq!(
+            malformed.result(),
+            SshSessionShellRequestResult::ShellRequestFailureMalformed
+        );
+        assert_eq!(
+            trailing.result(),
+            SshSessionShellRequestResult::ShellRequestFailureMalformed
+        );
+        assert_eq!(
+            over_limit.result(),
+            SshSessionShellRequestResult::ShellRequestFailureMalformed
+        );
+        assert_eq!(wrong.request_message_number(), Some(SSH_MSG_CHANNEL_OPEN));
+        assert_eq!(unsupported.request_type_len(), Some("exec".len()));
+        assert_eq!(malformed.parsed_field_count(), 3);
+        assert_eq!(trailing.parsed_field_count(), 4);
+        assert_eq!(trailing.want_reply(), Some(true));
+        assert_eq!(over_limit.parsed_field_count(), 2);
+        assert_eq!(wrong.shell_request_count(), 0);
+        assert_eq!(unsupported.channel_count(), 1);
         assert!(!malformed.shell_attached());
         assert!(!over_limit.ssh_ready());
     }
