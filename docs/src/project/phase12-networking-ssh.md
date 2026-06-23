@@ -8805,3 +8805,15 @@ lab-capture-regressed. No live reachability, remote receipt, compatibility,
 PTY/SCP/SFTP, broad command expansion, phase transition, or ssh-ready=true is
 accepted. Supervisor planning is required before any remote-receipt contract or
 fresh live discriminator retry.
+
+phase12-ssh-lab-capture-regression-reconciliation-20260623 reconciles that
+blocker without lab/hardware/OpenSSH action. The accepted control preflight
+proves the restored baseline/control tree can produce observable TFTP events,
+but it is not a sufficient standalone precondition for another selected
+candidate live OpenSSH retry. The next objective worker step is the no-OpenSSH
+selected-candidate lab-capture discriminator: prove a freshly published
+selected candidate's kernel_2712.img fetch with a stable same-run public TFTP
+delta or equivalent lab-controller signal before restore, or fail closed with a
+concrete lab-capture blocker. Live reachability, remote receipt,
+compatibility, PTY/SCP/SFTP, broad command expansion, phase transition, and
+ssh-ready=true remain unaccepted.

@@ -17757,6 +17757,17 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   PTY/SCP/SFTP, broad command expansion, phase transition, or ssh-ready=true is
   accepted. Supervisor planning is required before any remote-receipt contract
   or fresh live discriminator retry.
+- phase12-ssh-lab-capture-regression-reconciliation-20260623 reconciles the
+  lab-capture-regressed retry without lab/hardware/OpenSSH action. The accepted
+  control preflight is retained as proof that the restored baseline/control tree
+  can produce observable TFTP events, but it is quarantined as insufficient by
+  itself for another selected-candidate live retry. The selected next bounded
+  task is phase12-ssh-lab-capture-selected-candidate-discriminator-20260623,
+  which must prove selected-candidate kernel_2712.img fetch with a stable
+  same-run public TFTP delta or equivalent lab-controller signal before restore,
+  or fail closed with a concrete lab-capture blocker. Live reachability, remote
+  receipt, compatibility, PTY/SCP/SFTP, broad command expansion, phase
+  transition, and ssh-ready=true remain unaccepted.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
