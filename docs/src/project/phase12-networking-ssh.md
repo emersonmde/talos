@@ -8591,3 +8591,21 @@ ssh-ready=false remain authoritative. Pi 5 reachability, external OpenSSH, live
 remote receipt, OpenSSH/POSIX/Linux compatibility, PTY/SCP/SFTP, broad command
 expansion, phase transition, and ssh-ready=true remain deferred. The selected
 next bounded task is phase12-ssh-peer-output-receipt-feature-smoke-20260623.
+
+phase12-ssh-peer-output-receipt-feature-smoke-20260623 accepts the focused local
+modeled feature-smoke and regression evidence for SSH peer-output receipt. The
+retained evidence covers the accepted success path from local SSH output
+generation through the same connected peer's descriptor-backed receive path,
+including channel-data stdout/stderr, channel EOF, exit-status, and close. The
+negative evidence covers missing prerequisites, missing channel-window
+prerequisite, lifecycle violation, redaction-sensitive input, would-block peer
+receive, output backpressure, closed peer, malformed output, zero-length output,
+and over-limit output. Full regression evidence preserves the accepted SSH
+readiness, descriptor, syscall, userspace socket ABI, and stream-socket model
+surfaces. The only accepted receipt counter remains
+peer-output-receipt-local=true for local modeled receipt; live-reachability=false,
+remote-receipt=false, compatibility=false, and ssh-ready=false remain
+authoritative. Pi 5 reachability, external OpenSSH, live remote receipt,
+OpenSSH/POSIX/Linux compatibility, PTY/SCP/SFTP, broad command expansion, phase
+transition, and ssh-ready=true remain deferred. The selected next bounded task
+is phase12-ssh-peer-output-receipt-closeout-20260623.
