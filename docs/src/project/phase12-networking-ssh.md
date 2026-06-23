@@ -8818,19 +8818,19 @@ concrete lab-capture blocker. Live reachability, remote receipt,
 compatibility, PTY/SCP/SFTP, broad command expansion, phase transition, and
 ssh-ready=true remain unaccepted.
 
-phase12-ssh-lab-capture-selected-candidate-discriminator-20260623 accepts the
-no-OpenSSH selected-candidate lab-capture discriminator as
-selected-candidate-fetch-observed=true. The worker reused the exact previously
-reviewed 87,432-byte candidate archive, acquired hardwareTestLock, captured
-fresh serial and TFTP cursors, published the selected candidate, power-cycled
-once, retained stable same-cursor TFTP evidence before restore, and restored
-the pre-run boot tree
-a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. The stable
-TFTP delta observed two served da591740/kernel_2712.img fetches at 87,432
-bytes while final pre-restore identity still reported selected tree
-fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333. This
-accepts only the selected-candidate fetch precondition for the next bounded
-live OpenSSH retry-v2. Live reachability, remote receipt, compatibility,
-PTY/SCP/SFTP, broad command expansion, phase transition, and ssh-ready=true
-remain unaccepted. The selected next bounded task is
-phase12-ssh-live-openssh-client-discriminator-retry-v2-20260623.
+phase12-ssh-lab-capture-selected-candidate-discriminator-20260623 is
+superseded/quarantined by
+phase12-ssh-selected-candidate-evidence-contradiction-repair-20260623. Its
+retained sanitized JSON is authoritative and records
+capture-chain-inconclusive, selected_candidate_fetch_observed=false,
+selected_next_task=null, two served da591740/kernel_2712.img TFTP fetches at
+104,136 bytes, and final pre-restore identity on the baseline/control tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. The
+previously reviewed selected candidate archive still contains an 87,432-byte
+kernel_2712.img, but that selected candidate fetch was not observed in the
+retained TFTP delta. No live OpenSSH retry-v2 precondition, live reachability,
+remote receipt, compatibility, PTY/SCP/SFTP, broad command expansion, phase
+transition, or ssh-ready=true is accepted from this task. retry-v2 and
+closeout-v2 remain blocked/superseded. The selected next bounded task after the
+repair is accepted is
+phase12-ssh-selected-candidate-lab-capture-rerun-v2-20260623.

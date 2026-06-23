@@ -1,9 +1,9 @@
 # Phase 12.6 SSH selected-candidate lab-capture discriminator
 
 Task id: phase12-ssh-lab-capture-selected-candidate-discriminator-20260623
-Status: accepted
+Status: superseded/quarantined
 Owner: worker
-Classification: selected-candidate-fetch-observed
+Classification: capture-chain-inconclusive
 
 ## Goal
 
@@ -23,28 +23,30 @@ through the lab TFTP path before retrying the live OpenSSH discriminator.
 - docs/src/project/phase12-networking-ssh.md.
 - docs/src/roadmap.md.
 
-## Execution Summary
+## Supersession Notice
 
-The worker promoted exactly one queued task and acquired hardwareTestLock before
-any boot publication, power cycle, serial capture, or TFTP observation. The
-task reused the exact previously reviewed selected candidate archive from the
-live OpenSSH retry, preserving the 87,432-byte kernel_2712.img and kernel hash
-110e66ef6867a70cc8b72f52c0786a8f4037796b4058ee4a27ba1371ba8c12d5 rather than
-rebuilding a different input.
+This task's original accepted prose and state were superseded by
+tasks/2026-06-23-phase12-ssh-selected-candidate-evidence-contradiction-repair.md.
+The retained sanitized JSON evidence is authoritative and does not support the
+original selected-candidate-fetch-observed=true claim.
 
-The deployed lab API returned 404 for GET /, so boot identity evidence used the
-already documented authoritative GET /status endpoint. The run captured
-pre-publication status/files/snapshots, created a pre-run snapshot, retained
-fresh serial and TFTP cursors, published the selected candidate archive, power
-cycled once, collected a stable same-cursor TFTP delta before restore, captured
-serial status, recorded final pre-restore identity, restored the pre-run
-snapshot, and released hardwareTestLock with the prior boot tree restored.
+Corrected classification: capture-chain-inconclusive.
 
-The stable TFTP delta observed 13 sanitized events from the saved cursor,
-including two served da591740/kernel_2712.img fetches at 87,432 bytes. Final
-pre-restore identity still reported selected tree
-fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333, and final
-post-restore identity returned to
+Corrected selected_candidate_fetch_observed=false.
+
+Corrected selected_next_task=null.
+
+The candidate archive still records an 87,432-byte kernel_2712.img with kernel
+hash 110e66ef6867a70cc8b72f52c0786a8f4037796b4058ee4a27ba1371ba8c12d5, but the
+retained same-cursor TFTP delta did not observe that candidate size. It observed
+two served da591740/kernel_2712.img fetches at 104,136 bytes, matching the
+restored baseline/control boot files. Final pre-restore identity was also the
+baseline/control tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10, not the
+published selected tree
+fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333.
+
+The final post-restore identity remained on the same baseline/control tree
 a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
 
 ## Evidence
@@ -64,8 +66,10 @@ a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
   post-publish-boot-files.sanitized.json, power-cycle.sanitized.json,
   post-power-status.sanitized.json, final-pre-restore-status.sanitized.json,
   and final-pre-restore-boot-files.sanitized.json.
-- selected-candidate fetch proof:
-  tftp-delta.sanitized.json and tftp-delta.exit-code.txt.
+- selected-candidate fetch check:
+  tftp-delta.sanitized.json and tftp-delta.exit-code.txt. The retained JSON
+  records two 104,136-byte baseline kernel fetches and no observed 87,432-byte
+  selected-candidate kernel fetch.
 - serial status:
   serial-observe.request.sanitized.json, serial-observe.sanitized.json, and
   serial-observe.exit-code.txt.
@@ -79,30 +83,30 @@ a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
   lab/hardware window, with restore proof retained before release.
 - fixed: used GET /status for authoritative boot identity after the deployed
   lab API returned GET / as 404 unknown endpoint.
-- fixed: proved selected-candidate-fetch-observed=true with stable
-  same-cursor TFTP evidence before restore: da591740/kernel_2712.img was served
-  twice at the selected 87,432-byte size.
+- removed: the prior selected-candidate-fetch-observed=true disposition is
+  invalid. Retained JSON records capture-chain-inconclusive,
+  selected_candidate_fetch_observed=false, selected_next_task=null, two
+  104,136-byte da591740/kernel_2712.img fetches, and final pre-restore identity
+  on the baseline/control tree.
 - fixed: restored the pre-run boot tree
   a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 after the
   selected-candidate discriminator.
 - deferred: the saturated serial cursor direct-read path retained serial
   status only; selected-candidate acceptance is based on TFTP identity and
   final pre-restore/restore identity, not Talos runtime serial output.
-- deferred: live OpenSSH retry-v2 is selected as the next bounded task, but no
-  OpenSSH action, network client connection, live reachability, remote receipt,
-  compatibility, PTY/SCP/SFTP, broad command expansion, phase transition, or
-  ssh-ready=true is accepted here.
-- not-an-issue: a restored known-good control rerun was skipped because this
-  task's selected-candidate TFTP proof was decisive; the accepted
-  lab-boot-capture-fresh task already records restored-control capture health,
-  and another control would not prove the selected candidate was fetched.
+- removed: live OpenSSH retry-v2 is no longer selected by this task. The
+  retry-v2 and closeout-v2 path is quarantined and must not be mechanically
+  promoted from this invalid prerequisite.
+- deferred: a bounded selected-candidate lab-capture rerun may be selected only
+  by the repair task after this contradiction is committed.
 
 ## Validation
 
 - static task/docs/source review: pass.
 - serialized Pi 5 lab discriminator evidence with hardwareTestLock owned by
-  this task: pass; stable same-cursor TFTP delta observed selected
-  da591740/kernel_2712.img fetches at 87,432 bytes.
+  this task: capture-chain-inconclusive; stable same-cursor TFTP delta observed
+  baseline da591740/kernel_2712.img fetches at 104,136 bytes, not selected
+  87,432-byte candidate fetches.
 - restore proof showing hardwareTestLock.restored=true and the prior accepted
   boot identity restored: pass.
 - jq empty on task-owned JSON evidence: pass.
@@ -132,10 +136,14 @@ identifiers, or private user data.
 
 ## Acceptance
 
-Accepted as selected-candidate-fetch-observed=true.
+Superseded/quarantined as capture-chain-inconclusive.
 
-selected_next_task=phase12-ssh-live-openssh-client-discriminator-retry-v2-20260623.
-planningNeeded=false.
+selected_candidate_fetch_observed=false.
 
-No live reachability, remote receipt, compatibility, PTY/SCP/SFTP, broad
-command expansion, phase transition, or ssh-ready=true is accepted.
+selected_next_task=null.
+
+planningNeeded=true until the repair task is accepted.
+
+No live OpenSSH retry-v2 prerequisite, live reachability, remote receipt,
+compatibility, PTY/SCP/SFTP, broad command expansion, phase transition, or
+ssh-ready=true is accepted.

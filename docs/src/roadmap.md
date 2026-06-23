@@ -17768,20 +17768,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   or fail closed with a concrete lab-capture blocker. Live reachability, remote
   receipt, compatibility, PTY/SCP/SFTP, broad command expansion, phase
   transition, and ssh-ready=true remain unaccepted.
-- phase12-ssh-lab-capture-selected-candidate-discriminator-20260623 accepts
-  selected-candidate-fetch-observed=true for the previously reviewed 87,432-byte
-  Talos candidate archive. Under hardwareTestLock, the worker published the
-  selected candidate, power-cycled once, retained stable same-cursor TFTP
-  evidence before restore, observed two served da591740/kernel_2712.img fetches
-  at 87,432 bytes, recorded final pre-restore identity still on selected tree
-  fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333, and
-  restored the pre-run tree
-  a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. This
-  accepts only the boot/TFTP precondition for a bounded live OpenSSH retry-v2;
-  live reachability, remote receipt, compatibility, PTY/SCP/SFTP, broad command
-  expansion, phase transition, and ssh-ready=true remain unaccepted. The
-  selected next bounded task is
-  phase12-ssh-live-openssh-client-discriminator-retry-v2-20260623.
+- phase12-ssh-lab-capture-selected-candidate-discriminator-20260623 is
+  superseded/quarantined by
+  phase12-ssh-selected-candidate-evidence-contradiction-repair-20260623. Its
+  retained sanitized JSON is authoritative and records
+  capture-chain-inconclusive, selected_candidate_fetch_observed=false,
+  selected_next_task=null, two served da591740/kernel_2712.img TFTP fetches at
+  104,136 bytes, and final pre-restore identity on the baseline/control tree
+  a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. The
+  previously reviewed selected candidate archive still contains an 87,432-byte
+  kernel_2712.img, but that selected candidate fetch was not observed in the
+  retained TFTP delta. No live OpenSSH retry-v2 precondition, live reachability,
+  remote receipt, compatibility, PTY/SCP/SFTP, broad command expansion, phase
+  transition, or ssh-ready=true is accepted from this task. retry-v2 and
+  closeout-v2 remain blocked/superseded. The selected next bounded task after
+  the repair is accepted is
+  phase12-ssh-selected-candidate-lab-capture-rerun-v2-20260623.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
