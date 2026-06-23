@@ -8161,3 +8161,17 @@ channel window management, hardware proof, OpenSSH/POSIX/Linux compatibility,
 broad expansion, phase transition, and ssh-ready=true remain deferred. The
 selected next bounded task is
 phase12-ssh-session-shell-attachment-feature-smoke-20260623.
+
+phase12-ssh-session-shell-attachment-feature-smoke-20260623 accepts bounded
+local feature smoke/regression evidence for the modeled shell attachment path.
+The retained no_std coverage exercises the want-reply=true CHANNEL_SUCCESS and
+shell-attached=true path, the want-reply=false no-reply attachment path,
+attachment ownership and lifecycle failures, missing authentication/channel
+prerequisites, duplicate shell request or attachment, unsupported request type,
+malformed/trailing request data, redaction-sensitive input, and the previous
+shell-request failure/no-attachment controls. The evidence is local unit-test
+evidence only: live encrypted channel data delivery, socket reachability,
+channel window management, hardware proof, OpenSSH/POSIX/Linux compatibility,
+broad expansion, phase transition, and ssh-ready=true remain deferred. The
+selected next bounded task is
+phase12-ssh-session-shell-attachment-closeout-20260623.
