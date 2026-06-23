@@ -8456,3 +8456,21 @@ OpenSSH/POSIX/Linux compatibility, POSIX process wait/exit, boot publication,
 broad command expansion, phase transition, and ssh-ready=true remain deferred.
 The selected next bounded task is
 phase12-ssh-live-socket-delivery-closeout-20260623.
+
+phase12-ssh-live-socket-delivery-closeout-20260623 accepts the bounded local
+modeled SSH live socket-delivery closeout. The reconciled frontier is only
+local in-kernel stream socket delivery into and out of the accepted SSH service
+pipeline: one modeled AF_INET/SOCK_STREAM port-22 listener, one accepted local
+peer, recv_peek/recv_commit into SSH-owned classification, accepted SSH output
+queued back through send_ready/send, and fixed fail-closed controls for the
+accepted negative paths. socket-delivery-local=true is accepted only for that
+local modeled descriptor path; existing local authentication/session/channel,
+shell attachment, channel-data/stdio, channel-window, and channel-lifecycle
+counters may remain true only when satisfied by the same modeled path.
+live-reachability=false, remote-receipt=false, compatibility=false, and
+ssh-ready=false remain authoritative. Pi 5 reachability, remote receipt,
+OpenSSH/POSIX/Linux compatibility, POSIX process EOF/wait integration, boot
+publication, broad command expansion, phase transition, and ssh-ready=true
+remain deferred. selected_next_task is null and planningNeeded=true because no
+explicit queued/ready follow-up task exists for the worker to promote without
+supervisor planning.

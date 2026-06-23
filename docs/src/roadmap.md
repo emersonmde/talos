@@ -17435,6 +17435,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   process wait/exit, boot publication, broad command expansion, phase
   transition, and ssh-ready=true remain deferred. The selected next bounded
   task is phase12-ssh-live-socket-delivery-closeout-20260623.
+- phase12-ssh-live-socket-delivery-closeout-20260623 accepts the bounded local
+  modeled SSH live socket-delivery closeout. Talos accepts only local
+  in-kernel stream socket delivery into and out of the accepted SSH pipeline:
+  one modeled AF_INET/SOCK_STREAM port-22 listener, one accepted local peer,
+  recv_peek/recv_commit into SSH-owned classification, accepted SSH output
+  queued back through send_ready/send, and fixed fail-closed controls for the
+  accepted negative paths. socket-delivery-local=true is accepted only for that
+  local modeled descriptor path; existing authentication/session/channel,
+  shell attachment, channel-data/stdio, channel-window, and channel-lifecycle
+  counters remain local modeled counters only when satisfied by the same path.
+  live-reachability=false, remote-receipt=false, compatibility=false, and
+  ssh-ready=false remain authoritative. Pi 5 reachability, remote receipt,
+  OpenSSH/POSIX/Linux compatibility, POSIX process EOF/wait integration, boot
+  publication, broad command expansion, phase transition, and ssh-ready=true
+  remain deferred. selected_next_task is null and planningNeeded=true because
+  no explicit queued/ready follow-up task exists for the worker to promote
+  without supervisor planning.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
