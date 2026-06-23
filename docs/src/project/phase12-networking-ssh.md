@@ -8628,3 +8628,22 @@ receipt, OpenSSH/POSIX/Linux compatibility, PTY/SCP/SFTP, broad command
 expansion, phase transition, and ssh-ready=true remain deferred. The selected
 next bounded task is
 phase12-ssh-openssh-compat-discriminator-contract-20260623.
+
+phase12-ssh-openssh-compat-discriminator-contract-20260623 accepts the first
+bounded OpenSSH compatibility discriminator contract. The discriminator is
+local/offline and transcript-shaped: compare Talos' sanitized public modeled
+output sequence against the OpenSSH-compatible channel closeout expectation of
+optional SSH_MSG_CHANNEL_DATA stdout, optional SSH_MSG_CHANNEL_EXTENDED_DATA
+stderr, SSH_MSG_CHANNEL_EOF, SSH_MSG_CHANNEL_REQUEST exit-status with request
+type exit-status and want_reply=false, and SSH_MSG_CHANNEL_CLOSE in that
+order. The future implementation/evidence task may retain only public message
+names/numbers, request type names, public status values/categories, public
+length/count categories, readiness counters, fixed labels, and classifications.
+It must fail closed for missing accepted local prerequisites, missing modeled
+peer observation, out-of-order or duplicate lifecycle messages, unsupported
+request shape, over-limit transcript evidence, or redaction-sensitive material.
+This contract does not implement the discriminator, run OpenSSH, publish a boot
+archive, use the Pi 5 lab, or accept live-reachability=true,
+remote-receipt=true, compatibility=true, a phase transition, or ssh-ready=true.
+No explicit implementation/evidence task is currently queued, so
+selected_next_task is null and planningNeeded=true for supervisor planning.

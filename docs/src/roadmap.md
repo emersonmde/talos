@@ -17591,6 +17591,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   expansion, phase transition, and ssh-ready=true remain deferred. The selected
   next bounded task is
   phase12-ssh-openssh-compat-discriminator-contract-20260623.
+- phase12-ssh-openssh-compat-discriminator-contract-20260623 accepts the first
+  bounded OpenSSH compatibility discriminator contract. The discriminator is
+  local/offline and transcript-shaped: compare Talos' sanitized public modeled
+  output sequence against an OpenSSH-compatible channel closeout expectation of
+  optional channel-data stdout, optional extended-data stderr, EOF, exit-status
+  with request type exit-status and want_reply=false, and close in that order.
+  The future implementation/evidence task may retain only public message names
+  or numbers, request type names, public status values/categories, public
+  length/count categories, readiness counters, fixed labels, and
+  classifications. It must fail closed for missing accepted local
+  prerequisites, missing modeled peer observation, out-of-order or duplicate
+  lifecycle messages, unsupported request shape, over-limit transcript
+  evidence, or redaction-sensitive material. This contract does not implement
+  the discriminator, run OpenSSH, publish a boot archive, use the Pi 5 lab, or
+  accept live-reachability=true, remote-receipt=true, compatibility=true, a
+  phase transition, or ssh-ready=true. selected_next_task is null and
+  planningNeeded=true because no explicit implementation/evidence task is
+  queued for the worker to promote without supervisor planning.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
