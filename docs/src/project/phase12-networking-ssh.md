@@ -8532,3 +8532,23 @@ OpenSSH/POSIX/Linux compatibility, multiple sessions, multiple children,
 blocking wait, boot publication, broad command expansion, phase transition,
 and ssh-ready=true remain deferred. The selected next bounded task is
 phase12-ssh-posix-eof-wait-closeout-20260623.
+
+phase12-ssh-posix-eof-wait-closeout-20260623 accepts the bounded local modeled
+SSH POSIX EOF/wait closeout. The reconciled frontier is one authenticated local
+modeled session channel with socket-delivery, shell attachment,
+channel-data/stdio, channel-window, and channel-lifecycle prerequisites,
+inbound SSH_MSG_CHANNEL_EOF becoming stdin EOF for one local modeled attached
+process/session, one completed LocalCommandProcessLifecycleRecord wait/status
+observation, one local exit-status request with want_reply=false, one local
+stdout EOF, one local close, and full closure only after peer close. The
+accepted counter is posix-eof-wait-local=true only for that modeled success
+path; socket-delivery-local and existing local authentication/session/channel,
+shell, channel-data, channel-window, and channel-lifecycle counters remain
+local modeled prerequisites. live-reachability=false, remote-receipt=false,
+compatibility=false, and ssh-ready=false remain authoritative. Pi 5
+reachability, remote receipt, OpenSSH/POSIX/Linux compatibility, multiple
+sessions, multiple children, blocking wait, PTY behavior, boot publication,
+broad command expansion, phase transition, and ssh-ready=true remain deferred.
+selected_next_task is null and planningNeeded=true because no explicit
+queued/ready follow-up task exists for the worker to promote without supervisor
+planning.

@@ -17505,6 +17505,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   sessions, multiple children, blocking wait, boot publication, broad command
   expansion, phase transition, and ssh-ready=true remain deferred. The
   selected next bounded task is phase12-ssh-posix-eof-wait-closeout-20260623.
+- phase12-ssh-posix-eof-wait-closeout-20260623 accepts the bounded local
+  modeled SSH POSIX EOF/wait closeout. The reconciled frontier is exactly one
+  authenticated local modeled session channel with accepted socket-delivery,
+  shell, channel-data/stdio, channel-window, and channel-lifecycle
+  prerequisites; one inbound SSH_MSG_CHANNEL_EOF mapped to stdin EOF for one
+  local modeled attached process/session; one completed
+  LocalCommandProcessLifecycleRecord wait/status observation; one local
+  exit-status request with want_reply=false; one local stdout EOF; one local
+  close; and full closure only after peer close. posix-eof-wait-local=true is
+  accepted only for that modeled path, while live-reachability=false,
+  remote-receipt=false, compatibility=false, and ssh-ready=false remain
+  authoritative. Pi 5 reachability, remote receipt, OpenSSH/POSIX/Linux
+  compatibility, multiple sessions, multiple children, blocking wait, PTY
+  behavior, boot publication, broad command expansion, phase transition, and
+  ssh-ready=true remain deferred. selected_next_task is null and
+  planningNeeded=true because no explicit queued/ready follow-up task exists
+  for the worker to promote without supervisor planning.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
