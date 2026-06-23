@@ -17246,6 +17246,18 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   channel-window-management=false, and ssh-ready=false remain authoritative.
   The selected next bounded task is
   phase12-ssh-channel-data-stdio-feature-smoke-20260623.
+- phase12-ssh-channel-data-stdio-feature-smoke-20260623 accepts bounded local
+  feature smoke/regression evidence for the modeled channel-data/stdio bridge.
+  The retained no_std evidence covers successful inbound SSH_MSG_CHANNEL_DATA
+  to attached stdin, local stdout SSH_MSG_CHANNEL_DATA packet-shape reports,
+  local stderr SSH_MSG_CHANNEL_EXTENDED_DATA reports with
+  SSH_EXTENDED_DATA_STDERR, and fail-closed controls for missing shell
+  attachment, malformed/trailing or over-limit data, lifecycle violation,
+  redaction-sensitive input, and prior authentication/channel/shell-attachment
+  prerequisites. The accepted frontier remains channel-data-stdio-local=true
+  only; live-reachability=false, channel-window-management=false, and
+  ssh-ready=false remain authoritative. The selected next bounded task is
+  phase12-ssh-channel-data-stdio-closeout-20260623.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

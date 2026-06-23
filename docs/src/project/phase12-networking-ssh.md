@@ -8236,3 +8236,16 @@ channel-data-stdio-local=true while keeping live-reachability=false,
 channel-window-management=false, and ssh-ready=false authoritative. The
 selected next bounded task is
 phase12-ssh-channel-data-stdio-feature-smoke-20260623.
+
+phase12-ssh-channel-data-stdio-feature-smoke-20260623 accepts bounded local
+feature smoke/regression evidence for the modeled channel-data/stdio bridge.
+The retained no_std unit coverage exercises successful inbound
+SSH_MSG_CHANNEL_DATA to the attached stdin boundary, local stdout
+SSH_MSG_CHANNEL_DATA packet-shape reports, and local stderr
+SSH_MSG_CHANNEL_EXTENDED_DATA reports with SSH_EXTENDED_DATA_STDERR. It also
+retains fail-closed controls for missing shell attachment, malformed/trailing
+or over-limit data, lifecycle violation, redaction-sensitive input, and prior
+authentication/channel/shell-attachment prerequisites. The accepted frontier
+remains channel-data-stdio-local=true only; live-reachability=false,
+channel-window-management=false, and ssh-ready=false remain authoritative. The
+selected next bounded task is phase12-ssh-channel-data-stdio-closeout-20260623.
