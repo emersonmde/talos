@@ -17489,6 +17489,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   publication, broad command expansion, phase transition, and ssh-ready=true
   remain deferred. The selected next bounded task is
   phase12-ssh-posix-eof-wait-feature-smoke-20260623.
+- phase12-ssh-posix-eof-wait-feature-smoke-20260623 accepts the bounded local
+  modeled SSH POSIX EOF/wait feature-smoke evidence. The focused
+  ssh_posix_eof_wait filter exercises the accepted success path and required
+  negative controls: local modeled stdin EOF, one completed wait/status
+  record, exit-status request emission, local stdout EOF, local close, peer
+  close full closure, missing or consumed wait status, missing prerequisites,
+  lifecycle violations, output backpressure, closed peer, and
+  redaction-sensitive input. The full cargo regression keeps the accepted
+  local socket-delivery, channel-data/stdio, channel-window, channel-lifecycle,
+  userspace socket ABI, descriptor, and syscall surfaces covered. This remains
+  local modeled evidence only; live-reachability=false, remote-receipt=false,
+  compatibility=false, and ssh-ready=false remain authoritative. Pi 5
+  reachability, remote receipt, OpenSSH/POSIX/Linux compatibility, multiple
+  sessions, multiple children, blocking wait, boot publication, broad command
+  expansion, phase transition, and ssh-ready=true remain deferred. The
+  selected next bounded task is phase12-ssh-posix-eof-wait-closeout-20260623.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
