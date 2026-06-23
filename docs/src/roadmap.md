@@ -17417,6 +17417,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   broad command expansion, phase transition, and ssh-ready=true remain
   deferred. The selected next bounded task is
   phase12-ssh-live-socket-delivery-feature-smoke-20260623.
+- phase12-ssh-live-socket-delivery-feature-smoke-20260623 accepts bounded
+  local modeled SSH socket-delivery feature smoke and regression evidence. The
+  retained no_std tests exercise the descriptor-backed stream socket path:
+  local listener, accepted peer, recv_peek/recv_commit into SSH
+  channel-data/stdio classification, accepted stdout output queued back through
+  send, and negative controls for missing listener/connection, missing
+  prerequisite, would-block, backpressure, closed peer, malformed or over-limit
+  input, lifecycle violation, and redaction-sensitive input. Prior local-only
+  authentication/session/channel, shell attachment, channel-data/stdio,
+  channel-window, and channel-lifecycle counters remain regression surfaces in
+  the same 812-test run. The accepted frontier is evidence only for local
+  modeled in-kernel stream sockets: socket-delivery-local=true only on the
+  modeled success path, while live-reachability=false, remote-receipt=false,
+  compatibility=false, and ssh-ready=false remain authoritative. Pi 5
+  reachability, remote receipt, OpenSSH/POSIX/Linux compatibility, POSIX
+  process wait/exit, boot publication, broad command expansion, phase
+  transition, and ssh-ready=true remain deferred. The selected next bounded
+  task is phase12-ssh-live-socket-delivery-closeout-20260623.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
