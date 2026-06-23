@@ -17364,6 +17364,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   process wait/exit, broad command expansion, phase transition, and
   ssh-ready=true remain deferred. The selected next bounded task is
   phase12-ssh-channel-lifecycle-exit-status-closeout-20260623.
+- phase12-ssh-channel-lifecycle-exit-status-closeout-20260623 accepts the local
+  modeled SSH channel lifecycle closeout. The reconciled frontier covers local
+  modeled channel-data/stdio, channel-window accounting, and channel lifecycle
+  only on the accepted authenticated session channel, shell attachment, local
+  process/session, and fd0/fd1/fd2 stdio path. Talos accepts inbound
+  SSH_MSG_CHANNEL_EOF local receipt, local SSH_MSG_CHANNEL_REQUEST exit-status
+  emission with request type exit-status and want_reply=false, and local
+  SSH_MSG_CHANNEL_CLOSE send/receive state. channel-data-stdio-local=true,
+  channel-window-management=true, and channel-lifecycle-local=true are accepted
+  only for local modeled success paths; live-reachability=false,
+  remote-receipt=false, compatibility=false, and ssh-ready=false remain
+  authoritative. Live encrypted socket delivery, hardware reachability,
+  OpenSSH/POSIX/Linux compatibility, POSIX process wait/exit, EOF-driven
+  userspace/process integration, broad command expansion, phase transition, and
+  ssh-ready=true remain deferred. selected_next_task is null and
+  planningNeeded=true because no explicit queued/ready follow-up task exists
+  for the worker to promote without supervisor planning.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

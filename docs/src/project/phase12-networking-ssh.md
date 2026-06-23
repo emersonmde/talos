@@ -8375,3 +8375,23 @@ hardware reachability, OpenSSH/POSIX/Linux compatibility, process wait/exit,
 broad command expansion, phase transition, or ssh-ready=true is accepted. The
 selected next bounded task is
 phase12-ssh-channel-lifecycle-exit-status-closeout-20260623.
+
+phase12-ssh-channel-lifecycle-exit-status-closeout-20260623 accepts the local
+modeled SSH channel lifecycle closeout. The reconciled frontier covers only the
+accepted local authenticated session channel, shell attachment, local
+process/session ownership, fd0/fd1/fd2 stdio ownership, channel-data/stdio
+bridge, channel-window accounting, and lifecycle state. Talos records inbound
+SSH_MSG_CHANNEL_EOF as local EOF receipt, local SSH_MSG_CHANNEL_REQUEST
+exit-status emission with request type exit-status and want_reply=false, and
+local SSH_MSG_CHANNEL_CLOSE send/receive state. The modeled channel remains
+open until both close directions have been recorded; later lifecycle and
+channel-data operations then fail closed. channel-data-stdio-local=true,
+channel-window-management=true, and channel-lifecycle-local=true are accepted
+only for local modeled success paths. live-reachability=false,
+remote-receipt=false, compatibility=false, and ssh-ready=false remain
+authoritative. Live encrypted socket delivery, hardware reachability,
+OpenSSH/POSIX/Linux compatibility, POSIX process wait/exit, EOF-driven
+userspace/process integration, broad command expansion, phase transition, and
+ssh-ready=true remain deferred. selected_next_task is null and
+planningNeeded=true because no explicit queued/ready follow-up task exists for
+the worker to promote without supervisor planning.
