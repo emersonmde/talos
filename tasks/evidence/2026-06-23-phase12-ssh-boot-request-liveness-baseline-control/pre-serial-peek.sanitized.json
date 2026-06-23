@@ -1,0 +1,9 @@
+{
+  "action": "serial peek",
+  "bytes": 500,
+  "cursor": 4194304,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text_retained": false
+}

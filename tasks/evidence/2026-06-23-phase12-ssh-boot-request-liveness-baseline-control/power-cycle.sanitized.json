@@ -1,0 +1,7 @@
+{
+  "action": "power cycle",
+  "ok": true,
+  "relay": null,
+  "power": null,
+  "note": "raw client/device identities not retained"
+}

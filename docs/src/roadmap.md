@@ -17839,6 +17839,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   baseline/control a0452458... tree. selected_candidate_fetch_observed=false,
   selected_next_task=null, and planningNeeded=true, so live OpenSSH retry-v4
   remains blocked pending supervisor planning.
+- phase12-ssh-boot-request-liveness-baseline-control-20260623 accepts
+  baseline-control-fetch-observed evidence. The worker acquired
+  hardwareTestLock, kept the restored baseline/control a0452458... tree active,
+  saved fresh serial and TFTP cursors, power-cycled the Pi without publishing a
+  selected archive or running OpenSSH, and retained a stable same-cursor TFTP
+  delta with 13 parsed events. Two fresh da591740/kernel_2712.img serves
+  matched the restored baseline/control 104,136-byte kernel before restore.
+  Serial observe from the saturated cursor returned zero bytes, so serial
+  runtime readiness remains unaccepted. baseline_control_fetch_observed=true
+  and the selected next bounded task is
+  phase12-ssh-selected-candidate-fetch-after-baseline-liveness-v4-20260623;
+  live OpenSSH retry-v5 remains gated behind that future selected-candidate
+  fetch proof.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

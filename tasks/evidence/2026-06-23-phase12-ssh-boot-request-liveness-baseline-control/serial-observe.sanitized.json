@@ -1,0 +1,17 @@
+{
+  "action": "serial observe",
+  "bytes": 0,
+  "cursor_end": 4194304,
+  "cursor_start": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "truncated": false,
+  "text_retained": false,
+  "talos_runtime_readiness": {
+    "classification": "serial-empty-observe",
+    "capture_mode": "observe",
+    "has_kernel_main": null,
+    "has_required_success_marker": null,
+    "has_prompt_marker": null
+  }
+}

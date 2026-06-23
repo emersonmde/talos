@@ -8894,3 +8894,20 @@ reported the selected tree, and restore returned to the baseline/control
 a0452458... tree. selected_candidate_fetch_observed=false,
 selected_next_task=null, and planningNeeded=true; live OpenSSH retry-v4 remains
 blocked until supervisor planning resolves the no-fetch result.
+
+phase12-ssh-boot-request-liveness-baseline-control-20260623 accepts the
+baseline/control boot-request liveness discriminator as
+baseline-control-fetch-observed. The worker acquired hardwareTestLock, retained
+the restored baseline/control a0452458... tree with effective
+kernel_2712.img and 104,136-byte kernel entries, saved fresh serial and TFTP
+cursors, then power-cycled the Pi without publishing a selected archive or
+running OpenSSH. Stable same-cursor TFTP evidence advanced from cursor 4658346
+to 4659697 and retained 13 parsed events, including two served
+da591740/kernel_2712.img fetches at 104,136 bytes before restore. Serial
+observe from the saturated cursor returned zero bytes, so serial runtime
+readiness remains unaccepted. Final pre-restore and restore identity both
+reported the baseline/control tree. baseline_control_fetch_observed=true and
+the selected next bounded task is
+phase12-ssh-selected-candidate-fetch-after-baseline-liveness-v4-20260623;
+retry-v4 remains blocked/superseded and live OpenSSH retry-v5 remains
+dependency-gated behind a future selected-candidate fetch proof.

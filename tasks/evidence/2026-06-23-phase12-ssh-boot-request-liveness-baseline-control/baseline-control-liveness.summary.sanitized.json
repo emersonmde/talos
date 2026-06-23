@@ -1,0 +1,63 @@
+{
+  "task_id": "phase12-ssh-boot-request-liveness-baseline-control-20260623",
+  "classification": "baseline-control-fetch-observed",
+  "baseline_control_fetch_observed": true,
+  "selected_next_task": "phase12-ssh-selected-candidate-fetch-after-baseline-liveness-v4-20260623",
+  "planning_needed": false,
+  "selected_fetch_v3_reference": {
+    "task_id": "phase12-ssh-selected-candidate-fetch-after-root-cause-v3-20260623",
+    "classification": "stable-zero-tftp-after-selected-publish",
+    "selected_candidate_fetch_observed": false
+  },
+  "snapshot": "phase12-ssh-boot-liveness-pre-20260623T233900Z",
+  "pre": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "kernel_2712_bytes": 104136
+  },
+  "cursors": {
+    "serial_cursor": 4194304,
+    "tftp_cursor": 4658346,
+    "tftp_cursor_end": 4659697
+  },
+  "power": {
+    "ok": true
+  },
+  "serial": {
+    "exit_code": 0,
+    "bytes": 0,
+    "classification": "serial-empty-observe",
+    "capture_mode": "observe",
+    "has_kernel_main": null,
+    "has_required_success_marker": null,
+    "has_prompt_marker": null
+  },
+  "tftp": {
+    "wait_exit_code": 0,
+    "stable": true,
+    "stability_reason": "stable",
+    "event_count": 13,
+    "baseline_kernel_events": 2,
+    "kernel_events": [
+      {
+        "status": "served",
+        "filename": "da591740/kernel_2712.img",
+        "bytes": 104136
+      },
+      {
+        "status": "served",
+        "filename": "da591740/kernel_2712.img",
+        "bytes": 104136
+      }
+    ]
+  },
+  "final_pre_restore": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img"
+  },
+  "restore": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "restored": true
+  },
+  "redaction_review": "pass"
+}
