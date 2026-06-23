@@ -185,6 +185,15 @@ pub(crate) enum SshServiceReadinessLabel {
     ChannelDataStdioFailureOverLimit,
     ChannelDataStdioFailureLifecycleViolation,
     ChannelDataStdioFailureRedactionSensitive,
+    ChannelWindowAccountingPrerequisiteOnly,
+    ChannelWindowAccountingInboundAccounted,
+    ChannelWindowAccountingOutboundAccounted,
+    ChannelWindowAccountingAdjustEmitted,
+    ChannelWindowAccountingAdjustReceived,
+    ChannelWindowAccountingFailureWindowExhausted,
+    ChannelWindowAccountingFailureMalformed,
+    ChannelWindowAccountingFailureOverflow,
+    ChannelWindowAccountingFailureRedactionSensitive,
     TransportClosedBeforeKex,
     AuthenticationUnimplemented,
     SessionUnimplemented,
@@ -543,6 +552,33 @@ impl SshServiceReadinessLabel {
             Self::ChannelDataStdioFailureRedactionSensitive => {
                 "sshservicediag-channel-data-stdio-failure-redaction-sensitive"
             }
+            Self::ChannelWindowAccountingPrerequisiteOnly => {
+                "sshservicediag-channel-window-accounting-prerequisite-only"
+            }
+            Self::ChannelWindowAccountingInboundAccounted => {
+                "sshservicediag-channel-window-accounting-inbound-accounted"
+            }
+            Self::ChannelWindowAccountingOutboundAccounted => {
+                "sshservicediag-channel-window-accounting-outbound-accounted"
+            }
+            Self::ChannelWindowAccountingAdjustEmitted => {
+                "sshservicediag-channel-window-accounting-adjust-emitted"
+            }
+            Self::ChannelWindowAccountingAdjustReceived => {
+                "sshservicediag-channel-window-accounting-adjust-received"
+            }
+            Self::ChannelWindowAccountingFailureWindowExhausted => {
+                "sshservicediag-channel-window-accounting-failure-window-exhausted"
+            }
+            Self::ChannelWindowAccountingFailureMalformed => {
+                "sshservicediag-channel-window-accounting-failure-malformed"
+            }
+            Self::ChannelWindowAccountingFailureOverflow => {
+                "sshservicediag-channel-window-accounting-failure-overflow"
+            }
+            Self::ChannelWindowAccountingFailureRedactionSensitive => {
+                "sshservicediag-channel-window-accounting-failure-redaction-sensitive"
+            }
             Self::TransportClosedBeforeKex => "sshservicediag-transport-closed-before-kex",
             Self::AuthenticationUnimplemented => "sshservicediag-authentication-unimplemented",
             Self::SessionUnimplemented => "sshservicediag-session-unimplemented",
@@ -576,6 +612,7 @@ const SSH_MSG_USERAUTH_PK_OK: u8 = 60;
 const SSH_MSG_CHANNEL_OPEN: u8 = 90;
 const SSH_MSG_CHANNEL_OPEN_CONFIRMATION: u8 = 91;
 const SSH_MSG_CHANNEL_OPEN_FAILURE: u8 = 92;
+const SSH_MSG_CHANNEL_WINDOW_ADJUST: u8 = 93;
 const SSH_MSG_CHANNEL_DATA: u8 = 94;
 const SSH_MSG_CHANNEL_EXTENDED_DATA: u8 = 95;
 const SSH_MSG_CHANNEL_REQUEST: u8 = 98;
@@ -597,6 +634,7 @@ const MAX_SSH_SESSION_CHANNEL_OPEN_LABELS: usize = 8;
 const MAX_SSH_SESSION_SHELL_REQUEST_LABELS: usize = 10;
 const MAX_SSH_SESSION_SHELL_ATTACHMENT_LABELS: usize = 14;
 const MAX_SSH_CHANNEL_DATA_STDIO_LABELS: usize = 12;
+const MAX_SSH_CHANNEL_WINDOW_ACCOUNTING_LABELS: usize = 14;
 const SSH_PREAUTH_STRING_MAX_BYTES: usize = 256;
 const SSH_PREAUTH_PUBLIC_KEY_BLOB_MAX_BYTES: usize = 512;
 const SSH_PREAUTH_SIGNATURE_MAX_BYTES: usize = 512;
@@ -605,6 +643,8 @@ const SSH_CHANNEL_OPEN_TYPE_MAX_BYTES: usize = 64;
 const SSH_CHANNEL_REQUEST_PAYLOAD_MAX_BYTES: usize = 256;
 const SSH_CHANNEL_REQUEST_TYPE_MAX_BYTES: usize = 64;
 const SSH_CHANNEL_DATA_MAX_BYTES: usize = 256;
+const SSH_CHANNEL_LOCAL_RECEIVE_WINDOW_INITIAL_BYTES: u32 = 4096;
+const SSH_CHANNEL_LOCAL_RECEIVE_WINDOW_ADJUST_THRESHOLD_BYTES: u32 = 2048;
 const SSH_KEXINIT_MODELED_COOKIE_SEED: [u8; crate::csprng::CSPRNG_SEED_BYTES] =
     *b"Talos-kexinit-cookie-redacted!!!";
 
@@ -3974,6 +4014,464 @@ fn channel_data_stdio_malformed(
     )
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SshChannelWindowAccountingResult {
+    InboundDataWindowAccounted,
+    OutboundDataWindowAccounted,
+    InboundWindowAdjustAccounted,
+    ChannelWindowFailureWindowExhausted,
+    ChannelWindowFailureMalformed,
+    ChannelWindowFailureOverflow,
+    ChannelWindowFailureRedactionSensitive,
+    ChannelWindowFailureStdioRejected,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SshChannelWindowAccountingState {
+    local_receive_window_initial: u32,
+    local_receive_window_remaining: u32,
+    remote_receive_window_remaining: u32,
+}
+
+impl SshChannelWindowAccountingState {
+    pub(crate) const fn new(remote_receive_window_initial: u32) -> Self {
+        Self {
+            local_receive_window_initial: SSH_CHANNEL_LOCAL_RECEIVE_WINDOW_INITIAL_BYTES,
+            local_receive_window_remaining: SSH_CHANNEL_LOCAL_RECEIVE_WINDOW_INITIAL_BYTES,
+            remote_receive_window_remaining: remote_receive_window_initial,
+        }
+    }
+
+    pub(crate) const fn with_window_remaining(
+        local_receive_window_remaining: u32,
+        remote_receive_window_remaining: u32,
+    ) -> Self {
+        Self {
+            local_receive_window_initial: SSH_CHANNEL_LOCAL_RECEIVE_WINDOW_INITIAL_BYTES,
+            local_receive_window_remaining,
+            remote_receive_window_remaining,
+        }
+    }
+
+    pub(crate) const fn local_receive_window_remaining(self) -> u32 {
+        self.local_receive_window_remaining
+    }
+
+    pub(crate) const fn remote_receive_window_remaining(self) -> u32 {
+        self.remote_receive_window_remaining
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SshChannelWindowAdjustInput<'a> {
+    pub(crate) authentication_success: bool,
+    pub(crate) open_session_channel: bool,
+    pub(crate) channel_lifecycle_open: bool,
+    pub(crate) redaction_sensitive: bool,
+    pub(crate) decrypted_payload: &'a [u8],
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SshChannelWindowAccountingReport {
+    labels: [SshServiceReadinessLabel; MAX_SSH_CHANNEL_WINDOW_ACCOUNTING_LABELS],
+    label_count: usize,
+    result: SshChannelWindowAccountingResult,
+    request_message_number: Option<u8>,
+    output_message_number: Option<u8>,
+    data_len: Option<usize>,
+    window_adjust_bytes: Option<u32>,
+    local_receive_window_remaining: u32,
+    remote_receive_window_remaining: u32,
+    channel_data_stdio_local: bool,
+    channel_window_management: bool,
+}
+
+impl SshChannelWindowAccountingReport {
+    fn new(
+        result: SshChannelWindowAccountingResult,
+        state: SshChannelWindowAccountingState,
+        request_message_number: Option<u8>,
+        output_message_number: Option<u8>,
+        data_len: Option<usize>,
+        window_adjust_bytes: Option<u32>,
+        channel_data_stdio_local: bool,
+        channel_window_management: bool,
+    ) -> Self {
+        Self {
+            labels: [SshServiceReadinessLabel::NotReady; MAX_SSH_CHANNEL_WINDOW_ACCOUNTING_LABELS],
+            label_count: 0,
+            result,
+            request_message_number,
+            output_message_number,
+            data_len,
+            window_adjust_bytes,
+            local_receive_window_remaining: state.local_receive_window_remaining(),
+            remote_receive_window_remaining: state.remote_receive_window_remaining(),
+            channel_data_stdio_local,
+            channel_window_management,
+        }
+    }
+
+    fn push_success_prefix(&mut self) {
+        self.push(SshServiceReadinessLabel::AuthenticationSuccessLocalOnly);
+        self.push(SshServiceReadinessLabel::SessionOpenLocalOnly);
+        self.push(SshServiceReadinessLabel::ChannelOpenLocalOnly);
+        self.push(SshServiceReadinessLabel::ChannelWindowAccountingPrerequisiteOnly);
+    }
+
+    fn push(&mut self, label: SshServiceReadinessLabel) {
+        self.labels[self.label_count] = label;
+        self.label_count += 1;
+    }
+
+    pub(crate) fn labels(&self) -> &[SshServiceReadinessLabel] {
+        &self.labels[..self.label_count]
+    }
+
+    pub(crate) const fn result(self) -> SshChannelWindowAccountingResult {
+        self.result
+    }
+
+    pub(crate) const fn request_message_number(self) -> Option<u8> {
+        self.request_message_number
+    }
+
+    pub(crate) const fn output_message_number(self) -> Option<u8> {
+        self.output_message_number
+    }
+
+    pub(crate) const fn data_len(self) -> Option<usize> {
+        self.data_len
+    }
+
+    pub(crate) const fn window_adjust_bytes(self) -> Option<u32> {
+        self.window_adjust_bytes
+    }
+
+    pub(crate) const fn local_receive_window_remaining(self) -> u32 {
+        self.local_receive_window_remaining
+    }
+
+    pub(crate) const fn remote_receive_window_remaining(self) -> u32 {
+        self.remote_receive_window_remaining
+    }
+
+    pub(crate) const fn channel_data_stdio_local(self) -> bool {
+        self.channel_data_stdio_local
+    }
+
+    pub(crate) const fn channel_window_management(self) -> bool {
+        self.channel_window_management
+    }
+
+    pub(crate) const fn reachability_accepted(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn ssh_ready(self) -> bool {
+        false
+    }
+}
+
+pub(crate) fn classify_ssh_channel_window_accounting_inbound_data(
+    state: &mut SshChannelWindowAccountingState,
+    input: SshChannelDataStdioInput<'_>,
+) -> SshChannelWindowAccountingReport {
+    let stdio = classify_ssh_channel_data_stdio(input);
+    if stdio.result() != SshChannelDataStdioResult::InboundStdinDeliveredLocal {
+        return channel_window_accounting_stdio_rejection(*state, stdio);
+    }
+    let data_len = stdio.data_len().unwrap_or(0);
+    let Ok(data_len_u32) = u32::try_from(data_len) else {
+        return channel_window_accounting_failure(
+            *state,
+            SshChannelWindowAccountingResult::ChannelWindowFailureWindowExhausted,
+            SshServiceReadinessLabel::ChannelWindowAccountingFailureWindowExhausted,
+            Some(SSH_MSG_CHANNEL_DATA),
+            None,
+            Some(data_len),
+            None,
+        );
+    };
+    if data_len_u32 > state.local_receive_window_remaining {
+        return channel_window_accounting_failure(
+            *state,
+            SshChannelWindowAccountingResult::ChannelWindowFailureWindowExhausted,
+            SshServiceReadinessLabel::ChannelWindowAccountingFailureWindowExhausted,
+            Some(SSH_MSG_CHANNEL_DATA),
+            None,
+            Some(data_len),
+            None,
+        );
+    }
+
+    state.local_receive_window_remaining -= data_len_u32;
+    let mut adjust_bytes = None;
+    if state.local_receive_window_remaining
+        < SSH_CHANNEL_LOCAL_RECEIVE_WINDOW_ADJUST_THRESHOLD_BYTES
+    {
+        let bytes_to_add =
+            state.local_receive_window_initial - state.local_receive_window_remaining;
+        state.local_receive_window_remaining = state.local_receive_window_initial;
+        adjust_bytes = Some(bytes_to_add);
+    }
+
+    let mut report = SshChannelWindowAccountingReport::new(
+        SshChannelWindowAccountingResult::InboundDataWindowAccounted,
+        *state,
+        Some(SSH_MSG_CHANNEL_DATA),
+        adjust_bytes.map(|_| SSH_MSG_CHANNEL_WINDOW_ADJUST),
+        Some(data_len),
+        adjust_bytes,
+        true,
+        true,
+    );
+    report.push_success_prefix();
+    report.push(SshServiceReadinessLabel::ChannelDataStdioInboundStdin);
+    report.push(SshServiceReadinessLabel::ChannelDataStdioLocalOnly);
+    report.push(SshServiceReadinessLabel::ChannelWindowAccountingInboundAccounted);
+    if adjust_bytes.is_some() {
+        report.push(SshServiceReadinessLabel::ChannelWindowAccountingAdjustEmitted);
+    }
+    report.push(SshServiceReadinessLabel::NotReady);
+    report
+}
+
+pub(crate) fn classify_ssh_channel_window_accounting_output(
+    state: &mut SshChannelWindowAccountingState,
+    input: SshChannelDataStdioOutputInput,
+) -> SshChannelWindowAccountingReport {
+    let stdio = classify_ssh_channel_data_stdio_output(input);
+    if !matches!(
+        stdio.result(),
+        SshChannelDataStdioResult::OutboundStdoutChannelDataModeled
+            | SshChannelDataStdioResult::OutboundStderrExtendedDataModeled
+    ) {
+        return channel_window_accounting_stdio_rejection(*state, stdio);
+    }
+    let data_len = stdio.data_len().unwrap_or(0);
+    let Ok(data_len_u32) = u32::try_from(data_len) else {
+        return channel_window_accounting_failure(
+            *state,
+            SshChannelWindowAccountingResult::ChannelWindowFailureWindowExhausted,
+            SshServiceReadinessLabel::ChannelWindowAccountingFailureWindowExhausted,
+            None,
+            stdio.output_message_number(),
+            Some(data_len),
+            None,
+        );
+    };
+    if data_len_u32 > state.remote_receive_window_remaining {
+        return channel_window_accounting_failure(
+            *state,
+            SshChannelWindowAccountingResult::ChannelWindowFailureWindowExhausted,
+            SshServiceReadinessLabel::ChannelWindowAccountingFailureWindowExhausted,
+            None,
+            stdio.output_message_number(),
+            Some(data_len),
+            None,
+        );
+    }
+
+    state.remote_receive_window_remaining -= data_len_u32;
+    let label = match stdio.result() {
+        SshChannelDataStdioResult::OutboundStdoutChannelDataModeled => {
+            SshServiceReadinessLabel::ChannelDataStdioOutboundStdout
+        }
+        SshChannelDataStdioResult::OutboundStderrExtendedDataModeled => {
+            SshServiceReadinessLabel::ChannelDataStdioOutboundStderr
+        }
+        _ => SshServiceReadinessLabel::ChannelDataStdioFailureMalformed,
+    };
+    let mut report = SshChannelWindowAccountingReport::new(
+        SshChannelWindowAccountingResult::OutboundDataWindowAccounted,
+        *state,
+        None,
+        stdio.output_message_number(),
+        Some(data_len),
+        None,
+        true,
+        true,
+    );
+    report.push_success_prefix();
+    report.push(label);
+    report.push(SshServiceReadinessLabel::ChannelDataStdioLocalOnly);
+    report.push(SshServiceReadinessLabel::ChannelWindowAccountingOutboundAccounted);
+    report.push(SshServiceReadinessLabel::NotReady);
+    report
+}
+
+pub(crate) fn classify_ssh_channel_window_adjust(
+    state: &mut SshChannelWindowAccountingState,
+    input: SshChannelWindowAdjustInput<'_>,
+) -> SshChannelWindowAccountingReport {
+    if input.redaction_sensitive {
+        return channel_window_accounting_failure(
+            *state,
+            SshChannelWindowAccountingResult::ChannelWindowFailureRedactionSensitive,
+            SshServiceReadinessLabel::ChannelWindowAccountingFailureRedactionSensitive,
+            None,
+            None,
+            None,
+            None,
+        );
+    }
+    if !input.authentication_success || !input.open_session_channel || !input.channel_lifecycle_open
+    {
+        return channel_window_accounting_failure(
+            *state,
+            SshChannelWindowAccountingResult::ChannelWindowFailureMalformed,
+            SshServiceReadinessLabel::ChannelWindowAccountingFailureMalformed,
+            input.decrypted_payload.first().copied(),
+            None,
+            None,
+            None,
+        );
+    }
+    let Some(message_number) = input.decrypted_payload.first().copied() else {
+        return channel_window_accounting_failure(
+            *state,
+            SshChannelWindowAccountingResult::ChannelWindowFailureMalformed,
+            SshServiceReadinessLabel::ChannelWindowAccountingFailureMalformed,
+            None,
+            None,
+            None,
+            None,
+        );
+    };
+    if message_number != SSH_MSG_CHANNEL_WINDOW_ADJUST {
+        return channel_window_accounting_failure(
+            *state,
+            SshChannelWindowAccountingResult::ChannelWindowFailureMalformed,
+            SshServiceReadinessLabel::ChannelWindowAccountingFailureMalformed,
+            Some(message_number),
+            None,
+            None,
+            None,
+        );
+    }
+    let Some(cursor) = skip_ssh_u32(input.decrypted_payload, 1) else {
+        return channel_window_accounting_failure(
+            *state,
+            SshChannelWindowAccountingResult::ChannelWindowFailureMalformed,
+            SshServiceReadinessLabel::ChannelWindowAccountingFailureMalformed,
+            Some(message_number),
+            None,
+            None,
+            None,
+        );
+    };
+    let Some(bytes_to_add) = read_be_u32(input.decrypted_payload, cursor) else {
+        return channel_window_accounting_failure(
+            *state,
+            SshChannelWindowAccountingResult::ChannelWindowFailureMalformed,
+            SshServiceReadinessLabel::ChannelWindowAccountingFailureMalformed,
+            Some(message_number),
+            None,
+            None,
+            None,
+        );
+    };
+    if bytes_to_add == 0 || cursor + 4 != input.decrypted_payload.len() {
+        return channel_window_accounting_failure(
+            *state,
+            SshChannelWindowAccountingResult::ChannelWindowFailureMalformed,
+            SshServiceReadinessLabel::ChannelWindowAccountingFailureMalformed,
+            Some(message_number),
+            None,
+            None,
+            Some(bytes_to_add),
+        );
+    }
+    let Some(remote_window) = state
+        .remote_receive_window_remaining
+        .checked_add(bytes_to_add)
+    else {
+        return channel_window_accounting_failure(
+            *state,
+            SshChannelWindowAccountingResult::ChannelWindowFailureOverflow,
+            SshServiceReadinessLabel::ChannelWindowAccountingFailureOverflow,
+            Some(message_number),
+            None,
+            None,
+            Some(bytes_to_add),
+        );
+    };
+
+    state.remote_receive_window_remaining = remote_window;
+    let mut report = SshChannelWindowAccountingReport::new(
+        SshChannelWindowAccountingResult::InboundWindowAdjustAccounted,
+        *state,
+        Some(SSH_MSG_CHANNEL_WINDOW_ADJUST),
+        None,
+        None,
+        Some(bytes_to_add),
+        false,
+        true,
+    );
+    report.push_success_prefix();
+    report.push(SshServiceReadinessLabel::ChannelWindowAccountingAdjustReceived);
+    report.push(SshServiceReadinessLabel::NotReady);
+    report
+}
+
+fn channel_window_accounting_stdio_rejection(
+    state: SshChannelWindowAccountingState,
+    stdio: SshChannelDataStdioReport,
+) -> SshChannelWindowAccountingReport {
+    let (result, label) = match stdio.result() {
+        SshChannelDataStdioResult::ChannelDataFailureRedactionSensitive => (
+            SshChannelWindowAccountingResult::ChannelWindowFailureRedactionSensitive,
+            SshServiceReadinessLabel::ChannelWindowAccountingFailureRedactionSensitive,
+        ),
+        SshChannelDataStdioResult::ChannelDataFailureMalformed => (
+            SshChannelWindowAccountingResult::ChannelWindowFailureMalformed,
+            SshServiceReadinessLabel::ChannelWindowAccountingFailureMalformed,
+        ),
+        SshChannelDataStdioResult::ChannelDataFailureOverLimit => (
+            SshChannelWindowAccountingResult::ChannelWindowFailureWindowExhausted,
+            SshServiceReadinessLabel::ChannelWindowAccountingFailureWindowExhausted,
+        ),
+        _ => (
+            SshChannelWindowAccountingResult::ChannelWindowFailureStdioRejected,
+            SshServiceReadinessLabel::ChannelDataStdioFailureLifecycleViolation,
+        ),
+    };
+    channel_window_accounting_failure(
+        state,
+        result,
+        label,
+        stdio.request_message_number(),
+        stdio.output_message_number(),
+        stdio.data_len(),
+        None,
+    )
+}
+
+fn channel_window_accounting_failure(
+    state: SshChannelWindowAccountingState,
+    result: SshChannelWindowAccountingResult,
+    label: SshServiceReadinessLabel,
+    request_message_number: Option<u8>,
+    output_message_number: Option<u8>,
+    data_len: Option<usize>,
+    window_adjust_bytes: Option<u32>,
+) -> SshChannelWindowAccountingReport {
+    let mut report = SshChannelWindowAccountingReport::new(
+        result,
+        state,
+        request_message_number,
+        output_message_number,
+        data_len,
+        window_adjust_bytes,
+        false,
+        false,
+    );
+    report.push(label);
+    report.push(SshServiceReadinessLabel::NotReady);
+    report
+}
+
 struct ParsedSshPublickeyVerificationRequest<'a> {
     user_name: &'a [u8],
     service: &'a [u8],
@@ -4898,6 +5396,16 @@ mod tests {
         labels
     }
 
+    fn channel_window_accounting_label_names(
+        report: &SshChannelWindowAccountingReport,
+    ) -> [&'static str; MAX_SSH_CHANNEL_WINDOW_ACCOUNTING_LABELS] {
+        let mut labels = [""; MAX_SSH_CHANNEL_WINDOW_ACCOUNTING_LABELS];
+        for (index, label) in report.labels().iter().enumerate() {
+            labels[index] = label.name();
+        }
+        labels
+    }
+
     fn shape_modeled_key_report() -> SshKeyReadinessReport {
         let entropy = entropy::classify_entropy_snapshot(
             EntropyDiagnosticSnapshot::empty()
@@ -5084,6 +5592,14 @@ mod tests {
         payload.push(SSH_MSG_CHANNEL_DATA);
         payload.extend_from_slice(&0u32.to_be_bytes());
         push_ssh_string_to_vec(&mut payload, data).unwrap();
+        payload
+    }
+
+    fn channel_window_adjust_payload(bytes_to_add: u32) -> Vec<u8> {
+        let mut payload = Vec::new();
+        payload.push(SSH_MSG_CHANNEL_WINDOW_ADJUST);
+        payload.extend_from_slice(&0u32.to_be_bytes());
+        payload.extend_from_slice(&bytes_to_add.to_be_bytes());
         payload
     }
 
@@ -7726,6 +8242,230 @@ mod tests {
         );
         assert!(!over_limit.channel_data_stdio_local());
         assert!(!output_missing_shell.ssh_ready());
+    }
+
+    #[test_case]
+    fn channel_window_accounting_decrements_inbound_data_without_socket_readiness() {
+        let payload = channel_data_payload(b"help");
+        let mut state = SshChannelWindowAccountingState::new(4096);
+        let report = classify_ssh_channel_window_accounting_inbound_data(
+            &mut state,
+            channel_data_stdio_success_input(&payload),
+        );
+
+        assert_eq!(
+            report.result(),
+            SshChannelWindowAccountingResult::InboundDataWindowAccounted
+        );
+        assert_eq!(report.request_message_number(), Some(SSH_MSG_CHANNEL_DATA));
+        assert_eq!(report.output_message_number(), None);
+        assert_eq!(report.data_len(), Some(4));
+        assert_eq!(report.window_adjust_bytes(), None);
+        assert_eq!(
+            report.local_receive_window_remaining(),
+            SSH_CHANNEL_LOCAL_RECEIVE_WINDOW_INITIAL_BYTES - 4
+        );
+        assert_eq!(
+            state.local_receive_window_remaining(),
+            SSH_CHANNEL_LOCAL_RECEIVE_WINDOW_INITIAL_BYTES - 4
+        );
+        assert!(report.channel_data_stdio_local());
+        assert!(report.channel_window_management());
+        assert!(!report.reachability_accepted());
+        assert!(!report.ssh_ready());
+        assert!(
+            report
+                .labels()
+                .contains(&SshServiceReadinessLabel::ChannelWindowAccountingInboundAccounted)
+        );
+    }
+
+    #[test_case]
+    fn channel_window_accounting_emits_local_window_adjust_at_threshold() {
+        let payload = channel_data_payload(b"threshold");
+        let mut state = SshChannelWindowAccountingState::with_window_remaining(2050, 512);
+        let report = classify_ssh_channel_window_accounting_inbound_data(
+            &mut state,
+            channel_data_stdio_success_input(&payload),
+        );
+
+        assert_eq!(
+            report.result(),
+            SshChannelWindowAccountingResult::InboundDataWindowAccounted
+        );
+        assert_eq!(
+            report.output_message_number(),
+            Some(SSH_MSG_CHANNEL_WINDOW_ADJUST)
+        );
+        assert_eq!(report.window_adjust_bytes(), Some(2055));
+        assert_eq!(
+            report.local_receive_window_remaining(),
+            SSH_CHANNEL_LOCAL_RECEIVE_WINDOW_INITIAL_BYTES
+        );
+        assert_eq!(
+            state.local_receive_window_remaining(),
+            SSH_CHANNEL_LOCAL_RECEIVE_WINDOW_INITIAL_BYTES
+        );
+        assert_eq!(
+            &channel_window_accounting_label_names(&report)[..report.labels().len()],
+            &[
+                "sshservicediag-authentication-success-local-only",
+                "sshservicediag-session-open-local-only",
+                "sshservicediag-channel-open-local-only",
+                "sshservicediag-channel-window-accounting-prerequisite-only",
+                "sshservicediag-channel-data-stdio-inbound-stdin",
+                "sshservicediag-channel-data-stdio-local-only",
+                "sshservicediag-channel-window-accounting-inbound-accounted",
+                "sshservicediag-channel-window-accounting-adjust-emitted",
+                "sshservicediag-not-ready",
+            ]
+        );
+    }
+
+    #[test_case]
+    fn channel_window_accounting_decrements_outbound_and_accepts_window_adjust() {
+        let mut state = SshChannelWindowAccountingState::with_window_remaining(4096, 20);
+        let stdout = classify_ssh_channel_window_accounting_output(
+            &mut state,
+            SshChannelDataStdioOutputInput {
+                shell_attached: true,
+                local_stdio_descriptors_owned: true,
+                channel_lifecycle_open: true,
+                redaction_sensitive: false,
+                stream: SshChannelDataStdioOutputStream::Stdout,
+                data_len: 12,
+            },
+        );
+
+        assert_eq!(
+            stdout.result(),
+            SshChannelWindowAccountingResult::OutboundDataWindowAccounted
+        );
+        assert_eq!(stdout.output_message_number(), Some(SSH_MSG_CHANNEL_DATA));
+        assert_eq!(stdout.remote_receive_window_remaining(), 8);
+        assert_eq!(state.remote_receive_window_remaining(), 8);
+        assert!(stdout.channel_window_management());
+
+        let payload = channel_window_adjust_payload(100);
+        let adjust = classify_ssh_channel_window_adjust(
+            &mut state,
+            SshChannelWindowAdjustInput {
+                authentication_success: true,
+                open_session_channel: true,
+                channel_lifecycle_open: true,
+                redaction_sensitive: false,
+                decrypted_payload: &payload,
+            },
+        );
+
+        assert_eq!(
+            adjust.result(),
+            SshChannelWindowAccountingResult::InboundWindowAdjustAccounted
+        );
+        assert_eq!(
+            adjust.request_message_number(),
+            Some(SSH_MSG_CHANNEL_WINDOW_ADJUST)
+        );
+        assert_eq!(adjust.window_adjust_bytes(), Some(100));
+        assert_eq!(adjust.remote_receive_window_remaining(), 108);
+        assert_eq!(state.remote_receive_window_remaining(), 108);
+        assert!(
+            adjust
+                .labels()
+                .contains(&SshServiceReadinessLabel::ChannelWindowAccountingAdjustReceived)
+        );
+        assert!(!adjust.channel_data_stdio_local());
+        assert!(!adjust.ssh_ready());
+    }
+
+    #[test_case]
+    fn channel_window_accounting_rejects_over_window_data_without_mutation() {
+        let payload = channel_data_payload(b"help");
+        let mut inbound_state = SshChannelWindowAccountingState::with_window_remaining(3, 10);
+        let inbound = classify_ssh_channel_window_accounting_inbound_data(
+            &mut inbound_state,
+            channel_data_stdio_success_input(&payload),
+        );
+
+        assert_eq!(
+            inbound.result(),
+            SshChannelWindowAccountingResult::ChannelWindowFailureWindowExhausted
+        );
+        assert_eq!(inbound.data_len(), Some(4));
+        assert_eq!(inbound.local_receive_window_remaining(), 3);
+        assert_eq!(inbound_state.local_receive_window_remaining(), 3);
+        assert!(!inbound.channel_data_stdio_local());
+        assert!(!inbound.channel_window_management());
+
+        let mut outbound_state = SshChannelWindowAccountingState::with_window_remaining(4096, 4);
+        let outbound = classify_ssh_channel_window_accounting_output(
+            &mut outbound_state,
+            SshChannelDataStdioOutputInput {
+                shell_attached: true,
+                local_stdio_descriptors_owned: true,
+                channel_lifecycle_open: true,
+                redaction_sensitive: false,
+                stream: SshChannelDataStdioOutputStream::Stderr,
+                data_len: 5,
+            },
+        );
+
+        assert_eq!(
+            outbound.result(),
+            SshChannelWindowAccountingResult::ChannelWindowFailureWindowExhausted
+        );
+        assert_eq!(
+            outbound.output_message_number(),
+            Some(SSH_MSG_CHANNEL_EXTENDED_DATA)
+        );
+        assert_eq!(outbound.remote_receive_window_remaining(), 4);
+        assert_eq!(outbound_state.remote_receive_window_remaining(), 4);
+        assert!(!outbound.ssh_ready());
+    }
+
+    #[test_case]
+    fn channel_window_adjust_fails_closed_for_malformed_or_overflow() {
+        let zero_payload = channel_window_adjust_payload(0);
+        let mut malformed_state = SshChannelWindowAccountingState::with_window_remaining(4096, 10);
+        let malformed = classify_ssh_channel_window_adjust(
+            &mut malformed_state,
+            SshChannelWindowAdjustInput {
+                authentication_success: true,
+                open_session_channel: true,
+                channel_lifecycle_open: true,
+                redaction_sensitive: false,
+                decrypted_payload: &zero_payload,
+            },
+        );
+
+        assert_eq!(
+            malformed.result(),
+            SshChannelWindowAccountingResult::ChannelWindowFailureMalformed
+        );
+        assert_eq!(malformed.window_adjust_bytes(), Some(0));
+        assert_eq!(malformed_state.remote_receive_window_remaining(), 10);
+
+        let overflow_payload = channel_window_adjust_payload(1);
+        let mut overflow_state =
+            SshChannelWindowAccountingState::with_window_remaining(4096, u32::MAX);
+        let overflow = classify_ssh_channel_window_adjust(
+            &mut overflow_state,
+            SshChannelWindowAdjustInput {
+                authentication_success: true,
+                open_session_channel: true,
+                channel_lifecycle_open: true,
+                redaction_sensitive: false,
+                decrypted_payload: &overflow_payload,
+            },
+        );
+
+        assert_eq!(
+            overflow.result(),
+            SshChannelWindowAccountingResult::ChannelWindowFailureOverflow
+        );
+        assert_eq!(overflow.window_adjust_bytes(), Some(1));
+        assert_eq!(overflow_state.remote_receive_window_remaining(), u32::MAX);
+        assert!(!overflow.channel_window_management());
     }
 
     #[test_case]

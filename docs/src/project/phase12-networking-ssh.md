@@ -8295,3 +8295,19 @@ this contract. Live encrypted socket delivery, remote receipt, hardware
 reachability, OpenSSH/POSIX/Linux compatibility, broad expansion, phase
 transition, and ssh-ready=true remain deferred. The selected next bounded task
 is phase12-ssh-channel-window-accounting-core-20260623.
+
+phase12-ssh-channel-window-accounting-core-20260623 accepts the bounded local
+modeled source implementation of that contract in src/ssh_service_readiness.rs.
+Talos now has a per-channel window-accounting state/report surface for the
+local modeled SSH channel-data/stdio path: inbound SSH_MSG_CHANNEL_DATA
+decrements the fixed Talos receive window before accepted stdio delivery and
+emits a modeled SSH_MSG_CHANNEL_WINDOW_ADJUST when the low-water mark is crossed;
+outbound stdout/stderr reports decrement the peer receive-window budget; inbound
+SSH_MSG_CHANNEL_WINDOW_ADJUST adds nonzero bytes to that outbound budget without
+overflow. Over-window, malformed, overflow, redaction-sensitive, unsupported,
+or lifecycle-invalid inputs fail closed without stdio delivery or counter
+mutation. channel-window-management=true is accepted only for these local
+modeled success reports; live encrypted socket delivery, remote receipt,
+hardware reachability, OpenSSH/POSIX/Linux compatibility, broad expansion,
+phase transition, and ssh-ready=true remain deferred. The selected next bounded
+task is phase12-ssh-channel-window-accounting-feature-smoke-20260623.

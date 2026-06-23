@@ -17292,6 +17292,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   hardware reachability, OpenSSH/POSIX/Linux compatibility, broad expansion,
   phase transition, and ssh-ready=true remain deferred. The selected next
   bounded task is phase12-ssh-channel-window-accounting-core-20260623.
+- phase12-ssh-channel-window-accounting-core-20260623 accepts the bounded local
+  modeled source implementation for SSH channel-window accounting. The source
+  now maintains per-channel local receive-window and remote send-budget state
+  for accepted channel-data/stdio paths; inbound SSH_MSG_CHANNEL_DATA
+  decrements the local window and may emit SSH_MSG_CHANNEL_WINDOW_ADJUST at the
+  fixed low-water mark, outbound stdout/stderr reports decrement the remote
+  budget, and inbound WINDOW_ADJUST adds nonzero bytes without overflow.
+  Over-window, malformed, overflow, redaction-sensitive, unsupported, or
+  lifecycle-invalid inputs fail closed without stdio delivery or counter
+  mutation. The accepted frontier is still local modeled channel-data/stdio plus
+  local channel-window accounting only: live encrypted socket delivery, remote
+  receipt, hardware reachability, OpenSSH/POSIX/Linux compatibility, broad
+  expansion, phase transition, and ssh-ready=true remain deferred. The selected
+  next bounded task is
+  phase12-ssh-channel-window-accounting-feature-smoke-20260623.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
