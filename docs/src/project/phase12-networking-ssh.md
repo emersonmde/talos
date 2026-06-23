@@ -8249,3 +8249,23 @@ authentication/channel/shell-attachment prerequisites. The accepted frontier
 remains channel-data-stdio-local=true only; live-reachability=false,
 channel-window-management=false, and ssh-ready=false remain authoritative. The
 selected next bounded task is phase12-ssh-channel-data-stdio-closeout-20260623.
+
+phase12-ssh-channel-data-stdio-closeout-20260623 accepts the local modeled SSH
+channel-data/stdio closeout. The reconciled frontier covers only local modeled
+byte plumbing below live encrypted transport: inbound SSH_MSG_CHANNEL_DATA can
+be classified as local stdin delivery after the accepted authentication,
+session channel, shell request, shell attachment, local process/session, stdio
+descriptor ownership, open lifecycle, and bounded nonzero data prerequisites;
+stdout/stderr are represented only as local packet-shape reports from attached
+stdio ownership.
+
+The accepted counters are authentication-success=true, session-count=1,
+channel-count=1, shell-request-count=1, shell-attached=true, and
+channel-data-stdio-local=true only for the local modeled success path.
+live-reachability=false, channel-window-management=false, and ssh-ready=false
+remain authoritative. Live encrypted socket delivery, remote receipt, channel
+window management, EOF/close/exit-status behavior, hardware reachability,
+OpenSSH/POSIX/Linux compatibility, broad command expansion, phase transition,
+and ssh-ready=true remain deferred. selected_next_task is null and
+planningNeeded=true because no explicit queued/ready follow-up task exists for
+the worker to promote without supervisor planning.
