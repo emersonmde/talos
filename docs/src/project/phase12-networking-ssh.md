@@ -8686,3 +8686,19 @@ reachability, live remote receipt, OpenSSH/POSIX/Linux compatibility,
 PTY/SCP/SFTP, broad command expansion, phase transition, and ssh-ready=true
 remain deferred. The selected next bounded task is
 phase12-ssh-openssh-compat-discriminator-closeout-20260623.
+
+phase12-ssh-openssh-compat-discriminator-closeout-20260623 accepts the
+local/offline OpenSSH compatibility discriminator closeout. The reconciled
+frontier is exactly the accepted modeled stream-socket peer, local SSH service
+delivery, authentication/session/channel, shell attachment, channel-data/stdio,
+channel-window, channel-lifecycle, POSIX EOF/wait, and peer-output receipt
+path feeding a sanitized public transcript of optional channel-data stdout,
+optional extended-data stderr, EOF, exit-status with request type exit-status
+and want_reply=false, and close in that order. The accepted discriminator label
+remains openssh-compat-discriminator-local=true only for this local/offline
+shape; live-reachability=false, remote-receipt=false, compatibility=false, and
+ssh-ready=false remain authoritative. External OpenSSH execution, Pi 5
+reachability, live remote receipt, OpenSSH/POSIX/Linux compatibility,
+PTY/SCP/SFTP, broad command expansion, phase transition, and ssh-ready=true
+remain deferred. The selected next bounded task is
+phase12-ssh-live-openssh-client-contract-20260623.
