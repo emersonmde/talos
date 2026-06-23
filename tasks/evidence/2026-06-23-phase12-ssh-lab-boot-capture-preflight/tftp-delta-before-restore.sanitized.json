@@ -1,0 +1,88 @@
+{
+  "helper_exit_code": 0,
+  "ok": true,
+  "action": "tftp logs",
+  "tftp": {
+    "cursor_start": 4648889,
+    "cursor_end": 4650240,
+    "log_size": 4650240,
+    "tail_mode": false,
+    "truncated": false,
+    "event_count": 13,
+    "events": [
+      {
+        "status": "served",
+        "filename": "da591740/config.txt",
+        "bytes": 118
+      },
+      {
+        "status": "served",
+        "filename": "da591740/config.txt",
+        "bytes": 118
+      },
+      {
+        "status": "not_found",
+        "filename": "da591740/pieeprom.sig",
+        "bytes": null
+      },
+      {
+        "status": "served",
+        "filename": "da591740//config.txt",
+        "bytes": 118
+      },
+      {
+        "status": "served",
+        "filename": "da591740//config.txt",
+        "bytes": 118
+      },
+      {
+        "status": "served",
+        "filename": "da591740/kernel_2712.img",
+        "bytes": 104136
+      },
+      {
+        "status": "served",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "bytes": 78679
+      },
+      {
+        "status": "served",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "bytes": 5971
+      },
+      {
+        "status": "served",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "bytes": 1363
+      },
+      {
+        "status": "served",
+        "filename": "da591740//config.txt",
+        "bytes": 118
+      },
+      {
+        "status": "served",
+        "filename": "da591740//cmdline.txt",
+        "bytes": 81
+      },
+      {
+        "status": "not_found",
+        "filename": "da591740/armstub8-2712.bin",
+        "bytes": null
+      },
+      {
+        "status": "served",
+        "filename": "da591740/kernel_2712.img",
+        "bytes": 104136
+      }
+    ],
+    "raw_log_retained": false,
+    "client_identity_retained": false
+  },
+  "talos_tftp_stability": {
+    "stable": true,
+    "reason": "stable",
+    "stable_samples": 3,
+    "required_samples": 3
+  }
+}

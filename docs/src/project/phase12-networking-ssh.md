@@ -8766,3 +8766,24 @@ usable workspace-local client path for the next lab boot-capture preflight and
 selects phase12-ssh-lab-boot-capture-preflight-20260623. It does not accept
 Talos host reachability, remote receipt, compatibility, PTY/SCP/SFTP, broad
 command expansion, phase transition, or ssh-ready=true.
+
+phase12-ssh-lab-boot-capture-preflight-20260623 accepts only the serialized
+lab boot-capture freshness precondition for the next live OpenSSH client
+discriminator retry. The worker acquired hardwareTestLock, used the current
+restored known-good/control boot identity without publishing a new candidate,
+captured sanitized lab API identity, fresh serial/TFTP cursors, a control power
+cycle, stable same-cursor TFTP delta, final pre-restore identity, and restore
+proof, then released the lock with the prior control tree restored. The stable
+TFTP delta included served da591740/kernel_2712.img fetches at 104,136 bytes
+from the restored control tree; final pre-restore and post-restore identities
+matched the pre-run tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. The serial
+cursor remained saturated and direct-read observation was classified
+saturated-cursor-capture-blocked, so serial readiness was recorded as status
+only. Retained evidence excludes raw serial text, raw TFTP lines, client
+identity, boot artifact bytes, OpenSSH logs, key material, user/address
+identifiers, and stable peer identifiers. No OpenSSH execution, live TCP
+attempt, Talos runtime change, live reachability, remote receipt,
+compatibility, PTY/SCP/SFTP, broad command expansion, phase transition, or
+ssh-ready=true is accepted. The selected next bounded task is
+phase12-ssh-live-openssh-client-discriminator-retry-20260623.

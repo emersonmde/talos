@@ -1,0 +1,29 @@
+{
+  "helper_exit_code": 1,
+  "text_retained": false,
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "bytes": 0,
+  "truncated": false,
+  "talos_runtime_readiness": {
+    "requested_timeout_seconds": 75,
+    "elapsed_seconds": 75,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "observe_attempts": 1,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 0,
+    "required_kernel_marker": "TALOS: kernel_main",
+    "required_success_marker": "rpi5-production-timer-preemption: PASS",
+    "prompt_marker": "talos>",
+    "has_kernel_main": false,
+    "has_required_success_marker": false,
+    "has_prompt_marker": false,
+    "valid_known_good_talos_readiness": false,
+    "classification": "saturated-cursor-capture-blocked",
+    "raw_serial_retained": false
+  }
+}

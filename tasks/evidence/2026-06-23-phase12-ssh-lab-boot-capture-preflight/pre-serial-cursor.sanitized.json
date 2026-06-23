@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "action": "serial peek",
+  "cursor": 4194304,
+  "cursor_start": null,
+  "cursor_end": 4194304,
+  "retained_text_bytes": 500,
+  "drained": true,
+  "text_retained": false
+}

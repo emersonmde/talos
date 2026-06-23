@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "action": "boot snapshot",
+  "requested_snapshot": "pre-phase12-ssh-lab-boot-capture-preflight-20260623T174900Z",
+  "snapshot": {
+    "name": "pre-phase12-ssh-lab-boot-capture-preflight-20260623T174900Z",
+    "bytes": 201828
+  },
+  "snapshot_count": 586
+}
