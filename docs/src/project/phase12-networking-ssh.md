@@ -8787,3 +8787,21 @@ attempt, Talos runtime change, live reachability, remote receipt,
 compatibility, PTY/SCP/SFTP, broad command expansion, phase transition, or
 ssh-ready=true is accepted. The selected next bounded task is
 phase12-ssh-live-openssh-client-discriminator-retry-20260623.
+
+phase12-ssh-live-openssh-client-discriminator-retry-20260623 accepts only
+fail-closed blocker evidence for the live OpenSSH client discriminator retry.
+The worker owned hardwareTestLock, published a task-owned candidate with boot
+tree hash fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333
+and 87,432-byte kernel_2712.img, power-cycled once, launched exactly one
+workspace-local OpenSSH client attempt, and restored the pre-run boot tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. The lab
+API still reported the published candidate after power, but the TFTP delta
+from the saved cursor had zero events and the saturated serial cursor produced
+zero fresh bytes, so selected-candidate fetch/progress was not proven. The
+OpenSSH attempt launched and failed closed as no-tcp-connect/tcp-timeout, but
+that is retained only as secondary public client evidence because the exercised
+candidate was not proven. The accepted blocker label is
+lab-capture-regressed. No live reachability, remote receipt, compatibility,
+PTY/SCP/SFTP, broad command expansion, phase transition, or ssh-ready=true is
+accepted. Supervisor planning is required before any remote-receipt contract or
+fresh live discriminator retry.

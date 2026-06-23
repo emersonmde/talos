@@ -1,0 +1,68 @@
+{
+  "task_id": "phase12-ssh-live-openssh-client-discriminator-retry-20260623",
+  "classification": "lab-capture-regressed",
+  "accepted_tooling_precondition": "phase12-ssh-runner-openssh-client-provisioning-preflight-20260623",
+  "accepted_lab_capture_precondition": "phase12-ssh-lab-boot-capture-preflight-20260623",
+  "candidate": {
+    "candidate_kernel": {
+      "size_bytes": 87432,
+      "sha256": "110e66ef6867a70cc8b72f52c0786a8f4037796b4058ee4a27ba1371ba8c12d5"
+    },
+    "tftp_candidate_kernel_fetch_observed": false
+  },
+  "boot_identity": {
+    "pre_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "published_tree_hash": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333",
+    "post_power_tree_hash": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333",
+    "final_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img"
+  },
+  "tftp": {
+    "cursor_start": 4650240,
+    "cursor_end": 4650240,
+    "log_size": 4650240,
+    "tail_mode": false,
+    "truncated": false,
+    "event_count": 0,
+    "events": [],
+    "raw_log_retained": false,
+    "client_identity_retained": false
+  },
+  "serial": {
+    "ok": true,
+    "cursor_start": 4194304,
+    "cursor_end": 4194304,
+    "bytes": 0,
+    "contains_talos": false,
+    "contains_kernel_main": false,
+    "contains_prompt": false,
+    "raw_text_retained": false
+  },
+  "openssh": {
+    "invocation_class": "openssh-client-port22-no-pty-no-password-no-pubkey-bounded-timeout",
+    "launched": true,
+    "public_phase": "no-tcp-connect",
+    "exit_category": "tcp-timeout",
+    "client_exit_code": 255,
+    "raw_output_bytes": 62,
+    "retained_raw_output": false,
+    "raw_output_removed": true
+  },
+  "claims": {
+    "live_reachability_true": false,
+    "remote_receipt_true": false,
+    "compatibility_true": false,
+    "phase_transition": false,
+    "ssh_ready_true": false
+  },
+  "redaction_review": {
+    "result": "pass",
+    "raw_openssh_log_retained": false,
+    "raw_serial_text_retained": false,
+    "raw_tftp_log_retained": false,
+    "key_material_retained": false,
+    "user_or_address_retained": false,
+    "stable_peer_identifier_retained": false,
+    "private_user_data_retained": false
+  }
+}

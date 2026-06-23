@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "action": "boot archive publish",
+  "boot": {
+    "effective_kernel": "kernel_2712.img",
+    "configured_kernel": "kernel_2712.img",
+    "tree_hash": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333",
+    "config": {
+      "enable_rp1_uart": "1",
+      "kernel": "kernel_2712.img",
+      "os_check": "0"
+    }
+  },
+  "archive": {
+    "file_count": null,
+    "extracted_bytes": null
+  }
+}

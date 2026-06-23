@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "bytes": 0,
+  "contains_talos": false,
+  "contains_kernel_main": false,
+  "contains_prompt": false,
+  "raw_text_retained": false
+}

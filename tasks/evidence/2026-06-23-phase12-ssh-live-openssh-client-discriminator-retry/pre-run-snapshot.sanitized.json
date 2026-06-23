@@ -1,0 +1,9 @@
+{
+  "ok": true,
+  "action": "boot snapshot",
+  "snapshot": {
+    "name": "phase12-ssh-live-openssh-retry-pre-20260623T180409Z",
+    "bytes": 201808
+  },
+  "retained_snapshot_list": false
+}
