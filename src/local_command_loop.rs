@@ -858,6 +858,27 @@ impl LocalCommandProcessLifecycleRecord {
     const fn with_process_id(self, process_id: u64) -> Self {
         Self { process_id, ..self }
     }
+
+    pub(crate) const fn completed_wait_exit_status_u32(self) -> Option<u32> {
+        if !matches!(self.state, LocalCommandProcessState::Exited)
+            || !self.reaped
+            || self.status != self.observed_status
+            || self.status > u32::MAX as u64
+        {
+            return None;
+        }
+        Some(self.status as u32)
+    }
+
+    #[cfg(test)]
+    pub(crate) const fn ssh_model_test_exit_record(status: u32) -> Self {
+        Self::exited(
+            LOCAL_COMMAND_EXEC_PROCESS_ID,
+            1,
+            b"/bin/status42",
+            status as u64,
+        )
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

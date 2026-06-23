@@ -12,6 +12,7 @@ use ssh_key::{Algorithm, PublicKey, Signature, encoding::Decode};
 
 use crate::{
     csprng::OperatorSeededCsprng,
+    local_command_loop::LocalCommandProcessLifecycleRecord,
     ssh_key_readiness::{
         AuthorizedKeyMatchLabel, AuthorizedKeyMatchReport, HostKeyPrivateMaterial,
         SshKeyReadinessLabel, SshKeyReadinessReport,
@@ -199,6 +200,7 @@ pub(crate) enum SshServiceReadinessLabel {
     ChannelLifecycleExitStatusEmitted,
     ChannelLifecycleCloseReceived,
     ChannelLifecycleCloseEmitted,
+    ChannelLifecycleEofEmitted,
     ChannelLifecycleFailureAuthenticationMissing,
     ChannelLifecycleFailureChannelMissing,
     ChannelLifecycleFailureShellAttachmentMissing,
@@ -210,6 +212,19 @@ pub(crate) enum SshServiceReadinessLabel {
     ChannelLifecycleFailureDuplicate,
     ChannelLifecycleFailureLifecycleViolation,
     ChannelLifecycleFailureRedactionSensitive,
+    PosixEofWaitPrerequisiteOnly,
+    PosixEofWaitStdinEofLocal,
+    PosixEofWaitProcessCompleted,
+    PosixEofWaitExitStatusLocal,
+    PosixEofWaitStdoutEofLocal,
+    PosixEofWaitCloseLocal,
+    PosixEofWaitFailurePrerequisiteMissing,
+    PosixEofWaitFailureProcessMissing,
+    PosixEofWaitFailureWaitConsumed,
+    PosixEofWaitFailureLifecycleViolation,
+    PosixEofWaitFailureBackpressure,
+    PosixEofWaitFailureClosedPeer,
+    PosixEofWaitFailureRedactionSensitive,
     SocketDeliveryLocal,
     SocketDeliveryInputDispatched,
     SocketDeliveryOutputQueued,
@@ -619,6 +634,7 @@ impl SshServiceReadinessLabel {
                 "sshservicediag-channel-lifecycle-close-received"
             }
             Self::ChannelLifecycleCloseEmitted => "sshservicediag-channel-lifecycle-close-emitted",
+            Self::ChannelLifecycleEofEmitted => "sshservicediag-channel-lifecycle-eof-emitted",
             Self::ChannelLifecycleFailureAuthenticationMissing => {
                 "sshservicediag-channel-lifecycle-failure-authentication-missing"
             }
@@ -651,6 +667,33 @@ impl SshServiceReadinessLabel {
             }
             Self::ChannelLifecycleFailureRedactionSensitive => {
                 "sshservicediag-channel-lifecycle-failure-redaction-sensitive"
+            }
+            Self::PosixEofWaitPrerequisiteOnly => "sshservicediag-posix-eof-wait-prerequisite-only",
+            Self::PosixEofWaitStdinEofLocal => "sshservicediag-posix-eof-wait-stdin-eof-local",
+            Self::PosixEofWaitProcessCompleted => "sshservicediag-posix-eof-wait-process-completed",
+            Self::PosixEofWaitExitStatusLocal => "sshservicediag-posix-eof-wait-exit-status-local",
+            Self::PosixEofWaitStdoutEofLocal => "sshservicediag-posix-eof-wait-stdout-eof-local",
+            Self::PosixEofWaitCloseLocal => "sshservicediag-posix-eof-wait-close-local",
+            Self::PosixEofWaitFailurePrerequisiteMissing => {
+                "sshservicediag-posix-eof-wait-failure-prerequisite-missing"
+            }
+            Self::PosixEofWaitFailureProcessMissing => {
+                "sshservicediag-posix-eof-wait-failure-process-missing"
+            }
+            Self::PosixEofWaitFailureWaitConsumed => {
+                "sshservicediag-posix-eof-wait-failure-wait-consumed"
+            }
+            Self::PosixEofWaitFailureLifecycleViolation => {
+                "sshservicediag-posix-eof-wait-failure-lifecycle-violation"
+            }
+            Self::PosixEofWaitFailureBackpressure => {
+                "sshservicediag-posix-eof-wait-failure-backpressure"
+            }
+            Self::PosixEofWaitFailureClosedPeer => {
+                "sshservicediag-posix-eof-wait-failure-closed-peer"
+            }
+            Self::PosixEofWaitFailureRedactionSensitive => {
+                "sshservicediag-posix-eof-wait-failure-redaction-sensitive"
             }
             Self::SocketDeliveryLocal => "sshservicediag-socket-delivery-local",
             Self::SocketDeliveryInputDispatched => {
@@ -746,6 +789,7 @@ const MAX_SSH_SESSION_SHELL_ATTACHMENT_LABELS: usize = 14;
 const MAX_SSH_CHANNEL_DATA_STDIO_LABELS: usize = 12;
 const MAX_SSH_CHANNEL_WINDOW_ACCOUNTING_LABELS: usize = 14;
 const MAX_SSH_CHANNEL_LIFECYCLE_LABELS: usize = 14;
+const MAX_SSH_POSIX_EOF_WAIT_LABELS: usize = 20;
 const MAX_SSH_SOCKET_DELIVERY_LABELS: usize = 16;
 const SSH_PREAUTH_STRING_MAX_BYTES: usize = 256;
 const SSH_PREAUTH_PUBLIC_KEY_BLOB_MAX_BYTES: usize = 512;
@@ -4588,6 +4632,7 @@ fn channel_window_accounting_failure(
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum SshChannelLifecycleResult {
     InboundEofReceivedLocal,
+    OutboundEofModeled,
     ExitStatusRequestModeled,
     InboundCloseReceivedLocal,
     OutboundCloseModeled,
@@ -4607,6 +4652,7 @@ pub(crate) enum SshChannelLifecycleResult {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct SshChannelLifecycleState {
     eof_received: bool,
+    eof_emitted: bool,
     exit_status_emitted: bool,
     close_received: bool,
     close_emitted: bool,
@@ -4616,6 +4662,7 @@ impl SshChannelLifecycleState {
     pub(crate) const fn new() -> Self {
         Self {
             eof_received: false,
+            eof_emitted: false,
             exit_status_emitted: false,
             close_received: false,
             close_emitted: false,
@@ -4624,6 +4671,10 @@ impl SshChannelLifecycleState {
 
     pub(crate) const fn eof_received(self) -> bool {
         self.eof_received
+    }
+
+    pub(crate) const fn eof_emitted(self) -> bool {
+        self.eof_emitted
     }
 
     pub(crate) const fn exit_status_emitted(self) -> bool {
@@ -4661,6 +4712,12 @@ pub(crate) struct SshChannelExitStatusOutputInput {
     pub(crate) exit_status: u32,
 }
 
+pub(crate) struct SshChannelEofOutputInput {
+    pub(crate) shell_attached: bool,
+    pub(crate) channel_lifecycle_open: bool,
+    pub(crate) redaction_sensitive: bool,
+}
+
 pub(crate) struct SshChannelCloseOutputInput {
     pub(crate) shell_attached: bool,
     pub(crate) channel_lifecycle_open: bool,
@@ -4679,6 +4736,7 @@ pub(crate) struct SshChannelLifecycleReport {
     want_reply: Option<bool>,
     exit_status: Option<u32>,
     eof_received: bool,
+    eof_emitted: bool,
     exit_status_emitted: bool,
     close_received: bool,
     close_emitted: bool,
@@ -4709,6 +4767,7 @@ impl SshChannelLifecycleReport {
             want_reply,
             exit_status,
             eof_received: state.eof_received(),
+            eof_emitted: state.eof_emitted(),
             exit_status_emitted: state.exit_status_emitted(),
             close_received: state.close_received(),
             close_emitted: state.close_emitted(),
@@ -5003,6 +5062,81 @@ pub(crate) fn classify_ssh_channel_lifecycle_exit_status_output(
     report
 }
 
+pub(crate) fn classify_ssh_channel_lifecycle_eof_output(
+    state: &mut SshChannelLifecycleState,
+    input: SshChannelEofOutputInput,
+) -> SshChannelLifecycleReport {
+    if input.redaction_sensitive {
+        return channel_lifecycle_failure(
+            *state,
+            SshChannelLifecycleResult::ChannelLifecycleFailureRedactionSensitive,
+            SshServiceReadinessLabel::ChannelLifecycleFailureRedactionSensitive,
+            None,
+            Some(SSH_MSG_CHANNEL_EOF),
+            0,
+            None,
+            None,
+            None,
+        );
+    }
+    if !input.shell_attached {
+        return channel_lifecycle_failure(
+            *state,
+            SshChannelLifecycleResult::ChannelLifecycleFailureShellAttachmentMissing,
+            SshServiceReadinessLabel::ChannelLifecycleFailureShellAttachmentMissing,
+            None,
+            Some(SSH_MSG_CHANNEL_EOF),
+            0,
+            None,
+            None,
+            None,
+        );
+    }
+    if !input.channel_lifecycle_open || !state.channel_lifecycle_open() {
+        return channel_lifecycle_failure(
+            *state,
+            SshChannelLifecycleResult::ChannelLifecycleFailureLifecycleViolation,
+            SshServiceReadinessLabel::ChannelLifecycleFailureLifecycleViolation,
+            None,
+            Some(SSH_MSG_CHANNEL_EOF),
+            0,
+            None,
+            None,
+            None,
+        );
+    }
+    if state.eof_emitted() {
+        return channel_lifecycle_failure(
+            *state,
+            SshChannelLifecycleResult::ChannelLifecycleFailureDuplicate,
+            SshServiceReadinessLabel::ChannelLifecycleFailureDuplicate,
+            None,
+            Some(SSH_MSG_CHANNEL_EOF),
+            0,
+            None,
+            None,
+            None,
+        );
+    }
+
+    state.eof_emitted = true;
+    let mut report = SshChannelLifecycleReport::new(
+        SshChannelLifecycleResult::OutboundEofModeled,
+        *state,
+        None,
+        Some(SSH_MSG_CHANNEL_EOF),
+        2,
+        None,
+        None,
+        None,
+        true,
+    );
+    report.push_success_prefix();
+    report.push(SshServiceReadinessLabel::ChannelLifecycleEofEmitted);
+    report.push(SshServiceReadinessLabel::NotReady);
+    report
+}
+
 pub(crate) fn classify_ssh_channel_lifecycle_close_output(
     state: &mut SshChannelLifecycleState,
     input: SshChannelCloseOutputInput,
@@ -5226,6 +5360,499 @@ fn parse_channel_lifecycle_request_shape(payload: &[u8]) -> (Option<usize>, Opti
         return (request_type_len, None, 3);
     }
     (request_type_len, Some(want_reply_byte == 1), 4)
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SshPosixEofWaitResult {
+    LocalEofWaitCloseModeled,
+    FailurePrerequisiteMissing,
+    FailureProcessMissing,
+    FailureWaitConsumed,
+    FailureLifecycleViolation,
+    FailureBackpressure,
+    FailureClosedPeer,
+    FailureRedactionSensitive,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SshPosixEofWaitProcessInput {
+    CompletedWaitRecord(LocalCommandProcessLifecycleRecord),
+    Missing,
+    AlreadyConsumed,
+}
+
+pub(crate) struct SshPosixEofWaitInput<'a> {
+    pub(crate) socket_delivery_local: bool,
+    pub(crate) authentication_success: bool,
+    pub(crate) open_session_channel: bool,
+    pub(crate) shell_attached: bool,
+    pub(crate) local_process_session_owned: bool,
+    pub(crate) local_stdio_descriptors_owned: bool,
+    pub(crate) channel_lifecycle_open: bool,
+    pub(crate) redaction_sensitive: bool,
+    pub(crate) force_output_backpressure: bool,
+    pub(crate) peer_closed_before_output: bool,
+    pub(crate) inbound_eof_payload: &'a [u8],
+    pub(crate) peer_close_payload: &'a [u8],
+    pub(crate) process: SshPosixEofWaitProcessInput,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SshPosixEofWaitReport {
+    labels: [SshServiceReadinessLabel; MAX_SSH_POSIX_EOF_WAIT_LABELS],
+    label_count: usize,
+    result: SshPosixEofWaitResult,
+    request_message_number: Option<u8>,
+    output_message_number: Option<u8>,
+    exit_status: Option<u32>,
+    stdin_eof_received: bool,
+    process_completed: bool,
+    wait_record_consumed: bool,
+    exit_status_emitted: bool,
+    stdout_eof_emitted: bool,
+    local_close_emitted: bool,
+    peer_close_received: bool,
+    fully_closed: bool,
+    socket_delivery_local: bool,
+    posix_eof_wait_local: bool,
+}
+
+impl SshPosixEofWaitReport {
+    fn new(
+        result: SshPosixEofWaitResult,
+        request_message_number: Option<u8>,
+        output_message_number: Option<u8>,
+        exit_status: Option<u32>,
+        state: SshChannelLifecycleState,
+        socket_delivery_local: bool,
+        process_completed: bool,
+        wait_record_consumed: bool,
+        posix_eof_wait_local: bool,
+    ) -> Self {
+        Self {
+            labels: [SshServiceReadinessLabel::NotReady; MAX_SSH_POSIX_EOF_WAIT_LABELS],
+            label_count: 0,
+            result,
+            request_message_number,
+            output_message_number,
+            exit_status,
+            stdin_eof_received: state.eof_received(),
+            process_completed,
+            wait_record_consumed,
+            exit_status_emitted: state.exit_status_emitted(),
+            stdout_eof_emitted: state.eof_emitted(),
+            local_close_emitted: state.close_emitted(),
+            peer_close_received: state.close_received(),
+            fully_closed: !state.channel_lifecycle_open(),
+            socket_delivery_local,
+            posix_eof_wait_local,
+        }
+    }
+
+    fn success(state: SshChannelLifecycleState, exit_status: u32) -> Self {
+        let mut report = Self::new(
+            SshPosixEofWaitResult::LocalEofWaitCloseModeled,
+            Some(SSH_MSG_CHANNEL_CLOSE),
+            Some(SSH_MSG_CHANNEL_CLOSE),
+            Some(exit_status),
+            state,
+            true,
+            true,
+            true,
+            true,
+        );
+        report.push(SshServiceReadinessLabel::SocketDeliveryLocal);
+        report.push(SshServiceReadinessLabel::AuthenticationSuccessLocalOnly);
+        report.push(SshServiceReadinessLabel::SessionOpenLocalOnly);
+        report.push(SshServiceReadinessLabel::ChannelOpenLocalOnly);
+        report.push(SshServiceReadinessLabel::ShellAttached);
+        report.push(SshServiceReadinessLabel::ChannelDataStdioLocalOnly);
+        report.push(SshServiceReadinessLabel::ChannelWindowAccountingPrerequisiteOnly);
+        report.push(SshServiceReadinessLabel::ChannelLifecyclePrerequisiteOnly);
+        report.push(SshServiceReadinessLabel::PosixEofWaitPrerequisiteOnly);
+        report.push(SshServiceReadinessLabel::PosixEofWaitStdinEofLocal);
+        report.push(SshServiceReadinessLabel::PosixEofWaitProcessCompleted);
+        report.push(SshServiceReadinessLabel::PosixEofWaitExitStatusLocal);
+        report.push(SshServiceReadinessLabel::PosixEofWaitStdoutEofLocal);
+        report.push(SshServiceReadinessLabel::PosixEofWaitCloseLocal);
+        report.push(SshServiceReadinessLabel::NotReady);
+        report
+    }
+
+    fn failure(
+        result: SshPosixEofWaitResult,
+        label: SshServiceReadinessLabel,
+        request_message_number: Option<u8>,
+        output_message_number: Option<u8>,
+        exit_status: Option<u32>,
+        state: SshChannelLifecycleState,
+        socket_delivery_local: bool,
+        process_completed: bool,
+        wait_record_consumed: bool,
+    ) -> Self {
+        let mut report = Self::new(
+            result,
+            request_message_number,
+            output_message_number,
+            exit_status,
+            state,
+            socket_delivery_local,
+            process_completed,
+            wait_record_consumed,
+            false,
+        );
+        report.push(label);
+        report.push(SshServiceReadinessLabel::NotReady);
+        report
+    }
+
+    fn push(&mut self, label: SshServiceReadinessLabel) {
+        self.labels[self.label_count] = label;
+        self.label_count += 1;
+    }
+
+    pub(crate) fn labels(&self) -> &[SshServiceReadinessLabel] {
+        &self.labels[..self.label_count]
+    }
+
+    pub(crate) const fn result(self) -> SshPosixEofWaitResult {
+        self.result
+    }
+
+    pub(crate) const fn request_message_number(self) -> Option<u8> {
+        self.request_message_number
+    }
+
+    pub(crate) const fn output_message_number(self) -> Option<u8> {
+        self.output_message_number
+    }
+
+    pub(crate) const fn exit_status(self) -> Option<u32> {
+        self.exit_status
+    }
+
+    pub(crate) const fn stdin_eof_received(self) -> bool {
+        self.stdin_eof_received
+    }
+
+    pub(crate) const fn process_completed(self) -> bool {
+        self.process_completed
+    }
+
+    pub(crate) const fn wait_record_consumed(self) -> bool {
+        self.wait_record_consumed
+    }
+
+    pub(crate) const fn exit_status_emitted(self) -> bool {
+        self.exit_status_emitted
+    }
+
+    pub(crate) const fn stdout_eof_emitted(self) -> bool {
+        self.stdout_eof_emitted
+    }
+
+    pub(crate) const fn local_close_emitted(self) -> bool {
+        self.local_close_emitted
+    }
+
+    pub(crate) const fn peer_close_received(self) -> bool {
+        self.peer_close_received
+    }
+
+    pub(crate) const fn fully_closed(self) -> bool {
+        self.fully_closed
+    }
+
+    pub(crate) const fn socket_delivery_local(self) -> bool {
+        self.socket_delivery_local
+    }
+
+    pub(crate) const fn posix_eof_wait_local(self) -> bool {
+        self.posix_eof_wait_local
+    }
+
+    pub(crate) const fn live_reachability(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn remote_receipt(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn compatibility(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn ssh_ready(self) -> bool {
+        false
+    }
+}
+
+pub(crate) fn classify_ssh_posix_eof_wait_integration(
+    state: &mut SshChannelLifecycleState,
+    input: SshPosixEofWaitInput<'_>,
+) -> SshPosixEofWaitReport {
+    if input.redaction_sensitive {
+        return posix_eof_wait_failure(
+            *state,
+            SshPosixEofWaitResult::FailureRedactionSensitive,
+            SshServiceReadinessLabel::PosixEofWaitFailureRedactionSensitive,
+            None,
+            None,
+            None,
+            input.socket_delivery_local,
+            false,
+            false,
+        );
+    }
+    if !input.socket_delivery_local
+        || !input.authentication_success
+        || !input.open_session_channel
+        || !input.shell_attached
+        || !input.local_process_session_owned
+        || !input.local_stdio_descriptors_owned
+    {
+        return posix_eof_wait_failure(
+            *state,
+            SshPosixEofWaitResult::FailurePrerequisiteMissing,
+            SshServiceReadinessLabel::PosixEofWaitFailurePrerequisiteMissing,
+            input.inbound_eof_payload.first().copied(),
+            None,
+            None,
+            input.socket_delivery_local,
+            false,
+            false,
+        );
+    }
+    if !input.channel_lifecycle_open || !state.channel_lifecycle_open() {
+        return posix_eof_wait_failure(
+            *state,
+            SshPosixEofWaitResult::FailureLifecycleViolation,
+            SshServiceReadinessLabel::PosixEofWaitFailureLifecycleViolation,
+            input.inbound_eof_payload.first().copied(),
+            None,
+            None,
+            input.socket_delivery_local,
+            false,
+            false,
+        );
+    }
+    if input.force_output_backpressure {
+        return posix_eof_wait_failure(
+            *state,
+            SshPosixEofWaitResult::FailureBackpressure,
+            SshServiceReadinessLabel::PosixEofWaitFailureBackpressure,
+            None,
+            Some(SSH_MSG_CHANNEL_REQUEST),
+            None,
+            input.socket_delivery_local,
+            false,
+            false,
+        );
+    }
+    if input.peer_closed_before_output {
+        return posix_eof_wait_failure(
+            *state,
+            SshPosixEofWaitResult::FailureClosedPeer,
+            SshServiceReadinessLabel::PosixEofWaitFailureClosedPeer,
+            None,
+            Some(SSH_MSG_CHANNEL_REQUEST),
+            None,
+            input.socket_delivery_local,
+            false,
+            false,
+        );
+    }
+
+    let stdin_eof = classify_ssh_channel_lifecycle_inbound(
+        state,
+        SshChannelLifecycleInboundInput {
+            authentication_success: input.authentication_success,
+            open_session_channel: input.open_session_channel,
+            shell_attached: input.shell_attached,
+            channel_lifecycle_open: input.channel_lifecycle_open,
+            redaction_sensitive: input.redaction_sensitive,
+            decrypted_payload: input.inbound_eof_payload,
+        },
+    );
+    if stdin_eof.result() != SshChannelLifecycleResult::InboundEofReceivedLocal {
+        return posix_eof_wait_from_lifecycle_failure(
+            *state,
+            stdin_eof,
+            input.socket_delivery_local,
+            false,
+            false,
+        );
+    }
+
+    let exit_status = match input.process {
+        SshPosixEofWaitProcessInput::CompletedWaitRecord(record) => {
+            let Some(status) = record.completed_wait_exit_status_u32() else {
+                return posix_eof_wait_failure(
+                    *state,
+                    SshPosixEofWaitResult::FailureProcessMissing,
+                    SshServiceReadinessLabel::PosixEofWaitFailureProcessMissing,
+                    None,
+                    Some(SSH_MSG_CHANNEL_REQUEST),
+                    None,
+                    input.socket_delivery_local,
+                    false,
+                    false,
+                );
+            };
+            status
+        }
+        SshPosixEofWaitProcessInput::Missing => {
+            return posix_eof_wait_failure(
+                *state,
+                SshPosixEofWaitResult::FailureProcessMissing,
+                SshServiceReadinessLabel::PosixEofWaitFailureProcessMissing,
+                None,
+                Some(SSH_MSG_CHANNEL_REQUEST),
+                None,
+                input.socket_delivery_local,
+                false,
+                false,
+            );
+        }
+        SshPosixEofWaitProcessInput::AlreadyConsumed => {
+            return posix_eof_wait_failure(
+                *state,
+                SshPosixEofWaitResult::FailureWaitConsumed,
+                SshServiceReadinessLabel::PosixEofWaitFailureWaitConsumed,
+                None,
+                Some(SSH_MSG_CHANNEL_REQUEST),
+                None,
+                input.socket_delivery_local,
+                false,
+                true,
+            );
+        }
+    };
+
+    let exit_status_report = classify_ssh_channel_lifecycle_exit_status_output(
+        state,
+        SshChannelExitStatusOutputInput {
+            shell_attached: input.shell_attached,
+            local_process_session_owned: input.local_process_session_owned,
+            channel_lifecycle_open: input.channel_lifecycle_open,
+            exit_status_available: true,
+            redaction_sensitive: input.redaction_sensitive,
+            exit_status,
+        },
+    );
+    if exit_status_report.result() != SshChannelLifecycleResult::ExitStatusRequestModeled {
+        return posix_eof_wait_from_lifecycle_failure(
+            *state,
+            exit_status_report,
+            input.socket_delivery_local,
+            true,
+            true,
+        );
+    }
+
+    let stdout_eof = classify_ssh_channel_lifecycle_eof_output(
+        state,
+        SshChannelEofOutputInput {
+            shell_attached: input.shell_attached,
+            channel_lifecycle_open: input.channel_lifecycle_open,
+            redaction_sensitive: input.redaction_sensitive,
+        },
+    );
+    if stdout_eof.result() != SshChannelLifecycleResult::OutboundEofModeled {
+        return posix_eof_wait_from_lifecycle_failure(
+            *state,
+            stdout_eof,
+            input.socket_delivery_local,
+            true,
+            true,
+        );
+    }
+
+    let close_sent = classify_ssh_channel_lifecycle_close_output(
+        state,
+        SshChannelCloseOutputInput {
+            shell_attached: input.shell_attached,
+            channel_lifecycle_open: input.channel_lifecycle_open,
+            redaction_sensitive: input.redaction_sensitive,
+        },
+    );
+    if close_sent.result() != SshChannelLifecycleResult::OutboundCloseModeled {
+        return posix_eof_wait_from_lifecycle_failure(
+            *state,
+            close_sent,
+            input.socket_delivery_local,
+            true,
+            true,
+        );
+    }
+
+    let peer_close = classify_ssh_channel_lifecycle_inbound(
+        state,
+        SshChannelLifecycleInboundInput {
+            authentication_success: input.authentication_success,
+            open_session_channel: input.open_session_channel,
+            shell_attached: input.shell_attached,
+            channel_lifecycle_open: input.channel_lifecycle_open,
+            redaction_sensitive: input.redaction_sensitive,
+            decrypted_payload: input.peer_close_payload,
+        },
+    );
+    if peer_close.result() != SshChannelLifecycleResult::InboundCloseReceivedLocal {
+        return posix_eof_wait_from_lifecycle_failure(
+            *state,
+            peer_close,
+            input.socket_delivery_local,
+            true,
+            true,
+        );
+    }
+
+    SshPosixEofWaitReport::success(*state, exit_status)
+}
+
+fn posix_eof_wait_from_lifecycle_failure(
+    state: SshChannelLifecycleState,
+    lifecycle: SshChannelLifecycleReport,
+    socket_delivery_local: bool,
+    process_completed: bool,
+    wait_record_consumed: bool,
+) -> SshPosixEofWaitReport {
+    posix_eof_wait_failure(
+        state,
+        SshPosixEofWaitResult::FailureLifecycleViolation,
+        SshServiceReadinessLabel::PosixEofWaitFailureLifecycleViolation,
+        lifecycle.request_message_number(),
+        lifecycle.output_message_number(),
+        lifecycle.exit_status(),
+        socket_delivery_local,
+        process_completed,
+        wait_record_consumed,
+    )
+}
+
+fn posix_eof_wait_failure(
+    state: SshChannelLifecycleState,
+    result: SshPosixEofWaitResult,
+    label: SshServiceReadinessLabel,
+    request_message_number: Option<u8>,
+    output_message_number: Option<u8>,
+    exit_status: Option<u32>,
+    socket_delivery_local: bool,
+    process_completed: bool,
+    wait_record_consumed: bool,
+) -> SshPosixEofWaitReport {
+    SshPosixEofWaitReport::failure(
+        result,
+        label,
+        request_message_number,
+        output_message_number,
+        exit_status,
+        state,
+        socket_delivery_local,
+        process_completed,
+        wait_record_consumed,
+    )
 }
 
 struct ParsedSshPublickeyVerificationRequest<'a> {
@@ -6730,6 +7357,7 @@ mod tests {
     use crate::{
         csprng::OperatorSeededCsprng,
         entropy::{self, EntropyDiagnosticSnapshot, OperatorSeedObservation},
+        local_command_loop,
         ssh_key_readiness::{
             self, AuthorizedKeyMatchReport, HostKeyMaterialMetadata, SshKeyReadinessSnapshot,
         },
@@ -6860,6 +7488,16 @@ mod tests {
         report: &SshChannelLifecycleReport,
     ) -> [&'static str; MAX_SSH_CHANNEL_LIFECYCLE_LABELS] {
         let mut labels = [""; MAX_SSH_CHANNEL_LIFECYCLE_LABELS];
+        for (index, label) in report.labels().iter().enumerate() {
+            labels[index] = label.name();
+        }
+        labels
+    }
+
+    fn posix_eof_wait_label_names(
+        report: &SshPosixEofWaitReport,
+    ) -> [&'static str; MAX_SSH_POSIX_EOF_WAIT_LABELS] {
+        let mut labels = [""; MAX_SSH_POSIX_EOF_WAIT_LABELS];
         for (index, label) in report.labels().iter().enumerate() {
             labels[index] = label.name();
         }
@@ -7126,6 +7764,31 @@ mod tests {
             output_stream: SshChannelDataStdioOutputStream::Stdout,
             output_len: 8,
             force_output_backpressure: false,
+        }
+    }
+
+    fn posix_eof_wait_success_input<'a>(
+        inbound_eof_payload: &'a [u8],
+        peer_close_payload: &'a [u8],
+    ) -> SshPosixEofWaitInput<'a> {
+        SshPosixEofWaitInput {
+            socket_delivery_local: true,
+            authentication_success: true,
+            open_session_channel: true,
+            shell_attached: true,
+            local_process_session_owned: true,
+            local_stdio_descriptors_owned: true,
+            channel_lifecycle_open: true,
+            redaction_sensitive: false,
+            force_output_backpressure: false,
+            peer_closed_before_output: false,
+            inbound_eof_payload,
+            peer_close_payload,
+            process: SshPosixEofWaitProcessInput::CompletedWaitRecord(
+                local_command_loop::LocalCommandProcessLifecycleRecord::ssh_model_test_exit_record(
+                    42,
+                ),
+            ),
         }
     }
 
@@ -10309,6 +10972,183 @@ mod tests {
         );
         assert!(!rejected_after_close.channel_data_stdio_local());
         assert!(!rejected_after_close.ssh_ready());
+    }
+
+    #[test_case]
+    fn posix_eof_wait_integration_models_stdin_eof_wait_exit_status_and_close() {
+        let eof_payload = channel_eof_payload();
+        let close_payload = channel_close_payload();
+        let mut state = SshChannelLifecycleState::new();
+        let report = classify_ssh_posix_eof_wait_integration(
+            &mut state,
+            posix_eof_wait_success_input(&eof_payload, &close_payload),
+        );
+
+        assert_eq!(
+            report.result(),
+            SshPosixEofWaitResult::LocalEofWaitCloseModeled
+        );
+        assert_eq!(
+            &posix_eof_wait_label_names(&report)[..report.labels().len()],
+            &[
+                "sshservicediag-socket-delivery-local",
+                "sshservicediag-authentication-success-local-only",
+                "sshservicediag-session-open-local-only",
+                "sshservicediag-channel-open-local-only",
+                "sshservicediag-shell-attached",
+                "sshservicediag-channel-data-stdio-local-only",
+                "sshservicediag-channel-window-accounting-prerequisite-only",
+                "sshservicediag-channel-lifecycle-prerequisite-only",
+                "sshservicediag-posix-eof-wait-prerequisite-only",
+                "sshservicediag-posix-eof-wait-stdin-eof-local",
+                "sshservicediag-posix-eof-wait-process-completed",
+                "sshservicediag-posix-eof-wait-exit-status-local",
+                "sshservicediag-posix-eof-wait-stdout-eof-local",
+                "sshservicediag-posix-eof-wait-close-local",
+                "sshservicediag-not-ready",
+            ]
+        );
+        assert_eq!(report.request_message_number(), Some(SSH_MSG_CHANNEL_CLOSE));
+        assert_eq!(report.output_message_number(), Some(SSH_MSG_CHANNEL_CLOSE));
+        assert_eq!(report.exit_status(), Some(42));
+        assert!(report.stdin_eof_received());
+        assert!(report.process_completed());
+        assert!(report.wait_record_consumed());
+        assert!(report.exit_status_emitted());
+        assert!(report.stdout_eof_emitted());
+        assert!(report.local_close_emitted());
+        assert!(report.peer_close_received());
+        assert!(report.fully_closed());
+        assert!(report.socket_delivery_local());
+        assert!(report.posix_eof_wait_local());
+        assert!(state.eof_received());
+        assert!(state.eof_emitted());
+        assert!(state.exit_status_emitted());
+        assert!(state.close_emitted());
+        assert!(state.close_received());
+        assert!(!state.channel_lifecycle_open());
+        assert!(!report.live_reachability());
+        assert!(!report.remote_receipt());
+        assert!(!report.compatibility());
+        assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn posix_eof_wait_integration_fails_closed_for_missing_and_consumed_wait_records() {
+        let eof_payload = channel_eof_payload();
+        let close_payload = channel_close_payload();
+        let mut missing_input = posix_eof_wait_success_input(&eof_payload, &close_payload);
+        missing_input.process = SshPosixEofWaitProcessInput::Missing;
+        let mut missing_state = SshChannelLifecycleState::new();
+        let missing = classify_ssh_posix_eof_wait_integration(&mut missing_state, missing_input);
+
+        let mut consumed_input = posix_eof_wait_success_input(&eof_payload, &close_payload);
+        consumed_input.process = SshPosixEofWaitProcessInput::AlreadyConsumed;
+        let mut consumed_state = SshChannelLifecycleState::new();
+        let consumed = classify_ssh_posix_eof_wait_integration(&mut consumed_state, consumed_input);
+
+        assert_eq!(
+            missing.result(),
+            SshPosixEofWaitResult::FailureProcessMissing
+        );
+        assert_eq!(
+            consumed.result(),
+            SshPosixEofWaitResult::FailureWaitConsumed
+        );
+        assert!(missing.stdin_eof_received());
+        assert!(!missing.process_completed());
+        assert!(!missing.wait_record_consumed());
+        assert!(!missing.exit_status_emitted());
+        assert!(!missing.posix_eof_wait_local());
+        assert!(consumed.stdin_eof_received());
+        assert!(!consumed.process_completed());
+        assert!(consumed.wait_record_consumed());
+        assert!(!consumed.exit_status_emitted());
+        assert!(!consumed.posix_eof_wait_local());
+        assert!(
+            missing
+                .labels()
+                .contains(&SshServiceReadinessLabel::PosixEofWaitFailureProcessMissing)
+        );
+        assert!(
+            consumed
+                .labels()
+                .contains(&SshServiceReadinessLabel::PosixEofWaitFailureWaitConsumed)
+        );
+        assert!(!missing.ssh_ready());
+        assert!(!consumed.ssh_ready());
+    }
+
+    #[test_case]
+    fn posix_eof_wait_integration_fails_closed_for_prerequisites_lifecycle_and_output() {
+        let eof_payload = channel_eof_payload();
+        let close_payload = channel_close_payload();
+        let mut missing_prereq_input = posix_eof_wait_success_input(&eof_payload, &close_payload);
+        missing_prereq_input.socket_delivery_local = false;
+        let mut missing_prereq_state = SshChannelLifecycleState::new();
+        let missing_prereq = classify_ssh_posix_eof_wait_integration(
+            &mut missing_prereq_state,
+            missing_prereq_input,
+        );
+
+        let mut duplicate_state = SshChannelLifecycleState::new();
+        let _ = classify_ssh_channel_lifecycle_inbound(
+            &mut duplicate_state,
+            channel_lifecycle_success_input(&eof_payload),
+        );
+        let lifecycle = classify_ssh_posix_eof_wait_integration(
+            &mut duplicate_state,
+            posix_eof_wait_success_input(&eof_payload, &close_payload),
+        );
+
+        let mut backpressure_input = posix_eof_wait_success_input(&eof_payload, &close_payload);
+        backpressure_input.force_output_backpressure = true;
+        let mut backpressure_state = SshChannelLifecycleState::new();
+        let backpressure =
+            classify_ssh_posix_eof_wait_integration(&mut backpressure_state, backpressure_input);
+
+        let mut closed_peer_input = posix_eof_wait_success_input(&eof_payload, &close_payload);
+        closed_peer_input.peer_closed_before_output = true;
+        let mut closed_peer_state = SshChannelLifecycleState::new();
+        let closed_peer =
+            classify_ssh_posix_eof_wait_integration(&mut closed_peer_state, closed_peer_input);
+
+        let mut redaction_input = posix_eof_wait_success_input(&eof_payload, &close_payload);
+        redaction_input.redaction_sensitive = true;
+        let mut redaction_state = SshChannelLifecycleState::new();
+        let redaction =
+            classify_ssh_posix_eof_wait_integration(&mut redaction_state, redaction_input);
+
+        assert_eq!(
+            missing_prereq.result(),
+            SshPosixEofWaitResult::FailurePrerequisiteMissing
+        );
+        assert_eq!(
+            lifecycle.result(),
+            SshPosixEofWaitResult::FailureLifecycleViolation
+        );
+        assert_eq!(
+            backpressure.result(),
+            SshPosixEofWaitResult::FailureBackpressure
+        );
+        assert_eq!(
+            closed_peer.result(),
+            SshPosixEofWaitResult::FailureClosedPeer
+        );
+        assert_eq!(
+            redaction.result(),
+            SshPosixEofWaitResult::FailureRedactionSensitive
+        );
+        assert!(!missing_prereq.posix_eof_wait_local());
+        assert!(!lifecycle.posix_eof_wait_local());
+        assert!(!backpressure.posix_eof_wait_local());
+        assert!(!closed_peer.posix_eof_wait_local());
+        assert!(!redaction.posix_eof_wait_local());
+        assert!(!missing_prereq.ssh_ready());
+        assert!(!lifecycle.ssh_ready());
+        assert!(!backpressure.ssh_ready());
+        assert!(!closed_peer.ssh_ready());
+        assert!(!redaction.ssh_ready());
     }
 
     #[test_case]

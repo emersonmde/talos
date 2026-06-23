@@ -8494,3 +8494,24 @@ reachability, remote receipt, OpenSSH/POSIX/Linux compatibility, multiple
 sessions, multiple children, blocking wait, boot publication, broad command
 expansion, phase transition, and ssh-ready=true remain deferred. The selected
 next bounded task is phase12-ssh-posix-eof-wait-core-20260623.
+
+phase12-ssh-posix-eof-wait-core-20260623 accepts the bounded local modeled SSH
+POSIX EOF/wait source behavior. src/ssh_service_readiness.rs now models one
+authenticated, shell-attached local session channel receiving
+SSH_MSG_CHANNEL_EOF as stdin EOF, consuming exactly one completed
+LocalCommandProcessLifecycleRecord wait/status observation, emitting one local
+exit-status request with want_reply=false, emitting local stdout EOF, emitting
+local close, and reaching fully closed state only after peer close. The source
+also exposes fixed fail-closed labels for missing socket/auth/session/shell,
+stdio, process/session, lifecycle, missing process status, already-consumed
+wait status, backpressure, closed peer, duplicate or invalid ordering, and
+redaction-sensitive inputs. The accepted counter is posix-eof-wait-local=true
+only for this local modeled path; socket-delivery-local=true and the existing
+local authentication/session/channel/shell/channel-data/window/lifecycle
+counters remain prerequisites, while live-reachability=false,
+remote-receipt=false, compatibility=false, and ssh-ready=false remain
+authoritative. Pi 5 reachability, remote receipt, OpenSSH/POSIX/Linux
+compatibility, multiple sessions, multiple children, blocking wait, boot
+publication, broad command expansion, phase transition, and ssh-ready=true
+remain deferred. The selected next bounded task is
+phase12-ssh-posix-eof-wait-feature-smoke-20260623.
