@@ -8471,6 +8471,26 @@ live-reachability=false, remote-receipt=false, compatibility=false, and
 ssh-ready=false remain authoritative. Pi 5 reachability, remote receipt,
 OpenSSH/POSIX/Linux compatibility, POSIX process EOF/wait integration, boot
 publication, broad command expansion, phase transition, and ssh-ready=true
-remain deferred. selected_next_task is null and planningNeeded=true because no
-explicit queued/ready follow-up task exists for the worker to promote without
-supervisor planning.
+remain deferred. selected_next_task was later resolved by supervisor planning
+to phase12-ssh-posix-eof-wait-contract-20260623.
+
+phase12-ssh-posix-eof-wait-contract-20260623 accepts the bounded local modeled
+SSH POSIX EOF/wait contract. The next source task may consume only the accepted
+local socket-delivery, authentication/session/channel, shell attachment,
+channel-data/stdio, channel-window, channel-lifecycle, and one-record
+wait/exit foundations. The accepted ordering is one inbound
+SSH_MSG_CHANNEL_EOF becoming stdin EOF for exactly one local modeled attached
+process/session, process completion through the existing lifecycle/status
+record, one local exit-status request with want_reply=false, optional local
+channel EOF for stdout exhaustion, local close, and full closure only after the
+peer close is also received. Missing prerequisites, no or already-consumed
+process status, duplicate EOF/status/close, malformed or over-limit lifecycle
+input, redaction-sensitive input, backpressure, closed peer, and lifecycle
+violations fail closed. Broad command expansion and new fake/kernel-backed
+commands are rejected as progress. This accepts only a contract for local
+modeled EOF/wait integration; live-reachability=false, remote-receipt=false,
+compatibility=false, and ssh-ready=false remain authoritative. Pi 5
+reachability, remote receipt, OpenSSH/POSIX/Linux compatibility, multiple
+sessions, multiple children, blocking wait, boot publication, broad command
+expansion, phase transition, and ssh-ready=true remain deferred. The selected
+next bounded task is phase12-ssh-posix-eof-wait-core-20260623.
