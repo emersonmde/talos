@@ -17102,6 +17102,27 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   compatibility, broad expansion, phase transition, or ssh-ready=true is
   accepted. The selected next bounded task is
   phase12-ssh-session-shell-request-contract-20260622.
+- phase12-ssh-session-shell-request-contract-20260622 accepts the bounded
+  post-channel-open shell-request contract. The next implementation may
+  recognize one SSH_MSG_CHANNEL_REQUEST whose public request type is shell on
+  the already accepted local modeled session channel, with exact public fields:
+  message number, recipient channel, request type, want-reply boolean, and no
+  trailing shell request payload. This recognition does not accept shell
+  attachment. Until PTY, TTY, process, scheduler, descriptor, and filesystem
+  ownership are separately accepted, want-reply=true must produce
+  SSH_MSG_CHANNEL_FAILURE, and want-reply=false may record only no-reply
+  failure/no-attachment classification. Missing authentication, missing open
+  session channel, disabled policy, duplicate shell request,
+  redaction-sensitive paths, wrong message number, unsupported request type,
+  malformed packet, over-limit shape, trailing data, and every other
+  non-recognized path fail closed with fixed labels. The only new counter the
+  next source slice may move is shell-request-count=1; shell-attached=false,
+  live-reachability=false, and ssh-ready=false remain authoritative. No
+  CHANNEL_SUCCESS, PTY/process/shell attachment, descriptor handoff, channel
+  data, EOF/close/window flow control, exec/subsystem/pty/env/signal behavior,
+  live reachability, hardware proof, compatibility, broad expansion, phase
+  transition, or ssh-ready=true is accepted. The selected next bounded task is
+  phase12-ssh-session-shell-request-core-20260622.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

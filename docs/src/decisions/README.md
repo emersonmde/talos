@@ -12,6 +12,48 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-06-22 - Phase 12 Shell Requests Are Recognized Before Shell Attachment
+
+- Status: accepted as the bounded SSH session shell-request contract in
+  phase12-ssh-session-shell-request-contract-20260622. No Rust implementation,
+  CHANNEL_SUCCESS, shell attachment, PTY/process ownership, descriptor handoff,
+  live reachability, hardware action, OpenSSH/POSIX/Linux compatibility, broad
+  expansion, or phase transition is accepted here.
+- Context: Talos now has a local modeled post-authentication session channel
+  bookkeeping frontier. The next SSH slice needs to recognize the public shell
+  channel request without implying that a PTY, process, descriptor set, or
+  shell instance exists.
+- Decision: The first shell-request policy recognizes exactly one
+  SSH_MSG_CHANNEL_REQUEST request type shell on the existing local modeled
+  session channel. The accepted packet shape is public and exact: message
+  number, recipient channel, request type, want-reply boolean, and no trailing
+  shell request payload. Because no PTY/process/shell attachment is accepted,
+  want-reply=true must produce SSH_MSG_CHANNEL_FAILURE, while want-reply=false
+  may record only a no-reply failure/no-attachment classification. Missing
+  authentication, missing open session channel, disabled policy, duplicate
+  shell request, redaction-sensitive paths, wrong message number, unsupported
+  request type, malformed packet, over-limit shape, trailing data, and every
+  other non-recognized path fail closed.
+- Evidence level: static task/docs/source review. The task record is
+  tasks/2026-06-22-phase12-ssh-session-shell-request-contract.md.
+- Consequences: A later implementation can model shell-request-count=1 only as
+  request recognition. It cannot claim CHANNEL_SUCCESS, shell attachment,
+  PTY/TTY/process ownership, scheduler ownership, descriptor ownership,
+  current working directory, environment, filesystem-backed command execution,
+  live packet I/O, socket reachability, OpenSSH compatibility, or ssh-ready.
+  shell-attached=false, live-reachability=false, and ssh-ready=false remain
+  authoritative. Durable evidence must not retain request payload bytes,
+  channel identifiers, window sizes, packet sizes, user/operator identity, key
+  material, session-id bytes, stable identifiers, hardware data, or boot
+  artifacts.
+- Alternatives considered: accepting CHANNEL_SUCCESS immediately, combining
+  shell request recognition with PTY/process/shell attachment, treating
+  want-reply=false as implicit shell success, accepting exec/subsystem/pty/env
+  requests in the same slice, or waiting for live OpenSSH testing. These are
+  deferred or rejected because they mix protocol request recognition with
+  process, terminal, filesystem, compatibility, and live reachability
+  commitments that require separate contracts and evidence.
+
 ## 2026-06-22 - Phase 12 Session Channels Start As Post-Auth Bookkeeping
 
 - Status: accepted as the bounded SSH session channel-open contract in

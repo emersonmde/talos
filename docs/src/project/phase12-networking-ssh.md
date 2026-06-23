@@ -8063,3 +8063,28 @@ OpenSSH/POSIX/Linux compatibility, broad expansion, phase transition, or
 ssh-ready=true. shell-attached=false, live-reachability=false, and
 ssh-ready=false remain authoritative. The next bounded task is
 phase12-ssh-session-shell-request-contract-20260622.
+
+phase12-ssh-session-shell-request-contract-20260622 accepts the bounded
+post-channel-open shell-request contract. The next implementation may recognize
+one SSH_MSG_CHANNEL_REQUEST whose public request type is shell on the already
+accepted local modeled session channel. The accepted request shape is public
+and exact: message number, recipient channel, request type, want-reply boolean,
+and no trailing shell request payload.
+
+The contract deliberately does not accept shell attachment. Until PTY, TTY,
+process, scheduler, descriptor, and filesystem ownership are accepted
+separately, the modeled shell request remains failure/no-attachment behavior:
+want-reply=true must produce SSH_MSG_CHANNEL_FAILURE, and want-reply=false may
+record only a no-reply failure/no-attachment classification. Missing
+authentication, missing open session channel, disabled policy, duplicate shell
+request, redaction-sensitive paths, wrong message number, unsupported request
+type, malformed packet, over-limit shape, trailing data, and all other
+non-recognized paths fail closed with fixed labels. The only new counter the
+next source slice may move is shell-request-count=1; authentication-success,
+session-count=1, and channel-count=1 come from accepted prerequisites, while
+shell-attached=false, live-reachability=false, and ssh-ready=false remain
+authoritative. No CHANNEL_SUCCESS, PTY/process/shell attachment, descriptor
+handoff, channel data, EOF/close/window flow control, exec/subsystem/pty/env
+or signal behavior, live reachability, hardware proof, compatibility, broad
+expansion, phase transition, or ssh-ready=true is accepted. The selected next
+bounded task is phase12-ssh-session-shell-request-core-20260622.
