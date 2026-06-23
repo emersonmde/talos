@@ -1,0 +1,14 @@
+{
+  "action": "serial read",
+  "ok": true,
+  "cursor_start": null,
+  "cursor_end": null,
+  "cursor": 4194304,
+  "bytes": 0,
+  "truncated": false,
+  "text_retained": false,
+  "talos_serial_status": {
+    "capture_mode": "direct-read-after-saturated-cursor",
+    "raw_text_retained": false
+  }
+}

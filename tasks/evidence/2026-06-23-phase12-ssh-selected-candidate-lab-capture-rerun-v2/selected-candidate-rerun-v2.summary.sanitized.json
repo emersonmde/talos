@@ -1,0 +1,24 @@
+{
+  "task_id": "phase12-ssh-selected-candidate-lab-capture-rerun-v2-20260623",
+  "classification": "baseline-fetch-after-selected-publish",
+  "selected_candidate_fetch_observed": false,
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "Selected candidate publication reported the 87,432-byte candidate tree, but same-root TFTP evidence before restore served 104,136-byte baseline kernel_2712.img and final pre-restore status was already the baseline tree.",
+  "candidate_kernel_size": 87432,
+  "selected_kernel_fetch_count": 0,
+  "baseline_kernel_fetch_count": 2,
+  "candidate_tftp_event_count": 13,
+  "candidate_post_publish_tree_hash": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333",
+  "candidate_final_pre_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "final_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "candidate_tftp_stability": {
+    "stable": true,
+    "reason": "direct-same-root-before-restore",
+    "stable_samples": 1,
+    "required_samples": 1
+  },
+  "raw_text_retained": false,
+  "raw_tftp_log_retained": false,
+  "client_identity_retained": false
+}

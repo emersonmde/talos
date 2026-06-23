@@ -8834,3 +8834,19 @@ transition, or ssh-ready=true is accepted from this task. retry-v2 and
 closeout-v2 remain blocked/superseded. The selected next bounded task after the
 repair is accepted is
 phase12-ssh-selected-candidate-lab-capture-rerun-v2-20260623.
+
+phase12-ssh-selected-candidate-lab-capture-rerun-v2-20260623 accepts only
+fail-closed blocker evidence for the repaired selected-candidate lab-capture
+rerun. The worker reused the previously reviewed selected archive with an
+87,432-byte kernel_2712.img and published the selected tree
+fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333, but the
+unchanged candidate rerun's retained same-root TFTP delta before restore
+observed two da591740/kernel_2712.img fetches at 104,136 bytes and final
+pre-restore status was already the baseline/control tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. The
+accepted blocker is baseline-fetch-after-selected-publish.
+selected_candidate_fetch_observed=false and selected_next_task=null. No live
+OpenSSH retry-v3, live reachability, remote receipt, compatibility,
+PTY/SCP/SFTP, broad command expansion, phase transition, or ssh-ready=true is
+accepted. Supervisor planning is required before any further live OpenSSH or
+selected-candidate retry.
