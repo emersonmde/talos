@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "cursor_start": 4644836,
+  "cursor_end": 4644836,
+  "log_size": 4644836,
+  "stability": {
+    "stable": true,
+    "reason": "stable",
+    "stable_samples": 3,
+    "required_samples": 3
+  },
+  "events": []
+}

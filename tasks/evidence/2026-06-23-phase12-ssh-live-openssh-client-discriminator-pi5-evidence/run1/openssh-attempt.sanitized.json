@@ -1,0 +1,10 @@
+{
+  "invocation_class": "openssh-client-port22-no-pty-no-password-no-pubkey-bounded-timeout",
+  "launched": false,
+  "public_phase": "openssh-unavailable",
+  "exit_category": "command-not-found",
+  "stdout_bytes": 0,
+  "stderr_bytes": 0,
+  "retained_raw_output": false,
+  "raw_output_removed": true
+}

@@ -1,0 +1,8 @@
+target/phase12-ssh-live-openssh-boot-tree/bcm2712-rpi-5-b.dtb
+target/phase12-ssh-live-openssh-boot-tree/cmdline.txt
+target/phase12-ssh-live-openssh-boot-tree/config.txt
+target/phase12-ssh-live-openssh-boot-tree/kernel8.img
+target/phase12-ssh-live-openssh-boot-tree/kernel_2712.img
+target/phase12-ssh-live-openssh-boot-tree/overlays/bcm2712d0.dtbo
+target/phase12-ssh-live-openssh-boot-tree/overlays/overlay_map.dtb
+target/phase12-ssh-live-openssh-boot-tree/overlays/uart0-pi5.dtbo

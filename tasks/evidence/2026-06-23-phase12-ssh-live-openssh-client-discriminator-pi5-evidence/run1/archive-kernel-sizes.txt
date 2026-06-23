@@ -1,0 +1,4 @@
+175341 target/phase12-ssh-live-openssh-boot.tar.gz
+ 87432 target/phase12-ssh-live-openssh-boot-tree/kernel_2712.img
+ 87432 target/phase12-ssh-live-openssh-boot-tree/da591740/kernel_2712.img
+350205 total

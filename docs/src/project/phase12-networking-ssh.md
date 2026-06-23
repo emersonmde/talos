@@ -8716,7 +8716,25 @@ client-exit; sanitized Talos readiness labels; public exit categories; TFTP
 delta; and final pre-restore candidate identity. This contract does not run
 OpenSSH, mutate lab or hardware state, publish a boot archive, or accept
 live-reachability=true, remote-receipt=true, compatibility=true, PTY/SCP/SFTP,
-broad command expansion, phase transition, or ssh-ready=true. No explicit
-live-client evidence task is currently queued, so supervisor planning is
-required before any worker can run the client or touch hardware for this
-contract.
+broad command expansion, phase transition, or ssh-ready=true. The selected next
+bounded task is
+phase12-ssh-live-openssh-client-discriminator-pi5-evidence-20260623.
+
+phase12-ssh-live-openssh-client-discriminator-pi5-evidence-20260623 accepts
+only fail-closed blocker evidence for the first serialized Pi 5 live OpenSSH
+client discriminator attempt. The worker owned hardwareTestLock, published a
+task-owned candidate with boot tree hash
+fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333, captured
+fresh cursor/TFTP/serial evidence, ran a known-good restored control, reran the
+unchanged candidate, and restored the pre-run boot tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. Candidate,
+control, and rerun TFTP deltas were stable with zero events, and sanitized
+serial observation from the saved saturated cursor did not prove candidate
+progress. The host OpenSSH discriminator failed closed before launch because
+the worker runner has no ssh executable; the accepted public blocker label is
+openssh-unavailable. No selected-candidate fetch, live OpenSSH observation,
+live reachability, remote receipt, compatibility, PTY/SCP/SFTP, broad command
+expansion, phase transition, or ssh-ready claim is accepted. Supervisor
+planning is required to decide whether to provision an OpenSSH-capable runner
+or repair the lab boot-capture precondition before any remote-receipt contract
+or compatibility claim.

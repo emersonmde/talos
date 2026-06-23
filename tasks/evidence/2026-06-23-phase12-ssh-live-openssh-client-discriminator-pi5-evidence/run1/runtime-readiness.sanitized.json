@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+  "start_cursor": null,
+  "start_cursor_saturated": true,
+  "response_bytes": 4911,
+  "bytes": 4911,
+  "contains_ready": false,
+  "contains_talos": false
+}
