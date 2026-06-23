@@ -17709,6 +17709,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   different recoverable provisioning path. No live reachability, remote
   receipt, compatibility, PTY/SCP/SFTP, broad command expansion, phase
   transition, or ssh-ready claim is accepted.
+- phase12-ssh-runner-openssh-client-provisioning-preflight-20260623 accepts
+  only a recoverable workspace-local OpenSSH-compatible client provisioning
+  preflight. After supervisor planning explicitly authorized one public
+  package/tool retrieval attempt, the worker used apt-get download and dpkg-deb
+  extraction in the workspace tooling area to provide an OpenSSH 9.2p1
+  Debian/OpenSSL 3.0.x version-family ssh executable without system package
+  installation. Retained evidence is sanitized to package/source categories,
+  workspace-local artifact categories, hashes/sizes, capability category, and
+  dependency categories. No Talos host connection, lab/hardware action, boot
+  publication, Talos runtime change, live reachability, remote receipt,
+  compatibility, PTY/SCP/SFTP, broad command expansion, phase transition, or
+  ssh-ready claim is accepted. The selected next bounded task is
+  phase12-ssh-lab-boot-capture-preflight-20260623.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

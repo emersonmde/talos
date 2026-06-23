@@ -1,0 +1,76 @@
+{
+  "task_id": "phase12-ssh-runner-openssh-client-provisioning-preflight-20260623",
+  "classification": "openssh-client-workspace-local-provisioned",
+  "usable_client_path_available": true,
+  "selected_next_task": "phase12-ssh-lab-boot-capture-preflight-20260623",
+  "provisioning": {
+    "source_category": "public debian package repository",
+    "package_tool": "apt-get download",
+    "package_name": "openssh-client",
+    "package_version_family": "OpenSSH 9.2p1 Debian bookworm security update family",
+    "package_artifact_category": "workspace-local downloaded deb archive",
+    "package_artifact_size_bytes": 993532,
+    "package_artifact_sha256": "42c250b8b9110382488c53c066a960bc564ddac2cb9e449f47b6cdbb5fc1cb60",
+    "extraction_tool": "dpkg-deb -x",
+    "extraction_category": "workspace-local package extraction",
+    "system_package_installation": false,
+    "system_package_mutation": false
+  },
+  "client": {
+    "executable_category": "workspace-local extracted /usr/bin/ssh from public package",
+    "binary_size_bytes": 1129504,
+    "binary_sha256": "04f2ff5f506a3f332e7adeb1478a4c551ae74acdd328e6fb5c2495664d4064e6",
+    "version_family": "OpenSSH_9.2p1 Debian-2+deb12u10 with OpenSSL 3.0.x family",
+    "capability_check": "ssh -V returned version information without opening a network connection",
+    "dynamic_linking": "dynamic",
+    "dependency_categories": [
+      "glibc runtime",
+      "OpenSSL libcrypto 3.x",
+      "zlib",
+      "SELinux support library",
+      "Kerberos/GSSAPI support libraries",
+      "PCRE2",
+      "resolver/key utility support libraries",
+      "system dynamic loader"
+    ]
+  },
+  "negative_actions": {
+    "apt_get_install": false,
+    "system_package_installation": false,
+    "talos_host_connection": false,
+    "lab_or_hardware_action": false,
+    "boot_publication": false,
+    "talos_runtime_change": false,
+    "raw_openssh_log_retention": false,
+    "key_material_retention": false,
+    "user_or_address_retention": false,
+    "stable_peer_identifier_retention": false,
+    "compatibility_true_claim": false,
+    "live_reachability_true_claim": false,
+    "remote_receipt_true_claim": false,
+    "phase_transition_claim": false,
+    "ssh_ready_true_claim": false
+  },
+  "redaction_review": {
+    "result": "pass",
+    "retained_only": [
+      "task identifiers",
+      "public package/tool categories",
+      "public version family",
+      "workspace-local artifact categories",
+      "artifact sizes and hashes",
+      "dependency category names",
+      "fixed classifications"
+    ],
+    "not_retained": [
+      "raw OpenSSH logs",
+      "private keys or host keys",
+      "user names",
+      "network addresses",
+      "stable peer identifiers",
+      "packet captures",
+      "hardware serial text",
+      "private user data"
+    ]
+  }
+}

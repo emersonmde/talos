@@ -8753,3 +8753,16 @@ OpenSSH-capable runner/tool path or authorizes a different recoverable
 provisioning path. No live reachability, remote receipt, compatibility,
 PTY/SCP/SFTP, broad command expansion, phase transition, or ssh-ready claim is
 accepted.
+
+phase12-ssh-runner-openssh-client-provisioning-preflight-20260623 accepts only
+a recoverable workspace-local OpenSSH-compatible client provisioning preflight.
+After supervisor planning explicitly authorized one public package/tool
+retrieval attempt, the worker downloaded the public Debian openssh-client
+package into the workspace tooling area and extracted it with dpkg-deb without
+installing system packages. The extracted ssh executable returned an OpenSSH
+9.2p1 Debian/OpenSSL 3.0.x version-family capability check, and dynamic
+dependency evidence was retained only as library categories. This accepts a
+usable workspace-local client path for the next lab boot-capture preflight and
+selects phase12-ssh-lab-boot-capture-preflight-20260623. It does not accept
+Talos host reachability, remote receipt, compatibility, PTY/SCP/SFTP, broad
+command expansion, phase transition, or ssh-ready=true.
