@@ -17199,6 +17199,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   OpenSSH/POSIX/Linux compatibility, broad expansion, phase transition, and
   ssh-ready=true remain deferred. The selected next bounded task is
   phase12-ssh-session-shell-attachment-closeout-20260623.
+- phase12-ssh-session-shell-attachment-closeout-20260623 accepts the local
+  modeled SSH shell attachment closeout. Talos has accepted only one
+  authenticated local modeled session channel with one recognized shell request
+  attached to accepted local process/session and fd0/fd1/fd2 stdio ownership.
+  The reconciled counters are authentication-success=true, session-count=1,
+  channel-count=1, shell-request-count=1, and shell-attached=true only for that
+  local modeled attachment path; live-reachability=false and ssh-ready=false
+  remain authoritative. Live encrypted channel data delivery, socket delivery,
+  channel window management, hardware reachability, OpenSSH/POSIX/Linux
+  compatibility, broad expansion, phase transition, and ssh-ready=true remain
+  deferred. selected_next_task is null and planningNeeded=true because no
+  explicit queued/ready live-reachability or foundation follow-up task exists
+  for the worker to promote without supervisor planning.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
