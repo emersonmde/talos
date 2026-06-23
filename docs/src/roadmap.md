@@ -17230,6 +17230,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   receipt, hardware reachability, OpenSSH/POSIX/Linux compatibility, broad
   expansion, phase transition, and ssh-ready=true remain deferred. The
   selected next bounded task is phase12-ssh-channel-data-stdio-core-20260623.
+- phase12-ssh-channel-data-stdio-core-20260623 accepts the bounded local
+  modeled channel-data/stdio bridge source slice. Inbound SSH_MSG_CHANNEL_DATA
+  can now be classified as local stdin delivery only when accepted local
+  authentication success, one open session channel, shell attached, local
+  process/session ownership, fd0/fd1/fd2 ownership, open lifecycle state, and
+  bounded nonzero channel data are all present. Local outbound reports model
+  stdout as SSH_MSG_CHANNEL_DATA and stderr as SSH_MSG_CHANNEL_EXTENDED_DATA
+  with SSH_EXTENDED_DATA_STDERR from attached stdio ownership. Missing
+  authentication, missing channel, missing shell attachment, missing stdio
+  ownership, unsupported messages, unsupported inbound extended data,
+  malformed/trailing/zero-length data, over-limit data, lifecycle violations,
+  and redaction-sensitive inputs fail closed. The accepted frontier is
+  channel-data-stdio-local=true only; live-reachability=false,
+  channel-window-management=false, and ssh-ready=false remain authoritative.
+  The selected next bounded task is
+  phase12-ssh-channel-data-stdio-feature-smoke-20260623.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

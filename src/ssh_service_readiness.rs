@@ -170,6 +170,21 @@ pub(crate) enum SshServiceReadinessLabel {
     SessionShellAttachmentFailureDuplicate,
     SessionShellAttachmentFailureLocalExecutionMissing,
     SessionShellAttachmentFailureLifecycleViolation,
+    ChannelDataStdioPrerequisiteOnly,
+    ChannelDataStdioInboundStdin,
+    ChannelDataStdioOutboundStdout,
+    ChannelDataStdioOutboundStderr,
+    ChannelDataStdioLocalOnly,
+    ChannelDataStdioFailureAuthenticationMissing,
+    ChannelDataStdioFailureChannelMissing,
+    ChannelDataStdioFailureShellAttachmentMissing,
+    ChannelDataStdioFailureLocalStdioMissing,
+    ChannelDataStdioFailureUnsupportedMessage,
+    ChannelDataStdioFailureUnsupportedExtendedData,
+    ChannelDataStdioFailureMalformed,
+    ChannelDataStdioFailureOverLimit,
+    ChannelDataStdioFailureLifecycleViolation,
+    ChannelDataStdioFailureRedactionSensitive,
     TransportClosedBeforeKex,
     AuthenticationUnimplemented,
     SessionUnimplemented,
@@ -487,6 +502,47 @@ impl SshServiceReadinessLabel {
             Self::SessionShellAttachmentFailureLifecycleViolation => {
                 "sshservicediag-session-shell-attachment-failure-lifecycle-violation"
             }
+            Self::ChannelDataStdioPrerequisiteOnly => {
+                "sshservicediag-channel-data-stdio-prerequisite-only"
+            }
+            Self::ChannelDataStdioInboundStdin => "sshservicediag-channel-data-stdio-inbound-stdin",
+            Self::ChannelDataStdioOutboundStdout => {
+                "sshservicediag-channel-data-stdio-outbound-stdout"
+            }
+            Self::ChannelDataStdioOutboundStderr => {
+                "sshservicediag-channel-data-stdio-outbound-stderr"
+            }
+            Self::ChannelDataStdioLocalOnly => "sshservicediag-channel-data-stdio-local-only",
+            Self::ChannelDataStdioFailureAuthenticationMissing => {
+                "sshservicediag-channel-data-stdio-failure-authentication-missing"
+            }
+            Self::ChannelDataStdioFailureChannelMissing => {
+                "sshservicediag-channel-data-stdio-failure-channel-missing"
+            }
+            Self::ChannelDataStdioFailureShellAttachmentMissing => {
+                "sshservicediag-channel-data-stdio-failure-shell-attachment-missing"
+            }
+            Self::ChannelDataStdioFailureLocalStdioMissing => {
+                "sshservicediag-channel-data-stdio-failure-local-stdio-missing"
+            }
+            Self::ChannelDataStdioFailureUnsupportedMessage => {
+                "sshservicediag-channel-data-stdio-failure-unsupported-message"
+            }
+            Self::ChannelDataStdioFailureUnsupportedExtendedData => {
+                "sshservicediag-channel-data-stdio-failure-unsupported-extended-data"
+            }
+            Self::ChannelDataStdioFailureMalformed => {
+                "sshservicediag-channel-data-stdio-failure-malformed"
+            }
+            Self::ChannelDataStdioFailureOverLimit => {
+                "sshservicediag-channel-data-stdio-failure-over-limit"
+            }
+            Self::ChannelDataStdioFailureLifecycleViolation => {
+                "sshservicediag-channel-data-stdio-failure-lifecycle-violation"
+            }
+            Self::ChannelDataStdioFailureRedactionSensitive => {
+                "sshservicediag-channel-data-stdio-failure-redaction-sensitive"
+            }
             Self::TransportClosedBeforeKex => "sshservicediag-transport-closed-before-kex",
             Self::AuthenticationUnimplemented => "sshservicediag-authentication-unimplemented",
             Self::SessionUnimplemented => "sshservicediag-session-unimplemented",
@@ -520,9 +576,12 @@ const SSH_MSG_USERAUTH_PK_OK: u8 = 60;
 const SSH_MSG_CHANNEL_OPEN: u8 = 90;
 const SSH_MSG_CHANNEL_OPEN_CONFIRMATION: u8 = 91;
 const SSH_MSG_CHANNEL_OPEN_FAILURE: u8 = 92;
+const SSH_MSG_CHANNEL_DATA: u8 = 94;
+const SSH_MSG_CHANNEL_EXTENDED_DATA: u8 = 95;
 const SSH_MSG_CHANNEL_REQUEST: u8 = 98;
 const SSH_MSG_CHANNEL_SUCCESS: u8 = 99;
 const SSH_MSG_CHANNEL_FAILURE: u8 = 100;
+const SSH_EXTENDED_DATA_STDERR: u32 = 1;
 const SSH_KEXINIT_COOKIE_BYTES: usize = 16;
 const SSH_KEXINIT_LIST_COUNT: usize = 10;
 const SSH_KEXINIT_REQUIRED_LIST_COUNT: usize = 8;
@@ -537,6 +596,7 @@ const MAX_SSH_PUBLICKEY_AUTH_SUCCESS_ACCOUNT_LABELS: usize = 5;
 const MAX_SSH_SESSION_CHANNEL_OPEN_LABELS: usize = 8;
 const MAX_SSH_SESSION_SHELL_REQUEST_LABELS: usize = 10;
 const MAX_SSH_SESSION_SHELL_ATTACHMENT_LABELS: usize = 14;
+const MAX_SSH_CHANNEL_DATA_STDIO_LABELS: usize = 12;
 const SSH_PREAUTH_STRING_MAX_BYTES: usize = 256;
 const SSH_PREAUTH_PUBLIC_KEY_BLOB_MAX_BYTES: usize = 512;
 const SSH_PREAUTH_SIGNATURE_MAX_BYTES: usize = 512;
@@ -544,6 +604,7 @@ const SSH_CHANNEL_OPEN_PAYLOAD_MAX_BYTES: usize = 256;
 const SSH_CHANNEL_OPEN_TYPE_MAX_BYTES: usize = 64;
 const SSH_CHANNEL_REQUEST_PAYLOAD_MAX_BYTES: usize = 256;
 const SSH_CHANNEL_REQUEST_TYPE_MAX_BYTES: usize = 64;
+const SSH_CHANNEL_DATA_MAX_BYTES: usize = 256;
 const SSH_KEXINIT_MODELED_COOKIE_SEED: [u8; crate::csprng::CSPRNG_SEED_BYTES] =
     *b"Talos-kexinit-cookie-redacted!!!";
 
@@ -3326,6 +3387,593 @@ const fn shell_attachment_result_from_shell_request(
     }
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SshChannelDataStdioResult {
+    InboundStdinDeliveredLocal,
+    OutboundStdoutChannelDataModeled,
+    OutboundStderrExtendedDataModeled,
+    ChannelDataFailureAuthenticationMissing,
+    ChannelDataFailureChannelMissing,
+    ChannelDataFailureShellAttachmentMissing,
+    ChannelDataFailureLocalStdioMissing,
+    ChannelDataFailureUnsupportedMessage,
+    ChannelDataFailureUnsupportedExtendedData,
+    ChannelDataFailureMalformed,
+    ChannelDataFailureOverLimit,
+    ChannelDataFailureLifecycleViolation,
+    ChannelDataFailureRedactionSensitive,
+}
+
+pub(crate) struct SshChannelDataStdioInput<'a> {
+    pub(crate) authentication_success: bool,
+    pub(crate) open_session_channel: bool,
+    pub(crate) shell_attached: bool,
+    pub(crate) local_process_session_owned: bool,
+    pub(crate) local_stdio_descriptors_owned: bool,
+    pub(crate) channel_lifecycle_open: bool,
+    pub(crate) redaction_sensitive: bool,
+    pub(crate) decrypted_payload: &'a [u8],
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SshChannelDataStdioOutputStream {
+    Stdout,
+    Stderr,
+}
+
+pub(crate) struct SshChannelDataStdioOutputInput {
+    pub(crate) shell_attached: bool,
+    pub(crate) local_stdio_descriptors_owned: bool,
+    pub(crate) channel_lifecycle_open: bool,
+    pub(crate) redaction_sensitive: bool,
+    pub(crate) stream: SshChannelDataStdioOutputStream,
+    pub(crate) data_len: usize,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SshChannelDataStdioReport {
+    labels: [SshServiceReadinessLabel; MAX_SSH_CHANNEL_DATA_STDIO_LABELS],
+    label_count: usize,
+    result: SshChannelDataStdioResult,
+    request_message_number: Option<u8>,
+    output_message_number: Option<u8>,
+    parsed_field_count: usize,
+    data_len: Option<usize>,
+    extended_data_type: Option<u32>,
+    authentication_success: bool,
+    open_session_channel: bool,
+    shell_attached: bool,
+    local_stdio_descriptors_owned: bool,
+    channel_lifecycle_open: bool,
+    channel_data_stdio_local: bool,
+}
+
+impl SshChannelDataStdioReport {
+    fn inbound_success(data_len: usize) -> Self {
+        let mut report = Self {
+            labels: [SshServiceReadinessLabel::NotReady; MAX_SSH_CHANNEL_DATA_STDIO_LABELS],
+            label_count: 0,
+            result: SshChannelDataStdioResult::InboundStdinDeliveredLocal,
+            request_message_number: Some(SSH_MSG_CHANNEL_DATA),
+            output_message_number: None,
+            parsed_field_count: 3,
+            data_len: Some(data_len),
+            extended_data_type: None,
+            authentication_success: true,
+            open_session_channel: true,
+            shell_attached: true,
+            local_stdio_descriptors_owned: true,
+            channel_lifecycle_open: true,
+            channel_data_stdio_local: true,
+        };
+        report.push_success_prefix();
+        report.push(SshServiceReadinessLabel::ChannelDataStdioInboundStdin);
+        report.push(SshServiceReadinessLabel::ChannelDataStdioLocalOnly);
+        report.push(SshServiceReadinessLabel::NotReady);
+        report
+    }
+
+    fn outbound_success(stream: SshChannelDataStdioOutputStream, data_len: usize) -> Self {
+        let (result, output_message_number, extended_data_type, label, parsed_field_count) =
+            match stream {
+                SshChannelDataStdioOutputStream::Stdout => (
+                    SshChannelDataStdioResult::OutboundStdoutChannelDataModeled,
+                    SSH_MSG_CHANNEL_DATA,
+                    None,
+                    SshServiceReadinessLabel::ChannelDataStdioOutboundStdout,
+                    3,
+                ),
+                SshChannelDataStdioOutputStream::Stderr => (
+                    SshChannelDataStdioResult::OutboundStderrExtendedDataModeled,
+                    SSH_MSG_CHANNEL_EXTENDED_DATA,
+                    Some(SSH_EXTENDED_DATA_STDERR),
+                    SshServiceReadinessLabel::ChannelDataStdioOutboundStderr,
+                    4,
+                ),
+            };
+        let mut report = Self {
+            labels: [SshServiceReadinessLabel::NotReady; MAX_SSH_CHANNEL_DATA_STDIO_LABELS],
+            label_count: 0,
+            result,
+            request_message_number: None,
+            output_message_number: Some(output_message_number),
+            parsed_field_count,
+            data_len: Some(data_len),
+            extended_data_type,
+            authentication_success: true,
+            open_session_channel: true,
+            shell_attached: true,
+            local_stdio_descriptors_owned: true,
+            channel_lifecycle_open: true,
+            channel_data_stdio_local: true,
+        };
+        report.push_success_prefix();
+        report.push(label);
+        report.push(SshServiceReadinessLabel::ChannelDataStdioLocalOnly);
+        report.push(SshServiceReadinessLabel::NotReady);
+        report
+    }
+
+    fn failure(
+        result: SshChannelDataStdioResult,
+        label: SshServiceReadinessLabel,
+        request_message_number: Option<u8>,
+        output_message_number: Option<u8>,
+        parsed_field_count: usize,
+        data_len: Option<usize>,
+        extended_data_type: Option<u32>,
+        authentication_success: bool,
+        open_session_channel: bool,
+        shell_attached: bool,
+        local_stdio_descriptors_owned: bool,
+        channel_lifecycle_open: bool,
+    ) -> Self {
+        let mut report = Self {
+            labels: [SshServiceReadinessLabel::NotReady; MAX_SSH_CHANNEL_DATA_STDIO_LABELS],
+            label_count: 0,
+            result,
+            request_message_number,
+            output_message_number,
+            parsed_field_count,
+            data_len,
+            extended_data_type,
+            authentication_success,
+            open_session_channel,
+            shell_attached,
+            local_stdio_descriptors_owned,
+            channel_lifecycle_open,
+            channel_data_stdio_local: false,
+        };
+        if authentication_success {
+            report.push(SshServiceReadinessLabel::AuthenticationSuccessLocalOnly);
+        } else {
+            report.push(SshServiceReadinessLabel::AuthenticationUnimplemented);
+        }
+        if open_session_channel {
+            report.push(SshServiceReadinessLabel::ChannelOpenLocalOnly);
+        }
+        if shell_attached {
+            report.push(SshServiceReadinessLabel::ShellAttached);
+        } else {
+            report.push(SshServiceReadinessLabel::ShellUnattached);
+        }
+        report.push(label);
+        report.push(SshServiceReadinessLabel::NotReady);
+        report
+    }
+
+    fn push_success_prefix(&mut self) {
+        self.push(SshServiceReadinessLabel::AuthenticationSuccessLocalOnly);
+        self.push(SshServiceReadinessLabel::SessionOpenLocalOnly);
+        self.push(SshServiceReadinessLabel::ChannelOpenLocalOnly);
+        self.push(SshServiceReadinessLabel::SessionShellRequestPrerequisiteOnly);
+        self.push(SshServiceReadinessLabel::SessionShellAttachmentPrerequisiteOnly);
+        self.push(SshServiceReadinessLabel::SessionShellAttachmentLocalStdioOwned);
+        self.push(SshServiceReadinessLabel::ShellAttached);
+        self.push(SshServiceReadinessLabel::ChannelDataStdioPrerequisiteOnly);
+    }
+
+    fn push(&mut self, label: SshServiceReadinessLabel) {
+        self.labels[self.label_count] = label;
+        self.label_count += 1;
+    }
+
+    pub(crate) fn labels(&self) -> &[SshServiceReadinessLabel] {
+        &self.labels[..self.label_count]
+    }
+
+    pub(crate) const fn result(self) -> SshChannelDataStdioResult {
+        self.result
+    }
+
+    pub(crate) const fn request_message_number(self) -> Option<u8> {
+        self.request_message_number
+    }
+
+    pub(crate) const fn output_message_number(self) -> Option<u8> {
+        self.output_message_number
+    }
+
+    pub(crate) const fn parsed_field_count(self) -> usize {
+        self.parsed_field_count
+    }
+
+    pub(crate) const fn data_len(self) -> Option<usize> {
+        self.data_len
+    }
+
+    pub(crate) const fn extended_data_type(self) -> Option<u32> {
+        self.extended_data_type
+    }
+
+    pub(crate) const fn authentication_success(self) -> bool {
+        self.authentication_success
+    }
+
+    pub(crate) const fn session_count(self) -> usize {
+        if self.open_session_channel { 1 } else { 0 }
+    }
+
+    pub(crate) const fn channel_count(self) -> usize {
+        if self.open_session_channel { 1 } else { 0 }
+    }
+
+    pub(crate) const fn shell_request_count(self) -> usize {
+        if self.shell_attached { 1 } else { 0 }
+    }
+
+    pub(crate) const fn shell_attached(self) -> bool {
+        self.shell_attached
+    }
+
+    pub(crate) const fn local_stdio_descriptors_owned(self) -> bool {
+        self.local_stdio_descriptors_owned
+    }
+
+    pub(crate) const fn channel_lifecycle_open(self) -> bool {
+        self.channel_lifecycle_open
+    }
+
+    pub(crate) const fn channel_data_stdio_local(self) -> bool {
+        self.channel_data_stdio_local
+    }
+
+    pub(crate) const fn channel_window_management(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn reachability_accepted(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn ssh_ready(self) -> bool {
+        false
+    }
+}
+
+pub(crate) fn classify_ssh_channel_data_stdio(
+    input: SshChannelDataStdioInput<'_>,
+) -> SshChannelDataStdioReport {
+    if input.redaction_sensitive {
+        return channel_data_stdio_failure(
+            SshChannelDataStdioResult::ChannelDataFailureRedactionSensitive,
+            SshServiceReadinessLabel::ChannelDataStdioFailureRedactionSensitive,
+            None,
+            0,
+            None,
+            input.authentication_success,
+            input.open_session_channel,
+            input.shell_attached,
+            input.local_stdio_descriptors_owned,
+            input.channel_lifecycle_open,
+        );
+    }
+    if !input.authentication_success {
+        return channel_data_stdio_failure(
+            SshChannelDataStdioResult::ChannelDataFailureAuthenticationMissing,
+            SshServiceReadinessLabel::ChannelDataStdioFailureAuthenticationMissing,
+            None,
+            0,
+            None,
+            false,
+            input.open_session_channel,
+            input.shell_attached,
+            input.local_stdio_descriptors_owned,
+            input.channel_lifecycle_open,
+        );
+    }
+    if !input.open_session_channel {
+        return channel_data_stdio_failure(
+            SshChannelDataStdioResult::ChannelDataFailureChannelMissing,
+            SshServiceReadinessLabel::ChannelDataStdioFailureChannelMissing,
+            None,
+            0,
+            None,
+            true,
+            false,
+            input.shell_attached,
+            input.local_stdio_descriptors_owned,
+            input.channel_lifecycle_open,
+        );
+    }
+    if !input.shell_attached {
+        return channel_data_stdio_failure(
+            SshChannelDataStdioResult::ChannelDataFailureShellAttachmentMissing,
+            SshServiceReadinessLabel::ChannelDataStdioFailureShellAttachmentMissing,
+            None,
+            0,
+            None,
+            true,
+            true,
+            false,
+            input.local_stdio_descriptors_owned,
+            input.channel_lifecycle_open,
+        );
+    }
+    if !input.channel_lifecycle_open {
+        return channel_data_stdio_failure(
+            SshChannelDataStdioResult::ChannelDataFailureLifecycleViolation,
+            SshServiceReadinessLabel::ChannelDataStdioFailureLifecycleViolation,
+            input.decrypted_payload.first().copied(),
+            usize::from(!input.decrypted_payload.is_empty()),
+            None,
+            true,
+            true,
+            true,
+            input.local_stdio_descriptors_owned,
+            false,
+        );
+    }
+    if !input.local_process_session_owned || !input.local_stdio_descriptors_owned {
+        return channel_data_stdio_failure(
+            SshChannelDataStdioResult::ChannelDataFailureLocalStdioMissing,
+            SshServiceReadinessLabel::ChannelDataStdioFailureLocalStdioMissing,
+            input.decrypted_payload.first().copied(),
+            usize::from(!input.decrypted_payload.is_empty()),
+            None,
+            true,
+            true,
+            true,
+            input.local_stdio_descriptors_owned,
+            true,
+        );
+    }
+
+    let Some(message_number) = input.decrypted_payload.first().copied() else {
+        return channel_data_stdio_malformed(None, 0, None);
+    };
+    if message_number == SSH_MSG_CHANNEL_EXTENDED_DATA {
+        return channel_data_stdio_failure(
+            SshChannelDataStdioResult::ChannelDataFailureUnsupportedExtendedData,
+            SshServiceReadinessLabel::ChannelDataStdioFailureUnsupportedExtendedData,
+            Some(message_number),
+            1,
+            None,
+            true,
+            true,
+            true,
+            true,
+            true,
+        );
+    }
+    if message_number != SSH_MSG_CHANNEL_DATA {
+        return channel_data_stdio_failure(
+            SshChannelDataStdioResult::ChannelDataFailureUnsupportedMessage,
+            SshServiceReadinessLabel::ChannelDataStdioFailureUnsupportedMessage,
+            Some(message_number),
+            1,
+            None,
+            true,
+            true,
+            true,
+            true,
+            true,
+        );
+    }
+    let Some(cursor) = skip_ssh_u32(input.decrypted_payload, 1) else {
+        return channel_data_stdio_malformed(Some(message_number), 1, None);
+    };
+    let Some(data_len) = read_be_u32(input.decrypted_payload, cursor).map(|len| len as usize)
+    else {
+        return channel_data_stdio_malformed(Some(message_number), 2, None);
+    };
+    if data_len == 0 {
+        return channel_data_stdio_malformed(Some(message_number), 2, Some(0));
+    }
+    if data_len > SSH_CHANNEL_DATA_MAX_BYTES {
+        return channel_data_stdio_failure(
+            SshChannelDataStdioResult::ChannelDataFailureOverLimit,
+            SshServiceReadinessLabel::ChannelDataStdioFailureOverLimit,
+            Some(message_number),
+            2,
+            Some(data_len),
+            true,
+            true,
+            true,
+            true,
+            true,
+        );
+    }
+    let Some((data, cursor)) = parse_ssh_binary_string_bounded(
+        input.decrypted_payload,
+        cursor,
+        SSH_CHANNEL_DATA_MAX_BYTES,
+    ) else {
+        return channel_data_stdio_malformed(Some(message_number), 2, Some(data_len));
+    };
+    if cursor != input.decrypted_payload.len() {
+        return channel_data_stdio_malformed(Some(message_number), 3, Some(data.len()));
+    }
+
+    SshChannelDataStdioReport::inbound_success(data.len())
+}
+
+pub(crate) fn classify_ssh_channel_data_stdio_output(
+    input: SshChannelDataStdioOutputInput,
+) -> SshChannelDataStdioReport {
+    let (message_number, extended_data_type) = match input.stream {
+        SshChannelDataStdioOutputStream::Stdout => (SSH_MSG_CHANNEL_DATA, None),
+        SshChannelDataStdioOutputStream::Stderr => (
+            SSH_MSG_CHANNEL_EXTENDED_DATA,
+            Some(SSH_EXTENDED_DATA_STDERR),
+        ),
+    };
+    if input.redaction_sensitive {
+        return channel_data_stdio_output_failure(
+            SshChannelDataStdioResult::ChannelDataFailureRedactionSensitive,
+            SshServiceReadinessLabel::ChannelDataStdioFailureRedactionSensitive,
+            Some(message_number),
+            0,
+            None,
+            extended_data_type,
+            input.shell_attached,
+            input.local_stdio_descriptors_owned,
+            input.channel_lifecycle_open,
+        );
+    }
+    if !input.shell_attached {
+        return channel_data_stdio_output_failure(
+            SshChannelDataStdioResult::ChannelDataFailureShellAttachmentMissing,
+            SshServiceReadinessLabel::ChannelDataStdioFailureShellAttachmentMissing,
+            Some(message_number),
+            0,
+            None,
+            extended_data_type,
+            false,
+            input.local_stdio_descriptors_owned,
+            input.channel_lifecycle_open,
+        );
+    }
+    if !input.channel_lifecycle_open {
+        return channel_data_stdio_output_failure(
+            SshChannelDataStdioResult::ChannelDataFailureLifecycleViolation,
+            SshServiceReadinessLabel::ChannelDataStdioFailureLifecycleViolation,
+            Some(message_number),
+            0,
+            None,
+            extended_data_type,
+            true,
+            input.local_stdio_descriptors_owned,
+            false,
+        );
+    }
+    if !input.local_stdio_descriptors_owned {
+        return channel_data_stdio_output_failure(
+            SshChannelDataStdioResult::ChannelDataFailureLocalStdioMissing,
+            SshServiceReadinessLabel::ChannelDataStdioFailureLocalStdioMissing,
+            Some(message_number),
+            0,
+            None,
+            extended_data_type,
+            true,
+            false,
+            true,
+        );
+    }
+    if input.data_len == 0 {
+        return channel_data_stdio_output_failure(
+            SshChannelDataStdioResult::ChannelDataFailureMalformed,
+            SshServiceReadinessLabel::ChannelDataStdioFailureMalformed,
+            Some(message_number),
+            0,
+            Some(0),
+            extended_data_type,
+            true,
+            true,
+            true,
+        );
+    }
+    if input.data_len > SSH_CHANNEL_DATA_MAX_BYTES {
+        return channel_data_stdio_output_failure(
+            SshChannelDataStdioResult::ChannelDataFailureOverLimit,
+            SshServiceReadinessLabel::ChannelDataStdioFailureOverLimit,
+            Some(message_number),
+            0,
+            Some(input.data_len),
+            extended_data_type,
+            true,
+            true,
+            true,
+        );
+    }
+
+    SshChannelDataStdioReport::outbound_success(input.stream, input.data_len)
+}
+
+fn channel_data_stdio_failure(
+    result: SshChannelDataStdioResult,
+    label: SshServiceReadinessLabel,
+    request_message_number: Option<u8>,
+    parsed_field_count: usize,
+    data_len: Option<usize>,
+    authentication_success: bool,
+    open_session_channel: bool,
+    shell_attached: bool,
+    local_stdio_descriptors_owned: bool,
+    channel_lifecycle_open: bool,
+) -> SshChannelDataStdioReport {
+    SshChannelDataStdioReport::failure(
+        result,
+        label,
+        request_message_number,
+        None,
+        parsed_field_count,
+        data_len,
+        None,
+        authentication_success,
+        open_session_channel,
+        shell_attached,
+        local_stdio_descriptors_owned,
+        channel_lifecycle_open,
+    )
+}
+
+fn channel_data_stdio_output_failure(
+    result: SshChannelDataStdioResult,
+    label: SshServiceReadinessLabel,
+    output_message_number: Option<u8>,
+    parsed_field_count: usize,
+    data_len: Option<usize>,
+    extended_data_type: Option<u32>,
+    shell_attached: bool,
+    local_stdio_descriptors_owned: bool,
+    channel_lifecycle_open: bool,
+) -> SshChannelDataStdioReport {
+    SshChannelDataStdioReport::failure(
+        result,
+        label,
+        None,
+        output_message_number,
+        parsed_field_count,
+        data_len,
+        extended_data_type,
+        true,
+        true,
+        shell_attached,
+        local_stdio_descriptors_owned,
+        channel_lifecycle_open,
+    )
+}
+
+fn channel_data_stdio_malformed(
+    request_message_number: Option<u8>,
+    parsed_field_count: usize,
+    data_len: Option<usize>,
+) -> SshChannelDataStdioReport {
+    channel_data_stdio_failure(
+        SshChannelDataStdioResult::ChannelDataFailureMalformed,
+        SshServiceReadinessLabel::ChannelDataStdioFailureMalformed,
+        request_message_number,
+        parsed_field_count,
+        data_len,
+        true,
+        true,
+        true,
+        true,
+        true,
+    )
+}
+
 struct ParsedSshPublickeyVerificationRequest<'a> {
     user_name: &'a [u8],
     service: &'a [u8],
@@ -4240,6 +4888,16 @@ mod tests {
         labels
     }
 
+    fn channel_data_stdio_label_names(
+        report: &SshChannelDataStdioReport,
+    ) -> [&'static str; MAX_SSH_CHANNEL_DATA_STDIO_LABELS] {
+        let mut labels = [""; MAX_SSH_CHANNEL_DATA_STDIO_LABELS];
+        for (index, label) in report.labels().iter().enumerate() {
+            labels[index] = label.name();
+        }
+        labels
+    }
+
     fn shape_modeled_key_report() -> SshKeyReadinessReport {
         let entropy = entropy::classify_entropy_snapshot(
             EntropyDiagnosticSnapshot::empty()
@@ -4419,6 +5077,27 @@ mod tests {
         push_ssh_string_to_vec(&mut payload, request_type).unwrap();
         payload.push(u8::from(want_reply));
         payload
+    }
+
+    fn channel_data_payload(data: &[u8]) -> Vec<u8> {
+        let mut payload = Vec::new();
+        payload.push(SSH_MSG_CHANNEL_DATA);
+        payload.extend_from_slice(&0u32.to_be_bytes());
+        push_ssh_string_to_vec(&mut payload, data).unwrap();
+        payload
+    }
+
+    fn channel_data_stdio_success_input(payload: &[u8]) -> SshChannelDataStdioInput<'_> {
+        SshChannelDataStdioInput {
+            authentication_success: true,
+            open_session_channel: true,
+            shell_attached: true,
+            local_process_session_owned: true,
+            local_stdio_descriptors_owned: true,
+            channel_lifecycle_open: true,
+            redaction_sensitive: false,
+            decrypted_payload: payload,
+        }
     }
 
     fn runtime_kex_ready_for_userauth() -> SshRuntimeKexReady {
@@ -6794,6 +7473,259 @@ mod tests {
         assert_eq!(malformed.parsed_field_count(), 4);
         assert!(!redaction.shell_attached());
         assert!(!malformed.ssh_ready());
+    }
+
+    #[test_case]
+    fn channel_data_stdio_accepts_local_modeled_inbound_stdin() {
+        let payload = channel_data_payload(b"help");
+        let report = classify_ssh_channel_data_stdio(channel_data_stdio_success_input(&payload));
+
+        assert_eq!(
+            report.result(),
+            SshChannelDataStdioResult::InboundStdinDeliveredLocal
+        );
+        assert_eq!(
+            &channel_data_stdio_label_names(&report)[..report.labels().len()],
+            &[
+                "sshservicediag-authentication-success-local-only",
+                "sshservicediag-session-open-local-only",
+                "sshservicediag-channel-open-local-only",
+                "sshservicediag-session-shell-request-prerequisite-only",
+                "sshservicediag-session-shell-attachment-prerequisite-only",
+                "sshservicediag-session-shell-attachment-local-stdio-owned",
+                "sshservicediag-shell-attached",
+                "sshservicediag-channel-data-stdio-prerequisite-only",
+                "sshservicediag-channel-data-stdio-inbound-stdin",
+                "sshservicediag-channel-data-stdio-local-only",
+                "sshservicediag-not-ready",
+            ]
+        );
+        assert_eq!(report.request_message_number(), Some(SSH_MSG_CHANNEL_DATA));
+        assert_eq!(report.output_message_number(), None);
+        assert_eq!(report.parsed_field_count(), 3);
+        assert_eq!(report.data_len(), Some(4));
+        assert_eq!(report.extended_data_type(), None);
+        assert!(report.authentication_success());
+        assert_eq!(report.session_count(), 1);
+        assert_eq!(report.channel_count(), 1);
+        assert_eq!(report.shell_request_count(), 1);
+        assert!(report.shell_attached());
+        assert!(report.local_stdio_descriptors_owned());
+        assert!(report.channel_lifecycle_open());
+        assert!(report.channel_data_stdio_local());
+        assert!(!report.channel_window_management());
+        assert!(!report.reachability_accepted());
+        assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn channel_data_stdio_reports_local_stdout_and_stderr_packet_shapes() {
+        let stdout = classify_ssh_channel_data_stdio_output(SshChannelDataStdioOutputInput {
+            shell_attached: true,
+            local_stdio_descriptors_owned: true,
+            channel_lifecycle_open: true,
+            redaction_sensitive: false,
+            stream: SshChannelDataStdioOutputStream::Stdout,
+            data_len: 12,
+        });
+        let stderr = classify_ssh_channel_data_stdio_output(SshChannelDataStdioOutputInput {
+            shell_attached: true,
+            local_stdio_descriptors_owned: true,
+            channel_lifecycle_open: true,
+            redaction_sensitive: false,
+            stream: SshChannelDataStdioOutputStream::Stderr,
+            data_len: 7,
+        });
+
+        assert_eq!(
+            stdout.result(),
+            SshChannelDataStdioResult::OutboundStdoutChannelDataModeled
+        );
+        assert_eq!(
+            stderr.result(),
+            SshChannelDataStdioResult::OutboundStderrExtendedDataModeled
+        );
+        assert_eq!(stdout.output_message_number(), Some(SSH_MSG_CHANNEL_DATA));
+        assert_eq!(
+            stderr.output_message_number(),
+            Some(SSH_MSG_CHANNEL_EXTENDED_DATA)
+        );
+        assert_eq!(stdout.extended_data_type(), None);
+        assert_eq!(stderr.extended_data_type(), Some(SSH_EXTENDED_DATA_STDERR));
+        assert_eq!(stdout.parsed_field_count(), 3);
+        assert_eq!(stderr.parsed_field_count(), 4);
+        assert_eq!(stdout.data_len(), Some(12));
+        assert_eq!(stderr.data_len(), Some(7));
+        assert!(
+            stdout
+                .labels()
+                .contains(&SshServiceReadinessLabel::ChannelDataStdioOutboundStdout)
+        );
+        assert!(
+            stderr
+                .labels()
+                .contains(&SshServiceReadinessLabel::ChannelDataStdioOutboundStderr)
+        );
+        assert!(stdout.channel_data_stdio_local());
+        assert!(stderr.channel_data_stdio_local());
+        assert!(!stdout.reachability_accepted());
+        assert!(!stderr.ssh_ready());
+    }
+
+    #[test_case]
+    fn channel_data_stdio_fails_closed_for_prerequisites_and_lifecycle() {
+        let payload = channel_data_payload(b"pwd");
+        let mut missing_auth_input = channel_data_stdio_success_input(&payload);
+        missing_auth_input.authentication_success = false;
+        let missing_auth = classify_ssh_channel_data_stdio(missing_auth_input);
+
+        let mut missing_channel_input = channel_data_stdio_success_input(&payload);
+        missing_channel_input.open_session_channel = false;
+        let missing_channel = classify_ssh_channel_data_stdio(missing_channel_input);
+
+        let mut missing_shell_input = channel_data_stdio_success_input(&payload);
+        missing_shell_input.shell_attached = false;
+        let missing_shell = classify_ssh_channel_data_stdio(missing_shell_input);
+
+        let mut missing_stdio_input = channel_data_stdio_success_input(&payload);
+        missing_stdio_input.local_stdio_descriptors_owned = false;
+        let missing_stdio = classify_ssh_channel_data_stdio(missing_stdio_input);
+
+        let mut lifecycle_input = channel_data_stdio_success_input(&payload);
+        lifecycle_input.channel_lifecycle_open = false;
+        let lifecycle = classify_ssh_channel_data_stdio(lifecycle_input);
+
+        let redaction = classify_ssh_channel_data_stdio(SshChannelDataStdioInput {
+            redaction_sensitive: true,
+            ..channel_data_stdio_success_input(&payload)
+        });
+
+        assert_eq!(
+            missing_auth.result(),
+            SshChannelDataStdioResult::ChannelDataFailureAuthenticationMissing
+        );
+        assert_eq!(
+            missing_channel.result(),
+            SshChannelDataStdioResult::ChannelDataFailureChannelMissing
+        );
+        assert_eq!(
+            missing_shell.result(),
+            SshChannelDataStdioResult::ChannelDataFailureShellAttachmentMissing
+        );
+        assert_eq!(
+            missing_stdio.result(),
+            SshChannelDataStdioResult::ChannelDataFailureLocalStdioMissing
+        );
+        assert_eq!(
+            lifecycle.result(),
+            SshChannelDataStdioResult::ChannelDataFailureLifecycleViolation
+        );
+        assert_eq!(
+            redaction.result(),
+            SshChannelDataStdioResult::ChannelDataFailureRedactionSensitive
+        );
+        assert!(!missing_auth.authentication_success());
+        assert_eq!(missing_channel.channel_count(), 0);
+        assert!(!missing_shell.shell_attached());
+        assert!(!missing_stdio.local_stdio_descriptors_owned());
+        assert!(!lifecycle.channel_lifecycle_open());
+        assert!(!redaction.channel_data_stdio_local());
+        assert!(!missing_stdio.ssh_ready());
+    }
+
+    #[test_case]
+    fn channel_data_stdio_fails_closed_for_message_shape_and_output_controls() {
+        let payload = channel_data_payload(b"status");
+        let wrong = classify_ssh_channel_data_stdio(channel_data_stdio_success_input(&[
+            SSH_MSG_CHANNEL_REQUEST,
+        ]));
+        let extended = classify_ssh_channel_data_stdio(channel_data_stdio_success_input(&[
+            SSH_MSG_CHANNEL_EXTENDED_DATA,
+        ]));
+        let malformed = classify_ssh_channel_data_stdio(channel_data_stdio_success_input(&[
+            SSH_MSG_CHANNEL_DATA,
+        ]));
+        let zero_payload = channel_data_payload(b"");
+        let zero = classify_ssh_channel_data_stdio(channel_data_stdio_success_input(&zero_payload));
+        let mut trailing_payload = payload.clone();
+        trailing_payload.push(0);
+        let trailing =
+            classify_ssh_channel_data_stdio(channel_data_stdio_success_input(&trailing_payload));
+        let mut over_limit_data = Vec::new();
+        over_limit_data.resize(SSH_CHANNEL_DATA_MAX_BYTES + 1, b'x');
+        let over_limit_payload = channel_data_payload(&over_limit_data);
+        let over_limit =
+            classify_ssh_channel_data_stdio(channel_data_stdio_success_input(&over_limit_payload));
+        let output_missing_shell =
+            classify_ssh_channel_data_stdio_output(SshChannelDataStdioOutputInput {
+                shell_attached: false,
+                local_stdio_descriptors_owned: true,
+                channel_lifecycle_open: true,
+                redaction_sensitive: false,
+                stream: SshChannelDataStdioOutputStream::Stdout,
+                data_len: 1,
+            });
+        let output_over_limit =
+            classify_ssh_channel_data_stdio_output(SshChannelDataStdioOutputInput {
+                shell_attached: true,
+                local_stdio_descriptors_owned: true,
+                channel_lifecycle_open: true,
+                redaction_sensitive: false,
+                stream: SshChannelDataStdioOutputStream::Stderr,
+                data_len: SSH_CHANNEL_DATA_MAX_BYTES + 1,
+            });
+
+        assert_eq!(
+            wrong.result(),
+            SshChannelDataStdioResult::ChannelDataFailureUnsupportedMessage
+        );
+        assert_eq!(
+            extended.result(),
+            SshChannelDataStdioResult::ChannelDataFailureUnsupportedExtendedData
+        );
+        assert_eq!(
+            malformed.result(),
+            SshChannelDataStdioResult::ChannelDataFailureMalformed
+        );
+        assert_eq!(
+            zero.result(),
+            SshChannelDataStdioResult::ChannelDataFailureMalformed
+        );
+        assert_eq!(
+            trailing.result(),
+            SshChannelDataStdioResult::ChannelDataFailureMalformed
+        );
+        assert_eq!(
+            over_limit.result(),
+            SshChannelDataStdioResult::ChannelDataFailureOverLimit
+        );
+        assert_eq!(
+            output_missing_shell.result(),
+            SshChannelDataStdioResult::ChannelDataFailureShellAttachmentMissing
+        );
+        assert_eq!(
+            output_over_limit.result(),
+            SshChannelDataStdioResult::ChannelDataFailureOverLimit
+        );
+        assert_eq!(
+            wrong.request_message_number(),
+            Some(SSH_MSG_CHANNEL_REQUEST)
+        );
+        assert_eq!(
+            extended.request_message_number(),
+            Some(SSH_MSG_CHANNEL_EXTENDED_DATA)
+        );
+        assert_eq!(trailing.parsed_field_count(), 3);
+        assert_eq!(
+            output_over_limit.output_message_number(),
+            Some(SSH_MSG_CHANNEL_EXTENDED_DATA)
+        );
+        assert_eq!(
+            output_over_limit.extended_data_type(),
+            Some(SSH_EXTENDED_DATA_STDERR)
+        );
+        assert!(!over_limit.channel_data_stdio_local());
+        assert!(!output_missing_shell.ssh_ready());
     }
 
     #[test_case]

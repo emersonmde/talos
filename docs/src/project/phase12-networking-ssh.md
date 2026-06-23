@@ -8213,3 +8213,26 @@ delivery. The next source task may add channel-data-stdio-local=true only for
 the local modeled bridge; live-reachability=false,
 channel-window-management=false, and ssh-ready=false remain authoritative. The
 selected next bounded task is phase12-ssh-channel-data-stdio-core-20260623.
+
+phase12-ssh-channel-data-stdio-core-20260623 accepts the bounded local modeled
+channel-data/stdio bridge source slice. The implementation adds local
+classifiers and reports for inbound SSH_MSG_CHANNEL_DATA delivery to the
+attached shell stdin ownership boundary and for outbound stdout/stderr packet
+shapes from attached stdio ownership. The successful inbound path requires
+accepted local authentication success, one open session channel, shell
+attached, local process/session ownership, fd0/fd1/fd2 ownership, open channel
+lifecycle, and a bounded nonzero CHANNEL_DATA payload; it then reports
+channel-data-stdio-local=true without retaining payload bytes.
+
+The accepted outbound reports are local packet-construction evidence only:
+stdout maps to SSH_MSG_CHANNEL_DATA and stderr maps to
+SSH_MSG_CHANNEL_EXTENDED_DATA with SSH_EXTENDED_DATA_STDERR. Missing
+authentication, missing channel, missing shell attachment, missing stdio
+ownership, unsupported messages, unsupported inbound extended data,
+malformed/trailing/zero-length data, over-limit data, lifecycle violations,
+and redaction-sensitive inputs fail closed without stdio delivery. The
+accepted counters distinguish shell-attached=true from
+channel-data-stdio-local=true while keeping live-reachability=false,
+channel-window-management=false, and ssh-ready=false authoritative. The
+selected next bounded task is
+phase12-ssh-channel-data-stdio-feature-smoke-20260623.
