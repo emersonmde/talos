@@ -1,0 +1,58 @@
+{
+  "ok": true,
+  "action": "boot files",
+  "boot": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "active_name": "kernel8.img",
+    "configured_kernel": "kernel_2712.img",
+    "effective_kernel": "kernel_2712.img",
+    "config": {
+      "enable_rp1_uart": "1",
+      "kernel": "kernel_2712.img",
+      "os_check": "0"
+    },
+    "file_count": 16,
+    "files": [
+      {
+        "name": "cmdline.txt",
+        "bytes": 81,
+        "mtime": 1782253194
+      },
+      {
+        "name": "config.txt",
+        "bytes": 118,
+        "mtime": 1782253194
+      },
+      {
+        "name": "da591740/cmdline.txt",
+        "bytes": 81,
+        "mtime": 1782253194
+      },
+      {
+        "name": "da591740/config.txt",
+        "bytes": 118,
+        "mtime": 1782253194
+      },
+      {
+        "name": "da591740/kernel8.img",
+        "bytes": 104136,
+        "mtime": 1782253194
+      },
+      {
+        "name": "da591740/kernel_2712.img",
+        "bytes": 104136,
+        "mtime": 1782253194
+      },
+      {
+        "name": "kernel8.img",
+        "bytes": 104136,
+        "mtime": 1782253194
+      },
+      {
+        "name": "kernel_2712.img",
+        "bytes": 104136,
+        "mtime": 1782253194
+      }
+    ]
+  }
+}

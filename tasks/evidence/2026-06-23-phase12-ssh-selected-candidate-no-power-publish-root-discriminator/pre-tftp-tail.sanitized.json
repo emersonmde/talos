@@ -1,0 +1,146 @@
+{
+  "ok": true,
+  "action": "tftp logs",
+  "tftp": {
+    "cursor_start": 4591459,
+    "cursor_end": 4656995,
+    "event_count": 174,
+    "kernel_events": [
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "status": "served",
+        "bytes": 104136
+      }
+    ]
+  }
+}

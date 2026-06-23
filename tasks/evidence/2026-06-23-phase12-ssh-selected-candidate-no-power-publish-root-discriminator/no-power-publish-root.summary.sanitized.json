@@ -1,0 +1,116 @@
+{
+  "task_id": "phase12-ssh-selected-candidate-no-power-publish-root-discriminator-20260623",
+  "classification": "selected-root-visible",
+  "selected_root_visible": true,
+  "selected_next_task": "phase12-ssh-selected-candidate-fetch-after-root-cause-v3-20260623",
+  "planning_needed": false,
+  "archive": {
+    "path": "target/phase12-ssh-live-openssh-retry-boot.tar.gz",
+    "expected_tree": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333",
+    "expected_kernel_bytes": 87432
+  },
+  "snapshot": "phase12-ssh-no-power-root-pre-20260623T221953Z",
+  "pre": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "kernel_files": [
+      {
+        "name": "da591740/kernel_2712.img",
+        "bytes": 104136
+      },
+      {
+        "name": "kernel_2712.img",
+        "bytes": 104136
+      }
+    ],
+    "baseline_visible": true
+  },
+  "publish": {
+    "ok": true,
+    "tree_hash": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333",
+    "kernel_files": [
+      {
+        "name": "da591740/kernel_2712.img",
+        "bytes": 87432
+      },
+      {
+        "name": "kernel_2712.img",
+        "bytes": 87432
+      }
+    ]
+  },
+  "post_publish_status": {
+    "tree_hash": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333",
+    "effective_kernel": "kernel_2712.img",
+    "kernel_files": [
+      {
+        "name": "da591740/kernel_2712.img",
+        "bytes": 87432
+      },
+      {
+        "name": "kernel_2712.img",
+        "bytes": 87432
+      }
+    ],
+    "selected_visible": true
+  },
+  "post_publish_boot_files": {
+    "tree_hash": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333",
+    "effective_kernel": "kernel_2712.img",
+    "kernel_files": [
+      {
+        "name": "da591740/kernel_2712.img",
+        "bytes": 87432
+      },
+      {
+        "name": "kernel_2712.img",
+        "bytes": 87432
+      }
+    ],
+    "selected_visible": true
+  },
+  "restore": {
+    "ok": true,
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "kernel_files": [
+      {
+        "name": "da591740/kernel_2712.img",
+        "bytes": 104136
+      },
+      {
+        "name": "kernel_2712.img",
+        "bytes": 104136
+      }
+    ]
+  },
+  "final": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "kernel_files": [
+      {
+        "name": "da591740/kernel_2712.img",
+        "bytes": 104136
+      },
+      {
+        "name": "kernel_2712.img",
+        "bytes": 104136
+      }
+    ],
+    "baseline_visible": true
+  },
+  "final_boot_files": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "kernel_files": [
+      {
+        "name": "da591740/kernel_2712.img",
+        "bytes": 104136
+      },
+      {
+        "name": "kernel_2712.img",
+        "bytes": 104136
+      }
+    ],
+    "baseline_visible": true
+  },
+  "no_power_cycle": true,
+  "openssh_action": false,
+  "redaction_review": "pass"
+}

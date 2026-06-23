@@ -1,0 +1,80 @@
+{
+  "ok": true,
+  "action": "boot archive publish",
+  "boot": {
+    "tree_hash": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333",
+    "active_name": "kernel8.img",
+    "configured_kernel": "kernel_2712.img",
+    "effective_kernel": "kernel_2712.img",
+    "config": {
+      "enable_rp1_uart": "1",
+      "kernel": "kernel_2712.img",
+      "os_check": "0"
+    },
+    "files": [
+      {
+        "name": "cmdline.txt",
+        "bytes": 81,
+        "mtime": 1782253194
+      },
+      {
+        "name": "config.txt",
+        "bytes": 118,
+        "mtime": 1782253194
+      },
+      {
+        "name": "da591740/cmdline.txt",
+        "bytes": 81,
+        "mtime": 1782253194
+      },
+      {
+        "name": "da591740/config.txt",
+        "bytes": 118,
+        "mtime": 1782253194
+      },
+      {
+        "name": "da591740/kernel8.img",
+        "bytes": 87432,
+        "mtime": 1782253194
+      },
+      {
+        "name": "da591740/kernel_2712.img",
+        "bytes": 87432,
+        "mtime": 1782253194
+      },
+      {
+        "name": "kernel8.img",
+        "bytes": 87432,
+        "mtime": 1782253194
+      },
+      {
+        "name": "kernel_2712.img",
+        "bytes": 87432,
+        "mtime": 1782253194
+      }
+    ]
+  },
+  "archive": {
+    "extracted_bytes": 524294,
+    "file_count": 16,
+    "files": [
+      "bcm2712-rpi-5-b.dtb",
+      "cmdline.txt",
+      "config.txt",
+      "da591740/bcm2712-rpi-5-b.dtb",
+      "da591740/cmdline.txt",
+      "da591740/config.txt",
+      "da591740/kernel8.img",
+      "da591740/kernel_2712.img",
+      "da591740/overlays/bcm2712d0.dtbo",
+      "da591740/overlays/overlay_map.dtb",
+      "da591740/overlays/uart0-pi5.dtbo",
+      "kernel8.img",
+      "kernel_2712.img",
+      "overlays/bcm2712d0.dtbo",
+      "overlays/overlay_map.dtb",
+      "overlays/uart0-pi5.dtbo"
+    ],
+    "rollback_archive": "/state/boot-previous.tar.gz"
+  }
+}

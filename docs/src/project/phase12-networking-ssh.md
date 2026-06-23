@@ -8867,3 +8867,17 @@ root visibility, and restore without power-cycling. Only if it accepts
 selected-root-visible=true may the hardware-backed selected-fetch-v3 task test
 the power/TFTP path. retry-v3 and closeout-v3 remain blocked/superseded, and no
 live OpenSSH task is selected from rerun-v2.
+
+phase12-ssh-selected-candidate-no-power-publish-root-discriminator-20260623
+accepts the no-power publication/root discriminator as selected-root-visible.
+The worker acquired hardwareTestLock, created a pre-run snapshot, published the
+reviewed target/phase12-ssh-live-openssh-retry-boot.tar.gz archive, and
+restored the prior boot tree without power-cycling or running OpenSSH. The
+immediate post-publish status and boot/files responses both reported tree
+fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333,
+effective_kernel=kernel_2712.img, and 87,432-byte root plus
+da591740/kernel_2712.img entries before restore. Final restore returned to the
+baseline/control a0452458... tree with 104,136-byte kernel entries. This proves
+the lab API visible publish/root layer before power; it does not prove selected
+TFTP service after power-cycle. The selected next bounded task is
+phase12-ssh-selected-candidate-fetch-after-root-cause-v3-20260623.

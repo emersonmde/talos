@@ -17814,6 +17814,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   through status and boot/files before any hardware-backed selected-fetch-v3 or
   live OpenSSH retry-v4 can be promoted. retry-v3 and closeout-v3 remain
   blocked/superseded; no live OpenSSH task is selected from rerun-v2.
+- phase12-ssh-selected-candidate-no-power-publish-root-discriminator-20260623
+  accepts selected-root-visible for the no-power publication/root layer. The
+  worker acquired hardwareTestLock, created a pre-run snapshot, published the
+  reviewed target/phase12-ssh-live-openssh-retry-boot.tar.gz selected archive,
+  compared immediate post-publish status and boot/files identity, and restored
+  the prior boot tree without power-cycling or running OpenSSH. Both
+  post-publish status and boot/files exposed tree
+  fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333 with
+  effective_kernel=kernel_2712.img and 87,432-byte root plus
+  da591740/kernel_2712.img entries. Final restore returned to the
+  baseline/control a0452458... tree with 104,136-byte kernel entries. The next
+  mechanically selected discriminator is
+  phase12-ssh-selected-candidate-fetch-after-root-cause-v3-20260623; live
+  OpenSSH retry-v4 remains gated behind accepted selected-candidate fetch
+  evidence.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
