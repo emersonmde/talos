@@ -8395,3 +8395,24 @@ userspace/process integration, broad command expansion, phase transition, and
 ssh-ready=true remain deferred. selected_next_task is null and
 planningNeeded=true because no explicit queued/ready follow-up task exists for
 the worker to promote without supervisor planning.
+
+phase12-ssh-live-socket-delivery-contract-20260623 accepts the bounded local
+modeled SSH socket-delivery contract. The next source task may connect the
+accepted SSH pipeline to Talos' in-kernel AF_INET/SOCK_STREAM descriptor model:
+one modeled port-22 SSH listener may accept one local connected peer, recv_peek
+may read bounded bytes from the accepted descriptor, recv_commit may consume
+only bytes classified by the SSH service, and accepted SSH output may be sent
+back through send_ready/send on the same accepted connection. The socket table
+owns listener/accepted descriptor lifecycle, recv queues, send
+backpressure, close, hangup, and READ/WRITE/HANGUP/ERROR readiness; the SSH
+service owns protocol dispatch, output construction, fixed labels, and
+redaction. Missing listener/connection, wrong owner, would-block or
+backpressure, closed peer, malformed or over-limit SSH input, lifecycle
+violations, poll/wait errors, and redaction-sensitive inputs must fail closed.
+The only new allowed frontier is local modeled in-kernel socket delivery,
+expressed as socket-delivery-local=true when the modeled path succeeds.
+live-reachability=false, remote-receipt=false, compatibility=false, and
+ssh-ready=false remain authoritative; Pi 5 reachability, OpenSSH compatibility,
+remote receipt, POSIX process wait/exit, broad command expansion, phase
+transition, and ssh-ready=true remain deferred. The selected next bounded task
+is phase12-ssh-live-socket-delivery-core-20260623.

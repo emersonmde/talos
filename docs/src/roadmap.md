@@ -17381,6 +17381,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   ssh-ready=true remain deferred. selected_next_task is null and
   planningNeeded=true because no explicit queued/ready follow-up task exists
   for the worker to promote without supervisor planning.
+- phase12-ssh-live-socket-delivery-contract-20260623 accepts the bounded local
+  modeled SSH socket-delivery contract. The next source task may wire the
+  accepted SSH pipeline to Talos' in-kernel AF_INET/SOCK_STREAM descriptor
+  model: a modeled port-22 listener accepts one local connected peer,
+  recv_peek/recv_commit carry bounded input into SSH dispatch, and
+  send_ready/send carry accepted SSH output back to the peer socket. Socket
+  code owns descriptor lifecycle, recv queues, backpressure, close, hangup, and
+  READ/WRITE/HANGUP/ERROR readiness; SSH code owns protocol classification,
+  output construction, fixed labels, and redaction. Missing listener or
+  connection, wrong-owner descriptors, would-block/backpressure, closed peer,
+  malformed or over-limit SSH input, lifecycle violations, poll/wait errors,
+  and redaction-sensitive inputs fail closed. This accepts only
+  socket-delivery-local=true for the local modeled in-kernel stream socket
+  path; live-reachability=false, remote-receipt=false, compatibility=false, and
+  ssh-ready=false remain authoritative. Pi 5 reachability, OpenSSH
+  compatibility, remote receipt, POSIX process wait/exit, broad command
+  expansion, phase transition, and ssh-ready=true remain deferred. The selected
+  next bounded task is phase12-ssh-live-socket-delivery-core-20260623.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
