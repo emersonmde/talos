@@ -8192,3 +8192,24 @@ ssh-ready=true. Fake/kernel-backed remote shell command expansion remains
 rejected as progress. selected_next_task is null and planningNeeded=true
 because no explicit queued/ready live-reachability or foundation follow-up task
 exists for the worker to promote without supervisor planning.
+
+phase12-ssh-channel-data-stdio-contract-20260623 accepts the bounded local
+modeled channel-data/stdio bridge contract. The accepted foundations are
+sufficient for a next source task to model inbound SSH_MSG_CHANNEL_DATA
+delivery to the attached shell's stdin ownership boundary only after accepted
+local authentication success, one open session channel, one shell request, one
+shell attachment, open lifecycle state, local process/session ownership, and
+fd0/fd1/fd2 stdio ownership are all present.
+
+The same contract permits local outbound stdout/stderr packet-construction
+reports only from accepted attached stdio ownership: stdout maps to
+SSH_MSG_CHANNEL_DATA, and stderr maps to SSH_MSG_CHANNEL_EXTENDED_DATA with
+SSH_EXTENDED_DATA_STDERR. These reports remain local modeled packet evidence;
+they do not prove encrypted socket delivery or remote receipt. Missing
+authentication, channel, shell attachment, stdio ownership, wrong message,
+malformed/trailing/over-limit/redaction-sensitive payloads, unsupported inbound
+extended data, and lifecycle violations must fail closed without claiming stdio
+delivery. The next source task may add channel-data-stdio-local=true only for
+the local modeled bridge; live-reachability=false,
+channel-window-management=false, and ssh-ready=false remain authoritative. The
+selected next bounded task is phase12-ssh-channel-data-stdio-core-20260623.

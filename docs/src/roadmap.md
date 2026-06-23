@@ -17212,6 +17212,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   deferred. selected_next_task is null and planningNeeded=true because no
   explicit queued/ready live-reachability or foundation follow-up task exists
   for the worker to promote without supervisor planning.
+- phase12-ssh-channel-data-stdio-contract-20260623 accepts the bounded local
+  modeled channel-data/stdio bridge contract after the accepted local shell
+  attachment frontier. The next source task may model inbound
+  SSH_MSG_CHANNEL_DATA delivery to the attached shell's stdin ownership
+  boundary only when authentication success, one open session channel, one
+  shell request, one shell attachment, open lifecycle state, local
+  process/session ownership, and fd0/fd1/fd2 stdio ownership are all present.
+  It may also construct local outbound stdout/stderr reports from attached
+  stdio ownership: stdout as SSH_MSG_CHANNEL_DATA, stderr as
+  SSH_MSG_CHANNEL_EXTENDED_DATA with SSH_EXTENDED_DATA_STDERR. Missing
+  authentication, channel, shell attachment, stdio ownership, wrong message,
+  malformed/trailing/over-limit/redaction-sensitive payloads, unsupported
+  inbound extended data, and lifecycle violations must fail closed without
+  claiming stdio delivery. The contract accepts only local modeled packet
+  plumbing; encrypted socket delivery, channel-window management, remote
+  receipt, hardware reachability, OpenSSH/POSIX/Linux compatibility, broad
+  expansion, phase transition, and ssh-ready=true remain deferred. The
+  selected next bounded task is phase12-ssh-channel-data-stdio-core-20260623.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
