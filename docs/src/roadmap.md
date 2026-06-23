@@ -17145,6 +17145,25 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   compatibility, broad expansion, phase transition, or ssh-ready=true is
   accepted. The selected next bounded task is
   phase12-shell-ssh-session-shell-request-smoke-20260622.
+- phase12-ssh-session-shell-attachment-contract-20260623 accepts the bounded
+  local modeled SSH shell attachment contract and supersedes the old smoke-only
+  follow-up as the feature-led checkpoint. The accepted local foundations are
+  sufficient for a bounded CHANNEL_SUCCESS implementation only when one
+  authenticated open session channel with one recognized shell request owns an
+  accepted local execution/stdio attachment: VFS-backed process
+  launch/lifecycle, inherited fd0/fd1/fd2 descriptors,
+  runtime-console0/local-input stdin readiness and EOF semantics,
+  scheduler-owned stdin wait/wakeup, stdout/stderr output identities, and
+  lifecycle/close accounting. CHANNEL_SUCCESS and shell-attached=true remain
+  local and modeled only; missing prerequisites, duplicate requests or
+  attachments, unsupported request families, malformed or redaction-sensitive
+  inputs, missing local execution ownership, EOF/close-before-attach, and
+  lifecycle violations remain CHANNEL_FAILURE or no-reply
+  failure/no-attachment. Fake/kernel-backed remote shell progress remains
+  rejected. Live encrypted channel data delivery, socket reachability, channel
+  window management, hardware proof, OpenSSH/POSIX/Linux compatibility, broad
+  expansion, phase transition, and ssh-ready=true remain deferred. The selected
+  next bounded task is phase12-ssh-session-shell-attachment-core-20260623.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

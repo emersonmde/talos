@@ -8112,3 +8112,27 @@ data, EOF/close/window flow control, exec/subsystem/pty/env/signal behavior,
 live reachability, hardware proof, compatibility, broad expansion, phase
 transition, or ssh-ready=true is accepted. The selected next bounded task is
 phase12-shell-ssh-session-shell-request-smoke-20260622.
+
+phase12-ssh-session-shell-attachment-contract-20260623 accepts the bounded
+local modeled SSH shell attachment contract and supersedes the old smoke-only
+follow-up as the feature-led next checkpoint. The accepted local foundations
+are sufficient for a bounded CHANNEL_SUCCESS implementation only when the next
+source task ties one authenticated, open session channel with one recognized
+shell request to accepted local execution and stdio ownership: VFS-backed
+process launch/lifecycle, inherited fd0/fd1/fd2 descriptors,
+runtime-console0/local-input stdin readiness and EOF semantics, stdout/stderr
+output identities, scheduler-owned stdin wait/wakeup, and shell lifecycle
+accounting.
+
+The contract permits CHANNEL_SUCCESS and shell-attached=true only for that
+single local modeled attachment path. Missing authentication, missing channel,
+missing or duplicate shell request, duplicate attachment, disabled policy,
+unsupported request families, malformed or redaction-sensitive input, missing
+local execution ownership, EOF/close-before-attach, and lifecycle violations
+must remain CHANNEL_FAILURE or no-reply failure/no-attachment. The contract
+continues to reject fake/kernel-backed remote shell progress: shell attachment
+must consume accepted TTY/process/descriptor/VFS/userspace surfaces. Live
+encrypted channel data delivery, socket reachability, channel window
+management, OpenSSH/POSIX/Linux compatibility, hardware proof, broad
+expansion, phase transition, and ssh-ready=true remain deferred. The selected
+next bounded task is phase12-ssh-session-shell-attachment-core-20260623.
