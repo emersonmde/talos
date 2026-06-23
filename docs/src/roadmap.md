@@ -17627,6 +17627,25 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   expansion, phase transition, and ssh-ready=true remain deferred. The selected
   next bounded task is
   phase12-ssh-openssh-compat-discriminator-feature-smoke-20260623.
+- phase12-ssh-openssh-compat-discriminator-feature-smoke-20260623 accepts
+  focused feature-smoke and full regression evidence for the local/offline
+  OpenSSH compatibility discriminator. The focused no_std evidence exercises
+  the accepted sanitized success transcript of optional channel-data stdout,
+  optional extended-data stderr, EOF, exit-status with request type exit-status
+  and want_reply=false, and close in that order. Representative fail-closed
+  evidence covers missing prerequisites, missing modeled peer receipt,
+  lifecycle/order violations, duplicate terminal messages, unsupported request
+  shape, malformed/over-limit shape, and redaction-sensitive input. Full
+  regression evidence preserves the accepted SSH readiness, descriptor,
+  syscall, userspace socket ABI, and stream-socket model surfaces. The only
+  accepted discriminator counter remains
+  openssh-compat-discriminator-local=true for this local/offline shape;
+  live-reachability=false, remote-receipt=false, compatibility=false, and
+  ssh-ready=false remain authoritative. External OpenSSH execution, Pi 5
+  reachability, live remote receipt, OpenSSH/POSIX/Linux compatibility,
+  PTY/SCP/SFTP, broad command expansion, phase transition, and ssh-ready=true
+  remain deferred. The selected next bounded task is
+  phase12-ssh-openssh-compat-discriminator-closeout-20260623.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
