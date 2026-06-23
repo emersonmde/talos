@@ -210,6 +210,19 @@ pub(crate) enum SshServiceReadinessLabel {
     ChannelLifecycleFailureDuplicate,
     ChannelLifecycleFailureLifecycleViolation,
     ChannelLifecycleFailureRedactionSensitive,
+    SocketDeliveryLocal,
+    SocketDeliveryInputDispatched,
+    SocketDeliveryOutputQueued,
+    SocketDeliveryFailureListenerMissing,
+    SocketDeliveryFailureConnectionMissing,
+    SocketDeliveryFailurePrerequisiteMissing,
+    SocketDeliveryFailureWouldBlock,
+    SocketDeliveryFailureBackpressure,
+    SocketDeliveryFailureClosedPeer,
+    SocketDeliveryFailureMalformed,
+    SocketDeliveryFailureOverLimit,
+    SocketDeliveryFailureLifecycleViolation,
+    SocketDeliveryFailureRedactionSensitive,
     TransportClosedBeforeKex,
     AuthenticationUnimplemented,
     SessionUnimplemented,
@@ -639,6 +652,41 @@ impl SshServiceReadinessLabel {
             Self::ChannelLifecycleFailureRedactionSensitive => {
                 "sshservicediag-channel-lifecycle-failure-redaction-sensitive"
             }
+            Self::SocketDeliveryLocal => "sshservicediag-socket-delivery-local",
+            Self::SocketDeliveryInputDispatched => {
+                "sshservicediag-socket-delivery-input-dispatched"
+            }
+            Self::SocketDeliveryOutputQueued => "sshservicediag-socket-delivery-output-queued",
+            Self::SocketDeliveryFailureListenerMissing => {
+                "sshservicediag-socket-delivery-failure-listener-missing"
+            }
+            Self::SocketDeliveryFailureConnectionMissing => {
+                "sshservicediag-socket-delivery-failure-connection-missing"
+            }
+            Self::SocketDeliveryFailurePrerequisiteMissing => {
+                "sshservicediag-socket-delivery-failure-prerequisite-missing"
+            }
+            Self::SocketDeliveryFailureWouldBlock => {
+                "sshservicediag-socket-delivery-failure-would-block"
+            }
+            Self::SocketDeliveryFailureBackpressure => {
+                "sshservicediag-socket-delivery-failure-backpressure"
+            }
+            Self::SocketDeliveryFailureClosedPeer => {
+                "sshservicediag-socket-delivery-failure-closed-peer"
+            }
+            Self::SocketDeliveryFailureMalformed => {
+                "sshservicediag-socket-delivery-failure-malformed"
+            }
+            Self::SocketDeliveryFailureOverLimit => {
+                "sshservicediag-socket-delivery-failure-over-limit"
+            }
+            Self::SocketDeliveryFailureLifecycleViolation => {
+                "sshservicediag-socket-delivery-failure-lifecycle-violation"
+            }
+            Self::SocketDeliveryFailureRedactionSensitive => {
+                "sshservicediag-socket-delivery-failure-redaction-sensitive"
+            }
             Self::TransportClosedBeforeKex => "sshservicediag-transport-closed-before-kex",
             Self::AuthenticationUnimplemented => "sshservicediag-authentication-unimplemented",
             Self::SessionUnimplemented => "sshservicediag-session-unimplemented",
@@ -698,6 +746,7 @@ const MAX_SSH_SESSION_SHELL_ATTACHMENT_LABELS: usize = 14;
 const MAX_SSH_CHANNEL_DATA_STDIO_LABELS: usize = 12;
 const MAX_SSH_CHANNEL_WINDOW_ACCOUNTING_LABELS: usize = 14;
 const MAX_SSH_CHANNEL_LIFECYCLE_LABELS: usize = 14;
+const MAX_SSH_SOCKET_DELIVERY_LABELS: usize = 16;
 const SSH_PREAUTH_STRING_MAX_BYTES: usize = 256;
 const SSH_PREAUTH_PUBLIC_KEY_BLOB_MAX_BYTES: usize = 512;
 const SSH_PREAUTH_SIGNATURE_MAX_BYTES: usize = 512;
@@ -5902,6 +5951,700 @@ pub(crate) fn build_modeled_client_kexinit_packet_for_runtime_test(
     build_modeled_client_kexinit_packet(output, first_packet_follows)
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SshSocketDeliveryPeerInput<'a> {
+    Queued(&'a [u8]),
+    WouldBlock,
+    ClosedBeforeRecv,
+}
+
+pub(crate) struct SshSocketDeliveryInput<'a> {
+    pub(crate) listener_modeled: bool,
+    pub(crate) connection_modeled: bool,
+    pub(crate) peer_input: SshSocketDeliveryPeerInput<'a>,
+    pub(crate) authentication_success: bool,
+    pub(crate) open_session_channel: bool,
+    pub(crate) shell_attached: bool,
+    pub(crate) local_process_session_owned: bool,
+    pub(crate) local_stdio_descriptors_owned: bool,
+    pub(crate) channel_lifecycle_open: bool,
+    pub(crate) redaction_sensitive: bool,
+    pub(crate) output_stream: SshChannelDataStdioOutputStream,
+    pub(crate) output_len: usize,
+    pub(crate) force_output_backpressure: bool,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SshSocketDeliveryResult {
+    LocalInputOutputDelivered,
+    FailureListenerMissing,
+    FailureConnectionMissing,
+    FailurePrerequisiteMissing,
+    FailureWouldBlock,
+    FailureBackpressure,
+    FailureClosedPeer,
+    FailureMalformedInput,
+    FailureInputOverLimit,
+    FailureLifecycleViolation,
+    FailureRedactionSensitive,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SshSocketDeliveryReport {
+    labels: [SshServiceReadinessLabel; MAX_SSH_SOCKET_DELIVERY_LABELS],
+    label_count: usize,
+    result: SshSocketDeliveryResult,
+    listener_readiness_bits: u32,
+    connection_readiness_before_recv_bits: u32,
+    connection_readiness_before_send_bits: u32,
+    received_len: Option<usize>,
+    committed_len: Option<usize>,
+    sent_len: Option<usize>,
+    authentication_success: bool,
+    open_session_channel: bool,
+    shell_attached: bool,
+    channel_data_stdio_local: bool,
+    channel_window_management: bool,
+    channel_lifecycle_local: bool,
+    socket_delivery_local: bool,
+}
+
+impl SshSocketDeliveryReport {
+    fn success(
+        listener_readiness_bits: u32,
+        connection_readiness_before_recv_bits: u32,
+        connection_readiness_before_send_bits: u32,
+        received_len: usize,
+        sent_len: usize,
+        output_stream: SshChannelDataStdioOutputStream,
+    ) -> Self {
+        let mut report = Self::new(
+            SshSocketDeliveryResult::LocalInputOutputDelivered,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            listener_readiness_bits,
+            connection_readiness_before_recv_bits,
+            connection_readiness_before_send_bits,
+            Some(received_len),
+            Some(received_len),
+            Some(sent_len),
+        );
+        report.push_success_prefix();
+        report.push(SshServiceReadinessLabel::SocketDeliveryInputDispatched);
+        report.push(SshServiceReadinessLabel::ChannelDataStdioInboundStdin);
+        report.push(match output_stream {
+            SshChannelDataStdioOutputStream::Stdout => {
+                SshServiceReadinessLabel::ChannelDataStdioOutboundStdout
+            }
+            SshChannelDataStdioOutputStream::Stderr => {
+                SshServiceReadinessLabel::ChannelDataStdioOutboundStderr
+            }
+        });
+        report.push(SshServiceReadinessLabel::ChannelDataStdioLocalOnly);
+        report.push(SshServiceReadinessLabel::SocketDeliveryOutputQueued);
+        report.push(SshServiceReadinessLabel::SocketDeliveryLocal);
+        report.push(SshServiceReadinessLabel::NotReady);
+        report
+    }
+
+    fn failure(
+        result: SshSocketDeliveryResult,
+        label: SshServiceReadinessLabel,
+        authentication_success: bool,
+        open_session_channel: bool,
+        shell_attached: bool,
+        channel_lifecycle_open: bool,
+        listener_readiness_bits: u32,
+        connection_readiness_before_recv_bits: u32,
+        connection_readiness_before_send_bits: u32,
+        received_len: Option<usize>,
+    ) -> Self {
+        let mut report = Self::new(
+            result,
+            authentication_success,
+            open_session_channel,
+            shell_attached,
+            false,
+            false,
+            false,
+            listener_readiness_bits,
+            connection_readiness_before_recv_bits,
+            connection_readiness_before_send_bits,
+            received_len,
+            None,
+            None,
+        );
+        if authentication_success {
+            report.push(SshServiceReadinessLabel::AuthenticationSuccessLocalOnly);
+        } else {
+            report.push(SshServiceReadinessLabel::AuthenticationUnimplemented);
+        }
+        if open_session_channel {
+            report.push(SshServiceReadinessLabel::SessionOpenLocalOnly);
+            report.push(SshServiceReadinessLabel::ChannelOpenLocalOnly);
+        }
+        if shell_attached {
+            report.push(SshServiceReadinessLabel::ShellAttached);
+        } else {
+            report.push(SshServiceReadinessLabel::ShellUnattached);
+        }
+        if channel_lifecycle_open {
+            report.push(SshServiceReadinessLabel::ChannelLifecyclePrerequisiteOnly);
+        }
+        report.push(label);
+        report.push(SshServiceReadinessLabel::NotReady);
+        report
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn new(
+        result: SshSocketDeliveryResult,
+        authentication_success: bool,
+        open_session_channel: bool,
+        shell_attached: bool,
+        channel_data_stdio_local: bool,
+        channel_window_management: bool,
+        channel_lifecycle_local: bool,
+        listener_readiness_bits: u32,
+        connection_readiness_before_recv_bits: u32,
+        connection_readiness_before_send_bits: u32,
+        received_len: Option<usize>,
+        committed_len: Option<usize>,
+        sent_len: Option<usize>,
+    ) -> Self {
+        Self {
+            labels: [SshServiceReadinessLabel::NotReady; MAX_SSH_SOCKET_DELIVERY_LABELS],
+            label_count: 0,
+            result,
+            listener_readiness_bits,
+            connection_readiness_before_recv_bits,
+            connection_readiness_before_send_bits,
+            received_len,
+            committed_len,
+            sent_len,
+            authentication_success,
+            open_session_channel,
+            shell_attached,
+            channel_data_stdio_local,
+            channel_window_management,
+            channel_lifecycle_local,
+            socket_delivery_local: channel_data_stdio_local,
+        }
+    }
+
+    fn push_success_prefix(&mut self) {
+        self.push(SshServiceReadinessLabel::LocalListenerModeled);
+        self.push(SshServiceReadinessLabel::LocalTransportModeled);
+        self.push(SshServiceReadinessLabel::AuthenticationSuccessLocalOnly);
+        self.push(SshServiceReadinessLabel::SessionOpenLocalOnly);
+        self.push(SshServiceReadinessLabel::ChannelOpenLocalOnly);
+        self.push(SshServiceReadinessLabel::ShellAttached);
+        self.push(SshServiceReadinessLabel::ChannelLifecyclePrerequisiteOnly);
+    }
+
+    fn push(&mut self, label: SshServiceReadinessLabel) {
+        self.labels[self.label_count] = label;
+        self.label_count += 1;
+    }
+
+    pub(crate) fn labels(&self) -> &[SshServiceReadinessLabel] {
+        &self.labels[..self.label_count]
+    }
+
+    pub(crate) const fn result(self) -> SshSocketDeliveryResult {
+        self.result
+    }
+
+    pub(crate) const fn listener_readiness_bits(self) -> u32 {
+        self.listener_readiness_bits
+    }
+
+    pub(crate) const fn connection_readiness_before_recv_bits(self) -> u32 {
+        self.connection_readiness_before_recv_bits
+    }
+
+    pub(crate) const fn connection_readiness_before_send_bits(self) -> u32 {
+        self.connection_readiness_before_send_bits
+    }
+
+    pub(crate) const fn received_len(self) -> Option<usize> {
+        self.received_len
+    }
+
+    pub(crate) const fn committed_len(self) -> Option<usize> {
+        self.committed_len
+    }
+
+    pub(crate) const fn sent_len(self) -> Option<usize> {
+        self.sent_len
+    }
+
+    pub(crate) const fn authentication_success(self) -> bool {
+        self.authentication_success
+    }
+
+    pub(crate) const fn session_count(self) -> usize {
+        if self.open_session_channel { 1 } else { 0 }
+    }
+
+    pub(crate) const fn channel_count(self) -> usize {
+        if self.open_session_channel { 1 } else { 0 }
+    }
+
+    pub(crate) const fn shell_attached(self) -> bool {
+        self.shell_attached
+    }
+
+    pub(crate) const fn channel_data_stdio_local(self) -> bool {
+        self.channel_data_stdio_local
+    }
+
+    pub(crate) const fn channel_window_management(self) -> bool {
+        self.channel_window_management
+    }
+
+    pub(crate) const fn channel_lifecycle_local(self) -> bool {
+        self.channel_lifecycle_local
+    }
+
+    pub(crate) const fn socket_delivery_local(self) -> bool {
+        self.socket_delivery_local
+    }
+
+    pub(crate) const fn live_reachability(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn remote_receipt(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn compatibility(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn ssh_ready(self) -> bool {
+        false
+    }
+}
+
+pub(crate) fn classify_ssh_socket_delivery(
+    input: SshSocketDeliveryInput<'_>,
+) -> SshSocketDeliveryReport {
+    if !input.listener_modeled {
+        return socket_delivery_failure(
+            SshSocketDeliveryResult::FailureListenerMissing,
+            SshServiceReadinessLabel::SocketDeliveryFailureListenerMissing,
+            input,
+            0,
+            0,
+            0,
+            None,
+        );
+    }
+
+    let server_owner = match crate::scheduler::ProcessOwnerId::new(SSH_LOCAL_TRANSPORT_OWNER_RAW) {
+        Some(owner) => owner,
+        None => {
+            return socket_delivery_failure(
+                SshSocketDeliveryResult::FailureListenerMissing,
+                SshServiceReadinessLabel::SocketDeliveryFailureListenerMissing,
+                input,
+                0,
+                0,
+                0,
+                None,
+            );
+        }
+    };
+    let client_owner =
+        match crate::scheduler::ProcessOwnerId::new(SSH_LOCAL_TRANSPORT_CLIENT_OWNER_RAW) {
+            Some(owner) => owner,
+            None => {
+                return socket_delivery_failure(
+                    SshSocketDeliveryResult::FailureConnectionMissing,
+                    SshServiceReadinessLabel::SocketDeliveryFailureConnectionMissing,
+                    input,
+                    0,
+                    0,
+                    0,
+                    None,
+                );
+            }
+        };
+    let endpoint = crate::network::Ipv4Endpoint::new(
+        crate::network::SOCKET_SYNTHETIC_LOCAL_IPV4_BE,
+        SSH_LOCAL_MODELED_ENDPOINT_PORT,
+    );
+    let mut sockets =
+        crate::network::NetworkSocketDescriptorTable::<SSH_LOCAL_TRANSPORT_SOCKET_CAPACITY>::new();
+    let listener = match sockets.open(
+        server_owner,
+        crate::network::SOCKET_DOMAIN_AF_INET,
+        crate::network::SOCKET_TYPE_STREAM,
+        crate::network::SOCKET_PROTOCOL_DEFAULT,
+    ) {
+        Ok(descriptor) => descriptor,
+        Err(_) => {
+            return socket_delivery_failure(
+                SshSocketDeliveryResult::FailureListenerMissing,
+                SshServiceReadinessLabel::SocketDeliveryFailureListenerMissing,
+                input,
+                0,
+                0,
+                0,
+                None,
+            );
+        }
+    };
+    if sockets.bind(server_owner, listener, endpoint).is_err()
+        || sockets
+            .listen(
+                server_owner,
+                listener,
+                crate::network::SOCKET_LISTEN_BACKLOG_MIN as u8,
+            )
+            .is_err()
+    {
+        return socket_delivery_failure(
+            SshSocketDeliveryResult::FailureListenerMissing,
+            SshServiceReadinessLabel::SocketDeliveryFailureListenerMissing,
+            input,
+            0,
+            0,
+            0,
+            None,
+        );
+    }
+
+    if !input.connection_modeled {
+        let readiness = socket_readiness_bits(sockets.readiness(
+            server_owner,
+            listener,
+            crate::network::NetworkSocketReadiness::READ,
+        ));
+        return socket_delivery_failure(
+            SshSocketDeliveryResult::FailureConnectionMissing,
+            SshServiceReadinessLabel::SocketDeliveryFailureConnectionMissing,
+            input,
+            readiness,
+            0,
+            0,
+            None,
+        );
+    }
+
+    let client = match sockets.open(
+        client_owner,
+        crate::network::SOCKET_DOMAIN_AF_INET,
+        crate::network::SOCKET_TYPE_STREAM,
+        crate::network::SOCKET_PROTOCOL_DEFAULT,
+    ) {
+        Ok(descriptor) => descriptor,
+        Err(_) => {
+            return socket_delivery_failure(
+                SshSocketDeliveryResult::FailureConnectionMissing,
+                SshServiceReadinessLabel::SocketDeliveryFailureConnectionMissing,
+                input,
+                0,
+                0,
+                0,
+                None,
+            );
+        }
+    };
+    if sockets.connect(client_owner, client, endpoint).is_err() {
+        return socket_delivery_failure(
+            SshSocketDeliveryResult::FailureConnectionMissing,
+            SshServiceReadinessLabel::SocketDeliveryFailureConnectionMissing,
+            input,
+            0,
+            0,
+            0,
+            None,
+        );
+    }
+    let listener_readiness = socket_readiness_bits(sockets.readiness(
+        server_owner,
+        listener,
+        crate::network::NetworkSocketReadiness::READ,
+    ));
+    let accepted = match sockets.accept(server_owner, listener) {
+        Ok(descriptor) => descriptor,
+        Err(_) => {
+            return socket_delivery_failure(
+                SshSocketDeliveryResult::FailureConnectionMissing,
+                SshServiceReadinessLabel::SocketDeliveryFailureConnectionMissing,
+                input,
+                listener_readiness,
+                0,
+                0,
+                None,
+            );
+        }
+    };
+
+    match input.peer_input {
+        SshSocketDeliveryPeerInput::Queued(payload) => {
+            if payload.len() > crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY {
+                return socket_delivery_failure(
+                    SshSocketDeliveryResult::FailureInputOverLimit,
+                    SshServiceReadinessLabel::SocketDeliveryFailureOverLimit,
+                    input,
+                    listener_readiness,
+                    0,
+                    0,
+                    Some(payload.len()),
+                );
+            }
+            if sockets.send(client_owner, client, payload).is_err() {
+                return socket_delivery_failure(
+                    SshSocketDeliveryResult::FailureInputOverLimit,
+                    SshServiceReadinessLabel::SocketDeliveryFailureOverLimit,
+                    input,
+                    listener_readiness,
+                    0,
+                    0,
+                    Some(payload.len()),
+                );
+            }
+        }
+        SshSocketDeliveryPeerInput::WouldBlock => {}
+        SshSocketDeliveryPeerInput::ClosedBeforeRecv => {
+            let _ = sockets.close(client_owner, client);
+        }
+    }
+
+    let read_write = crate::network::NetworkSocketReadiness::from_bits(
+        crate::network::NetworkSocketReadiness::READ.bits()
+            | crate::network::NetworkSocketReadiness::WRITE.bits(),
+    );
+    let connection_readiness_before_recv =
+        socket_readiness_bits(sockets.readiness(server_owner, accepted, read_write));
+    let mut received = [0u8; crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY];
+    let received_len = match sockets.recv_peek(server_owner, accepted, &mut received) {
+        Ok(0) | Err(crate::posix::PosixError::Again) => {
+            return socket_delivery_failure(
+                SshSocketDeliveryResult::FailureWouldBlock,
+                SshServiceReadinessLabel::SocketDeliveryFailureWouldBlock,
+                input,
+                listener_readiness,
+                connection_readiness_before_recv,
+                0,
+                None,
+            );
+        }
+        Err(crate::posix::PosixError::Pipe) => {
+            return socket_delivery_failure(
+                SshSocketDeliveryResult::FailureClosedPeer,
+                SshServiceReadinessLabel::SocketDeliveryFailureClosedPeer,
+                input,
+                listener_readiness,
+                connection_readiness_before_recv,
+                0,
+                None,
+            );
+        }
+        Ok(len) => len,
+        Err(_) => {
+            return socket_delivery_failure(
+                SshSocketDeliveryResult::FailureConnectionMissing,
+                SshServiceReadinessLabel::SocketDeliveryFailureConnectionMissing,
+                input,
+                listener_readiness,
+                connection_readiness_before_recv,
+                0,
+                None,
+            );
+        }
+    };
+
+    let input_report = classify_ssh_channel_data_stdio(SshChannelDataStdioInput {
+        authentication_success: input.authentication_success,
+        open_session_channel: input.open_session_channel,
+        shell_attached: input.shell_attached,
+        local_process_session_owned: input.local_process_session_owned,
+        local_stdio_descriptors_owned: input.local_stdio_descriptors_owned,
+        channel_lifecycle_open: input.channel_lifecycle_open,
+        redaction_sensitive: input.redaction_sensitive,
+        decrypted_payload: &received[..received_len],
+    });
+    if !input_report.channel_data_stdio_local() {
+        let (result, label) = socket_delivery_channel_data_failure(input_report.result());
+        return socket_delivery_failure(
+            result,
+            label,
+            input,
+            listener_readiness,
+            connection_readiness_before_recv,
+            0,
+            Some(received_len),
+        );
+    }
+    if sockets
+        .recv_commit(server_owner, accepted, received_len)
+        .is_err()
+    {
+        return socket_delivery_failure(
+            SshSocketDeliveryResult::FailureConnectionMissing,
+            SshServiceReadinessLabel::SocketDeliveryFailureConnectionMissing,
+            input,
+            listener_readiness,
+            connection_readiness_before_recv,
+            0,
+            Some(received_len),
+        );
+    }
+
+    let output_report = classify_ssh_channel_data_stdio_output(SshChannelDataStdioOutputInput {
+        shell_attached: input.shell_attached,
+        local_stdio_descriptors_owned: input.local_stdio_descriptors_owned,
+        channel_lifecycle_open: input.channel_lifecycle_open,
+        redaction_sensitive: input.redaction_sensitive,
+        stream: input.output_stream,
+        data_len: input.output_len,
+    });
+    if !output_report.channel_data_stdio_local() {
+        let (result, label) = socket_delivery_channel_data_failure(output_report.result());
+        return socket_delivery_failure(
+            result,
+            label,
+            input,
+            listener_readiness,
+            connection_readiness_before_recv,
+            0,
+            Some(received_len),
+        );
+    }
+
+    if input.force_output_backpressure {
+        let filler = [0u8; crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY];
+        let _ = sockets.send(server_owner, accepted, &filler);
+    }
+    let connection_readiness_before_send =
+        socket_readiness_bits(sockets.readiness(server_owner, accepted, read_write));
+    if input.output_len > crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY {
+        return socket_delivery_failure(
+            SshSocketDeliveryResult::FailureBackpressure,
+            SshServiceReadinessLabel::SocketDeliveryFailureBackpressure,
+            input,
+            listener_readiness,
+            connection_readiness_before_recv,
+            connection_readiness_before_send,
+            Some(received_len),
+        );
+    }
+    let output = [0u8; crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY];
+    match sockets.send(server_owner, accepted, &output[..input.output_len]) {
+        Ok(sent_len) => SshSocketDeliveryReport::success(
+            listener_readiness,
+            connection_readiness_before_recv,
+            connection_readiness_before_send,
+            received_len,
+            sent_len,
+            input.output_stream,
+        ),
+        Err(crate::posix::PosixError::NoSpace) => socket_delivery_failure(
+            SshSocketDeliveryResult::FailureBackpressure,
+            SshServiceReadinessLabel::SocketDeliveryFailureBackpressure,
+            input,
+            listener_readiness,
+            connection_readiness_before_recv,
+            connection_readiness_before_send,
+            Some(received_len),
+        ),
+        Err(crate::posix::PosixError::Pipe) => socket_delivery_failure(
+            SshSocketDeliveryResult::FailureClosedPeer,
+            SshServiceReadinessLabel::SocketDeliveryFailureClosedPeer,
+            input,
+            listener_readiness,
+            connection_readiness_before_recv,
+            connection_readiness_before_send,
+            Some(received_len),
+        ),
+        Err(_) => socket_delivery_failure(
+            SshSocketDeliveryResult::FailureConnectionMissing,
+            SshServiceReadinessLabel::SocketDeliveryFailureConnectionMissing,
+            input,
+            listener_readiness,
+            connection_readiness_before_recv,
+            connection_readiness_before_send,
+            Some(received_len),
+        ),
+    }
+}
+
+fn socket_delivery_failure(
+    result: SshSocketDeliveryResult,
+    label: SshServiceReadinessLabel,
+    input: SshSocketDeliveryInput<'_>,
+    listener_readiness_bits: u32,
+    connection_readiness_before_recv_bits: u32,
+    connection_readiness_before_send_bits: u32,
+    received_len: Option<usize>,
+) -> SshSocketDeliveryReport {
+    SshSocketDeliveryReport::failure(
+        result,
+        label,
+        input.authentication_success,
+        input.open_session_channel,
+        input.shell_attached,
+        input.channel_lifecycle_open,
+        listener_readiness_bits,
+        connection_readiness_before_recv_bits,
+        connection_readiness_before_send_bits,
+        received_len,
+    )
+}
+
+fn socket_readiness_bits(
+    readiness: Result<crate::network::NetworkSocketReadiness, crate::posix::PosixError>,
+) -> u32 {
+    readiness.map_or(0, crate::network::NetworkSocketReadiness::bits)
+}
+
+fn socket_delivery_channel_data_failure(
+    result: SshChannelDataStdioResult,
+) -> (SshSocketDeliveryResult, SshServiceReadinessLabel) {
+    match result {
+        SshChannelDataStdioResult::ChannelDataFailureAuthenticationMissing
+        | SshChannelDataStdioResult::ChannelDataFailureChannelMissing
+        | SshChannelDataStdioResult::ChannelDataFailureShellAttachmentMissing
+        | SshChannelDataStdioResult::ChannelDataFailureLocalStdioMissing => (
+            SshSocketDeliveryResult::FailurePrerequisiteMissing,
+            SshServiceReadinessLabel::SocketDeliveryFailurePrerequisiteMissing,
+        ),
+        SshChannelDataStdioResult::ChannelDataFailureLifecycleViolation => (
+            SshSocketDeliveryResult::FailureLifecycleViolation,
+            SshServiceReadinessLabel::SocketDeliveryFailureLifecycleViolation,
+        ),
+        SshChannelDataStdioResult::ChannelDataFailureOverLimit => (
+            SshSocketDeliveryResult::FailureInputOverLimit,
+            SshServiceReadinessLabel::SocketDeliveryFailureOverLimit,
+        ),
+        SshChannelDataStdioResult::ChannelDataFailureRedactionSensitive => (
+            SshSocketDeliveryResult::FailureRedactionSensitive,
+            SshServiceReadinessLabel::SocketDeliveryFailureRedactionSensitive,
+        ),
+        SshChannelDataStdioResult::ChannelDataFailureUnsupportedMessage
+        | SshChannelDataStdioResult::ChannelDataFailureUnsupportedExtendedData
+        | SshChannelDataStdioResult::ChannelDataFailureMalformed => (
+            SshSocketDeliveryResult::FailureMalformedInput,
+            SshServiceReadinessLabel::SocketDeliveryFailureMalformed,
+        ),
+        SshChannelDataStdioResult::InboundStdinDeliveredLocal
+        | SshChannelDataStdioResult::OutboundStdoutChannelDataModeled
+        | SshChannelDataStdioResult::OutboundStderrExtendedDataModeled => (
+            SshSocketDeliveryResult::FailureMalformedInput,
+            SshServiceReadinessLabel::SocketDeliveryFailureMalformed,
+        ),
+    }
+}
+
 fn model_local_ssh_listener_transport(
     remote_input: &[u8],
     input_state: SshRemoteIdentificationInputState,
@@ -6117,6 +6860,16 @@ mod tests {
         report: &SshChannelLifecycleReport,
     ) -> [&'static str; MAX_SSH_CHANNEL_LIFECYCLE_LABELS] {
         let mut labels = [""; MAX_SSH_CHANNEL_LIFECYCLE_LABELS];
+        for (index, label) in report.labels().iter().enumerate() {
+            labels[index] = label.name();
+        }
+        labels
+    }
+
+    fn socket_delivery_label_names(
+        report: &SshSocketDeliveryReport,
+    ) -> [&'static str; MAX_SSH_SOCKET_DELIVERY_LABELS] {
+        let mut labels = [""; MAX_SSH_SOCKET_DELIVERY_LABELS];
         for (index, label) in report.labels().iter().enumerate() {
             labels[index] = label.name();
         }
@@ -6355,6 +7108,24 @@ mod tests {
             channel_lifecycle_open: true,
             redaction_sensitive: false,
             decrypted_payload: payload,
+        }
+    }
+
+    fn socket_delivery_success_input(payload: &[u8]) -> SshSocketDeliveryInput<'_> {
+        SshSocketDeliveryInput {
+            listener_modeled: true,
+            connection_modeled: true,
+            peer_input: SshSocketDeliveryPeerInput::Queued(payload),
+            authentication_success: true,
+            open_session_channel: true,
+            shell_attached: true,
+            local_process_session_owned: true,
+            local_stdio_descriptors_owned: true,
+            channel_lifecycle_open: true,
+            redaction_sensitive: false,
+            output_stream: SshChannelDataStdioOutputStream::Stdout,
+            output_len: 8,
+            force_output_backpressure: false,
         }
     }
 
@@ -9538,6 +10309,217 @@ mod tests {
         );
         assert!(!rejected_after_close.channel_data_stdio_local());
         assert!(!rejected_after_close.ssh_ready());
+    }
+
+    #[test_case]
+    fn socket_delivery_local_model_delivers_input_and_output_through_stream_socket() {
+        let payload = channel_data_payload(b"socket");
+        let report = classify_ssh_socket_delivery(socket_delivery_success_input(&payload));
+
+        assert_eq!(
+            report.result(),
+            SshSocketDeliveryResult::LocalInputOutputDelivered
+        );
+        assert_eq!(
+            &socket_delivery_label_names(&report)[..report.labels().len()],
+            &[
+                "sshservicediag-local-listener-modeled",
+                "sshservicediag-local-transport-modeled",
+                "sshservicediag-authentication-success-local-only",
+                "sshservicediag-session-open-local-only",
+                "sshservicediag-channel-open-local-only",
+                "sshservicediag-shell-attached",
+                "sshservicediag-channel-lifecycle-prerequisite-only",
+                "sshservicediag-socket-delivery-input-dispatched",
+                "sshservicediag-channel-data-stdio-inbound-stdin",
+                "sshservicediag-channel-data-stdio-outbound-stdout",
+                "sshservicediag-channel-data-stdio-local-only",
+                "sshservicediag-socket-delivery-output-queued",
+                "sshservicediag-socket-delivery-local",
+                "sshservicediag-not-ready",
+            ]
+        );
+        assert_eq!(
+            report.listener_readiness_bits(),
+            crate::network::NetworkSocketReadiness::READ.bits()
+        );
+        assert_ne!(
+            report.connection_readiness_before_recv_bits()
+                & crate::network::NetworkSocketReadiness::READ.bits(),
+            0
+        );
+        assert_ne!(
+            report.connection_readiness_before_send_bits()
+                & crate::network::NetworkSocketReadiness::WRITE.bits(),
+            0
+        );
+        assert_eq!(report.received_len(), Some(payload.len()));
+        assert_eq!(report.committed_len(), Some(payload.len()));
+        assert_eq!(report.sent_len(), Some(8));
+        assert!(report.authentication_success());
+        assert_eq!(report.session_count(), 1);
+        assert_eq!(report.channel_count(), 1);
+        assert!(report.shell_attached());
+        assert!(report.channel_data_stdio_local());
+        assert!(report.channel_window_management());
+        assert!(report.channel_lifecycle_local());
+        assert!(report.socket_delivery_local());
+        assert!(!report.live_reachability());
+        assert!(!report.remote_receipt());
+        assert!(!report.compatibility());
+        assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn socket_delivery_fails_closed_for_missing_listener_connection_and_prerequisite() {
+        let payload = channel_data_payload(b"socket");
+
+        let no_listener = classify_ssh_socket_delivery(SshSocketDeliveryInput {
+            listener_modeled: false,
+            ..socket_delivery_success_input(&payload)
+        });
+        let no_connection = classify_ssh_socket_delivery(SshSocketDeliveryInput {
+            connection_modeled: false,
+            ..socket_delivery_success_input(&payload)
+        });
+        let missing_auth = classify_ssh_socket_delivery(SshSocketDeliveryInput {
+            authentication_success: false,
+            ..socket_delivery_success_input(&payload)
+        });
+
+        assert_eq!(
+            no_listener.result(),
+            SshSocketDeliveryResult::FailureListenerMissing
+        );
+        assert_eq!(
+            no_connection.result(),
+            SshSocketDeliveryResult::FailureConnectionMissing
+        );
+        assert_eq!(
+            missing_auth.result(),
+            SshSocketDeliveryResult::FailurePrerequisiteMissing
+        );
+        assert!(
+            no_listener
+                .labels()
+                .contains(&SshServiceReadinessLabel::SocketDeliveryFailureListenerMissing)
+        );
+        assert!(
+            no_connection
+                .labels()
+                .contains(&SshServiceReadinessLabel::SocketDeliveryFailureConnectionMissing)
+        );
+        assert!(
+            missing_auth
+                .labels()
+                .contains(&SshServiceReadinessLabel::SocketDeliveryFailurePrerequisiteMissing)
+        );
+        assert!(!missing_auth.socket_delivery_local());
+        assert!(!missing_auth.ssh_ready());
+    }
+
+    #[test_case]
+    fn socket_delivery_fails_closed_for_would_block_backpressure_and_closed_peer() {
+        let payload = channel_data_payload(b"socket");
+        let would_block = classify_ssh_socket_delivery(SshSocketDeliveryInput {
+            peer_input: SshSocketDeliveryPeerInput::WouldBlock,
+            ..socket_delivery_success_input(&payload)
+        });
+        let backpressure = classify_ssh_socket_delivery(SshSocketDeliveryInput {
+            force_output_backpressure: true,
+            ..socket_delivery_success_input(&payload)
+        });
+        let closed_peer = classify_ssh_socket_delivery(SshSocketDeliveryInput {
+            peer_input: SshSocketDeliveryPeerInput::ClosedBeforeRecv,
+            ..socket_delivery_success_input(&payload)
+        });
+
+        assert_eq!(
+            would_block.result(),
+            SshSocketDeliveryResult::FailureWouldBlock
+        );
+        assert_eq!(
+            backpressure.result(),
+            SshSocketDeliveryResult::FailureBackpressure
+        );
+        assert_eq!(
+            closed_peer.result(),
+            SshSocketDeliveryResult::FailureClosedPeer
+        );
+        assert!(
+            would_block
+                .labels()
+                .contains(&SshServiceReadinessLabel::SocketDeliveryFailureWouldBlock)
+        );
+        assert!(
+            backpressure
+                .labels()
+                .contains(&SshServiceReadinessLabel::SocketDeliveryFailureBackpressure)
+        );
+        assert!(
+            closed_peer
+                .labels()
+                .contains(&SshServiceReadinessLabel::SocketDeliveryFailureClosedPeer)
+        );
+        assert!(!backpressure.remote_receipt());
+        assert!(!closed_peer.socket_delivery_local());
+        assert!(!would_block.ssh_ready());
+    }
+
+    #[test_case]
+    fn socket_delivery_fails_closed_for_malformed_over_limit_lifecycle_and_redaction() {
+        let malformed = [SSH_MSG_CHANNEL_DATA, 0, 0];
+        let over_limit = [0u8; crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY + 1];
+        let payload = channel_data_payload(b"socket");
+        let malformed = classify_ssh_socket_delivery(socket_delivery_success_input(&malformed));
+        let over_limit = classify_ssh_socket_delivery(socket_delivery_success_input(&over_limit));
+        let lifecycle = classify_ssh_socket_delivery(SshSocketDeliveryInput {
+            channel_lifecycle_open: false,
+            ..socket_delivery_success_input(&payload)
+        });
+        let redaction = classify_ssh_socket_delivery(SshSocketDeliveryInput {
+            redaction_sensitive: true,
+            ..socket_delivery_success_input(&payload)
+        });
+
+        assert_eq!(
+            malformed.result(),
+            SshSocketDeliveryResult::FailureMalformedInput
+        );
+        assert_eq!(
+            over_limit.result(),
+            SshSocketDeliveryResult::FailureInputOverLimit
+        );
+        assert_eq!(
+            lifecycle.result(),
+            SshSocketDeliveryResult::FailureLifecycleViolation
+        );
+        assert_eq!(
+            redaction.result(),
+            SshSocketDeliveryResult::FailureRedactionSensitive
+        );
+        assert!(
+            malformed
+                .labels()
+                .contains(&SshServiceReadinessLabel::SocketDeliveryFailureMalformed)
+        );
+        assert!(
+            over_limit
+                .labels()
+                .contains(&SshServiceReadinessLabel::SocketDeliveryFailureOverLimit)
+        );
+        assert!(
+            lifecycle
+                .labels()
+                .contains(&SshServiceReadinessLabel::SocketDeliveryFailureLifecycleViolation)
+        );
+        assert!(
+            redaction
+                .labels()
+                .contains(&SshServiceReadinessLabel::SocketDeliveryFailureRedactionSensitive)
+        );
+        assert!(!redaction.socket_delivery_local());
+        assert!(!lifecycle.ssh_ready());
     }
 
     #[test_case]

@@ -8416,3 +8416,24 @@ ssh-ready=false remain authoritative; Pi 5 reachability, OpenSSH compatibility,
 remote receipt, POSIX process wait/exit, broad command expansion, phase
 transition, and ssh-ready=true remain deferred. The selected next bounded task
 is phase12-ssh-live-socket-delivery-core-20260623.
+
+phase12-ssh-live-socket-delivery-core-20260623 accepts the bounded local
+modeled SSH socket-delivery source behavior. src/ssh_service_readiness.rs now
+models one in-kernel AF_INET/SOCK_STREAM port-22 listener, one accepted local
+peer connection, recv_peek into an SSH-owned bounded buffer, recv_commit only
+after accepted SSH service classification, accepted stdout/stderr output
+classification, send_ready/send output queuing, and fixed fail-closed labels
+for missing listener/connection, missing prerequisite, would-block,
+backpressure, closed peer, malformed or over-limit input, lifecycle violation,
+and redaction-sensitive input. The accepted success counter is
+socket-delivery-local=true for local modeled in-kernel stream sockets only; the
+report may also preserve authentication-success=true, session-count=1,
+channel-count=1, shell-attached=true, channel-data-stdio-local=true,
+channel-window-management=true, and channel-lifecycle-local=true when the same
+modeled path satisfies those accepted prerequisites. live-reachability=false,
+remote-receipt=false, compatibility=false, and ssh-ready=false remain
+authoritative. Pi 5 reachability, remote receipt, OpenSSH/POSIX/Linux
+compatibility, POSIX process wait/exit, boot publication, broad command
+expansion, phase transition, and ssh-ready=true remain deferred. The selected
+next bounded task is
+phase12-ssh-live-socket-delivery-feature-smoke-20260623.
