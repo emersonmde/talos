@@ -8136,3 +8136,28 @@ encrypted channel data delivery, socket reachability, channel window
 management, OpenSSH/POSIX/Linux compatibility, hardware proof, broad
 expansion, phase transition, and ssh-ready=true remain deferred. The selected
 next bounded task is phase12-ssh-session-shell-attachment-core-20260623.
+
+phase12-ssh-session-shell-attachment-core-20260623 accepts the bounded local
+modeled SSH shell attachment source slice. The new attachment classifier keeps
+the prior shell-request failure/no-attachment classifier intact, then accepts
+one local modeled shell attachment only when authentication success, exactly
+one open session channel, the accepted shell request shape, enabled
+shell-request and shell-attachment policies, no duplicate request or
+attachment, an open channel lifecycle, local process/session ownership, and
+local fd0/fd1/fd2 stdio descriptor ownership are all present.
+
+For want-reply=true, that single local modeled success path records
+SSH_MSG_CHANNEL_SUCCESS and shell-attached=true. For want-reply=false, the same
+attachment is accepted without emitting a response packet. Missing
+authentication, missing channel, disabled shell-request or attachment policy,
+duplicate request or attachment, unsupported request type, malformed/trailing
+input, redaction-sensitive input, missing local execution/stdio ownership, and
+lifecycle violations remain fail-closed with no attachment. The accepted
+counters are authentication-success=true, session-count=1, channel-count=1,
+shell-request-count=1, and shell-attached=true only for the local modeled
+attachment path; live-reachability=false and ssh-ready=false remain
+authoritative. Live encrypted channel data delivery, socket reachability,
+channel window management, hardware proof, OpenSSH/POSIX/Linux compatibility,
+broad expansion, phase transition, and ssh-ready=true remain deferred. The
+selected next bounded task is
+phase12-ssh-session-shell-attachment-feature-smoke-20260623.

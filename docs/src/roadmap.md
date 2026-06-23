@@ -17164,6 +17164,28 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   window management, hardware proof, OpenSSH/POSIX/Linux compatibility, broad
   expansion, phase transition, and ssh-ready=true remain deferred. The selected
   next bounded task is phase12-ssh-session-shell-attachment-core-20260623.
+- phase12-ssh-session-shell-attachment-core-20260623 accepts the bounded local
+  modeled SSH shell attachment source slice. It adds a separate attachment
+  classifier that keeps the prior shell-request failure/no-attachment
+  classifier as a control surface, then accepts exactly one local modeled
+  shell attachment only when authentication success, one open session channel,
+  the accepted shell request shape, enabled request and attachment policies, no
+  duplicate request or attachment, open channel lifecycle, local
+  process/session ownership, and local fd0/fd1/fd2 stdio descriptor ownership
+  are all present. For want-reply=true, that path records
+  SSH_MSG_CHANNEL_SUCCESS and shell-attached=true; for want-reply=false, it
+  accepts the attachment without a response packet. Missing prerequisites,
+  disabled policies, duplicates, unsupported request type, malformed/trailing
+  input, redaction-sensitive input, missing local execution/stdio ownership,
+  and lifecycle violations fail closed without attachment. The accepted
+  counters are authentication-success=true, session-count=1, channel-count=1,
+  shell-request-count=1, and shell-attached=true only for the local modeled
+  attachment path; live-reachability=false and ssh-ready=false remain
+  authoritative. Live encrypted channel data delivery, socket reachability,
+  channel window management, hardware proof, OpenSSH/POSIX/Linux
+  compatibility, broad expansion, phase transition, and ssh-ready=true remain
+  deferred. The selected next bounded task is
+  phase12-ssh-session-shell-attachment-feature-smoke-20260623.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
