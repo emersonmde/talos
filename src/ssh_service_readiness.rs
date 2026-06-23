@@ -252,6 +252,21 @@ pub(crate) enum SshServiceReadinessLabel {
     PeerOutputReceiptFailureOverLimit,
     PeerOutputReceiptFailureLifecycleViolation,
     PeerOutputReceiptFailureRedactionSensitive,
+    OpenSshCompatDiscriminatorPrerequisiteOnly,
+    OpenSshCompatDiscriminatorStdoutDataAccepted,
+    OpenSshCompatDiscriminatorStderrExtendedDataAccepted,
+    OpenSshCompatDiscriminatorEofAccepted,
+    OpenSshCompatDiscriminatorExitStatusAccepted,
+    OpenSshCompatDiscriminatorCloseAccepted,
+    OpenSshCompatDiscriminatorLocal,
+    OpenSshCompatDiscriminatorFailurePrerequisiteMissing,
+    OpenSshCompatDiscriminatorFailureMissingPeerReceipt,
+    OpenSshCompatDiscriminatorFailureUnsupportedRequestShape,
+    OpenSshCompatDiscriminatorFailureMalformedShape,
+    OpenSshCompatDiscriminatorFailureOverLimit,
+    OpenSshCompatDiscriminatorFailureLifecycleViolation,
+    OpenSshCompatDiscriminatorFailureDuplicate,
+    OpenSshCompatDiscriminatorFailureRedactionSensitive,
     TransportClosedBeforeKex,
     AuthenticationUnimplemented,
     SessionUnimplemented,
@@ -750,9 +765,7 @@ impl SshServiceReadinessLabel {
             Self::PeerOutputReceiptChannelDataObserved => {
                 "sshservicediag-peer-output-receipt-channel-data-observed"
             }
-            Self::PeerOutputReceiptEofObserved => {
-                "sshservicediag-peer-output-receipt-eof-observed"
-            }
+            Self::PeerOutputReceiptEofObserved => "sshservicediag-peer-output-receipt-eof-observed",
             Self::PeerOutputReceiptExitStatusObserved => {
                 "sshservicediag-peer-output-receipt-exit-status-observed"
             }
@@ -783,6 +796,51 @@ impl SshServiceReadinessLabel {
             }
             Self::PeerOutputReceiptFailureRedactionSensitive => {
                 "sshservicediag-peer-output-receipt-failure-redaction-sensitive"
+            }
+            Self::OpenSshCompatDiscriminatorPrerequisiteOnly => {
+                "sshservicediag-openssh-compat-discriminator-prerequisite-only"
+            }
+            Self::OpenSshCompatDiscriminatorStdoutDataAccepted => {
+                "sshservicediag-openssh-compat-discriminator-stdout-data-accepted"
+            }
+            Self::OpenSshCompatDiscriminatorStderrExtendedDataAccepted => {
+                "sshservicediag-openssh-compat-discriminator-stderr-extended-data-accepted"
+            }
+            Self::OpenSshCompatDiscriminatorEofAccepted => {
+                "sshservicediag-openssh-compat-discriminator-eof-accepted"
+            }
+            Self::OpenSshCompatDiscriminatorExitStatusAccepted => {
+                "sshservicediag-openssh-compat-discriminator-exit-status-accepted"
+            }
+            Self::OpenSshCompatDiscriminatorCloseAccepted => {
+                "sshservicediag-openssh-compat-discriminator-close-accepted"
+            }
+            Self::OpenSshCompatDiscriminatorLocal => {
+                "sshservicediag-openssh-compat-discriminator-local"
+            }
+            Self::OpenSshCompatDiscriminatorFailurePrerequisiteMissing => {
+                "sshservicediag-openssh-compat-discriminator-failure-prerequisite-missing"
+            }
+            Self::OpenSshCompatDiscriminatorFailureMissingPeerReceipt => {
+                "sshservicediag-openssh-compat-discriminator-failure-missing-peer-receipt"
+            }
+            Self::OpenSshCompatDiscriminatorFailureUnsupportedRequestShape => {
+                "sshservicediag-openssh-compat-discriminator-failure-unsupported-request-shape"
+            }
+            Self::OpenSshCompatDiscriminatorFailureMalformedShape => {
+                "sshservicediag-openssh-compat-discriminator-failure-malformed-shape"
+            }
+            Self::OpenSshCompatDiscriminatorFailureOverLimit => {
+                "sshservicediag-openssh-compat-discriminator-failure-over-limit"
+            }
+            Self::OpenSshCompatDiscriminatorFailureLifecycleViolation => {
+                "sshservicediag-openssh-compat-discriminator-failure-lifecycle-violation"
+            }
+            Self::OpenSshCompatDiscriminatorFailureDuplicate => {
+                "sshservicediag-openssh-compat-discriminator-failure-duplicate"
+            }
+            Self::OpenSshCompatDiscriminatorFailureRedactionSensitive => {
+                "sshservicediag-openssh-compat-discriminator-failure-redaction-sensitive"
             }
             Self::TransportClosedBeforeKex => "sshservicediag-transport-closed-before-kex",
             Self::AuthenticationUnimplemented => "sshservicediag-authentication-unimplemented",
@@ -846,6 +904,8 @@ const MAX_SSH_CHANNEL_LIFECYCLE_LABELS: usize = 14;
 const MAX_SSH_POSIX_EOF_WAIT_LABELS: usize = 20;
 const MAX_SSH_SOCKET_DELIVERY_LABELS: usize = 16;
 const MAX_SSH_PEER_OUTPUT_RECEIPT_LABELS: usize = 20;
+const MAX_SSH_OPENSSH_COMPAT_DISCRIMINATOR_LABELS: usize = 20;
+const SSH_OPENSSH_COMPAT_TRANSCRIPT_MAX_EVENTS: usize = 8;
 const SSH_PREAUTH_STRING_MAX_BYTES: usize = 256;
 const SSH_PREAUTH_PUBLIC_KEY_BLOB_MAX_BYTES: usize = 512;
 const SSH_PREAUTH_SIGNATURE_MAX_BYTES: usize = 512;
@@ -7735,7 +7795,8 @@ pub(crate) fn classify_ssh_peer_output_receipt(
             | crate::network::NetworkSocketReadiness::WRITE.bits(),
     );
     if input.peer_receive_before_output {
-        let peer_readiness = socket_readiness_bits(sockets.readiness(client_owner, client, read_write));
+        let peer_readiness =
+            socket_readiness_bits(sockets.readiness(client_owner, client, read_write));
         let mut observed = [0u8; crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY];
         if matches!(
             sockets.recv_peek(client_owner, client, &mut observed),
@@ -7901,11 +7962,9 @@ pub(crate) fn classify_ssh_peer_output_receipt(
         &packet,
         SshPeerOutputReceiptExpected::Marker(SSH_MSG_CHANNEL_CLOSE),
     ) {
-        Ok(readiness) => SshPeerOutputReceiptReport::success(
-            readiness,
-            input.output_data_len,
-            input.exit_status,
-        ),
+        Ok(readiness) => {
+            SshPeerOutputReceiptReport::success(readiness, input.output_data_len, input.exit_status)
+        }
         Err((result, label, readiness)) => peer_output_receipt_failure(
             result,
             label,
@@ -7976,7 +8035,8 @@ fn send_and_observe_peer_output<const CAPACITY: usize>(
             ));
         }
     }
-    let peer_readiness = socket_readiness_bits(sockets.readiness(client_owner, client, readiness_mask));
+    let peer_readiness =
+        socket_readiness_bits(sockets.readiness(client_owner, client, readiness_mask));
     let mut observed = [0u8; crate::network::SOCKET_PAYLOAD_QUEUE_CAPACITY];
     let observed_len = match sockets.recv_peek(client_owner, client, &mut observed) {
         Ok(0) | Err(crate::posix::PosixError::Again) => {
@@ -8103,6 +8163,573 @@ fn classify_peer_output_observation(
         }
     }
     Ok(())
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SshOpenSshCompatTranscriptEvent {
+    StdoutData { data_len: usize },
+    StderrExtendedData { data_len: usize },
+    Eof,
+    ExitStatus { status: u32, want_reply: bool },
+    Close,
+    UnsupportedRequestType,
+    MalformedShape,
+}
+
+pub(crate) struct SshOpenSshCompatDiscriminatorInput<'a> {
+    pub(crate) listener_modeled: bool,
+    pub(crate) connection_modeled: bool,
+    pub(crate) socket_delivery_local: bool,
+    pub(crate) authentication_success: bool,
+    pub(crate) open_session_channel: bool,
+    pub(crate) shell_attached: bool,
+    pub(crate) channel_data_stdio_local: bool,
+    pub(crate) channel_window_management: bool,
+    pub(crate) channel_lifecycle_local: bool,
+    pub(crate) posix_eof_wait_local: bool,
+    pub(crate) peer_output_receipt_local: bool,
+    pub(crate) redaction_sensitive: bool,
+    pub(crate) transcript: &'a [SshOpenSshCompatTranscriptEvent],
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SshOpenSshCompatDiscriminatorResult {
+    LocalOpenSshCompatDiscriminatorModeled,
+    FailurePrerequisiteMissing,
+    FailureMissingPeerReceipt,
+    FailureUnsupportedRequestShape,
+    FailureMalformedShape,
+    FailureOverLimit,
+    FailureLifecycleViolation,
+    FailureDuplicate,
+    FailureRedactionSensitive,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SshOpenSshCompatDiscriminatorReport {
+    labels: [SshServiceReadinessLabel; MAX_SSH_OPENSSH_COMPAT_DISCRIMINATOR_LABELS],
+    label_count: usize,
+    result: SshOpenSshCompatDiscriminatorResult,
+    transcript_event_count: usize,
+    stdout_data_count: usize,
+    stderr_extended_data_count: usize,
+    observed_exit_status: Option<u32>,
+    eof_observed: bool,
+    exit_status_observed: bool,
+    close_observed: bool,
+    peer_output_receipt_local: bool,
+    openssh_compat_discriminator_local: bool,
+}
+
+impl SshOpenSshCompatDiscriminatorReport {
+    fn success(
+        transcript_event_count: usize,
+        stdout_data_count: usize,
+        stderr_extended_data_count: usize,
+        observed_exit_status: u32,
+    ) -> Self {
+        let mut report = Self::new(
+            SshOpenSshCompatDiscriminatorResult::LocalOpenSshCompatDiscriminatorModeled,
+            transcript_event_count,
+            stdout_data_count,
+            stderr_extended_data_count,
+            Some(observed_exit_status),
+            true,
+            true,
+            true,
+            true,
+            true,
+        );
+        report.push(SshServiceReadinessLabel::SocketDeliveryLocal);
+        report.push(SshServiceReadinessLabel::AuthenticationSuccessLocalOnly);
+        report.push(SshServiceReadinessLabel::SessionOpenLocalOnly);
+        report.push(SshServiceReadinessLabel::ChannelOpenLocalOnly);
+        report.push(SshServiceReadinessLabel::ShellAttached);
+        report.push(SshServiceReadinessLabel::ChannelDataStdioLocalOnly);
+        report.push(SshServiceReadinessLabel::ChannelWindowAccountingPrerequisiteOnly);
+        report.push(SshServiceReadinessLabel::ChannelLifecyclePrerequisiteOnly);
+        report.push(SshServiceReadinessLabel::PosixEofWaitPrerequisiteOnly);
+        report.push(SshServiceReadinessLabel::PeerOutputReceiptLocal);
+        report.push(SshServiceReadinessLabel::OpenSshCompatDiscriminatorPrerequisiteOnly);
+        if stdout_data_count > 0 {
+            report.push(SshServiceReadinessLabel::OpenSshCompatDiscriminatorStdoutDataAccepted);
+        }
+        if stderr_extended_data_count > 0 {
+            report.push(
+                SshServiceReadinessLabel::OpenSshCompatDiscriminatorStderrExtendedDataAccepted,
+            );
+        }
+        report.push(SshServiceReadinessLabel::OpenSshCompatDiscriminatorEofAccepted);
+        report.push(SshServiceReadinessLabel::OpenSshCompatDiscriminatorExitStatusAccepted);
+        report.push(SshServiceReadinessLabel::OpenSshCompatDiscriminatorCloseAccepted);
+        report.push(SshServiceReadinessLabel::OpenSshCompatDiscriminatorLocal);
+        report.push(SshServiceReadinessLabel::NotReady);
+        report
+    }
+
+    fn failure(
+        result: SshOpenSshCompatDiscriminatorResult,
+        label: SshServiceReadinessLabel,
+        transcript_event_count: usize,
+        stdout_data_count: usize,
+        stderr_extended_data_count: usize,
+        observed_exit_status: Option<u32>,
+        eof_observed: bool,
+        exit_status_observed: bool,
+        close_observed: bool,
+        peer_output_receipt_local: bool,
+    ) -> Self {
+        let mut report = Self::new(
+            result,
+            transcript_event_count,
+            stdout_data_count,
+            stderr_extended_data_count,
+            observed_exit_status,
+            eof_observed,
+            exit_status_observed,
+            close_observed,
+            peer_output_receipt_local,
+            false,
+        );
+        report.push(label);
+        report.push(SshServiceReadinessLabel::NotReady);
+        report
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn new(
+        result: SshOpenSshCompatDiscriminatorResult,
+        transcript_event_count: usize,
+        stdout_data_count: usize,
+        stderr_extended_data_count: usize,
+        observed_exit_status: Option<u32>,
+        eof_observed: bool,
+        exit_status_observed: bool,
+        close_observed: bool,
+        peer_output_receipt_local: bool,
+        openssh_compat_discriminator_local: bool,
+    ) -> Self {
+        Self {
+            labels: [SshServiceReadinessLabel::NotReady;
+                MAX_SSH_OPENSSH_COMPAT_DISCRIMINATOR_LABELS],
+            label_count: 0,
+            result,
+            transcript_event_count,
+            stdout_data_count,
+            stderr_extended_data_count,
+            observed_exit_status,
+            eof_observed,
+            exit_status_observed,
+            close_observed,
+            peer_output_receipt_local,
+            openssh_compat_discriminator_local,
+        }
+    }
+
+    fn push(&mut self, label: SshServiceReadinessLabel) {
+        self.labels[self.label_count] = label;
+        self.label_count += 1;
+    }
+
+    pub(crate) fn labels(&self) -> &[SshServiceReadinessLabel] {
+        &self.labels[..self.label_count]
+    }
+
+    pub(crate) const fn result(self) -> SshOpenSshCompatDiscriminatorResult {
+        self.result
+    }
+
+    pub(crate) const fn transcript_event_count(self) -> usize {
+        self.transcript_event_count
+    }
+
+    pub(crate) const fn stdout_data_count(self) -> usize {
+        self.stdout_data_count
+    }
+
+    pub(crate) const fn stderr_extended_data_count(self) -> usize {
+        self.stderr_extended_data_count
+    }
+
+    pub(crate) const fn observed_exit_status(self) -> Option<u32> {
+        self.observed_exit_status
+    }
+
+    pub(crate) const fn eof_observed(self) -> bool {
+        self.eof_observed
+    }
+
+    pub(crate) const fn exit_status_observed(self) -> bool {
+        self.exit_status_observed
+    }
+
+    pub(crate) const fn close_observed(self) -> bool {
+        self.close_observed
+    }
+
+    pub(crate) const fn peer_output_receipt_local(self) -> bool {
+        self.peer_output_receipt_local
+    }
+
+    pub(crate) const fn openssh_compat_discriminator_local(self) -> bool {
+        self.openssh_compat_discriminator_local
+    }
+
+    pub(crate) const fn live_reachability(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn remote_receipt(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn compatibility(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn ssh_ready(self) -> bool {
+        false
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum SshOpenSshCompatTranscriptPhase {
+    Output,
+    Eof,
+    ExitStatus,
+    Close,
+}
+
+pub(crate) fn classify_ssh_openssh_compat_discriminator(
+    input: SshOpenSshCompatDiscriminatorInput<'_>,
+) -> SshOpenSshCompatDiscriminatorReport {
+    if input.redaction_sensitive {
+        return openssh_compat_discriminator_failure(
+            SshOpenSshCompatDiscriminatorResult::FailureRedactionSensitive,
+            SshServiceReadinessLabel::OpenSshCompatDiscriminatorFailureRedactionSensitive,
+            0,
+            0,
+            0,
+            None,
+            false,
+            false,
+            false,
+            input.peer_output_receipt_local,
+        );
+    }
+    if !input.listener_modeled
+        || !input.connection_modeled
+        || !input.socket_delivery_local
+        || !input.authentication_success
+        || !input.open_session_channel
+        || !input.shell_attached
+        || !input.channel_data_stdio_local
+        || !input.channel_window_management
+        || !input.channel_lifecycle_local
+        || !input.posix_eof_wait_local
+    {
+        return openssh_compat_discriminator_failure(
+            SshOpenSshCompatDiscriminatorResult::FailurePrerequisiteMissing,
+            SshServiceReadinessLabel::OpenSshCompatDiscriminatorFailurePrerequisiteMissing,
+            0,
+            0,
+            0,
+            None,
+            false,
+            false,
+            false,
+            input.peer_output_receipt_local,
+        );
+    }
+    if !input.peer_output_receipt_local {
+        return openssh_compat_discriminator_failure(
+            SshOpenSshCompatDiscriminatorResult::FailureMissingPeerReceipt,
+            SshServiceReadinessLabel::OpenSshCompatDiscriminatorFailureMissingPeerReceipt,
+            0,
+            0,
+            0,
+            None,
+            false,
+            false,
+            false,
+            false,
+        );
+    }
+    if input.transcript.is_empty()
+        || input.transcript.len() > SSH_OPENSSH_COMPAT_TRANSCRIPT_MAX_EVENTS
+    {
+        return openssh_compat_discriminator_failure(
+            SshOpenSshCompatDiscriminatorResult::FailureOverLimit,
+            SshServiceReadinessLabel::OpenSshCompatDiscriminatorFailureOverLimit,
+            input.transcript.len(),
+            0,
+            0,
+            None,
+            false,
+            false,
+            false,
+            true,
+        );
+    }
+
+    let mut phase = SshOpenSshCompatTranscriptPhase::Output;
+    let mut stdout_data_count = 0usize;
+    let mut stderr_extended_data_count = 0usize;
+    let mut observed_exit_status = None;
+    let mut eof_observed = false;
+    let mut exit_status_observed = false;
+    let mut close_observed = false;
+
+    for (index, event) in input.transcript.iter().copied().enumerate() {
+        match event {
+            SshOpenSshCompatTranscriptEvent::StdoutData { data_len }
+            | SshOpenSshCompatTranscriptEvent::StderrExtendedData { data_len } => {
+                if data_len == 0 {
+                    return openssh_compat_discriminator_failure(
+                        SshOpenSshCompatDiscriminatorResult::FailureMalformedShape,
+                        SshServiceReadinessLabel::OpenSshCompatDiscriminatorFailureMalformedShape,
+                        index + 1,
+                        stdout_data_count,
+                        stderr_extended_data_count,
+                        observed_exit_status,
+                        eof_observed,
+                        exit_status_observed,
+                        close_observed,
+                        true,
+                    );
+                }
+                if data_len > SSH_CHANNEL_DATA_MAX_BYTES {
+                    return openssh_compat_discriminator_failure(
+                        SshOpenSshCompatDiscriminatorResult::FailureOverLimit,
+                        SshServiceReadinessLabel::OpenSshCompatDiscriminatorFailureOverLimit,
+                        index + 1,
+                        stdout_data_count,
+                        stderr_extended_data_count,
+                        observed_exit_status,
+                        eof_observed,
+                        exit_status_observed,
+                        close_observed,
+                        true,
+                    );
+                }
+                if phase != SshOpenSshCompatTranscriptPhase::Output {
+                    return openssh_compat_discriminator_failure(
+                        SshOpenSshCompatDiscriminatorResult::FailureLifecycleViolation,
+                        SshServiceReadinessLabel::OpenSshCompatDiscriminatorFailureLifecycleViolation,
+                        index + 1,
+                        stdout_data_count,
+                        stderr_extended_data_count,
+                        observed_exit_status,
+                        eof_observed,
+                        exit_status_observed,
+                        close_observed,
+                        true,
+                    );
+                }
+                match event {
+                    SshOpenSshCompatTranscriptEvent::StdoutData { .. } => {
+                        stdout_data_count += 1;
+                    }
+                    SshOpenSshCompatTranscriptEvent::StderrExtendedData { .. } => {
+                        stderr_extended_data_count += 1;
+                    }
+                    _ => {}
+                }
+            }
+            SshOpenSshCompatTranscriptEvent::Eof => {
+                if eof_observed {
+                    return openssh_compat_discriminator_failure(
+                        SshOpenSshCompatDiscriminatorResult::FailureDuplicate,
+                        SshServiceReadinessLabel::OpenSshCompatDiscriminatorFailureDuplicate,
+                        index + 1,
+                        stdout_data_count,
+                        stderr_extended_data_count,
+                        observed_exit_status,
+                        eof_observed,
+                        exit_status_observed,
+                        close_observed,
+                        true,
+                    );
+                }
+                if phase != SshOpenSshCompatTranscriptPhase::Output {
+                    return openssh_compat_discriminator_failure(
+                        SshOpenSshCompatDiscriminatorResult::FailureLifecycleViolation,
+                        SshServiceReadinessLabel::OpenSshCompatDiscriminatorFailureLifecycleViolation,
+                        index + 1,
+                        stdout_data_count,
+                        stderr_extended_data_count,
+                        observed_exit_status,
+                        eof_observed,
+                        exit_status_observed,
+                        close_observed,
+                        true,
+                    );
+                }
+                eof_observed = true;
+                phase = SshOpenSshCompatTranscriptPhase::Eof;
+            }
+            SshOpenSshCompatTranscriptEvent::ExitStatus { status, want_reply } => {
+                if want_reply {
+                    return openssh_compat_discriminator_failure(
+                        SshOpenSshCompatDiscriminatorResult::FailureUnsupportedRequestShape,
+                        SshServiceReadinessLabel::OpenSshCompatDiscriminatorFailureUnsupportedRequestShape,
+                        index + 1,
+                        stdout_data_count,
+                        stderr_extended_data_count,
+                        observed_exit_status,
+                        eof_observed,
+                        exit_status_observed,
+                        close_observed,
+                        true,
+                    );
+                }
+                if exit_status_observed {
+                    return openssh_compat_discriminator_failure(
+                        SshOpenSshCompatDiscriminatorResult::FailureDuplicate,
+                        SshServiceReadinessLabel::OpenSshCompatDiscriminatorFailureDuplicate,
+                        index + 1,
+                        stdout_data_count,
+                        stderr_extended_data_count,
+                        observed_exit_status,
+                        eof_observed,
+                        exit_status_observed,
+                        close_observed,
+                        true,
+                    );
+                }
+                if phase != SshOpenSshCompatTranscriptPhase::Eof {
+                    return openssh_compat_discriminator_failure(
+                        SshOpenSshCompatDiscriminatorResult::FailureLifecycleViolation,
+                        SshServiceReadinessLabel::OpenSshCompatDiscriminatorFailureLifecycleViolation,
+                        index + 1,
+                        stdout_data_count,
+                        stderr_extended_data_count,
+                        observed_exit_status,
+                        eof_observed,
+                        exit_status_observed,
+                        close_observed,
+                        true,
+                    );
+                }
+                observed_exit_status = Some(status);
+                exit_status_observed = true;
+                phase = SshOpenSshCompatTranscriptPhase::ExitStatus;
+            }
+            SshOpenSshCompatTranscriptEvent::Close => {
+                if close_observed {
+                    return openssh_compat_discriminator_failure(
+                        SshOpenSshCompatDiscriminatorResult::FailureDuplicate,
+                        SshServiceReadinessLabel::OpenSshCompatDiscriminatorFailureDuplicate,
+                        index + 1,
+                        stdout_data_count,
+                        stderr_extended_data_count,
+                        observed_exit_status,
+                        eof_observed,
+                        exit_status_observed,
+                        close_observed,
+                        true,
+                    );
+                }
+                if phase != SshOpenSshCompatTranscriptPhase::ExitStatus {
+                    return openssh_compat_discriminator_failure(
+                        SshOpenSshCompatDiscriminatorResult::FailureLifecycleViolation,
+                        SshServiceReadinessLabel::OpenSshCompatDiscriminatorFailureLifecycleViolation,
+                        index + 1,
+                        stdout_data_count,
+                        stderr_extended_data_count,
+                        observed_exit_status,
+                        eof_observed,
+                        exit_status_observed,
+                        close_observed,
+                        true,
+                    );
+                }
+                close_observed = true;
+                phase = SshOpenSshCompatTranscriptPhase::Close;
+            }
+            SshOpenSshCompatTranscriptEvent::UnsupportedRequestType => {
+                return openssh_compat_discriminator_failure(
+                    SshOpenSshCompatDiscriminatorResult::FailureUnsupportedRequestShape,
+                    SshServiceReadinessLabel::OpenSshCompatDiscriminatorFailureUnsupportedRequestShape,
+                    index + 1,
+                    stdout_data_count,
+                    stderr_extended_data_count,
+                    observed_exit_status,
+                    eof_observed,
+                    exit_status_observed,
+                    close_observed,
+                    true,
+                );
+            }
+            SshOpenSshCompatTranscriptEvent::MalformedShape => {
+                return openssh_compat_discriminator_failure(
+                    SshOpenSshCompatDiscriminatorResult::FailureMalformedShape,
+                    SshServiceReadinessLabel::OpenSshCompatDiscriminatorFailureMalformedShape,
+                    index + 1,
+                    stdout_data_count,
+                    stderr_extended_data_count,
+                    observed_exit_status,
+                    eof_observed,
+                    exit_status_observed,
+                    close_observed,
+                    true,
+                );
+            }
+        }
+    }
+
+    match (
+        eof_observed,
+        exit_status_observed,
+        close_observed,
+        observed_exit_status,
+    ) {
+        (true, true, true, Some(status)) => SshOpenSshCompatDiscriminatorReport::success(
+            input.transcript.len(),
+            stdout_data_count,
+            stderr_extended_data_count,
+            status,
+        ),
+        _ => openssh_compat_discriminator_failure(
+            SshOpenSshCompatDiscriminatorResult::FailureLifecycleViolation,
+            SshServiceReadinessLabel::OpenSshCompatDiscriminatorFailureLifecycleViolation,
+            input.transcript.len(),
+            stdout_data_count,
+            stderr_extended_data_count,
+            observed_exit_status,
+            eof_observed,
+            exit_status_observed,
+            close_observed,
+            true,
+        ),
+    }
+}
+
+#[allow(clippy::too_many_arguments)]
+fn openssh_compat_discriminator_failure(
+    result: SshOpenSshCompatDiscriminatorResult,
+    label: SshServiceReadinessLabel,
+    transcript_event_count: usize,
+    stdout_data_count: usize,
+    stderr_extended_data_count: usize,
+    observed_exit_status: Option<u32>,
+    eof_observed: bool,
+    exit_status_observed: bool,
+    close_observed: bool,
+    peer_output_receipt_local: bool,
+) -> SshOpenSshCompatDiscriminatorReport {
+    SshOpenSshCompatDiscriminatorReport::failure(
+        result,
+        label,
+        transcript_event_count,
+        stdout_data_count,
+        stderr_extended_data_count,
+        observed_exit_status,
+        eof_observed,
+        exit_status_observed,
+        close_observed,
+        peer_output_receipt_local,
+    )
 }
 
 fn build_peer_channel_data_output(
@@ -8386,6 +9013,16 @@ mod tests {
         report: &SshPeerOutputReceiptReport,
     ) -> [&'static str; MAX_SSH_PEER_OUTPUT_RECEIPT_LABELS] {
         let mut labels = [""; MAX_SSH_PEER_OUTPUT_RECEIPT_LABELS];
+        for (index, label) in report.labels().iter().enumerate() {
+            labels[index] = label.name();
+        }
+        labels
+    }
+
+    fn openssh_compat_discriminator_label_names(
+        report: &SshOpenSshCompatDiscriminatorReport,
+    ) -> [&'static str; MAX_SSH_OPENSSH_COMPAT_DISCRIMINATOR_LABELS] {
+        let mut labels = [""; MAX_SSH_OPENSSH_COMPAT_DISCRIMINATOR_LABELS];
         for (index, label) in report.labels().iter().enumerate() {
             labels[index] = label.name();
         }
@@ -8691,6 +9328,26 @@ mod tests {
             force_output_backpressure: false,
             peer_closed_before_output: false,
             peer_receive_before_output: false,
+        }
+    }
+
+    fn openssh_compat_success_input<'a>(
+        transcript: &'a [SshOpenSshCompatTranscriptEvent],
+    ) -> SshOpenSshCompatDiscriminatorInput<'a> {
+        SshOpenSshCompatDiscriminatorInput {
+            listener_modeled: true,
+            connection_modeled: true,
+            socket_delivery_local: true,
+            authentication_success: true,
+            open_session_channel: true,
+            shell_attached: true,
+            channel_data_stdio_local: true,
+            channel_window_management: true,
+            channel_lifecycle_local: true,
+            posix_eof_wait_local: true,
+            peer_output_receipt_local: true,
+            redaction_sensitive: false,
+            transcript,
         }
     }
 
@@ -12435,6 +13092,252 @@ mod tests {
         );
         assert!(!malformed.peer_output_receipt_local());
         assert!(!over_limit.ssh_ready());
+    }
+
+    #[test_case]
+    fn ssh_openssh_compat_discriminator_accepts_local_offline_closeout_transcript() {
+        let transcript = [
+            SshOpenSshCompatTranscriptEvent::StdoutData { data_len: 8 },
+            SshOpenSshCompatTranscriptEvent::StderrExtendedData { data_len: 4 },
+            SshOpenSshCompatTranscriptEvent::Eof,
+            SshOpenSshCompatTranscriptEvent::ExitStatus {
+                status: 42,
+                want_reply: false,
+            },
+            SshOpenSshCompatTranscriptEvent::Close,
+        ];
+        let report =
+            classify_ssh_openssh_compat_discriminator(openssh_compat_success_input(&transcript));
+
+        assert_eq!(
+            report.result(),
+            SshOpenSshCompatDiscriminatorResult::LocalOpenSshCompatDiscriminatorModeled
+        );
+        assert_eq!(
+            &openssh_compat_discriminator_label_names(&report)[..report.labels().len()],
+            &[
+                "sshservicediag-socket-delivery-local",
+                "sshservicediag-authentication-success-local-only",
+                "sshservicediag-session-open-local-only",
+                "sshservicediag-channel-open-local-only",
+                "sshservicediag-shell-attached",
+                "sshservicediag-channel-data-stdio-local-only",
+                "sshservicediag-channel-window-accounting-prerequisite-only",
+                "sshservicediag-channel-lifecycle-prerequisite-only",
+                "sshservicediag-posix-eof-wait-prerequisite-only",
+                "sshservicediag-peer-output-receipt-local",
+                "sshservicediag-openssh-compat-discriminator-prerequisite-only",
+                "sshservicediag-openssh-compat-discriminator-stdout-data-accepted",
+                "sshservicediag-openssh-compat-discriminator-stderr-extended-data-accepted",
+                "sshservicediag-openssh-compat-discriminator-eof-accepted",
+                "sshservicediag-openssh-compat-discriminator-exit-status-accepted",
+                "sshservicediag-openssh-compat-discriminator-close-accepted",
+                "sshservicediag-openssh-compat-discriminator-local",
+                "sshservicediag-not-ready",
+            ]
+        );
+        assert_eq!(report.transcript_event_count(), transcript.len());
+        assert_eq!(report.stdout_data_count(), 1);
+        assert_eq!(report.stderr_extended_data_count(), 1);
+        assert_eq!(report.observed_exit_status(), Some(42));
+        assert!(report.eof_observed());
+        assert!(report.exit_status_observed());
+        assert!(report.close_observed());
+        assert!(report.peer_output_receipt_local());
+        assert!(report.openssh_compat_discriminator_local());
+        assert!(!report.live_reachability());
+        assert!(!report.remote_receipt());
+        assert!(!report.compatibility());
+        assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn ssh_openssh_compat_discriminator_fails_closed_for_missing_prerequisites() {
+        let transcript = [
+            SshOpenSshCompatTranscriptEvent::Eof,
+            SshOpenSshCompatTranscriptEvent::ExitStatus {
+                status: 0,
+                want_reply: false,
+            },
+            SshOpenSshCompatTranscriptEvent::Close,
+        ];
+        let missing_socket =
+            classify_ssh_openssh_compat_discriminator(SshOpenSshCompatDiscriminatorInput {
+                socket_delivery_local: false,
+                ..openssh_compat_success_input(&transcript)
+            });
+        let missing_peer =
+            classify_ssh_openssh_compat_discriminator(SshOpenSshCompatDiscriminatorInput {
+                peer_output_receipt_local: false,
+                ..openssh_compat_success_input(&transcript)
+            });
+        let redaction =
+            classify_ssh_openssh_compat_discriminator(SshOpenSshCompatDiscriminatorInput {
+                redaction_sensitive: true,
+                ..openssh_compat_success_input(&transcript)
+            });
+
+        assert_eq!(
+            missing_socket.result(),
+            SshOpenSshCompatDiscriminatorResult::FailurePrerequisiteMissing
+        );
+        assert_eq!(
+            missing_peer.result(),
+            SshOpenSshCompatDiscriminatorResult::FailureMissingPeerReceipt
+        );
+        assert_eq!(
+            redaction.result(),
+            SshOpenSshCompatDiscriminatorResult::FailureRedactionSensitive
+        );
+        assert!(!missing_socket.openssh_compat_discriminator_local());
+        assert!(!missing_peer.openssh_compat_discriminator_local());
+        assert!(!redaction.openssh_compat_discriminator_local());
+        assert!(!missing_peer.peer_output_receipt_local());
+    }
+
+    #[test_case]
+    fn ssh_openssh_compat_discriminator_fails_closed_for_ordering_and_duplicates() {
+        let data_after_eof = [
+            SshOpenSshCompatTranscriptEvent::Eof,
+            SshOpenSshCompatTranscriptEvent::StdoutData { data_len: 1 },
+            SshOpenSshCompatTranscriptEvent::ExitStatus {
+                status: 0,
+                want_reply: false,
+            },
+            SshOpenSshCompatTranscriptEvent::Close,
+        ];
+        let duplicate_eof = [
+            SshOpenSshCompatTranscriptEvent::Eof,
+            SshOpenSshCompatTranscriptEvent::Eof,
+            SshOpenSshCompatTranscriptEvent::ExitStatus {
+                status: 0,
+                want_reply: false,
+            },
+            SshOpenSshCompatTranscriptEvent::Close,
+        ];
+        let close_before_exit_status = [
+            SshOpenSshCompatTranscriptEvent::Eof,
+            SshOpenSshCompatTranscriptEvent::Close,
+        ];
+
+        let order = classify_ssh_openssh_compat_discriminator(openssh_compat_success_input(
+            &data_after_eof,
+        ));
+        let duplicate =
+            classify_ssh_openssh_compat_discriminator(openssh_compat_success_input(&duplicate_eof));
+        let lifecycle = classify_ssh_openssh_compat_discriminator(openssh_compat_success_input(
+            &close_before_exit_status,
+        ));
+
+        assert_eq!(
+            order.result(),
+            SshOpenSshCompatDiscriminatorResult::FailureLifecycleViolation
+        );
+        assert_eq!(
+            duplicate.result(),
+            SshOpenSshCompatDiscriminatorResult::FailureDuplicate
+        );
+        assert_eq!(
+            lifecycle.result(),
+            SshOpenSshCompatDiscriminatorResult::FailureLifecycleViolation
+        );
+    }
+
+    #[test_case]
+    fn ssh_openssh_compat_discriminator_fails_closed_for_shape_and_limits() {
+        let unsupported = [
+            SshOpenSshCompatTranscriptEvent::Eof,
+            SshOpenSshCompatTranscriptEvent::UnsupportedRequestType,
+            SshOpenSshCompatTranscriptEvent::Close,
+        ];
+        let want_reply = [
+            SshOpenSshCompatTranscriptEvent::Eof,
+            SshOpenSshCompatTranscriptEvent::ExitStatus {
+                status: 0,
+                want_reply: true,
+            },
+            SshOpenSshCompatTranscriptEvent::Close,
+        ];
+        let malformed = [
+            SshOpenSshCompatTranscriptEvent::MalformedShape,
+            SshOpenSshCompatTranscriptEvent::Eof,
+            SshOpenSshCompatTranscriptEvent::ExitStatus {
+                status: 0,
+                want_reply: false,
+            },
+            SshOpenSshCompatTranscriptEvent::Close,
+        ];
+        let zero_data = [
+            SshOpenSshCompatTranscriptEvent::StdoutData { data_len: 0 },
+            SshOpenSshCompatTranscriptEvent::Eof,
+            SshOpenSshCompatTranscriptEvent::ExitStatus {
+                status: 0,
+                want_reply: false,
+            },
+            SshOpenSshCompatTranscriptEvent::Close,
+        ];
+        let over_limit_data = [
+            SshOpenSshCompatTranscriptEvent::StdoutData {
+                data_len: SSH_CHANNEL_DATA_MAX_BYTES + 1,
+            },
+            SshOpenSshCompatTranscriptEvent::Eof,
+            SshOpenSshCompatTranscriptEvent::ExitStatus {
+                status: 0,
+                want_reply: false,
+            },
+            SshOpenSshCompatTranscriptEvent::Close,
+        ];
+        let too_many_events = [
+            SshOpenSshCompatTranscriptEvent::StdoutData { data_len: 1 },
+            SshOpenSshCompatTranscriptEvent::StdoutData { data_len: 1 },
+            SshOpenSshCompatTranscriptEvent::StdoutData { data_len: 1 },
+            SshOpenSshCompatTranscriptEvent::StdoutData { data_len: 1 },
+            SshOpenSshCompatTranscriptEvent::StdoutData { data_len: 1 },
+            SshOpenSshCompatTranscriptEvent::StdoutData { data_len: 1 },
+            SshOpenSshCompatTranscriptEvent::StdoutData { data_len: 1 },
+            SshOpenSshCompatTranscriptEvent::StdoutData { data_len: 1 },
+            SshOpenSshCompatTranscriptEvent::Eof,
+        ];
+
+        let unsupported =
+            classify_ssh_openssh_compat_discriminator(openssh_compat_success_input(&unsupported));
+        let want_reply =
+            classify_ssh_openssh_compat_discriminator(openssh_compat_success_input(&want_reply));
+        let malformed =
+            classify_ssh_openssh_compat_discriminator(openssh_compat_success_input(&malformed));
+        let zero_data =
+            classify_ssh_openssh_compat_discriminator(openssh_compat_success_input(&zero_data));
+        let over_limit_data = classify_ssh_openssh_compat_discriminator(
+            openssh_compat_success_input(&over_limit_data),
+        );
+        let too_many_events = classify_ssh_openssh_compat_discriminator(
+            openssh_compat_success_input(&too_many_events),
+        );
+
+        assert_eq!(
+            unsupported.result(),
+            SshOpenSshCompatDiscriminatorResult::FailureUnsupportedRequestShape
+        );
+        assert_eq!(
+            want_reply.result(),
+            SshOpenSshCompatDiscriminatorResult::FailureUnsupportedRequestShape
+        );
+        assert_eq!(
+            malformed.result(),
+            SshOpenSshCompatDiscriminatorResult::FailureMalformedShape
+        );
+        assert_eq!(
+            zero_data.result(),
+            SshOpenSshCompatDiscriminatorResult::FailureMalformedShape
+        );
+        assert_eq!(
+            over_limit_data.result(),
+            SshOpenSshCompatDiscriminatorResult::FailureOverLimit
+        );
+        assert_eq!(
+            too_many_events.result(),
+            SshOpenSshCompatDiscriminatorResult::FailureOverLimit
+        );
     }
 
     #[test_case]

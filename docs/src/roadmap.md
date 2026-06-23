@@ -17606,9 +17606,27 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   evidence, or redaction-sensitive material. This contract does not implement
   the discriminator, run OpenSSH, publish a boot archive, use the Pi 5 lab, or
   accept live-reachability=true, remote-receipt=true, compatibility=true, a
-  phase transition, or ssh-ready=true. selected_next_task is null and
-  planningNeeded=true because no explicit implementation/evidence task is
-  queued for the worker to promote without supervisor planning.
+  phase transition, or ssh-ready=true. The selected next bounded task is
+  phase12-ssh-openssh-compat-discriminator-core-20260623.
+- phase12-ssh-openssh-compat-discriminator-core-20260623 accepts the
+  local/offline OpenSSH-compatible closeout transcript discriminator source
+  behavior. The readiness model classifies only sanitized public transcript
+  categories: optional channel-data stdout, optional extended-data stderr, EOF,
+  exit-status with request type exit-status and want_reply=false, and close in
+  that order. The discriminator requires the accepted local socket-delivery,
+  authentication/session/channel, shell attachment, channel-data/stdio,
+  channel-window, channel-lifecycle, POSIX EOF/wait, and peer-output receipt
+  frontiers, and exposes only openssh-compat-discriminator-local=true for that
+  local/offline shape. Fail-closed controls reject missing prerequisites,
+  missing modeled peer receipt, out-of-order data or terminal messages,
+  duplicate EOF or terminal messages, unsupported request shape, malformed or
+  over-limit shape, and redaction-sensitive input. live-reachability=false,
+  remote-receipt=false, compatibility=false, and ssh-ready=false remain
+  authoritative. External OpenSSH execution, Pi 5 reachability, live remote
+  receipt, OpenSSH/POSIX/Linux compatibility, PTY/SCP/SFTP, broad command
+  expansion, phase transition, and ssh-ready=true remain deferred. The selected
+  next bounded task is
+  phase12-ssh-openssh-compat-discriminator-feature-smoke-20260623.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
