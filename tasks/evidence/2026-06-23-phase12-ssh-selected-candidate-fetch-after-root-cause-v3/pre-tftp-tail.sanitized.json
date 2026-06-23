@@ -1,0 +1,21 @@
+{
+  "action": "tftp logs",
+  "ok": true,
+  "tftp": {
+    "cursor_start": 4591459,
+    "cursor_end": 4656995,
+    "log_size": 4656995,
+    "tail_mode": true,
+    "truncated": true,
+    "events": [
+      {
+        "status": "served",
+        "filename": "da591740/kernel_2712.img",
+        "bytes": 104136
+      }
+    ],
+    "raw_log_retained": false,
+    "client_identity_retained": false
+  },
+  "talos_tftp_stability": null
+}

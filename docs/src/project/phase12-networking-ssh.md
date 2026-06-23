@@ -8881,3 +8881,16 @@ baseline/control a0452458... tree with 104,136-byte kernel entries. This proves
 the lab API visible publish/root layer before power; it does not prove selected
 TFTP service after power-cycle. The selected next bounded task is
 phase12-ssh-selected-candidate-fetch-after-root-cause-v3-20260623.
+
+phase12-ssh-selected-candidate-fetch-after-root-cause-v3-20260623 accepts a
+fail-closed hardware discriminator as stable-zero-tftp-after-selected-publish.
+The worker acquired hardwareTestLock, republished the same reviewed selected
+archive, confirmed post-publish status and boot/files still exposed the
+fe9a0d98... selected tree with 87,432-byte kernel entries, then power-cycled
+the Pi without running OpenSSH. Stable TFTP evidence from the fresh cursor
+contained zero events: no selected 87,432-byte kernel fetch and no baseline
+104,136-byte kernel fetch. Final pre-restore status and boot/files still
+reported the selected tree, and restore returned to the baseline/control
+a0452458... tree. selected_candidate_fetch_observed=false,
+selected_next_task=null, and planningNeeded=true; live OpenSSH retry-v4 remains
+blocked until supervisor planning resolves the no-fetch result.

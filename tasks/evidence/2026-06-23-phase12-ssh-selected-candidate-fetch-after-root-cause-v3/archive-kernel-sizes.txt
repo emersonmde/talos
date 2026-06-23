@@ -1,0 +1,2 @@
+kernel_2712.img=87432
+da591740/kernel_2712.img=87432

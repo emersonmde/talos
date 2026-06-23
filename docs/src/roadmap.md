@@ -17829,6 +17829,16 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   phase12-ssh-selected-candidate-fetch-after-root-cause-v3-20260623; live
   OpenSSH retry-v4 remains gated behind accepted selected-candidate fetch
   evidence.
+- phase12-ssh-selected-candidate-fetch-after-root-cause-v3-20260623 accepts
+  fail-closed stable-zero-tftp-after-selected-publish evidence. The worker
+  acquired hardwareTestLock, republished the selected 87,432-byte archive,
+  confirmed post-publish status and boot/files exposed the selected
+  fe9a0d98... tree, power-cycled the Pi without OpenSSH, and retained a stable
+  same-cursor TFTP delta with zero events. Final pre-restore status and
+  boot/files still exposed the selected tree; final restore returned to the
+  baseline/control a0452458... tree. selected_candidate_fetch_observed=false,
+  selected_next_task=null, and planningNeeded=true, so live OpenSSH retry-v4
+  remains blocked pending supervisor planning.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

@@ -1,0 +1,41 @@
+{
+  "task_id": "phase12-ssh-selected-candidate-fetch-after-root-cause-v3-20260623",
+  "classification": "stable-zero-tftp-after-selected-publish",
+  "selected_candidate_fetch_observed": false,
+  "selected_next_task": null,
+  "planning_needed": true,
+  "archive": {
+    "path": "target/phase12-ssh-live-openssh-retry-boot.tar.gz",
+    "expected_tree": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333",
+    "expected_kernel_bytes": 87432
+  },
+  "selected_root_proof": {
+    "task_id": "phase12-ssh-selected-candidate-no-power-publish-root-discriminator-20260623",
+    "classification": "selected-root-visible",
+    "selected_root_visible": true
+  },
+  "snapshot": "phase12-ssh-fetch-v3-pre-20260623T223129Z",
+  "post_publish": {
+    "tree_hash": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333"
+  },
+  "tftp": {
+    "event_count": 0,
+    "selected_kernel_events": 0,
+    "baseline_kernel_events": 0,
+    "wait_exit_code": 1
+  },
+  "serial": {
+    "cursor_file": "serial-cursor.txt",
+    "observe_exit_code": 1
+  },
+  "final_pre_restore": {
+    "tree_hash": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333"
+  },
+  "restore": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "baseline_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "restored": true
+  },
+  "no_openssh_action": true,
+  "redaction_review": "pass"
+}

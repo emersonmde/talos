@@ -1,0 +1,12 @@
+{
+  "action": "serial read",
+  "ok": true,
+  "bytes": 4791,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "truncated": false,
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "talos_serial_window": null,
+  "text_retained": false
+}
