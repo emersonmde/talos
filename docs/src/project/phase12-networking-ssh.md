@@ -8360,3 +8360,18 @@ hardware reachability, OpenSSH/POSIX/Linux compatibility, process wait/exit,
 broad command expansion, phase transition, or ssh-ready=true. The selected next
 bounded task is
 phase12-ssh-channel-lifecycle-exit-status-feature-smoke-20260623.
+
+phase12-ssh-channel-lifecycle-exit-status-feature-smoke-20260623 accepts
+bounded local feature smoke/regression evidence for the modeled SSH channel
+lifecycle layer. The retained no_std unit coverage exercises successful local
+EOF receipt, local exit-status request emission with want_reply=false, outbound
+close, inbound close, duplicate/invalid-ordering rejection, malformed and
+over-limit lifecycle payload controls, missing-prerequisite and missing-local
+execution controls, redaction-sensitive input, and prior channel-data/window
+regression surfaces. The evidence is local unit-test evidence only:
+live-reachability=false, remote-receipt=false, compatibility=false, and
+ssh-ready=false remain authoritative. No live encrypted socket delivery,
+hardware reachability, OpenSSH/POSIX/Linux compatibility, process wait/exit,
+broad command expansion, phase transition, or ssh-ready=true is accepted. The
+selected next bounded task is
+phase12-ssh-channel-lifecycle-exit-status-closeout-20260623.

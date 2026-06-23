@@ -17350,6 +17350,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   compatibility, process wait/exit, broad command expansion, phase transition,
   and ssh-ready=true remain deferred. The selected next bounded task is
   phase12-ssh-channel-lifecycle-exit-status-feature-smoke-20260623.
+- phase12-ssh-channel-lifecycle-exit-status-feature-smoke-20260623 accepts
+  bounded local feature smoke/regression evidence for the modeled SSH channel
+  lifecycle layer. The retained no_std unit coverage exercises successful local
+  EOF receipt, local exit-status request emission with want_reply=false,
+  outbound close, inbound close, duplicate/invalid-ordering rejection,
+  malformed and over-limit payload controls, missing-prerequisite and
+  missing-local-execution controls, redaction-sensitive input, and prior
+  channel-data/window regression surfaces. This remains local unit-test
+  evidence only: live-reachability=false, remote-receipt=false,
+  compatibility=false, and ssh-ready=false remain authoritative. Live encrypted
+  socket delivery, hardware reachability, OpenSSH/POSIX/Linux compatibility,
+  process wait/exit, broad command expansion, phase transition, and
+  ssh-ready=true remain deferred. The selected next bounded task is
+  phase12-ssh-channel-lifecycle-exit-status-closeout-20260623.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
