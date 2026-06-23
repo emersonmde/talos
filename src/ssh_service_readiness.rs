@@ -194,6 +194,22 @@ pub(crate) enum SshServiceReadinessLabel {
     ChannelWindowAccountingFailureMalformed,
     ChannelWindowAccountingFailureOverflow,
     ChannelWindowAccountingFailureRedactionSensitive,
+    ChannelLifecyclePrerequisiteOnly,
+    ChannelLifecycleEofReceived,
+    ChannelLifecycleExitStatusEmitted,
+    ChannelLifecycleCloseReceived,
+    ChannelLifecycleCloseEmitted,
+    ChannelLifecycleFailureAuthenticationMissing,
+    ChannelLifecycleFailureChannelMissing,
+    ChannelLifecycleFailureShellAttachmentMissing,
+    ChannelLifecycleFailureLocalExecutionMissing,
+    ChannelLifecycleFailureUnsupportedMessage,
+    ChannelLifecycleFailureUnsupportedRequestType,
+    ChannelLifecycleFailureMalformed,
+    ChannelLifecycleFailureOverLimit,
+    ChannelLifecycleFailureDuplicate,
+    ChannelLifecycleFailureLifecycleViolation,
+    ChannelLifecycleFailureRedactionSensitive,
     TransportClosedBeforeKex,
     AuthenticationUnimplemented,
     SessionUnimplemented,
@@ -579,6 +595,50 @@ impl SshServiceReadinessLabel {
             Self::ChannelWindowAccountingFailureRedactionSensitive => {
                 "sshservicediag-channel-window-accounting-failure-redaction-sensitive"
             }
+            Self::ChannelLifecyclePrerequisiteOnly => {
+                "sshservicediag-channel-lifecycle-prerequisite-only"
+            }
+            Self::ChannelLifecycleEofReceived => "sshservicediag-channel-lifecycle-eof-received",
+            Self::ChannelLifecycleExitStatusEmitted => {
+                "sshservicediag-channel-lifecycle-exit-status-emitted"
+            }
+            Self::ChannelLifecycleCloseReceived => {
+                "sshservicediag-channel-lifecycle-close-received"
+            }
+            Self::ChannelLifecycleCloseEmitted => "sshservicediag-channel-lifecycle-close-emitted",
+            Self::ChannelLifecycleFailureAuthenticationMissing => {
+                "sshservicediag-channel-lifecycle-failure-authentication-missing"
+            }
+            Self::ChannelLifecycleFailureChannelMissing => {
+                "sshservicediag-channel-lifecycle-failure-channel-missing"
+            }
+            Self::ChannelLifecycleFailureShellAttachmentMissing => {
+                "sshservicediag-channel-lifecycle-failure-shell-attachment-missing"
+            }
+            Self::ChannelLifecycleFailureLocalExecutionMissing => {
+                "sshservicediag-channel-lifecycle-failure-local-execution-missing"
+            }
+            Self::ChannelLifecycleFailureUnsupportedMessage => {
+                "sshservicediag-channel-lifecycle-failure-unsupported-message"
+            }
+            Self::ChannelLifecycleFailureUnsupportedRequestType => {
+                "sshservicediag-channel-lifecycle-failure-unsupported-request-type"
+            }
+            Self::ChannelLifecycleFailureMalformed => {
+                "sshservicediag-channel-lifecycle-failure-malformed"
+            }
+            Self::ChannelLifecycleFailureOverLimit => {
+                "sshservicediag-channel-lifecycle-failure-over-limit"
+            }
+            Self::ChannelLifecycleFailureDuplicate => {
+                "sshservicediag-channel-lifecycle-failure-duplicate"
+            }
+            Self::ChannelLifecycleFailureLifecycleViolation => {
+                "sshservicediag-channel-lifecycle-failure-lifecycle-violation"
+            }
+            Self::ChannelLifecycleFailureRedactionSensitive => {
+                "sshservicediag-channel-lifecycle-failure-redaction-sensitive"
+            }
             Self::TransportClosedBeforeKex => "sshservicediag-transport-closed-before-kex",
             Self::AuthenticationUnimplemented => "sshservicediag-authentication-unimplemented",
             Self::SessionUnimplemented => "sshservicediag-session-unimplemented",
@@ -615,6 +675,8 @@ const SSH_MSG_CHANNEL_OPEN_FAILURE: u8 = 92;
 const SSH_MSG_CHANNEL_WINDOW_ADJUST: u8 = 93;
 const SSH_MSG_CHANNEL_DATA: u8 = 94;
 const SSH_MSG_CHANNEL_EXTENDED_DATA: u8 = 95;
+const SSH_MSG_CHANNEL_EOF: u8 = 96;
+const SSH_MSG_CHANNEL_CLOSE: u8 = 97;
 const SSH_MSG_CHANNEL_REQUEST: u8 = 98;
 const SSH_MSG_CHANNEL_SUCCESS: u8 = 99;
 const SSH_MSG_CHANNEL_FAILURE: u8 = 100;
@@ -635,6 +697,7 @@ const MAX_SSH_SESSION_SHELL_REQUEST_LABELS: usize = 10;
 const MAX_SSH_SESSION_SHELL_ATTACHMENT_LABELS: usize = 14;
 const MAX_SSH_CHANNEL_DATA_STDIO_LABELS: usize = 12;
 const MAX_SSH_CHANNEL_WINDOW_ACCOUNTING_LABELS: usize = 14;
+const MAX_SSH_CHANNEL_LIFECYCLE_LABELS: usize = 14;
 const SSH_PREAUTH_STRING_MAX_BYTES: usize = 256;
 const SSH_PREAUTH_PUBLIC_KEY_BLOB_MAX_BYTES: usize = 512;
 const SSH_PREAUTH_SIGNATURE_MAX_BYTES: usize = 512;
@@ -659,6 +722,7 @@ const SSH_AUTH_METHOD_PUBLICKEY: &[u8] = b"publickey";
 const SSH_RESERVED_ACCOUNT_TALOS: &[u8] = b"talos";
 const SSH_CHANNEL_TYPE_SESSION: &[u8] = b"session";
 const SSH_CHANNEL_REQUEST_TYPE_SHELL: &[u8] = b"shell";
+const SSH_CHANNEL_REQUEST_TYPE_EXIT_STATUS: &[u8] = b"exit-status";
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum SshRemoteIdentificationInputState {
@@ -4472,6 +4536,649 @@ fn channel_window_accounting_failure(
     report
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SshChannelLifecycleResult {
+    InboundEofReceivedLocal,
+    ExitStatusRequestModeled,
+    InboundCloseReceivedLocal,
+    OutboundCloseModeled,
+    ChannelLifecycleFailureAuthenticationMissing,
+    ChannelLifecycleFailureChannelMissing,
+    ChannelLifecycleFailureShellAttachmentMissing,
+    ChannelLifecycleFailureLocalExecutionMissing,
+    ChannelLifecycleFailureUnsupportedMessage,
+    ChannelLifecycleFailureUnsupportedRequestType,
+    ChannelLifecycleFailureMalformed,
+    ChannelLifecycleFailureOverLimit,
+    ChannelLifecycleFailureDuplicate,
+    ChannelLifecycleFailureLifecycleViolation,
+    ChannelLifecycleFailureRedactionSensitive,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SshChannelLifecycleState {
+    eof_received: bool,
+    exit_status_emitted: bool,
+    close_received: bool,
+    close_emitted: bool,
+}
+
+impl SshChannelLifecycleState {
+    pub(crate) const fn new() -> Self {
+        Self {
+            eof_received: false,
+            exit_status_emitted: false,
+            close_received: false,
+            close_emitted: false,
+        }
+    }
+
+    pub(crate) const fn eof_received(self) -> bool {
+        self.eof_received
+    }
+
+    pub(crate) const fn exit_status_emitted(self) -> bool {
+        self.exit_status_emitted
+    }
+
+    pub(crate) const fn close_received(self) -> bool {
+        self.close_received
+    }
+
+    pub(crate) const fn close_emitted(self) -> bool {
+        self.close_emitted
+    }
+
+    pub(crate) const fn channel_lifecycle_open(self) -> bool {
+        !(self.close_received && self.close_emitted)
+    }
+}
+
+pub(crate) struct SshChannelLifecycleInboundInput<'a> {
+    pub(crate) authentication_success: bool,
+    pub(crate) open_session_channel: bool,
+    pub(crate) shell_attached: bool,
+    pub(crate) channel_lifecycle_open: bool,
+    pub(crate) redaction_sensitive: bool,
+    pub(crate) decrypted_payload: &'a [u8],
+}
+
+pub(crate) struct SshChannelExitStatusOutputInput {
+    pub(crate) shell_attached: bool,
+    pub(crate) local_process_session_owned: bool,
+    pub(crate) channel_lifecycle_open: bool,
+    pub(crate) exit_status_available: bool,
+    pub(crate) redaction_sensitive: bool,
+    pub(crate) exit_status: u32,
+}
+
+pub(crate) struct SshChannelCloseOutputInput {
+    pub(crate) shell_attached: bool,
+    pub(crate) channel_lifecycle_open: bool,
+    pub(crate) redaction_sensitive: bool,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SshChannelLifecycleReport {
+    labels: [SshServiceReadinessLabel; MAX_SSH_CHANNEL_LIFECYCLE_LABELS],
+    label_count: usize,
+    result: SshChannelLifecycleResult,
+    request_message_number: Option<u8>,
+    output_message_number: Option<u8>,
+    parsed_field_count: usize,
+    request_type_len: Option<usize>,
+    want_reply: Option<bool>,
+    exit_status: Option<u32>,
+    eof_received: bool,
+    exit_status_emitted: bool,
+    close_received: bool,
+    close_emitted: bool,
+    channel_lifecycle_open: bool,
+    channel_lifecycle_local: bool,
+}
+
+impl SshChannelLifecycleReport {
+    fn new(
+        result: SshChannelLifecycleResult,
+        state: SshChannelLifecycleState,
+        request_message_number: Option<u8>,
+        output_message_number: Option<u8>,
+        parsed_field_count: usize,
+        request_type_len: Option<usize>,
+        want_reply: Option<bool>,
+        exit_status: Option<u32>,
+        channel_lifecycle_local: bool,
+    ) -> Self {
+        Self {
+            labels: [SshServiceReadinessLabel::NotReady; MAX_SSH_CHANNEL_LIFECYCLE_LABELS],
+            label_count: 0,
+            result,
+            request_message_number,
+            output_message_number,
+            parsed_field_count,
+            request_type_len,
+            want_reply,
+            exit_status,
+            eof_received: state.eof_received(),
+            exit_status_emitted: state.exit_status_emitted(),
+            close_received: state.close_received(),
+            close_emitted: state.close_emitted(),
+            channel_lifecycle_open: state.channel_lifecycle_open(),
+            channel_lifecycle_local,
+        }
+    }
+
+    fn push_success_prefix(&mut self) {
+        self.push(SshServiceReadinessLabel::AuthenticationSuccessLocalOnly);
+        self.push(SshServiceReadinessLabel::SessionOpenLocalOnly);
+        self.push(SshServiceReadinessLabel::ChannelOpenLocalOnly);
+        self.push(SshServiceReadinessLabel::ShellAttached);
+        self.push(SshServiceReadinessLabel::ChannelLifecyclePrerequisiteOnly);
+    }
+
+    fn push(&mut self, label: SshServiceReadinessLabel) {
+        self.labels[self.label_count] = label;
+        self.label_count += 1;
+    }
+
+    pub(crate) fn labels(&self) -> &[SshServiceReadinessLabel] {
+        &self.labels[..self.label_count]
+    }
+
+    pub(crate) const fn result(self) -> SshChannelLifecycleResult {
+        self.result
+    }
+
+    pub(crate) const fn request_message_number(self) -> Option<u8> {
+        self.request_message_number
+    }
+
+    pub(crate) const fn output_message_number(self) -> Option<u8> {
+        self.output_message_number
+    }
+
+    pub(crate) const fn parsed_field_count(self) -> usize {
+        self.parsed_field_count
+    }
+
+    pub(crate) const fn request_type_len(self) -> Option<usize> {
+        self.request_type_len
+    }
+
+    pub(crate) const fn want_reply(self) -> Option<bool> {
+        self.want_reply
+    }
+
+    pub(crate) const fn exit_status(self) -> Option<u32> {
+        self.exit_status
+    }
+
+    pub(crate) const fn eof_received(self) -> bool {
+        self.eof_received
+    }
+
+    pub(crate) const fn exit_status_emitted(self) -> bool {
+        self.exit_status_emitted
+    }
+
+    pub(crate) const fn close_received(self) -> bool {
+        self.close_received
+    }
+
+    pub(crate) const fn close_emitted(self) -> bool {
+        self.close_emitted
+    }
+
+    pub(crate) const fn channel_lifecycle_open(self) -> bool {
+        self.channel_lifecycle_open
+    }
+
+    pub(crate) const fn channel_lifecycle_local(self) -> bool {
+        self.channel_lifecycle_local
+    }
+
+    pub(crate) const fn reachability_accepted(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn ssh_ready(self) -> bool {
+        false
+    }
+}
+
+pub(crate) fn classify_ssh_channel_lifecycle_inbound(
+    state: &mut SshChannelLifecycleState,
+    input: SshChannelLifecycleInboundInput<'_>,
+) -> SshChannelLifecycleReport {
+    if input.redaction_sensitive {
+        return channel_lifecycle_failure(
+            *state,
+            SshChannelLifecycleResult::ChannelLifecycleFailureRedactionSensitive,
+            SshServiceReadinessLabel::ChannelLifecycleFailureRedactionSensitive,
+            None,
+            None,
+            0,
+            None,
+            None,
+            None,
+        );
+    }
+    if !input.authentication_success {
+        return channel_lifecycle_failure(
+            *state,
+            SshChannelLifecycleResult::ChannelLifecycleFailureAuthenticationMissing,
+            SshServiceReadinessLabel::ChannelLifecycleFailureAuthenticationMissing,
+            input.decrypted_payload.first().copied(),
+            None,
+            usize::from(!input.decrypted_payload.is_empty()),
+            None,
+            None,
+            None,
+        );
+    }
+    if !input.open_session_channel {
+        return channel_lifecycle_failure(
+            *state,
+            SshChannelLifecycleResult::ChannelLifecycleFailureChannelMissing,
+            SshServiceReadinessLabel::ChannelLifecycleFailureChannelMissing,
+            input.decrypted_payload.first().copied(),
+            None,
+            usize::from(!input.decrypted_payload.is_empty()),
+            None,
+            None,
+            None,
+        );
+    }
+    if !input.shell_attached {
+        return channel_lifecycle_failure(
+            *state,
+            SshChannelLifecycleResult::ChannelLifecycleFailureShellAttachmentMissing,
+            SshServiceReadinessLabel::ChannelLifecycleFailureShellAttachmentMissing,
+            input.decrypted_payload.first().copied(),
+            None,
+            usize::from(!input.decrypted_payload.is_empty()),
+            None,
+            None,
+            None,
+        );
+    }
+    if !input.channel_lifecycle_open || !state.channel_lifecycle_open() {
+        return channel_lifecycle_failure(
+            *state,
+            SshChannelLifecycleResult::ChannelLifecycleFailureLifecycleViolation,
+            SshServiceReadinessLabel::ChannelLifecycleFailureLifecycleViolation,
+            input.decrypted_payload.first().copied(),
+            None,
+            usize::from(!input.decrypted_payload.is_empty()),
+            None,
+            None,
+            None,
+        );
+    }
+    if input.decrypted_payload.len() > SSH_CHANNEL_REQUEST_PAYLOAD_MAX_BYTES {
+        return channel_lifecycle_failure(
+            *state,
+            SshChannelLifecycleResult::ChannelLifecycleFailureOverLimit,
+            SshServiceReadinessLabel::ChannelLifecycleFailureOverLimit,
+            input.decrypted_payload.first().copied(),
+            None,
+            usize::from(!input.decrypted_payload.is_empty()),
+            None,
+            None,
+            None,
+        );
+    }
+
+    let Some(message_number) = input.decrypted_payload.first().copied() else {
+        return channel_lifecycle_malformed(*state, None, None, 0, None, None);
+    };
+    match message_number {
+        SSH_MSG_CHANNEL_EOF => classify_ssh_channel_lifecycle_eof(state, input.decrypted_payload),
+        SSH_MSG_CHANNEL_CLOSE => {
+            classify_ssh_channel_lifecycle_close_received(state, input.decrypted_payload)
+        }
+        SSH_MSG_CHANNEL_REQUEST => {
+            let (request_type_len, want_reply, parsed_field_count) =
+                parse_channel_lifecycle_request_shape(input.decrypted_payload);
+            channel_lifecycle_failure(
+                *state,
+                SshChannelLifecycleResult::ChannelLifecycleFailureUnsupportedRequestType,
+                SshServiceReadinessLabel::ChannelLifecycleFailureUnsupportedRequestType,
+                Some(message_number),
+                None,
+                parsed_field_count,
+                request_type_len,
+                want_reply,
+                None,
+            )
+        }
+        _ => channel_lifecycle_failure(
+            *state,
+            SshChannelLifecycleResult::ChannelLifecycleFailureUnsupportedMessage,
+            SshServiceReadinessLabel::ChannelLifecycleFailureUnsupportedMessage,
+            Some(message_number),
+            None,
+            1,
+            None,
+            None,
+            None,
+        ),
+    }
+}
+
+pub(crate) fn classify_ssh_channel_lifecycle_exit_status_output(
+    state: &mut SshChannelLifecycleState,
+    input: SshChannelExitStatusOutputInput,
+) -> SshChannelLifecycleReport {
+    if input.redaction_sensitive {
+        return channel_lifecycle_failure(
+            *state,
+            SshChannelLifecycleResult::ChannelLifecycleFailureRedactionSensitive,
+            SshServiceReadinessLabel::ChannelLifecycleFailureRedactionSensitive,
+            None,
+            Some(SSH_MSG_CHANNEL_REQUEST),
+            0,
+            None,
+            None,
+            None,
+        );
+    }
+    if !input.shell_attached {
+        return channel_lifecycle_failure(
+            *state,
+            SshChannelLifecycleResult::ChannelLifecycleFailureShellAttachmentMissing,
+            SshServiceReadinessLabel::ChannelLifecycleFailureShellAttachmentMissing,
+            None,
+            Some(SSH_MSG_CHANNEL_REQUEST),
+            0,
+            None,
+            None,
+            None,
+        );
+    }
+    if !input.local_process_session_owned || !input.exit_status_available {
+        return channel_lifecycle_failure(
+            *state,
+            SshChannelLifecycleResult::ChannelLifecycleFailureLocalExecutionMissing,
+            SshServiceReadinessLabel::ChannelLifecycleFailureLocalExecutionMissing,
+            None,
+            Some(SSH_MSG_CHANNEL_REQUEST),
+            0,
+            None,
+            None,
+            None,
+        );
+    }
+    if !input.channel_lifecycle_open || !state.channel_lifecycle_open() || state.close_received() {
+        return channel_lifecycle_failure(
+            *state,
+            SshChannelLifecycleResult::ChannelLifecycleFailureLifecycleViolation,
+            SshServiceReadinessLabel::ChannelLifecycleFailureLifecycleViolation,
+            None,
+            Some(SSH_MSG_CHANNEL_REQUEST),
+            0,
+            None,
+            None,
+            None,
+        );
+    }
+    if state.exit_status_emitted() {
+        return channel_lifecycle_failure(
+            *state,
+            SshChannelLifecycleResult::ChannelLifecycleFailureDuplicate,
+            SshServiceReadinessLabel::ChannelLifecycleFailureDuplicate,
+            None,
+            Some(SSH_MSG_CHANNEL_REQUEST),
+            0,
+            Some(SSH_CHANNEL_REQUEST_TYPE_EXIT_STATUS.len()),
+            Some(false),
+            Some(input.exit_status),
+        );
+    }
+
+    state.exit_status_emitted = true;
+    let mut report = SshChannelLifecycleReport::new(
+        SshChannelLifecycleResult::ExitStatusRequestModeled,
+        *state,
+        None,
+        Some(SSH_MSG_CHANNEL_REQUEST),
+        5,
+        Some(SSH_CHANNEL_REQUEST_TYPE_EXIT_STATUS.len()),
+        Some(false),
+        Some(input.exit_status),
+        true,
+    );
+    report.push_success_prefix();
+    report.push(SshServiceReadinessLabel::ChannelLifecycleExitStatusEmitted);
+    report.push(SshServiceReadinessLabel::NotReady);
+    report
+}
+
+pub(crate) fn classify_ssh_channel_lifecycle_close_output(
+    state: &mut SshChannelLifecycleState,
+    input: SshChannelCloseOutputInput,
+) -> SshChannelLifecycleReport {
+    if input.redaction_sensitive {
+        return channel_lifecycle_failure(
+            *state,
+            SshChannelLifecycleResult::ChannelLifecycleFailureRedactionSensitive,
+            SshServiceReadinessLabel::ChannelLifecycleFailureRedactionSensitive,
+            None,
+            Some(SSH_MSG_CHANNEL_CLOSE),
+            0,
+            None,
+            None,
+            None,
+        );
+    }
+    if !input.shell_attached {
+        return channel_lifecycle_failure(
+            *state,
+            SshChannelLifecycleResult::ChannelLifecycleFailureShellAttachmentMissing,
+            SshServiceReadinessLabel::ChannelLifecycleFailureShellAttachmentMissing,
+            None,
+            Some(SSH_MSG_CHANNEL_CLOSE),
+            0,
+            None,
+            None,
+            None,
+        );
+    }
+    if !input.channel_lifecycle_open || !state.channel_lifecycle_open() {
+        return channel_lifecycle_failure(
+            *state,
+            SshChannelLifecycleResult::ChannelLifecycleFailureLifecycleViolation,
+            SshServiceReadinessLabel::ChannelLifecycleFailureLifecycleViolation,
+            None,
+            Some(SSH_MSG_CHANNEL_CLOSE),
+            0,
+            None,
+            None,
+            None,
+        );
+    }
+    if state.close_emitted() {
+        return channel_lifecycle_failure(
+            *state,
+            SshChannelLifecycleResult::ChannelLifecycleFailureDuplicate,
+            SshServiceReadinessLabel::ChannelLifecycleFailureDuplicate,
+            None,
+            Some(SSH_MSG_CHANNEL_CLOSE),
+            0,
+            None,
+            None,
+            None,
+        );
+    }
+
+    state.close_emitted = true;
+    let mut report = SshChannelLifecycleReport::new(
+        SshChannelLifecycleResult::OutboundCloseModeled,
+        *state,
+        None,
+        Some(SSH_MSG_CHANNEL_CLOSE),
+        2,
+        None,
+        None,
+        None,
+        true,
+    );
+    report.push_success_prefix();
+    report.push(SshServiceReadinessLabel::ChannelLifecycleCloseEmitted);
+    report.push(SshServiceReadinessLabel::NotReady);
+    report
+}
+
+fn classify_ssh_channel_lifecycle_eof(
+    state: &mut SshChannelLifecycleState,
+    payload: &[u8],
+) -> SshChannelLifecycleReport {
+    if payload.len() != 5 {
+        return channel_lifecycle_malformed(*state, Some(SSH_MSG_CHANNEL_EOF), None, 1, None, None);
+    }
+    if state.eof_received() {
+        return channel_lifecycle_failure(
+            *state,
+            SshChannelLifecycleResult::ChannelLifecycleFailureDuplicate,
+            SshServiceReadinessLabel::ChannelLifecycleFailureDuplicate,
+            Some(SSH_MSG_CHANNEL_EOF),
+            None,
+            2,
+            None,
+            None,
+            None,
+        );
+    }
+    state.eof_received = true;
+    let mut report = SshChannelLifecycleReport::new(
+        SshChannelLifecycleResult::InboundEofReceivedLocal,
+        *state,
+        Some(SSH_MSG_CHANNEL_EOF),
+        None,
+        2,
+        None,
+        None,
+        None,
+        true,
+    );
+    report.push_success_prefix();
+    report.push(SshServiceReadinessLabel::ChannelLifecycleEofReceived);
+    report.push(SshServiceReadinessLabel::NotReady);
+    report
+}
+
+fn classify_ssh_channel_lifecycle_close_received(
+    state: &mut SshChannelLifecycleState,
+    payload: &[u8],
+) -> SshChannelLifecycleReport {
+    if payload.len() != 5 {
+        return channel_lifecycle_malformed(
+            *state,
+            Some(SSH_MSG_CHANNEL_CLOSE),
+            None,
+            1,
+            None,
+            None,
+        );
+    }
+    if state.close_received() {
+        return channel_lifecycle_failure(
+            *state,
+            SshChannelLifecycleResult::ChannelLifecycleFailureDuplicate,
+            SshServiceReadinessLabel::ChannelLifecycleFailureDuplicate,
+            Some(SSH_MSG_CHANNEL_CLOSE),
+            None,
+            2,
+            None,
+            None,
+            None,
+        );
+    }
+    state.close_received = true;
+    let mut report = SshChannelLifecycleReport::new(
+        SshChannelLifecycleResult::InboundCloseReceivedLocal,
+        *state,
+        Some(SSH_MSG_CHANNEL_CLOSE),
+        None,
+        2,
+        None,
+        None,
+        None,
+        true,
+    );
+    report.push_success_prefix();
+    report.push(SshServiceReadinessLabel::ChannelLifecycleCloseReceived);
+    report.push(SshServiceReadinessLabel::NotReady);
+    report
+}
+
+fn channel_lifecycle_failure(
+    state: SshChannelLifecycleState,
+    result: SshChannelLifecycleResult,
+    label: SshServiceReadinessLabel,
+    request_message_number: Option<u8>,
+    output_message_number: Option<u8>,
+    parsed_field_count: usize,
+    request_type_len: Option<usize>,
+    want_reply: Option<bool>,
+    exit_status: Option<u32>,
+) -> SshChannelLifecycleReport {
+    let mut report = SshChannelLifecycleReport::new(
+        result,
+        state,
+        request_message_number,
+        output_message_number,
+        parsed_field_count,
+        request_type_len,
+        want_reply,
+        exit_status,
+        false,
+    );
+    report.push(label);
+    report.push(SshServiceReadinessLabel::NotReady);
+    report
+}
+
+fn channel_lifecycle_malformed(
+    state: SshChannelLifecycleState,
+    request_message_number: Option<u8>,
+    output_message_number: Option<u8>,
+    parsed_field_count: usize,
+    request_type_len: Option<usize>,
+    want_reply: Option<bool>,
+) -> SshChannelLifecycleReport {
+    channel_lifecycle_failure(
+        state,
+        SshChannelLifecycleResult::ChannelLifecycleFailureMalformed,
+        SshServiceReadinessLabel::ChannelLifecycleFailureMalformed,
+        request_message_number,
+        output_message_number,
+        parsed_field_count,
+        request_type_len,
+        want_reply,
+        None,
+    )
+}
+
+fn parse_channel_lifecycle_request_shape(payload: &[u8]) -> (Option<usize>, Option<bool>, usize) {
+    let Some(cursor) = skip_ssh_u32(payload, 1) else {
+        return (None, None, 1);
+    };
+    let Some((request_type, cursor)) =
+        parse_ssh_binary_string_bounded(payload, cursor, SSH_CHANNEL_REQUEST_TYPE_MAX_BYTES)
+    else {
+        return (None, None, 2);
+    };
+    let request_type_len = Some(request_type.len());
+    let Some(want_reply_byte) = payload.get(cursor).copied() else {
+        return (request_type_len, None, 3);
+    };
+    if !matches!(want_reply_byte, 0 | 1) {
+        return (request_type_len, None, 3);
+    }
+    (request_type_len, Some(want_reply_byte == 1), 4)
+}
+
 struct ParsedSshPublickeyVerificationRequest<'a> {
     user_name: &'a [u8],
     service: &'a [u8],
@@ -5406,6 +6113,16 @@ mod tests {
         labels
     }
 
+    fn channel_lifecycle_label_names(
+        report: &SshChannelLifecycleReport,
+    ) -> [&'static str; MAX_SSH_CHANNEL_LIFECYCLE_LABELS] {
+        let mut labels = [""; MAX_SSH_CHANNEL_LIFECYCLE_LABELS];
+        for (index, label) in report.labels().iter().enumerate() {
+            labels[index] = label.name();
+        }
+        labels
+    }
+
     fn shape_modeled_key_report() -> SshKeyReadinessReport {
         let entropy = entropy::classify_entropy_snapshot(
             EntropyDiagnosticSnapshot::empty()
@@ -5601,6 +6318,31 @@ mod tests {
         payload.extend_from_slice(&0u32.to_be_bytes());
         payload.extend_from_slice(&bytes_to_add.to_be_bytes());
         payload
+    }
+
+    fn channel_eof_payload() -> Vec<u8> {
+        let mut payload = Vec::new();
+        payload.push(SSH_MSG_CHANNEL_EOF);
+        payload.extend_from_slice(&0u32.to_be_bytes());
+        payload
+    }
+
+    fn channel_close_payload() -> Vec<u8> {
+        let mut payload = Vec::new();
+        payload.push(SSH_MSG_CHANNEL_CLOSE);
+        payload.extend_from_slice(&0u32.to_be_bytes());
+        payload
+    }
+
+    fn channel_lifecycle_success_input(payload: &[u8]) -> SshChannelLifecycleInboundInput<'_> {
+        SshChannelLifecycleInboundInput {
+            authentication_success: true,
+            open_session_channel: true,
+            shell_attached: true,
+            channel_lifecycle_open: true,
+            redaction_sensitive: false,
+            decrypted_payload: payload,
+        }
     }
 
     fn channel_data_stdio_success_input(payload: &[u8]) -> SshChannelDataStdioInput<'_> {
@@ -8466,6 +9208,336 @@ mod tests {
         assert_eq!(overflow.window_adjust_bytes(), Some(1));
         assert_eq!(overflow_state.remote_receive_window_remaining(), u32::MAX);
         assert!(!overflow.channel_window_management());
+    }
+
+    #[test_case]
+    fn channel_lifecycle_models_eof_exit_status_and_close_without_socket_readiness() {
+        let mut state = SshChannelLifecycleState::new();
+        let eof_payload = channel_eof_payload();
+        let eof = classify_ssh_channel_lifecycle_inbound(
+            &mut state,
+            channel_lifecycle_success_input(&eof_payload),
+        );
+
+        assert_eq!(
+            eof.result(),
+            SshChannelLifecycleResult::InboundEofReceivedLocal
+        );
+        assert_eq!(eof.request_message_number(), Some(SSH_MSG_CHANNEL_EOF));
+        assert_eq!(eof.output_message_number(), None);
+        assert_eq!(eof.parsed_field_count(), 2);
+        assert!(eof.eof_received());
+        assert!(state.eof_received());
+        assert!(eof.channel_lifecycle_open());
+        assert!(eof.channel_lifecycle_local());
+        assert!(
+            eof.labels()
+                .contains(&SshServiceReadinessLabel::ChannelLifecycleEofReceived)
+        );
+
+        let exit_status = classify_ssh_channel_lifecycle_exit_status_output(
+            &mut state,
+            SshChannelExitStatusOutputInput {
+                shell_attached: true,
+                local_process_session_owned: true,
+                channel_lifecycle_open: true,
+                exit_status_available: true,
+                redaction_sensitive: false,
+                exit_status: 0,
+            },
+        );
+
+        assert_eq!(
+            exit_status.result(),
+            SshChannelLifecycleResult::ExitStatusRequestModeled
+        );
+        assert_eq!(
+            exit_status.output_message_number(),
+            Some(SSH_MSG_CHANNEL_REQUEST)
+        );
+        assert_eq!(
+            exit_status.request_type_len(),
+            Some(SSH_CHANNEL_REQUEST_TYPE_EXIT_STATUS.len())
+        );
+        assert_eq!(exit_status.want_reply(), Some(false));
+        assert_eq!(exit_status.exit_status(), Some(0));
+        assert!(exit_status.exit_status_emitted());
+        assert!(state.exit_status_emitted());
+        assert!(exit_status.channel_lifecycle_local());
+
+        let close_sent = classify_ssh_channel_lifecycle_close_output(
+            &mut state,
+            SshChannelCloseOutputInput {
+                shell_attached: true,
+                channel_lifecycle_open: true,
+                redaction_sensitive: false,
+            },
+        );
+
+        assert_eq!(
+            close_sent.result(),
+            SshChannelLifecycleResult::OutboundCloseModeled
+        );
+        assert_eq!(
+            close_sent.output_message_number(),
+            Some(SSH_MSG_CHANNEL_CLOSE)
+        );
+        assert!(close_sent.close_emitted());
+        assert!(close_sent.channel_lifecycle_open());
+
+        let close_payload = channel_close_payload();
+        let close_received = classify_ssh_channel_lifecycle_inbound(
+            &mut state,
+            channel_lifecycle_success_input(&close_payload),
+        );
+
+        assert_eq!(
+            close_received.result(),
+            SshChannelLifecycleResult::InboundCloseReceivedLocal
+        );
+        assert_eq!(
+            close_received.request_message_number(),
+            Some(SSH_MSG_CHANNEL_CLOSE)
+        );
+        assert!(close_received.close_received());
+        assert!(close_received.close_emitted());
+        assert!(!close_received.channel_lifecycle_open());
+        assert!(!close_received.reachability_accepted());
+        assert!(!close_received.ssh_ready());
+        assert_eq!(
+            &channel_lifecycle_label_names(&close_received)[..close_received.labels().len()],
+            &[
+                "sshservicediag-authentication-success-local-only",
+                "sshservicediag-session-open-local-only",
+                "sshservicediag-channel-open-local-only",
+                "sshservicediag-shell-attached",
+                "sshservicediag-channel-lifecycle-prerequisite-only",
+                "sshservicediag-channel-lifecycle-close-received",
+                "sshservicediag-not-ready",
+            ]
+        );
+    }
+
+    #[test_case]
+    fn channel_lifecycle_fails_closed_for_duplicate_and_invalid_ordering() {
+        let mut duplicate_eof_state = SshChannelLifecycleState::new();
+        let eof_payload = channel_eof_payload();
+        let first_eof = classify_ssh_channel_lifecycle_inbound(
+            &mut duplicate_eof_state,
+            channel_lifecycle_success_input(&eof_payload),
+        );
+        let duplicate_eof = classify_ssh_channel_lifecycle_inbound(
+            &mut duplicate_eof_state,
+            channel_lifecycle_success_input(&eof_payload),
+        );
+
+        assert_eq!(
+            first_eof.result(),
+            SshChannelLifecycleResult::InboundEofReceivedLocal
+        );
+        assert_eq!(
+            duplicate_eof.result(),
+            SshChannelLifecycleResult::ChannelLifecycleFailureDuplicate
+        );
+        assert!(duplicate_eof.eof_received());
+        assert!(!duplicate_eof.channel_lifecycle_local());
+
+        let mut closed_state = SshChannelLifecycleState::new();
+        let close_sent = classify_ssh_channel_lifecycle_close_output(
+            &mut closed_state,
+            SshChannelCloseOutputInput {
+                shell_attached: true,
+                channel_lifecycle_open: true,
+                redaction_sensitive: false,
+            },
+        );
+        let close_payload = channel_close_payload();
+        let close_received = classify_ssh_channel_lifecycle_inbound(
+            &mut closed_state,
+            channel_lifecycle_success_input(&close_payload),
+        );
+        let late_exit_status = classify_ssh_channel_lifecycle_exit_status_output(
+            &mut closed_state,
+            SshChannelExitStatusOutputInput {
+                shell_attached: true,
+                local_process_session_owned: true,
+                channel_lifecycle_open: true,
+                exit_status_available: true,
+                redaction_sensitive: false,
+                exit_status: 1,
+            },
+        );
+
+        assert_eq!(
+            close_sent.result(),
+            SshChannelLifecycleResult::OutboundCloseModeled
+        );
+        assert_eq!(
+            close_received.result(),
+            SshChannelLifecycleResult::InboundCloseReceivedLocal
+        );
+        assert_eq!(
+            late_exit_status.result(),
+            SshChannelLifecycleResult::ChannelLifecycleFailureLifecycleViolation
+        );
+        assert!(!late_exit_status.channel_lifecycle_open());
+        assert!(!late_exit_status.ssh_ready());
+    }
+
+    #[test_case]
+    fn channel_lifecycle_fails_closed_for_message_shape_and_prerequisites() {
+        let eof_payload = channel_eof_payload();
+        let missing_auth = classify_ssh_channel_lifecycle_inbound(
+            &mut SshChannelLifecycleState::new(),
+            SshChannelLifecycleInboundInput {
+                authentication_success: false,
+                ..channel_lifecycle_success_input(&eof_payload)
+            },
+        );
+        let missing_channel = classify_ssh_channel_lifecycle_inbound(
+            &mut SshChannelLifecycleState::new(),
+            SshChannelLifecycleInboundInput {
+                open_session_channel: false,
+                ..channel_lifecycle_success_input(&eof_payload)
+            },
+        );
+        let missing_shell = classify_ssh_channel_lifecycle_inbound(
+            &mut SshChannelLifecycleState::new(),
+            SshChannelLifecycleInboundInput {
+                shell_attached: false,
+                ..channel_lifecycle_success_input(&eof_payload)
+            },
+        );
+        let redaction = classify_ssh_channel_lifecycle_inbound(
+            &mut SshChannelLifecycleState::new(),
+            SshChannelLifecycleInboundInput {
+                redaction_sensitive: true,
+                ..channel_lifecycle_success_input(&eof_payload)
+            },
+        );
+        let wrong = classify_ssh_channel_lifecycle_inbound(
+            &mut SshChannelLifecycleState::new(),
+            channel_lifecycle_success_input(&channel_data_payload(b"ignored")),
+        );
+        let unsupported_request = classify_ssh_channel_lifecycle_inbound(
+            &mut SshChannelLifecycleState::new(),
+            channel_lifecycle_success_input(&session_shell_request_payload(
+                SSH_CHANNEL_REQUEST_TYPE_SHELL,
+                true,
+            )),
+        );
+        let malformed = classify_ssh_channel_lifecycle_inbound(
+            &mut SshChannelLifecycleState::new(),
+            channel_lifecycle_success_input(&[SSH_MSG_CHANNEL_CLOSE]),
+        );
+        let mut over_limit_payload = Vec::new();
+        over_limit_payload.resize(SSH_CHANNEL_REQUEST_PAYLOAD_MAX_BYTES + 1, 0);
+        over_limit_payload[0] = SSH_MSG_CHANNEL_EOF;
+        let over_limit = classify_ssh_channel_lifecycle_inbound(
+            &mut SshChannelLifecycleState::new(),
+            channel_lifecycle_success_input(&over_limit_payload),
+        );
+        let missing_local_execution = classify_ssh_channel_lifecycle_exit_status_output(
+            &mut SshChannelLifecycleState::new(),
+            SshChannelExitStatusOutputInput {
+                shell_attached: true,
+                local_process_session_owned: false,
+                channel_lifecycle_open: true,
+                exit_status_available: true,
+                redaction_sensitive: false,
+                exit_status: 127,
+            },
+        );
+
+        assert_eq!(
+            missing_auth.result(),
+            SshChannelLifecycleResult::ChannelLifecycleFailureAuthenticationMissing
+        );
+        assert_eq!(
+            missing_channel.result(),
+            SshChannelLifecycleResult::ChannelLifecycleFailureChannelMissing
+        );
+        assert_eq!(
+            missing_shell.result(),
+            SshChannelLifecycleResult::ChannelLifecycleFailureShellAttachmentMissing
+        );
+        assert_eq!(
+            redaction.result(),
+            SshChannelLifecycleResult::ChannelLifecycleFailureRedactionSensitive
+        );
+        assert_eq!(
+            wrong.result(),
+            SshChannelLifecycleResult::ChannelLifecycleFailureUnsupportedMessage
+        );
+        assert_eq!(
+            unsupported_request.result(),
+            SshChannelLifecycleResult::ChannelLifecycleFailureUnsupportedRequestType
+        );
+        assert_eq!(
+            malformed.result(),
+            SshChannelLifecycleResult::ChannelLifecycleFailureMalformed
+        );
+        assert_eq!(
+            over_limit.result(),
+            SshChannelLifecycleResult::ChannelLifecycleFailureOverLimit
+        );
+        assert_eq!(
+            missing_local_execution.result(),
+            SshChannelLifecycleResult::ChannelLifecycleFailureLocalExecutionMissing
+        );
+        assert_eq!(wrong.request_message_number(), Some(SSH_MSG_CHANNEL_DATA));
+        assert_eq!(
+            unsupported_request.request_type_len(),
+            Some(SSH_CHANNEL_REQUEST_TYPE_SHELL.len())
+        );
+        assert_eq!(unsupported_request.want_reply(), Some(true));
+        assert!(!redaction.channel_lifecycle_local());
+        assert!(!missing_local_execution.exit_status_emitted());
+        assert!(!over_limit.ssh_ready());
+    }
+
+    #[test_case]
+    fn channel_lifecycle_preserves_channel_data_and_window_regression_surfaces() {
+        let data_payload = channel_data_payload(b"lifecycle");
+        let mut window_state = SshChannelWindowAccountingState::new(64);
+        let data = classify_ssh_channel_window_accounting_inbound_data(
+            &mut window_state,
+            channel_data_stdio_success_input(&data_payload),
+        );
+
+        assert_eq!(
+            data.result(),
+            SshChannelWindowAccountingResult::InboundDataWindowAccounted
+        );
+        assert!(data.channel_data_stdio_local());
+        assert!(data.channel_window_management());
+        assert!(!data.ssh_ready());
+
+        let mut closed_lifecycle = SshChannelLifecycleState::new();
+        let _ = classify_ssh_channel_lifecycle_close_output(
+            &mut closed_lifecycle,
+            SshChannelCloseOutputInput {
+                shell_attached: true,
+                channel_lifecycle_open: true,
+                redaction_sensitive: false,
+            },
+        );
+        let close_payload = channel_close_payload();
+        let _ = classify_ssh_channel_lifecycle_inbound(
+            &mut closed_lifecycle,
+            channel_lifecycle_success_input(&close_payload),
+        );
+        let rejected_after_close = classify_ssh_channel_data_stdio(SshChannelDataStdioInput {
+            channel_lifecycle_open: closed_lifecycle.channel_lifecycle_open(),
+            ..channel_data_stdio_success_input(&data_payload)
+        });
+
+        assert_eq!(
+            rejected_after_close.result(),
+            SshChannelDataStdioResult::ChannelDataFailureLifecycleViolation
+        );
+        assert!(!rejected_after_close.channel_data_stdio_local());
+        assert!(!rejected_after_close.ssh_ready());
     }
 
     #[test_case]

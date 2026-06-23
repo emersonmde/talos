@@ -17337,6 +17337,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   selected_next_task is null and planningNeeded=true because no explicit
   queued/ready follow-up task exists for the worker to promote without
   supervisor planning.
+- phase12-ssh-channel-lifecycle-exit-status-core-20260623 accepts the bounded
+  local modeled SSH channel lifecycle source slice. The source records local
+  SSH_MSG_CHANNEL_EOF receipt, local SSH_MSG_CHANNEL_REQUEST exit-status
+  emission with want_reply=false, and local SSH_MSG_CHANNEL_CLOSE send/receive
+  state on the accepted authenticated session channel, shell attachment,
+  local process/session, stdio, channel-data, and window-accounting path.
+  Malformed, unsupported, duplicate, missing-prerequisite, lifecycle-invalid,
+  local-execution-missing, over-limit, and redaction-sensitive controls fail
+  closed. This remains local modeled evidence only: live encrypted socket
+  delivery, remote receipt, hardware reachability, OpenSSH/POSIX/Linux
+  compatibility, process wait/exit, broad command expansion, phase transition,
+  and ssh-ready=true remain deferred. The selected next bounded task is
+  phase12-ssh-channel-lifecycle-exit-status-feature-smoke-20260623.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

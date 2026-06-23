@@ -8345,3 +8345,18 @@ behavior, broad command expansion, phase transition, and ssh-ready=true remain
 deferred. selected_next_task is null and planningNeeded=true because no
 explicit queued/ready follow-up task exists for the worker to promote without
 supervisor planning.
+
+phase12-ssh-channel-lifecycle-exit-status-core-20260623 accepts the bounded
+local modeled SSH channel lifecycle source slice. Talos now records local EOF
+receipt from SSH_MSG_CHANNEL_EOF, local exit-status emission as
+SSH_MSG_CHANNEL_REQUEST with request type exit-status and want_reply=false, and
+local send/receive SSH_MSG_CHANNEL_CLOSE state around the accepted
+authentication, session channel, shell attachment, local process/session,
+stdio, channel-data, and window-accounting path. The lifecycle remains local
+modeled only: close state is open until both outbound and inbound close are
+recorded, then later lifecycle and channel-data operations fail closed. The
+accepted source does not prove live encrypted socket delivery, remote receipt,
+hardware reachability, OpenSSH/POSIX/Linux compatibility, process wait/exit,
+broad command expansion, phase transition, or ssh-ready=true. The selected next
+bounded task is
+phase12-ssh-channel-lifecycle-exit-status-feature-smoke-20260623.
