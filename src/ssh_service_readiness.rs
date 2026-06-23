@@ -4208,7 +4208,7 @@ pub(crate) fn classify_ssh_channel_window_accounting_inbound_data(
     state.local_receive_window_remaining -= data_len_u32;
     let mut adjust_bytes = None;
     if state.local_receive_window_remaining
-        < SSH_CHANNEL_LOCAL_RECEIVE_WINDOW_ADJUST_THRESHOLD_BYTES
+        <= SSH_CHANNEL_LOCAL_RECEIVE_WINDOW_ADJUST_THRESHOLD_BYTES
     {
         let bytes_to_add =
             state.local_receive_window_initial - state.local_receive_window_remaining;
@@ -8283,7 +8283,7 @@ mod tests {
     #[test_case]
     fn channel_window_accounting_emits_local_window_adjust_at_threshold() {
         let payload = channel_data_payload(b"threshold");
-        let mut state = SshChannelWindowAccountingState::with_window_remaining(2050, 512);
+        let mut state = SshChannelWindowAccountingState::with_window_remaining(2057, 512);
         let report = classify_ssh_channel_window_accounting_inbound_data(
             &mut state,
             channel_data_stdio_success_input(&payload),
@@ -8297,7 +8297,7 @@ mod tests {
             report.output_message_number(),
             Some(SSH_MSG_CHANNEL_WINDOW_ADJUST)
         );
-        assert_eq!(report.window_adjust_bytes(), Some(2055));
+        assert_eq!(report.window_adjust_bytes(), Some(2048));
         assert_eq!(
             report.local_receive_window_remaining(),
             SSH_CHANNEL_LOCAL_RECEIVE_WINDOW_INITIAL_BYTES

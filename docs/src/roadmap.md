@@ -17319,6 +17319,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   OpenSSH/POSIX/Linux compatibility, broad expansion, phase transition, and
   ssh-ready=true remain deferred. The selected next bounded task is
   phase12-ssh-channel-window-accounting-closeout-20260623.
+- phase12-ssh-channel-window-accounting-closeout-20260623 accepts the local
+  modeled SSH channel-window accounting closeout. The reconciled frontier
+  covers accepted local channel-data/stdio plus local channel-window accounting
+  only: inbound SSH_MSG_CHANNEL_DATA decrements the fixed Talos receive window
+  and emits a modeled SSH_MSG_CHANNEL_WINDOW_ADJUST when the remaining window
+  reaches or crosses the low-water threshold; outbound stdout/stderr reports
+  decrement the peer receive-window budget; inbound WINDOW_ADJUST adds nonzero
+  public bytes-to-add without overflow. The closeout fixed the source
+  threshold edge from below-only to at-or-below and retained exact-threshold
+  unit evidence. channel-data-stdio-local=true and
+  channel-window-management=true are accepted only for local modeled success
+  paths; live-reachability=false and ssh-ready=false remain authoritative. Live
+  encrypted socket delivery, remote receipt, hardware reachability,
+  OpenSSH/POSIX/Linux compatibility, EOF/close/exit-status behavior, broad
+  command expansion, phase transition, and ssh-ready=true remain deferred.
+  selected_next_task is null and planningNeeded=true because no explicit
+  queued/ready follow-up task exists for the worker to promote without
+  supervisor planning.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

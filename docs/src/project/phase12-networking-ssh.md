@@ -8324,3 +8324,24 @@ only: live encrypted socket delivery, remote receipt, hardware reachability,
 OpenSSH/POSIX/Linux compatibility, broad expansion, phase transition, and
 ssh-ready=true remain deferred. The selected next bounded task is
 phase12-ssh-channel-window-accounting-closeout-20260623.
+
+phase12-ssh-channel-window-accounting-closeout-20260623 accepts the local
+modeled SSH channel-window accounting closeout. The reconciled frontier covers
+only accepted local channel-data/stdio plus local channel-window accounting on
+the authenticated session channel, shell attachment, local process/session
+ownership, fd0/fd1/fd2 stdio ownership, and open lifecycle path. Inbound
+SSH_MSG_CHANNEL_DATA decrements the fixed Talos receive window and emits a
+modeled SSH_MSG_CHANNEL_WINDOW_ADJUST when the remaining window reaches or
+crosses the low-water threshold; outbound stdout/stderr reports decrement the
+peer receive-window budget; inbound WINDOW_ADJUST adds a nonzero public
+bytes-to-add counter without overflow. The closeout fixed the source threshold
+edge from below-only to at-or-below to match the accepted contract and retained
+focused unit evidence for exact-threshold emission. The accepted counters are
+channel-data-stdio-local=true and channel-window-management=true only for the
+local modeled success paths; live-reachability=false and ssh-ready=false remain
+authoritative. Live encrypted socket delivery, remote receipt, hardware
+reachability, OpenSSH/POSIX/Linux compatibility, EOF/close/exit-status
+behavior, broad command expansion, phase transition, and ssh-ready=true remain
+deferred. selected_next_task is null and planningNeeded=true because no
+explicit queued/ready follow-up task exists for the worker to promote without
+supervisor planning.
