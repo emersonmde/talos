@@ -17307,6 +17307,18 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   expansion, phase transition, and ssh-ready=true remain deferred. The selected
   next bounded task is
   phase12-ssh-channel-window-accounting-feature-smoke-20260623.
+- phase12-ssh-channel-window-accounting-feature-smoke-20260623 accepts bounded
+  local feature smoke/regression evidence for the modeled channel-window
+  accounting layer. The retained no_std evidence covers inbound
+  SSH_MSG_CHANNEL_DATA receive-window decrement, low-water modeled
+  SSH_MSG_CHANNEL_WINDOW_ADJUST emission, outbound stdout/stderr send-budget
+  decrement, inbound WINDOW_ADJUST budget increase, over-window rejection
+  without state mutation, malformed/overflow WINDOW_ADJUST controls, and prior
+  channel-data/stdio bridge regressions. This remains local unit-test evidence
+  only: live encrypted socket delivery, remote receipt, hardware reachability,
+  OpenSSH/POSIX/Linux compatibility, broad expansion, phase transition, and
+  ssh-ready=true remain deferred. The selected next bounded task is
+  phase12-ssh-channel-window-accounting-closeout-20260623.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
