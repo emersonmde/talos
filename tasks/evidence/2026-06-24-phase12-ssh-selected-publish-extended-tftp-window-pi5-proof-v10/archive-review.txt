@@ -1,0 +1,9 @@
+archive=target/phase12-ssh-live-openssh-retry-boot.tar.gz
+required_members_present=true
+./bcm2712-rpi-5-b.dtb
+./cmdline.txt
+./config.txt
+./da591740/config.txt
+./da591740/kernel_2712.img
+./kernel8.img
+./kernel_2712.img

@@ -1,0 +1,91 @@
+{
+  "action": "tftp logs",
+  "ok": true,
+  "tftp": {
+    "cursor_start": 4669154,
+    "cursor_end": 4670505,
+    "log_size": 4670505,
+    "tail_mode": false,
+    "truncated": false,
+    "events": [
+      {
+        "status": "served",
+        "filename": "da591740/config.txt",
+        "bytes": 118
+      },
+      {
+        "status": "served",
+        "filename": "da591740/config.txt",
+        "bytes": 118
+      },
+      {
+        "status": "not_found",
+        "filename": "da591740/pieeprom.sig",
+        "bytes": null
+      },
+      {
+        "status": "served",
+        "filename": "da591740//config.txt",
+        "bytes": 118
+      },
+      {
+        "status": "served",
+        "filename": "da591740//config.txt",
+        "bytes": 118
+      },
+      {
+        "status": "served",
+        "filename": "da591740/kernel_2712.img",
+        "bytes": 87432
+      },
+      {
+        "status": "served",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "bytes": 78679
+      },
+      {
+        "status": "served",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "bytes": 5971
+      },
+      {
+        "status": "served",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "bytes": 1363
+      },
+      {
+        "status": "served",
+        "filename": "da591740//config.txt",
+        "bytes": 118
+      },
+      {
+        "status": "served",
+        "filename": "da591740//cmdline.txt",
+        "bytes": 81
+      },
+      {
+        "status": "not_found",
+        "filename": "da591740/armstub8-2712.bin",
+        "bytes": null
+      },
+      {
+        "status": "served",
+        "filename": "da591740/kernel_2712.img",
+        "bytes": 87432
+      }
+    ],
+    "event_count": 13,
+    "selected_kernel_87432_fetch_count": 2,
+    "baseline_kernel_104136_fetch_count": 0,
+    "kernel_fetch_bytes_seen": [
+      87432,
+      87432
+    ],
+    "not_found_count": 2
+  },
+  "raw_lines_retained": false,
+  "client_identity_retained": false,
+  "sample_index": 8,
+  "scheduled_elapsed_seconds": 75,
+  "sampled_at": "2026-06-24T07:16:23Z"
+}

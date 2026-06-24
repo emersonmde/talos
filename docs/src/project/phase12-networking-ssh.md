@@ -8973,6 +8973,23 @@ phase transition, and ssh-ready paths remain blocked. The next required
 boundary is a supervisor-planned changed-timing selected-publish discriminator
 or helper repair before any selected-candidate fetch retry or OpenSSH launch.
 
+phase12-ssh-selected-publish-extended-tftp-window-pi5-proof-v10-20260624
+accepts selected-publish-extended-window-fetch-observed. The worker published
+the reviewed selected 87,432-byte archive, verified the selected fe9a0d98...
+tree through GET /status and GET /boot/files, saved fresh serial and TFTP
+cursors, and power-cycled the Pi once without launching OpenSSH. The retained
+pre-restore TFTP cadence queried the same cursor 4669154 at scheduled elapsed
+seconds 0, 5, 10, 20, 30, 45, 60, 75, 90, 105, and 120 while the selected tree
+remained published. The 30-second sample advanced to cursor 4670505 with 13
+parsed events, including two served da591740/kernel_2712.img fetches at the
+selected 87,432-byte category and no baseline 104,136-byte kernel fetches;
+later samples stayed stable at that event set. Final pre-restore identity still
+reported the selected tree, and restore returned to the baseline/control
+a0452458... tree. This resolves the v8/v9 capture timing boundary for selected
+byte service only. OpenSSH execution, TCP reachability, remote receipt,
+compatibility, phase transition, and ssh-ready=true remain blocked until the
+dependency-gated v10 pre-client OpenSSH discriminator proves its own gate.
+
 phase12-ssh-selected-candidate-fetch-liveness-bracket-pi5-proof-20260624
 accepts only fail-closed blocker evidence as baseline-control-fetch-missing.
 The worker acquired hardwareTestLock, started from the restored baseline/control

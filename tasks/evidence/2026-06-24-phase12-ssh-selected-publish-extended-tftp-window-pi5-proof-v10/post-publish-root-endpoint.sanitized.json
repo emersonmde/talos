@@ -1,0 +1,7 @@
+{
+  "action": "GET /",
+  "ok": false,
+  "http_status": 404,
+  "body_summary": "{\n  \"error\": \"unknown endpoint: GET /\",\n  \"ok\": false\n}",
+  "raw_body_retained": false
+}

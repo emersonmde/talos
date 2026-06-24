@@ -17977,6 +17977,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   repair is required before any selected-candidate fetch retry or OpenSSH
   launch; stale closeout, remote-receipt, compatibility, phase transition, and
   ssh-ready paths remain blocked.
+- phase12-ssh-selected-publish-extended-tftp-window-pi5-proof-v10-20260624
+  accepts selected-publish-extended-window-fetch-observed evidence. The worker
+  published the reviewed selected 87,432-byte archive, verified the selected
+  fe9a0d98... tree, saved fresh cursors, and power-cycled the Pi once without
+  launching OpenSSH. Pre-restore TFTP cadence from cursor 4669154 retained 11
+  samples over scheduled elapsed seconds 0 through 120 while the selected tree
+  stayed published; the 30-second sample advanced to cursor 4670505 with 13
+  parsed events, including two selected 87,432-byte
+  da591740/kernel_2712.img serves and no baseline 104,136-byte kernel serves.
+  Final pre-restore identity still reported the selected tree, and restore
+  returned to the baseline/control a0452458... tree. OpenSSH execution, live
+  reachability, remote receipt, compatibility, phase transition, and
+  ssh-ready=true remain unaccepted until the dependency-gated v10 pre-client
+  OpenSSH discriminator proves its own selected-byte gate.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

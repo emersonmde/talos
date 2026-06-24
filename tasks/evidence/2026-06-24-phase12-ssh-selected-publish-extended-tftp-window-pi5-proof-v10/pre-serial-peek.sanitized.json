@@ -1,0 +1,14 @@
+{
+  "cursor": 4194304,
+  "bytes": 500,
+  "truncated": null,
+  "talos_serial_peek": {
+    "drain": true,
+    "max_bytes": 500,
+    "has_kernel_main": false,
+    "has_firmware_network": false,
+    "firmware_network_occurrences": 0
+  },
+  "text_retained": false,
+  "base64_retained": false
+}
