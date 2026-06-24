@@ -1,0 +1,76 @@
+{
+  "task_id": "phase12-ssh-selected-candidate-fetch-after-baseline-liveness-v4-20260623",
+  "classification": "selected-candidate-fetch-observed",
+  "selected_candidate_fetch_observed": true,
+  "selected_next_task": "phase12-ssh-live-openssh-client-discriminator-retry-v5-20260623",
+  "planningNeeded": false,
+  "accepted_baseline_control_liveness_proof": {
+    "task": "tasks/2026-06-23-phase12-ssh-boot-request-liveness-baseline-control.md",
+    "commit": "223b14a92abaf4f1fb02ac8bbb6ec329bf2f3247",
+    "baseline_control_fetch_observed": true
+  },
+  "selected_archive": {
+    "path": "target/phase12-ssh-live-openssh-retry-boot.tar.gz",
+    "sha256_line": "2f88dfdabaeb38e0f90fe597a874df04424e7d639646aa6e8729930766e2ca01  target/phase12-ssh-live-openssh-retry-boot.tar.gz",
+    "kernel_sha256_line": "110e66ef6867a70cc8b72f52c0786a8f4037796b4058ee4a27ba1371ba8c12d5  -",
+    "kernel_sizes": "root kernel_2712.img 87432\nprefixed da591740/kernel_2712.img 87432"
+  },
+  "pre_identity": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "kernel_bytes": [
+      104136
+    ]
+  },
+  "post_publish_identity": {
+    "tree_hash": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333",
+    "effective_kernel": "kernel_2712.img",
+    "kernel_bytes": [
+      87432
+    ]
+  },
+  "pre_run_snapshot": "phase12-ssh-fetch-v4-pre-20260623T235923Z",
+  "tftp": {
+    "cursor_start": 4659697,
+    "cursor_end": 4661048,
+    "event_count": 13,
+    "selected_kernel_serves_87432": 2,
+    "baseline_kernel_serves_104136": 0,
+    "stability": {
+      "stable": true,
+      "reason": "stable",
+      "stable_samples": 3,
+      "required_samples": 3
+    },
+    "exit_code": "0"
+  },
+  "serial": {
+    "cursor_start": 4194304,
+    "cursor_end": 4194304,
+    "bytes": 5369,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "has_kernel_main": false,
+    "has_firmware_network": true,
+    "exit_code": "1"
+  },
+  "final_pre_restore_identity": {
+    "tree_hash": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333",
+    "effective_kernel": "kernel_2712.img",
+    "kernel_bytes": [
+      87432
+    ]
+  },
+  "restore_identity": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "kernel_bytes": [
+      104136
+    ]
+  },
+  "redaction_review": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_log_retained": false,
+    "client_identity_retained": false,
+    "openssh_output_retained": false
+  }
+}

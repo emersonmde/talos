@@ -8911,3 +8911,20 @@ the selected next bounded task is
 phase12-ssh-selected-candidate-fetch-after-baseline-liveness-v4-20260623;
 retry-v4 remains blocked/superseded and live OpenSSH retry-v5 remains
 dependency-gated behind a future selected-candidate fetch proof.
+
+phase12-ssh-selected-candidate-fetch-after-baseline-liveness-v4-20260623
+accepts the baseline-gated selected-candidate fetch discriminator as
+selected-candidate-fetch-observed. The worker acquired hardwareTestLock,
+retained the accepted baseline/control liveness proof, republished the reviewed
+target/phase12-ssh-live-openssh-retry-boot.tar.gz archive, verified
+post-publish status exposed the fe9a0d98... selected tree with 87,432-byte
+kernel entries, then power-cycled the Pi once without running OpenSSH. Stable
+same-cursor TFTP evidence advanced from cursor 4659697 to 4661048 and retained
+13 parsed events, including two served da591740/kernel_2712.img fetches at
+87,432 bytes before restore. Serial observe used the saturated-cursor
+direct-read fallback, saw firmware NETWORK markers, and did not observe TALOS:
+kernel_main, so serial runtime readiness remains unaccepted. Final pre-restore
+identity still reported the selected tree, and restore returned to the
+baseline/control a0452458... tree with 104,136-byte kernel entries.
+selected_candidate_fetch_observed=true, and the selected next bounded task is
+phase12-ssh-live-openssh-client-discriminator-retry-v5-20260623.
