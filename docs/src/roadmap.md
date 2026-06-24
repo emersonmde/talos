@@ -18011,6 +18011,17 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   Further OpenSSH retries, TCP reachability, remote receipt, compatibility,
   phase transition, and ssh-ready=true remain blocked until source-grounded
   live Ethernet/network-substrate evidence exists.
+- phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624 accepts
+  the live reachability source reconciliation as paused with no defensible
+  discriminator selected. The v10 no-tcp-connect result identifies live
+  Ethernet/TCP reachability as the blocker below SSH, but it does not add a new
+  RP1/BCM54213PE source invariant beyond the accepted 2026-06-21 link-ready
+  source contract, which already blocked the generic link-ready discriminator.
+  The accepted driver packet adapter, smoltcp, socket, pingdiag, and sockdiag
+  evidence remains host/substitute only. selected_discriminator=null,
+  selected_next_task=null, and planningNeeded=true; packet I/O, ping
+  reachability, hardware reachability, SSH live receipt, compatibility, phase
+  transition, and ssh-ready=true remain unaccepted pending supervisor planning.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

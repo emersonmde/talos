@@ -8961,6 +8961,29 @@ planningNeeded=true. No live reachability, remote receipt, compatibility,
 PTY/SCP/SFTP, broad command expansion, phase transition, or ssh-ready=true is
 accepted.
 
+phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624 accepts
+the live reachability source reconciliation as
+live-reachability-source-reconciliation-paused-no-defensible-discriminator.
+The accepted v10 SSH evidence proves selected-byte TFTP service and one
+bounded OpenSSH attempt after the same-task pre-client gate, but the public
+result remains no-tcp-connect / tcp-timeout. That identifies the missing layer
+as live Ethernet/TCP reachability below SSH rather than SSH protocol modeling
+or OpenSSH client tooling.
+
+No new RP1/BCM54213PE discriminator is selected. The accepted 2026-06-21
+link-ready source contract already blocked the generic link-ready path with
+selected_discriminator=null, and the latest BCM54213PE hardware frontier still
+records link-not-ready after master-mode write/readback, BMCR autoneg restart,
+lifecycle/powerdown-exit inspection, and repeated BMSR/MII_STAT1000/MACB_NSR
+samples. The driver packet adapter, smoltcp, socket, pingdiag, and sockdiag
+surfaces remain source/unit or host/QEMU-substitute evidence only; they do not
+prove RP1/GEM live RX/TX coupling, packet scheduling, hardware reachability, or
+live link facts. selected_discriminator=null, selected_next_task=null, and
+planningNeeded=true. Packet I/O, ping reachability, hardware reachability, SSH
+live receipt, compatibility, phase transition, and ssh-ready=true remain
+unaccepted pending supervisor planning for a new source-bounded live
+reachability strategy or explicit pause.
+
 phase12-ssh-tftp-capture-invariant-reconciliation-v9-20260624 accepts the
 no-hardware reconciliation as capture-helper-timing-root-cause-ready. Read-only
 replay of retained TFTP cursors showed v8 cursor 4667803 later advancing to
