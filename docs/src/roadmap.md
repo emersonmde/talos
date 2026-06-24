@@ -17939,6 +17939,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   selected-candidate fetch evidence, live OpenSSH, remote receipt,
   compatibility, phase transition, and ssh-ready=true remain blocked until that
   future selected-fetch proof accepts.
+- phase12-ssh-selected-candidate-fetch-after-recovered-baseline-v5-20260624
+  accepts selected-candidate-fetch-observed evidence. After recovered
+  baseline/control liveness, the worker published the reviewed selected archive,
+  verified the selected fe9a0d98... tree with 87,432-byte kernel entries, saved
+  fresh serial and TFTP cursors, and power-cycled the Pi without launching
+  OpenSSH. Stable same-cursor TFTP evidence advanced from cursor 4666452 to
+  4667803 with 13 parsed events, including two 87,432-byte
+  da591740/kernel_2712.img serves and no baseline 104,136-byte kernel serves.
+  Serial direct-read fallback retained no Talos runtime marker. The boot tree
+  was restored to the baseline/control a0452458... tree. The selected next
+  bounded task is
+  phase12-ssh-live-openssh-preclient-fetch-gated-discriminator-v8-20260624;
+  OpenSSH execution, live reachability, remote receipt, compatibility, phase
+  transition, and ssh-ready=true remain unaccepted until the pre-client gate
+  passes.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

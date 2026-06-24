@@ -9011,3 +9011,20 @@ baseline_control_fetch_observed=true, and the selected next bounded task is
 phase12-ssh-selected-candidate-fetch-after-recovered-baseline-v5-20260624. No
 selected-candidate fetch, OpenSSH execution, live reachability, remote receipt,
 compatibility, phase transition, or ssh-ready=true is accepted from this proof.
+
+phase12-ssh-selected-candidate-fetch-after-recovered-baseline-v5-20260624
+accepts selected-candidate-fetch-observed evidence. After the immediately
+preceding baseline/control liveness recovery, the worker acquired
+hardwareTestLock, published the reviewed
+target/phase12-ssh-live-openssh-retry-boot.tar.gz archive, verified the selected
+fe9a0d98... tree with 87,432-byte kernel_2712.img entries, saved fresh cursors,
+and power-cycled the Pi once without launching OpenSSH. Stable same-cursor TFTP
+evidence advanced from cursor 4666452 to 4667803 with 13 parsed events,
+including two da591740/kernel_2712.img serves at 87,432 bytes and no baseline
+104,136-byte kernel serves. Serial direct-read fallback retained no Talos
+runtime marker, so serial runtime readiness remains unaccepted. The boot tree
+was restored to the baseline/control a0452458... tree. The selected next bounded
+task is phase12-ssh-live-openssh-preclient-fetch-gated-discriminator-v8-20260624;
+OpenSSH execution, live reachability, remote receipt, compatibility, phase
+transition, and ssh-ready=true remain unaccepted until that pre-client gate
+passes.
