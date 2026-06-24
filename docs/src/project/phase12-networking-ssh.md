@@ -9013,10 +9013,13 @@ accepted boundary is now: stable-zero helper results are timing/window evidence
 rather than durable no-boot-request proof; v10 selected-publish retained
 selected-byte TFTP service before restore; and the v10 live OpenSSH attempt was
 launched only after same-task selected-byte service was proved. The public
-OpenSSH result remains no-tcp-connect / tcp-timeout. Supervisor planning is
-required for the next bounded feature step around that no-tcp-connect boundary
-before any TCP reachability, remote receipt, compatibility, phase transition,
-or ssh-ready=true claim.
+OpenSSH result remains no-tcp-connect / tcp-timeout. The follow-on checkpoint,
+phase12-ssh-no-tcp-connect-live-network-substrate-checkpoint-20260624, selects
+phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624 as the
+next bounded worker task because the missing evidence is below SSH: a
+source-grounded live Ethernet/network-substrate reachability discriminator
+before any further OpenSSH retry, TCP reachability, remote receipt,
+compatibility, phase transition, or ssh-ready=true claim.
 
 phase12-ssh-selected-candidate-fetch-liveness-bracket-pi5-proof-20260624
 accepts only fail-closed blocker evidence as baseline-control-fetch-missing.

@@ -17991,6 +17991,26 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   reachability, remote receipt, compatibility, phase transition, and
   ssh-ready=true remain unaccepted until the dependency-gated v10 pre-client
   OpenSSH discriminator proves its own selected-byte gate.
+- phase12-ssh-live-openssh-preclient-fetch-gated-discriminator-v10-20260624
+  accepts a bounded OpenSSH client attempt only after same-task selected-byte
+  TFTP service was proved. The clean rerun retained two selected 87,432-byte
+  da591740/kernel_2712.img serves before launch, then ran one workspace-local
+  OpenSSH attempt. The public result was no-tcp-connect / tcp-timeout, with raw
+  OpenSSH output deleted and the boot tree restored to the baseline/control
+  a0452458... tree. No live reachability, remote receipt, compatibility, phase
+  transition, or ssh-ready=true is accepted.
+- phase12-ssh-tftp-capture-invariant-closeout-20260624 closes the v9/v10 TFTP
+  capture invariant as capture-invariant-closed-live-openssh-no-tcp-connect.
+  Stable-zero helper results are timing/window evidence, not durable
+  no-boot-request proof; selected-byte TFTP service was proved before restore;
+  and the OpenSSH attempt was launched only after its same-task pre-client gate.
+- phase12-ssh-no-tcp-connect-live-network-substrate-checkpoint-20260624 accepts
+  the no-tcp-connect boundary as a live network substrate blocker. The selected
+  next bounded task is
+  phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624.
+  Further OpenSSH retries, TCP reachability, remote receipt, compatibility,
+  phase transition, and ssh-ready=true remain blocked until source-grounded
+  live Ethernet/network-substrate evidence exists.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
