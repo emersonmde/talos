@@ -9007,6 +9007,17 @@ baseline/control a0452458... tree. This accepts no TCP reachability, remote
 receipt, compatibility, PTY/SCP/SFTP, broad command expansion, phase
 transition, or ssh-ready=true.
 
+phase12-ssh-tftp-capture-invariant-closeout-20260624 closes the v9/v10 capture
+invariant thread as capture-invariant-closed-live-openssh-no-tcp-connect. The
+accepted boundary is now: stable-zero helper results are timing/window evidence
+rather than durable no-boot-request proof; v10 selected-publish retained
+selected-byte TFTP service before restore; and the v10 live OpenSSH attempt was
+launched only after same-task selected-byte service was proved. The public
+OpenSSH result remains no-tcp-connect / tcp-timeout. Supervisor planning is
+required for the next bounded feature step around that no-tcp-connect boundary
+before any TCP reachability, remote receipt, compatibility, phase transition,
+or ssh-ready=true claim.
+
 phase12-ssh-selected-candidate-fetch-liveness-bracket-pi5-proof-20260624
 accepts only fail-closed blocker evidence as baseline-control-fetch-missing.
 The worker acquired hardwareTestLock, started from the restored baseline/control
