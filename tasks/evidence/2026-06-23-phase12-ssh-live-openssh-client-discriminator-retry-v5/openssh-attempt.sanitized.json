@@ -1,0 +1,16 @@
+{
+  "invocation_class": "openssh-client-port22-no-pty-no-password-no-pubkey-bounded-timeout",
+  "client_path_category": "workspace-local extracted OpenSSH client",
+  "target_port_category": "port-22",
+  "target_address_retained": false,
+  "username_retained": false,
+  "launched": true,
+  "public_phase": "no-tcp-connect",
+  "exit_category": "tcp-timeout",
+  "client_exit_code": 255,
+  "raw_output_bytes": 470,
+  "retained_raw_output": false,
+  "raw_output_removed": true,
+  "live_openssh_client_discriminator_observed": false,
+  "redaction_sensitive_material_retained": false
+}

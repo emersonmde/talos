@@ -8928,3 +8928,18 @@ identity still reported the selected tree, and restore returned to the
 baseline/control a0452458... tree with 104,136-byte kernel entries.
 selected_candidate_fetch_observed=true, and the selected next bounded task is
 phase12-ssh-live-openssh-client-discriminator-retry-v5-20260623.
+
+phase12-ssh-live-openssh-client-discriminator-retry-v5-20260623 accepts only
+fail-closed blocker evidence as lab-capture-regressed. The worker acquired
+hardwareTestLock, republished the selected 87,432-byte archive, verified the
+fe9a0d98... selected tree through post-publish status, power-cycled the Pi
+once, ran one workspace-local OpenSSH client attempt, and restored the
+baseline/control a0452458... tree. The same-run TFTP delta from the fresh
+cursor stayed stable at zero events before restore, so the selected candidate
+was not proven fetched in this live-client run. The OpenSSH attempt launched
+and produced sanitized no-tcp-connect / tcp-timeout evidence, but that client
+result is retained only as secondary evidence because the exercised candidate
+was not proven. live_openssh_client_discriminator_observed=false,
+selected_next_task=null, and planningNeeded=true. No live reachability, remote
+receipt, compatibility, PTY/SCP/SFTP, broad command expansion, phase
+transition, or ssh-ready=true is accepted.

@@ -17866,6 +17866,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   task is phase12-ssh-live-openssh-client-discriminator-retry-v5-20260623; no
   OpenSSH execution, remote receipt, compatibility, phase transition, or
   ssh-ready=true is accepted from this fetch proof.
+- phase12-ssh-live-openssh-client-discriminator-retry-v5-20260623 accepts only
+  fail-closed lab-capture-regressed evidence. The worker acquired
+  hardwareTestLock, republished the selected 87,432-byte archive, verified the
+  fe9a0d98... selected tree through post-publish status, power-cycled the Pi
+  once, ran one workspace-local OpenSSH client attempt, and restored the
+  baseline/control a0452458... tree. Same-run TFTP evidence from the fresh
+  cursor stayed stable at zero events before restore, so the selected
+  candidate was not proven fetched in this live-client run. The OpenSSH attempt
+  launched and produced sanitized no-tcp-connect / tcp-timeout evidence, but
+  that client result is secondary because the exercised candidate was not
+  proven. live_openssh_client_discriminator_observed=false,
+  selected_next_task=null, and planningNeeded=true. No live reachability,
+  remote receipt, compatibility, PTY/SCP/SFTP, broad command expansion, phase
+  transition, or ssh-ready=true is accepted.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

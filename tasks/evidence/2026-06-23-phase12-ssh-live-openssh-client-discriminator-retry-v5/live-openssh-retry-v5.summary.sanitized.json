@@ -1,0 +1,75 @@
+{
+  "task_id": "phase12-ssh-live-openssh-client-discriminator-retry-v5-20260623",
+  "classification": "lab-capture-regressed",
+  "live_openssh_client_discriminator_observed": false,
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "accepted_prerequisites": {
+    "openssh_provisioning_preflight": "phase12-ssh-runner-openssh-client-provisioning-preflight-20260623",
+    "selected_fetch_v4": "phase12-ssh-selected-candidate-fetch-after-baseline-liveness-v4-20260623"
+  },
+  "selected_archive": {
+    "path": "target/phase12-ssh-live-openssh-retry-boot.tar.gz",
+    "sha256_line": "2f88dfdabaeb38e0f90fe597a874df04424e7d639646aa6e8729930766e2ca01  /opt/strider/openclaw/current/workspace/projects/talos/target/phase12-ssh-live-openssh-retry-boot.tar.gz",
+    "kernel_sha256_line": "110e66ef6867a70cc8b72f52c0786a8f4037796b4058ee4a27ba1371ba8c12d5  -",
+    "kernel_sizes": "root kernel_2712.img 87432\nprefixed da591740/kernel_2712.img 87432"
+  },
+  "boot_identity": {
+    "pre_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "post_publish_tree_hash": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333",
+    "final_pre_restore_tree_hash": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333",
+    "final_restored_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img"
+  },
+  "tftp": {
+    "cursor_start": 4661048,
+    "cursor_end": 4661048,
+    "event_count": 0,
+    "selected_kernel_87432_fetch_count": 0,
+    "baseline_kernel_104136_fetch_count": 0,
+    "stable": true,
+    "raw_log_retained": false,
+    "client_identity_retained": false
+  },
+  "serial": {
+    "capture_mode": "read",
+    "bytes": 4764,
+    "contains_talos_kernel_main": false,
+    "contains_firmware_network": true,
+    "raw_text_retained": false
+  },
+  "openssh": {
+    "invocation_class": "openssh-client-port22-no-pty-no-password-no-pubkey-bounded-timeout",
+    "client_path_category": "workspace-local extracted OpenSSH client",
+    "target_port_category": "port-22",
+    "target_address_retained": false,
+    "username_retained": false,
+    "launched": true,
+    "public_phase": "no-tcp-connect",
+    "exit_category": "tcp-timeout",
+    "client_exit_code": 255,
+    "raw_output_bytes": 470,
+    "retained_raw_output": false,
+    "raw_output_removed": true,
+    "live_openssh_client_discriminator_observed": false,
+    "redaction_sensitive_material_retained": false
+  },
+  "claims": {
+    "live_reachability_true": false,
+    "remote_receipt_true": false,
+    "compatibility_true": false,
+    "phase_transition": false,
+    "ssh_ready_true": false
+  },
+  "redaction_review": {
+    "result": "pass",
+    "raw_openssh_log_retained": false,
+    "raw_serial_text_retained": false,
+    "raw_tftp_log_retained": false,
+    "key_material_retained": false,
+    "user_or_address_retained": false,
+    "stable_peer_identifier_retained": false,
+    "private_user_data_retained": false
+  },
+  "planningReason": "Selected candidate was published and OpenSSH launched, but same-run TFTP evidence from the fresh cursor stayed at zero events before restore; the OpenSSH tcp-timeout is retained only as secondary public client evidence because the exercised candidate was not proven in this run."
+}
