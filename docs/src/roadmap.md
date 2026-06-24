@@ -17966,6 +17966,17 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   live_openssh_client_discriminator_observed=false, selected_next_task=null,
   and planningNeeded=true. No live reachability, remote receipt,
   compatibility, phase transition, or ssh-ready=true is accepted.
+- phase12-ssh-tftp-capture-invariant-reconciliation-v9-20260624 accepts the
+  no-hardware reconciliation as capture-helper-timing-root-cause-ready.
+  Read-only replay of the retained v8 TFTP cursor 4667803 now advances to
+  4669154 with 13 parsed events after restore, so the stable-zero pre-client
+  gate is quarantined as timing/window evidence rather than durable proof that
+  the Pi made no TFTP request. Because post-restore byte labels reflect the
+  current restored root, replay does not prove selected-byte identity. A
+  supervisor-planned changed-timing selected-publish discriminator or helper
+  repair is required before any selected-candidate fetch retry or OpenSSH
+  launch; stale closeout, remote-receipt, compatibility, phase transition, and
+  ssh-ready paths remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

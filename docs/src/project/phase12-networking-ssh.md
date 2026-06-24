@@ -8961,6 +8961,18 @@ planningNeeded=true. No live reachability, remote receipt, compatibility,
 PTY/SCP/SFTP, broad command expansion, phase transition, or ssh-ready=true is
 accepted.
 
+phase12-ssh-tftp-capture-invariant-reconciliation-v9-20260624 accepts the
+no-hardware reconciliation as capture-helper-timing-root-cause-ready. Read-only
+replay of retained TFTP cursors showed v8 cursor 4667803 later advancing to
+4669154 with 13 parsed events after restore, including two restored-root
+baseline-sized da591740/kernel_2712.img labels. This proves the v8 stable-zero
+pre-client gate was not durable no-boot-request proof, but it does not
+reclassify selected-byte identity because the lab endpoint computes byte labels
+from the current served root. Stale v8 closeout, remote-receipt, compatibility,
+phase transition, and ssh-ready paths remain blocked. The next required
+boundary is a supervisor-planned changed-timing selected-publish discriminator
+or helper repair before any selected-candidate fetch retry or OpenSSH launch.
+
 phase12-ssh-selected-candidate-fetch-liveness-bracket-pi5-proof-20260624
 accepts only fail-closed blocker evidence as baseline-control-fetch-missing.
 The worker acquired hardwareTestLock, started from the restored baseline/control

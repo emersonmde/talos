@@ -1,0 +1,74 @@
+{
+  "task_id": "phase12-ssh-tftp-capture-invariant-reconciliation-v9-20260624",
+  "captured_at": "2026-06-24T05:36:45Z",
+  "read_only_lab_api_only": true,
+  "post_restore_current_identity": {
+    "source": "GET /status and GET /boot/files",
+    "configured_kernel": "kernel_2712.img",
+    "kernel_entries": [
+      {
+        "name": "da591740/kernel_2712.img",
+        "bytes": 104136
+      },
+      {
+        "name": "kernel_2712.img",
+        "bytes": 104136
+      }
+    ],
+    "selected_archive_bytes_currently_served": false,
+    "raw_response_retained": false
+  },
+  "endpoint_semantics": {
+    "get_root_http_status": 404,
+    "get_root_ok": false,
+    "get_root_body_summary": "unknown endpoint: GET /",
+    "raw_response_retained": false
+  },
+  "replayed_cursors": [
+    {
+      "cursor": 4667803,
+      "source_task": "phase12-ssh-live-openssh-preclient-fetch-gated-discriminator-v8-20260624",
+      "source_accepted_classification": "preclient-selected-fetch-gate-failed",
+      "source_in_window_event_count": 0,
+      "replay_cursor_start": 4667803,
+      "replay_cursor_end": 4669154,
+      "replay_log_size": 4669154,
+      "replay_event_count": 13,
+      "selected_kernel_87432_fetch_count": 0,
+      "baseline_kernel_104136_fetch_count": 2,
+      "finding": "The retained v8 cursor now exposes parsed TFTP events, but byte labels reflect the restored baseline/control root and therefore cannot be used as in-window selected-byte proof."
+    },
+    {
+      "cursor": 4662399,
+      "source_task": "phase12-ssh-live-openssh-preclient-fetch-gated-discriminator-v6-20260624",
+      "source_accepted_classification": "stable-zero-tftp-after-selected-publish",
+      "source_in_window_event_count": 0,
+      "replay_cursor_start": 4662399,
+      "replay_cursor_end": 4669154,
+      "replay_log_size": 4669154,
+      "replay_event_count": 65,
+      "selected_kernel_87432_fetch_count": 0,
+      "baseline_kernel_104136_fetch_count": 10,
+      "finding": "This extends the earlier reconciliation: previously stable-zero selected-publish cursors can later become visible through GET /tftp/logs after the boot tree has been restored."
+    }
+  ],
+  "interpretation": {
+    "no_boot_request_proven": false,
+    "capture_or_cursor_visibility_problem_proven": true,
+    "selected_vs_baseline_byte_identity_proven_by_replay": false,
+    "root_cause_boundary": "capture-helper-timing-root-cause-ready",
+    "smallest_decisive_discriminator": "Run one selected-publish hardware discriminator that keeps the selected tree published through an extended pre-restore log-visibility window, samples GET /tftp/logs from the same cursor on a fixed cadence, retains pre/post sample cursor_end and current boot identity, and restores only after the visibility window closes. OpenSSH remains disallowed until selected-byte proof is observed in-window while the selected tree is still published."
+  },
+  "redaction": {
+    "raw_serial_text_retained": false,
+    "raw_serial_base64_retained": false,
+    "raw_tftp_lines_retained": false,
+    "client_or_address_identifiers_retained": false,
+    "openssh_logs_retained": false,
+    "host_keys_or_fingerprints_retained": false,
+    "known_hosts_retained": false,
+    "stable_peer_identifiers_retained": false,
+    "packet_captures_retained": false,
+    "private_user_data_retained": false
+  }
+}
