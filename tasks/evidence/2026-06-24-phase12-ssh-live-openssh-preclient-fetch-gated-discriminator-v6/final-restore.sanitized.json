@@ -1,0 +1,6 @@
+{
+  "action": "boot snapshot restore",
+  "ok": true,
+  "restored": null,
+  "snapshot": null
+}

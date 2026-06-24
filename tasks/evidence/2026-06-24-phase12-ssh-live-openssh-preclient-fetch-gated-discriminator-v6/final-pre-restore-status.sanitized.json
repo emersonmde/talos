@@ -1,0 +1,40 @@
+{
+  "action": "status",
+  "ok": true,
+  "boot": {
+    "tree_hash": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333",
+    "configured_kernel": "kernel_2712.img",
+    "effective_kernel": "kernel_2712.img",
+    "config": {
+      "enable_rp1_uart": "1",
+      "kernel": "kernel_2712.img",
+      "os_check": "0"
+    },
+    "files": [
+      {
+        "name": "config.txt",
+        "bytes": 118
+      },
+      {
+        "name": "da591740/config.txt",
+        "bytes": 118
+      },
+      {
+        "name": "da591740/kernel8.img",
+        "bytes": 87432
+      },
+      {
+        "name": "da591740/kernel_2712.img",
+        "bytes": 87432
+      },
+      {
+        "name": "kernel8.img",
+        "bytes": 87432
+      },
+      {
+        "name": "kernel_2712.img",
+        "bytes": 87432
+      }
+    ]
+  }
+}

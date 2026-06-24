@@ -1,0 +1,84 @@
+{
+  "task_id": "phase12-ssh-live-openssh-preclient-fetch-gated-discriminator-v6-20260624",
+  "classification": "stable-zero-tftp-after-selected-publish",
+  "preclient_selected_fetch_gate_passed": false,
+  "live_openssh_client_discriminator_observed": false,
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "Selected candidate was published and the Pi 5 was power-cycled, but the same-task pre-client TFTP delta from the fresh cursor stayed stable at zero events before restore. OpenSSH was not launched because selected kernel_2712.img was not proven served after publication.",
+  "selected_archive": {
+    "path": "target/phase12-ssh-live-openssh-retry-boot.tar.gz",
+    "sha256_line": "2f88dfdabaeb38e0f90fe597a874df04424e7d639646aa6e8729930766e2ca01  target/phase12-ssh-live-openssh-retry-boot.tar.gz",
+    "kernel_sha256_line": "110e66ef6867a70cc8b72f52c0786a8f4037796b4058ee4a27ba1371ba8c12d5  -",
+    "kernel_sizes": "root kernel_2712.img 87432\nprefixed da591740/kernel_2712.img 87432"
+  },
+  "prerequisites": {
+    "retry_v5": "phase12-ssh-live-openssh-client-discriminator-retry-v5-20260623",
+    "selected_fetch_v4": "phase12-ssh-selected-candidate-fetch-after-baseline-liveness-v4-20260623",
+    "baseline_control": "phase12-ssh-boot-request-liveness-baseline-control-20260623",
+    "openssh_provisioning_preflight": "phase12-ssh-runner-openssh-client-provisioning-preflight-20260623"
+  },
+  "boot_identity": {
+    "post_publish_tree_hash": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333",
+    "final_pre_client_tree_hash": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333",
+    "final_pre_restore_tree_hash": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333",
+    "final_restored_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "expected_selected_tree_hash": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333",
+    "expected_restored_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img"
+  },
+  "tftp": {
+    "cursor_start": 4662399,
+    "cursor_end": 4662399,
+    "event_count": 0,
+    "wait_exit_code": 1,
+    "selected_kernel_87432_fetch_count": 0,
+    "baseline_kernel_104136_fetch_count": 0,
+    "stability": {
+      "stable": true,
+      "reason": "stable",
+      "stable_samples": 3,
+      "required_samples": 3
+    }
+  },
+  "serial": {
+    "capture_mode": "read",
+    "bytes": 4805,
+    "contains_talos_kernel_main": false,
+    "contains_firmware_network": false,
+    "raw_text_retained": false
+  },
+  "openssh": {
+    "invocation_class": "openssh-client-port22-no-pty-no-password-no-pubkey-bounded-timeout",
+    "client_path_category": "workspace-local extracted OpenSSH client",
+    "target_port_category": "port-22",
+    "target_address_retained": false,
+    "username_retained": false,
+    "launched": false,
+    "public_phase": "not-launched-preclient-gate-failed",
+    "exit_category": "not-launched",
+    "client_exit_code": null,
+    "raw_output_bytes": 0,
+    "retained_raw_output": false,
+    "raw_output_removed": true,
+    "live_openssh_client_discriminator_observed": false,
+    "redaction_sensitive_material_retained": false
+  },
+  "claims": {
+    "live_reachability_true": false,
+    "remote_receipt_true": false,
+    "compatibility_true": false,
+    "phase_transition": false,
+    "ssh_ready_true": false
+  },
+  "redaction_review": {
+    "result": "pass",
+    "raw_openssh_log_retained": false,
+    "raw_serial_text_retained": false,
+    "raw_tftp_log_retained": false,
+    "key_material_retained": false,
+    "user_or_address_retained": false,
+    "stable_peer_identifier_retained": false,
+    "private_user_data_retained": false
+  }
+}

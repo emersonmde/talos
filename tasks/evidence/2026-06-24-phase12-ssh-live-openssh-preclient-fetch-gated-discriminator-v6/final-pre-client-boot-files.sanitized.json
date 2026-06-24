@@ -1,0 +1,32 @@
+{
+  "action": "boot files derived from retained status.boot.files",
+  "ok": true,
+  "source": "status.boot.files",
+  "tree_hash": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333",
+  "files": [
+    {
+      "name": "config.txt",
+      "bytes": 118
+    },
+    {
+      "name": "da591740/config.txt",
+      "bytes": 118
+    },
+    {
+      "name": "da591740/kernel8.img",
+      "bytes": 87432
+    },
+    {
+      "name": "da591740/kernel_2712.img",
+      "bytes": 87432
+    },
+    {
+      "name": "kernel8.img",
+      "bytes": 87432
+    },
+    {
+      "name": "kernel_2712.img",
+      "bytes": 87432
+    }
+  ]
+}

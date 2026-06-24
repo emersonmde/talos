@@ -17880,6 +17880,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   selected_next_task=null, and planningNeeded=true. No live reachability,
   remote receipt, compatibility, PTY/SCP/SFTP, broad command expansion, phase
   transition, or ssh-ready=true is accepted.
+- phase12-ssh-live-openssh-preclient-fetch-gated-discriminator-v6-20260624
+  accepts only fail-closed stable-zero-tftp-after-selected-publish evidence.
+  The worker republished the selected 87,432-byte archive, verified the
+  fe9a0d98... selected tree through post-publish status, saved fresh serial and
+  TFTP cursors, and power-cycled the Pi once. The required pre-client
+  selected-fetch gate failed: stable same-cursor TFTP evidence stayed at zero
+  events, so no selected 87,432-byte da591740/kernel_2712.img fetch was proven
+  before restore. Final pre-client/pre-restore identity stayed on the selected
+  tree, restore returned to the baseline/control a0452458... tree, and OpenSSH
+  was not launched. preclient_selected_fetch_gate_passed=false,
+  live_openssh_client_discriminator_observed=false, selected_next_task=null,
+  and planningNeeded=true. No live reachability, remote receipt,
+  compatibility, PTY/SCP/SFTP, broad command expansion, phase transition, or
+  ssh-ready=true is accepted.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

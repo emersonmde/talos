@@ -8943,3 +8943,20 @@ was not proven. live_openssh_client_discriminator_observed=false,
 selected_next_task=null, and planningNeeded=true. No live reachability, remote
 receipt, compatibility, PTY/SCP/SFTP, broad command expansion, phase
 transition, or ssh-ready=true is accepted.
+
+phase12-ssh-live-openssh-preclient-fetch-gated-discriminator-v6-20260624
+accepts only fail-closed blocker evidence as
+stable-zero-tftp-after-selected-publish. The worker acquired hardwareTestLock,
+republished the selected 87,432-byte archive, verified the fe9a0d98... selected
+tree through post-publish status, saved fresh serial and TFTP cursors, and
+power-cycled the Pi once. The required same-task pre-client selected-fetch gate
+failed: stable TFTP evidence from cursor 4662399 stayed at cursor 4662399 with
+zero parsed events before restore, so no selected 87,432-byte
+da591740/kernel_2712.img fetch was observed. Final pre-client and
+pre-restore status still reported the selected tree, restore returned to the
+baseline/control a0452458... tree, and OpenSSH was not launched.
+preclient_selected_fetch_gate_passed=false,
+live_openssh_client_discriminator_observed=false, selected_next_task=null, and
+planningNeeded=true. No live reachability, remote receipt, compatibility,
+PTY/SCP/SFTP, broad command expansion, phase transition, or ssh-ready=true is
+accepted.
