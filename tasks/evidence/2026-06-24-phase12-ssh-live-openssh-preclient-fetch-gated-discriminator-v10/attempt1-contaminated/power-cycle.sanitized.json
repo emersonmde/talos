@@ -1,0 +1,7 @@
+{
+  "action": "power cycle",
+  "ok": true,
+  "controller": {
+    "guard": null
+  }
+}

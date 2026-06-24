@@ -8990,6 +8990,23 @@ byte service only. OpenSSH execution, TCP reachability, remote receipt,
 compatibility, phase transition, and ssh-ready=true remain blocked until the
 dependency-gated v10 pre-client OpenSSH discriminator proves its own gate.
 
+phase12-ssh-live-openssh-preclient-fetch-gated-discriminator-v10-20260624
+accepts the bounded live OpenSSH attempt as
+live-openssh-client-discriminator-attempted-after-selected-fetch. The first
+attempt is quarantined because evidence collection later sampled TFTP after
+restore changed byte labels. The clean rerun started from the restored
+baseline/control a0452458... tree, republished the reviewed selected
+fe9a0d98... archive, saved fresh cursors, and power-cycled the Pi once. The
+same-cursor pre-client TFTP gate advanced from cursor 4671856 to 4673207 and
+retained two selected 87,432-byte da591740/kernel_2712.img serves with no
+baseline 104,136-byte kernel serves while the selected tree stayed published.
+Only after that gate passed, the worker launched one bounded workspace-local
+OpenSSH client attempt. The public result was no-tcp-connect with exit category
+tcp-timeout and raw OpenSSH output deleted. The boot tree was restored to the
+baseline/control a0452458... tree. This accepts no TCP reachability, remote
+receipt, compatibility, PTY/SCP/SFTP, broad command expansion, phase
+transition, or ssh-ready=true.
+
 phase12-ssh-selected-candidate-fetch-liveness-bracket-pi5-proof-20260624
 accepts only fail-closed blocker evidence as baseline-control-fetch-missing.
 The worker acquired hardwareTestLock, started from the restored baseline/control

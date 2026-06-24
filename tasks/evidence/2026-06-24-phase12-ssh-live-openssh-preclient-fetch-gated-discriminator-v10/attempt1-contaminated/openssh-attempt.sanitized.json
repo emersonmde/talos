@@ -1,0 +1,9 @@
+{
+  "invocation_class": "openssh-client-port22-no-pty-no-password-no-pubkey-bounded-timeout",
+  "launched": false,
+  "public_phase": "preclient-selected-fetch-gate-failed",
+  "exit_category": "not-launched",
+  "retained_raw_output": false,
+  "raw_output_removed": true,
+  "live_openssh_client_discriminator_observed": false
+}

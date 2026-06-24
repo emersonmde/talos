@@ -1,0 +1,4 @@
+root kernel_2712.img 87432
+prefixed kernel_2712.img 87432
+root kernel8.img 87432
+prefixed kernel8.img 87432

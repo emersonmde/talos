@@ -1,0 +1,19 @@
+{
+  "action": "tftp logs",
+  "ok": true,
+  "tftp": {
+    "cursor_start": 4670505,
+    "cursor_end": 4670505,
+    "log_size": 4670505,
+    "tail_mode": false,
+    "truncated": false,
+    "event_count": 0,
+    "events": []
+  },
+  "sample_index": 4,
+  "scheduled_elapsed_seconds": 20,
+  "selected_kernel_87432_fetch_count": 0,
+  "baseline_kernel_104136_fetch_count": 0,
+  "kernel_fetch_bytes_seen": [],
+  "not_found_count": 0
+}

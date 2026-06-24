@@ -1,0 +1,365 @@
+{
+  "task_id": "phase12-ssh-live-openssh-preclient-fetch-gated-discriminator-v10-20260624",
+  "run_label": "rerun-clean",
+  "classification": "live-openssh-client-discriminator-attempted-after-selected-fetch",
+  "archive": "target/phase12-ssh-live-openssh-retry-boot.tar.gz",
+  "archive_sha256_line": "2f88dfdabaeb38e0f90fe597a874df04424e7d639646aa6e8729930766e2ca01  target/phase12-ssh-live-openssh-retry-boot.tar.gz\n",
+  "kernel_sha256_text": "110e66ef6867a70cc8b72f52c0786a8f4037796b4058ee4a27ba1371ba8c12d5  -\n",
+  "kernel_sizes_text": "root kernel_2712.img 87432\nprefixed kernel_2712.img 87432\nroot kernel8.img 87432\nprefixed kernel8.img 87432\n",
+  "pre_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "selected_tree_hash": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333",
+  "final_pre_restore_tree_hash": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333",
+  "restored_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "post_publish_effective_kernel": "kernel_2712.img",
+  "final_pre_restore_effective_kernel": "kernel_2712.img",
+  "preclient_selected_fetch_gate": {
+    "action": "pre-client TFTP gate summary",
+    "cursor_start": 4671856,
+    "sample_count": 7,
+    "samples": [
+      {
+        "sample_index": 1,
+        "scheduled_elapsed_seconds": 0,
+        "cursor_end": 4671856,
+        "log_size": 4671856,
+        "truncated": false,
+        "event_count": 0,
+        "selected_kernel_87432_fetch_count": 0,
+        "baseline_kernel_104136_fetch_count": 0,
+        "kernel_fetch_bytes_seen": [],
+        "not_found_count": 0,
+        "events": []
+      },
+      {
+        "sample_index": 2,
+        "scheduled_elapsed_seconds": 5,
+        "cursor_end": 4671856,
+        "log_size": 4671856,
+        "truncated": false,
+        "event_count": 0,
+        "selected_kernel_87432_fetch_count": 0,
+        "baseline_kernel_104136_fetch_count": 0,
+        "kernel_fetch_bytes_seen": [],
+        "not_found_count": 0,
+        "events": []
+      },
+      {
+        "sample_index": 3,
+        "scheduled_elapsed_seconds": 10,
+        "cursor_end": 4671856,
+        "log_size": 4671856,
+        "truncated": false,
+        "event_count": 0,
+        "selected_kernel_87432_fetch_count": 0,
+        "baseline_kernel_104136_fetch_count": 0,
+        "kernel_fetch_bytes_seen": [],
+        "not_found_count": 0,
+        "events": []
+      },
+      {
+        "sample_index": 4,
+        "scheduled_elapsed_seconds": 20,
+        "cursor_end": 4671856,
+        "log_size": 4671856,
+        "truncated": false,
+        "event_count": 0,
+        "selected_kernel_87432_fetch_count": 0,
+        "baseline_kernel_104136_fetch_count": 0,
+        "kernel_fetch_bytes_seen": [],
+        "not_found_count": 0,
+        "events": []
+      },
+      {
+        "sample_index": 5,
+        "scheduled_elapsed_seconds": 30,
+        "cursor_end": 4673207,
+        "log_size": 4673207,
+        "truncated": false,
+        "event_count": 13,
+        "selected_kernel_87432_fetch_count": 2,
+        "baseline_kernel_104136_fetch_count": 0,
+        "kernel_fetch_bytes_seen": [
+          87432,
+          87432
+        ],
+        "not_found_count": 2,
+        "events": [
+          {
+            "status": "served",
+            "filename": "da591740/config.txt",
+            "bytes": 118
+          },
+          {
+            "status": "served",
+            "filename": "da591740/config.txt",
+            "bytes": 118
+          },
+          {
+            "status": "not_found",
+            "filename": "da591740/pieeprom.sig",
+            "bytes": null
+          },
+          {
+            "status": "served",
+            "filename": "da591740//config.txt",
+            "bytes": 118
+          },
+          {
+            "status": "served",
+            "filename": "da591740//config.txt",
+            "bytes": 118
+          },
+          {
+            "status": "served",
+            "filename": "da591740/kernel_2712.img",
+            "bytes": 87432
+          },
+          {
+            "status": "served",
+            "filename": "da591740/bcm2712-rpi-5-b.dtb",
+            "bytes": 78679
+          },
+          {
+            "status": "served",
+            "filename": "da591740//overlays/overlay_map.dtb",
+            "bytes": 5971
+          },
+          {
+            "status": "served",
+            "filename": "da591740//overlays/bcm2712d0.dtbo",
+            "bytes": 1363
+          },
+          {
+            "status": "served",
+            "filename": "da591740//config.txt",
+            "bytes": 118
+          },
+          {
+            "status": "served",
+            "filename": "da591740//cmdline.txt",
+            "bytes": 81
+          },
+          {
+            "status": "not_found",
+            "filename": "da591740/armstub8-2712.bin",
+            "bytes": null
+          },
+          {
+            "status": "served",
+            "filename": "da591740/kernel_2712.img",
+            "bytes": 87432
+          }
+        ]
+      },
+      {
+        "sample_index": 6,
+        "scheduled_elapsed_seconds": 45,
+        "cursor_end": 4673207,
+        "log_size": 4673207,
+        "truncated": false,
+        "event_count": 13,
+        "selected_kernel_87432_fetch_count": 2,
+        "baseline_kernel_104136_fetch_count": 0,
+        "kernel_fetch_bytes_seen": [
+          87432,
+          87432
+        ],
+        "not_found_count": 2,
+        "events": [
+          {
+            "status": "served",
+            "filename": "da591740/config.txt",
+            "bytes": 118
+          },
+          {
+            "status": "served",
+            "filename": "da591740/config.txt",
+            "bytes": 118
+          },
+          {
+            "status": "not_found",
+            "filename": "da591740/pieeprom.sig",
+            "bytes": null
+          },
+          {
+            "status": "served",
+            "filename": "da591740//config.txt",
+            "bytes": 118
+          },
+          {
+            "status": "served",
+            "filename": "da591740//config.txt",
+            "bytes": 118
+          },
+          {
+            "status": "served",
+            "filename": "da591740/kernel_2712.img",
+            "bytes": 87432
+          },
+          {
+            "status": "served",
+            "filename": "da591740/bcm2712-rpi-5-b.dtb",
+            "bytes": 78679
+          },
+          {
+            "status": "served",
+            "filename": "da591740//overlays/overlay_map.dtb",
+            "bytes": 5971
+          },
+          {
+            "status": "served",
+            "filename": "da591740//overlays/bcm2712d0.dtbo",
+            "bytes": 1363
+          },
+          {
+            "status": "served",
+            "filename": "da591740//config.txt",
+            "bytes": 118
+          },
+          {
+            "status": "served",
+            "filename": "da591740//cmdline.txt",
+            "bytes": 81
+          },
+          {
+            "status": "not_found",
+            "filename": "da591740/armstub8-2712.bin",
+            "bytes": null
+          },
+          {
+            "status": "served",
+            "filename": "da591740/kernel_2712.img",
+            "bytes": 87432
+          }
+        ]
+      },
+      {
+        "sample_index": 7,
+        "scheduled_elapsed_seconds": 60,
+        "cursor_end": 4673207,
+        "log_size": 4673207,
+        "truncated": false,
+        "event_count": 13,
+        "selected_kernel_87432_fetch_count": 2,
+        "baseline_kernel_104136_fetch_count": 0,
+        "kernel_fetch_bytes_seen": [
+          87432,
+          87432
+        ],
+        "not_found_count": 2,
+        "events": [
+          {
+            "status": "served",
+            "filename": "da591740/config.txt",
+            "bytes": 118
+          },
+          {
+            "status": "served",
+            "filename": "da591740/config.txt",
+            "bytes": 118
+          },
+          {
+            "status": "not_found",
+            "filename": "da591740/pieeprom.sig",
+            "bytes": null
+          },
+          {
+            "status": "served",
+            "filename": "da591740//config.txt",
+            "bytes": 118
+          },
+          {
+            "status": "served",
+            "filename": "da591740//config.txt",
+            "bytes": 118
+          },
+          {
+            "status": "served",
+            "filename": "da591740/kernel_2712.img",
+            "bytes": 87432
+          },
+          {
+            "status": "served",
+            "filename": "da591740/bcm2712-rpi-5-b.dtb",
+            "bytes": 78679
+          },
+          {
+            "status": "served",
+            "filename": "da591740//overlays/overlay_map.dtb",
+            "bytes": 5971
+          },
+          {
+            "status": "served",
+            "filename": "da591740//overlays/bcm2712d0.dtbo",
+            "bytes": 1363
+          },
+          {
+            "status": "served",
+            "filename": "da591740//config.txt",
+            "bytes": 118
+          },
+          {
+            "status": "served",
+            "filename": "da591740//cmdline.txt",
+            "bytes": 81
+          },
+          {
+            "status": "not_found",
+            "filename": "da591740/armstub8-2712.bin",
+            "bytes": null
+          },
+          {
+            "status": "served",
+            "filename": "da591740/kernel_2712.img",
+            "bytes": 87432
+          }
+        ]
+      }
+    ],
+    "final_selected_kernel_87432_fetch_count": 2,
+    "final_baseline_kernel_104136_fetch_count": 0,
+    "selected_fetch_gate_passed": true
+  },
+  "openssh": {
+    "invocation_class": "openssh-client-port22-no-pty-no-password-no-pubkey-bounded-timeout",
+    "client_path_category": "workspace-local extracted OpenSSH client",
+    "target_port_category": "port-22",
+    "target_address_retained": false,
+    "username_retained": false,
+    "launched": true,
+    "public_phase": "no-tcp-connect",
+    "exit_category": "tcp-timeout",
+    "client_exit_code": 255,
+    "raw_output_bytes": 62,
+    "retained_raw_output": false,
+    "raw_output_removed": true,
+    "live_openssh_client_discriminator_observed": false,
+    "live_reachability_true_claim": false,
+    "remote_receipt_true_claim": false,
+    "compatibility_true_claim": false,
+    "phase_transition_claim": false,
+    "ssh_ready_true_claim": false
+  },
+  "serial": {
+    "action": "serial observe",
+    "ok": true,
+    "cursor_start": 4194304,
+    "cursor_end": 4194304,
+    "bytes": 0,
+    "contains_talos": false,
+    "contains_kernel_main": false,
+    "contains_network_marker": false,
+    "contains_prompt": false,
+    "raw_text_retained": false
+  },
+  "claims": {
+    "live_reachability_true": false,
+    "remote_receipt_true": false,
+    "compatibility_true": false,
+    "phase_transition": false,
+    "ssh_ready_true": false
+  },
+  "redaction_review": {
+    "result": "pass"
+  }
+}

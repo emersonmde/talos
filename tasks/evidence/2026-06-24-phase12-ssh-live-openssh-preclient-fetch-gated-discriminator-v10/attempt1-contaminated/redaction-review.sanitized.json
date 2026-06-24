@@ -1,0 +1,11 @@
+{
+  "result": "pass",
+  "raw_openssh_log_retained": false,
+  "raw_serial_text_retained": false,
+  "raw_tftp_log_retained": false,
+  "key_material_retained": false,
+  "user_or_address_retained": false,
+  "stable_peer_identifier_retained": false,
+  "packet_capture_retained": false,
+  "private_user_data_retained": false
+}
