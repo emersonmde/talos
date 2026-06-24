@@ -8984,6 +8984,19 @@ live receipt, compatibility, phase transition, and ssh-ready=true remain
 unaccepted pending supervisor planning for a new source-bounded live
 reachability strategy or explicit pause.
 
+phase12-network-frontier-pause-and-local-capability-selection-20260624 accepts
+network-frontier-paused-no-local-followup-selected. The checkpoint keeps the
+live Ethernet/TCP lane paused because the accepted no-tcp-connect and live
+reachability reconciliation records still have selected_discriminator=null and
+selected_next_task=null. It also reconciles the local POSIX/VFS/userspace/shell
+foundation chain and rejects promoting the queued generated-root command-input
+strategy task because Pi 5 generated-root command-input success was already
+accepted by the 2026-06-18 success closeout and Phase 12 was already resumed
+from that boundary. selected_next_task=null and planningNeeded=true; packet
+I/O, ping reachability, OpenSSH retry, remote receipt, compatibility, phase
+transition, ssh-ready=true, generated-root command-input retry, and fake
+command expansion remain unaccepted.
+
 phase12-ssh-tftp-capture-invariant-reconciliation-v9-20260624 accepts the
 no-hardware reconciliation as capture-helper-timing-root-cause-ready. Read-only
 replay of retained TFTP cursors showed v8 cursor 4667803 later advancing to

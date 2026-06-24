@@ -18022,6 +18022,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   selected_next_task=null, and planningNeeded=true; packet I/O, ping
   reachability, hardware reachability, SSH live receipt, compatibility, phase
   transition, and ssh-ready=true remain unaccepted pending supervisor planning.
+- phase12-network-frontier-pause-and-local-capability-selection-20260624
+  accepts network-frontier-paused-no-local-followup-selected. The checkpoint
+  explicitly pauses the live Ethernet/TCP lane after the no-defensible-
+  discriminator source reconciliation and preserves the accepted local
+  POSIX/VFS/userspace/shell foundation map instead of replanning Phase 8 or
+  Phase 10 prerequisites. The queued generated-root command-input strategy
+  reconciliation is rejected as a follow-up here because Pi 5 generated-root
+  command-input success was already accepted by the 2026-06-18 success
+  closeout and the 2026-06-18 post-generated-root checkpoint already resumed
+  Phase 12 from that accepted boundary. selected_next_task=null and
+  planningNeeded=true; live reachability core/proof, OpenSSH retry, packet I/O,
+  ping reachability, remote receipt, compatibility, phase transition,
+  ssh-ready=true, generated-root command-input retry, and fake command
+  expansion remain unaccepted pending supervisor planning.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
