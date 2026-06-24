@@ -8960,3 +8960,19 @@ live_openssh_client_discriminator_observed=false, selected_next_task=null, and
 planningNeeded=true. No live reachability, remote receipt, compatibility,
 PTY/SCP/SFTP, broad command expansion, phase transition, or ssh-ready=true is
 accepted.
+
+phase12-ssh-selected-candidate-fetch-liveness-bracket-pi5-proof-20260624
+accepts only fail-closed blocker evidence as baseline-control-fetch-missing.
+The worker acquired hardwareTestLock, started from the restored baseline/control
+a0452458... tree, saved fresh serial and TFTP cursors, and power-cycled the Pi
+without publishing a selected archive or launching OpenSSH. The required
+same-task baseline/control TFTP liveness gate failed: stable TFTP evidence from
+cursor 4663750 stayed at cursor 4663750 with zero parsed events, so no
+104,136-byte da591740/kernel_2712.img fetch was observed. Because baseline
+liveness was not proven, the selected archive was not published and selected
+no-fetch evidence was not used. Final pre-restore and restored identity both
+reported the baseline/control tree. baseline_control_fetch_observed=false,
+selected_candidate_fetch_bracket_observed=false, selected_next_task=null, and
+planningNeeded=true. No live OpenSSH, remote receipt, compatibility,
+PTY/SCP/SFTP, broad command expansion, phase transition, or ssh-ready=true is
+accepted.

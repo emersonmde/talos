@@ -1,0 +1,17 @@
+{
+  "action": "tftp logs",
+  "ok": true,
+  "tftp": {
+    "cursor_end": 4663750,
+    "cursor_start": 4598214,
+    "events": [
+      {
+        "status": "served",
+        "filename": "da591740/kernel_2712.img",
+        "bytes": 104136
+      }
+    ],
+    "log_size": 4663750,
+    "truncated": true
+  }
+}

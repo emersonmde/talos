@@ -1,0 +1,5 @@
+archive=target/phase12-ssh-live-openssh-retry-boot.tar.gz
+archive_sha256=2f88dfdabaeb38e0f90fe597a874df04424e7d639646aa6e8729930766e2ca01
+kernel entries:
+./kernel_2712.img
+./da591740/kernel_2712.img

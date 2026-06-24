@@ -17894,6 +17894,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   and planningNeeded=true. No live reachability, remote receipt,
   compatibility, PTY/SCP/SFTP, broad command expansion, phase transition, or
   ssh-ready=true is accepted.
+- phase12-ssh-selected-candidate-fetch-liveness-bracket-pi5-proof-20260624
+  accepts only fail-closed baseline-control-fetch-missing evidence. The worker
+  started from the restored baseline/control a0452458... tree, saved fresh
+  serial and TFTP cursors, and power-cycled the Pi without publishing a
+  selected archive or running OpenSSH. The same-task baseline/control TFTP
+  liveness gate failed: stable same-cursor TFTP evidence stayed at zero events,
+  so no 104,136-byte da591740/kernel_2712.img fetch was observed. Because
+  baseline liveness was not proven, the selected archive was not published and
+  selected no-fetch evidence was not used. Final pre-restore and restored
+  identity both reported the baseline/control tree.
+  baseline_control_fetch_observed=false,
+  selected_candidate_fetch_bracket_observed=false, selected_next_task=null, and
+  planningNeeded=true. No live OpenSSH, remote receipt, compatibility,
+  PTY/SCP/SFTP, broad command expansion, phase transition, or ssh-ready=true is
+  accepted.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

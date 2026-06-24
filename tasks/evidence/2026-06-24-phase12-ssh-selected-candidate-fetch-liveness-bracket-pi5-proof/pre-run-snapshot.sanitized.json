@@ -1,0 +1,8 @@
+{
+  "action": "boot snapshot",
+  "ok": true,
+  "snapshot": {
+    "name": "phase12-ssh-fetch-bracket-pre-20260624T023738Z",
+    "bytes": 201828
+  }
+}

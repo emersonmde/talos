@@ -1,0 +1,6 @@
+{
+  "action": "boot snapshots",
+  "ok": true,
+  "snapshot_count": 596,
+  "retained_full_listing": false
+}

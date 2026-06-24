@@ -1,0 +1,88 @@
+{
+  "task_id": "phase12-ssh-selected-candidate-fetch-liveness-bracket-pi5-proof-20260624",
+  "classification": "baseline-control-fetch-missing",
+  "baseline_control_fetch_observed": false,
+  "selected_candidate_fetch_bracket_observed": false,
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "Same-task baseline/control TFTP liveness was not observed from the fresh cursor after a Pi 5 power-cycle, so selected-candidate no-fetch evidence was not collected or used to unblock live OpenSSH.",
+  "prerequisites": {
+    "v6_blocker": "phase12-ssh-live-openssh-preclient-fetch-gated-discriminator-v6-20260624",
+    "selected_fetch_v4": "phase12-ssh-selected-candidate-fetch-after-baseline-liveness-v4-20260623",
+    "baseline_control": "phase12-ssh-boot-request-liveness-baseline-control-20260623"
+  },
+  "selected_archive": {
+    "path": "target/phase12-ssh-live-openssh-retry-boot.tar.gz",
+    "sha256_line": "2f88dfdabaeb38e0f90fe597a874df04424e7d639646aa6e8729930766e2ca01  target/phase12-ssh-live-openssh-retry-boot.tar.gz",
+    "kernel_sha256_line": "110e66ef6867a70cc8b72f52c0786a8f4037796b4058ee4a27ba1371ba8c12d5  -",
+    "kernel_sizes": "root kernel_2712.img 87432\nprefixed da591740/kernel_2712.img 87432"
+  },
+  "baseline": {
+    "pre_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "pre_effective_kernel": "kernel_2712.img",
+    "pre_kernel_bytes": [
+      104136
+    ],
+    "snapshot": "phase12-ssh-fetch-bracket-pre-20260624T023738Z",
+    "tftp": {
+      "cursor_start": 4663750,
+      "cursor_end": 4663750,
+      "event_count": 0,
+      "baseline_kernel_serves_104136": 0,
+      "wait_exit_code": 1,
+      "stability": {
+        "stable": true,
+        "reason": "stable",
+        "stable_samples": 3,
+        "required_samples": 3
+      }
+    },
+    "serial": {
+      "capture_mode": "read",
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+      "bytes": 5765,
+      "contains_talos_kernel_main": false,
+      "raw_text_retained": false
+    }
+  },
+  "selected_leg": {
+    "skipped": true,
+    "reason": "baseline-control-fetch-missing",
+    "published": false,
+    "power_cycled": false,
+    "tftp_evidence_used": false
+  },
+  "final_pre_restore_identity": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "kernel_bytes": [
+      104136
+    ]
+  },
+  "restore_identity": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "kernel_bytes": [
+      104136
+    ],
+    "restored": true
+  },
+  "redaction_review": {
+    "result": "pass",
+    "raw_serial_text_retained": false,
+    "raw_tftp_log_retained": false,
+    "openssh_output_retained": false,
+    "key_material_retained": false,
+    "user_or_address_retained": false,
+    "stable_peer_identifier_retained": false,
+    "private_user_data_retained": false
+  },
+  "claims": {
+    "live_openssh_launched": false,
+    "live_reachability_true": false,
+    "remote_receipt_true": false,
+    "compatibility_true": false,
+    "phase_transition": false,
+    "ssh_ready_true": false
+  }
+}

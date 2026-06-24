@@ -1,0 +1,103 @@
+{
+  "action": "boot snapshot restore",
+  "ok": true,
+  "archive": {
+    "name": "phase12-ssh-fetch-bracket-pre-20260624T023738Z",
+    "file_count": 16,
+    "extracted_bytes": 591110,
+    "files": [
+      "bcm2712-rpi-5-b.dtb",
+      "cmdline.txt",
+      "config.txt",
+      "da591740/bcm2712-rpi-5-b.dtb",
+      "da591740/cmdline.txt",
+      "da591740/config.txt",
+      "da591740/kernel8.img",
+      "da591740/kernel_2712.img",
+      "da591740/overlays/bcm2712d0.dtbo",
+      "da591740/overlays/overlay_map.dtb",
+      "da591740/overlays/uart0-pi5.dtbo",
+      "kernel8.img",
+      "kernel_2712.img",
+      "overlays/bcm2712d0.dtbo",
+      "overlays/overlay_map.dtb",
+      "overlays/uart0-pi5.dtbo"
+    ]
+  },
+  "boot": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "configured_kernel": "kernel_2712.img",
+    "effective_kernel": "kernel_2712.img",
+    "config": {
+      "enable_rp1_uart": "1",
+      "kernel": "kernel_2712.img",
+      "os_check": "0"
+    },
+    "files": [
+      {
+        "name": "bcm2712-rpi-5-b.dtb",
+        "bytes": 78679
+      },
+      {
+        "name": "cmdline.txt",
+        "bytes": 81
+      },
+      {
+        "name": "config.txt",
+        "bytes": 118
+      },
+      {
+        "name": "da591740/bcm2712-rpi-5-b.dtb",
+        "bytes": 78679
+      },
+      {
+        "name": "da591740/cmdline.txt",
+        "bytes": 81
+      },
+      {
+        "name": "da591740/config.txt",
+        "bytes": 118
+      },
+      {
+        "name": "da591740/kernel8.img",
+        "bytes": 104136
+      },
+      {
+        "name": "da591740/kernel_2712.img",
+        "bytes": 104136
+      },
+      {
+        "name": "da591740/overlays/bcm2712d0.dtbo",
+        "bytes": 1363
+      },
+      {
+        "name": "da591740/overlays/overlay_map.dtb",
+        "bytes": 5971
+      },
+      {
+        "name": "da591740/overlays/uart0-pi5.dtbo",
+        "bytes": 1071
+      },
+      {
+        "name": "kernel8.img",
+        "bytes": 104136
+      },
+      {
+        "name": "kernel_2712.img",
+        "bytes": 104136
+      },
+      {
+        "name": "overlays/bcm2712d0.dtbo",
+        "bytes": 1363
+      },
+      {
+        "name": "overlays/overlay_map.dtb",
+        "bytes": 5971
+      },
+      {
+        "name": "overlays/uart0-pi5.dtbo",
+        "bytes": 1071
+      }
+    ]
+  }
+}
