@@ -8976,3 +8976,21 @@ selected_candidate_fetch_bracket_observed=false, selected_next_task=null, and
 planningNeeded=true. No live OpenSSH, remote receipt, compatibility,
 PTY/SCP/SFTP, broad command expansion, phase transition, or ssh-ready=true is
 accepted.
+
+phase12-ssh-lab-tftp-capture-liveness-reconciliation-20260624 accepts the
+read-only lab/TFTP capture reconciliation as
+baseline-control-liveness-retry-authorized. The task did not publish boot
+archives, restore snapshots, power-cycle hardware, run hardware tests, or launch
+OpenSSH. It replayed retained TFTP cursors through GET /tftp/logs and compared
+accepted evidence from the baseline/control proof, selected fetch v4, v6
+preclient gate, and the bracket proof. Current replay from cursor 4662399 now
+returns 26 parsed events, and current replay from cursor 4663750 now returns 13
+parsed events, even though those cursors were accepted earlier as stable-zero
+windows. This proves the blocker is at the capture timing/cursor visibility
+layer, not a durable no-boot conclusion. Because the lab endpoint computes TFTP
+bytes from the current served root at query time, post-restore replay is not
+used to reclassify selected-vs-baseline byte identity. selected_next_task is
+phase12-ssh-baseline-control-tftp-liveness-recovery-pi5-proof-20260624; no
+selected-candidate fetch retry, live OpenSSH, remote receipt, compatibility,
+phase transition, or ssh-ready=true is accepted until fresh same-task
+baseline/control liveness is accepted.

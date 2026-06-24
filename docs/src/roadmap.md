@@ -17909,6 +17909,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   planningNeeded=true. No live OpenSSH, remote receipt, compatibility,
   PTY/SCP/SFTP, broad command expansion, phase transition, or ssh-ready=true is
   accepted.
+- phase12-ssh-lab-tftp-capture-liveness-reconciliation-20260624 accepts the
+  read-only lab/TFTP capture reconciliation as
+  baseline-control-liveness-retry-authorized. No boot state was mutated: the
+  worker used GET /status, GET /boot/files, GET /, and GET /tftp/logs with
+  explicit cursors only. Current replay from the previous stable-zero cursors
+  now exposes parsed TFTP events: cursor 4662399 returns 26 events and cursor
+  4663750 returns 13 events. Because TFTP byte labels are computed from the
+  current served root at query time, replay after restore is only cursor/log
+  visibility evidence and does not reclassify selected-vs-baseline kernel
+  bytes. The selected next bounded task is
+  phase12-ssh-baseline-control-tftp-liveness-recovery-pi5-proof-20260624;
+  selected-candidate fetch retry, live OpenSSH, remote receipt,
+  compatibility, phase transition, and ssh-ready=true remain blocked until
+  fresh same-task baseline/control liveness is accepted.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

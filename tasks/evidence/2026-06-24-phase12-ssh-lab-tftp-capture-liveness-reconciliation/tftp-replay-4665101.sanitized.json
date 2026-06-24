@@ -1,0 +1,19 @@
+{
+  "label": "cursor-4665101",
+  "ok": true,
+  "action": "tftp logs",
+  "tftp": {
+    "cursor_start": 4665101,
+    "cursor_end": 4665101,
+    "log_size": 4665101,
+    "truncated": false,
+    "event_count": 0,
+    "status_counts": [],
+    "kernel_fetch_counts": [],
+    "filename_counts": []
+  },
+  "redaction": {
+    "raw_lines_retained": false,
+    "client_identifiers_retained": false
+  }
+}

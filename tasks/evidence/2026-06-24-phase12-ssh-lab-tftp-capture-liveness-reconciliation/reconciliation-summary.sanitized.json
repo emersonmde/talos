@@ -1,0 +1,84 @@
+{
+  "task_id": "phase12-ssh-lab-tftp-capture-liveness-reconciliation-20260624",
+  "comparison": [
+    {
+      "task": "phase12-ssh-boot-request-liveness-baseline-control-20260623",
+      "classification": "baseline-control-fetch-observed",
+      "accepted_cursor_start": 4658346,
+      "accepted_cursor_end": 4659697,
+      "accepted_event_count": 13,
+      "accepted_baseline_kernel_events": 2,
+      "accepted_serial_bytes": 0,
+      "selected_next_task": "phase12-ssh-selected-candidate-fetch-after-baseline-liveness-v4-20260623"
+    },
+    {
+      "task": "phase12-ssh-selected-candidate-fetch-after-baseline-liveness-v4-20260623",
+      "classification": "selected-candidate-fetch-observed",
+      "accepted_cursor_start": 4659697,
+      "accepted_cursor_end": 4661048,
+      "accepted_event_count": 13,
+      "accepted_selected_kernel_serves_87432": 2,
+      "accepted_baseline_kernel_serves_104136": 0,
+      "selected_next_task": "phase12-ssh-live-openssh-client-discriminator-retry-v5-20260623"
+    },
+    {
+      "task": "phase12-ssh-live-openssh-preclient-fetch-gated-discriminator-v6-20260624",
+      "classification": "stable-zero-tftp-after-selected-publish",
+      "accepted_cursor_start": 4662399,
+      "accepted_cursor_end": 4662399,
+      "accepted_event_count": 0,
+      "accepted_selected_kernel_87432_fetch_count": 0,
+      "accepted_baseline_kernel_104136_fetch_count": 0,
+      "selected_next_task": null,
+      "planningNeeded": true
+    },
+    {
+      "task": "phase12-ssh-selected-candidate-fetch-liveness-bracket-pi5-proof-20260624",
+      "classification": "baseline-control-fetch-missing",
+      "accepted_cursor_start": 4663750,
+      "accepted_cursor_end": 4663750,
+      "accepted_event_count": 0,
+      "accepted_baseline_kernel_serves_104136": 0,
+      "accepted_serial_bytes": 5765,
+      "selected_next_task": null,
+      "planningNeeded": true
+    }
+  ],
+  "read_only_replay_findings": {
+    "cursor_4663750_previous_stable_zero_now_event_count": 13,
+    "cursor_4663750_previous_stable_zero_now_kernel_fetch_counts": [
+      {
+        "bytes": 104136,
+        "count": 2,
+        "statuses": [
+          "served"
+        ]
+      }
+    ],
+    "cursor_4662399_previous_stable_zero_now_event_count": 26,
+    "cursor_4662399_previous_stable_zero_now_kernel_fetch_counts": [
+      {
+        "bytes": 104136,
+        "count": 4,
+        "statuses": [
+          "served"
+        ]
+      }
+    ],
+    "post_restore_byte_label_caveat": "TFTP bytes are computed from the current served root at query time, so read-only replay after restore can prove log-event/cursor visibility but cannot prove selected-vs-baseline bytes for earlier selected-root windows."
+  },
+  "decision": {
+    "classification": "baseline-control-liveness-retry-authorized",
+    "baseline_control_fetch_observed": false,
+    "selected_candidate_fetch_observed": false,
+    "selected_next_task": "phase12-ssh-baseline-control-tftp-liveness-recovery-pi5-proof-20260624",
+    "planningNeeded": false
+  },
+  "redaction": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_lines_retained": false,
+    "client_identifiers_retained": false,
+    "key_material_retained": false,
+    "openssh_output_retained": false
+  }
+}

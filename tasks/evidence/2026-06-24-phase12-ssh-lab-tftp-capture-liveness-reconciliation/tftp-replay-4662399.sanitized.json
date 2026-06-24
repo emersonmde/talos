@@ -1,0 +1,73 @@
+{
+  "label": "cursor-4662399",
+  "ok": true,
+  "action": "tftp logs",
+  "tftp": {
+    "cursor_start": 4662399,
+    "cursor_end": 4665101,
+    "log_size": 4665101,
+    "truncated": false,
+    "event_count": 26,
+    "status_counts": [
+      {
+        "status": "not_found",
+        "count": 4
+      },
+      {
+        "status": "served",
+        "count": 22
+      }
+    ],
+    "kernel_fetch_counts": [
+      {
+        "bytes": 104136,
+        "count": 4,
+        "statuses": [
+          "served"
+        ]
+      }
+    ],
+    "filename_counts": [
+      {
+        "filename": "da591740//cmdline.txt",
+        "count": 2
+      },
+      {
+        "filename": "da591740//config.txt",
+        "count": 6
+      },
+      {
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "count": 2
+      },
+      {
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "count": 2
+      },
+      {
+        "filename": "da591740/armstub8-2712.bin",
+        "count": 2
+      },
+      {
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "count": 2
+      },
+      {
+        "filename": "da591740/config.txt",
+        "count": 4
+      },
+      {
+        "filename": "da591740/kernel_2712.img",
+        "count": 4
+      },
+      {
+        "filename": "da591740/pieeprom.sig",
+        "count": 2
+      }
+    ]
+  },
+  "redaction": {
+    "raw_lines_retained": false,
+    "client_identifiers_retained": false
+  }
+}
