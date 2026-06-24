@@ -1,0 +1,5 @@
+{
+  "endpoint": "GET /",
+  "http_status": 404,
+  "body_summary": "{   \"error\": \"unknown endpoint: GET /\",   \"ok\": false }"
+}

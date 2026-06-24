@@ -1,0 +1,11 @@
+{
+  "action": "serial peek",
+  "ok": true,
+  "bytes": 500,
+  "cursor": 4194304,
+  "cursor_start": null,
+  "cursor_end": null,
+  "truncated": null,
+  "drained": true,
+  "talos_serial_window": null
+}

@@ -8994,3 +8994,20 @@ phase12-ssh-baseline-control-tftp-liveness-recovery-pi5-proof-20260624; no
 selected-candidate fetch retry, live OpenSSH, remote receipt, compatibility,
 phase transition, or ssh-ready=true is accepted until fresh same-task
 baseline/control liveness is accepted.
+
+phase12-ssh-baseline-control-tftp-liveness-recovery-pi5-proof-20260624
+accepts the recovery proof as baseline-control-fetch-liveness-recovered. The
+worker acquired hardwareTestLock, retained the restored baseline/control
+a0452458... tree with effective_kernel=kernel_2712.img and 104,136-byte
+kernel_2712.img entries, saved fresh serial and TFTP cursors, and power-cycled
+the Pi once without publishing a selected archive or launching OpenSSH. Stable
+same-cursor TFTP evidence advanced from cursor 4665101 to 4666452 and retained
+13 parsed events, including two served da591740/kernel_2712.img fetches at
+104,136 bytes before restore. Serial observation used the saturated-cursor
+direct-read fallback and saw firmware NETWORK markers but no Talos runtime
+marker, so serial runtime readiness remains unaccepted. Final pre-restore,
+restore, and final restored identities all reported the baseline/control tree.
+baseline_control_fetch_observed=true, and the selected next bounded task is
+phase12-ssh-selected-candidate-fetch-after-recovered-baseline-v5-20260624. No
+selected-candidate fetch, OpenSSH execution, live reachability, remote receipt,
+compatibility, phase transition, or ssh-ready=true is accepted from this proof.

@@ -1,0 +1,132 @@
+{
+  "task_id": "phase12-ssh-baseline-control-tftp-liveness-recovery-pi5-proof-20260624",
+  "snapshot": "phase12-ssh-baseline-liveness-pre-20260624T041930Z",
+  "pre_run": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "configured_kernel": "kernel_2712.img",
+    "root_endpoint": {
+      "endpoint": "GET /",
+      "http_status": 404,
+      "body_summary": "{   \"error\": \"unknown endpoint: GET /\",   \"ok\": false }"
+    },
+    "kernel_2712_entries": [
+      {
+        "path": "da591740/kernel_2712.img",
+        "bytes": 104136,
+        "sha256": null
+      },
+      {
+        "path": "kernel_2712.img",
+        "bytes": 104136,
+        "sha256": null
+      }
+    ]
+  },
+  "serial_freshness_summary": {
+    "exit_code": 1,
+    "cursor_start": 4194304,
+    "cursor_end": 4194304,
+    "bytes": 6555,
+    "has_firmware_network": true,
+    "firmware_network_occurrences": 2,
+    "has_kernel_main": false,
+    "has_required_marker": false,
+    "capture_mode": "read",
+    "start_cursor_saturated": true,
+    "response_bytes": 6555
+  },
+  "tftp_liveness_summary": {
+    "exit_code": 0,
+    "cursor_start": 4665101,
+    "cursor_end": 4666452,
+    "event_count": 13,
+    "stable": true,
+    "stability_reason": "stable",
+    "baseline_kernel_serves": 2,
+    "events": [
+      {
+        "status": "served",
+        "filename": "da591740/config.txt",
+        "bytes": 118
+      },
+      {
+        "status": "served",
+        "filename": "da591740/config.txt",
+        "bytes": 118
+      },
+      {
+        "status": "not_found",
+        "filename": "da591740/pieeprom.sig",
+        "bytes": null
+      },
+      {
+        "status": "served",
+        "filename": "da591740//config.txt",
+        "bytes": 118
+      },
+      {
+        "status": "served",
+        "filename": "da591740//config.txt",
+        "bytes": 118
+      },
+      {
+        "status": "served",
+        "filename": "da591740/kernel_2712.img",
+        "bytes": 104136
+      },
+      {
+        "status": "served",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "bytes": 78679
+      },
+      {
+        "status": "served",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "bytes": 5971
+      },
+      {
+        "status": "served",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "bytes": 1363
+      },
+      {
+        "status": "served",
+        "filename": "da591740//config.txt",
+        "bytes": 118
+      },
+      {
+        "status": "served",
+        "filename": "da591740//cmdline.txt",
+        "bytes": 81
+      },
+      {
+        "status": "not_found",
+        "filename": "da591740/armstub8-2712.bin",
+        "bytes": null
+      },
+      {
+        "status": "served",
+        "filename": "da591740/kernel_2712.img",
+        "bytes": 104136
+      }
+    ]
+  },
+  "final_pre_restore": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img"
+  },
+  "restore": {
+    "ok": true,
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img"
+  },
+  "final_restored": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img"
+  },
+  "classification": "baseline-control-fetch-liveness-recovered",
+  "baseline_control_fetch_observed": true,
+  "selected_next_task": "phase12-ssh-selected-candidate-fetch-after-recovered-baseline-v5-20260624",
+  "planningNeeded": false
+}
