@@ -17954,6 +17954,18 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   OpenSSH execution, live reachability, remote receipt, compatibility, phase
   transition, and ssh-ready=true remain unaccepted until the pre-client gate
   passes.
+- phase12-ssh-live-openssh-preclient-fetch-gated-discriminator-v8-20260624
+  accepts only fail-closed preclient-selected-fetch-gate-failed evidence. The
+  worker published the reviewed selected 87,432-byte archive, verified the
+  selected fe9a0d98... tree, saved fresh cursors, and power-cycled the Pi once.
+  Stable same-cursor TFTP evidence from cursor 4667803 stayed at zero parsed
+  events, so the same-task pre-client selected-fetch gate failed before any
+  OpenSSH launch. Serial direct-read fallback retained no Talos runtime marker,
+  and restore returned to the baseline/control a0452458... tree.
+  preclient_selected_fetch_gate_passed=false,
+  live_openssh_client_discriminator_observed=false, selected_next_task=null,
+  and planningNeeded=true. No live reachability, remote receipt,
+  compatibility, phase transition, or ssh-ready=true is accepted.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

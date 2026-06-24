@@ -1,0 +1,66 @@
+{
+  "task_id": "phase12-ssh-live-openssh-preclient-fetch-gated-discriminator-v8-20260624",
+  "classification": "preclient-selected-fetch-gate-failed",
+  "preclient_selected_fetch_gate_passed": false,
+  "live_openssh_client_discriminator_observed": false,
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "selected_archive": {
+    "path": "target/phase12-ssh-live-openssh-retry-boot.tar.gz",
+    "sha256_line": "2f88dfdabaeb38e0f90fe597a874df04424e7d639646aa6e8729930766e2ca01  target/phase12-ssh-live-openssh-retry-boot.tar.gz",
+    "kernel_sha256_line": "110e66ef6867a70cc8b72f52c0786a8f4037796b4058ee4a27ba1371ba8c12d5  -",
+    "kernel_sizes": "root kernel_2712.img 87432\nprefixed da591740/kernel_2712.img 87432"
+  },
+  "prerequisites": {
+    "selected_fetch_v5": "phase12-ssh-selected-candidate-fetch-after-recovered-baseline-v5-20260624",
+    "openssh_provisioning_preflight": "phase12-ssh-runner-openssh-client-provisioning-preflight-20260623"
+  },
+  "boot_identity": {
+    "post_publish_tree_hash": "fe9a0d98aae7e38310a18adf7902d59346cbdef943250f16c948eae6a3f64333",
+    "final_restored_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img"
+  },
+  "tftp": {
+    "cursor_start": 4667803,
+    "cursor_end": 4667803,
+    "event_count": 0,
+    "selected_kernel_87432_fetch_count": 0,
+    "baseline_kernel_104136_fetch_count": 0
+  },
+  "openssh": {
+    "invocation_class": "openssh-client-port22-no-pty-no-password-publickey-only-bounded-timeout",
+    "client_path_category": "workspace-local extracted OpenSSH client",
+    "target_port_category": "port-22",
+    "target_address_retained": false,
+    "username_retained": false,
+    "command_bytes_retained": false,
+    "preclient_selected_fetch_gate_passed": false,
+    "launched": false,
+    "public_phase": "not-launched-preclient-gate-failed",
+    "exit_category": "not-launched",
+    "client_exit_code": null,
+    "raw_stdout_bytes": 0,
+    "raw_stderr_bytes": 0,
+    "retained_raw_output": false,
+    "raw_output_removed": true,
+    "live_openssh_client_discriminator_observed": false,
+    "redaction_sensitive_material_retained": false
+  },
+  "claims": {
+    "live_reachability_true": false,
+    "remote_receipt_true": false,
+    "compatibility_true": false,
+    "phase_transition": false,
+    "ssh_ready_true": false
+  },
+  "redaction_review": {
+    "result": "pass",
+    "raw_openssh_log_retained": false,
+    "raw_serial_text_retained": false,
+    "raw_tftp_log_retained": false,
+    "key_material_retained": false,
+    "user_or_address_retained": false,
+    "stable_peer_identifier_retained": false,
+    "private_user_data_retained": false
+  }
+}

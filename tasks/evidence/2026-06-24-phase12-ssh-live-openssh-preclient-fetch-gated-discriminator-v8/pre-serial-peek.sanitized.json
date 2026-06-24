@@ -1,0 +1,9 @@
+{
+  "action": "serial peek",
+  "ok": true,
+  "cursor": 4194304,
+  "bytes": 500,
+  "truncated": false,
+  "text_retained": false,
+  "base64_retained": false
+}

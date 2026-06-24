@@ -9028,3 +9028,21 @@ task is phase12-ssh-live-openssh-preclient-fetch-gated-discriminator-v8-20260624
 OpenSSH execution, live reachability, remote receipt, compatibility, phase
 transition, and ssh-ready=true remain unaccepted until that pre-client gate
 passes.
+
+phase12-ssh-live-openssh-preclient-fetch-gated-discriminator-v8-20260624
+accepts only fail-closed blocker evidence as
+preclient-selected-fetch-gate-failed. The worker acquired hardwareTestLock,
+published the reviewed selected 87,432-byte archive, verified the selected
+fe9a0d98... tree through post-publish status, saved fresh serial and TFTP
+cursors, and power-cycled the Pi once. The same-task pre-client selected-fetch
+gate failed: stable TFTP evidence from cursor 4667803 stayed at cursor 4667803
+with zero parsed events before restore, so no selected 87,432-byte
+da591740/kernel_2712.img fetch was observed. Serial direct-read fallback
+retained no Talos runtime marker. Final pre-client and pre-restore status still
+reported the selected tree, restore returned to the baseline/control
+a0452458... tree, and OpenSSH was not launched.
+preclient_selected_fetch_gate_passed=false,
+live_openssh_client_discriminator_observed=false, selected_next_task=null, and
+planningNeeded=true. No live reachability, remote receipt, compatibility,
+PTY/SCP/SFTP, broad command expansion, phase transition, or ssh-ready=true is
+accepted.
