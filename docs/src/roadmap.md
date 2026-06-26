@@ -18298,6 +18298,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   Linux `ps`/procfs compatibility, `/proc/self`, `/proc/<pid>`, public process
   enumeration ABI, scheduler concurrency, fork/signals, PID policy expansion,
   hardware proof, live networking, SSH, or a phase transition.
+- phase12-local-ps-command-vfs-backed-closeout-20260626 accepts
+  local-ps-command-vfs-backed-closeout-accepted. The closeout reconciles the
+  accepted `ps` view against the retained descriptor-backed
+  `/proc/talos/processes` evidence, QEMU/substitute ps transcript, process
+  status VFS regression, roadmap, and Phase 12 project notes. The accepted
+  boundary remains zero-argument, Talos-private process status backed by the
+  VFS status file; `cat /proc/talos/processes` remains the control surface and
+  a direct process-table dump remains rejected. Linux `ps`/procfs
+  compatibility, `/proc/self`, `/proc/<pid>`, public process enumeration
+  ABI, scheduler concurrency, fork/signals, PID policy expansion, hardware
+  proof, live networking, SSH, and phase transition remain deferred.
+  selected_next_task is phase12-local-posix-frontier-checkpoint-20260626
+  because the queued checkpoint is mechanically objective after this accepted
+  closeout.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

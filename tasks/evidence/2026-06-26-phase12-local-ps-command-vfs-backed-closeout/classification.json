@@ -1,0 +1,36 @@
+{
+  "task_id": "phase12-local-ps-command-vfs-backed-closeout-20260626",
+  "classification": "local-ps-command-vfs-backed-closeout-accepted",
+  "status_path": "/proc/talos/processes",
+  "command": "ps",
+  "selected_next_task": "phase12-local-posix-frontier-checkpoint-20260626",
+  "accepted": [
+    "zero-argument ps remains a thin presentation of the accepted /proc/talos/processes VFS status file",
+    "cat /proc/talos/processes remains the regression/control surface",
+    "ps does not bypass the VFS process-status helper with a direct process-table dump",
+    "retained QEMU/substitute evidence covers direct, exact pipeline, and background process-status fixtures plus unsupported ps arguments"
+  ],
+  "deferred": [
+    "Linux ps compatibility",
+    "Linux procfs compatibility",
+    "/proc/self",
+    "/proc/<pid>",
+    "public process enumeration ABI",
+    "ps arguments/options",
+    "sorting/filtering",
+    "scheduler concurrency",
+    "fork/signals",
+    "process groups/sessions",
+    "waitpid options",
+    "PID reuse/zombie policy",
+    "multi-stage pipelines",
+    "pipefail",
+    "persistent storage",
+    "live networking",
+    "SSH",
+    "Pi 5 hardware proof",
+    "phase transition"
+  ],
+  "hardware_claim": false,
+  "live_network_ssh_paused": true
+}

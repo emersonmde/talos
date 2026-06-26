@@ -9220,6 +9220,20 @@ extra` negative controls. This is not Linux `ps`/procfs compatibility,
 concurrency, fork/signals, process groups/sessions, waitpid options, PID reuse
 policy, hardware proof, live networking, SSH, or phase transition work.
 
+phase12-local-ps-command-vfs-backed-closeout-20260626 accepts
+local-ps-command-vfs-backed-closeout-accepted. The closeout maps the accepted
+`ps` view to the retained core task record, core classification/evidence map,
+QEMU/substitute `ps` transcript, process-status VFS regression transcript,
+roadmap entry, and this Phase 12 project note. The accepted boundary remains a
+zero-argument Talos-private shell view backed by `/proc/talos/processes`;
+`cat /proc/talos/processes` remains the control surface and direct
+process-table dumps remain rejected. selected_next_task is
+phase12-local-posix-frontier-checkpoint-20260626. Linux `ps`/procfs
+compatibility, `/proc/self`, `/proc/<pid>`, public process enumeration ABI,
+scheduler concurrency, fork/signals, process groups/sessions, waitpid options,
+PID reuse/zombie policy, hardware proof, live networking, SSH, and phase
+transition work remain deferred.
+
 phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624 accepts
 the live reachability source reconciliation as
 live-reachability-source-reconciliation-paused-no-defensible-discriminator.

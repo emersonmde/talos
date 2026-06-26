@@ -1,0 +1,46 @@
+{
+  "task_id": "phase12-local-ps-command-vfs-backed-closeout-20260626",
+  "classification": "local-ps-command-vfs-backed-closeout-accepted",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "path": "tasks/2026-06-26-phase12-local-ps-command-vfs-backed-core.md",
+      "summary": "Accepted core task record states ps uses /proc/talos/processes through the descriptor-backed process-status helper and rejects unsupported arguments/options."
+    },
+    {
+      "level": "static inspection",
+      "path": "tasks/evidence/2026-06-26-phase12-local-ps-command-vfs-backed-core/classification.json",
+      "summary": "Core classification accepts zero-argument ps as VFS-backed process status and rejects Linux ps/procfs compatibility, process enumeration ABI, hardware, networking, SSH, and phase transition."
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-26-phase12-local-ps-command-vfs-backed-core/qemu-local-shell-ps-command-vfs-smoke.log",
+      "summary": "Retained smoke transcript passed with participants=23 expected=23 errors=0 and classification qemu-local-shell-ps-command-vfs-complete."
+    },
+    {
+      "level": "QEMU/substitute regression",
+      "path": "tasks/evidence/2026-06-26-phase12-local-process-status-vfs-core/qemu-local-shell-process-status-vfs-smoke.log",
+      "summary": "Retained process-status VFS smoke transcript passed with participants=19 expected=19 errors=0 and classification qemu-local-shell-process-status-vfs-complete."
+    },
+    {
+      "level": "static inspection",
+      "path": "docs/src/roadmap.md",
+      "summary": "Roadmap records the VFS-backed ps closeout, selected checkpoint follow-up, and deferred live networking/SSH/hardware/phase-transition surfaces."
+    },
+    {
+      "level": "static inspection",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "summary": "Phase 12 project notes record ps as Talos-private VFS-backed process status only, with no Linux ps/procfs compatibility or live reachability claim."
+    }
+  ],
+  "validation": [
+    "static inspection of task records, evidence paths, docs, and git diff",
+    "jq empty on closeout classification/evidence-map JSON",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "git diff --cached --check"
+  ],
+  "selected_next_task": "phase12-local-posix-frontier-checkpoint-20260626",
+  "hardware_claim": false,
+  "live_network_ssh_paused": true
+}
