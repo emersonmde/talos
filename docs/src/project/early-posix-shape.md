@@ -217,6 +217,21 @@ redirections, environment-backed PATH, arbitrary shell grammar, unbounded
 pipelines, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
 phase transition remain deferred pending supervisor planning.
 
+The first bare-name command argv slice extends only the accepted direct
+bare-name command form. A shell input of 'status42 alpha beta' resolves through
+the fixed /bin lookup to /bin/status42, then uses VFS open/read, the accepted
+loader, userspace startup/status, and bounded process-table path. The startup
+ABI records argc=3, canonical argv0=/bin/status42, argv1=alpha, argv2=beta,
+deterministic empty envp, inherited standard descriptors, and a closed loader
+temporary descriptor. No-argument bare-name commands, bare-name pipelines,
+direct absolute-path argv, exec-prefixed literal argv, process-status VFS,
+zero-argument 'ps', and 'pipestatus' remain regression surfaces. Too many
+bare-name arguments, unsupported literal characters, and unsupported bare
+commands fail closed. Pipeline stage argv, redirections, environment-backed
+PATH, current-directory search, arbitrary shell grammar, unbounded pipelines,
+live networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
+transition remain deferred pending the command argv frontier checkpoint.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

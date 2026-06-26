@@ -1,0 +1,38 @@
+{
+  "classification": "local-bare-name-command-argv-core-accepted",
+  "task_id": "phase12-local-bare-name-command-argv-core-20260626",
+  "accepted": true,
+  "command": "status42 alpha beta",
+  "resolved_path": "/bin/status42",
+  "startup_abi": {
+    "argc": 3,
+    "argv0": "/bin/status42",
+    "argv1": "alpha",
+    "argv2": "beta",
+    "envp": "empty-envp0",
+    "standard_descriptors": "inherited",
+    "loader_temp_descriptor_open": false,
+    "status": "0x2a"
+  },
+  "evidence_level": [
+    "fmt/lint",
+    "unit tests",
+    "QEMU/substitute",
+    "static inspection"
+  ],
+  "no_hardware_claim": true,
+  "live_network_ssh_paused": true,
+  "selected_next_task": "phase12-local-command-argv-frontier-checkpoint-20260626",
+  "deferred": [
+    "pipeline stage argv",
+    "redirections",
+    "environment-backed PATH",
+    "current-directory search",
+    "command lookup beyond bounded /bin surface",
+    "arbitrary shell grammar",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "phase transition"
+  ]
+}

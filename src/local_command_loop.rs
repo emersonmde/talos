@@ -50,7 +50,8 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+multistage-pipeline-bounded-process-table+bounded-pipeline-status-observation",
     "+direct-absolute-path-vfs-command+bounded-absolute-path-vfs-pipeline",
     "+bounded-bare-name-bin-vfs-command+bounded-bare-name-bin-vfs-pipeline",
-    "+direct-absolute-path-vfs-command-literal-argv"
+    "+direct-absolute-path-vfs-command-literal-argv",
+    "+bounded-bare-name-bin-vfs-command-literal-argv"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -7014,10 +7015,7 @@ fn parse_absolute_path_command_request(
 fn parse_bare_bin_command_request(
     command: ParsedLocalCommand<'_>,
 ) -> Result<LocalCommandExecRequest, LocalCommandExecError> {
-    if command.arguments.is_some() {
-        return Err(LocalCommandExecError::InvalidPath);
-    }
-    parse_bare_bin_exec_request(command.name)
+    parse_bare_bin_exec_request_with_arguments(command.name, command.arguments)
 }
 
 fn parse_bare_bin_pipeline_request(
@@ -7044,11 +7042,34 @@ fn parse_bare_bin_pipeline_request(
 fn parse_bare_bin_exec_request(
     name: &str,
 ) -> Result<LocalCommandExecRequest, LocalCommandExecError> {
+    parse_bare_bin_exec_request_with_arguments(name, None)
+}
+
+fn parse_bare_bin_exec_request_with_arguments(
+    name: &str,
+    arguments: Option<&str>,
+) -> Result<LocalCommandExecRequest, LocalCommandExecError> {
     if !is_bounded_bare_bin_command_name(name) {
         return Err(LocalCommandExecError::InvalidPath);
     }
     let path = LocalCommandExecPath::from_fixed_bin_name(name.as_bytes())?;
-    let argv = LocalCommandLiteralArgv::from_tokens(&[name.as_bytes()])?
+    let mut tokens: [&[u8]; LOCAL_COMMAND_LITERAL_ARGV_CAPACITY] =
+        [&[]; LOCAL_COMMAND_LITERAL_ARGV_CAPACITY];
+    tokens[0] = name.as_bytes();
+    let mut count = 1usize;
+    if let Some(arguments) = arguments {
+        for token in arguments.as_bytes().split(|byte| is_space(*byte)) {
+            if token.is_empty() {
+                continue;
+            }
+            if count == tokens.len() || !is_supported_literal_exec_token(token) {
+                return Err(LocalCommandExecError::InvalidPath);
+            }
+            tokens[count] = token;
+            count += 1;
+        }
+    }
+    let argv = LocalCommandLiteralArgv::from_tokens(&tokens[..count])?
         .with_resolved_argv0(path.as_bytes())?;
     Ok(LocalCommandExecRequest {
         path,
@@ -12500,6 +12521,56 @@ talos> talos: exec-not-executable\n"
     }
 
     #[test_case]
+    fn local_command_loop_runs_bare_name_vfs_command_with_literal_argv() {
+        let bytes = *b"status42 alpha beta\rwaitpid\rlaststatus\rcat /proc/talos/processes\rps\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (exec, waited, observed, cat, ps) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            let exec = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let record = io.process_table_records()[0].unwrap();
+            assert_eq!(
+                record.lifecycle.source_path,
+                initramfs::PHASE10_STATUS42_PATH
+            );
+            assert_eq!(record.lifecycle.status, 0x2a);
+            assert_eq!(record.lifecycle.observed_status, 0x2a);
+            let waited = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let observed = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let cat = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let ps = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(io.process_table_records()[0], Some(record));
+            (exec, waited, observed, cat, ps)
+        };
+        let output = backend.as_str();
+
+        assert_eq!(exec.line(), b"status42 alpha beta");
+        assert_eq!(exec.status(), LocalCommandStatus::Handled);
+        assert_eq!(exec.response_lines(), 10);
+        assert_eq!(waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(observed.status(), LocalCommandStatus::Handled);
+        assert_eq!(cat.status(), LocalCommandStatus::Handled);
+        assert_eq!(ps.status(), LocalCommandStatus::Handled);
+        assert!(output.contains("talos> talos: exec path=/bin/status42 source=vfs-open-read\n"));
+        assert!(output.contains(
+            "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-startup-abi state=literal-argv-absolute-empty-envp argc=0x0000000000000003 argv0=/bin/status42 argv1=alpha argv2=beta argv0-ptr=0x00007fffffffffe0 argv-null=false envp-null=true envp-state=empty-envp0 envp-entries=0x0000000000000000 envp0-ptr=0x00007fffffffffd8 copied-startup-bytes=0x0000000000000049 source=initial-user-stack-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "slot=0 capacity=3 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true wait-consumed=true job-state=foreground source=bounded-process-table\n"
+        ));
+    }
+
+    #[test_case]
     fn local_command_loop_runs_path_form_absolute_vfs_pipeline() {
         let bytes = *b"/bin/stdout | /bin/stdin\rwaitpid 0x100001\rwaitpid 0x100002\rlaststatus\rpipestatus\rcat /proc/talos/processes\rps\r";
         let input = ScriptedInput::new(bytes, bytes.len());
@@ -12793,10 +12864,10 @@ talos> talos: exec-not-executable\n"
     #[test_case]
     fn local_command_loop_rejects_unsupported_direct_path_commands_without_process_records() {
         let bytes =
-            *b"/missing\rbin/status42\r/bin\r/etc/banner.txt\rstatus42 extra\r/bin/status42 alpha beta gamma delta\r";
+            *b"/missing\rbin/status42\r/bin\r/etc/banner.txt\rstatus42 alpha beta gamma delta\rstatus42 *\r/bin/status42 alpha beta gamma delta\r";
         let input = ScriptedInput::new(bytes, bytes.len());
         let mut backend = CaptureSink::new();
-        let (missing, relative, directory, banner, bare_extra, path_extra) = {
+        let (missing, relative, directory, banner, bare_too_many, bare_invalid, path_extra) = {
             let mut io =
                 DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
             let missing = run_one_descriptor_backed_serial_command(&mut io).unwrap();
@@ -12819,7 +12890,12 @@ talos> talos: exec-not-executable\n"
                 io.process_table_records(),
                 [None; LOCAL_COMMAND_PROCESS_TABLE_CAPACITY]
             );
-            let bare_extra = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bare_too_many = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(
+                io.process_table_records(),
+                [None; LOCAL_COMMAND_PROCESS_TABLE_CAPACITY]
+            );
+            let bare_invalid = run_one_descriptor_backed_serial_command(&mut io).unwrap();
             assert_eq!(
                 io.process_table_records(),
                 [None; LOCAL_COMMAND_PROCESS_TABLE_CAPACITY]
@@ -12829,7 +12905,15 @@ talos> talos: exec-not-executable\n"
                 io.process_table_records(),
                 [None; LOCAL_COMMAND_PROCESS_TABLE_CAPACITY]
             );
-            (missing, relative, directory, banner, bare_extra, path_extra)
+            (
+                missing,
+                relative,
+                directory,
+                banner,
+                bare_too_many,
+                bare_invalid,
+                path_extra,
+            )
         };
 
         assert_eq!(missing.line(), b"/missing");
@@ -12840,8 +12924,16 @@ talos> talos: exec-not-executable\n"
         assert_eq!(directory.status(), LocalCommandStatus::UnexpectedArgument);
         assert_eq!(banner.line(), b"/etc/banner.txt");
         assert_eq!(banner.status(), LocalCommandStatus::UnexpectedArgument);
-        assert_eq!(bare_extra.line(), b"status42 extra");
-        assert_eq!(bare_extra.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(bare_too_many.line(), b"status42 alpha beta gamma delta");
+        assert_eq!(
+            bare_too_many.status(),
+            LocalCommandStatus::UnexpectedArgument
+        );
+        assert_eq!(bare_invalid.line(), b"status42 *");
+        assert_eq!(
+            bare_invalid.status(),
+            LocalCommandStatus::UnexpectedArgument
+        );
         assert_eq!(path_extra.line(), b"/bin/status42 alpha beta gamma delta");
         assert_eq!(path_extra.status(), LocalCommandStatus::UnexpectedArgument);
         assert_eq!(
@@ -12850,6 +12942,7 @@ talos> talos: exec-not-executable\n"
 talos> talos: unknown-command\n\
 talos> talos: exec-not-executable\n\
 talos> talos: exec-not-executable\n\
+talos> talos: exec-invalid-path\n\
 talos> talos: exec-invalid-path\n\
 talos> talos: exec-invalid-path\n"
         );

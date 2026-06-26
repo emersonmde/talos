@@ -9129,6 +9129,24 @@ arbitrary shell grammar, live networking/SSH, Pi 5 hardware proof,
 generated-root retry, and phase transition remain deferred. selected_next_task
 is phase12-local-bare-name-command-argv-core-20260626.
 
+phase12-local-bare-name-command-argv-core-20260626 accepts
+local-bare-name-command-argv-core. The local shell now accepts the bounded
+bare-name argv form 'status42 alpha beta'. The command resolves only through
+the accepted fixed /bin VFS lookup to /bin/status42, opens and reads the
+resolved executable from VFS, launches through the accepted loader/userspace
+startup/status path, and exits with status 0x2a. The startup evidence records
+argc=3, canonical argv0=/bin/status42, argv1=alpha, argv2=beta,
+deterministic empty envp, inherited standard descriptors, and a closed loader
+temporary descriptor. Existing no-argument bare-name command, bare-name
+pipeline, direct absolute-path argv, exec-prefixed literal argv,
+process-status VFS, ps, and pipestatus regressions remain intact. Too many
+bare-name literal arguments, unsupported literal characters, and unsupported
+bare commands fail closed without accepted process records. This does not
+accept pipeline stage argv, redirections, environment-backed PATH,
+current-directory search, arbitrary shell grammar, live networking/SSH, Pi 5
+hardware proof, generated-root retry, or a phase transition.
+selected_next_task is phase12-local-command-argv-frontier-checkpoint-20260626.
+
 phase12-local-vfs-exec-lifecycle-record-generalization-core-20260626
 accepts local-vfs-exec-lifecycle-record-generalization-core. This local
 POSIX/VFS/userspace continuation preserves the accepted

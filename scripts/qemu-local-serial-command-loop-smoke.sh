@@ -24,6 +24,7 @@ CAT_CWD_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_CAT_CWD_SMOKE:-0}"
 SHELL_VFS_EXEC_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_VFS_EXEC_SMOKE:-0}"
 SHELL_ABSOLUTE_PATH_VFS_COMMAND_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_ABSOLUTE_PATH_VFS_COMMAND_SMOKE:-0}"
 SHELL_ABSOLUTE_PATH_VFS_PIPELINE_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_ABSOLUTE_PATH_VFS_PIPELINE_SMOKE:-0}"
+SHELL_BARE_NAME_COMMAND_ARGV_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_BARE_NAME_COMMAND_ARGV_SMOKE:-0}"
 SHELL_BARE_NAME_VFS_PIPELINE_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_BARE_NAME_VFS_PIPELINE_SMOKE:-0}"
 SHELL_LITERAL_ARGV_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_LITERAL_ARGV_SMOKE:-0}"
 SHELL_PATH_LOOKUP_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_PATH_LOOKUP_SMOKE:-0}"
@@ -582,6 +583,29 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
             command_index="${BASH_REMATCH[1]}"
             if [ "$sent" -eq "$command_index" ] && [ "$command_index" -lt "${#bare_name_vfs_pipeline_commands[@]}" ]; then
                 printf '%s\r' "${bare_name_vfs_pipeline_commands[$command_index]}" >&3
+                sent=$((command_index + 1))
+            fi
+            continue
+        fi
+        if [ "$SHELL_BARE_NAME_COMMAND_ARGV_SMOKE" -eq 1 ] && [[ "$line" =~ ready\ command=([0-9]+) ]]; then
+            bare_name_command_argv_commands=(
+                "help"
+                "status"
+                "stdio"
+                "status42 alpha beta"
+                "waitpid"
+                "laststatus"
+                "cat /proc/talos/processes"
+                "ps"
+                "status42"
+                "stdout | stdin"
+                "status42 alpha beta gamma delta"
+                "status42 *"
+                "missing alpha"
+            )
+            command_index="${BASH_REMATCH[1]}"
+            if [ "$sent" -eq "$command_index" ] && [ "$command_index" -lt "${#bare_name_command_argv_commands[@]}" ]; then
+                printf '%s\r' "${bare_name_command_argv_commands[$command_index]}" >&3
                 sent=$((command_index + 1))
             fi
             continue
@@ -2752,6 +2776,32 @@ elif [ "$SHELL_BARE_NAME_VFS_PIPELINE_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: dispatch command=15 status=unexpected-argument responses=1" "$LOG_FILE"
     grep -q "$LABEL: dispatch command=16 status=unexpected-argument responses=1" "$LOG_FILE"
     grep -q "$LABEL: final participants=17 expected=17 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+elif [ "$SHELL_BARE_NAME_COMMAND_ARGV_SMOKE" -eq 1 ]; then
+    grep -q "talos> status42 alpha beta" "$LOG_FILE"
+    grep -q "talos: exec path=/bin/status42 source=vfs-open-read" "$LOG_FILE"
+    grep -Eq "talos: exec-source bytes=0x[0-9a-f]+ digest=0x[0-9a-f]+" "$LOG_FILE"
+    grep -Eq "talos: exec-loader fixture=phase8-program-loader-elf64-aarch64-v1 entry=0x[0-9a-f]+ segments=0x[0-9a-f]+" "$LOG_FILE"
+    grep -Eq "talos: exec-launch launch-boundary=phase8-initial-process-launch-plan-v1 stack-boundary=phase8-initial-user-stack-plan-v1 address-space=0x[0-9a-f]+ materialization=0x[0-9a-f]+ initial-sp=0x[0-9a-f]+" "$LOG_FILE"
+    grep -Eq "talos: exec-descriptors owner=0x[0-9a-f]+ inherited-count=0x0000000000000003 fd0=stdio-input fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table" "$LOG_FILE"
+    grep -Eq "talos: exec-startup-abi state=literal-argv-absolute-empty-envp argc=0x0000000000000003 argv0=/bin/status42 argv1=alpha argv2=beta argv0-ptr=0x[0-9a-f]+ argv-null=false envp-null=true envp-state=empty-envp0 envp-entries=0x0000000000000000 envp0-ptr=0x[0-9a-f]+ copied-startup-bytes=0x0000000000000049 source=initial-user-stack-record" "$LOG_FILE"
+    grep -Eq "talos: exec-lifecycle pid=0x[0-9a-f]+ parent=shell owner=0x[0-9a-f]+ path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true" "$LOG_FILE"
+    grep -q "talos: exec-status boundary=lower-aarch64-svc-status-equivalent marker=0x0000000000007a10 status=0x000000000000002a complete=true source=lifecycle-record" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=3 status=handled responses=10" "$LOG_FILE"
+    grep -Eq "talos: waitpid pid=0x[0-9a-f]+ parent=shell owner=0x[0-9a-f]+ path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -Eq "talos: last-process pid=0x[0-9a-f]+ parent=shell owner=0x[0-9a-f]+ path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -q "path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true wait-consumed=true job-state=foreground source=bounded-process-table" "$LOG_FILE"
+    grep -q "talos> ps" "$LOG_FILE"
+    grep -q "talos> status42" "$LOG_FILE"
+    grep -Eq "talos: exec-startup-abi state=minimal-argc1-argv0-absolute-empty-envp argc=0x0000000000000001 argv0=/bin/status42 argv0-ptr=0x[0-9a-f]+ argv-null=false envp-null=true envp-state=empty-envp0 envp-entries=0x0000000000000000 envp0-ptr=0x[0-9a-f]+ copied-startup-bytes=0x000000000000002e source=initial-user-stack-record" "$LOG_FILE"
+    grep -q "talos> stdout | stdin" "$LOG_FILE"
+    grep -q "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin" "$LOG_FILE"
+    grep -q "talos> status42 alpha beta gamma delta" "$LOG_FILE"
+    grep -q "talos> status42 *" "$LOG_FILE"
+    grep -q "talos> missing alpha" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=10 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=11 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=12 status=unknown-command responses=1" "$LOG_FILE"
+    grep -q "$LABEL: final participants=13 expected=13 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
 elif [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
     grep -q "talos> exec /bin/status42" "$LOG_FILE"
     grep -q "talos: exec path=/bin/status42 source=vfs-open-read" "$LOG_FILE"

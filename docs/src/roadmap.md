@@ -18563,6 +18563,25 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
   transition remain deferred. selected_next_task is
   phase12-local-bare-name-command-argv-core-20260626.
+- phase12-local-bare-name-command-argv-core-20260626 accepts
+  local-bare-name-command-argv-core. The local shell now carries a small
+  literal argv vector for the direct bare-name command form:
+  'status42 alpha beta'. The command resolves only through the accepted fixed
+  /bin VFS lookup to /bin/status42, then uses descriptor-backed VFS open/read,
+  the accepted loader, userspace startup/status, inherited standard
+  descriptors, closed loader temporary descriptor, bounded process-table
+  observations, waitpid, laststatus, /proc/talos/processes, zero-argument ps,
+  and pipestatus compatibility. The startup ABI records argc=3, canonical
+  argv0=/bin/status42, argv1=alpha, argv2=beta, deterministic empty envp, and
+  status 0x2a. Existing no-argument bare-name command, bare-name pipeline,
+  direct absolute-path argv, exec-prefixed literal argv, process-status VFS,
+  ps, and pipestatus regressions remain passing. Too many bare-name literal
+  arguments, unsupported literal characters, and unsupported bare commands fail
+  closed without accepted process records. Pipeline stage argv, redirections,
+  environment-backed PATH, current-directory search, arbitrary shell grammar,
+  live networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
+  transition remain deferred. selected_next_task is
+  phase12-local-command-argv-frontier-checkpoint-20260626.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
