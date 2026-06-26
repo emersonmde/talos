@@ -18036,6 +18036,17 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   ping reachability, remote receipt, compatibility, phase transition,
   ssh-ready=true, generated-root command-input retry, and fake command
   expansion remain unaccepted pending supervisor planning.
+- phase12-local-process-lifecycle-status-record-core-20260626 resumes local
+  POSIX/VFS/userspace capability work while live Phase 12 network reachability
+  remains paused. It adds a named kernel-owned
+  `phase12-local-process-lifecycle-status-record-v1` record for the single
+  accepted `/bin/init` fixture path, preserving descriptor-backed VFS/open/read,
+  loader, launch, initial-stack, lower-AArch64 SVC zero-status, `laststatus`,
+  deterministic negative exec behavior, and `cat /etc/banner.txt` regression
+  evidence. It does not accept broad process tables, waitpid expansion,
+  process replacement, arbitrary executable dispatch, PATH lookup, writable
+  filesystem support, packet I/O, live networking, SSH, Pi 5 hardware evidence,
+  or a phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

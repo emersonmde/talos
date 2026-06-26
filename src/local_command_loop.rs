@@ -589,6 +589,7 @@ pub struct LocalCommandExecSummary {
     sockdiag: Option<LocalCommandSockdiagRecord>,
     sockdiag_controls: Option<LocalCommandSockdiagControlRecord>,
     lifecycle: LocalCommandProcessLifecycleRecord,
+    init_lifecycle_status: Option<LocalCommandInitLifecycleStatusRecord>,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -878,6 +879,26 @@ impl LocalCommandProcessLifecycleRecord {
             b"/bin/status42",
             status as u64,
         )
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct LocalCommandInitLifecycleStatusRecord {
+    identity: &'static str,
+    lifecycle: LocalCommandProcessLifecycleRecord,
+}
+
+impl LocalCommandInitLifecycleStatusRecord {
+    const IDENTITY: &'static str = "phase12-local-process-lifecycle-status-record-v1";
+
+    fn from_lifecycle(lifecycle: LocalCommandProcessLifecycleRecord) -> Option<Self> {
+        if lifecycle.source_path != initramfs::PHASE8_INIT_PATH {
+            return None;
+        }
+        Some(Self {
+            identity: Self::IDENTITY,
+            lifecycle,
+        })
     }
 }
 
@@ -1753,6 +1774,8 @@ where
             source_path,
             completion_status,
         );
+        let init_lifecycle_status =
+            LocalCommandInitLifecycleStatusRecord::from_lifecycle(lifecycle);
         self.last_process = Some(lifecycle);
         self.waitable_process = Some(lifecycle);
 
@@ -1791,6 +1814,7 @@ where
             sockdiag,
             sockdiag_controls,
             lifecycle,
+            init_lifecycle_status,
         })
     }
 
@@ -6582,6 +6606,9 @@ fn write_exec_summary(
         write_exec_sockdiag_controls_line(sink, response_lines, record)?;
     }
     write_exec_lifecycle_line(sink, response_lines, summary)?;
+    if let Some(record) = summary.init_lifecycle_status {
+        write_exec_init_lifecycle_status_line(sink, response_lines, record)?;
+    }
     write_exec_status_line(sink, response_lines, summary)?;
     write_line(
         sink,
@@ -6960,6 +6987,32 @@ fn write_exec_lifecycle_line(
     write_hex_u64_part(sink, lifecycle.observed_status)?;
     write_str_part(sink, " reaped=")?;
     write_str_part(sink, if lifecycle.reaped { "true" } else { "false" })?;
+    finish_dynamic_line(sink, response_lines)
+}
+
+fn write_exec_init_lifecycle_status_line(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    record: LocalCommandInitLifecycleStatusRecord,
+) -> Result<(), LocalCommandCycleError> {
+    let lifecycle = record.lifecycle;
+    write_str_part(sink, "talos: init-lifecycle-status record=")?;
+    write_str_part(sink, record.identity)?;
+    write_str_part(sink, " pid=")?;
+    write_hex_u64_part(sink, lifecycle.process_id)?;
+    write_str_part(sink, " parent=shell owner=")?;
+    write_hex_u64_part(sink, lifecycle.parent_owner_id)?;
+    write_str_part(sink, " path=")?;
+    write_byte_path_part(sink, lifecycle.source_path)?;
+    write_str_part(sink, " state=")?;
+    write_str_part(sink, lifecycle.state.name())?;
+    write_str_part(sink, " status=")?;
+    write_hex_u64_part(sink, lifecycle.status)?;
+    write_str_part(sink, " observed-status=")?;
+    write_hex_u64_part(sink, lifecycle.observed_status)?;
+    write_str_part(sink, " reaped=")?;
+    write_str_part(sink, if lifecycle.reaped { "true" } else { "false" })?;
+    write_str_part(sink, " source=kernel-owned-lifecycle-status-record")?;
     finish_dynamic_line(sink, response_lines)
 }
 
@@ -8101,7 +8154,7 @@ talos> Talos initramfs fixture\n"
 
         assert_eq!(result.line(), b"exec /bin/init");
         assert_eq!(result.status(), LocalCommandStatus::Handled);
-        assert_eq!(result.response_lines(), 9);
+        assert_eq!(result.response_lines(), 10);
         assert!(output.contains("talos> talos: exec path=/bin/init source=vfs-open-read\n"));
         assert!(output.contains("talos: exec-source bytes=0x0000000000000204 digest=0x"));
         assert!(output.contains(
@@ -8121,6 +8174,9 @@ talos> Talos initramfs fixture\n"
         ));
         assert!(output.contains(
             "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/init state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true\n"
+        ));
+        assert!(output.contains(
+            "talos: init-lifecycle-status record=phase12-local-process-lifecycle-status-record-v1 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/init state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=kernel-owned-lifecycle-status-record\n"
         ));
         assert!(output.contains(
             "talos: exec-status boundary=lower-aarch64-svc-status-equivalent marker=0x0000000000007a10 status=0x0000000000000000 complete=true source=lifecycle-record\n"
@@ -10529,7 +10585,7 @@ talos> talos: exec-invalid-path\n"
         assert_eq!(none.response_lines(), 1);
         assert_eq!(exec.line(), b"exec /bin/init");
         assert_eq!(exec.status(), LocalCommandStatus::Handled);
-        assert_eq!(exec.response_lines(), 9);
+        assert_eq!(exec.response_lines(), 10);
         assert_eq!(observed.line(), b"laststatus");
         assert_eq!(observed.status(), LocalCommandStatus::Handled);
         assert_eq!(observed.response_lines(), 1);
@@ -10539,6 +10595,9 @@ talos> talos: exec-invalid-path\n"
         ));
         assert!(output.contains(
             "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/init state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true\n"
+        ));
+        assert!(output.contains(
+            "talos: init-lifecycle-status record=phase12-local-process-lifecycle-status-record-v1 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/init state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=kernel-owned-lifecycle-status-record\n"
         ));
         assert!(output.contains(
             "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/init state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"

@@ -133,10 +133,21 @@ Still deferred after this checkpoint:
 
 ## Next Planning Handoff
 
+Update: the originally deferred narrow handoff below was later accepted by
+`phase12-local-process-lifecycle-status-record-core-20260626`, while live
+Phase 12 network reachability stayed paused. That continuation preserved the
+accepted `/bin/init` VFS/open/read, loader, launch, and zero-status SVC
+evidence, then added shell-visible
+`init-lifecycle-status record=phase12-local-process-lifecycle-status-record-v1`
+as a named kernel-owned lifecycle/status record for the single accepted
+`/bin/init` fixture path. General process tables, waitpid expansion, process
+replacement, PATH lookup, arbitrary executable dispatch, writable filesystem,
+networking, SSH, and Pi 5 hardware claims remain outside that continuation.
+
 No later explicit queued task exists after this closeout. The worker should
 therefore stop after acceptance and set durable state for supervisor planning.
 
-The next plausible feature-led slice is a narrow kernel-owned process
+The then-next plausible feature-led slice was a narrow kernel-owned process
 lifecycle or wait/status boundary: preserve the accepted `/bin/init` VFS read,
 launch, and zero-status SVC evidence, then make that status flow through an
 explicit lifecycle record the shell can observe. That task should be planned by
