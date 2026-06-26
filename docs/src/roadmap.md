@@ -18511,6 +18511,26 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   proof, generated-root command-input retry, or a phase transition.
   selected_next_task is
   phase12-local-bare-name-path-frontier-checkpoint-20260626.
+- phase12-local-bare-name-path-frontier-checkpoint-20260626 accepts
+  local-bare-name-path-frontier-checkpoint-accepted-planning-needed. The
+  checkpoint reconciles the accepted bounded bare-name command and pipeline
+  frontier against retained bare-name command, bare-name pipeline, direct
+  absolute-path command, path-form pipeline, exec-prefixed pipeline,
+  multistage pipeline, process-table, waitpid/jobs,
+  `/proc/talos/processes`, zero-argument `ps`, and `pipestatus`
+  evidence. Accepted bare-name lookup remains exactly the fixed `/bin` VFS
+  surface for `status42` and `stdout | stdin`, with VFS open/read, loader,
+  userspace launch/status, descriptor-backed pipe handoff, and bounded
+  process-table/status observations. selected_next_task is null and
+  planningNeeded=true because no later queued same-lane local POSIX/shell task
+  exists with complete objective dependencies, acceptance criteria,
+  validation gates, docs, and evidence requirements. Live networking/SSH,
+  Pi 5 hardware proof, POSIX PATH environment compatibility, command lookup
+  beyond the bounded `/bin` surface, path-form arguments/redirections,
+  arbitrary shell grammar, unbounded pipelines, pipeline concurrency,
+  scheduler concurrency, fork/signals, process groups/sessions, persistent
+  storage, generated-root command-input retry, and phase transition remain
+  deferred.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

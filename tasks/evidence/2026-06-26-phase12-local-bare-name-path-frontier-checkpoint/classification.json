@@ -1,0 +1,37 @@
+{
+  "classification": "local-bare-name-path-frontier-checkpoint-accepted-planning-needed",
+  "task_id": "phase12-local-bare-name-path-frontier-checkpoint-20260626",
+  "evidence_level": [
+    "static inspection",
+    "fmt/lint/typecheck inherited from accepted core tasks",
+    "unit tests inherited from accepted core tasks",
+    "QEMU/substitute inherited from accepted core tasks",
+    "docs build"
+  ],
+  "accepted_frontier": {
+    "direct_bare_name_command": "status42 resolves through fixed /bin VFS lookup to /bin/status42 and launches through VFS open/read, loader, userspace launch/status, and process-table surfaces",
+    "bare_name_pipeline": "stdout | stdin resolves through fixed /bin VFS lookup to /bin/stdout and /bin/stdin and launches through descriptor-backed pipe handoff",
+    "scope": "local static/unit/QEMU-substitute evidence only"
+  },
+  "deferred_frontier": [
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "POSIX PATH environment compatibility",
+    "command lookup beyond the bounded /bin surface",
+    "path-form arguments/redirections",
+    "arbitrary shell grammar",
+    "unbounded pipelines",
+    "pipeline concurrency",
+    "scheduler concurrency",
+    "fork/signals",
+    "process groups/sessions",
+    "persistent storage",
+    "generated-root command-input retry",
+    "phase transition"
+  ],
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "No later queued same-lane local POSIX/shell task exists with complete objective dependencies, acceptance criteria, validation gates, docs, and evidence requirements.",
+  "hardware_claim": "none",
+  "live_network_ssh": "paused"
+}

@@ -9076,6 +9076,27 @@ selected_next_task is
 phase12-local-bare-name-path-frontier-checkpoint-20260626 because that queued
 checkpoint is mechanically objective after this accepted bare-name pipeline.
 
+phase12-local-bare-name-path-frontier-checkpoint-20260626 accepts
+local-bare-name-path-frontier-checkpoint-accepted-planning-needed. The
+checkpoint reconciles the accepted bounded bare-name command and bare-name
+pipeline frontier against retained bare-name command, bare-name pipeline,
+direct absolute-path command, path-form pipeline, exec-prefixed pipeline,
+multistage pipeline, process-table, waitpid/jobs, /proc/talos/processes,
+zero-argument ps, and pipestatus evidence. The accepted surface remains
+exactly status42 and stdout | stdin resolving through the fixed /bin VFS lookup
+and then using VFS open/read, the accepted loader, userspace launch/status,
+descriptor-backed pipe handoff, and bounded process-table/status surfaces.
+This is local static/unit/QEMU-substitute evidence only. selected_next_task is
+null and planningNeeded=true because no later queued same-lane local
+POSIX/shell task exists with complete objective dependencies, acceptance
+criteria, validation gates, docs, and evidence requirements. Live
+networking/SSH, Pi 5 hardware proof, POSIX PATH environment compatibility,
+command lookup beyond the bounded /bin surface, path-form
+arguments/redirections, arbitrary shell grammar, unbounded pipelines,
+pipeline concurrency, scheduler concurrency, fork/signals, process
+groups/sessions, persistent storage, generated-root command-input retry, and
+phase transition remain deferred.
+
 phase12-local-vfs-exec-lifecycle-record-generalization-core-20260626
 accepts local-vfs-exec-lifecycle-record-generalization-core. This local
 POSIX/VFS/userspace continuation preserves the accepted

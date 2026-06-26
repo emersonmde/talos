@@ -1,0 +1,61 @@
+{
+  "task_id": "phase12-local-bare-name-path-frontier-checkpoint-20260626",
+  "classification": "local-bare-name-path-frontier-checkpoint-accepted-planning-needed",
+  "task_record": "tasks/2026-06-26-phase12-local-bare-name-path-frontier-checkpoint.md",
+  "accepted_core_records": [
+    "tasks/2026-06-26-phase12-local-bare-name-vfs-command-core.md",
+    "tasks/2026-06-26-phase12-local-bare-name-vfs-pipeline-core.md",
+    "tasks/2026-06-26-phase12-local-absolute-path-vfs-command-core.md",
+    "tasks/2026-06-26-phase12-local-absolute-path-vfs-pipeline-core.md",
+    "tasks/2026-06-26-phase12-local-path-command-frontier-checkpoint.md"
+  ],
+  "retained_transcripts": [
+    "tasks/evidence/2026-06-26-phase12-local-bare-name-vfs-command-core/qemu-local-shell-bare-name-vfs-command-smoke.log",
+    "tasks/evidence/2026-06-26-phase12-local-bare-name-vfs-pipeline-core/qemu-local-shell-bare-name-vfs-pipeline-smoke.log",
+    "tasks/evidence/2026-06-26-phase12-local-absolute-path-vfs-command-core/qemu-local-shell-absolute-path-vfs-command-smoke.log",
+    "tasks/evidence/2026-06-26-phase12-local-absolute-path-vfs-pipeline-core/qemu-local-shell-absolute-path-vfs-pipeline-smoke.log"
+  ],
+  "retained_regression_records": [
+    "tasks/2026-06-26-phase12-local-multistage-pipeline-core.md",
+    "tasks/2026-06-26-phase12-local-pipefail-status-core.md",
+    "tasks/2026-06-26-phase12-local-process-table-frontier-checkpoint.md",
+    "tasks/2026-06-26-phase12-local-posix-frontier-checkpoint.md",
+    "tasks/2026-06-26-phase12-local-pipeline-frontier-checkpoint.md"
+  ],
+  "docs": [
+    "docs/src/roadmap.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/project/early-posix-shape.md"
+  ],
+  "validation": [
+    {
+      "level": "static inspection",
+      "command": "Static inspection of retained bare-name command, bare-name pipeline, direct path-command, path-form pipeline, pipeline/process records, docs, and git diff.",
+      "result": "passed"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty tasks/evidence/2026-06-26-phase12-local-bare-name-path-frontier-checkpoint/classification.json tasks/evidence/2026-06-26-phase12-local-bare-name-path-frontier-checkpoint/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "level": "staged diff validation",
+      "command": "git diff --cached --check",
+      "result": "passed"
+    }
+  ],
+  "selected_next_task": null,
+  "planning_needed": true,
+  "hardware_claim": "none",
+  "live_network_ssh": "paused"
+}

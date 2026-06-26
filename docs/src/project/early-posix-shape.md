@@ -188,6 +188,20 @@ compatibility, command lookup beyond the bounded /bin surface, arbitrary shell
 grammar, unbounded pipelines, generated-root command-input retry, live
 networking/SSH, Pi 5 hardware proof, or a phase transition.
 
+The 2026-06-26 local bare-name path frontier checkpoint keeps that bare-name
+surface at static/unit/QEMU substitute evidence level. The accepted boundary is
+only status42 as a direct bare-name command and stdout | stdin as a two-stage
+bare-name pipeline, both backed by the fixed /bin VFS lookup, VFS open/read,
+loader, userspace launch/status, descriptor-backed pipe handoff, bounded
+process-table state, waitpid, /proc/talos/processes, zero-argument ps, and
+pipestatus observations. Live networking/SSH, Pi 5 hardware proof,
+environment-backed POSIX PATH compatibility, command lookup beyond the bounded
+/bin surface, path-form arguments/redirections, arbitrary shell grammar,
+unbounded pipelines, pipeline concurrency, scheduler concurrency,
+fork/signals, process groups/sessions, persistent storage, generated-root
+command-input retry, and phase transition remain deferred pending supervisor
+planning.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
