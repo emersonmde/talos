@@ -1,0 +1,29 @@
+{
+  "task_id": "phase12-local-pipefail-status-core-20260626",
+  "classification": "local-pipeline-status-core-accepted",
+  "accepted": true,
+  "accepted_surface": "bounded pipestatus observation over process-table lifecycle records",
+  "default_pipeline_status": "final-stage status remains the default shell status observation",
+  "pipefail_status_scope": "bounded-observation-not-posix-shell",
+  "accepted_cases": [
+    "pipestatus none before a pipeline",
+    "zero-status exact two-stage exec stdout | exec stdin",
+    "nonzero producer exact two-stage exec status42 | exec stdin",
+    "accepted exact three-stage exec stdout | exec stdin | exec stdin"
+  ],
+  "deferred": [
+    "POSIX shell compatibility",
+    "arbitrary shell grammar",
+    "unbounded pipelines",
+    "scheduler concurrency",
+    "fork/signals",
+    "process groups/sessions",
+    "live networking",
+    "SSH",
+    "Pi 5 hardware proof",
+    "phase transition"
+  ],
+  "selected_next_task": "phase12-local-pipefail-status-closeout-20260626",
+  "hardware_claim": "none",
+  "live_network_ssh_reachability": "paused"
+}

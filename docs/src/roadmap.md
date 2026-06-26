@@ -18361,6 +18361,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   fork/signals, process groups/sessions, broad procfs/Linux `ps`, persistent
   storage, live networking, SSH, Pi 5 hardware proof, generated-root
   command-input retry, and phase transition remain deferred.
+- phase12-local-pipefail-status-core-20260626 accepts
+  local-pipeline-status-core-accepted. The local shell now has a bounded
+  `pipestatus` observation surface backed by the accepted process-table
+  lifecycle records rather than shell-parser recomputation. It reports
+  participant statuses for exact two-stage pipelines, the accepted three-stage
+  pipeline, and a bounded nonzero-status two-stage case
+  `exec status42 | exec stdin`; default pipeline status remains the final
+  stage status and the reported `pipefail-status` is explicitly
+  `bounded-observation-not-posix-shell`. The retained QEMU/substitute transcript
+  records zero-status two-stage, nonzero producer/status42, and three-stage
+  cases. Arbitrary shell grammar, POSIX pipefail compatibility, unbounded
+  pipelines, scheduler concurrency, fork/signals, process groups/sessions, live
+  networking, SSH, Pi 5 hardware proof, and phase transition remain deferred.
+  selected_next_task is phase12-local-pipefail-status-closeout-20260626.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

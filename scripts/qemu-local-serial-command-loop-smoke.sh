@@ -67,6 +67,7 @@ SHELL_STDOUT_CLOSE_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDO
 SHELL_STDERR_CLOSE_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDERR_CLOSE_REDIRECTION_SMOKE:-0}"
 SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE:-0}"
 SHELL_MULTISTAGE_PIPELINE_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_MULTISTAGE_PIPELINE_SMOKE:-0}"
+SHELL_PIPELINE_STATUS_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_PIPELINE_STATUS_SMOKE:-0}"
 SHELL_PIPELINE_STDERR_NOT_PIPED_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_PIPELINE_STDERR_NOT_PIPED_SMOKE:-0}"
 SHELL_PIPELINE_STDERR_DUP_TO_STDOUT_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_PIPELINE_STDERR_DUP_TO_STDOUT_SMOKE:-0}"
 SHELL_PIPELINE_STDOUT_REDIRECT_AWAY_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_PIPELINE_STDOUT_REDIRECT_AWAY_SMOKE:-0}"
@@ -212,6 +213,28 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
             command_index="${BASH_REMATCH[1]}"
             if [ "$sent" -eq "$command_index" ] && [ "$command_index" -lt "${#multistage_pipeline_commands[@]}" ]; then
                 printf '%s\r' "${multistage_pipeline_commands[$command_index]}" >&3
+                sent=$((command_index + 1))
+            fi
+            continue
+        fi
+        if [ "$SHELL_PIPELINE_STATUS_SMOKE" -eq 1 ] && [[ "$line" =~ ready\ command=([0-9]+) ]]; then
+            pipeline_status_commands=(
+                "help"
+                "status"
+                "stdio"
+                "pipestatus"
+                "exec stdout | exec stdin"
+                "pipestatus"
+                "laststatus"
+                "exec status42 | exec stdin"
+                "pipestatus"
+                "laststatus"
+                "exec stdout | exec stdin | exec stdin"
+                "pipestatus"
+            )
+            command_index="${BASH_REMATCH[1]}"
+            if [ "$sent" -eq "$command_index" ] && [ "$command_index" -lt "${#pipeline_status_commands[@]}" ]; then
+                printf '%s\r' "${pipeline_status_commands[$command_index]}" >&3
                 sent=$((command_index + 1))
             fi
             continue
@@ -2856,6 +2879,19 @@ elif [ "$SHELL_PIPELINE_PRODUCER_FILE_REDIRECTION_AWAY_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: dispatch command=9 status=unexpected-argument responses=1" "$LOG_FILE"
     grep -q "$LABEL: dispatch command=10 status=unexpected-argument responses=1" "$LOG_FILE"
     grep -q "$LABEL: final participants=11 expected=11 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+elif [ "$SHELL_PIPELINE_STATUS_SMOKE" -eq 1 ]; then
+    grep -q "talos> pipestatus" "$LOG_FILE"
+    grep -q "talos: pipestatus none source=bounded-process-table-pipeline-status" "$LOG_FILE"
+    grep -q "talos> exec stdout | exec stdin" "$LOG_FILE"
+    grep -q "talos: pipestatus participants=0x0000000000000002 default-status=0x0000000000000000 pipefail-status=0x0000000000000000 semantics=bounded-observation-not-posix-shell source=bounded-process-table-pipeline-status" "$LOG_FILE"
+    grep -q "talos> exec status42 | exec stdin" "$LOG_FILE"
+    grep -q "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/status42 consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x0000000000000000 bytes-read=0x0000000000000000 writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-status42-to-stdin" "$LOG_FILE"
+    grep -q "talos: pipestatus participants=0x0000000000000002 default-status=0x0000000000000000 pipefail-status=0x000000000000002a semantics=bounded-observation-not-posix-shell source=bounded-process-table-pipeline-status" "$LOG_FILE"
+    grep -q "talos: pipestatus-participant slot=0 pid=0x0000000000100001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=bounded-process-table-pipeline-status" "$LOG_FILE"
+    grep -q "talos: last-process pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -q "talos> exec stdout | exec stdin | exec stdin" "$LOG_FILE"
+    grep -q "talos: pipestatus participants=0x0000000000000003 default-status=0x0000000000000000 pipefail-status=0x0000000000000000 semantics=bounded-observation-not-posix-shell source=bounded-process-table-pipeline-status" "$LOG_FILE"
+    grep -q "$LABEL: final participants=12 expected=12 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
 elif [ "$SHELL_MULTISTAGE_PIPELINE_SMOKE" -eq 1 ]; then
     grep -q "talos> exec stdout | exec stdin | exec stdin" "$LOG_FILE"
     grep -q "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-multistage-first-stdout-to-stdin" "$LOG_FILE"

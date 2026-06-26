@@ -119,8 +119,12 @@ The first accepted multistage pipeline remains deliberately narrow:
 but still serialized and bounded. The three fixtures exchange bytes through
 two pipe descriptor handoffs and install three process-table records that
 `waitpid`, `/proc/talos/processes`, and zero-argument `ps` can observe.
-This does not accept arbitrary pipeline grammar, unbounded pipeline length,
-pipeline concurrency, or pipefail.
+The bounded `pipestatus` shell surface now reads those same process-table
+records for exact two-stage and accepted three-stage pipelines, preserving
+default final-stage status while exposing a labeled `pipefail-status`
+observation for a nonzero producer case. This is not POSIX shell
+compatibility and does not accept arbitrary pipeline grammar, unbounded
+pipeline length, pipeline concurrency, or a shell option framework.
 
 ## Scheduler Implications
 

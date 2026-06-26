@@ -9285,6 +9285,23 @@ groups/sessions, broad procfs/Linux `ps`, persistent storage, live networking,
 SSH, Pi 5 hardware proof, generated-root command-input retry, and phase
 transition remain deferred.
 
+phase12-local-pipefail-status-core-20260626 accepts
+local-pipeline-status-core-accepted. The accepted shell-visible surface is the
+bounded `pipestatus` command. It reads the current bounded process-table
+records for the last accepted pipeline and prints participant status, default
+final-stage status, and a `pipefail-status` observation labeled
+`bounded-observation-not-posix-shell`. The implementation adds one bounded
+nonzero two-stage case, `exec status42 | exec stdin`, so the status surface
+records both zero-status and nonzero producer-status evidence without changing
+`laststatus`/`waitpid` semantics. The retained QEMU/substitute transcript
+covers zero-status two-stage, nonzero status42 producer, and the accepted
+three-stage pipeline. This remains local static/unit/QEMU-substitute evidence;
+POSIX shell compatibility, arbitrary shell grammar, unbounded pipelines,
+scheduler concurrency, fork/signals, process groups/sessions, public procfs or
+Linux `ps`, persistent storage, live networking, SSH, Pi 5 hardware proof, and
+phase transition remain deferred. selected_next_task is
+phase12-local-pipefail-status-closeout-20260626.
+
 phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624 accepts
 the live reachability source reconciliation as
 live-reachability-source-reconciliation-paused-no-defensible-discriminator.

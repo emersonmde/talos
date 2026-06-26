@@ -1,0 +1,51 @@
+{
+  "task_id": "phase12-local-pipefail-status-core-20260626",
+  "classification": "local-pipeline-status-core-accepted",
+  "evidence": [
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "result": "passed; 834 talos no_std tests including bounded two-stage, nonzero producer, and three-stage pipestatus tests"
+    },
+    {
+      "level": "QEMU/substitute",
+      "command": "scripts/qemu-local-shell-pipeline-status-smoke.sh",
+      "path": "tasks/evidence/2026-06-26-phase12-local-pipefail-status-core/qemu-local-shell-pipeline-status-smoke.log",
+      "result": "passed; transcript records pipestatus none, zero-status two-stage, nonzero producer status42, preserved laststatus, and three-stage pipestatus observations"
+    },
+    {
+      "level": "fmt/lint",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed; mdBook HTML emitted with existing large-search-index warning"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty tasks/evidence/2026-06-26-phase12-local-pipefail-status-core/classification.json tasks/evidence/2026-06-26-phase12-local-pipefail-status-core/evidence-map.json",
+      "result": "passed"
+    }
+  ],
+  "retained_paths": [
+    "src/local_command_loop.rs",
+    "src/target/qemu_virt.rs",
+    "build.rs",
+    "scripts/qemu-local-serial-command-loop-smoke.sh",
+    "scripts/qemu-local-shell-pipeline-status-smoke.sh",
+    "tasks/2026-06-26-phase12-local-pipefail-status-core.md",
+    "docs/src/roadmap.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/project/early-posix-shape.md"
+  ],
+  "selected_next_task": "phase12-local-pipefail-status-closeout-20260626",
+  "hardware_claim": "none",
+  "live_network_ssh_reachability": "paused"
+}

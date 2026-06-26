@@ -47,7 +47,7 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+bounded-process-table-direct-vfs-exec-lifecycle",
     "+bounded-process-table-pipeline-background-lifecycle",
     "+proc-talos-processes-descriptor-backed-status-vfs+ps-command-vfs-backed-process-status",
-    "+multistage-pipeline-bounded-process-table"
+    "+multistage-pipeline-bounded-process-table+bounded-pipeline-status-observation"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -1241,6 +1241,12 @@ pub trait LocalCommandSink {
         &self,
     ) -> [Option<LocalCommandBackgroundJobRecord>; LOCAL_COMMAND_BACKGROUND_JOB_CAPACITY] {
         [None; LOCAL_COMMAND_BACKGROUND_JOB_CAPACITY]
+    }
+
+    fn process_table_records(
+        &self,
+    ) -> [Option<LocalCommandProcessTableRecord>; LOCAL_COMMAND_PROCESS_TABLE_CAPACITY] {
+        [None; LOCAL_COMMAND_PROCESS_TABLE_CAPACITY]
     }
 
     fn last_process_lifecycle_record(&self) -> Option<LocalCommandProcessLifecycleRecord> {
@@ -4148,6 +4154,7 @@ where
                 None,
                 None | Some(LocalCommandExecRedirection::StderrToStdout),
             ) => true,
+            (initramfs::PHASE10_STATUS42_PATH, None, None) => true,
             _ => false,
         };
         let consumer_output_redirection_supported = request.producer.path()
@@ -4218,6 +4225,9 @@ where
             }
             (None, None) if producer.source_path == initramfs::PHASE10_STDERR_PATH => {
                 "shell-pipe-stdout-only-stderr-not-piped"
+            }
+            (None, None) if producer.source_path == initramfs::PHASE10_STATUS42_PATH => {
+                "shell-pipe-status42-to-stdin"
             }
             (None, None) => "shell-pipe-stdout-to-stdin",
             _ => return Err(LocalCommandExecError::InvalidPath),
@@ -4460,6 +4470,12 @@ where
         &self,
     ) -> [Option<LocalCommandBackgroundJobRecord>; LOCAL_COMMAND_BACKGROUND_JOB_CAPACITY] {
         self.background_jobs
+    }
+
+    fn process_table_records(
+        &self,
+    ) -> [Option<LocalCommandProcessTableRecord>; LOCAL_COMMAND_PROCESS_TABLE_CAPACITY] {
+        self.process_table_records
     }
 }
 
@@ -6382,7 +6398,7 @@ fn dispatch_local_command(
             write_line(
                 sink,
                 responses,
-                "talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid jobs ps",
+                "talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid jobs ps pipestatus",
             )?;
             write_line(
                 sink,
@@ -6420,7 +6436,7 @@ fn dispatch_local_command(
             write_line(
                 sink,
                 responses,
-                "talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid jobs ps",
+                "talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid jobs ps pipestatus",
             )?;
             Ok(LocalCommandStatus::Handled)
         }
@@ -6444,6 +6460,14 @@ fn dispatch_local_command(
                     "talos: jobs none source=background-vfs-exec-accounting",
                 )?;
             }
+            Ok(LocalCommandStatus::Handled)
+        }
+        "pipestatus" => {
+            if command.arguments.is_some() {
+                write_line(sink, responses, "talos: unexpected-argument")?;
+                return Ok(LocalCommandStatus::UnexpectedArgument);
+            }
+            write_pipeline_status_observation(sink, responses, sink.process_table_records())?;
             Ok(LocalCommandStatus::Handled)
         }
         "rootinfo" => {
@@ -7477,6 +7501,73 @@ fn write_jobs_accounting_line(
     write_str_part(sink, if job.reaped { "true" } else { "false" })?;
     write_str_part(sink, " source=background-vfs-exec-accounting")?;
     finish_dynamic_line(sink, response_lines)
+}
+
+fn write_pipeline_status_observation(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    records: [Option<LocalCommandProcessTableRecord>; LOCAL_COMMAND_PROCESS_TABLE_CAPACITY],
+) -> Result<(), LocalCommandCycleError> {
+    let mut participant_count = 0usize;
+    let mut default_status = 0u64;
+    let mut pipefail_status = 0u64;
+    let mut first_nonzero_seen = false;
+
+    for record in records.into_iter().flatten() {
+        participant_count += 1;
+        default_status = record.lifecycle.status;
+        if !first_nonzero_seen && record.lifecycle.status != 0 {
+            pipefail_status = record.lifecycle.status;
+            first_nonzero_seen = true;
+        }
+    }
+
+    if participant_count < 2 {
+        write_line(
+            sink,
+            response_lines,
+            "talos: pipestatus none source=bounded-process-table-pipeline-status",
+        )?;
+        return Ok(());
+    }
+
+    if !first_nonzero_seen {
+        pipefail_status = default_status;
+    }
+
+    write_str_part(sink, "talos: pipestatus participants=")?;
+    write_hex_usize_part(sink, participant_count)?;
+    write_str_part(sink, " default-status=")?;
+    write_hex_u64_part(sink, default_status)?;
+    write_str_part(sink, " pipefail-status=")?;
+    write_hex_u64_part(sink, pipefail_status)?;
+    write_str_part(
+        sink,
+        " semantics=bounded-observation-not-posix-shell source=bounded-process-table-pipeline-status",
+    )?;
+    finish_dynamic_line(sink, response_lines)?;
+
+    for record in records.into_iter().flatten() {
+        let lifecycle = record.lifecycle;
+        write_str_part(sink, "talos: pipestatus-participant slot=")?;
+        write_decimal_usize_part(sink, record.slot)?;
+        write_str_part(sink, " pid=")?;
+        write_hex_u64_part(sink, lifecycle.process_id)?;
+        write_str_part(sink, " path=")?;
+        write_byte_path_part(sink, lifecycle.source_path)?;
+        write_str_part(sink, " state=")?;
+        write_str_part(sink, lifecycle.state.name())?;
+        write_str_part(sink, " status=")?;
+        write_hex_u64_part(sink, lifecycle.status)?;
+        write_str_part(sink, " observed-status=")?;
+        write_hex_u64_part(sink, lifecycle.observed_status)?;
+        write_str_part(sink, " reaped=")?;
+        write_str_part(sink, if lifecycle.reaped { "true" } else { "false" })?;
+        write_str_part(sink, " source=bounded-process-table-pipeline-status")?;
+        finish_dynamic_line(sink, response_lines)?;
+    }
+
+    Ok(())
 }
 
 fn write_pipeline_summary(
@@ -8660,7 +8751,7 @@ mod tests {
         assert_eq!(
             sink.as_str(),
             "talos> talos: ok help\n\
-	talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid jobs ps\n\
+	talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid jobs ps pipestatus\n\
 	talos: echo forms echo hello; echo local serial works\n\
 	talos: editing backspace delete ctrl-c ctrl-u\n"
         );
@@ -12154,6 +12245,90 @@ talos> talos: exec-not-executable\n"
             "slot=2 capacity=3 pid=0x0000000000100003 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true wait-consumed=true job-state=foreground source=bounded-process-table\n"
         ));
         assert_eq!(output.matches("talos-processes-v1\n").count(), 2);
+    }
+
+    #[test_case]
+    fn local_command_loop_reports_bounded_pipeline_status_from_process_table() {
+        let bytes = *b"pipestatus\rexec stdout | exec stdin\rpipestatus\rlaststatus\rexec status42 | exec stdin\rpipestatus\rlaststatus\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (
+            empty,
+            zero_pipeline,
+            zero_status,
+            zero_last,
+            nonzero_pipeline,
+            nonzero_status,
+            nonzero_last,
+        ) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(empty.line(), b"pipestatus");
+        assert_eq!(empty.status(), LocalCommandStatus::Handled);
+        assert_eq!(zero_pipeline.line(), b"exec stdout | exec stdin");
+        assert_eq!(zero_pipeline.status(), LocalCommandStatus::Handled);
+        assert_eq!(zero_status.line(), b"pipestatus");
+        assert_eq!(zero_status.status(), LocalCommandStatus::Handled);
+        assert_eq!(zero_last.status(), LocalCommandStatus::Handled);
+        assert_eq!(nonzero_pipeline.line(), b"exec status42 | exec stdin");
+        assert_eq!(nonzero_pipeline.status(), LocalCommandStatus::Handled);
+        assert_eq!(nonzero_status.line(), b"pipestatus");
+        assert_eq!(nonzero_status.status(), LocalCommandStatus::Handled);
+        assert_eq!(nonzero_last.status(), LocalCommandStatus::Handled);
+        assert!(output.contains(
+            "talos> talos: pipestatus none source=bounded-process-table-pipeline-status\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: pipestatus participants=0x0000000000000002 default-status=0x0000000000000000 pipefail-status=0x0000000000000000 semantics=bounded-observation-not-posix-shell source=bounded-process-table-pipeline-status\n"
+        ));
+        assert!(output.contains(
+            "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/status42 consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x0000000000000000 bytes-read=0x0000000000000000 writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-status42-to-stdin\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: pipestatus participants=0x0000000000000002 default-status=0x0000000000000000 pipefail-status=0x000000000000002a semantics=bounded-observation-not-posix-shell source=bounded-process-table-pipeline-status\n"
+        ));
+        assert!(output.contains(
+            "talos: pipestatus-participant slot=0 pid=0x0000000000100001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=bounded-process-table-pipeline-status\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: last-process pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+    }
+
+    #[test_case]
+    fn local_command_loop_reports_three_stage_pipeline_status_from_process_table() {
+        let bytes = *b"exec stdout | exec stdin | exec stdin\rpipestatus\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (pipeline, status) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(pipeline.line(), b"exec stdout | exec stdin | exec stdin");
+        assert_eq!(pipeline.status(), LocalCommandStatus::Handled);
+        assert_eq!(status.line(), b"pipestatus");
+        assert_eq!(status.status(), LocalCommandStatus::Handled);
+        assert!(output.contains(
+            "talos> talos: pipestatus participants=0x0000000000000003 default-status=0x0000000000000000 pipefail-status=0x0000000000000000 semantics=bounded-observation-not-posix-shell source=bounded-process-table-pipeline-status\n"
+        ));
     }
 
     #[test_case]
