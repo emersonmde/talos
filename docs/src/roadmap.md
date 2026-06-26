@@ -18227,6 +18227,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   options, PID reuse policy beyond bounded deterministic controls, multi-stage
   pipelines, pipefail, persistent storage, live networking, SSH, Pi 5 hardware
   proof, or a phase transition.
+- phase12-local-process-table-pipeline-background-closeout-20260626 accepts the
+  static closeout for the pipeline/background process-table frontier. The
+  accepted boundary is one bounded internal process-table lifecycle/status
+  substrate for direct foreground VFS exec, exact two-stage pipeline
+  producer/consumer records, and accepted background /bin/status42 and /bin/zero
+  job records. The evidence map cites retained direct exec, pipeline,
+  background, waitpid, jobs, stale-entry, descriptor-backed VFS, and redirection
+  controls, including the accepted QEMU/substitute waitpid-any-completed-child
+  transcript. Public process enumeration/procfs, true scheduler concurrency,
+  fork/signals, process groups/sessions, waitpid options, PID reuse policy
+  beyond bounded deterministic controls, multi-stage pipelines, pipefail,
+  persistent storage, live networking, SSH, Pi 5 hardware proof, and phase
+  transition remain deferred. selected_next_task is
+  phase12-local-process-table-frontier-checkpoint-20260626 because the queued
+  checkpoint is mechanically objective after this accepted closeout.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

@@ -9145,6 +9145,22 @@ options, PID reuse policy beyond bounded deterministic controls, multi-stage
 pipelines, pipefail, persistent storage, live networking, SSH, Pi 5 hardware
 proof, and phase transition remain deferred.
 
+phase12-local-process-table-pipeline-background-closeout-20260626 accepts the
+static closeout for the pipeline/background process-table frontier. The
+accepted boundary is one bounded internal process-table lifecycle/status
+substrate for direct foreground VFS exec, exact two-stage pipeline
+producer/consumer records, and accepted background /bin/status42 and /bin/zero
+job records. The evidence map cites retained direct exec, pipeline, background,
+waitpid, jobs, stale-entry, descriptor-backed VFS, and redirection controls,
+including the accepted QEMU/substitute waitpid-any-completed-child transcript.
+Public process enumeration/procfs, true scheduler concurrency, fork/signals,
+process groups/sessions, waitpid options, PID reuse policy beyond bounded
+deterministic controls, multi-stage pipelines, pipefail, persistent storage,
+live networking, SSH, Pi 5 hardware proof, and phase transition remain
+deferred. selected_next_task is
+phase12-local-process-table-frontier-checkpoint-20260626 because the queued
+checkpoint is mechanically objective after this accepted closeout.
+
 phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624 accepts
 the live reachability source reconciliation as
 live-reachability-source-reconciliation-paused-no-defensible-discriminator.

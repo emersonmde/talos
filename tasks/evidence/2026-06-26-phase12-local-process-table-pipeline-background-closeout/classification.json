@@ -1,0 +1,34 @@
+{
+  "task_id": "phase12-local-process-table-pipeline-background-closeout-20260626",
+  "classification": "local-process-table-pipeline-background-closeout-accepted",
+  "accepted_frontier": "bounded internal process-table lifecycle/status records for direct foreground VFS exec, exact two-stage pipelines, and accepted background VFS exec jobs",
+  "source_changes": [],
+  "closeout": {
+    "direct_foreground_vfs_exec": "accepted through the bounded process-table substrate",
+    "exact_two_stage_pipelines": "accepted producer and consumer lifecycle/status records use bounded process-table entries with distinct stable pids",
+    "background_vfs_exec_jobs": "accepted /bin/status42 and /bin/zero background job lifecycle/status records use bounded process-table entries while preserving jobs accounting and deterministic clearing"
+  },
+  "deferred": [
+    "public process enumeration",
+    "procfs/ps command",
+    "true scheduler concurrency",
+    "fork/signals",
+    "process groups/sessions",
+    "waitpid options",
+    "PID reuse policy beyond bounded deterministic controls",
+    "multi-stage pipelines",
+    "pipefail",
+    "persistent storage",
+    "live networking",
+    "SSH",
+    "Pi 5 hardware proof",
+    "phase transition"
+  ],
+  "hardware": {
+    "hardwareTestLock_acquired": false,
+    "pi5_hardware_action": false,
+    "claim": "no hardware proof claimed"
+  },
+  "selected_next_task": "phase12-local-process-table-frontier-checkpoint-20260626",
+  "commit": "recorded in durable supervisor state after commit"
+}

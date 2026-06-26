@@ -1,0 +1,43 @@
+{
+  "task_id": "phase12-local-process-table-pipeline-background-closeout-20260626",
+  "classification": "local-process-table-pipeline-background-closeout-accepted",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "path": "tasks/2026-06-26-phase12-local-process-table-pipeline-background-core.md",
+      "summary": "Accepted core task records bounded process-table lifecycle/status backing for exact pipeline producer/consumer and accepted background jobs."
+    },
+    {
+      "level": "static inspection",
+      "path": "tasks/evidence/2026-06-26-phase12-local-process-table-pipeline-background-core/classification.json",
+      "summary": "Accepted/deferred frontier and selected closeout task are recorded."
+    },
+    {
+      "level": "static inspection",
+      "path": "tasks/evidence/2026-06-26-phase12-local-process-table-pipeline-background-core/evidence-map.json",
+      "summary": "Evidence cites source inspection, focused local command loop tests, retained QEMU/substitute waitpid smoke, and docs."
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-26-phase12-local-process-table-pipeline-background-core/qemu-local-shell-waitpid-any-completed-child-smoke.log",
+      "summary": "Retained smoke passed with classification qemu-local-shell-waitpid-any-completed-child-complete and participants=19 expected=19 errors=0."
+    },
+    {
+      "level": "documentation",
+      "paths": [
+        "docs/src/roadmap.md",
+        "docs/src/project/phase12-networking-ssh.md",
+        "tasks/2026-06-26-phase12-local-process-table-pipeline-background-closeout.md"
+      ],
+      "summary": "Closeout records accepted/deferred frontier and selects the queued process-table frontier checkpoint."
+    }
+  ],
+  "validation": {
+    "static_inspection": "passed",
+    "jq_empty": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed"
+  },
+  "commit": "recorded in durable supervisor state after commit"
+}
