@@ -18346,6 +18346,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   public procfs/Linux `ps` compatibility, generated-root command-input retry,
   live networking, SSH, Pi 5 hardware proof, or a phase transition.
   selected_next_task is phase12-local-multistage-pipeline-closeout-20260626.
+- phase12-local-multistage-pipeline-closeout-20260626 accepts
+  local-multistage-pipeline-closeout-accepted. The closeout maps the accepted
+  exact three-stage pipeline to the retained core task record, classification,
+  evidence map, QEMU/substitute transcript, process-status VFS regression, and
+  VFS-backed `ps` regression. The accepted boundary remains only
+  `exec stdout | exec stdin | exec stdin`: VFS exec loads all three fixtures,
+  two descriptor-backed pipe handoffs carry bytes to the final fixture, and
+  `/proc/talos/processes` plus zero-argument `ps` report the three bounded
+  process-table records consistently. selected_next_task is
+  phase12-local-pipefail-status-core-20260626 because the queued bounded
+  pipeline status task is mechanically objective after this closeout. Arbitrary
+  shell grammar, unbounded pipelines, pipefail, scheduler concurrency,
+  fork/signals, process groups/sessions, broad procfs/Linux `ps`, persistent
+  storage, live networking, SSH, Pi 5 hardware proof, generated-root
+  command-input retry, and phase transition remain deferred.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

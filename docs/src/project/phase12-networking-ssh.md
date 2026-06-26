@@ -9269,6 +9269,22 @@ compatibility, generated-root command-input retry, live networking, SSH, Pi 5
 hardware proof, and phase transition remain deferred. selected_next_task is
 phase12-local-multistage-pipeline-closeout-20260626.
 
+phase12-local-multistage-pipeline-closeout-20260626 accepts
+local-multistage-pipeline-closeout-accepted. The closeout maps the exact
+three-stage pipeline to the retained core task record, core
+classification/evidence map, QEMU/substitute transcript, process-status VFS
+regression transcript, and VFS-backed `ps` regression transcript. The accepted
+frontier remains only `exec stdout | exec stdin | exec stdin`: all three
+fixtures load through VFS exec, two descriptor-backed pipe handoffs carry bytes
+to the final fixture, and the retained transcript records the three bounded
+process-table records through explicit waitpid, `/proc/talos/processes`, and
+zero-argument `ps`. selected_next_task is
+phase12-local-pipefail-status-core-20260626. Arbitrary shell grammar,
+unbounded pipelines, pipefail, scheduler concurrency, fork/signals, process
+groups/sessions, broad procfs/Linux `ps`, persistent storage, live networking,
+SSH, Pi 5 hardware proof, generated-root command-input retry, and phase
+transition remain deferred.
+
 phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624 accepts
 the live reachability source reconciliation as
 live-reachability-source-reconciliation-paused-no-defensible-discriminator.

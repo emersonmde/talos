@@ -1,0 +1,31 @@
+{
+  "task_id": "phase12-local-multistage-pipeline-closeout-20260626",
+  "classification": "local-multistage-pipeline-closeout-accepted",
+  "accepted": [
+    "static closeout of exact three-stage VFS-backed pipeline form",
+    "retained two-pipe byte-flow evidence for exec stdout | exec stdin | exec stdin",
+    "retained three bounded process-table records and explicit waitpid observations",
+    "retained /proc/talos/processes and zero-argument ps consistency for accepted records"
+  ],
+  "deferred": [
+    "arbitrary shell grammar",
+    "unbounded or arbitrary-length pipelines",
+    "pipefail",
+    "scheduler concurrency",
+    "fork/signals",
+    "process groups/sessions",
+    "waitpid options",
+    "broad procfs or Linux ps compatibility",
+    "public process enumeration ABI",
+    "PID policy expansion",
+    "persistent storage",
+    "live networking",
+    "SSH",
+    "Pi 5 hardware proof",
+    "generated-root command-input retry",
+    "phase transition"
+  ],
+  "selected_next_task": "phase12-local-pipefail-status-core-20260626",
+  "hardware_claim": false,
+  "live_network_ssh_paused": true
+}

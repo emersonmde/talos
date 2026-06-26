@@ -1,0 +1,56 @@
+{
+  "task_id": "phase12-local-multistage-pipeline-closeout-20260626",
+  "classification": "local-multistage-pipeline-closeout-accepted",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "path": "tasks/2026-06-26-phase12-local-multistage-pipeline-core.md",
+      "summary": "Core task record accepts exactly exec stdout | exec stdin | exec stdin and lists findings, accepted frontier, deferred frontier, and validation."
+    },
+    {
+      "level": "static inspection",
+      "path": "tasks/evidence/2026-06-26-phase12-local-multistage-pipeline-core/classification.json",
+      "summary": "Core classification records the accepted command, three bounded process-table records, explicit waitpid observation, /proc/talos/processes and ps consistency, and deferred surfaces."
+    },
+    {
+      "level": "static inspection",
+      "path": "tasks/evidence/2026-06-26-phase12-local-multistage-pipeline-core/evidence-map.json",
+      "summary": "Core evidence map cites unit tests, QEMU/substitute multistage transcript, process-status VFS regression, VFS-backed ps regression, and docs."
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-26-phase12-local-multistage-pipeline-core/qemu-local-shell-multistage-pipeline-smoke.log",
+      "summary": "Transcript records both pipe summaries, nested final stdin output, lifecycle/status record, explicit waitpid for pids 0x100001 through 0x100003, /proc/talos/processes, ps, and PASS classification."
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-26-phase12-local-process-status-vfs-core/qemu-local-shell-process-status-vfs-smoke.log",
+      "summary": "Process-status VFS regression remains retained for the bounded /proc/talos/processes surface."
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-26-phase12-local-ps-command-vfs-backed-core/qemu-local-shell-ps-command-vfs-smoke.log",
+      "summary": "VFS-backed ps regression remains retained for zero-argument ps over /proc/talos/processes."
+    },
+    {
+      "level": "static inspection",
+      "path": "docs/src/roadmap.md",
+      "summary": "Roadmap records closeout and selected dependency-gated pipeline status follow-up."
+    },
+    {
+      "level": "static inspection",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "summary": "Phase 12 project notes record local-only closeout and keep live networking/SSH paused."
+    }
+  ],
+  "validation": [
+    "static inspection of retained core task record, classification, evidence map, QEMU/substitute transcript paths, roadmap, and Phase 12 project notes",
+    "jq empty tasks/evidence/2026-06-26-phase12-local-multistage-pipeline-closeout/classification.json tasks/evidence/2026-06-26-phase12-local-multistage-pipeline-closeout/evidence-map.json",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "git diff --cached --check"
+  ],
+  "selected_next_task": "phase12-local-pipefail-status-core-20260626",
+  "hardware_claim": false,
+  "live_network_ssh_paused": true
+}
