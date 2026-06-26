@@ -9083,6 +9083,21 @@ completeness and does not accept broad process tables, scheduler concurrency,
 waitpid options, pid reuse/zombie policy, multi-stage pipelines, pipefail,
 fork/signals, live networking, SSH, Pi 5 hardware proof, or phase transition.
 
+phase12-local-waitpid-process-observation-closeout-20260626 accepts
+local-waitpid-process-observation-closeout. The closeout reconciles the
+accepted local process-observation frontier across direct VFS exec
+lifecycle/status records, exact two-stage serialized pipeline producer/consumer
+records, completed background jobs, explicit pid waitpid, no-argument waitpid,
+non-consuming laststatus, and jobs accounting. Retained evidence remains
+QEMU/substitute and static documentation/commit inspection only; no Pi 5
+hardware or live network claim is made. selected_next_task=null and
+planningNeeded=true because no queued same-slice local process-observation
+follow-up remains. Broad process tables, true scheduler concurrency,
+fork/signals, process groups/sessions, waitpid options, pid reuse/zombie
+policy, multi-stage pipelines, pipefail, persistent filesystem semantics, live
+networking, SSH, Pi 5 hardware proof, and phase transition remain deferred
+pending supervisor planning.
+
 phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624 accepts
 the live reachability source reconciliation as
 live-reachability-source-reconciliation-paused-no-defensible-discriminator.

@@ -18172,6 +18172,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   completeness, broad process tables, scheduler concurrency, waitpid options,
   pid reuse/zombie policy, multi-stage pipelines, pipefail, fork/signals, live
   networking, SSH, Pi 5 hardware proof, or a phase transition.
+- phase12-local-waitpid-process-observation-closeout-20260626 accepts the
+  static closeout for the local waitpid/process-observation frontier. The
+  evidence map reconciles direct VFS exec lifecycle/status records, exact
+  two-stage serialized pipeline producer/consumer records, completed
+  background jobs, explicit pid waitpid, no-argument waitpid, non-consuming
+  laststatus, jobs accounting, retained QEMU/substitute transcripts, and recent
+  commits b6fd1838, 1d727909, and 5e349404. The accepted frontier remains
+  bounded local process observation only: no broad process tables, true
+  scheduler concurrency, fork/signals, process groups/sessions, waitpid
+  options, pid reuse/zombie policy, multi-stage pipelines, pipefail, persistent
+  filesystem semantics, live networking, SSH, Pi 5 hardware proof, or phase
+  transition is accepted. selected_next_task=null and planningNeeded=true
+  because no queued same-slice local process-observation follow-up remains;
+  supervisor planning is required before further worker promotion.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
