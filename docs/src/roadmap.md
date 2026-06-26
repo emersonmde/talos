@@ -18445,6 +18445,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   multistage pipelines fail closed. PATH lookup, bare-name lookup, arbitrary
   shell grammar, unbounded pipelines, pipeline concurrency, live networking/SSH,
   Pi 5 hardware proof, and phase transition remain deferred.
+- phase12-local-absolute-path-vfs-pipeline-closeout-20260626 accepts
+  local-absolute-path-vfs-pipeline-closeout. The closeout maps the accepted
+  bounded path-form pipeline to the retained core task record, classification,
+  evidence map, QEMU/substitute transcript, Phase 12 project note, roadmap, and
+  early POSIX note. The accepted boundary remains local-only
+  static/unit/QEMU-substitute evidence for /bin/stdout | /bin/stdin through
+  VFS open/read, loader, userspace launch, serialized pipe handoff,
+  lifecycle/status, process-table, waitpid, laststatus, /proc/talos/processes,
+  zero-argument ps, and pipestatus. PATH lookup, bare-name lookup, path-form
+  arguments/redirections, arbitrary shell grammar, unbounded pipelines,
+  pipeline concurrency, scheduler concurrency, fork/signals, process
+  groups/sessions, live networking/SSH, Pi 5 hardware proof, generated-root
+  retry, and phase transition remain deferred. selected_next_task is
+  phase12-local-path-command-frontier-checkpoint-20260626 because that queued
+  checkpoint is mechanically objective after the accepted path-form pipeline
+  closeout.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

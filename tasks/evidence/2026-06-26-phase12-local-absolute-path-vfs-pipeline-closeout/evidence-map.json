@@ -1,0 +1,43 @@
+{
+  "task_id": "phase12-local-absolute-path-vfs-pipeline-closeout-20260626",
+  "classification": "local-absolute-path-vfs-pipeline-closeout-accepted",
+  "core_task": "phase12-local-absolute-path-vfs-pipeline-core-20260626",
+  "core_commit": "422b065facd9c87e7b0b053f966f67a24043fac0",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "command": "static inspection of task records, retained evidence paths, docs, and git diff",
+      "result": "passed"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty tasks/evidence/2026-06-26-phase12-local-absolute-path-vfs-pipeline-closeout/classification.json tasks/evidence/2026-06-26-phase12-local-absolute-path-vfs-pipeline-closeout/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed; mdBook HTML emitted with existing large-search-index warning"
+    }
+  ],
+  "retained_paths": [
+    "tasks/2026-06-26-phase12-local-absolute-path-vfs-pipeline-core.md",
+    "tasks/evidence/2026-06-26-phase12-local-absolute-path-vfs-pipeline-core/classification.json",
+    "tasks/evidence/2026-06-26-phase12-local-absolute-path-vfs-pipeline-core/evidence-map.json",
+    "tasks/evidence/2026-06-26-phase12-local-absolute-path-vfs-pipeline-core/qemu-local-shell-absolute-path-vfs-pipeline-smoke.log",
+    "tasks/2026-06-26-phase12-local-absolute-path-vfs-pipeline-closeout.md",
+    "tasks/evidence/2026-06-26-phase12-local-absolute-path-vfs-pipeline-closeout/classification.json",
+    "tasks/evidence/2026-06-26-phase12-local-absolute-path-vfs-pipeline-closeout/evidence-map.json",
+    "docs/src/roadmap.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/project/early-posix-shape.md"
+  ],
+  "selected_next_task": "phase12-local-path-command-frontier-checkpoint-20260626",
+  "hardware_claim": "none",
+  "live_network_ssh_reachability": "paused"
+}
