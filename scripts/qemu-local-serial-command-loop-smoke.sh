@@ -25,6 +25,7 @@ SHELL_VFS_EXEC_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_VFS_EXEC_SMOKE:-0}"
 SHELL_ABSOLUTE_PATH_VFS_COMMAND_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_ABSOLUTE_PATH_VFS_COMMAND_SMOKE:-0}"
 SHELL_ABSOLUTE_PATH_VFS_PIPELINE_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_ABSOLUTE_PATH_VFS_PIPELINE_SMOKE:-0}"
 SHELL_DIRECT_PIPELINE_STAGE_ARGV_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_DIRECT_PIPELINE_STAGE_ARGV_SMOKE:-0}"
+SHELL_BARE_NAME_PIPELINE_STAGE_ARGV_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_BARE_NAME_PIPELINE_STAGE_ARGV_SMOKE:-0}"
 SHELL_BARE_NAME_COMMAND_ARGV_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_BARE_NAME_COMMAND_ARGV_SMOKE:-0}"
 SHELL_BARE_NAME_VFS_PIPELINE_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_BARE_NAME_VFS_PIPELINE_SMOKE:-0}"
 SHELL_LITERAL_ARGV_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_LITERAL_ARGV_SMOKE:-0}"
@@ -582,6 +583,31 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
             command_index="${BASH_REMATCH[1]}"
             if [ "$sent" -eq "$command_index" ] && [ "$command_index" -lt "${#direct_pipeline_stage_argv_commands[@]}" ]; then
                 printf '%s\r' "${direct_pipeline_stage_argv_commands[$command_index]}" >&3
+                sent=$((command_index + 1))
+            fi
+            continue
+        fi
+        if [ "$SHELL_BARE_NAME_PIPELINE_STAGE_ARGV_SMOKE" -eq 1 ] && [[ "$line" =~ ready\ command=([0-9]+) ]]; then
+            bare_name_pipeline_stage_argv_commands=(
+                "help"
+                "status"
+                "stdio"
+                "stdout alpha | stdin beta"
+                "waitpid 0x100001"
+                "waitpid 0x100002"
+                "laststatus"
+                "pipestatus"
+                "cat /proc/talos/processes"
+                "ps"
+                "stdout alpha beta | stdin"
+                "stdout * | stdin"
+                "stdout alpha | stdin beta gamma"
+                "stdout alpha | stdin *"
+                "stdout | stdin"
+            )
+            command_index="${BASH_REMATCH[1]}"
+            if [ "$sent" -eq "$command_index" ] && [ "$command_index" -lt "${#bare_name_pipeline_stage_argv_commands[@]}" ]; then
+                printf '%s\r' "${bare_name_pipeline_stage_argv_commands[$command_index]}" >&3
                 sent=$((command_index + 1))
             fi
             continue
@@ -1575,6 +1601,18 @@ if [ "$SHELL_WAITPID_ANY_COMPLETED_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=18" "$LOG_FILE"
 fi
 if [ "$SHELL_DIRECT_PIPELINE_STAGE_ARGV_SMOKE" -eq 1 ]; then
+    grep -q "$LABEL: ready command=5" "$LOG_FILE"
+    grep -q "$LABEL: ready command=6" "$LOG_FILE"
+    grep -q "$LABEL: ready command=7" "$LOG_FILE"
+    grep -q "$LABEL: ready command=8" "$LOG_FILE"
+    grep -q "$LABEL: ready command=9" "$LOG_FILE"
+    grep -q "$LABEL: ready command=10" "$LOG_FILE"
+    grep -q "$LABEL: ready command=11" "$LOG_FILE"
+    grep -q "$LABEL: ready command=12" "$LOG_FILE"
+    grep -q "$LABEL: ready command=13" "$LOG_FILE"
+    grep -q "$LABEL: ready command=14" "$LOG_FILE"
+fi
+if [ "$SHELL_BARE_NAME_PIPELINE_STAGE_ARGV_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=5" "$LOG_FILE"
     grep -q "$LABEL: ready command=6" "$LOG_FILE"
     grep -q "$LABEL: ready command=7" "$LOG_FILE"
@@ -2809,6 +2847,35 @@ elif [ "$SHELL_DIRECT_PIPELINE_STAGE_ARGV_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: dispatch command=12 status=unexpected-argument responses=1" "$LOG_FILE"
     grep -q "$LABEL: dispatch command=13 status=unexpected-argument responses=1" "$LOG_FILE"
     grep -q "talos> /bin/stdout | /bin/stdin" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=14 status=handled responses=22" "$LOG_FILE"
+    grep -q "$LABEL: final participants=15 expected=15 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+elif [ "$SHELL_BARE_NAME_PIPELINE_STAGE_ARGV_SMOKE" -eq 1 ]; then
+    grep -q "talos> stdout alpha | stdin beta" "$LOG_FILE"
+    grep -q "talos: exec path=/bin/stdout source=vfs-open-read" "$LOG_FILE"
+    grep -q "talos: exec path=/bin/stdin source=vfs-open-read" "$LOG_FILE"
+    grep -Eq "talos: exec-startup-abi state=literal-argv-absolute-empty-envp argc=0x0000000000000002 argv0=/bin/stdout argv1=alpha argv0-ptr=0x[0-9a-f]+ argv-null=false envp-null=true envp-state=empty-envp0 envp-entries=0x0000000000000000 envp0-ptr=0x[0-9a-f]+ copied-startup-bytes=0x[0-9a-f]+ source=initial-user-stack-record" "$LOG_FILE"
+    grep -Eq "talos: exec-startup-abi state=literal-argv-absolute-empty-envp argc=0x0000000000000002 argv0=/bin/stdin argv1=beta argv0-ptr=0x[0-9a-f]+ argv-null=false envp-null=true envp-state=empty-envp0 envp-entries=0x0000000000000000 envp0-ptr=0x[0-9a-f]+ copied-startup-bytes=0x[0-9a-f]+ source=initial-user-stack-record" "$LOG_FILE"
+    grep -q "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=pipe-endpoint fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table" "$LOG_FILE"
+    grep -q "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=pipe-endpoint fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table" "$LOG_FILE"
+    grep -q "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-to-stdin" "$LOG_FILE"
+    grep -q "talos: pipeline-lifecycle-status record=phase12-local-pipeline-distinct-process-lifecycle-status-record-v1 pipeline=0x0000000000000001 producer-pid=0x0000000000100001 producer-path=/bin/stdout" "$LOG_FILE"
+    grep -q "consumer-pid=0x0000000000100002 consumer-path=/bin/stdin" "$LOG_FILE"
+    grep -q "Talos userspace stdin fixture read: Talos userspace stdout fixture" "$LOG_FILE"
+    grep -q "talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=explicit-pid-lifecycle-record" "$LOG_FILE"
+    grep -q "talos: waitpid pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=explicit-pid-lifecycle-record" "$LOG_FILE"
+    grep -q "talos: last-process pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -q "talos: pipestatus participants=0x0000000000000002 default-status=0x0000000000000000 pipefail-status=0x0000000000000000 semantics=bounded-observation-not-posix-shell source=bounded-process-table-pipeline-status" "$LOG_FILE"
+    grep -q "path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true wait-consumed=true job-state=foreground source=bounded-process-table" "$LOG_FILE"
+    grep -q "path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true wait-consumed=true job-state=foreground source=bounded-process-table" "$LOG_FILE"
+    grep -q "talos> stdout alpha beta | stdin" "$LOG_FILE"
+    grep -q "talos> stdout * | stdin" "$LOG_FILE"
+    grep -q "talos> stdout alpha | stdin beta gamma" "$LOG_FILE"
+    grep -q "talos> stdout alpha | stdin *" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=10 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=11 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=12 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=13 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "talos> stdout | stdin" "$LOG_FILE"
     grep -q "$LABEL: dispatch command=14 status=handled responses=22" "$LOG_FILE"
     grep -q "$LABEL: final participants=15 expected=15 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
 elif [ "$SHELL_BARE_NAME_VFS_PIPELINE_SMOKE" -eq 1 ]; then

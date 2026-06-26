@@ -1,0 +1,104 @@
+{
+  "task_id": "phase12-local-bare-name-pipeline-stage-argv-core-20260626",
+  "classification": "local-bare-name-pipeline-stage-argv-core-accepted",
+  "task_record": "tasks/2026-06-26-phase12-local-bare-name-pipeline-stage-argv-core.md",
+  "implementation": [
+    "build.rs",
+    "src/main.rs",
+    "src/local_command_loop.rs",
+    "src/target/qemu_virt.rs",
+    "scripts/qemu-local-serial-command-loop-smoke.sh",
+    "scripts/qemu-local-shell-bare-name-pipeline-stage-argv-smoke.sh"
+  ],
+  "docs": [
+    "docs/src/roadmap.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/project/early-posix-shape.md"
+  ],
+  "transcript": "tasks/evidence/2026-06-26-phase12-local-bare-name-pipeline-stage-argv-core/qemu-local-shell-bare-name-pipeline-stage-argv-smoke.log",
+  "validation": [
+    {
+      "level": "fmt/lint",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "result": "passed"
+    },
+    {
+      "level": "QEMU/substitute",
+      "command": "scripts/qemu-local-shell-bare-name-pipeline-stage-argv-smoke.sh --quiet",
+      "result": "passed; final participants=15 expected=15 errors=0 classification=qemu-local-shell-bare-name-pipeline-stage-argv-complete"
+    },
+    {
+      "level": "QEMU/substitute regression",
+      "command": "scripts/qemu-local-shell-direct-pipeline-stage-argv-smoke.sh --quiet",
+      "result": "passed; final participants=15 expected=15 errors=0 classification=qemu-local-shell-direct-pipeline-stage-argv-complete"
+    },
+    {
+      "level": "QEMU/substitute regression",
+      "command": "scripts/qemu-local-shell-bare-name-command-argv-smoke.sh --quiet",
+      "result": "passed; final participants=13 expected=13 errors=0 classification=qemu-local-shell-bare-name-command-argv-complete"
+    },
+    {
+      "level": "QEMU/substitute regression",
+      "command": "scripts/qemu-local-shell-absolute-path-vfs-command-smoke.sh --quiet",
+      "result": "passed; final participants=18 expected=18 errors=0 classification=qemu-local-shell-absolute-path-vfs-command-complete"
+    },
+    {
+      "level": "QEMU/substitute regression",
+      "command": "scripts/qemu-local-shell-absolute-path-vfs-pipeline-smoke.sh --quiet",
+      "result": "passed; final participants=15 expected=15 errors=0 classification=qemu-local-shell-absolute-path-vfs-pipeline-complete"
+    },
+    {
+      "level": "QEMU/substitute regression",
+      "command": "scripts/qemu-local-shell-bare-name-vfs-pipeline-smoke.sh --quiet",
+      "result": "passed; final participants=17 expected=17 errors=0 classification=qemu-local-shell-bare-name-vfs-pipeline-complete"
+    },
+    {
+      "level": "QEMU/substitute regression",
+      "command": "scripts/qemu-local-shell-multistage-pipeline-smoke.sh --quiet",
+      "result": "passed; final participants=10 expected=10 errors=0 classification=qemu-local-shell-multistage-pipeline-complete"
+    },
+    {
+      "level": "QEMU/substitute regression",
+      "command": "scripts/qemu-local-shell-process-status-vfs-smoke.sh --quiet",
+      "result": "passed; final participants=19 expected=19 errors=0 classification=qemu-local-shell-process-status-vfs-complete"
+    },
+    {
+      "level": "QEMU/substitute regression",
+      "command": "scripts/qemu-local-shell-ps-command-vfs-smoke.sh --quiet",
+      "result": "passed; final participants=23 expected=23 errors=0 classification=qemu-local-shell-ps-command-vfs-complete"
+    },
+    {
+      "level": "QEMU/substitute regression",
+      "command": "scripts/qemu-local-shell-pipeline-status-smoke.sh --quiet",
+      "result": "passed; final participants=12 expected=12 errors=0 classification=qemu-local-shell-pipeline-status-complete"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty tasks/evidence/2026-06-26-phase12-local-bare-name-pipeline-stage-argv-core/classification.json tasks/evidence/2026-06-26-phase12-local-bare-name-pipeline-stage-argv-core/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "diff hygiene",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "level": "diff hygiene",
+      "command": "git diff --cached --check",
+      "result": "passed before commit"
+    }
+  ],
+  "selected_next_task": "phase12-local-bare-name-pipeline-stage-argv-closeout-20260626",
+  "no_hardware_claim": true,
+  "live_network_ssh_paused": true
+}

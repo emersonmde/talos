@@ -272,6 +272,26 @@ argv, redirections, environment-backed PATH, arbitrary shell grammar, live
 networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
 transition remain deferred until the selected follow-up task.
 
+The first bare-name pipeline argv slice extends only the accepted two-stage
+bare-name pipeline. A shell input of 'stdout alpha | stdin beta' resolves
+each stage through the fixed bounded /bin lookup to /bin/stdout and /bin/stdin,
+then uses descriptor-backed VFS open/read, the accepted loader, userspace
+startup/status, and the existing serialized pipe descriptor handoff. The
+producer startup ABI records argc=2, canonical argv0=/bin/stdout, argv1=alpha,
+empty envp, inherited standard descriptors with fd1 as the pipe endpoint, and
+a closed loader temporary descriptor. The consumer records argc=2, canonical
+argv0=/bin/stdin, argv1=beta, empty envp, inherited standard descriptors with
+fd0 as the pipe endpoint, and a closed loader temporary descriptor. Direct
+path-form pipeline argv, direct/bare-name command argv, no-argument pipelines,
+multistage pipeline, process-status VFS, zero-argument ps, and pipestatus
+remain regression surfaces. Unsupported bare-name pipeline argument shapes,
+unsupported literal characters, and unsupported bare commands fail closed
+without successful process records. Multistage pipeline argv, redirections,
+environment-backed PATH, command lookup beyond bounded /bin, arbitrary shell
+grammar, unbounded pipelines, live networking/SSH, Pi 5 hardware proof,
+generated-root retry, and phase transition remain deferred pending the
+bare-name pipeline argv closeout.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

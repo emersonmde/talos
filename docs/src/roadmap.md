@@ -18636,6 +18636,27 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   hardware proof, generated-root retry, and phase transition remain deferred.
   selected_next_task is
   phase12-local-bare-name-pipeline-stage-argv-core-20260626.
+- phase12-local-bare-name-pipeline-stage-argv-core-20260626 accepts
+  local-bare-name-pipeline-stage-argv-core. The local shell now carries one
+  bounded literal argument on each stage of the accepted bare-name two-stage
+  pipeline: 'stdout alpha | stdin beta'. Each stage resolves only through the
+  fixed bounded /bin lookup to /bin/stdout and /bin/stdin before descriptor-
+  backed VFS open/read, the accepted loader, userspace startup/status, and the
+  serialized pipe descriptor handoff. QEMU/substitute evidence records producer
+  argc=2 argv0=/bin/stdout argv1=alpha, consumer argc=2 argv0=/bin/stdin
+  argv1=beta, deterministic empty envp, inherited standard descriptors plus
+  fd1/fd0 pipe endpoints, closed loader temporary descriptors, pipeline
+  lifecycle/status records, waitpid, laststatus, /proc/talos/processes,
+  zero-argument ps, and pipestatus compatibility. Existing direct path-form
+  pipeline argv, direct/bare-name command argv, no-argument pipelines,
+  multistage pipeline, process-status VFS, ps, and pipestatus regressions
+  remain passing. Unsupported bare-name pipeline argument shapes, unsupported
+  literal characters, and unsupported bare commands fail closed without
+  successful process records. Multistage pipeline argv, redirections,
+  environment-backed PATH, command lookup beyond bounded /bin, arbitrary shell
+  grammar, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
+  phase transition remain deferred. selected_next_task is
+  phase12-local-bare-name-pipeline-stage-argv-closeout-20260626.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

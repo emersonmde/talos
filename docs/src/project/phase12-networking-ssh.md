@@ -9201,6 +9201,27 @@ networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
 transition remain deferred. selected_next_task is
 phase12-local-bare-name-pipeline-stage-argv-core-20260626.
 
+phase12-local-bare-name-pipeline-stage-argv-core-20260626 accepts
+local-bare-name-pipeline-stage-argv-core. The accepted local shell surface now
+allows one bounded literal argument on each stage of the two-stage bare-name
+pipeline: 'stdout alpha | stdin beta'. Each stage resolves only through the
+fixed bounded /bin lookup, then executes through descriptor-backed VFS
+open/read, the accepted loader, userspace startup/status, pipe descriptors,
+and bounded process-table observations. The startup evidence records producer
+argc=2 argv0=/bin/stdout argv1=alpha with fd1 as the pipe endpoint, consumer
+argc=2 argv0=/bin/stdin argv1=beta with fd0 as the pipe endpoint,
+deterministic empty envp, inherited standard descriptors, and closed loader
+temporary descriptors. Existing direct path-form pipeline argv, direct and
+bare-name command argv, no-argument pipelines, multistage pipeline,
+process-status VFS, ps, and pipestatus regressions remain intact. Unsupported
+bare-name pipeline argument shapes, unsupported literal characters, and
+unsupported bare commands fail closed without successful process records. This
+does not accept multistage pipeline argv, redirections, environment-backed
+PATH, command lookup beyond bounded /bin, arbitrary shell grammar, live
+networking/SSH, Pi 5 hardware proof, generated-root retry, or a phase
+transition. selected_next_task is
+phase12-local-bare-name-pipeline-stage-argv-closeout-20260626.
+
 phase12-local-vfs-exec-lifecycle-record-generalization-core-20260626
 accepts local-vfs-exec-lifecycle-record-generalization-core. This local
 POSIX/VFS/userspace continuation preserves the accepted
