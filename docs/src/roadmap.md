@@ -18479,6 +18479,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   unbounded pipelines, pipeline concurrency, scheduler concurrency,
   fork/signals, process groups/sessions, persistent storage, generated-root
   command-input retry, and phase transition remain deferred.
+- phase12-local-bare-name-vfs-command-core-20260626 accepts
+  local-bare-name-vfs-command-core. The local shell now resolves the direct
+  bare command `status42` through the bounded `/bin` VFS lookup to
+  `/bin/status42`, then opens and reads that VFS executable through the
+  accepted loader, userspace launch, lifecycle/status, and bounded
+  process-table path. Unit and QEMU/substitute evidence preserve waitpid,
+  laststatus, `/proc/talos/processes`, zero-argument `ps`, and
+  pipestatus/process-status observations. Relative names with slashes, bare
+  arguments/redirections, still-deferred bare pipelines, non-executable
+  absolute paths, and missing absolute paths fail closed without successful
+  process records. This is not POSIX PATH environment compatibility, command
+  lookup beyond the bounded `/bin` surface, arbitrary shell grammar, live
+  networking/SSH, Pi 5 hardware proof, generated-root command-input retry, or
+  a phase transition. selected_next_task is
+  phase12-local-bare-name-vfs-pipeline-core-20260626.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

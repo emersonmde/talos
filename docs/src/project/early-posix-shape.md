@@ -143,10 +143,10 @@ of /bin/status42 now reaches the same accepted VFS open/read, program-loader,
 initial stack, and userspace launch path previously exercised by
 exec /bin/status42. It records the same bounded lifecycle/process-table state
 and remains observable through waitpid, laststatus, /proc/talos/processes, and
-zero-argument ps. Unsupported direct paths fail closed, while bin/status42 and
-status42 remain unknown-command; this is absolute-path VFS command execution
-only, not PATH lookup, bare-name lookup, POSIX shell compatibility, direct path
-redirection/argument support, or broad shell support.
+zero-argument ps. Unsupported direct paths fail closed, while bin/status42
+remains unknown-command; this is absolute-path VFS command execution only, not
+PATH lookup, POSIX shell compatibility, direct path redirection/argument
+support, or broad shell support.
 
 The first accepted path-form pipeline is equally bounded:
 \`/bin/stdout | /bin/stdin\`. Both stages are absolute paths and load through the
@@ -171,6 +171,17 @@ unbounded pipelines, pipeline concurrency, scheduler concurrency,
 fork/signals, process groups/sessions, persistent storage, generated-root
 command-input retry, and phase transition remain deferred pending supervisor
 planning.
+
+The first direct bare-name command is narrower than POSIX PATH. A shell input
+of status42 is resolved through the fixed bounded /bin lookup to /bin/status42
+and then follows the same VFS open/read, loader, userspace launch,
+lifecycle/status, waitpid, laststatus, /proc/talos/processes, and
+zero-argument ps path accepted for /bin/status42. Relative names with slashes,
+unsupported bare arguments/redirections, and the still-deferred bare pipeline
+form fail closed without successful process records. This does not accept
+environment-backed PATH compatibility, command lookup beyond the bounded /bin
+surface, arbitrary shell grammar, generated-root command-input retry, live
+networking/SSH, Pi 5 hardware proof, or a phase transition.
 
 ## Scheduler Implications
 

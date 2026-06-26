@@ -15536,13 +15536,15 @@ fn expected_local_command_loop_dispatch(
                         && status == UnexpectedArgument
                         && response_lines == 1
                 }
-                12 => line == b"status42" && status == UnknownCommand && response_lines == 1,
+                12 => line == b"status42" && status == Handled && response_lines == 10,
                 _ => false,
             }
         }
         index if cfg!(talos_boot_scenario = "qemu_local_shell_absolute_path_vfs_pipeline") => {
             match index {
-                3 => line == b"/bin/stdout | /bin/stdin" && status == Handled && response_lines == 22,
+                3 => {
+                    line == b"/bin/stdout | /bin/stdin" && status == Handled && response_lines == 22
+                }
                 4 => line == b"waitpid 0x100001" && status == Handled && response_lines == 1,
                 5 => line == b"waitpid 0x100002" && status == Handled && response_lines == 1,
                 6 => line == b"laststatus" && status == Handled && response_lines == 1,
@@ -15561,7 +15563,11 @@ fn expected_local_command_loop_dispatch(
                         && status == UnexpectedArgument
                         && response_lines == 1
                 }
-                12 => line == b"status42 | /bin/stdin" && status == UnknownCommand && response_lines == 1,
+                12 => {
+                    line == b"status42 | /bin/stdin"
+                        && status == UnexpectedArgument
+                        && response_lines == 1
+                }
                 13 => {
                     line == b"/bin/stdout | /missing"
                         && status == UnexpectedArgument

@@ -1,0 +1,29 @@
+{
+  "classification": "local-bare-name-vfs-command-core-accepted",
+  "task_id": "phase12-local-bare-name-vfs-command-core-20260626",
+  "evidence_level": [
+    "fmt/lint",
+    "unit tests",
+    "QEMU/substitute",
+    "static inspection",
+    "docs"
+  ],
+  "accepted_surface": {
+    "command": "status42",
+    "resolved_path": "/bin/status42",
+    "resolution": "bounded /bin VFS lookup",
+    "execution_path": "VFS open/read -> accepted loader -> userspace launch/status -> bounded process table"
+  },
+  "deferred_surface": [
+    "POSIX PATH environment compatibility",
+    "command lookup beyond the bounded /bin surface",
+    "bare-name arguments and redirections",
+    "bare-name pipelines",
+    "arbitrary shell grammar",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root command-input retry",
+    "phase transition"
+  ],
+  "hardware_claim": false
+}

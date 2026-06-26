@@ -5,11 +5,11 @@ target-services: uart=pl011 timer=arm-generic irq=gic-v2 dtb=Some(
     0x0000000048000000,
 )
 mmio-regions: 3
-qemu-local-shell-vfs-exec: start command-count=7 backend=runtime-console0/qemu-virt-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed-regression-control+vfs-syscall-cat+vfs-userspace-exec-boundary descriptor-backed-input=true descriptor-backed-output=true
+qemu-local-shell-vfs-exec: start command-count=15 backend=runtime-console0/qemu-virt-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed-regression-control+vfs-syscall-cat+vfs-userspace-exec-boundary+lifecycle-laststatus+waitpid-lifecycle-observation+standard-descriptor-inheritance+userspace-stdout-through-inherited-fd1+userspace-stdin-through-inherited-fd0+userspace-stderr-through-inherited-fd2+descriptor-dup-redirection-1-to-2+descriptor-dup-redirection-2-to-1+descriptor-close-redirection-1+descriptor-close-redirection-2+minimal-stdout-to-stdin-pipeline+stdout-only-pipeline-stderr-not-piped+pipeline-stderr-dup-to-stdout+pipeline-stdout-redirect-away+stdout-dev-null-redirection+stderr-dev-null-redirection+stdin-dev-null-redirection+readonly-regular-file-stdin-redirection+volatile-stdout-regular-file-redirection+volatile-stderr-regular-file-redirection+explicit-fd1-regular-file-redirection+stdout-arbitrary-tmp-output-redirection+stderr-arbitrary-tmp-output-redirection+combined-stdin-stdout-redirection+pipeline-consumer-output-redirection+pipeline-producer-file-redirection-away+background-vfs-exec-lifecycle+jobs-accounting-list+multiple-background-vfs-exec-records+background-jobs-stale-entry-policy+generated-root-manifest-read+generated-root-executable-vfs-exec+shell-pingdiag-vfs-userspace-diagnostic+shell-sockdiag-vfs-userspace-socket-open-close+shell-sockdiag-vfs-userspace-socket-bind-listen+shell-sockdiag-vfs-userspace-socket-connect-accept+shell-sockdiag-vfs-userspace-socket-send-recv+shell-sockdiag-vfs-userspace-socket-readiness-poll+shell-sockdiag-vfs-userspace-socket-blocking-poll-wait+shell-sockdiag-vfs-userspace-cross-process-local-socket+shell-sockdiag-vfs-userspace-smoltcp-tcp+pipeline-distinct-serialized-process-identities+explicit-pid-wait-status-observation+waitpid-completed-child-observation+bounded-process-table-direct-vfs-exec-lifecycle+bounded-process-table-pipeline-background-lifecycle+proc-talos-processes-descriptor-backed-status-vfs+ps-command-vfs-backed-process-status+multistage-pipeline-bounded-process-table+bounded-pipeline-status-observation+direct-absolute-path-vfs-command+bounded-absolute-path-vfs-pipeline+bounded-bare-name-bin-vfs-command descriptor-backed-input=true descriptor-backed-output=true
 qemu-local-shell-vfs-exec: ready command=0
 talos> help
 talos: ok help
-talos: commands help status stdio pwd echo ls cat cd exec
+talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid jobs ps pipestatus
 talos: echo forms echo hello; echo local serial works
 talos: editing backspace delete ctrl-c ctrl-u
 
@@ -18,10 +18,10 @@ qemu-local-shell-vfs-exec: dispatch command=0 status=handled responses=4 raw-byt
 qemu-local-shell-vfs-exec: ready command=1
 talos> status
 talos: ok status
-talos: version phase10.1-kernel-builtins-v1
+talos: version phase10.2-kernel-builtins-v2
 talos: runtime-console runtime-console0
-talos: builtins kernel-backed-regression-control+vfs-syscall-cat+vfs-userspace-exec-boundary
-talos: commands help status stdio pwd echo ls cat cd exec
+talos: builtins kernel-backed-regression-control+vfs-syscall-cat+vfs-userspace-exec-boundary+lifecycle-laststatus+waitpid-lifecycle-observation+standard-descriptor-inheritance+userspace-stdout-through-inherited-fd1+userspace-stdin-through-inherited-fd0+userspace-stderr-through-inherited-fd2+descriptor-dup-redirection-1-to-2+descriptor-dup-redirection-2-to-1+descriptor-close-redirection-1+descriptor-close-redirection-2+minimal-stdout-to-stdin-pipeline+stdout-only-pipeline-stderr-not-piped+pipeline-stderr-dup-to-stdout+pipeline-stdout-redirect-away+stdout-dev-null-redirection+stderr-dev-null-redirection+stdin-dev-null-redirection+readonly-regular-file-stdin-redirection+volatile-stdout-regular-file-redirection+volatile-stderr-regular-file-redirection+explicit-fd1-regular-file-redirection+stdout-arbitrary-tmp-output-redirection+stderr-arbitrary-tmp-output-redirection+combined-stdin-stdout-redirection+pipeline-consumer-output-redirection+pipeline-producer-file-redirection-away+background-vfs-exec-lifecycle+jobs-accounting-list+multiple-background-vfs-exec-records+background-jobs-stale-entry-policy+generated-root-manifest-read+generated-root-executable-vfs-exec+shell-pingdiag-vfs-userspace-diagnostic+shell-sockdiag-vfs-userspace-socket-open-close+shell-sockdiag-vfs-userspace-socket-bind-listen+shell-sockdiag-vfs-userspace-socket-connect-accept+shell-sockdiag-vfs-userspace-socket-send-recv+shell-sockdiag-vfs-userspace-socket-readiness-poll+shell-sockdiag-vfs-userspace-socket-blocking-poll-wait+shell-sockdiag-vfs-userspace-cross-process-local-socket+shell-sockdiag-vfs-userspace-smoltcp-tcp+pipeline-distinct-serialized-process-identities+explicit-pid-wait-status-observation+waitpid-completed-child-observation+bounded-process-table-direct-vfs-exec-lifecycle+bounded-process-table-pipeline-background-lifecycle+proc-talos-processes-descriptor-backed-status-vfs+ps-command-vfs-backed-process-status+multistage-pipeline-bounded-process-table+bounded-pipeline-status-observation+direct-absolute-path-vfs-command+bounded-absolute-path-vfs-pipeline+bounded-bare-name-bin-vfs-command
+talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid jobs ps pipestatus
 
 qemu-local-shell-vfs-exec: line command=1 hex=73 74 61 74 75 73
 qemu-local-shell-vfs-exec: dispatch command=1 status=handled responses=5 raw-bytes=7 backspaces=0 deletes=0 truncated=false controls=0
@@ -38,35 +38,106 @@ talos: descriptor-backed-output=true
 qemu-local-shell-vfs-exec: line command=2 hex=73 74 64 69 6f
 qemu-local-shell-vfs-exec: dispatch command=2 status=handled responses=7 raw-bytes=6 backspaces=0 deletes=0 truncated=false controls=0
 qemu-local-shell-vfs-exec: ready command=3
+talos> exec /bin/status42
+talos: exec path=/bin/status42 source=vfs-open-read
+talos: exec-source bytes=0x0000000000000204 digest=0xfcf2aa9a18924de0
+talos: exec-loader fixture=phase8-program-loader-elf64-aarch64-v1 entry=0x0000000000010100 segments=0x0000000000000002
+talos: exec-launch launch-boundary=phase8-initial-process-launch-plan-v1 stack-boundary=phase8-initial-user-stack-plan-v1 address-space=0x0000000000100001 materialization=0x0000000830100001 initial-sp=0x00007fffffffffd0
+talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table
+talos: exec-startup-abi state=minimal-argc1-argv0-absolute-empty-envp argc=0x0000000000000001 argv0=/bin/status42 argv0-ptr=0x00007ffffffffff0 argv-null=false envp-null=true envp-state=empty-envp0 envp-entries=0x0000000000000000 envp0-ptr=0x00007fffffffffe8 copied-startup-bytes=0x000000000000002e source=initial-user-stack-record
+talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true
+talos: vfs-exec-lifecycle-status record=phase12-local-vfs-exec-lifecycle-status-record-v2 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=kernel-owned-vfs-exec-lifecycle-status-record
+talos: exec-status boundary=lower-aarch64-svc-status-equivalent marker=0x0000000000007a10 status=0x000000000000002a complete=true source=lifecycle-record
+talos: exec-signal lower-aarch64-svc-launch-boundary-equivalent
+
+qemu-local-shell-vfs-exec: line command=3 hex=65 78 65 63 20 2f 62 69 6e 2f 73 74 61 74 75 73 34 32
+qemu-local-shell-vfs-exec: dispatch command=3 status=handled responses=10 raw-bytes=19 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-vfs-exec: ready command=4
+talos> laststatus
+talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record
+
+qemu-local-shell-vfs-exec: line command=4 hex=6c 61 73 74 73 74 61 74 75 73
+qemu-local-shell-vfs-exec: dispatch command=4 status=handled responses=1 raw-bytes=11 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-vfs-exec: ready command=5
 talos> exec /bin/init
 talos: exec path=/bin/init source=vfs-open-read
 talos: exec-source bytes=0x0000000000000204 digest=0x96ee5866736d445b
 talos: exec-loader fixture=phase8-program-loader-elf64-aarch64-v1 entry=0x0000000000010100 segments=0x0000000000000002
-talos: exec-launch launch-boundary=phase8-initial-process-launch-plan-v1 stack-boundary=phase8-initial-user-stack-plan-v1 address-space=0x0000000000100001 materialization=0x0000000830100001 initial-sp=0x0000800000000000
-talos: exec-status boundary=lower-aarch64-svc-status-equivalent marker=0x0000000000007a10 status=0x0000000000000000 complete=true
+talos: exec-launch launch-boundary=phase8-initial-process-launch-plan-v1 stack-boundary=phase8-initial-user-stack-plan-v1 address-space=0x0000000000100001 materialization=0x0000000830100001 initial-sp=0x00007fffffffffd0
+talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table
+talos: exec-startup-abi state=minimal-argc1-argv0-init-empty-envp argc=0x0000000000000001 argv0=/bin/init argv0-ptr=0x00007ffffffffff0 argv-null=false envp-null=true envp-state=empty-envp0 envp-entries=0x0000000000000000 envp0-ptr=0x00007fffffffffe8 copied-startup-bytes=0x000000000000002a source=initial-user-stack-record
+talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/init state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true
+talos: init-lifecycle-status record=phase12-local-process-lifecycle-status-record-v1 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/init state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=kernel-owned-lifecycle-status-record
+talos: vfs-exec-lifecycle-status record=phase12-local-vfs-exec-lifecycle-status-record-v2 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/init state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=kernel-owned-vfs-exec-lifecycle-status-record
+talos: exec-status boundary=lower-aarch64-svc-status-equivalent marker=0x0000000000007a10 status=0x0000000000000000 complete=true source=lifecycle-record
 talos: exec-signal lower-aarch64-svc-launch-boundary-equivalent
 
-qemu-local-shell-vfs-exec: line command=3 hex=65 78 65 63 20 2f 62 69 6e 2f 69 6e 69 74
-qemu-local-shell-vfs-exec: dispatch command=3 status=handled responses=6 raw-bytes=15 backspaces=0 deletes=0 truncated=false controls=0
-qemu-local-shell-vfs-exec: ready command=4
+qemu-local-shell-vfs-exec: line command=5 hex=65 78 65 63 20 2f 62 69 6e 2f 69 6e 69 74
+qemu-local-shell-vfs-exec: dispatch command=5 status=handled responses=11 raw-bytes=15 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-vfs-exec: ready command=6
+talos> laststatus
+talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/init state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record
+
+qemu-local-shell-vfs-exec: line command=6 hex=6c 61 73 74 73 74 61 74 75 73
+qemu-local-shell-vfs-exec: dispatch command=6 status=handled responses=1 raw-bytes=11 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-vfs-exec: ready command=7
+talos> exec /bin/zero
+talos: exec path=/bin/zero source=vfs-open-read
+talos: exec-source bytes=0x0000000000000204 digest=0x96ee5866736d445b
+talos: exec-loader fixture=phase8-program-loader-elf64-aarch64-v1 entry=0x0000000000010100 segments=0x0000000000000002
+talos: exec-launch launch-boundary=phase8-initial-process-launch-plan-v1 stack-boundary=phase8-initial-user-stack-plan-v1 address-space=0x0000000000100001 materialization=0x0000000830100001 initial-sp=0x00007fffffffffd0
+talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table
+talos: exec-startup-abi state=minimal-argc1-argv0-absolute-empty-envp argc=0x0000000000000001 argv0=/bin/zero argv0-ptr=0x00007ffffffffff0 argv-null=false envp-null=true envp-state=empty-envp0 envp-entries=0x0000000000000000 envp0-ptr=0x00007fffffffffe8 copied-startup-bytes=0x000000000000002a source=initial-user-stack-record
+talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/zero state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true
+talos: vfs-exec-lifecycle-status record=phase12-local-vfs-exec-lifecycle-status-record-v2 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/zero state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=kernel-owned-vfs-exec-lifecycle-status-record
+talos: exec-status boundary=lower-aarch64-svc-status-equivalent marker=0x0000000000007a10 status=0x0000000000000000 complete=true source=lifecycle-record
+talos: exec-signal lower-aarch64-svc-launch-boundary-equivalent
+
+qemu-local-shell-vfs-exec: line command=7 hex=65 78 65 63 20 2f 62 69 6e 2f 7a 65 72 6f
+qemu-local-shell-vfs-exec: dispatch command=7 status=handled responses=10 raw-bytes=15 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-vfs-exec: ready command=8
+talos> laststatus
+talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/zero state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record
+
+qemu-local-shell-vfs-exec: line command=8 hex=6c 61 73 74 73 74 61 74 75 73
+qemu-local-shell-vfs-exec: dispatch command=8 status=handled responses=1 raw-bytes=11 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-vfs-exec: ready command=9
 talos> exec /missing
 talos: exec-not-found
 
-qemu-local-shell-vfs-exec: line command=4 hex=65 78 65 63 20 2f 6d 69 73 73 69 6e 67
-qemu-local-shell-vfs-exec: dispatch command=4 status=unexpected-argument responses=1 raw-bytes=14 backspaces=0 deletes=0 truncated=false controls=0
-qemu-local-shell-vfs-exec: ready command=5
+qemu-local-shell-vfs-exec: line command=9 hex=65 78 65 63 20 2f 6d 69 73 73 69 6e 67
+qemu-local-shell-vfs-exec: dispatch command=9 status=unexpected-argument responses=1 raw-bytes=14 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-vfs-exec: ready command=10
+talos> exec bin/init
+talos: exec-invalid-path
+
+qemu-local-shell-vfs-exec: line command=10 hex=65 78 65 63 20 62 69 6e 2f 69 6e 69 74
+qemu-local-shell-vfs-exec: dispatch command=10 status=unexpected-argument responses=1 raw-bytes=14 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-vfs-exec: ready command=11
+talos> exec /bin
+talos: exec-not-executable
+
+qemu-local-shell-vfs-exec: line command=11 hex=65 78 65 63 20 2f 62 69 6e
+qemu-local-shell-vfs-exec: dispatch command=11 status=unexpected-argument responses=1 raw-bytes=10 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-vfs-exec: ready command=12
 talos> exec /etc/banner.txt
 talos: exec-not-executable
 
-qemu-local-shell-vfs-exec: line command=5 hex=65 78 65 63 20 2f 65 74 63 2f 62 61 6e 6e 65 72 2e 74 78 74
-qemu-local-shell-vfs-exec: dispatch command=5 status=unexpected-argument responses=1 raw-bytes=21 backspaces=0 deletes=0 truncated=false controls=0
-qemu-local-shell-vfs-exec: ready command=6
+qemu-local-shell-vfs-exec: line command=12 hex=65 78 65 63 20 2f 65 74 63 2f 62 61 6e 6e 65 72 2e 74 78 74
+qemu-local-shell-vfs-exec: dispatch command=12 status=unexpected-argument responses=1 raw-bytes=21 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-vfs-exec: ready command=13
+talos> exec /empty
+talos: exec-not-executable
+
+qemu-local-shell-vfs-exec: line command=13 hex=65 78 65 63 20 2f 65 6d 70 74 79
+qemu-local-shell-vfs-exec: dispatch command=13 status=unexpected-argument responses=1 raw-bytes=12 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-vfs-exec: ready command=14
 talos> cat /etc/banner.txt
 Talos initramfs fixture
 
-qemu-local-shell-vfs-exec: line command=6 hex=63 61 74 20 2f 65 74 63 2f 62 61 6e 6e 65 72 2e 74 78 74
-qemu-local-shell-vfs-exec: dispatch command=6 status=handled responses=1 raw-bytes=20 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-vfs-exec: line command=14 hex=63 61 74 20 2f 65 74 63 2f 62 61 6e 6e 65 72 2e 74 78 74
+qemu-local-shell-vfs-exec: dispatch command=14 status=handled responses=1 raw-bytes=20 backspaces=0 deletes=0 truncated=false controls=0
 talos>
 qemu-local-shell-vfs-exec: ready-for-next prompt=true
-qemu-local-shell-vfs-exec: final participants=7 expected=7 errors=0 classification=qemu-local-shell-vfs-exec-complete
+qemu-local-shell-vfs-exec: final participants=15 expected=15 errors=0 classification=qemu-local-shell-vfs-exec-complete
 qemu-local-shell-vfs-exec: PASS

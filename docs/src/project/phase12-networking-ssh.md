@@ -9038,6 +9038,25 @@ arbitrary shell grammar, unbounded pipelines, pipeline concurrency, scheduler
 concurrency, fork/signals, process groups/sessions, persistent storage,
 generated-root command-input retry, and phase transition remain deferred.
 
+phase12-local-bare-name-vfs-command-core-20260626 accepts
+local-bare-name-vfs-command-core. The local shell now accepts the direct bare
+command `status42` by resolving it through the bounded `/bin` VFS lookup to
+`/bin/status42`; successful execution still opens and reads the VFS executable
+and runs through the accepted loader, userspace launch, lifecycle/status, and
+bounded process-table path. Unit and QEMU/substitute evidence preserve
+waitpid, laststatus, `/proc/talos/processes`, zero-argument `ps`, and
+pipestatus/process-status observations at the same static/QEMU substitute
+evidence level as the direct absolute-path command. Relative names with
+slashes, unsupported bare arguments/redirections, still-deferred bare
+pipelines, non-executable absolute paths, and missing absolute paths fail
+closed without successful process records. This is not POSIX PATH environment
+compatibility, command lookup beyond the bounded `/bin` surface, arbitrary
+shell grammar, live networking/SSH, Pi 5 hardware proof, generated-root
+command-input retry, or a phase transition. selected_next_task is
+phase12-local-bare-name-vfs-pipeline-core-20260626 because that queued bounded
+bare-name pipeline task is mechanically objective after this accepted direct
+bare-name command.
+
 phase12-local-vfs-exec-lifecycle-record-generalization-core-20260626
 accepts local-vfs-exec-lifecycle-record-generalization-core. This local
 POSIX/VFS/userspace continuation preserves the accepted
