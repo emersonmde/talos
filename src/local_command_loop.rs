@@ -44,7 +44,8 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+shell-sockdiag-vfs-userspace-smoltcp-tcp",
     "+pipeline-distinct-serialized-process-identities",
     "+explicit-pid-wait-status-observation+waitpid-completed-child-observation",
-    "+bounded-process-table-direct-vfs-exec-lifecycle"
+    "+bounded-process-table-direct-vfs-exec-lifecycle",
+    "+bounded-process-table-pipeline-background-lifecycle"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -972,7 +973,7 @@ pub struct LocalCommandProcessTableRecord {
 }
 
 impl LocalCommandProcessTableRecord {
-    const IDENTITY: &'static str = "phase12-local-process-table-direct-vfs-exec-record-v1";
+    const IDENTITY: &'static str = "phase12-local-bounded-process-table-lifecycle-record-v1";
 
     const fn from_lifecycle(
         slot: usize,
@@ -984,6 +985,9 @@ impl LocalCommandProcessTableRecord {
             initramfs::PHASE8_INIT_PATH
                 | initramfs::PHASE10_ZERO_PATH
                 | initramfs::PHASE10_STATUS42_PATH
+                | initramfs::PHASE10_STDOUT_PATH
+                | initramfs::PHASE10_STDIN_PATH
+                | initramfs::PHASE10_STDERR_PATH
         ) {
             return None;
         }
@@ -1510,12 +1514,24 @@ where
         &mut self,
         lifecycle: LocalCommandProcessLifecycleRecord,
     ) -> Option<LocalCommandProcessTableRecord> {
+        self.process_table_records = [None; LOCAL_COMMAND_PROCESS_TABLE_CAPACITY];
+        self.record_process_table_record(0, lifecycle)
+    }
+
+    fn record_process_table_record(
+        &mut self,
+        slot: usize,
+        lifecycle: LocalCommandProcessLifecycleRecord,
+    ) -> Option<LocalCommandProcessTableRecord> {
+        if slot >= LOCAL_COMMAND_PROCESS_TABLE_CAPACITY {
+            return None;
+        }
         let record = LocalCommandProcessTableRecord::from_lifecycle(
-            0,
+            slot,
             LOCAL_COMMAND_PROCESS_TABLE_CAPACITY,
             lifecycle,
         )?;
-        self.process_table_records[record.slot] = Some(record);
+        self.process_table_records[slot] = Some(record);
         Some(record)
     }
 
@@ -4009,6 +4025,9 @@ where
         consumer.lifecycle = consumer
             .lifecycle
             .with_process_id(LOCAL_COMMAND_PIPELINE_CONSUMER_PROCESS_ID);
+        self.process_table_records = [None; LOCAL_COMMAND_PROCESS_TABLE_CAPACITY];
+        producer.process_table_record = self.record_process_table_record(0, producer.lifecycle);
+        consumer.process_table_record = self.record_process_table_record(1, consumer.lifecycle);
         self.last_process = Some(consumer.lifecycle);
         self.waitable_process = Some(consumer.lifecycle);
         self.explicit_wait_records = [Some(producer.lifecycle), Some(consumer.lifecycle)];
@@ -4084,10 +4103,12 @@ where
         let previous_last = self.last_process;
         let previous_waitable = self.waitable_process;
         let previous_explicit = self.explicit_wait_records;
-        let exec = self.exec_vfs_program(request)?;
+        let previous_process_table = self.process_table_records;
+        let mut exec = self.exec_vfs_program(request)?;
         self.last_process = previous_last;
         self.waitable_process = previous_waitable;
         self.explicit_wait_records = previous_explicit;
+        self.process_table_records = previous_process_table;
         let job_id = self.next_background_job_id;
         self.next_background_job_id = self
             .next_background_job_id
@@ -4101,6 +4122,7 @@ where
             exec.lifecycle.with_process_id(process_id),
             exec.source_path,
         );
+        exec.process_table_record = self.record_process_table_record(slot, job.lifecycle);
         self.background_jobs[slot] = Some(job);
         Ok(LocalCommandBackgroundExecSummary { exec, job })
     }
@@ -10006,13 +10028,16 @@ talos> talos: exec-invalid-path\n"
     fn local_command_loop_execs_minimal_stdout_to_stdin_pipeline() {
         let input = ScriptedInput::new(*b"exec stdout | exec stdin\rwaitpid\rlaststatus\r", 44);
         let mut backend = CaptureSink::new();
-        let (pipeline, waited, observed) = {
+        let (pipeline, waited, observed, process_table_records) = {
             let mut io =
                 DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            let pipeline = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let process_table_records = io.process_table_records();
             (
+                pipeline,
                 run_one_descriptor_backed_serial_command(&mut io).unwrap(),
                 run_one_descriptor_backed_serial_command(&mut io).unwrap(),
-                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                process_table_records,
             )
         };
         let output = backend.as_str();
@@ -10020,6 +10045,43 @@ talos> talos: exec-invalid-path\n"
         assert_eq!(pipeline.line(), b"exec stdout | exec stdin");
         assert_eq!(pipeline.status(), LocalCommandStatus::Handled);
         assert_eq!(pipeline.response_lines(), 22);
+        let producer_record = process_table_records[0].unwrap();
+        let consumer_record = process_table_records[1].unwrap();
+        assert_eq!(
+            producer_record.identity,
+            LocalCommandProcessTableRecord::IDENTITY
+        );
+        assert_eq!(producer_record.slot, 0);
+        assert_eq!(
+            producer_record.capacity,
+            LOCAL_COMMAND_PROCESS_TABLE_CAPACITY
+        );
+        assert_eq!(
+            producer_record.lifecycle.process_id,
+            LOCAL_COMMAND_PIPELINE_PRODUCER_PROCESS_ID
+        );
+        assert_eq!(
+            producer_record.lifecycle.source_path,
+            initramfs::PHASE10_STDOUT_PATH
+        );
+        assert_eq!(
+            consumer_record.identity,
+            LocalCommandProcessTableRecord::IDENTITY
+        );
+        assert_eq!(consumer_record.slot, 1);
+        assert_eq!(
+            consumer_record.capacity,
+            LOCAL_COMMAND_PROCESS_TABLE_CAPACITY
+        );
+        assert_eq!(
+            consumer_record.lifecycle.process_id,
+            LOCAL_COMMAND_PIPELINE_CONSUMER_PROCESS_ID
+        );
+        assert_eq!(
+            consumer_record.lifecycle.source_path,
+            initramfs::PHASE10_STDIN_PATH
+        );
+        assert_eq!(process_table_records[2], None);
         assert_eq!(waited.line(), b"waitpid");
         assert_eq!(waited.status(), LocalCommandStatus::Handled);
         assert_eq!(observed.line(), b"laststatus");
@@ -10908,12 +10970,26 @@ talos> talos: exec-invalid-path\n"
         let bytes = *b"jobs\rexec /bin/status42 &\rjobs\rjobs\rwaitpid\rlaststatus\rfg\rbg\r";
         let input = ScriptedInput::new(bytes, bytes.len());
         let mut backend = CaptureSink::new();
-        let (empty, background, running, completed, waited, observed, fg, bg) = {
+        let (
+            empty,
+            background,
+            background_process_table_records,
+            running,
+            completed,
+            waited,
+            observed,
+            fg,
+            bg,
+        ) = {
             let mut io =
                 DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            let empty = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let background = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let background_process_table_records = io.process_table_records();
             (
-                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
-                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                empty,
+                background,
+                background_process_table_records,
                 run_one_descriptor_backed_serial_command(&mut io).unwrap(),
                 run_one_descriptor_backed_serial_command(&mut io).unwrap(),
                 run_one_descriptor_backed_serial_command(&mut io).unwrap(),
@@ -10930,6 +11006,22 @@ talos> talos: exec-invalid-path\n"
         assert_eq!(background.line(), b"exec /bin/status42 &");
         assert_eq!(background.status(), LocalCommandStatus::Handled);
         assert_eq!(background.response_lines(), 8);
+        let background_process_record = background_process_table_records[0].unwrap();
+        assert_eq!(
+            background_process_record.identity,
+            LocalCommandProcessTableRecord::IDENTITY
+        );
+        assert_eq!(background_process_record.slot, 0);
+        assert_eq!(
+            background_process_record.lifecycle.process_id,
+            LOCAL_COMMAND_EXEC_PROCESS_ID
+        );
+        assert_eq!(
+            background_process_record.lifecycle.source_path,
+            initramfs::PHASE10_STATUS42_PATH
+        );
+        assert_eq!(background_process_record.lifecycle.status, 0x2a);
+        assert_eq!(background_process_table_records[1], None);
         assert_eq!(running.line(), b"jobs");
         assert_eq!(running.status(), LocalCommandStatus::Handled);
         assert_eq!(running.response_lines(), 1);
@@ -10967,6 +11059,7 @@ talos> talos: exec-invalid-path\n"
             empty,
             first_background,
             second_background,
+            two_background_process_table_records,
             mixed_jobs,
             completed_jobs,
             stale_cleared_jobs,
@@ -10980,10 +11073,15 @@ talos> talos: exec-invalid-path\n"
         ) = {
             let mut io =
                 DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            let empty = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let first_background = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let second_background = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let two_background_process_table_records = io.process_table_records();
             (
-                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
-                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
-                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                empty,
+                first_background,
+                second_background,
+                two_background_process_table_records,
                 run_one_descriptor_backed_serial_command(&mut io).unwrap(),
                 run_one_descriptor_backed_serial_command(&mut io).unwrap(),
                 run_one_descriptor_backed_serial_command(&mut io).unwrap(),
@@ -11007,6 +11105,33 @@ talos> talos: exec-invalid-path\n"
         assert_eq!(second_background.line(), b"exec /bin/zero &");
         assert_eq!(second_background.status(), LocalCommandStatus::Handled);
         assert_eq!(second_background.response_lines(), 9);
+        let first_background_record = two_background_process_table_records[0].unwrap();
+        let second_background_record = two_background_process_table_records[1].unwrap();
+        assert_eq!(
+            first_background_record.identity,
+            LocalCommandProcessTableRecord::IDENTITY
+        );
+        assert_eq!(first_background_record.slot, 0);
+        assert_eq!(
+            first_background_record.lifecycle.source_path,
+            initramfs::PHASE10_STATUS42_PATH
+        );
+        assert_eq!(first_background_record.lifecycle.status, 0x2a);
+        assert_eq!(
+            second_background_record.identity,
+            LocalCommandProcessTableRecord::IDENTITY
+        );
+        assert_eq!(second_background_record.slot, 1);
+        assert_eq!(
+            second_background_record.lifecycle.process_id,
+            LOCAL_COMMAND_EXEC_PROCESS_ID + 1
+        );
+        assert_eq!(
+            second_background_record.lifecycle.source_path,
+            initramfs::PHASE10_ZERO_PATH
+        );
+        assert_eq!(second_background_record.lifecycle.status, 0);
+        assert_eq!(two_background_process_table_records[2], None);
         assert_eq!(mixed_jobs.line(), b"jobs");
         assert_eq!(mixed_jobs.status(), LocalCommandStatus::Handled);
         assert_eq!(mixed_jobs.response_lines(), 2);

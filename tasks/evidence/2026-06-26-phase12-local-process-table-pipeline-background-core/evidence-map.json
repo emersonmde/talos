@@ -1,0 +1,41 @@
+{
+  "task_id": "phase12-local-process-table-pipeline-background-core-20260626",
+  "classification": "local-process-table-pipeline-background-core-accepted",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "path": "src/local_command_loop.rs",
+      "summary": "Process-table substrate generalized and populated for exact pipeline producer/consumer and accepted background job records."
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "summary": "Focused local command loop tests passed, including direct process-table, pipeline process-table, background process-table, waitpid, jobs, and negative-control coverage."
+    },
+    {
+      "level": "QEMU/substitute",
+      "command": "scripts/qemu-local-shell-waitpid-any-completed-child-smoke.sh",
+      "path": "tasks/evidence/2026-06-26-phase12-local-process-table-pipeline-background-core/qemu-local-shell-waitpid-any-completed-child-smoke.log",
+      "summary": "Retained smoke passed with participants=19 expected=19 errors=0 and classification qemu-local-shell-waitpid-any-completed-child-complete."
+    },
+    {
+      "level": "documentation",
+      "paths": [
+        "docs/src/roadmap.md",
+        "docs/src/project/phase12-networking-ssh.md",
+        "docs/src/project/early-posix-shape.md",
+        "tasks/2026-06-26-phase12-local-process-table-pipeline-background-core.md"
+      ],
+      "summary": "Accepted/deferred process-table frontier recorded."
+    }
+  ],
+  "validation": {
+    "cargo_fmt_check": "passed",
+    "cargo_test_quiet": "passed",
+    "jq_empty": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed"
+  },
+  "commit": "recorded in durable supervisor state after commit"
+}

@@ -18213,6 +18213,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   phase12-local-process-table-pipeline-background-core-20260626 because that
   queued follow-up is mechanically objective after the accepted direct
   frontier.
+- phase12-local-process-table-pipeline-background-core-20260626 accepts the
+  bounded process-table migration for exact two-stage pipelines and accepted
+  background VFS exec jobs. The same internal process-table record identity now
+  backs direct foreground VFS exec, exact pipeline producer/consumer entries,
+  and background /bin/status42 and /bin/zero job entries. The retained focused
+  unit tests inspect pipeline slots 0/1 with distinct pids 0x100001/0x100002
+  and background slots 0/1 for status42/zero while the retained
+  QEMU/substitute waitpid smoke preserves existing shell-visible direct,
+  pipeline, background, jobs, descriptor-backed VFS, and stale/no-child
+  behavior. This does not accept a public process table API, procfs/ps, true
+  scheduler concurrency, fork/signals, process groups/sessions, waitpid
+  options, PID reuse policy beyond bounded deterministic controls, multi-stage
+  pipelines, pipefail, persistent storage, live networking, SSH, Pi 5 hardware
+  proof, or a phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

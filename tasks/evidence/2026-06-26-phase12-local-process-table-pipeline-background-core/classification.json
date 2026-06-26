@@ -1,0 +1,33 @@
+{
+  "task_id": "phase12-local-process-table-pipeline-background-core-20260626",
+  "classification": "local-process-table-pipeline-background-core-accepted",
+  "accepted_frontier": "bounded internal process-table lifecycle/status records for direct foreground VFS exec, exact two-stage pipelines, and accepted background VFS exec jobs",
+  "source_changes": [
+    "src/local_command_loop.rs generalizes LocalCommandProcessTableRecord identity",
+    "exact pipeline producer and consumer lifecycle records populate bounded process-table slots",
+    "background /bin/status42 and /bin/zero jobs populate bounded process-table slots while preserving jobs accounting"
+  ],
+  "deferred": [
+    "public process enumeration",
+    "procfs/ps command",
+    "true scheduler concurrency",
+    "fork/signals",
+    "process groups/sessions",
+    "waitpid options",
+    "PID reuse policy beyond bounded deterministic controls",
+    "multi-stage pipelines",
+    "pipefail",
+    "persistent storage",
+    "live networking",
+    "SSH",
+    "Pi 5 hardware proof",
+    "phase transition"
+  ],
+  "hardware": {
+    "hardwareTestLock_acquired": false,
+    "pi5_hardware_action": false,
+    "claim": "no hardware proof claimed"
+  },
+  "selected_next_task": "phase12-local-process-table-pipeline-background-closeout-20260626",
+  "commit": "recorded in durable supervisor state after commit"
+}

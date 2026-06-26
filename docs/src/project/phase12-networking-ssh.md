@@ -9128,6 +9128,23 @@ transition remain deferred. selected_next_task is
 phase12-local-process-table-pipeline-background-core-20260626 because that
 queued follow-up is mechanically objective after the accepted direct frontier.
 
+phase12-local-process-table-pipeline-background-core-20260626 accepts bounded
+process-table lifecycle/status backing for exact two-stage pipeline and
+accepted background VFS exec records. Exact pipeline producer/consumer records
+now use the same internal process-table substrate with distinct stable pids
+0x100001 and 0x100002 while preserving existing pipeline-local accounting and
+shell-visible waitpid/laststatus compatibility. Background /bin/status42 and
+/bin/zero jobs now install process-table records in bounded slots while
+preserving jobs accounting, completed-entry retention, deterministic clearing,
+and explicit/no-argument waitpid behavior. The retained focused unit tests
+inspect the process-table slots directly; the retained QEMU/substitute waitpid
+smoke preserves direct exec, pipeline, background, jobs, descriptor-backed VFS,
+and stale/no-child regressions. Public process enumeration, procfs/ps command,
+true scheduler concurrency, fork/signals, process groups/sessions, waitpid
+options, PID reuse policy beyond bounded deterministic controls, multi-stage
+pipelines, pipefail, persistent storage, live networking, SSH, Pi 5 hardware
+proof, and phase transition remain deferred.
+
 phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624 accepts
 the live reachability source reconciliation as
 live-reachability-source-reconciliation-paused-no-defensible-discriminator.
