@@ -9222,6 +9222,25 @@ networking/SSH, Pi 5 hardware proof, generated-root retry, or a phase
 transition. selected_next_task is
 phase12-local-bare-name-pipeline-stage-argv-closeout-20260626.
 
+phase12-local-bare-name-pipeline-stage-argv-closeout-20260626 accepts
+local-bare-name-pipeline-stage-argv-closeout. The checkpoint reconciles the
+accepted bare-name pipeline stage argv frontier against retained core
+evidence, classification/evidence JSON, QEMU/substitute transcript, docs, and
+regression records. The accepted surface remains exactly 'stdout alpha | stdin
+beta': both stages resolve only through fixed bounded /bin lookup and then run
+through descriptor-backed VFS open/read, the accepted loader, userspace
+startup/status, inherited standard descriptors, pipe descriptor handoff,
+closed loader temporary descriptors, bounded process-table observations,
+waitpid, laststatus, /proc/talos/processes, zero-argument ps, and pipestatus
+compatibility. Direct path-form pipeline stage argv, direct/bare-name command
+argv, no-argument direct and bare-name pipelines, multistage pipeline,
+process-status VFS, ps, and pipestatus remain retained controls. Multistage
+pipeline argv, redirections, environment-backed PATH, command lookup beyond
+bounded /bin, arbitrary shell grammar, live networking/SSH, Pi 5 hardware
+proof, generated-root retry, and phase transition remain deferred.
+selected_next_task is
+phase12-local-pipeline-stage-argv-frontier-checkpoint-20260626.
+
 phase12-local-vfs-exec-lifecycle-record-generalization-core-20260626
 accepts local-vfs-exec-lifecycle-record-generalization-core. This local
 POSIX/VFS/userspace continuation preserves the accepted

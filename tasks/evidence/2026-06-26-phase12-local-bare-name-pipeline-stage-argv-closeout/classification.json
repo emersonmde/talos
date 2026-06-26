@@ -1,0 +1,10 @@
+{
+  "task_id": "phase12-local-bare-name-pipeline-stage-argv-closeout-20260626",
+  "classification": "local-bare-name-pipeline-stage-argv-closeout-accepted",
+  "accepted_frontier": "bare-name two-stage pipeline with one bounded literal argument per stage",
+  "feature_witness": "stdout alpha | stdin beta",
+  "selected_next_task": "phase12-local-pipeline-stage-argv-frontier-checkpoint-20260626",
+  "planning_needed": false,
+  "hardware_claim": "none",
+  "live_network_ssh": "paused"
+}

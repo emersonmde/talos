@@ -292,6 +292,18 @@ grammar, unbounded pipelines, live networking/SSH, Pi 5 hardware proof,
 generated-root retry, and phase transition remain deferred pending the
 bare-name pipeline argv closeout.
 
+The bare-name pipeline argv closeout reconciles that accepted surface without
+adding runtime behavior. The accepted frontier remains exactly 'stdout alpha |
+stdin beta' through fixed bounded /bin lookup, VFS open/read, loader,
+userspace startup/status, pipe descriptors, process-table records, waitpid,
+/proc/talos/processes, zero-argument ps, and pipestatus. Direct path-form
+pipeline stage argv, command argv, no-argument pipelines, multistage pipeline,
+process-status VFS, ps, and pipestatus remain retained controls. Multistage
+pipeline argv, redirections, environment-backed PATH, command lookup beyond
+bounded /bin, arbitrary shell grammar, live networking/SSH, Pi 5 hardware
+proof, generated-root retry, and phase transition remain deferred until the
+selected pipeline stage argv frontier checkpoint.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
