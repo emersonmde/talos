@@ -95,6 +95,14 @@ laststatus, and jobs accounting surfaces. That is still not a public process
 enumeration API, procfs, ps, fork, process groups, waitpid option model, PID
 reuse policy, or scheduler-concurrent process model.
 
+The first process-status VFS view is `/proc/talos/processes`. It is
+Talos-private, read-only, versioned as `talos-processes-v1`, descriptor-backed
+through the same `cat`/open/read path used by accepted VFS files, and reports
+only bounded process-table records for direct VFS exec, exact two-stage
+pipelines, and accepted background jobs. It is not Linux procfs compatibility,
+`ps`, `/proc/self`, `/proc/<pid>`, a public process enumeration ABI, or a
+scheduler-concurrent process model.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

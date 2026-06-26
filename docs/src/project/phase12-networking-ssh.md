@@ -9178,6 +9178,21 @@ POSIX/process-table follow-up exists after this checkpoint with explicit
 dependencies, acceptance criteria, validation gates, docs, and evidence
 requirements.
 
+phase12-local-process-status-vfs-core-20260626 accepts
+local-process-status-vfs-core-accepted. The local shell now exposes the
+Talos-private read-only `/proc/talos/processes` VFS path through the
+descriptor-backed `cat`/open/read route instead of a fake shell command. The
+versioned `talos-processes-v1` schema reports bounded process-table records for
+direct `/bin/status42`, exact `/bin/stdout | /bin/stdin` pipeline
+producer/consumer records, and background `/bin/status42`, including
+`wait-consumed` and `job-state` before and after accepted explicit `waitpid`
+observation. Unsupported `/proc/talos` fails closed and the existing
+`/etc/banner.txt` VFS cat path remains accepted. This is not Linux procfs
+compatibility, `ps`, `/proc/self`, `/proc/<pid>`, public process enumeration
+ABI, hardware proof, networking, SSH, or a phase transition. selected_next_task
+is phase12-local-process-status-vfs-closeout-20260626 because the queued
+closeout is mechanically objective after this accepted core task.
+
 phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624 accepts
 the live reachability source reconciliation as
 live-reachability-source-reconciliation-paused-no-defensible-discriminator.

@@ -1,0 +1,57 @@
+{
+  "task_id": "phase12-local-process-status-vfs-core-20260626",
+  "evidence": [
+    {
+      "kind": "static inspection",
+      "path": "src/local_command_loop.rs",
+      "summary": "Adds the Talos-private /proc/talos/processes path, fixed talos-processes-v1 text schema, descriptor-backed process-status read helper, and cat routing with unsupported /proc paths failing closed."
+    },
+    {
+      "kind": "static inspection",
+      "path": "src/target/qemu_virt.rs",
+      "summary": "Adds a dedicated qemu_local_shell_process_status_vfs boot scenario with 19 command expectations and qemu-local-shell-process-status-vfs-complete classification."
+    },
+    {
+      "kind": "QEMU/substitute",
+      "command": "./scripts/qemu-local-shell-process-status-vfs-smoke.sh",
+      "path": "tasks/evidence/2026-06-26-phase12-local-process-status-vfs-core/qemu-local-shell-process-status-vfs-smoke.log",
+      "summary": "Passed with participants=19 expected=19 errors=0 and classification qemu-local-shell-process-status-vfs-complete."
+    },
+    {
+      "kind": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop_cats_proc_talos_processes",
+      "summary": "Passed focused host tests for direct, exact pipeline, background, and unsupported proc-path controls."
+    },
+    {
+      "kind": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "summary": "Passed the relevant local command loop regression set, including accepted VFS exec, waitpid, jobs, pipeline/background, descriptor redirection, VFS cat, and process-status controls."
+    },
+    {
+      "kind": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet",
+      "summary": "Passed the full no_std test suite with 830 tests."
+    },
+    {
+      "kind": "fmt/lint/typecheck",
+      "command": "cargo fmt --all -- --check",
+      "summary": "Passed formatting check."
+    },
+    {
+      "kind": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "summary": "Passed mdbook build; mdbook reported the existing large search-index warning."
+    },
+    {
+      "kind": "diff hygiene",
+      "command": "git diff --check",
+      "summary": "Passed unstaged diff whitespace check before staging."
+    }
+  ],
+  "docs": [
+    "tasks/2026-06-26-phase12-local-process-status-vfs-core.md",
+    "docs/src/roadmap.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/project/early-posix-shape.md"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "task_id": "phase12-local-process-status-vfs-core-20260626",
+  "classification": "local-process-status-vfs-core-accepted",
+  "status_path": "/proc/talos/processes",
+  "schema": "talos-processes-v1",
+  "descriptor_backed": true,
+  "accepted_surface": [
+    "cat /proc/talos/processes reads through the local descriptor-backed cat/read path",
+    "direct /bin/status42 status record",
+    "exact two-stage /bin/stdout | /bin/stdin producer and consumer records",
+    "background /bin/status42 record before and after explicit waitpid consumption",
+    "unsupported /proc/talos negative control fails closed",
+    "existing non-proc VFS cat behavior remains accepted"
+  ],
+  "deferred": [
+    "Linux procfs compatibility",
+    "ps command",
+    "/proc/self",
+    "/proc/<pid>",
+    "public stable process enumeration ABI",
+    "scheduler-concurrent execution",
+    "fork/signals",
+    "process groups/sessions",
+    "waitpid options",
+    "PID reuse policy",
+    "multi-stage pipelines",
+    "pipefail",
+    "persistent storage",
+    "live networking",
+    "SSH",
+    "Pi 5 hardware proof",
+    "phase transition"
+  ],
+  "hardware_claim": false,
+  "live_network_ssh_paused": true
+}

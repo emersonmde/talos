@@ -45,7 +45,8 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+pipeline-distinct-serialized-process-identities",
     "+explicit-pid-wait-status-observation+waitpid-completed-child-observation",
     "+bounded-process-table-direct-vfs-exec-lifecycle",
-    "+bounded-process-table-pipeline-background-lifecycle"
+    "+bounded-process-table-pipeline-background-lifecycle",
+    "+proc-talos-processes-descriptor-backed-status-vfs"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -54,9 +55,13 @@ const LOCAL_COMMAND_LITERAL_ARG_BYTES: usize = 32;
 const LOCAL_COMMAND_EXEC_PATH_BYTES: usize = LOCAL_COMMAND_LITERAL_ARG_BYTES;
 const LOCAL_COMMAND_FILE_USER_BASE: u64 = 0x0000_0000_0011_0000;
 const LOCAL_COMMAND_FILE_READ_OFFSET: usize = 0x40;
-const LOCAL_COMMAND_FILE_USER_MEMORY_LEN: usize = 128;
-const LOCAL_COMMAND_INITRAMFS_CAT_BUFFER_LEN: usize = 64;
+const LOCAL_COMMAND_FILE_USER_MEMORY_LEN: usize = 1024;
+const LOCAL_COMMAND_INITRAMFS_CAT_BUFFER_LEN: usize = 768;
 const LOCAL_COMMAND_READ_ONLY_FILE_CAPACITY: usize = 2;
+const LOCAL_COMMAND_PROC_TALOS_PROCESSES_PATH: &[u8] = b"/proc/talos/processes";
+const LOCAL_COMMAND_PROCESS_STATUS_SCHEMA: &str = "talos-processes-v1";
+const LOCAL_COMMAND_PROCESS_STATUS_FILE_REFERENCE: usize = 0x200;
+const LOCAL_COMMAND_PROCESS_STATUS_FILE_BYTES: usize = 768;
 const LOCAL_COMMAND_STDOUT_VOLATILE_FILE_REFERENCE: usize = 0x100;
 const LOCAL_COMMAND_STDERR_VOLATILE_FILE_REFERENCE: usize = 0x101;
 const LOCAL_COMMAND_VOLATILE_FILE_BYTES: usize = 128;
@@ -1000,6 +1005,36 @@ impl LocalCommandProcessTableRecord {
     }
 }
 
+struct LocalCommandProcessStatusFile {
+    bytes: [u8; LOCAL_COMMAND_PROCESS_STATUS_FILE_BYTES],
+    len: usize,
+}
+
+impl LocalCommandProcessStatusFile {
+    const fn new_empty() -> Self {
+        Self {
+            bytes: [0; LOCAL_COMMAND_PROCESS_STATUS_FILE_BYTES],
+            len: 0,
+        }
+    }
+
+    fn as_bytes(&self) -> &[u8] {
+        &self.bytes[..self.len]
+    }
+}
+
+impl core::fmt::Write for LocalCommandProcessStatusFile {
+    fn write_str(&mut self, text: &str) -> core::fmt::Result {
+        let end = self.len.checked_add(text.len()).ok_or(core::fmt::Error)?;
+        if end > self.bytes.len() {
+            return Err(core::fmt::Error);
+        }
+        self.bytes[self.len..end].copy_from_slice(text.as_bytes());
+        self.len = end;
+        Ok(())
+    }
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 enum LocalCommandProcessState {
     Exited,
@@ -1541,6 +1576,60 @@ where
     ) -> [Option<LocalCommandProcessTableRecord>; LOCAL_COMMAND_PROCESS_TABLE_CAPACITY] {
         self.process_table_records
     }
+
+    fn process_status_file_bytes(&self) -> Result<LocalCommandProcessStatusFile, core::fmt::Error> {
+        use core::fmt::Write as _;
+
+        let mut file = LocalCommandProcessStatusFile::new_empty();
+        writeln!(file, "{}", LOCAL_COMMAND_PROCESS_STATUS_SCHEMA)?;
+        for record in self.process_table_records.into_iter().flatten() {
+            let lifecycle = record.lifecycle;
+            let wait_consumed = !self.process_has_pending_wait_observation(lifecycle.process_id);
+            let job_state = self
+                .background_jobs
+                .iter()
+                .flatten()
+                .find(|job| job.lifecycle.process_id == lifecycle.process_id)
+                .map(|job| job.state.name())
+                .unwrap_or("foreground");
+            write!(
+                file,
+                "slot={} capacity={} pid={:#018x} parent=shell owner={:#018x} path=",
+                record.slot, record.capacity, lifecycle.process_id, lifecycle.parent_owner_id
+            )?;
+            core::fmt::Write::write_str(
+                &mut file,
+                core::str::from_utf8(lifecycle.source_path).map_err(|_| core::fmt::Error)?,
+            )?;
+            writeln!(
+                file,
+                " state={} status={:#018x} observed-status={:#018x} reaped={} wait-consumed={} job-state={} source=bounded-process-table",
+                lifecycle.state.name(),
+                lifecycle.status,
+                lifecycle.observed_status,
+                lifecycle.reaped,
+                wait_consumed,
+                job_state
+            )?;
+        }
+        Ok(file)
+    }
+
+    fn process_has_pending_wait_observation(&self, process_id: u64) -> bool {
+        self.waitable_process
+            .map(|record| record.process_id == process_id)
+            .unwrap_or(false)
+            || self
+                .explicit_wait_records
+                .iter()
+                .flatten()
+                .any(|record| record.process_id == process_id)
+            || self
+                .background_jobs
+                .iter()
+                .flatten()
+                .any(|job| job.lifecycle.process_id == process_id)
+    }
 }
 
 struct RuntimeStdinReadBackend<'a, I> {
@@ -1672,6 +1761,9 @@ where
         path: &[u8],
         output: &mut [u8],
     ) -> Result<usize, LocalCommandFileReadError> {
+        if path == LOCAL_COMMAND_PROC_TALOS_PROCESSES_PATH {
+            return self.read_process_status_file_via_descriptor(output);
+        }
         self.read_initramfs_file_via_syscall_with_memory::<LOCAL_COMMAND_FILE_USER_MEMORY_LEN>(
             path,
             output,
@@ -4319,6 +4411,60 @@ where
         }
     }
 
+    fn read_process_status_file_via_descriptor(
+        &mut self,
+        output: &mut [u8],
+    ) -> Result<usize, LocalCommandFileReadError> {
+        let file = self
+            .process_status_file_bytes()
+            .map_err(|_| LocalCommandFileReadError::SyscallFailed)?;
+        let table = self
+            .descriptor_store
+            .current_descriptor_table_mut(self.current_owner)
+            .map_err(|_| LocalCommandFileReadError::SyscallFailed)?;
+        let entry = posix::DescriptorEntry::new(
+            posix::DescriptorAccess::ReadOnly,
+            posix::DescriptorFlags::EMPTY,
+            posix::DescriptorObject::new(
+                posix::DescriptorObjectKind::OtherKernelObject,
+                LOCAL_COMMAND_PROCESS_STATUS_FILE_REFERENCE,
+            ),
+        );
+        let descriptor = table
+            .allocate(entry)
+            .map_err(|_| LocalCommandFileReadError::SyscallFailed)?;
+        let bytes = self.read_process_status_descriptor(descriptor, file.as_bytes(), output);
+        let cleanup = self.close_regular_file_descriptor(descriptor);
+        match (bytes, cleanup) {
+            (Ok(bytes), Ok(())) => Ok(bytes),
+            _ => Err(LocalCommandFileReadError::SyscallFailed),
+        }
+    }
+
+    fn read_process_status_descriptor(
+        &mut self,
+        descriptor: usize,
+        file_bytes: &[u8],
+        output: &mut [u8],
+    ) -> Result<usize, LocalCommandFileReadError> {
+        let table = self
+            .descriptor_store
+            .current_descriptor_table(self.current_owner)
+            .map_err(|_| LocalCommandFileReadError::SyscallFailed)?;
+        let entry = table
+            .get(descriptor)
+            .map_err(|_| LocalCommandFileReadError::SyscallFailed)?;
+        if entry.require_readable().is_err()
+            || entry.object().kind() != posix::DescriptorObjectKind::OtherKernelObject
+            || entry.object().reference() != LOCAL_COMMAND_PROCESS_STATUS_FILE_REFERENCE
+        {
+            return Err(LocalCommandFileReadError::SyscallFailed);
+        }
+        let selected = core::cmp::min(output.len(), file_bytes.len());
+        output[..selected].copy_from_slice(&file_bytes[..selected]);
+        Ok(selected)
+    }
+
     fn open_readonly_stdin_redirection(
         &mut self,
         path: &[u8],
@@ -6146,6 +6292,15 @@ fn dispatch_local_command(
                 Some("/etc/banner.txt") => write_banner_file(sink, responses)?,
                 Some("/generated/manifest.txt") => {
                     write_initramfs_text_file(sink, responses, initramfs::GENERATED_ROOT_FILE_PATH)?
+                }
+                Some("/proc/talos/processes") => write_initramfs_text_file(
+                    sink,
+                    responses,
+                    LOCAL_COMMAND_PROC_TALOS_PROCESSES_PATH,
+                )?,
+                Some(path) if path.starts_with("/proc") => {
+                    write_line(sink, responses, "talos: not-found")?;
+                    return Ok(LocalCommandStatus::UnexpectedArgument);
                 }
                 Some(path)
                     if LocalCommandVolatilePath::from_supported_stdout_path(path.as_bytes())
@@ -11523,6 +11678,114 @@ talos> talos: exec-not-executable\n"
 talos> talos: exec-invalid-path\n\
 talos> talos: exec-not-executable\n"
         );
+    }
+
+    #[test_case]
+    fn local_command_loop_cats_proc_talos_processes_after_direct_vfs_exec() {
+        let bytes = *b"exec /bin/status42\rcat /proc/talos/processes\rwaitpid\rcat /proc/talos/processes\rcat /proc/talos\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (exec, first_cat, wait, second_cat, missing_proc) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(exec.line(), b"exec /bin/status42");
+        assert_eq!(exec.status(), LocalCommandStatus::Handled);
+        assert_eq!(first_cat.line(), b"cat /proc/talos/processes");
+        assert_eq!(first_cat.status(), LocalCommandStatus::Handled);
+        assert_eq!(first_cat.response_lines(), 1);
+        assert_eq!(wait.status(), LocalCommandStatus::Handled);
+        assert_eq!(second_cat.status(), LocalCommandStatus::Handled);
+        assert_eq!(missing_proc.line(), b"cat /proc/talos");
+        assert_eq!(
+            missing_proc.status(),
+            LocalCommandStatus::UnexpectedArgument
+        );
+        assert!(output.contains("talos-processes-v1\n"));
+        assert!(output.contains(
+            "slot=0 capacity=3 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true wait-consumed=false job-state=foreground source=bounded-process-table\n"
+        ));
+        assert!(output.contains(
+            "slot=0 capacity=3 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true wait-consumed=true job-state=foreground source=bounded-process-table\n"
+        ));
+        assert!(output.contains("talos> talos: not-found\n"));
+    }
+
+    #[test_case]
+    fn local_command_loop_cats_proc_talos_processes_after_pipeline_vfs_exec() {
+        let bytes = *b"exec stdout | exec stdin\rcat /proc/talos/processes\rwaitpid 0x100001\rcat /proc/talos/processes\rwaitpid 0x100002\rcat /proc/talos/processes\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (pipeline, first_cat, producer_wait, second_cat, consumer_wait, third_cat) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(pipeline.status(), LocalCommandStatus::Handled);
+        assert_eq!(first_cat.status(), LocalCommandStatus::Handled);
+        assert_eq!(producer_wait.status(), LocalCommandStatus::Handled);
+        assert_eq!(second_cat.status(), LocalCommandStatus::Handled);
+        assert_eq!(consumer_wait.status(), LocalCommandStatus::Handled);
+        assert_eq!(third_cat.status(), LocalCommandStatus::Handled);
+        assert!(output.contains(
+            "slot=0 capacity=3 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true wait-consumed=false job-state=foreground source=bounded-process-table\n"
+        ));
+        assert!(output.contains(
+            "slot=1 capacity=3 pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true wait-consumed=false job-state=foreground source=bounded-process-table\n"
+        ));
+        assert!(output.contains(
+            "slot=0 capacity=3 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true wait-consumed=true job-state=foreground source=bounded-process-table\n"
+        ));
+        assert!(output.contains(
+            "slot=1 capacity=3 pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true wait-consumed=true job-state=foreground source=bounded-process-table\n"
+        ));
+    }
+
+    #[test_case]
+    fn local_command_loop_cats_proc_talos_processes_after_background_vfs_exec() {
+        let bytes = *b"exec /bin/status42 &\rcat /proc/talos/processes\rwaitpid 0x100001\rcat /proc/talos/processes\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (background, first_cat, wait, second_cat) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(background.status(), LocalCommandStatus::Handled);
+        assert_eq!(first_cat.status(), LocalCommandStatus::Handled);
+        assert_eq!(wait.status(), LocalCommandStatus::Handled);
+        assert_eq!(second_cat.status(), LocalCommandStatus::Handled);
+        assert!(output.contains(
+            "slot=0 capacity=3 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true wait-consumed=false job-state=completed source=bounded-process-table\n"
+        ));
+        assert!(output.contains(
+            "slot=0 capacity=3 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true wait-consumed=true job-state=foreground source=bounded-process-table\n"
+        ));
     }
 
     #[test_case]
