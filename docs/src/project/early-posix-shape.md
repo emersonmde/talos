@@ -111,8 +111,16 @@ direct fixture loading, local userspace launch/status, bounded process-table
 records, waitpid/laststatus/jobs accounting, `/proc/talos/processes`, and
 zero-argument VFS-backed `ps` are accepted; live networking/SSH, Pi 5 hardware
 proof, scheduler concurrency, fork/signals, process groups/sessions, broad
-procfs, PID policy expansion, persistent storage, multi-stage pipelines,
+procfs, PID policy expansion, persistent storage, arbitrary pipelines,
 pipefail, and phase transition remain deferred pending supervisor planning.
+
+The first accepted multistage pipeline remains deliberately narrow:
+`exec stdout | exec stdin | exec stdin`. It is shell-visible and VFS-backed,
+but still serialized and bounded. The three fixtures exchange bytes through
+two pipe descriptor handoffs and install three process-table records that
+`waitpid`, `/proc/talos/processes`, and zero-argument `ps` can observe.
+This does not accept arbitrary pipeline grammar, unbounded pipeline length,
+pipeline concurrency, or pipefail.
 
 ## Scheduler Implications
 

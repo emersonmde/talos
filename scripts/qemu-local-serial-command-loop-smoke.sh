@@ -66,6 +66,7 @@ SHELL_STDERR_TO_STDOUT_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_
 SHELL_STDOUT_CLOSE_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDOUT_CLOSE_REDIRECTION_SMOKE:-0}"
 SHELL_STDERR_CLOSE_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDERR_CLOSE_REDIRECTION_SMOKE:-0}"
 SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_MINIMAL_STDOUT_TO_STDIN_PIPELINE_SMOKE:-0}"
+SHELL_MULTISTAGE_PIPELINE_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_MULTISTAGE_PIPELINE_SMOKE:-0}"
 SHELL_PIPELINE_STDERR_NOT_PIPED_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_PIPELINE_STDERR_NOT_PIPED_SMOKE:-0}"
 SHELL_PIPELINE_STDERR_DUP_TO_STDOUT_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_PIPELINE_STDERR_DUP_TO_STDOUT_SMOKE:-0}"
 SHELL_PIPELINE_STDOUT_REDIRECT_AWAY_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_PIPELINE_STDOUT_REDIRECT_AWAY_SMOKE:-0}"
@@ -191,6 +192,26 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
             command_index="${BASH_REMATCH[1]}"
             if [ "$sent" -eq "$command_index" ] && [ "$command_index" -lt "${#pipeline_producer_file_redirection_away_commands[@]}" ]; then
                 printf '%s\r' "${pipeline_producer_file_redirection_away_commands[$command_index]}" >&3
+                sent=$((command_index + 1))
+            fi
+            continue
+        fi
+        if [ "$SHELL_MULTISTAGE_PIPELINE_SMOKE" -eq 1 ] && [[ "$line" =~ ready\ command=([0-9]+) ]]; then
+            multistage_pipeline_commands=(
+                "help"
+                "status"
+                "stdio"
+                "exec stdout | exec stdin | exec stdin"
+                "waitpid 0x100001"
+                "waitpid 0x100002"
+                "waitpid 0x100003"
+                "cat /proc/talos/processes"
+                "ps"
+                "cat /etc/banner.txt"
+            )
+            command_index="${BASH_REMATCH[1]}"
+            if [ "$sent" -eq "$command_index" ] && [ "$command_index" -lt "${#multistage_pipeline_commands[@]}" ]; then
+                printf '%s\r' "${multistage_pipeline_commands[$command_index]}" >&3
                 sent=$((command_index + 1))
             fi
             continue
@@ -2835,6 +2856,26 @@ elif [ "$SHELL_PIPELINE_PRODUCER_FILE_REDIRECTION_AWAY_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: dispatch command=9 status=unexpected-argument responses=1" "$LOG_FILE"
     grep -q "$LABEL: dispatch command=10 status=unexpected-argument responses=1" "$LOG_FILE"
     grep -q "$LABEL: final participants=11 expected=11 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+elif [ "$SHELL_MULTISTAGE_PIPELINE_SMOKE" -eq 1 ]; then
+    grep -q "talos> exec stdout | exec stdin | exec stdin" "$LOG_FILE"
+    grep -q "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-multistage-first-stdout-to-stdin" "$LOG_FILE"
+    grep -q "talos: pipeline id=0x0000000000000002 producer-fd=0x0000000000000001 producer-path=/bin/stdin consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x0000000000000044 bytes-read=0x0000000000000044 writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-multistage-middle-to-stdin" "$LOG_FILE"
+    grep -q "middle-pid=0x0000000000100002 middle-path=/bin/stdin" "$LOG_FILE"
+    grep -q "consumer-pid=0x0000000000100003 consumer-path=/bin/stdin" "$LOG_FILE"
+    grep -q "talos: exec-stdin fd=0x0000000000000000 bytes=0x000000000000001f return=0x000000000000001f read-source=pipe:stdout-to-stdin stdout-fd=0x0000000000000001 stdout-bytes=0x0000000000000044" "$LOG_FILE"
+    grep -q "talos: exec-stdin fd=0x0000000000000000 bytes=0x0000000000000044 return=0x0000000000000044 read-source=pipe:middle-to-stdin stdout-fd=0x0000000000000001 stdout-bytes=0x0000000000000069" "$LOG_FILE"
+    grep -q "Talos userspace stdin fixture read: Talos userspace stdin fixture read: Talos userspace stdout fixture" "$LOG_FILE"
+    grep -q "talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=explicit-pid-lifecycle-record" "$LOG_FILE"
+    grep -q "talos: waitpid pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=explicit-pid-lifecycle-record" "$LOG_FILE"
+    grep -q "talos: waitpid pid=0x0000000000100003 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=explicit-pid-lifecycle-record" "$LOG_FILE"
+    grep -q "slot=0 capacity=3 pid=0x0000000000100001" "$LOG_FILE"
+    grep -q "slot=1 capacity=3 pid=0x0000000000100002" "$LOG_FILE"
+    grep -q "slot=2 capacity=3 pid=0x0000000000100003" "$LOG_FILE"
+    grep -q "talos> ps" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=3 status=handled responses=33" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=7 status=handled responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=8 status=handled responses=1" "$LOG_FILE"
+    grep -q "$LABEL: final participants=10 expected=10 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
 elif [ "$SHELL_BACKGROUND_VFS_EXEC_LIFECYCLE_SMOKE" -eq 1 ]; then
     grep -q "talos> exec /bin/status42 &" "$LOG_FILE"
     grep -q "talos: exec path=/bin/status42 source=vfs-open-read mode=background" "$LOG_FILE"

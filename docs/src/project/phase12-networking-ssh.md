@@ -9250,6 +9250,25 @@ is null and planningNeeded=true because no later queued same-lane local POSIX
 task exists with complete objective dependencies, acceptance criteria,
 validation gates, docs, and evidence requirements.
 
+phase12-local-multistage-pipeline-core-20260626 accepts
+local-multistage-pipeline-core-accepted. The local shell now supports exactly
+one three-stage VFS-backed pipeline:
+`exec stdout | exec stdin | exec stdin`. The implementation routes bytes
+through two descriptor-backed pipe objects: producer stdout to middle stdin,
+then middle stdout to final stdin. The retained QEMU/substitute transcript
+shows the final fixture printing the nested stdin output, both pipe records,
+the three-stage lifecycle/status record
+`phase12-local-multistage-pipeline-lifecycle-status-record-v1`, explicit
+waitpid for pids `0x100001`, `0x100002`, and `0x100003`, and
+`/proc/talos/processes` plus zero-argument `ps` reporting all three bounded
+process-table records. Focused process-status VFS and VFS-backed `ps`
+regression smokes remain passing. This is local QEMU/substitute evidence only:
+arbitrary shell grammar, unbounded pipeline length, concurrent scheduling,
+pipefail, fork/signals, process groups/sessions, public procfs/Linux `ps`
+compatibility, generated-root command-input retry, live networking, SSH, Pi 5
+hardware proof, and phase transition remain deferred. selected_next_task is
+phase12-local-multistage-pipeline-closeout-20260626.
+
 phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624 accepts
 the live reachability source reconciliation as
 live-reachability-source-reconciliation-paused-no-defensible-discriminator.

@@ -1,0 +1,31 @@
+{
+  "task_id": "phase12-local-multistage-pipeline-core-20260626",
+  "classification": "local-multistage-pipeline-core-accepted",
+  "accepted_command": "exec stdout | exec stdin | exec stdin",
+  "accepted": [
+    "exact three-stage local VFS-backed pipeline form",
+    "two descriptor-backed pipe handoffs: stdout-to-middle-stdin and middle-stdout-to-final-stdin",
+    "three bounded process-table lifecycle/status records for pids 0x100001, 0x100002, and 0x100003",
+    "explicit waitpid observation of all three accepted records",
+    "/proc/talos/processes and zero-argument ps reporting all three accepted records"
+  ],
+  "deferred": [
+    "arbitrary shell grammar",
+    "unbounded or arbitrary-length pipelines",
+    "pipeline concurrency",
+    "pipefail",
+    "fork/signals",
+    "process groups/sessions",
+    "waitpid options",
+    "public procfs or Linux ps compatibility",
+    "persistent or block-backed storage",
+    "live networking",
+    "SSH",
+    "Pi 5 hardware proof",
+    "generated-root command-input retry",
+    "phase transition"
+  ],
+  "hardware_claim": false,
+  "live_network_ssh_paused": true,
+  "selected_next_task": "phase12-local-multistage-pipeline-closeout-20260626"
+}

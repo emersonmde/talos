@@ -14390,6 +14390,7 @@ pub fn run_diagnostic_command_channel_smoke() -> bool {
     talos_boot_scenario = "qemu_local_shell_stdout_close_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_close_redirection",
     talos_boot_scenario = "qemu_local_shell_minimal_stdout_to_stdin_pipeline",
+    talos_boot_scenario = "qemu_local_shell_multistage_pipeline",
     talos_boot_scenario = "qemu_local_shell_pipeline_stderr_not_piped",
     talos_boot_scenario = "qemu_local_shell_pipeline_stderr_dup_to_stdout",
     talos_boot_scenario = "qemu_local_shell_pipeline_stdout_redirect_away",
@@ -14753,6 +14754,11 @@ const fn local_command_loop_smoke_label() -> &'static str {
     "qemu-local-shell-minimal-stdout-to-stdin-pipeline"
 }
 
+#[cfg(talos_boot_scenario = "qemu_local_shell_multistage_pipeline")]
+const fn local_command_loop_smoke_label() -> &'static str {
+    "qemu-local-shell-multistage-pipeline"
+}
+
 #[cfg(talos_boot_scenario = "qemu_local_shell_pipeline_stderr_not_piped")]
 const fn local_command_loop_smoke_label() -> &'static str {
     "qemu-local-shell-pipeline-stderr-not-piped"
@@ -14857,6 +14863,7 @@ const fn local_command_loop_smoke_label() -> &'static str {
     not(talos_boot_scenario = "qemu_local_shell_stdout_close_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_close_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_minimal_stdout_to_stdin_pipeline"),
+    not(talos_boot_scenario = "qemu_local_shell_multistage_pipeline"),
     not(talos_boot_scenario = "qemu_local_shell_pipeline_stderr_not_piped"),
     not(talos_boot_scenario = "qemu_local_shell_pipeline_stderr_dup_to_stdout"),
     not(talos_boot_scenario = "qemu_local_shell_pipeline_stdout_redirect_away"),
@@ -15084,6 +15091,11 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     "qemu-local-shell-minimal-stdout-to-stdin-pipeline-complete"
 }
 
+#[cfg(talos_boot_scenario = "qemu_local_shell_multistage_pipeline")]
+const fn local_command_loop_smoke_classification() -> &'static str {
+    "qemu-local-shell-multistage-pipeline-complete"
+}
+
 #[cfg(talos_boot_scenario = "qemu_local_shell_pipeline_stderr_not_piped")]
 const fn local_command_loop_smoke_classification() -> &'static str {
     "qemu-local-shell-pipeline-stderr-not-piped-complete"
@@ -15188,6 +15200,7 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     not(talos_boot_scenario = "qemu_local_shell_stdout_close_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_close_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_minimal_stdout_to_stdin_pipeline"),
+    not(talos_boot_scenario = "qemu_local_shell_multistage_pipeline"),
     not(talos_boot_scenario = "qemu_local_shell_pipeline_stderr_not_piped"),
     not(talos_boot_scenario = "qemu_local_shell_pipeline_stderr_dup_to_stdout"),
     not(talos_boot_scenario = "qemu_local_shell_pipeline_stdout_redirect_away"),
@@ -15247,6 +15260,7 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     talos_boot_scenario = "qemu_local_shell_stdout_close_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_close_redirection",
     talos_boot_scenario = "qemu_local_shell_minimal_stdout_to_stdin_pipeline",
+    talos_boot_scenario = "qemu_local_shell_multistage_pipeline",
     talos_boot_scenario = "qemu_local_shell_pipeline_stderr_not_piped",
     talos_boot_scenario = "qemu_local_shell_pipeline_stderr_dup_to_stdout",
     talos_boot_scenario = "qemu_local_shell_pipeline_stdout_redirect_away",
@@ -15347,6 +15361,8 @@ const fn local_command_loop_smoke_command_count() -> usize {
         12
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_minimal_stdout_to_stdin_pipeline") {
         7
+    } else if cfg!(talos_boot_scenario = "qemu_local_shell_multistage_pipeline") {
+        10
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_pipeline_stderr_not_piped") {
         8
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_pipeline_stderr_dup_to_stdout") {
@@ -15424,6 +15440,7 @@ const fn local_command_loop_smoke_command_count() -> usize {
     talos_boot_scenario = "qemu_local_shell_stdout_close_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_close_redirection",
     talos_boot_scenario = "qemu_local_shell_minimal_stdout_to_stdin_pipeline",
+    talos_boot_scenario = "qemu_local_shell_multistage_pipeline",
     talos_boot_scenario = "qemu_local_shell_pipeline_stderr_not_piped",
     talos_boot_scenario = "qemu_local_shell_pipeline_stderr_dup_to_stdout",
     talos_boot_scenario = "qemu_local_shell_pipeline_stdout_redirect_away",
@@ -16253,6 +16270,11 @@ fn expected_local_command_loop_dispatch(
         3 if cfg!(talos_boot_scenario = "qemu_local_shell_minimal_stdout_to_stdin_pipeline") => {
             line == b"exec stdout | exec stdin" && status == Handled && response_lines == 22
         }
+        3 if cfg!(talos_boot_scenario = "qemu_local_shell_multistage_pipeline") => {
+            line == b"exec stdout | exec stdin | exec stdin"
+                && status == Handled
+                && response_lines == 33
+        }
         3 if cfg!(talos_boot_scenario = "qemu_local_shell_pipeline_stderr_not_piped") => {
             line == b"exec stderr | exec stdin" && status == Handled && response_lines == 22
         }
@@ -16378,6 +16400,9 @@ fn expected_local_command_loop_dispatch(
         }
         4 if cfg!(talos_boot_scenario = "qemu_local_shell_minimal_stdout_to_stdin_pipeline") => {
             line == b"waitpid" && status == Handled && response_lines == 1
+        }
+        4 if cfg!(talos_boot_scenario = "qemu_local_shell_multistage_pipeline") => {
+            line == b"waitpid 0x100001" && status == Handled && response_lines == 1
         }
         4 if cfg!(talos_boot_scenario = "qemu_local_shell_pipeline_stderr_not_piped") => {
             line == b"waitpid" && status == Handled && response_lines == 1
@@ -16520,6 +16545,9 @@ fn expected_local_command_loop_dispatch(
         5 if cfg!(talos_boot_scenario = "qemu_local_shell_minimal_stdout_to_stdin_pipeline") => {
             line == b"laststatus" && status == Handled && response_lines == 1
         }
+        5 if cfg!(talos_boot_scenario = "qemu_local_shell_multistage_pipeline") => {
+            line == b"waitpid 0x100002" && status == Handled && response_lines == 1
+        }
         5 if cfg!(talos_boot_scenario = "qemu_local_shell_pipeline_stderr_not_piped") => {
             line == b"laststatus" && status == Handled && response_lines == 1
         }
@@ -16647,6 +16675,9 @@ fn expected_local_command_loop_dispatch(
         6 if cfg!(talos_boot_scenario = "qemu_local_shell_minimal_stdout_to_stdin_pipeline") => {
             line == b"cat /etc/banner.txt" && status == Handled && response_lines == 1
         }
+        6 if cfg!(talos_boot_scenario = "qemu_local_shell_multistage_pipeline") => {
+            line == b"waitpid 0x100003" && status == Handled && response_lines == 1
+        }
         6 if cfg!(talos_boot_scenario = "qemu_local_shell_pipeline_stderr_not_piped") => {
             line == b"exec stdout | exec stdin" && status == Handled && response_lines == 22
         }
@@ -16677,6 +16708,9 @@ fn expected_local_command_loop_dispatch(
         }
         7 if cfg!(talos_boot_scenario = "qemu_local_shell_pipeline_stderr_not_piped") => {
             line == b"cat /etc/banner.txt" && status == Handled && response_lines == 1
+        }
+        7 if cfg!(talos_boot_scenario = "qemu_local_shell_multistage_pipeline") => {
+            line == b"cat /proc/talos/processes" && status == Handled && response_lines == 1
         }
         7 if cfg!(talos_boot_scenario = "qemu_local_shell_pipeline_stderr_dup_to_stdout") => {
             line == b"exec stdout | exec stdin" && status == Handled && response_lines == 22
@@ -16801,6 +16835,12 @@ fn expected_local_command_loop_dispatch(
         }
         8 if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid_any_completed_child") => {
             line == b"exec stdout | exec stdin" && status == Handled && response_lines == 22
+        }
+        8 if cfg!(talos_boot_scenario = "qemu_local_shell_multistage_pipeline") => {
+            line == b"ps" && status == Handled && response_lines == 1
+        }
+        9 if cfg!(talos_boot_scenario = "qemu_local_shell_multistage_pipeline") => {
+            line == b"cat /etc/banner.txt" && status == Handled && response_lines == 1
         }
         8 if cfg!(talos_boot_scenario = "qemu_local_shell_vfs_exec") => {
             line == b"laststatus" && status == Handled && response_lines == 1

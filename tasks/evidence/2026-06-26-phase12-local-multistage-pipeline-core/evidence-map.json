@@ -1,0 +1,66 @@
+{
+  "task_id": "phase12-local-multistage-pipeline-core-20260626",
+  "classification": "local-multistage-pipeline-core-accepted",
+  "evidence": [
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop_runs_three_stage_pipeline_through_bounded_vfs_processes",
+      "summary": "Focused unit coverage proves exact three-stage byte flow, three process-table records, explicit waitpid for pids 0x100001 through 0x100003, /proc/talos/processes, and ps."
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "summary": "Focused local command loop regression passed with 832 no_std tests reported, preserving direct exec, two-stage pipeline, redirection, background jobs, waitpid, /proc/talos/processes, and ps behavior."
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-26-phase12-local-multistage-pipeline-core/qemu-local-shell-multistage-pipeline-smoke.log",
+      "summary": "Three-stage smoke passed with participants=10 expected=10 errors=0 and classification=qemu-local-shell-multistage-pipeline-complete."
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-26-phase12-local-process-status-vfs-core/qemu-local-shell-process-status-vfs-smoke.log",
+      "summary": "Process-status VFS regression passed with participants=19 expected=19 errors=0."
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-26-phase12-local-ps-command-vfs-backed-core/qemu-local-shell-ps-command-vfs-smoke.log",
+      "summary": "VFS-backed ps regression passed with participants=23 expected=23 errors=0."
+    },
+    {
+      "level": "static inspection",
+      "path": "src/local_command_loop.rs",
+      "summary": "Implementation adds a second bounded pipe endpoint, exact three-stage parser/dispatcher path, three-stage lifecycle identity, and bounded process-table records without broad pipeline grammar."
+    },
+    {
+      "level": "static inspection",
+      "path": "docs/src/roadmap.md",
+      "summary": "Roadmap records the accepted multistage pipeline boundary and deferred surfaces."
+    },
+    {
+      "level": "static inspection",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "summary": "Phase 12 notes record local-only QEMU/substitute acceptance and keep live networking/SSH paused."
+    },
+    {
+      "level": "static inspection",
+      "path": "docs/src/project/early-posix-shape.md",
+      "summary": "Early POSIX notes now distinguish the accepted exact three-stage pipeline from deferred arbitrary/concurrent pipelines and pipefail."
+    }
+  ],
+  "validation": [
+    "cargo fmt --all -- --check",
+    "cargo -Zjson-target-spec test --quiet local_command_loop_runs_three_stage_pipeline_through_bounded_vfs_processes",
+    "cargo -Zjson-target-spec test --quiet local_command_loop",
+    "./scripts/qemu-local-shell-multistage-pipeline-smoke.sh",
+    "./scripts/qemu-local-shell-process-status-vfs-smoke.sh",
+    "./scripts/qemu-local-shell-ps-command-vfs-smoke.sh",
+    "jq empty tasks/evidence/2026-06-26-phase12-local-multistage-pipeline-core/classification.json tasks/evidence/2026-06-26-phase12-local-multistage-pipeline-core/evidence-map.json",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "git diff --cached --check"
+  ],
+  "selected_next_task": "phase12-local-multistage-pipeline-closeout-20260626",
+  "hardware_claim": false,
+  "live_network_ssh_paused": true
+}

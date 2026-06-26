@@ -18328,6 +18328,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   planningNeeded=true because no later queued same-lane local POSIX task exists
   with complete objective dependencies, acceptance criteria, validation gates,
   docs, and evidence requirements.
+- phase12-local-multistage-pipeline-core-20260626 accepts
+  local-multistage-pipeline-core-accepted. The local shell now accepts exactly
+  one three-stage VFS-backed pipeline form:
+  `exec stdout | exec stdin | exec stdin`. The producer, middle, and final
+  fixtures are loaded through VFS exec, and byte flow crosses two pipe-backed
+  stdio descriptor handoffs: `/bin/stdout` fd1 to the middle `/bin/stdin`
+  fd0, then the middle `/bin/stdin` fd1 to the final `/bin/stdin` fd0. The
+  QEMU/substitute transcript records both pipe summaries, final nested stdin
+  output, explicit waitpid for pids `0x100001`, `0x100002`, and
+  `0x100003`, plus `/proc/talos/processes` and zero-argument `ps` reporting
+  the three bounded records consistently. Existing direct exec, two-stage
+  pipeline, redirection, background job, waitpid, jobs, process-status VFS, and
+  VFS-backed `ps` regressions remain passing at static/unit/QEMU-substitute
+  level. This does not accept arbitrary shell grammar, unbounded pipeline
+  length, pipeline concurrency, pipefail, fork/signals, process groups/sessions,
+  public procfs/Linux `ps` compatibility, generated-root command-input retry,
+  live networking, SSH, Pi 5 hardware proof, or a phase transition.
+  selected_next_task is phase12-local-multistage-pipeline-closeout-20260626.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

@@ -46,7 +46,8 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+explicit-pid-wait-status-observation+waitpid-completed-child-observation",
     "+bounded-process-table-direct-vfs-exec-lifecycle",
     "+bounded-process-table-pipeline-background-lifecycle",
-    "+proc-talos-processes-descriptor-backed-status-vfs+ps-command-vfs-backed-process-status"
+    "+proc-talos-processes-descriptor-backed-status-vfs+ps-command-vfs-backed-process-status",
+    "+multistage-pipeline-bounded-process-table"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -55,13 +56,13 @@ const LOCAL_COMMAND_LITERAL_ARG_BYTES: usize = 32;
 const LOCAL_COMMAND_EXEC_PATH_BYTES: usize = LOCAL_COMMAND_LITERAL_ARG_BYTES;
 const LOCAL_COMMAND_FILE_USER_BASE: u64 = 0x0000_0000_0011_0000;
 const LOCAL_COMMAND_FILE_READ_OFFSET: usize = 0x40;
-const LOCAL_COMMAND_FILE_USER_MEMORY_LEN: usize = 1024;
-const LOCAL_COMMAND_INITRAMFS_CAT_BUFFER_LEN: usize = 768;
+const LOCAL_COMMAND_FILE_USER_MEMORY_LEN: usize = 2048;
+const LOCAL_COMMAND_INITRAMFS_CAT_BUFFER_LEN: usize = 1280;
 const LOCAL_COMMAND_READ_ONLY_FILE_CAPACITY: usize = 2;
 const LOCAL_COMMAND_PROC_TALOS_PROCESSES_PATH: &[u8] = b"/proc/talos/processes";
 const LOCAL_COMMAND_PROCESS_STATUS_SCHEMA: &str = "talos-processes-v1";
 const LOCAL_COMMAND_PROCESS_STATUS_FILE_REFERENCE: usize = 0x200;
-const LOCAL_COMMAND_PROCESS_STATUS_FILE_BYTES: usize = 768;
+const LOCAL_COMMAND_PROCESS_STATUS_FILE_BYTES: usize = 1280;
 const LOCAL_COMMAND_STDOUT_VOLATILE_FILE_REFERENCE: usize = 0x100;
 const LOCAL_COMMAND_STDERR_VOLATILE_FILE_REFERENCE: usize = 0x101;
 const LOCAL_COMMAND_VOLATILE_FILE_BYTES: usize = 128;
@@ -71,7 +72,7 @@ const LOCAL_COMMAND_VOLATILE_ROUTE_BYTES: usize =
 const LOCAL_COMMAND_EXEC_READ_OFFSET: usize = 0x80;
 const LOCAL_COMMAND_EXEC_USER_MEMORY_LEN: usize = 1024;
 const LOCAL_COMMAND_STDIN_USER_BASE: u64 = 0x0000_0000_0013_0000;
-const LOCAL_COMMAND_STDIN_USER_MEMORY_LEN: usize = 128;
+const LOCAL_COMMAND_STDIN_USER_MEMORY_LEN: usize = 192;
 const LOCAL_COMMAND_STDIN_READ_OFFSET: usize = 0x40;
 const LOCAL_COMMAND_RUNTIME_STDIN_INPUT_BYTES: &[u8] = b"talos-console0";
 #[cfg(not(test))]
@@ -84,13 +85,16 @@ const LOCAL_COMMAND_EXEC_ADDRESS_SPACE_ID: u64 = 0x0010_0001;
 const LOCAL_COMMAND_EXEC_PROCESS_ID: u64 = 0x0010_0001;
 const LOCAL_COMMAND_PIPELINE_PRODUCER_PROCESS_ID: u64 = LOCAL_COMMAND_EXEC_PROCESS_ID;
 const LOCAL_COMMAND_PIPELINE_CONSUMER_PROCESS_ID: u64 = LOCAL_COMMAND_EXEC_PROCESS_ID + 1;
-const LOCAL_COMMAND_EXPLICIT_WAIT_RECORD_CAPACITY: usize = 2;
+const LOCAL_COMMAND_PIPELINE_MIDDLE_PROCESS_ID: u64 = LOCAL_COMMAND_EXEC_PROCESS_ID + 1;
+const LOCAL_COMMAND_PIPELINE_FINAL_PROCESS_ID: u64 = LOCAL_COMMAND_EXEC_PROCESS_ID + 2;
+const LOCAL_COMMAND_EXPLICIT_WAIT_RECORD_CAPACITY: usize = 3;
 const LOCAL_COMMAND_PROCESS_TABLE_CAPACITY: usize = 3;
 const LOCAL_COMMAND_BACKGROUND_JOB_CAPACITY: usize = 2;
 const LOCAL_COMMAND_BACKGROUND_JOB_FIRST_ID: u64 = 0x0000_0001;
 const LOCAL_COMMAND_EXEC_TEMP_DESCRIPTOR: usize = posix::STDERR_FD + 1;
 const LOCAL_COMMAND_PIPE_BUFFER_LEN: usize = 128;
 const LOCAL_COMMAND_PIPE_ENDPOINT_REFERENCE: usize = 1;
+const LOCAL_COMMAND_SECOND_PIPE_ENDPOINT_REFERENCE: usize = 2;
 const LOCAL_COMMAND_SOCKET_CAPACITY: usize = 4;
 const LOCAL_COMMAND_SOCKDIAG_USER_BASE: u64 = 0x0000_0000_0026_0000;
 const LOCAL_COMMAND_SOCKDIAG_POLL_WAIT_TASK_BASE: u64 = 0x0000_0000_0000_1200;
@@ -204,14 +208,17 @@ impl LocalCommandExecRequest {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct LocalCommandPipelineRequest {
     producer: LocalCommandExecRequest,
+    middle: Option<LocalCommandExecRequest>,
     consumer: LocalCommandExecRequest,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct LocalCommandPipelineSummary {
     pipe: LocalCommandPipeRecord,
+    second_pipe: Option<LocalCommandPipeRecord>,
     lifecycle_status: LocalCommandPipelineLifecycleStatusRecord,
     producer: LocalCommandExecSummary,
+    middle: Option<LocalCommandExecSummary>,
     consumer: LocalCommandExecSummary,
 }
 
@@ -663,12 +670,15 @@ pub struct LocalCommandPipelineLifecycleStatusRecord {
     identity: &'static str,
     pipe_id: usize,
     producer: LocalCommandProcessLifecycleRecord,
+    middle: Option<LocalCommandProcessLifecycleRecord>,
     consumer: LocalCommandProcessLifecycleRecord,
 }
 
 impl LocalCommandPipelineLifecycleStatusRecord {
     const IDENTITY: &'static str =
         "phase12-local-pipeline-distinct-process-lifecycle-status-record-v1";
+    const MULTISTAGE_IDENTITY: &'static str =
+        "phase12-local-multistage-pipeline-lifecycle-status-record-v1";
 
     const fn from_pipeline(
         pipe_id: usize,
@@ -679,6 +689,22 @@ impl LocalCommandPipelineLifecycleStatusRecord {
             identity: Self::IDENTITY,
             pipe_id,
             producer,
+            middle: None,
+            consumer,
+        }
+    }
+
+    const fn from_three_stage_pipeline(
+        pipe_id: usize,
+        producer: LocalCommandProcessLifecycleRecord,
+        middle: LocalCommandProcessLifecycleRecord,
+        consumer: LocalCommandProcessLifecycleRecord,
+    ) -> Self {
+        Self {
+            identity: Self::MULTISTAGE_IDENTITY,
+            pipe_id,
+            producer,
+            middle: Some(middle),
             consumer,
         }
     }
@@ -1177,6 +1203,13 @@ pub trait LocalCommandSink {
         Err(LocalCommandExecError::NotSupported)
     }
 
+    fn exec_three_stage_vfs_pipeline(
+        &mut self,
+        _request: LocalCommandPipelineRequest,
+    ) -> Result<LocalCommandPipelineSummary, LocalCommandExecError> {
+        Err(LocalCommandExecError::NotSupported)
+    }
+
     fn exec_background_vfs_program(
         &mut self,
         _request: LocalCommandExecRequest,
@@ -1271,6 +1304,7 @@ pub struct DescriptorBackedLocalCommandIo<
         [Option<LocalCommandBackgroundJobRecord>; LOCAL_COMMAND_BACKGROUND_JOB_CAPACITY],
     next_background_job_id: u64,
     pipe: LocalCommandPipeState,
+    second_pipe: LocalCommandPipeState,
     stdout_scratch_file: LocalCommandVolatileFileState,
     stderr_scratch_file: LocalCommandVolatileFileState,
     socket_descriptors: crate::network::NetworkSocketDescriptorTable<LOCAL_COMMAND_SOCKET_CAPACITY>,
@@ -1511,6 +1545,7 @@ where
             background_jobs: [None; LOCAL_COMMAND_BACKGROUND_JOB_CAPACITY],
             next_background_job_id: LOCAL_COMMAND_BACKGROUND_JOB_FIRST_ID,
             pipe: LocalCommandPipeState::new_empty(),
+            second_pipe: LocalCommandPipeState::new_empty(),
             stdout_scratch_file: LocalCommandVolatileFileState::new_empty(),
             stderr_scratch_file: LocalCommandVolatileFileState::new_empty(),
             socket_descriptors: crate::network::NetworkSocketDescriptorTable::new(),
@@ -1629,6 +1664,41 @@ where
                 .iter()
                 .flatten()
                 .any(|job| job.lifecycle.process_id == process_id)
+    }
+
+    fn pipe_route(reference: usize) -> Result<&'static str, LocalCommandExecError> {
+        match reference {
+            LOCAL_COMMAND_PIPE_ENDPOINT_REFERENCE => Ok("pipe:stdout-to-stdin"),
+            LOCAL_COMMAND_SECOND_PIPE_ENDPOINT_REFERENCE => Ok("pipe:middle-to-stdin"),
+            _ => Err(LocalCommandExecError::LaunchPipelineFailed),
+        }
+    }
+
+    fn pipe_state(
+        &self,
+        reference: usize,
+    ) -> Result<&LocalCommandPipeState, LocalCommandExecError> {
+        match reference {
+            LOCAL_COMMAND_PIPE_ENDPOINT_REFERENCE => Ok(&self.pipe),
+            LOCAL_COMMAND_SECOND_PIPE_ENDPOINT_REFERENCE => Ok(&self.second_pipe),
+            _ => Err(LocalCommandExecError::LaunchPipelineFailed),
+        }
+    }
+
+    fn pipe_state_mut(
+        &mut self,
+        reference: usize,
+    ) -> Result<&mut LocalCommandPipeState, LocalCommandExecError> {
+        match reference {
+            LOCAL_COMMAND_PIPE_ENDPOINT_REFERENCE => Ok(&mut self.pipe),
+            LOCAL_COMMAND_SECOND_PIPE_ENDPOINT_REFERENCE => Ok(&mut self.second_pipe),
+            _ => Err(LocalCommandExecError::LaunchPipelineFailed),
+        }
+    }
+
+    fn pipe_remaining(&self, reference: usize) -> Result<usize, LocalCommandExecError> {
+        let pipe = self.pipe_state(reference)?;
+        Ok(pipe.len.saturating_sub(pipe.cursor))
     }
 }
 
@@ -2038,7 +2108,7 @@ where
         let process_table_record = self.record_direct_process_table_record(lifecycle);
         self.last_process = Some(lifecycle);
         self.waitable_process = Some(lifecycle);
-        self.explicit_wait_records = [Some(lifecycle), None];
+        self.explicit_wait_records = [Some(lifecycle), None, None];
 
         Ok(LocalCommandExecSummary {
             source_path: image.source_path(),
@@ -4057,6 +4127,10 @@ where
         &mut self,
         request: LocalCommandPipelineRequest,
     ) -> Result<LocalCommandPipelineSummary, LocalCommandExecError> {
+        if request.middle.is_some() {
+            return self.exec_three_stage_vfs_pipeline(request);
+        }
+
         let producer_redirection_supported = match (
             request.producer.path(),
             request.producer.stdin_redirection,
@@ -4095,8 +4169,11 @@ where
         }
 
         self.pipe.reset();
-        let stdout_restore =
-            self.install_pipe_endpoint(posix::STDOUT_FD, posix::DescriptorAccess::WriteOnly)?;
+        let stdout_restore = self.install_pipe_endpoint(
+            posix::STDOUT_FD,
+            posix::DescriptorAccess::WriteOnly,
+            LOCAL_COMMAND_PIPE_ENDPOINT_REFERENCE,
+        )?;
         self.pipe.open_writer();
         let producer = self.exec_vfs_program(request.producer);
         self.pipe.close_writer();
@@ -4106,8 +4183,11 @@ where
             .lifecycle
             .with_process_id(LOCAL_COMMAND_PIPELINE_PRODUCER_PROCESS_ID);
 
-        let stdin_restore =
-            self.install_pipe_endpoint(posix::STDIN_FD, posix::DescriptorAccess::ReadOnly)?;
+        let stdin_restore = self.install_pipe_endpoint(
+            posix::STDIN_FD,
+            posix::DescriptorAccess::ReadOnly,
+            LOCAL_COMMAND_PIPE_ENDPOINT_REFERENCE,
+        )?;
         self.pipe.open_reader();
         let consumer = self
             .exec_vfs_program_with_policy(request.consumer, consumer_output_redirection_supported);
@@ -4122,7 +4202,7 @@ where
         consumer.process_table_record = self.record_process_table_record(1, consumer.lifecycle);
         self.last_process = Some(consumer.lifecycle);
         self.waitable_process = Some(consumer.lifecycle);
-        self.explicit_wait_records = [Some(producer.lifecycle), Some(consumer.lifecycle)];
+        self.explicit_wait_records = [Some(producer.lifecycle), Some(consumer.lifecycle), None];
         let pipe_source = match (request.producer.redirection, request.consumer.redirection) {
             (None, Some(LocalCommandExecRedirection::StdoutToTmpStdout(_))) => {
                 "shell-pipe-consumer-stdout-redirection"
@@ -4159,12 +4239,140 @@ where
 
         Ok(LocalCommandPipelineSummary {
             pipe,
+            second_pipe: None,
             lifecycle_status: LocalCommandPipelineLifecycleStatusRecord::from_pipeline(
                 pipe.id,
                 producer.lifecycle,
                 consumer.lifecycle,
             ),
             producer,
+            middle: None,
+            consumer,
+        })
+    }
+
+    fn exec_three_stage_vfs_pipeline(
+        &mut self,
+        request: LocalCommandPipelineRequest,
+    ) -> Result<LocalCommandPipelineSummary, LocalCommandExecError> {
+        let middle = request.middle.ok_or(LocalCommandExecError::InvalidPath)?;
+        if request.producer.path() != initramfs::PHASE10_STDOUT_PATH
+            || request.producer.stdin_redirection.is_some()
+            || request.producer.redirection.is_some()
+            || middle.path() != initramfs::PHASE10_STDIN_PATH
+            || middle.stdin_redirection.is_some()
+            || middle.redirection.is_some()
+            || request.consumer.path() != initramfs::PHASE10_STDIN_PATH
+            || request.consumer.stdin_redirection.is_some()
+            || request.consumer.redirection.is_some()
+        {
+            return Err(LocalCommandExecError::InvalidPath);
+        }
+
+        self.pipe.reset();
+        self.second_pipe.reset();
+
+        let producer_stdout_restore = self.install_pipe_endpoint(
+            posix::STDOUT_FD,
+            posix::DescriptorAccess::WriteOnly,
+            LOCAL_COMMAND_PIPE_ENDPOINT_REFERENCE,
+        )?;
+        self.pipe.open_writer();
+        let producer = self.exec_vfs_program(request.producer);
+        self.pipe.close_writer();
+        self.restore_pipe_endpoint(posix::STDOUT_FD, producer_stdout_restore)?;
+        let mut producer = producer?;
+        producer.lifecycle = producer
+            .lifecycle
+            .with_process_id(LOCAL_COMMAND_PIPELINE_PRODUCER_PROCESS_ID);
+
+        let middle_stdin_restore = self.install_pipe_endpoint(
+            posix::STDIN_FD,
+            posix::DescriptorAccess::ReadOnly,
+            LOCAL_COMMAND_PIPE_ENDPOINT_REFERENCE,
+        )?;
+        let middle_stdout_restore = self.install_pipe_endpoint(
+            posix::STDOUT_FD,
+            posix::DescriptorAccess::WriteOnly,
+            LOCAL_COMMAND_SECOND_PIPE_ENDPOINT_REFERENCE,
+        )?;
+        self.pipe.open_reader();
+        self.second_pipe.open_writer();
+        let middle_exec = self.exec_vfs_program(middle);
+        self.second_pipe.close_writer();
+        self.pipe.close_reader();
+        self.restore_pipe_endpoint(posix::STDOUT_FD, middle_stdout_restore)?;
+        self.restore_pipe_endpoint(posix::STDIN_FD, middle_stdin_restore)?;
+        let mut middle_exec = middle_exec?;
+        middle_exec.lifecycle = middle_exec
+            .lifecycle
+            .with_process_id(LOCAL_COMMAND_PIPELINE_MIDDLE_PROCESS_ID);
+
+        let consumer_stdin_restore = self.install_pipe_endpoint(
+            posix::STDIN_FD,
+            posix::DescriptorAccess::ReadOnly,
+            LOCAL_COMMAND_SECOND_PIPE_ENDPOINT_REFERENCE,
+        )?;
+        self.second_pipe.open_reader();
+        let consumer = self.exec_vfs_program(request.consumer);
+        self.second_pipe.close_reader();
+        self.restore_pipe_endpoint(posix::STDIN_FD, consumer_stdin_restore)?;
+        let mut consumer = consumer?;
+        consumer.lifecycle = consumer
+            .lifecycle
+            .with_process_id(LOCAL_COMMAND_PIPELINE_FINAL_PROCESS_ID);
+
+        self.process_table_records = [None; LOCAL_COMMAND_PROCESS_TABLE_CAPACITY];
+        producer.process_table_record = self.record_process_table_record(0, producer.lifecycle);
+        middle_exec.process_table_record =
+            self.record_process_table_record(1, middle_exec.lifecycle);
+        consumer.process_table_record = self.record_process_table_record(2, consumer.lifecycle);
+        self.last_process = Some(consumer.lifecycle);
+        self.waitable_process = Some(consumer.lifecycle);
+        self.explicit_wait_records = [
+            Some(producer.lifecycle),
+            Some(middle_exec.lifecycle),
+            Some(consumer.lifecycle),
+        ];
+
+        let first_pipe = LocalCommandPipeRecord {
+            id: LOCAL_COMMAND_PIPE_ENDPOINT_REFERENCE,
+            producer_fd: posix::STDOUT_FD,
+            producer_path: producer.source_path,
+            consumer_fd: posix::STDIN_FD,
+            consumer_path: middle_exec.source_path,
+            bytes_written: self.pipe.len,
+            bytes_read: self.pipe.cursor,
+            writer_closed: !self.pipe.writer_open,
+            reader_eof: self.pipe.eof_observed,
+            shell_restored: self.shell_standard_descriptors_restored()?,
+            source: "shell-pipe-multistage-first-stdout-to-stdin",
+        };
+        let second_pipe = LocalCommandPipeRecord {
+            id: LOCAL_COMMAND_SECOND_PIPE_ENDPOINT_REFERENCE,
+            producer_fd: posix::STDOUT_FD,
+            producer_path: middle_exec.source_path,
+            consumer_fd: posix::STDIN_FD,
+            consumer_path: consumer.source_path,
+            bytes_written: self.second_pipe.len,
+            bytes_read: self.second_pipe.cursor,
+            writer_closed: !self.second_pipe.writer_open,
+            reader_eof: self.second_pipe.eof_observed,
+            shell_restored: self.shell_standard_descriptors_restored()?,
+            source: "shell-pipe-multistage-middle-to-stdin",
+        };
+
+        Ok(LocalCommandPipelineSummary {
+            pipe: first_pipe,
+            second_pipe: Some(second_pipe),
+            lifecycle_status: LocalCommandPipelineLifecycleStatusRecord::from_three_stage_pipeline(
+                first_pipe.id,
+                producer.lifecycle,
+                middle_exec.lifecycle,
+                consumer.lifecycle,
+            ),
+            producer,
+            middle: Some(middle_exec),
             consumer,
         })
     }
@@ -4821,6 +5029,7 @@ where
         &mut self,
         descriptor: usize,
         access: posix::DescriptorAccess,
+        reference: usize,
     ) -> Result<posix::DescriptorEntry, LocalCommandExecError> {
         let table = self
             .descriptor_store
@@ -4832,10 +5041,7 @@ where
         let pipe = posix::DescriptorEntry::new(
             access,
             posix::DescriptorFlags::EMPTY,
-            posix::DescriptorObject::new(
-                posix::DescriptorObjectKind::PipeEndpoint,
-                LOCAL_COMMAND_PIPE_ENDPOINT_REFERENCE,
-            ),
+            posix::DescriptorObject::new(posix::DescriptorObjectKind::PipeEndpoint, reference),
         );
         if table.allocate_at(descriptor, pipe).is_err() {
             let _ = table.allocate_at(descriptor, restored);
@@ -5073,10 +5279,17 @@ where
                 return (syscall::EBADF as u64).wrapping_neg();
             }
             let read_start = LOCAL_COMMAND_STDIN_READ_OFFSET;
-            let read_len = initramfs::PHASE10_STDOUT_PAYLOAD.len();
-            let bytes_read = self
-                .pipe
-                .read(&mut user_memory[read_start..read_start + read_len]);
+            let reference = entry.object().reference();
+            let remaining = match self.pipe_remaining(reference) {
+                Ok(remaining) => remaining,
+                Err(_) => return (syscall::EBADF as u64).wrapping_neg(),
+            };
+            let read_len =
+                core::cmp::min(core::cmp::max(remaining, 1), user_memory.len() - read_start);
+            let bytes_read = match self.pipe_state_mut(reference) {
+                Ok(pipe) => pipe.read(&mut user_memory[read_start..read_start + read_len]),
+                Err(_) => return (syscall::EBADF as u64).wrapping_neg(),
+            };
             return bytes_read as u64;
         }
 
@@ -5124,6 +5337,20 @@ where
             .get(posix::STDIN_FD)
             .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
         Ok(entry.object().kind() == posix::DescriptorObjectKind::PipeEndpoint)
+    }
+
+    fn stdin_pipe_route(&self) -> Result<&'static str, LocalCommandExecError> {
+        let table = self
+            .descriptor_store
+            .current_descriptor_table(self.current_owner)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        let entry = table
+            .get(posix::STDIN_FD)
+            .map_err(|_| LocalCommandExecError::LaunchPipelineFailed)?;
+        if entry.object().kind() != posix::DescriptorObjectKind::PipeEndpoint {
+            return Err(LocalCommandExecError::LaunchPipelineFailed);
+        }
+        Self::pipe_route(entry.object().reference())
     }
 
     fn stdin_descriptor_is_dev_null(&self) -> Result<bool, LocalCommandExecError> {
@@ -5294,9 +5521,12 @@ where
         if stdin_is_dev_null {
             read_source = "device:/dev/null";
         }
-        if read_return_value != (syscall::EAGAIN as u64).wrapping_neg() && stdin_is_pipe {
-            expected_read_bytes = initramfs::PHASE10_STDOUT_PAYLOAD.len();
-            read_source = "pipe:stdout-to-stdin";
+        if read_return_value != (syscall::EAGAIN as u64).wrapping_neg()
+            && read_return_value != 0
+            && stdin_is_pipe
+        {
+            expected_read_bytes = read_return_value as usize;
+            read_source = self.stdin_pipe_route()?;
         }
         if read_return_value != (syscall::EAGAIN as u64).wrapping_neg() && stdin_is_regular_file {
             expected_read_bytes = initramfs::PHASE8_BANNER_BYTES.len();
@@ -5337,6 +5567,16 @@ where
                 {
                     return Err(LocalCommandExecError::SyscallFailed);
                 }
+            } else if read_source == "pipe:middle-to-stdin" {
+                let prefix = initramfs::PHASE10_STDIN_STDOUT_PREFIX;
+                let payload = initramfs::PHASE10_STDOUT_PAYLOAD;
+                if read_input.len() != prefix.len() + payload.len() + 1
+                    || &read_input[..prefix.len()] != prefix
+                    || &read_input[prefix.len()..prefix.len() + payload.len()] != payload
+                    || read_input[read_input.len() - 1] != b'\n'
+                {
+                    return Err(LocalCommandExecError::SyscallFailed);
+                }
             } else if read_source == "initramfs:/etc/banner.txt" {
                 if read_input != initramfs::PHASE8_BANNER_BYTES {
                     return Err(LocalCommandExecError::SyscallFailed);
@@ -5371,7 +5611,7 @@ where
             } else {
                 Some("scheduler-wait/delayed-input")
             };
-            if read_source == "pipe:stdout-to-stdin" {
+            if read_source == "pipe:stdout-to-stdin" || read_source == "pipe:middle-to-stdin" {
                 let eof = self.dispatch_stdin_fixture_read(
                     &mappings,
                     &mut user_memory,
@@ -5400,6 +5640,7 @@ where
             read_bytes = 0;
             read_result = Some("readiness/no-data");
         } else if read_return_value == 0 && stdin_is_pipe {
+            read_source = self.stdin_pipe_route()?;
             let payload = initramfs::PHASE10_STDIN_PIPE_EOF_STDOUT;
             user_memory[..payload.len()].copy_from_slice(payload);
             let stdout_return =
@@ -5532,7 +5773,7 @@ where
             )),
             posix::DescriptorObjectKind::PipeEndpoint => Ok((
                 "pipe-writer",
-                LocalCommandFieldText::from_static("pipe:stdout-to-stdin"),
+                LocalCommandFieldText::from_static(Self::pipe_route(entry.object().reference())?),
             )),
             posix::DescriptorObjectKind::Device if entry.object().is_dev_null() => Ok((
                 "null-sink",
@@ -5613,7 +5854,11 @@ where
             if entry.require_writable().is_err() || len > user_memory.len() {
                 return (syscall::EBADF as u64).wrapping_neg();
             }
-            return match self.pipe.write(&user_memory[..len]) {
+            let reference = entry.object().reference();
+            return match self
+                .pipe_state_mut(reference)
+                .and_then(|pipe| pipe.write(&user_memory[..len]))
+            {
                 Ok(bytes) => bytes as u64,
                 Err(_) => (syscall::EPIPE as u64).wrapping_neg(),
             };
@@ -6524,29 +6769,52 @@ fn parse_pipeline_request(
     arguments: &str,
 ) -> Result<LocalCommandPipelineRequest, LocalCommandExecError> {
     let bytes = arguments.as_bytes();
-    let mut pipe = None;
+    let mut pipes = [None; 2];
+    let mut pipe_count = 0usize;
     let mut index = 0usize;
     while index < bytes.len() {
         if bytes[index] == b'|' {
-            if pipe.is_some() {
+            if pipe_count >= pipes.len() {
                 return Err(LocalCommandExecError::InvalidPath);
             }
-            pipe = Some(index);
+            pipes[pipe_count] = Some(index);
+            pipe_count += 1;
         }
         index += 1;
     }
-    let pipe = pipe.ok_or(LocalCommandExecError::InvalidPath)?;
-    let producer = trim_ascii_space(&arguments[..pipe]);
-    let consumer = trim_ascii_space(&arguments[pipe + 1..]);
-    let consumer = consumer
-        .strip_prefix("exec ")
-        .ok_or(LocalCommandExecError::InvalidPath)?;
-    if producer.is_empty() || consumer.is_empty() {
+    let first_pipe = pipes[0].ok_or(LocalCommandExecError::InvalidPath)?;
+    let producer = trim_ascii_space(&arguments[..first_pipe]);
+    if producer.is_empty() {
         return Err(LocalCommandExecError::InvalidPath);
     }
+    let second_pipe = pipes[1];
+    let middle_or_consumer_end = second_pipe.unwrap_or(arguments.len());
+    let middle_or_consumer = trim_ascii_space(&arguments[first_pipe + 1..middle_or_consumer_end]);
+    let middle_or_consumer = middle_or_consumer
+        .strip_prefix("exec ")
+        .ok_or(LocalCommandExecError::InvalidPath)?;
+    if middle_or_consumer.is_empty() {
+        return Err(LocalCommandExecError::InvalidPath);
+    }
+    let (middle, consumer) = if let Some(second_pipe) = second_pipe {
+        let consumer = trim_ascii_space(&arguments[second_pipe + 1..]);
+        let consumer = consumer
+            .strip_prefix("exec ")
+            .ok_or(LocalCommandExecError::InvalidPath)?;
+        if consumer.is_empty() {
+            return Err(LocalCommandExecError::InvalidPath);
+        }
+        (
+            Some(parse_exec_request(middle_or_consumer)?),
+            parse_exec_request(consumer)?,
+        )
+    } else {
+        (None, parse_exec_request(middle_or_consumer)?)
+    };
     Ok(LocalCommandPipelineRequest {
         producer: parse_exec_request(producer)?,
-        consumer: parse_exec_request(consumer)?,
+        middle,
+        consumer,
     })
 }
 
@@ -7216,7 +7484,23 @@ fn write_pipeline_summary(
     response_lines: &mut usize,
     summary: LocalCommandPipelineSummary,
 ) -> Result<(), LocalCommandCycleError> {
-    let record = summary.pipe;
+    write_pipeline_record_line(sink, response_lines, summary.pipe)?;
+    if let Some(record) = summary.second_pipe {
+        write_pipeline_record_line(sink, response_lines, record)?;
+    }
+    write_pipeline_lifecycle_status_line(sink, response_lines, summary.lifecycle_status)?;
+    write_exec_summary(sink, response_lines, summary.producer)?;
+    if let Some(middle) = summary.middle {
+        write_exec_summary(sink, response_lines, middle)?;
+    }
+    write_exec_summary(sink, response_lines, summary.consumer)
+}
+
+fn write_pipeline_record_line(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    record: LocalCommandPipeRecord,
+) -> Result<(), LocalCommandCycleError> {
     write_str_part(sink, "talos: pipeline id=")?;
     write_hex_usize_part(sink, record.id)?;
     write_str_part(sink, " producer-fd=")?;
@@ -7253,10 +7537,7 @@ fn write_pipeline_summary(
     )?;
     write_str_part(sink, " source=")?;
     write_str_part(sink, record.source)?;
-    finish_dynamic_line(sink, response_lines)?;
-    write_pipeline_lifecycle_status_line(sink, response_lines, summary.lifecycle_status)?;
-    write_exec_summary(sink, response_lines, summary.producer)?;
-    write_exec_summary(sink, response_lines, summary.consumer)
+    finish_dynamic_line(sink, response_lines)
 }
 
 fn write_pipeline_lifecycle_status_line(
@@ -7282,6 +7563,20 @@ fn write_pipeline_lifecycle_status_line(
     write_hex_u64_part(sink, producer.observed_status)?;
     write_str_part(sink, " producer-reaped=")?;
     write_str_part(sink, if producer.reaped { "true" } else { "false" })?;
+    if let Some(middle) = record.middle {
+        write_str_part(sink, " middle-pid=")?;
+        write_hex_u64_part(sink, middle.process_id)?;
+        write_str_part(sink, " middle-path=")?;
+        write_byte_path_part(sink, middle.source_path)?;
+        write_str_part(sink, " middle-state=")?;
+        write_str_part(sink, middle.state.name())?;
+        write_str_part(sink, " middle-status=")?;
+        write_hex_u64_part(sink, middle.status)?;
+        write_str_part(sink, " middle-observed-status=")?;
+        write_hex_u64_part(sink, middle.observed_status)?;
+        write_str_part(sink, " middle-reaped=")?;
+        write_str_part(sink, if middle.reaped { "true" } else { "false" })?;
+    }
     write_str_part(sink, " consumer-pid=")?;
     write_hex_u64_part(sink, consumer.process_id)?;
     write_str_part(sink, " consumer-path=")?;
@@ -11765,6 +12060,100 @@ talos> talos: exec-not-executable\n"
         assert!(output.contains(
             "slot=1 capacity=3 pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true wait-consumed=true job-state=foreground source=bounded-process-table\n"
         ));
+    }
+
+    #[test_case]
+    fn local_command_loop_runs_three_stage_pipeline_through_bounded_vfs_processes() {
+        let bytes = *b"exec stdout | exec stdin | exec stdin\rwaitpid 0x100001\rwaitpid 0x100002\rwaitpid 0x100003\rwaitpid\rlaststatus\rcat /proc/talos/processes\rps\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (pipeline, records, wait_producer, wait_middle, wait_final, wait_none, last, cat, ps) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            let pipeline = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let records = io.process_table_records();
+            (
+                pipeline,
+                records,
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(pipeline.line(), b"exec stdout | exec stdin | exec stdin");
+        assert_eq!(pipeline.status(), LocalCommandStatus::Handled);
+        assert_eq!(wait_producer.status(), LocalCommandStatus::Handled);
+        assert_eq!(wait_middle.status(), LocalCommandStatus::Handled);
+        assert_eq!(wait_final.status(), LocalCommandStatus::Handled);
+        assert_eq!(wait_none.status(), LocalCommandStatus::Handled);
+        assert_eq!(last.status(), LocalCommandStatus::Handled);
+        assert_eq!(cat.status(), LocalCommandStatus::Handled);
+        assert_eq!(ps.status(), LocalCommandStatus::Handled);
+        assert_eq!(cat.response_lines(), 1);
+        assert_eq!(ps.response_lines(), 1);
+        let [producer, middle, final_stage] = records;
+        let producer = producer.unwrap();
+        let middle = middle.unwrap();
+        let final_stage = final_stage.unwrap();
+        assert_eq!(producer.lifecycle.process_id, 0x100001);
+        assert_eq!(
+            producer.lifecycle.source_path,
+            initramfs::PHASE10_STDOUT_PATH
+        );
+        assert_eq!(middle.lifecycle.process_id, 0x100002);
+        assert_eq!(middle.lifecycle.source_path, initramfs::PHASE10_STDIN_PATH);
+        assert_eq!(final_stage.lifecycle.process_id, 0x100003);
+        assert_eq!(
+            final_stage.lifecycle.source_path,
+            initramfs::PHASE10_STDIN_PATH
+        );
+        assert!(output.contains(
+            "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-multistage-first-stdout-to-stdin\n"
+        ));
+        assert!(output.contains(
+            "talos: pipeline id=0x0000000000000002 producer-fd=0x0000000000000001 producer-path=/bin/stdin consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x0000000000000044 bytes-read=0x0000000000000044 writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-multistage-middle-to-stdin\n"
+        ));
+        assert!(output.contains(
+            "talos: pipeline-lifecycle-status record=phase12-local-multistage-pipeline-lifecycle-status-record-v1 pipeline=0x0000000000000001 producer-pid=0x0000000000100001 producer-path=/bin/stdout producer-state=exited producer-status=0x0000000000000000 producer-observed-status=0x0000000000000000 producer-reaped=true middle-pid=0x0000000000100002 middle-path=/bin/stdin middle-state=exited middle-status=0x0000000000000000 middle-observed-status=0x0000000000000000 middle-reaped=true consumer-pid=0x0000000000100003 consumer-path=/bin/stdin consumer-state=exited consumer-status=0x0000000000000000 consumer-observed-status=0x0000000000000000 consumer-reaped=true source=kernel-owned-pipeline-lifecycle-status-record\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=pipe-endpoint fd1=pipe-endpoint fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stdin fd=0x0000000000000000 bytes=0x000000000000001f return=0x000000000000001f read-source=pipe:stdout-to-stdin stdout-fd=0x0000000000000001 stdout-bytes=0x0000000000000044 stdout-return=0x0000000000000044 source=userspace-talos-read+userspace-talos-write read-result=pipe-eof-after-writer-close\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stdin fd=0x0000000000000000 bytes=0x0000000000000044 return=0x0000000000000044 read-source=pipe:middle-to-stdin stdout-fd=0x0000000000000001 stdout-bytes=0x0000000000000069 stdout-return=0x0000000000000069 source=userspace-talos-read+userspace-talos-write read-result=pipe-eof-after-writer-close\n"
+        ));
+        assert!(output.contains(
+            "Talos userspace stdin fixture read: Talos userspace stdin fixture read: Talos userspace stdout fixture\n\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=explicit-pid-lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=explicit-pid-lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100003 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=explicit-pid-lifecycle-record\n"
+        ));
+        assert!(output.contains("talos> talos: waitpid no-child source=lifecycle-record\n"));
+        assert!(output.contains(
+            "slot=0 capacity=3 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true wait-consumed=true job-state=foreground source=bounded-process-table\n"
+        ));
+        assert!(output.contains(
+            "slot=1 capacity=3 pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true wait-consumed=true job-state=foreground source=bounded-process-table\n"
+        ));
+        assert!(output.contains(
+            "slot=2 capacity=3 pid=0x0000000000100003 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true wait-consumed=true job-state=foreground source=bounded-process-table\n"
+        ));
+        assert_eq!(output.matches("talos-processes-v1\n").count(), 2);
     }
 
     #[test_case]
