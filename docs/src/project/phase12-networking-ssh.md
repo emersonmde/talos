@@ -8987,6 +8987,22 @@ multi-stage or concurrent pipelines, pipefail, broader descriptor grammar,
 persistent filesystem semantics, live networking, SSH, Pi 5 hardware proof,
 and phase transition remain unaccepted.
 
+phase12-local-pipeline-dual-lifecycle-record-core-20260626 accepts
+local-pipeline-dual-lifecycle-record-core. The exact accepted two-stage
+pipeline forms now emit
+`phase12-local-pipeline-dual-lifecycle-status-record-v1` as a pipeline-local
+producer/consumer lifecycle/status accounting record. The retained
+QEMU/substitute evidence covers `exec stdout | exec stdin`,
+`exec stderr | exec stdin`, `exec stderr 2>&1 | exec stdin`, and
+`exec stdout 1>&2 | exec stdin`, including descriptor-backed VFS/open/read,
+fd restoration, stdout-only pipe semantics, descriptor dup/redirect controls,
+writer-close EOF, `waitpid`, `laststatus`, and descriptor-backed VFS cat.
+Consumer `waitpid` and `laststatus` remain the accepted shell status
+observation; producer status is pipeline-local accounting only. Concurrent
+scheduling, distinct process-table identities, multi-stage pipelines, pipefail,
+background jobs, fork/signals, arbitrary descriptor syntax, live networking,
+SSH, Pi 5 hardware proof, and phase transition remain unaccepted.
+
 phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624 accepts
 the live reachability source reconciliation as
 live-reachability-source-reconciliation-paused-no-defensible-discriminator.

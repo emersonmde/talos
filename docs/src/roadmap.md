@@ -18070,6 +18070,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   `phase12-local-pipeline-dual-lifecycle-record-core-20260626`; pipeline
   dual-lifecycle accounting remains unaccepted until that task, and live
   networking, SSH, Pi 5 hardware proof, and phase transition remain deferred.
+- phase12-local-pipeline-dual-lifecycle-record-core-20260626 accepts the
+  bounded local pipeline lifecycle/status accounting frontier. The accepted
+  exact two-stage forms (`exec stdout | exec stdin`,
+  `exec stderr | exec stdin`, `exec stderr 2>&1 | exec stdin`, and
+  `exec stdout 1>&2 | exec stdin`) now emit
+  `phase12-local-pipeline-dual-lifecycle-status-record-v1` as a
+  pipeline-local producer/consumer lifecycle/status record while preserving the
+  existing descriptor-backed VFS exec summaries. Consumer `waitpid` and
+  `laststatus` remain the accepted shell status observation; producer status
+  is visible only in the pipeline-local accounting record. Concurrent
+  scheduling, separate process-table identities, multi-stage pipelines,
+  pipefail, background jobs, fork/signals, live networking, SSH, Pi 5 hardware
+  proof, and phase transition remain deferred.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

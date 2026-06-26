@@ -15427,7 +15427,7 @@ fn expected_local_command_loop_dispatch(
             line == b"laststatus" && status == Handled && response_lines == 1
         }
         12 if cfg!(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest") => {
-            line == b"exec stdout | exec stdin" && status == Handled && response_lines == 21
+            line == b"exec stdout | exec stdin" && status == Handled && response_lines == 22
         }
         13 if cfg!(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest") => {
             line == b"jobs" && status == Handled && response_lines == 1
@@ -15475,7 +15475,7 @@ fn expected_local_command_loop_dispatch(
         {
             line == b"exec stdout | exec stdin >/tmp/pipe-consumer.txt"
                 && status == Handled
-                && response_lines == 22
+                && response_lines == 23
         }
         4 if cfg!(
             talos_boot_scenario = "qemu_local_shell_pipeline_consumer_output_redirection"
@@ -15499,7 +15499,7 @@ fn expected_local_command_loop_dispatch(
             talos_boot_scenario = "qemu_local_shell_pipeline_consumer_output_redirection"
         ) =>
         {
-            line == b"exec stdout | exec stdin" && status == Handled && response_lines == 21
+            line == b"exec stdout | exec stdin" && status == Handled && response_lines == 22
         }
         8 if cfg!(
             talos_boot_scenario = "qemu_local_shell_pipeline_consumer_output_redirection"
@@ -15531,7 +15531,7 @@ fn expected_local_command_loop_dispatch(
         {
             line == b"exec stdout >/tmp/pipe-source.txt | exec stdin"
                 && status == Handled
-                && response_lines == 22
+                && response_lines == 23
         }
         4 if cfg!(
             talos_boot_scenario = "qemu_local_shell_pipeline_producer_file_redirection_away"
@@ -15555,7 +15555,7 @@ fn expected_local_command_loop_dispatch(
             talos_boot_scenario = "qemu_local_shell_pipeline_producer_file_redirection_away"
         ) =>
         {
-            line == b"exec stdout | exec stdin" && status == Handled && response_lines == 21
+            line == b"exec stdout | exec stdin" && status == Handled && response_lines == 22
         }
         8 if cfg!(
             talos_boot_scenario = "qemu_local_shell_pipeline_producer_file_redirection_away"
@@ -15603,7 +15603,7 @@ fn expected_local_command_loop_dispatch(
             line == b"laststatus" && status == Handled && response_lines == 1
         }
         10 if cfg!(talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle") => {
-            line == b"exec stdout | exec stdin" && status == Handled && response_lines == 21
+            line == b"exec stdout | exec stdin" && status == Handled && response_lines == 22
         }
         11 if cfg!(talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle") => {
             line == b"cat /etc/banner.txt" && status == Handled && response_lines == 1
@@ -15642,7 +15642,7 @@ fn expected_local_command_loop_dispatch(
             line == b"laststatus" && status == Handled && response_lines == 1
         }
         12 if cfg!(talos_boot_scenario = "qemu_local_shell_jobs_accounting_list") => {
-            line == b"exec stdout | exec stdin" && status == Handled && response_lines == 21
+            line == b"exec stdout | exec stdin" && status == Handled && response_lines == 22
         }
         13 if cfg!(talos_boot_scenario = "qemu_local_shell_jobs_accounting_list") => {
             line == b"cat /etc/banner.txt" && status == Handled && response_lines == 1
@@ -16091,16 +16091,16 @@ fn expected_local_command_loop_dispatch(
             line == b"exec stderr 2>&-" && status == Handled && response_lines == 11
         }
         3 if cfg!(talos_boot_scenario = "qemu_local_shell_minimal_stdout_to_stdin_pipeline") => {
-            line == b"exec stdout | exec stdin" && status == Handled && response_lines == 21
+            line == b"exec stdout | exec stdin" && status == Handled && response_lines == 22
         }
         3 if cfg!(talos_boot_scenario = "qemu_local_shell_pipeline_stderr_not_piped") => {
-            line == b"exec stderr | exec stdin" && status == Handled && response_lines == 21
+            line == b"exec stderr | exec stdin" && status == Handled && response_lines == 22
         }
         3 if cfg!(talos_boot_scenario = "qemu_local_shell_pipeline_stderr_dup_to_stdout") => {
-            line == b"exec stderr 2>&1 | exec stdin" && status == Handled && response_lines == 22
+            line == b"exec stderr 2>&1 | exec stdin" && status == Handled && response_lines == 23
         }
         3 if cfg!(talos_boot_scenario = "qemu_local_shell_pipeline_stdout_redirect_away") => {
-            line == b"exec stdout 1>&2 | exec stdin" && status == Handled && response_lines == 22
+            line == b"exec stdout 1>&2 | exec stdin" && status == Handled && response_lines == 23
         }
         3 if cfg!(talos_boot_scenario = "qemu_local_shell_stdin") => {
             line == b"exec stdin" && status == Handled && response_lines == 10
@@ -16476,13 +16476,13 @@ fn expected_local_command_loop_dispatch(
             line == b"cat /etc/banner.txt" && status == Handled && response_lines == 1
         }
         6 if cfg!(talos_boot_scenario = "qemu_local_shell_pipeline_stderr_not_piped") => {
-            line == b"exec stdout | exec stdin" && status == Handled && response_lines == 21
+            line == b"exec stdout | exec stdin" && status == Handled && response_lines == 22
         }
         6 if cfg!(talos_boot_scenario = "qemu_local_shell_pipeline_stderr_dup_to_stdout") => {
-            line == b"exec stderr | exec stdin" && status == Handled && response_lines == 21
+            line == b"exec stderr | exec stdin" && status == Handled && response_lines == 22
         }
         6 if cfg!(talos_boot_scenario = "qemu_local_shell_pipeline_stdout_redirect_away") => {
-            line == b"exec stderr 2>&1 | exec stdin" && status == Handled && response_lines == 22
+            line == b"exec stderr 2>&1 | exec stdin" && status == Handled && response_lines == 23
         }
         6 if cfg!(talos_boot_scenario = "qemu_local_shell_stdin") => {
             line == b"exec stdout" && status == Handled && response_lines == 10
@@ -16504,10 +16504,10 @@ fn expected_local_command_loop_dispatch(
             line == b"cat /etc/banner.txt" && status == Handled && response_lines == 1
         }
         7 if cfg!(talos_boot_scenario = "qemu_local_shell_pipeline_stderr_dup_to_stdout") => {
-            line == b"exec stdout | exec stdin" && status == Handled && response_lines == 21
+            line == b"exec stdout | exec stdin" && status == Handled && response_lines == 22
         }
         7 if cfg!(talos_boot_scenario = "qemu_local_shell_pipeline_stdout_redirect_away") => {
-            line == b"exec stdout | exec stdin" && status == Handled && response_lines == 21
+            line == b"exec stdout | exec stdin" && status == Handled && response_lines == 22
         }
         7 if cfg!(talos_boot_scenario = "qemu_local_shell_literal_argv") => {
             line == b"exec /bin/zero" && status == Handled && response_lines == 10

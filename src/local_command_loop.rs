@@ -197,6 +197,7 @@ pub struct LocalCommandPipelineRequest {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct LocalCommandPipelineSummary {
     pipe: LocalCommandPipeRecord,
+    lifecycle_status: LocalCommandPipelineLifecycleStatusRecord,
     producer: LocalCommandExecSummary,
     consumer: LocalCommandExecSummary,
 }
@@ -641,6 +642,31 @@ pub struct LocalCommandPipeRecord {
     reader_eof: bool,
     shell_restored: bool,
     source: &'static str,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct LocalCommandPipelineLifecycleStatusRecord {
+    identity: &'static str,
+    pipe_id: usize,
+    producer: LocalCommandProcessLifecycleRecord,
+    consumer: LocalCommandProcessLifecycleRecord,
+}
+
+impl LocalCommandPipelineLifecycleStatusRecord {
+    const IDENTITY: &'static str = "phase12-local-pipeline-dual-lifecycle-status-record-v1";
+
+    const fn from_pipeline(
+        pipe_id: usize,
+        producer: LocalCommandProcessLifecycleRecord,
+        consumer: LocalCommandProcessLifecycleRecord,
+    ) -> Self {
+        Self {
+            identity: Self::IDENTITY,
+            pipe_id,
+            producer,
+            consumer,
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -3830,20 +3856,27 @@ where
             _ => return Err(LocalCommandExecError::InvalidPath),
         };
 
+        let pipe = LocalCommandPipeRecord {
+            id: LOCAL_COMMAND_PIPE_ENDPOINT_REFERENCE,
+            producer_fd: posix::STDOUT_FD,
+            producer_path: producer.source_path,
+            consumer_fd: posix::STDIN_FD,
+            consumer_path: consumer.source_path,
+            bytes_written: self.pipe.len,
+            bytes_read: self.pipe.cursor,
+            writer_closed: !self.pipe.writer_open,
+            reader_eof: self.pipe.eof_observed,
+            shell_restored: self.shell_standard_descriptors_restored()?,
+            source: pipe_source,
+        };
+
         Ok(LocalCommandPipelineSummary {
-            pipe: LocalCommandPipeRecord {
-                id: LOCAL_COMMAND_PIPE_ENDPOINT_REFERENCE,
-                producer_fd: posix::STDOUT_FD,
-                producer_path: producer.source_path,
-                consumer_fd: posix::STDIN_FD,
-                consumer_path: consumer.source_path,
-                bytes_written: self.pipe.len,
-                bytes_read: self.pipe.cursor,
-                writer_closed: !self.pipe.writer_open,
-                reader_eof: self.pipe.eof_observed,
-                shell_restored: self.shell_standard_descriptors_restored()?,
-                source: pipe_source,
-            },
+            pipe,
+            lifecycle_status: LocalCommandPipelineLifecycleStatusRecord::from_pipeline(
+                pipe.id,
+                producer.lifecycle,
+                consumer.lifecycle,
+            ),
             producer,
             consumer,
         })
@@ -6804,8 +6837,51 @@ fn write_pipeline_summary(
     write_str_part(sink, " source=")?;
     write_str_part(sink, record.source)?;
     finish_dynamic_line(sink, response_lines)?;
+    write_pipeline_lifecycle_status_line(sink, response_lines, summary.lifecycle_status)?;
     write_exec_summary(sink, response_lines, summary.producer)?;
     write_exec_summary(sink, response_lines, summary.consumer)
+}
+
+fn write_pipeline_lifecycle_status_line(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    record: LocalCommandPipelineLifecycleStatusRecord,
+) -> Result<(), LocalCommandCycleError> {
+    let producer = record.producer;
+    let consumer = record.consumer;
+    write_str_part(sink, "talos: pipeline-lifecycle-status record=")?;
+    write_str_part(sink, record.identity)?;
+    write_str_part(sink, " pipeline=")?;
+    write_hex_usize_part(sink, record.pipe_id)?;
+    write_str_part(sink, " producer-pid=")?;
+    write_hex_u64_part(sink, producer.process_id)?;
+    write_str_part(sink, " producer-path=")?;
+    write_byte_path_part(sink, producer.source_path)?;
+    write_str_part(sink, " producer-state=")?;
+    write_str_part(sink, producer.state.name())?;
+    write_str_part(sink, " producer-status=")?;
+    write_hex_u64_part(sink, producer.status)?;
+    write_str_part(sink, " producer-observed-status=")?;
+    write_hex_u64_part(sink, producer.observed_status)?;
+    write_str_part(sink, " producer-reaped=")?;
+    write_str_part(sink, if producer.reaped { "true" } else { "false" })?;
+    write_str_part(sink, " consumer-pid=")?;
+    write_hex_u64_part(sink, consumer.process_id)?;
+    write_str_part(sink, " consumer-path=")?;
+    write_byte_path_part(sink, consumer.source_path)?;
+    write_str_part(sink, " consumer-state=")?;
+    write_str_part(sink, consumer.state.name())?;
+    write_str_part(sink, " consumer-status=")?;
+    write_hex_u64_part(sink, consumer.status)?;
+    write_str_part(sink, " consumer-observed-status=")?;
+    write_hex_u64_part(sink, consumer.observed_status)?;
+    write_str_part(sink, " consumer-reaped=")?;
+    write_str_part(sink, if consumer.reaped { "true" } else { "false" })?;
+    write_str_part(
+        sink,
+        " source=kernel-owned-pipeline-lifecycle-status-record",
+    )?;
+    finish_dynamic_line(sink, response_lines)
 }
 
 fn write_exec_redirection_line(
@@ -9687,13 +9763,16 @@ talos> talos: exec-invalid-path\n"
 
         assert_eq!(pipeline.line(), b"exec stdout | exec stdin");
         assert_eq!(pipeline.status(), LocalCommandStatus::Handled);
-        assert_eq!(pipeline.response_lines(), 21);
+        assert_eq!(pipeline.response_lines(), 22);
         assert_eq!(waited.line(), b"waitpid");
         assert_eq!(waited.status(), LocalCommandStatus::Handled);
         assert_eq!(observed.line(), b"laststatus");
         assert_eq!(observed.status(), LocalCommandStatus::Handled);
         assert!(output.contains(
             "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-to-stdin\n"
+        ));
+        assert!(output.contains(
+            "talos: pipeline-lifecycle-status record=phase12-local-pipeline-dual-lifecycle-status-record-v1 pipeline=0x0000000000000001 producer-pid=0x0000000000100001 producer-path=/bin/stdout producer-state=exited producer-status=0x0000000000000000 producer-observed-status=0x0000000000000000 producer-reaped=true consumer-pid=0x0000000000100001 consumer-path=/bin/stdin consumer-state=exited consumer-status=0x0000000000000000 consumer-observed-status=0x0000000000000000 consumer-reaped=true source=kernel-owned-pipeline-lifecycle-status-record\n"
         ));
         assert!(output.contains(
             "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=pipe-endpoint fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
@@ -9735,13 +9814,16 @@ talos> talos: exec-invalid-path\n"
 
         assert_eq!(pipeline.line(), b"exec stderr | exec stdin");
         assert_eq!(pipeline.status(), LocalCommandStatus::Handled);
-        assert_eq!(pipeline.response_lines(), 21);
+        assert_eq!(pipeline.response_lines(), 22);
         assert_eq!(waited.line(), b"waitpid");
         assert_eq!(waited.status(), LocalCommandStatus::Handled);
         assert_eq!(observed.line(), b"laststatus");
         assert_eq!(observed.status(), LocalCommandStatus::Handled);
         assert!(output.contains(
             "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stderr consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x0000000000000000 bytes-read=0x0000000000000000 writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-only-stderr-not-piped\n"
+        ));
+        assert!(output.contains(
+            "talos: pipeline-lifecycle-status record=phase12-local-pipeline-dual-lifecycle-status-record-v1 pipeline=0x0000000000000001 producer-pid=0x0000000000100001 producer-path=/bin/stderr producer-state=exited producer-status=0x0000000000000000 producer-observed-status=0x0000000000000000 producer-reaped=true consumer-pid=0x0000000000100001 consumer-path=/bin/stdin consumer-state=exited consumer-status=0x0000000000000000 consumer-observed-status=0x0000000000000000 consumer-reaped=true source=kernel-owned-pipeline-lifecycle-status-record\n"
         ));
         assert!(output.contains(
             "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=pipe-endpoint fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
@@ -9782,7 +9864,7 @@ talos> talos: exec-invalid-path\n"
 
         assert_eq!(mixed.line(), b"exec stderr 2>&1 | exec stdin");
         assert_eq!(mixed.status(), LocalCommandStatus::Handled);
-        assert_eq!(mixed.response_lines(), 22);
+        assert_eq!(mixed.response_lines(), 23);
         assert_eq!(waited.line(), b"waitpid");
         assert_eq!(waited.status(), LocalCommandStatus::Handled);
         assert_eq!(observed.line(), b"laststatus");
@@ -9793,6 +9875,9 @@ talos> talos: exec-invalid-path\n"
         assert_eq!(plain_stdout.status(), LocalCommandStatus::Handled);
         assert!(output.contains(
             "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stderr consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stderr-dup-to-stdout\n"
+        ));
+        assert!(output.contains(
+            "talos: pipeline-lifecycle-status record=phase12-local-pipeline-dual-lifecycle-status-record-v1 pipeline=0x0000000000000001 producer-pid=0x0000000000100001 producer-path=/bin/stderr producer-state=exited producer-status=0x0000000000000000 producer-observed-status=0x0000000000000000 producer-reaped=true consumer-pid=0x0000000000100001 consumer-path=/bin/stdin consumer-state=exited consumer-status=0x0000000000000000 consumer-observed-status=0x0000000000000000 consumer-reaped=true source=kernel-owned-pipeline-lifecycle-status-record\n"
         ));
         assert!(output.contains(
             "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=pipe-endpoint fd2=pipe-endpoint loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
@@ -9843,7 +9928,7 @@ talos> talos: exec-invalid-path\n"
 
         assert_eq!(mixed.line(), b"exec stdout 1>&2 | exec stdin");
         assert_eq!(mixed.status(), LocalCommandStatus::Handled);
-        assert_eq!(mixed.response_lines(), 22);
+        assert_eq!(mixed.response_lines(), 23);
         assert_eq!(waited.line(), b"waitpid");
         assert_eq!(waited.status(), LocalCommandStatus::Handled);
         assert_eq!(observed.line(), b"laststatus");
@@ -9854,6 +9939,9 @@ talos> talos: exec-invalid-path\n"
         assert_eq!(plain_stdout.status(), LocalCommandStatus::Handled);
         assert!(output.contains(
             "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x0000000000000000 bytes-read=0x0000000000000000 writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-redirect-away\n"
+        ));
+        assert!(output.contains(
+            "talos: pipeline-lifecycle-status record=phase12-local-pipeline-dual-lifecycle-status-record-v1 pipeline=0x0000000000000001 producer-pid=0x0000000000100001 producer-path=/bin/stdout producer-state=exited producer-status=0x0000000000000000 producer-observed-status=0x0000000000000000 producer-reaped=true consumer-pid=0x0000000000100001 consumer-path=/bin/stdin consumer-state=exited consumer-status=0x0000000000000000 consumer-observed-status=0x0000000000000000 consumer-reaped=true source=kernel-owned-pipeline-lifecycle-status-record\n"
         ));
         assert!(output.contains(
             "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
@@ -9917,7 +10005,7 @@ talos> talos: exec-invalid-path\n"
             b"exec stdout | exec stdin >/tmp/pipe-consumer.txt"
         );
         assert_eq!(redirected.status(), LocalCommandStatus::Handled);
-        assert_eq!(redirected.response_lines(), 22);
+        assert_eq!(redirected.response_lines(), 23);
         assert_eq!(waited.line(), b"waitpid");
         assert_eq!(waited.status(), LocalCommandStatus::Handled);
         assert_eq!(observed.line(), b"laststatus");
@@ -9933,6 +10021,9 @@ talos> talos: exec-invalid-path\n"
         }
         assert!(output.contains(
             "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-consumer-stdout-redirection\n"
+        ));
+        assert!(output.contains(
+            "talos: pipeline-lifecycle-status record=phase12-local-pipeline-dual-lifecycle-status-record-v1 pipeline=0x0000000000000001 producer-pid=0x0000000000100001 producer-path=/bin/stdout producer-state=exited producer-status=0x0000000000000000 producer-observed-status=0x0000000000000000 producer-reaped=true consumer-pid=0x0000000000100001 consumer-path=/bin/stdin consumer-state=exited consumer-status=0x0000000000000000 consumer-observed-status=0x0000000000000000 consumer-reaped=true source=kernel-owned-pipeline-lifecycle-status-record\n"
         ));
         assert!(output.contains(
             "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=pipe-endpoint fd1=regular-file fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
@@ -9995,7 +10086,7 @@ talos> talos: exec-invalid-path\n"
             b"exec stdout >/tmp/pipe-source.txt | exec stdin"
         );
         assert_eq!(redirected.status(), LocalCommandStatus::Handled);
-        assert_eq!(redirected.response_lines(), 22);
+        assert_eq!(redirected.response_lines(), 23);
         assert_eq!(waited.line(), b"waitpid");
         assert_eq!(waited.status(), LocalCommandStatus::Handled);
         assert_eq!(observed.line(), b"laststatus");
@@ -10011,6 +10102,9 @@ talos> talos: exec-invalid-path\n"
         }
         assert!(output.contains(
             "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x0000000000000000 bytes-read=0x0000000000000000 writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-producer-file-redirection-away\n"
+        ));
+        assert!(output.contains(
+            "talos: pipeline-lifecycle-status record=phase12-local-pipeline-dual-lifecycle-status-record-v1 pipeline=0x0000000000000001 producer-pid=0x0000000000100001 producer-path=/bin/stdout producer-state=exited producer-status=0x0000000000000000 producer-observed-status=0x0000000000000000 producer-reaped=true consumer-pid=0x0000000000100001 consumer-path=/bin/stdin consumer-state=exited consumer-status=0x0000000000000000 consumer-observed-status=0x0000000000000000 consumer-reaped=true source=kernel-owned-pipeline-lifecycle-status-record\n"
         ));
         assert!(output.contains(
             "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=regular-file fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
@@ -10374,7 +10468,7 @@ talos> talos: exec-invalid-path\n"
 
         assert_eq!(exec.line(), b"exec /generated/status7 alpha");
         assert_eq!(exec.status(), LocalCommandStatus::Handled);
-        assert_eq!(exec.response_lines(), 10);
+        assert_eq!(exec.response_lines(), 9);
         assert_eq!(waited.line(), b"waitpid");
         assert_eq!(waited.status(), LocalCommandStatus::Handled);
         assert_eq!(observed.line(), b"laststatus");
