@@ -15233,7 +15233,7 @@ const fn local_command_loop_smoke_command_count() -> usize {
     } else if cfg!(talos_boot_scenario = "qemu_local_cat_cwd") {
         7
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid") {
-        25
+        33
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_path_lookup") {
         17
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_stdout_to_stderr_redirection") {
@@ -17199,6 +17199,30 @@ fn expected_local_command_loop_dispatch(
         }
         24 if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid") => {
             line == b"cat /etc/banner.txt" && status == Handled && response_lines == 1
+        }
+        25 if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid") => {
+            line == b"exec /bin/status42 &" && status == Handled && response_lines == 8
+        }
+        26 if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid") => {
+            line == b"waitpid 0x100001" && status == Handled && response_lines == 2
+        }
+        27 if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid") => {
+            line == b"waitpid 0x100001" && status == Handled && response_lines == 1
+        }
+        28 if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid") => {
+            line == b"jobs" && status == Handled && response_lines == 1
+        }
+        29 if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid") => {
+            line == b"exec /bin/zero &" && status == Handled && response_lines == 8
+        }
+        30 if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid") => {
+            line == b"waitpid 0x100002" && status == Handled && response_lines == 2
+        }
+        31 if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid") => {
+            line == b"waitpid 0x100002" && status == Handled && response_lines == 1
+        }
+        32 if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid") => {
+            line == b"jobs" && status == Handled && response_lines == 1
         }
         17 if cfg!(talos_boot_scenario = "qemu_local_shell_stdout") => {
             line == b"cat /etc/banner.txt" && status == Handled && response_lines == 1

@@ -18140,6 +18140,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   scheduling, multi-stage pipelines, pipefail, async jobs, fork/signals,
   broader descriptor grammar, persistent filesystem semantics, live
   networking, SSH, Pi 5 hardware proof, or a phase transition.
+- phase12-local-background-explicit-waitpid-observation-core-20260626 accepts
+  the bounded local background explicit waitpid observation frontier. The local
+  shell now restores foreground explicit wait records after background launch
+  and lets waitpid-by-pid consume completed background VFS exec records for the
+  accepted status42 and zero fixture paths exactly once through
+  source=background-job-lifecycle-record. The retained QEMU/substitute smoke
+  proves exec /bin/status42 & -> waitpid 0x100001 status 0x2a, exec /bin/zero
+  & -> waitpid 0x100002 status 0, repeated stale no-child controls, jobs none
+  after consumption, direct VFS exec regressions, exact pipeline
+  producer/consumer explicit waitpid regressions, no-argument waitpid,
+  laststatus, VFS cat, and deterministic negative controls. selected_next_task
+  is phase12-local-waitpid-any-completed-child-observation-core-20260626. This
+  does not accept no-argument waitpid over arbitrary completed children, POSIX
+  waitpid completeness, broad process tables, scheduler concurrency, waitpid
+  options, pid reuse/zombie policy, multi-stage pipelines, pipefail,
+  fork/signals, live networking, SSH, Pi 5 hardware proof, or a phase
+  transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

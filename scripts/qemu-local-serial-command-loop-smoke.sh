@@ -688,6 +688,54 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                     sent=25
                 fi
                 ;;
+            *"$LABEL: ready command=25"*)
+                if [ "$sent" -eq 25 ] && [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                    printf 'exec /bin/status42 &\r' >&3
+                    sent=26
+                fi
+                ;;
+            *"$LABEL: ready command=26"*)
+                if [ "$sent" -eq 26 ] && [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                    printf 'waitpid 0x100001\r' >&3
+                    sent=27
+                fi
+                ;;
+            *"$LABEL: ready command=27"*)
+                if [ "$sent" -eq 27 ] && [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                    printf 'waitpid 0x100001\r' >&3
+                    sent=28
+                fi
+                ;;
+            *"$LABEL: ready command=28"*)
+                if [ "$sent" -eq 28 ] && [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                    printf 'jobs\r' >&3
+                    sent=29
+                fi
+                ;;
+            *"$LABEL: ready command=29"*)
+                if [ "$sent" -eq 29 ] && [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                    printf 'exec /bin/zero &\r' >&3
+                    sent=30
+                fi
+                ;;
+            *"$LABEL: ready command=30"*)
+                if [ "$sent" -eq 30 ] && [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                    printf 'waitpid 0x100002\r' >&3
+                    sent=31
+                fi
+                ;;
+            *"$LABEL: ready command=31"*)
+                if [ "$sent" -eq 31 ] && [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                    printf 'waitpid 0x100002\r' >&3
+                    sent=32
+                fi
+                ;;
+            *"$LABEL: ready command=32"*)
+                if [ "$sent" -eq 32 ] && [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                    printf 'jobs\r' >&3
+                    sent=33
+                fi
+                ;;
             *"$LABEL: ready command=0"*)
                 if [ "$sent" -eq 0 ]; then
                     printf 'help\r' >&3
@@ -2230,7 +2278,14 @@ elif [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
     grep -q "talos: waitpid unsupported-pid pid=0x0000000000000000 source=explicit-pid-lifecycle-record" "$LOG_FILE"
     grep -q "talos> cat /etc/banner.txt" "$LOG_FILE"
     grep -q "^Talos initramfs fixture" "$LOG_FILE"
-    grep -q "$LABEL: final participants=25 expected=25 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+    grep -q "talos> exec /bin/status42 &" "$LOG_FILE"
+    grep -q "talos: background-job id=0x0000000000000001 pid=0x0000000000100001 command=/bin/status42 state=completed status=0x000000000000002a observed-status=0x000000000000002a reaped=true shell-responsive=observed source=background-vfs-exec-accounting" "$LOG_FILE"
+    grep -q "talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=background-job-lifecycle-record" "$LOG_FILE"
+    grep -q "talos> exec /bin/zero &" "$LOG_FILE"
+    grep -q "talos: background-job id=0x0000000000000002 pid=0x0000000000100002 command=/bin/zero state=completed status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true shell-responsive=observed source=background-vfs-exec-accounting" "$LOG_FILE"
+    grep -q "talos: waitpid pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/zero state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=background-job-lifecycle-record" "$LOG_FILE"
+    grep -q "talos: waitpid no-child pid=0x0000000000100002 source=explicit-pid-lifecycle-record" "$LOG_FILE"
+    grep -q "$LABEL: final participants=33 expected=33 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
 elif [ "$SHELL_PATH_LOOKUP_SMOKE" -eq 1 ]; then
     grep -q "talos> exec status42 alpha beta" "$LOG_FILE"
     grep -q "talos: exec path=/bin/status42 source=vfs-open-read" "$LOG_FILE"

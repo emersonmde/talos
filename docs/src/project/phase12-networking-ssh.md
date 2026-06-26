@@ -9050,6 +9050,22 @@ not accept broad process tables, concurrent scheduling, multi-stage pipelines,
 pipefail, fork/signals, live networking, SSH, Pi 5 hardware proof, or phase
 transition.
 
+phase12-local-background-explicit-waitpid-observation-core-20260626 accepts
+local-background-explicit-waitpid-observation-core. Background VFS exec launch
+now restores the prior foreground explicit wait records, and completed
+background status42/zero jobs can be consumed exactly once by explicit pid
+through source=background-job-lifecycle-record. The retained QEMU/substitute
+evidence proves exec /bin/status42 & -> waitpid 0x100001 status 0x2a,
+exec /bin/zero & -> waitpid 0x100002 status 0, repeated stale no-child
+controls, and jobs none after consumption while preserving direct VFS exec,
+exact pipeline producer/consumer explicit waitpid, no-argument waitpid,
+laststatus, descriptor-backed VFS cat, and negative controls. selected_next_task
+is phase12-local-waitpid-any-completed-child-observation-core-20260626. This is
+not POSIX waitpid completeness and does not accept broad process tables,
+scheduler concurrency, waitpid options, pid reuse/zombie policy, multi-stage
+pipelines, pipefail, fork/signals, live networking, SSH, Pi 5 hardware proof,
+or phase transition.
+
 phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624 accepts
 the live reachability source reconciliation as
 live-reachability-source-reconciliation-paused-no-defensible-discriminator.

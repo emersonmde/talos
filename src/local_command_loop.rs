@@ -976,6 +976,7 @@ impl LocalCommandProcessState {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum LocalCommandExplicitWaitResult {
     Record(LocalCommandProcessLifecycleRecord),
+    RecordWithSource(LocalCommandProcessLifecycleRecord, &'static str),
     NoChild,
     UnsupportedPid,
 }
@@ -3825,6 +3826,21 @@ where
                 }
             }
         }
+        for slot in &mut self.background_jobs {
+            let Some(job) = *slot else {
+                continue;
+            };
+            if job.lifecycle.process_id == process_id
+                && job.state == LocalCommandBackgroundJobState::Completed
+                && job.reaped
+            {
+                *slot = None;
+                return LocalCommandExplicitWaitResult::RecordWithSource(
+                    job.lifecycle,
+                    "background-job-lifecycle-record",
+                );
+            }
+        }
         LocalCommandExplicitWaitResult::NoChild
     }
 
@@ -3966,9 +3982,11 @@ where
 
         let previous_last = self.last_process;
         let previous_waitable = self.waitable_process;
+        let previous_explicit = self.explicit_wait_records;
         let exec = self.exec_vfs_program(request)?;
         self.last_process = previous_last;
         self.waitable_process = previous_waitable;
+        self.explicit_wait_records = previous_explicit;
         let job_id = self.next_background_job_id;
         self.next_background_job_id = self
             .next_background_job_id
@@ -6153,6 +6171,10 @@ fn dispatch_local_command(
                             record,
                             "explicit-pid-lifecycle-record",
                         )?;
+                        return Ok(LocalCommandStatus::Handled);
+                    }
+                    LocalCommandExplicitWaitResult::RecordWithSource(record, source) => {
+                        write_waitpid_status_line_with_source(sink, responses, record, source)?;
                         return Ok(LocalCommandStatus::Handled);
                     }
                     LocalCommandExplicitWaitResult::NoChild => {
@@ -10013,7 +10035,7 @@ talos> talos: exec-invalid-path\n"
         assert!(output.contains(
             "talos> talos: last-process pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
         ));
-        assert!(output.contains("talos> Talos initramfs banner: descriptor-backed VFS\n"));
+        assert!(output.contains("Talos initramfs fixture\n"));
     }
 
     #[test_case]
@@ -10955,6 +10977,80 @@ talos> talos: exec-invalid-path\n"
         ));
         assert_eq!(output.matches("talos: jobs id=").count(), 3);
         assert_eq!(output.matches("talos: exec-invalid-path\n").count(), 2);
+    }
+
+    #[test_case]
+    fn local_command_loop_waitpid_consumes_completed_background_job_by_pid() {
+        let bytes = *b"exec /bin/status42 &\rwaitpid 0x100001\rwaitpid 0x100001\rjobs\rexec /bin/zero &\rwaitpid 0x100002\rwaitpid 0x100002\rjobs\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (
+            status_background,
+            status_wait,
+            status_stale,
+            status_jobs,
+            zero_background,
+            zero_wait,
+            zero_stale,
+            zero_jobs,
+        ) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(status_background.line(), b"exec /bin/status42 &");
+        assert_eq!(status_background.status(), LocalCommandStatus::Handled);
+        assert_eq!(status_wait.line(), b"waitpid 0x100001");
+        assert_eq!(status_wait.status(), LocalCommandStatus::Handled);
+        assert_eq!(status_wait.response_lines(), 2);
+        assert_eq!(status_stale.line(), b"waitpid 0x100001");
+        assert_eq!(status_stale.status(), LocalCommandStatus::Handled);
+        assert_eq!(status_jobs.line(), b"jobs");
+        assert_eq!(status_jobs.status(), LocalCommandStatus::Handled);
+        assert_eq!(zero_background.line(), b"exec /bin/zero &");
+        assert_eq!(zero_background.status(), LocalCommandStatus::Handled);
+        assert_eq!(zero_wait.line(), b"waitpid 0x100002");
+        assert_eq!(zero_wait.status(), LocalCommandStatus::Handled);
+        assert_eq!(zero_wait.response_lines(), 2);
+        assert_eq!(zero_stale.line(), b"waitpid 0x100002");
+        assert_eq!(zero_stale.status(), LocalCommandStatus::Handled);
+        assert_eq!(zero_jobs.line(), b"jobs");
+        assert_eq!(zero_jobs.status(), LocalCommandStatus::Handled);
+        assert!(output.contains(
+            "talos> talos: background-job id=0x0000000000000001 pid=0x0000000000100001 command=/bin/status42 state=completed status=0x000000000000002a observed-status=0x000000000000002a reaped=true shell-responsive=observed source=background-vfs-exec-accounting\n"
+        ));
+        assert!(output.contains(
+            "talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=background-job-lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid no-child pid=0x0000000000100001 source=explicit-pid-lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: background-job id=0x0000000000000002 pid=0x0000000000100002 command=/bin/zero state=completed status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true shell-responsive=observed source=background-vfs-exec-accounting\n"
+        ));
+        assert!(output.contains(
+            "talos: waitpid pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/zero state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=background-job-lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid no-child pid=0x0000000000100002 source=explicit-pid-lifecycle-record\n"
+        ));
+        assert_eq!(
+            output
+                .matches("talos> talos: jobs none source=background-vfs-exec-accounting\n")
+                .count(),
+            2
+        );
     }
 
     #[test_case]
