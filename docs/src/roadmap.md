@@ -18411,6 +18411,15 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   no later queued same-lane local POSIX/pipeline task exists with complete
   objective dependencies, acceptance criteria, validation gates, docs, and
   evidence requirements.
+- phase12-local-absolute-path-vfs-command-core-20260626 accepts
+  local-absolute-path-vfs-command-core. The local shell can now run
+  /bin/status42 directly through the accepted VFS open/read, program-loader,
+  initial stack, and userspace launch path, preserving waitpid, laststatus,
+  /proc/talos/processes, and zero-argument ps observations. Unsupported direct
+  paths fail closed, and bin/status42/status42 remain unknown-command; PATH
+  lookup, bare-name lookup, direct path arguments/redirections, path-form
+  pipelines, arbitrary shell grammar, live networking/SSH, Pi 5 hardware proof,
+  and phase transition remain deferred.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

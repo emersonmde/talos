@@ -1,0 +1,37 @@
+{
+  "task_id": "phase12-local-absolute-path-vfs-command-core-20260626",
+  "classification": "local-absolute-path-vfs-command-core-accepted",
+  "accepted": true,
+  "accepted_surface": "direct absolute-path VFS command execution",
+  "accepted_cases": [
+    "/bin/status42 launches through the accepted VFS open/read/program-loader/userspace launch path without the exec prefix",
+    "waitpid observes the direct absolute-path lifecycle record",
+    "laststatus observes the direct absolute-path lifecycle record without consuming it",
+    "/proc/talos/processes and zero-argument ps report the direct absolute-path process-table record"
+  ],
+  "negative_controls": [
+    "/missing fails not-found",
+    "bin/status42 fails as unknown-command and does not perform PATH lookup",
+    "/bin fails not-executable",
+    "/etc/banner.txt fails not-executable",
+    "status42 fails as unknown-command and does not perform bare-name lookup"
+  ],
+  "deferred": [
+    "PATH lookup",
+    "bare command lookup",
+    "direct absolute-path arguments and redirections",
+    "path-form pipelines",
+    "arbitrary shell grammar",
+    "unbounded pipelines",
+    "scheduler concurrency",
+    "fork/signals",
+    "process groups/sessions",
+    "live networking",
+    "SSH",
+    "Pi 5 hardware proof",
+    "phase transition"
+  ],
+  "selected_next_task": "phase12-local-absolute-path-vfs-command-closeout-20260626",
+  "hardware_claim": "none",
+  "live_network_ssh_reachability": "paused"
+}

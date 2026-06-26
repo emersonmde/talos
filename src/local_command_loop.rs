@@ -47,7 +47,8 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+bounded-process-table-direct-vfs-exec-lifecycle",
     "+bounded-process-table-pipeline-background-lifecycle",
     "+proc-talos-processes-descriptor-backed-status-vfs+ps-command-vfs-backed-process-status",
-    "+multistage-pipeline-bounded-process-table+bounded-pipeline-status-observation"
+    "+multistage-pipeline-bounded-process-table+bounded-pipeline-status-observation",
+    "+direct-absolute-path-vfs-command"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -6388,6 +6389,10 @@ fn dispatch_local_command(
         }
     }
 
+    if command.name.starts_with('/') {
+        return dispatch_absolute_path_command(command, sink, responses);
+    }
+
     match command.name {
         "help" => {
             if command.arguments.is_some() {
@@ -6764,6 +6769,37 @@ fn dispatch_local_command(
     }
 }
 
+fn dispatch_absolute_path_command(
+    command: ParsedLocalCommand<'_>,
+    sink: &mut impl LocalCommandSink,
+    responses: &mut usize,
+) -> Result<LocalCommandStatus, LocalCommandCycleError> {
+    match parse_absolute_path_command_request(command)
+        .and_then(|request| sink.exec_vfs_program(request))
+    {
+        Ok(summary) => {
+            write_exec_summary(sink, responses, summary)?;
+            Ok(LocalCommandStatus::Handled)
+        }
+        Err(LocalCommandExecError::InvalidPath) => {
+            write_line(sink, responses, "talos: exec-invalid-path")?;
+            Ok(LocalCommandStatus::UnexpectedArgument)
+        }
+        Err(LocalCommandExecError::NotExecutable) => {
+            write_line(sink, responses, "talos: exec-not-executable")?;
+            Ok(LocalCommandStatus::UnexpectedArgument)
+        }
+        Err(LocalCommandExecError::NotFound) => {
+            write_line(sink, responses, "talos: exec-not-found")?;
+            Ok(LocalCommandStatus::UnexpectedArgument)
+        }
+        Err(_) => {
+            write_line(sink, responses, "talos: exec-error")?;
+            Ok(LocalCommandStatus::UnexpectedArgument)
+        }
+    }
+}
+
 fn parse_waitpid_process_id(arguments: &str) -> Option<u64> {
     if arguments.as_bytes().contains(&b' ') {
         return None;
@@ -6853,6 +6889,23 @@ fn parse_background_exec_request(
         return Err(LocalCommandExecError::InvalidPath);
     }
     parse_exec_request(trim_ascii_space(foreground))
+}
+
+fn parse_absolute_path_command_request(
+    command: ParsedLocalCommand<'_>,
+) -> Result<LocalCommandExecRequest, LocalCommandExecError> {
+    if command.arguments.is_some() || !is_absolute_exec_path(command.name.as_bytes()) {
+        return Err(LocalCommandExecError::InvalidPath);
+    }
+    let path = LocalCommandExecPath::from_absolute(command.name.as_bytes())?;
+    let argv = LocalCommandLiteralArgv::from_tokens(&[command.name.as_bytes()])?
+        .with_resolved_argv0(path.as_bytes())?;
+    Ok(LocalCommandExecRequest {
+        path,
+        argv,
+        redirection: None,
+        stdin_redirection: None,
+    })
 }
 
 fn has_background_exec_suffix(arguments: &str) -> bool {
@@ -7295,7 +7348,15 @@ const fn is_space(byte: u8) -> bool {
 }
 
 const fn is_command_byte(byte: u8) -> bool {
-    matches!(byte, b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_')
+    matches!(
+        byte,
+        b'a'..=b'z'
+            | b'0'..=b'9'
+            | b'/'
+            | b'.'
+            | b'-'
+            | b'_'
+    )
 }
 
 fn write_line(
@@ -12071,6 +12132,118 @@ talos> talos: exec-not-executable\n"
             "talos> talos: exec-not-found\n\
 talos> talos: exec-invalid-path\n\
 talos> talos: exec-not-executable\n"
+        );
+    }
+
+    #[test_case]
+    fn local_command_loop_runs_direct_absolute_path_vfs_command() {
+        let bytes = *b"/bin/status42\rwaitpid\rlaststatus\rcat /proc/talos/processes\rps\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (exec, waited, observed, cat, ps) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            let exec = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let record = io.process_table_records()[0].unwrap();
+            assert_eq!(
+                record.lifecycle.source_path,
+                initramfs::PHASE10_STATUS42_PATH
+            );
+            assert_eq!(record.lifecycle.status, 0x2a);
+            assert_eq!(record.lifecycle.observed_status, 0x2a);
+            let waited = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let observed = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let cat = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let ps = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(io.process_table_records()[0], Some(record));
+            (exec, waited, observed, cat, ps)
+        };
+        let output = backend.as_str();
+
+        assert_eq!(exec.line(), b"/bin/status42");
+        assert_eq!(exec.status(), LocalCommandStatus::Handled);
+        assert_eq!(exec.response_lines(), 10);
+        assert_eq!(waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(observed.status(), LocalCommandStatus::Handled);
+        assert_eq!(cat.status(), LocalCommandStatus::Handled);
+        assert_eq!(ps.status(), LocalCommandStatus::Handled);
+        assert!(output.contains("talos> talos: exec path=/bin/status42 source=vfs-open-read\n"));
+        assert!(output.contains(
+            "talos: exec-startup-abi state=minimal-argc1-argv0-absolute-empty-envp argc=0x0000000000000001 argv0=/bin/status42"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "slot=0 capacity=3 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true wait-consumed=true job-state=foreground source=bounded-process-table\n"
+        ));
+    }
+
+    #[test_case]
+    fn local_command_loop_rejects_unsupported_direct_path_commands_without_process_records() {
+        let bytes =
+            *b"/missing\rbin/status42\r/bin\r/etc/banner.txt\rstatus42\r/bin/status42 extra\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (missing, relative, directory, banner, bare, extra) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            let missing = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(
+                io.process_table_records(),
+                [None; LOCAL_COMMAND_PROCESS_TABLE_CAPACITY]
+            );
+            let relative = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(
+                io.process_table_records(),
+                [None; LOCAL_COMMAND_PROCESS_TABLE_CAPACITY]
+            );
+            let directory = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(
+                io.process_table_records(),
+                [None; LOCAL_COMMAND_PROCESS_TABLE_CAPACITY]
+            );
+            let banner = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(
+                io.process_table_records(),
+                [None; LOCAL_COMMAND_PROCESS_TABLE_CAPACITY]
+            );
+            let bare = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(
+                io.process_table_records(),
+                [None; LOCAL_COMMAND_PROCESS_TABLE_CAPACITY]
+            );
+            let extra = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(
+                io.process_table_records(),
+                [None; LOCAL_COMMAND_PROCESS_TABLE_CAPACITY]
+            );
+            (missing, relative, directory, banner, bare, extra)
+        };
+
+        assert_eq!(missing.line(), b"/missing");
+        assert_eq!(missing.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(relative.line(), b"bin/status42");
+        assert_eq!(relative.status(), LocalCommandStatus::UnknownCommand);
+        assert_eq!(directory.line(), b"/bin");
+        assert_eq!(directory.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(banner.line(), b"/etc/banner.txt");
+        assert_eq!(banner.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(bare.line(), b"status42");
+        assert_eq!(bare.status(), LocalCommandStatus::UnknownCommand);
+        assert_eq!(extra.line(), b"/bin/status42 extra");
+        assert_eq!(extra.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(
+            backend.as_str(),
+            "talos> talos: exec-not-found\n\
+talos> talos: unknown-command\n\
+talos> talos: exec-not-executable\n\
+talos> talos: exec-not-executable\n\
+talos> talos: unknown-command\n\
+talos> talos: exec-invalid-path\n"
         );
     }
 

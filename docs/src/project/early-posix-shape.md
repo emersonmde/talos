@@ -138,6 +138,16 @@ procfs/Linux `ps`, persistent storage, arbitrary shell grammar, unbounded
 pipelines, POSIX pipefail compatibility, and phase transition remain deferred
 pending supervisor planning.
 
+The first direct path-form command is also deliberately narrow. A shell input
+of /bin/status42 now reaches the same accepted VFS open/read, program-loader,
+initial stack, and userspace launch path previously exercised by
+exec /bin/status42. It records the same bounded lifecycle/process-table state
+and remains observable through waitpid, laststatus, /proc/talos/processes, and
+zero-argument ps. Unsupported direct paths fail closed, while bin/status42 and
+status42 remain unknown-command; this is absolute-path VFS command execution
+only, not PATH lookup, bare-name lookup, POSIX shell compatibility, direct path
+redirection/argument support, or path-form pipeline support.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

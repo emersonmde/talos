@@ -14359,6 +14359,7 @@ pub fn run_diagnostic_command_channel_smoke() -> bool {
     talos_boot_scenario = "qemu_local_cat_banner",
     talos_boot_scenario = "qemu_local_cat_cwd",
     talos_boot_scenario = "qemu_local_shell_vfs_exec",
+    talos_boot_scenario = "qemu_local_shell_absolute_path_vfs_command",
     talos_boot_scenario = "qemu_local_shell_literal_argv",
     talos_boot_scenario = "qemu_local_shell_path_lookup",
     talos_boot_scenario = "qemu_local_shell_stdout",
@@ -14593,6 +14594,11 @@ const fn local_command_loop_smoke_label() -> &'static str {
 #[cfg(talos_boot_scenario = "qemu_local_shell_vfs_exec")]
 const fn local_command_loop_smoke_label() -> &'static str {
     "qemu-local-shell-vfs-exec"
+}
+
+#[cfg(talos_boot_scenario = "qemu_local_shell_absolute_path_vfs_command")]
+const fn local_command_loop_smoke_label() -> &'static str {
+    "qemu-local-shell-absolute-path-vfs-command"
 }
 
 #[cfg(talos_boot_scenario = "qemu_local_shell_literal_argv")]
@@ -14837,6 +14843,7 @@ const fn local_command_loop_smoke_label() -> &'static str {
     not(talos_boot_scenario = "qemu_local_cat_banner"),
     not(talos_boot_scenario = "qemu_local_cat_cwd"),
     not(talos_boot_scenario = "qemu_local_shell_vfs_exec"),
+    not(talos_boot_scenario = "qemu_local_shell_absolute_path_vfs_command"),
     not(talos_boot_scenario = "qemu_local_shell_literal_argv"),
     not(talos_boot_scenario = "qemu_local_shell_path_lookup"),
     not(talos_boot_scenario = "qemu_local_shell_stdout"),
@@ -14936,6 +14943,11 @@ const fn local_command_loop_smoke_classification() -> &'static str {
 #[cfg(talos_boot_scenario = "qemu_local_shell_vfs_exec")]
 const fn local_command_loop_smoke_classification() -> &'static str {
     "qemu-local-shell-vfs-exec-complete"
+}
+
+#[cfg(talos_boot_scenario = "qemu_local_shell_absolute_path_vfs_command")]
+const fn local_command_loop_smoke_classification() -> &'static str {
+    "qemu-local-shell-absolute-path-vfs-command-complete"
 }
 
 #[cfg(talos_boot_scenario = "qemu_local_shell_literal_argv")]
@@ -15180,6 +15192,7 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     not(talos_boot_scenario = "qemu_local_cat_banner"),
     not(talos_boot_scenario = "qemu_local_cat_cwd"),
     not(talos_boot_scenario = "qemu_local_shell_vfs_exec"),
+    not(talos_boot_scenario = "qemu_local_shell_absolute_path_vfs_command"),
     not(talos_boot_scenario = "qemu_local_shell_literal_argv"),
     not(talos_boot_scenario = "qemu_local_shell_path_lookup"),
     not(talos_boot_scenario = "qemu_local_shell_stdout"),
@@ -15243,6 +15256,7 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     talos_boot_scenario = "qemu_local_cat_banner",
     talos_boot_scenario = "qemu_local_cat_cwd",
     talos_boot_scenario = "qemu_local_shell_vfs_exec",
+    talos_boot_scenario = "qemu_local_shell_absolute_path_vfs_command",
     talos_boot_scenario = "qemu_local_shell_literal_argv",
     talos_boot_scenario = "qemu_local_shell_path_lookup",
     talos_boot_scenario = "qemu_local_shell_stdout",
@@ -15396,6 +15410,8 @@ const fn local_command_loop_smoke_command_count() -> usize {
         18
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_literal_argv") {
         12
+    } else if cfg!(talos_boot_scenario = "qemu_local_shell_absolute_path_vfs_command") {
+        13
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_vfs_exec") {
         15
     } else if cfg!(talos_boot_scenario = "qemu_local_cd_fixed_dirs") {
@@ -15428,6 +15444,7 @@ const fn local_command_loop_smoke_command_count() -> usize {
     talos_boot_scenario = "qemu_local_cat_banner",
     talos_boot_scenario = "qemu_local_cat_cwd",
     talos_boot_scenario = "qemu_local_shell_vfs_exec",
+    talos_boot_scenario = "qemu_local_shell_absolute_path_vfs_command",
     talos_boot_scenario = "qemu_local_shell_literal_argv",
     talos_boot_scenario = "qemu_local_shell_path_lookup",
     talos_boot_scenario = "qemu_local_shell_stdout",
@@ -15485,6 +15502,27 @@ fn expected_local_command_loop_dispatch(
         0 => line == b"help" && status == Handled && response_lines == 4,
         1 => line == b"status" && status == Handled && response_lines == 5,
         2 => line == b"stdio" && status == Handled && response_lines == 7,
+        index if cfg!(talos_boot_scenario = "qemu_local_shell_absolute_path_vfs_command") => {
+            match index {
+                3 => line == b"/bin/status42" && status == Handled && response_lines == 10,
+                4 => line == b"waitpid" && status == Handled && response_lines == 1,
+                5 => line == b"laststatus" && status == Handled && response_lines == 1,
+                6 => {
+                    line == b"cat /proc/talos/processes" && status == Handled && response_lines == 1
+                }
+                7 => line == b"ps" && status == Handled && response_lines == 1,
+                8 => line == b"/missing" && status == UnexpectedArgument && response_lines == 1,
+                9 => line == b"bin/status42" && status == UnknownCommand && response_lines == 1,
+                10 => line == b"/bin" && status == UnexpectedArgument && response_lines == 1,
+                11 => {
+                    line == b"/etc/banner.txt"
+                        && status == UnexpectedArgument
+                        && response_lines == 1
+                }
+                12 => line == b"status42" && status == UnknownCommand && response_lines == 1,
+                _ => false,
+            }
+        }
         3 if cfg!(talos_boot_scenario = "qemu_local_shell_pipeline_status") => {
             line == b"pipestatus" && status == Handled
         }

@@ -1,0 +1,52 @@
+{
+  "task_id": "phase12-local-absolute-path-vfs-command-core-20260626",
+  "classification": "local-absolute-path-vfs-command-core-accepted",
+  "evidence": [
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "result": "passed; 836 talos no_std tests including direct absolute-path VFS command and negative control tests"
+    },
+    {
+      "level": "QEMU/substitute",
+      "command": "scripts/qemu-local-shell-absolute-path-vfs-command-smoke.sh",
+      "path": "tasks/evidence/2026-06-26-phase12-local-absolute-path-vfs-command-core/qemu-local-shell-absolute-path-vfs-command-smoke.log",
+      "result": "passed; transcript records /bin/status42 direct path launch, waitpid, laststatus, /proc/talos/processes, ps, and negative controls"
+    },
+    {
+      "level": "fmt/lint",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed; mdBook HTML emitted with existing large-search-index warning"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty tasks/evidence/2026-06-26-phase12-local-absolute-path-vfs-command-core/classification.json tasks/evidence/2026-06-26-phase12-local-absolute-path-vfs-command-core/evidence-map.json",
+      "result": "passed"
+    }
+  ],
+  "retained_paths": [
+    "src/local_command_loop.rs",
+    "src/target/qemu_virt.rs",
+    "src/main.rs",
+    "build.rs",
+    "scripts/qemu-local-serial-command-loop-smoke.sh",
+    "scripts/qemu-local-shell-absolute-path-vfs-command-smoke.sh",
+    "tasks/2026-06-26-phase12-local-absolute-path-vfs-command-core.md",
+    "docs/src/roadmap.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/project/early-posix-shape.md"
+  ],
+  "selected_next_task": "phase12-local-absolute-path-vfs-command-closeout-20260626",
+  "hardware_claim": "none",
+  "live_network_ssh_reachability": "paused"
+}

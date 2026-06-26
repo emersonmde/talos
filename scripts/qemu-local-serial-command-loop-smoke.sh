@@ -22,6 +22,7 @@ LS_BIN_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_LS_BIN_SMOKE:-0}"
 CAT_BANNER_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_CAT_BANNER_SMOKE:-0}"
 CAT_CWD_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_CAT_CWD_SMOKE:-0}"
 SHELL_VFS_EXEC_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_VFS_EXEC_SMOKE:-0}"
+SHELL_ABSOLUTE_PATH_VFS_COMMAND_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_ABSOLUTE_PATH_VFS_COMMAND_SMOKE:-0}"
 SHELL_LITERAL_ARGV_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_LITERAL_ARGV_SMOKE:-0}"
 SHELL_PATH_LOOKUP_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_PATH_LOOKUP_SMOKE:-0}"
 SHELL_STDOUT_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDOUT_SMOKE:-0}"
@@ -530,6 +531,29 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                     delayed_stdin_sent=1
                     ;;
             esac
+        fi
+        if [ "$SHELL_ABSOLUTE_PATH_VFS_COMMAND_SMOKE" -eq 1 ] && [[ "$line" =~ ready\ command=([0-9]+) ]]; then
+            absolute_path_vfs_command_commands=(
+                "help"
+                "status"
+                "stdio"
+                "/bin/status42"
+                "waitpid"
+                "laststatus"
+                "cat /proc/talos/processes"
+                "ps"
+                "/missing"
+                "bin/status42"
+                "/bin"
+                "/etc/banner.txt"
+                "status42"
+            )
+            command_index="${BASH_REMATCH[1]}"
+            if [ "$sent" -eq "$command_index" ] && [ "$command_index" -lt "${#absolute_path_vfs_command_commands[@]}" ]; then
+                printf '%s\r' "${absolute_path_vfs_command_commands[$command_index]}" >&3
+                sent=$((command_index + 1))
+            fi
+            continue
         fi
         case "$line" in
             *"$LABEL: ready command=10"*)
@@ -2573,6 +2597,30 @@ elif [ "$SHELL_LITERAL_ARGV_SMOKE" -eq 1 ]; then
     grep -q "talos> cat /etc/banner.txt" "$LOG_FILE"
     grep -q "^Talos initramfs fixture" "$LOG_FILE"
     grep -q "$LABEL: final participants=12 expected=12 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+elif [ "$SHELL_ABSOLUTE_PATH_VFS_COMMAND_SMOKE" -eq 1 ]; then
+    grep -q "talos> /bin/status42" "$LOG_FILE"
+    grep -q "talos: exec path=/bin/status42 source=vfs-open-read" "$LOG_FILE"
+    grep -Eq "talos: exec-startup-abi state=minimal-argc1-argv0-absolute-empty-envp argc=0x0000000000000001 argv0=/bin/status42 argv0-ptr=0x[0-9a-f]+ argv-null=false envp-null=true envp-state=empty-envp0 envp-entries=0x0000000000000000 envp0-ptr=0x[0-9a-f]+ copied-startup-bytes=0x000000000000002e source=initial-user-stack-record" "$LOG_FILE"
+    grep -Eq "talos: exec-lifecycle pid=0x[0-9a-f]+ parent=shell owner=0x[0-9a-f]+ path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true" "$LOG_FILE"
+    grep -Eq "talos: waitpid pid=0x[0-9a-f]+ parent=shell owner=0x[0-9a-f]+ path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -Eq "talos: last-process pid=0x[0-9a-f]+ parent=shell owner=0x[0-9a-f]+ path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -q "talos> cat /proc/talos/processes" "$LOG_FILE"
+    grep -q "path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true wait-consumed=true job-state=foreground source=bounded-process-table" "$LOG_FILE"
+    grep -q "talos> ps" "$LOG_FILE"
+    grep -q "talos> /missing" "$LOG_FILE"
+    grep -q "talos: exec-not-found" "$LOG_FILE"
+    grep -q "talos> bin/status42" "$LOG_FILE"
+    grep -q "talos: unknown-command" "$LOG_FILE"
+    grep -q "talos> /bin" "$LOG_FILE"
+    grep -q "talos> /etc/banner.txt" "$LOG_FILE"
+    grep -q "talos: exec-not-executable" "$LOG_FILE"
+    grep -q "talos> status42" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=8 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=9 status=unknown-command responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=10 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=11 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=12 status=unknown-command responses=1" "$LOG_FILE"
+    grep -q "$LABEL: final participants=13 expected=13 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
 elif [ "$SHELL_VFS_EXEC_SMOKE" -eq 1 ]; then
     grep -q "talos> exec /bin/status42" "$LOG_FILE"
     grep -q "talos: exec path=/bin/status42 source=vfs-open-read" "$LOG_FILE"

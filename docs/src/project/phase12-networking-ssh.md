@@ -8961,6 +8961,20 @@ planningNeeded=true. No live reachability, remote receipt, compatibility,
 PTY/SCP/SFTP, broad command expansion, phase transition, or ssh-ready=true is
 accepted.
 
+phase12-local-absolute-path-vfs-command-core-20260626 accepts
+local-absolute-path-vfs-command-core. The local shell now dispatches a direct
+absolute-path command, /bin/status42, through the same accepted VFS open/read,
+program-loader, initial user stack, and userspace launch path used by
+exec /bin/status42. The retained unit and QEMU/substitute evidence records
+status 0x2a, waitpid, laststatus, /proc/talos/processes, and zero-argument ps
+observations over the bounded process-table record. Negative controls show
+/missing fails not-found, /bin and /etc/banner.txt fail not-executable, and
+bin/status42 plus status42 remain unknown-command; no PATH lookup or bare-name
+lookup is accepted. This is not POSIX shell compatibility and does not accept
+direct path arguments, redirections, path-form pipelines, arbitrary shell
+grammar, live network/SSH reachability, Pi 5 hardware proof, or a phase
+transition.
+
 phase12-local-vfs-exec-lifecycle-record-generalization-core-20260626
 accepts local-vfs-exec-lifecycle-record-generalization-core. This local
 POSIX/VFS/userspace continuation preserves the accepted
