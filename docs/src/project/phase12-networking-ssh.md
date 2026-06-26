@@ -9147,6 +9147,24 @@ current-directory search, arbitrary shell grammar, live networking/SSH, Pi 5
 hardware proof, generated-root retry, or a phase transition.
 selected_next_task is phase12-local-command-argv-frontier-checkpoint-20260626.
 
+phase12-local-command-argv-frontier-checkpoint-20260626 accepts
+local-command-argv-frontier-checkpoint. The checkpoint reconciles direct
+absolute-path argv and bounded bare-name argv against retained core evidence,
+task-owned classification/evidence JSON, QEMU/substitute transcripts, docs,
+and regression records. The accepted command argv surface remains exactly
+'/bin/status42 alpha beta' and 'status42 alpha beta'. Both forms reach
+/bin/status42 through descriptor-backed VFS open/read, the accepted loader,
+userspace startup/status, inherited standard descriptors, closed loader
+temporary descriptor, bounded process-table observations, waitpid, laststatus,
+/proc/talos/processes, zero-argument ps, and pipestatus compatibility. The
+bare-name form still resolves only through the fixed /bin VFS lookup. Pipeline
+stage argv, redirections, environment-backed PATH, command lookup beyond the
+bounded /bin surface, arbitrary shell grammar, live networking/SSH, Pi 5
+hardware proof, generated-root retry, and phase transition remain deferred.
+selected_next_task is null and planningNeeded=true because no later queued
+same-lane local POSIX/shell task exists with complete objective dependencies,
+acceptance criteria, validation gates, docs, and evidence requirements.
+
 phase12-local-vfs-exec-lifecycle-record-generalization-core-20260626
 accepts local-vfs-exec-lifecycle-record-generalization-core. This local
 POSIX/VFS/userspace continuation preserves the accepted

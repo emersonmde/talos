@@ -1,0 +1,45 @@
+{
+  "classification": "local-command-argv-frontier-checkpoint-accepted",
+  "task_id": "phase12-local-command-argv-frontier-checkpoint-20260626",
+  "evidence_level": [
+    "static inspection",
+    "fmt/lint/typecheck inherited from accepted command argv cores",
+    "unit tests inherited from accepted command argv cores",
+    "QEMU/substitute inherited from accepted command argv cores",
+    "docs build"
+  ],
+  "accepted_frontier": {
+    "direct_absolute_path_argv": "/bin/status42 alpha beta",
+    "bare_name_argv": "status42 alpha beta",
+    "resolved_path": "/bin/status42",
+    "argv": [
+      "/bin/status42",
+      "alpha",
+      "beta"
+    ],
+    "execution_path": "VFS open/read -> accepted loader -> userspace launch/status -> bounded process table"
+  },
+  "deferred_frontier": [
+    "pipeline stage argv",
+    "redirections",
+    "environment-backed PATH",
+    "current-directory search",
+    "command lookup beyond bounded /bin",
+    "arbitrary shell grammar",
+    "unbounded pipelines",
+    "pipeline concurrency",
+    "scheduler concurrency",
+    "fork/signals",
+    "process groups/sessions",
+    "persistent storage",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root command-input retry",
+    "phase transition"
+  ],
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "No later queued same-lane local POSIX/shell task exists with complete objective dependencies, acceptance criteria, validation gates, docs, and evidence requirements.",
+  "hardware_claim": "none",
+  "live_network_ssh": "paused"
+}

@@ -232,6 +232,18 @@ PATH, current-directory search, arbitrary shell grammar, unbounded pipelines,
 live networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
 transition remain deferred pending the command argv frontier checkpoint.
 
+The 2026-06-26 local command argv frontier checkpoint keeps command argv at
+static/unit/QEMU substitute evidence level. The accepted boundary is only the
+direct command forms '/bin/status42 alpha beta' and 'status42 alpha beta',
+with bare names resolving through the fixed /bin VFS lookup and both forms
+using VFS open/read, the loader, userspace startup/status, inherited standard
+descriptors, a closed loader temporary descriptor, bounded process-table
+records, waitpid, /proc/talos/processes, zero-argument ps, and pipestatus.
+Pipeline stage argv, redirections, environment-backed PATH, command lookup
+beyond the bounded /bin surface, arbitrary shell grammar, unbounded pipelines,
+live networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
+transition remain deferred pending supervisor planning.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
