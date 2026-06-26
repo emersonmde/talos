@@ -18435,6 +18435,16 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   phase12-local-absolute-path-vfs-pipeline-core-20260626 because that queued
   path-form pipeline task is mechanically objective after the accepted direct
   command closeout.
+- phase12-local-absolute-path-vfs-pipeline-core-20260626 accepts
+  local-absolute-path-vfs-pipeline-core. The local shell now runs the bounded
+  two-stage path-form pipeline \`/bin/stdout | /bin/stdin\` through the accepted
+  VFS exec/loading path for both stages. Unit and QEMU/substitute evidence
+  preserve pipe byte flow, lifecycle/status records, waitpid, laststatus,
+  \`/proc/talos/processes\`, zero-argument ps, and \`pipestatus\`; mixed
+  diagnostic/path forms, bare names, unsupported paths, and path-form
+  multistage pipelines fail closed. PATH lookup, bare-name lookup, arbitrary
+  shell grammar, unbounded pipelines, pipeline concurrency, live networking/SSH,
+  Pi 5 hardware proof, and phase transition remain deferred.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

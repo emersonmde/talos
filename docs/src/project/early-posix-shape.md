@@ -146,7 +146,18 @@ and remains observable through waitpid, laststatus, /proc/talos/processes, and
 zero-argument ps. Unsupported direct paths fail closed, while bin/status42 and
 status42 remain unknown-command; this is absolute-path VFS command execution
 only, not PATH lookup, bare-name lookup, POSIX shell compatibility, direct path
-redirection/argument support, or path-form pipeline support.
+redirection/argument support, or broad shell support.
+
+The first accepted path-form pipeline is equally bounded:
+\`/bin/stdout | /bin/stdin\`. Both stages are absolute paths and load through the
+accepted VFS exec/loading path; the existing serialized two-stage pipe byte
+flow, lifecycle/status records, waitpid, laststatus, \`/proc/talos/processes\`,
+zero-argument \`ps\`, and \`pipestatus\` observations remain intact. Mixed
+diagnostic/path forms, bare command names, unsupported paths, and path-form
+multistage pipelines fail closed. PATH lookup, bare-name lookup, arbitrary
+shell grammar, unbounded pipelines, pipeline concurrency, scheduler
+concurrency, fork/signals, live networking/SSH, Pi 5 hardware proof, and phase
+transition remain deferred.
 
 ## Scheduler Implications
 

@@ -8991,6 +8991,19 @@ phase12-local-absolute-path-vfs-pipeline-core-20260626 because that queued
 path-form pipeline task is mechanically objective after this accepted direct
 command closeout.
 
+phase12-local-absolute-path-vfs-pipeline-core-20260626 accepts
+local-absolute-path-vfs-pipeline-core. The local shell now accepts the bounded
+two-stage path-form pipeline \`/bin/stdout | /bin/stdin\`. Both producer and
+consumer are loaded through the accepted VFS open/read, program-loader,
+initial stack, and userspace launch path; the retained unit and
+QEMU/substitute evidence preserves pipe byte flow, lifecycle/status records,
+waitpid, laststatus, \`/proc/talos/processes\`, zero-argument ps, and
+\`pipestatus\`. Mixed diagnostic/path forms, bare command names, unsupported
+paths, and path-form multistage pipelines fail closed without successful
+process records. This accepts no PATH lookup, bare-name lookup, arbitrary shell
+grammar, unbounded pipelines, pipeline concurrency, live network/SSH
+reachability, Pi 5 hardware proof, or phase transition.
+
 phase12-local-vfs-exec-lifecycle-record-generalization-core-20260626
 accepts local-vfs-exec-lifecycle-record-generalization-core. This local
 POSIX/VFS/userspace continuation preserves the accepted

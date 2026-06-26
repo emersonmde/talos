@@ -1,0 +1,30 @@
+{
+  "task_id": "phase12-local-absolute-path-vfs-pipeline-core-20260626",
+  "classification": "local-absolute-path-vfs-pipeline-core-accepted",
+  "accepted": true,
+  "hardware_claim": "none",
+  "live_network_ssh_reachability": "paused",
+  "accepted_frontier": [
+    "bounded two-stage path-form pipeline /bin/stdout | /bin/stdin",
+    "both stages loaded through accepted VFS open/read and program-loader path",
+    "serialized pipe byte flow and bounded lifecycle/status/process-table observations",
+    "waitpid, laststatus, /proc/talos/processes, ps, and pipestatus observations"
+  ],
+  "deferred_frontier": [
+    "PATH lookup",
+    "bare command lookup",
+    "path-form arguments or redirections",
+    "mixed diagnostic/path pipeline forms",
+    "path-form multistage pipelines",
+    "arbitrary shell grammar",
+    "unbounded pipelines",
+    "pipeline concurrency",
+    "scheduler concurrency",
+    "fork/signals",
+    "process groups/sessions",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "phase transition"
+  ],
+  "selected_next_task": "phase12-local-absolute-path-vfs-pipeline-closeout-20260626"
+}

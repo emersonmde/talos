@@ -48,7 +48,7 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+bounded-process-table-pipeline-background-lifecycle",
     "+proc-talos-processes-descriptor-backed-status-vfs+ps-command-vfs-backed-process-status",
     "+multistage-pipeline-bounded-process-table+bounded-pipeline-status-observation",
-    "+direct-absolute-path-vfs-command"
+    "+direct-absolute-path-vfs-command+bounded-absolute-path-vfs-pipeline"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -6774,6 +6774,45 @@ fn dispatch_absolute_path_command(
     sink: &mut impl LocalCommandSink,
     responses: &mut usize,
 ) -> Result<LocalCommandStatus, LocalCommandCycleError> {
+    if command
+        .arguments
+        .map(|arguments| arguments.as_bytes().contains(&b'|'))
+        .unwrap_or(false)
+    {
+        return match parse_absolute_path_pipeline_request(command)
+            .and_then(|request| sink.exec_vfs_pipeline(request))
+        {
+            Ok(summary) => {
+                write_pipeline_summary(sink, responses, summary)?;
+                Ok(LocalCommandStatus::Handled)
+            }
+            Err(LocalCommandExecError::InvalidPath) => {
+                write_line(sink, responses, "talos: exec-invalid-path")?;
+                Ok(LocalCommandStatus::UnexpectedArgument)
+            }
+            Err(LocalCommandExecError::NotExecutable) => {
+                write_line(sink, responses, "talos: exec-not-executable")?;
+                Ok(LocalCommandStatus::UnexpectedArgument)
+            }
+            Err(LocalCommandExecError::NotFound) => {
+                write_line(sink, responses, "talos: exec-not-found")?;
+                Ok(LocalCommandStatus::UnexpectedArgument)
+            }
+            Err(LocalCommandExecError::SyscallFailed) => {
+                write_line(sink, responses, "talos: exec-syscall-failed")?;
+                Ok(LocalCommandStatus::UnexpectedArgument)
+            }
+            Err(LocalCommandExecError::LaunchPipelineFailed) => {
+                write_line(sink, responses, "talos: exec-launch-failed")?;
+                Ok(LocalCommandStatus::UnexpectedArgument)
+            }
+            Err(_) => {
+                write_line(sink, responses, "talos: exec-error")?;
+                Ok(LocalCommandStatus::UnexpectedArgument)
+            }
+        };
+    }
+
     match parse_absolute_path_command_request(command)
         .and_then(|request| sink.exec_vfs_program(request))
     {
@@ -6894,11 +6933,41 @@ fn parse_background_exec_request(
 fn parse_absolute_path_command_request(
     command: ParsedLocalCommand<'_>,
 ) -> Result<LocalCommandExecRequest, LocalCommandExecError> {
-    if command.arguments.is_some() || !is_absolute_exec_path(command.name.as_bytes()) {
+    if command.arguments.is_some() {
         return Err(LocalCommandExecError::InvalidPath);
     }
-    let path = LocalCommandExecPath::from_absolute(command.name.as_bytes())?;
-    let argv = LocalCommandLiteralArgv::from_tokens(&[command.name.as_bytes()])?
+    parse_absolute_path_exec_request(command.name)
+}
+
+fn parse_absolute_path_pipeline_request(
+    command: ParsedLocalCommand<'_>,
+) -> Result<LocalCommandPipelineRequest, LocalCommandExecError> {
+    let arguments = command
+        .arguments
+        .ok_or(LocalCommandExecError::InvalidPath)?;
+    let arguments = trim_ascii_space(arguments);
+    let consumer = arguments
+        .strip_prefix('|')
+        .ok_or(LocalCommandExecError::InvalidPath)?;
+    let consumer = trim_ascii_space(consumer);
+    if consumer.is_empty() || consumer.as_bytes().contains(&b'|') {
+        return Err(LocalCommandExecError::InvalidPath);
+    }
+    Ok(LocalCommandPipelineRequest {
+        producer: parse_absolute_path_exec_request(command.name)?,
+        middle: None,
+        consumer: parse_absolute_path_exec_request(consumer)?,
+    })
+}
+
+fn parse_absolute_path_exec_request(
+    path_text: &str,
+) -> Result<LocalCommandExecRequest, LocalCommandExecError> {
+    if !is_absolute_exec_path(path_text.as_bytes()) {
+        return Err(LocalCommandExecError::InvalidPath);
+    }
+    let path = LocalCommandExecPath::from_absolute(path_text.as_bytes())?;
+    let argv = LocalCommandLiteralArgv::from_tokens(&[path_text.as_bytes()])?
         .with_resolved_argv0(path.as_bytes())?;
     Ok(LocalCommandExecRequest {
         path,
@@ -12180,6 +12249,133 @@ talos> talos: exec-not-executable\n"
         assert!(output.contains(
             "slot=0 capacity=3 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true wait-consumed=true job-state=foreground source=bounded-process-table\n"
         ));
+    }
+
+    #[test_case]
+    fn local_command_loop_runs_path_form_absolute_vfs_pipeline() {
+        let bytes = *b"/bin/stdout | /bin/stdin\rwaitpid 0x100001\rwaitpid 0x100002\rlaststatus\rpipestatus\rcat /proc/talos/processes\rps\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (pipeline, producer_wait, consumer_wait, last, status, cat, ps) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(pipeline.line(), b"/bin/stdout | /bin/stdin");
+        assert_eq!(pipeline.status(), LocalCommandStatus::Handled);
+        assert_eq!(producer_wait.status(), LocalCommandStatus::Handled);
+        assert_eq!(consumer_wait.status(), LocalCommandStatus::Handled);
+        assert_eq!(last.status(), LocalCommandStatus::Handled);
+        assert_eq!(status.status(), LocalCommandStatus::Handled);
+        assert_eq!(cat.status(), LocalCommandStatus::Handled);
+        assert_eq!(ps.status(), LocalCommandStatus::Handled);
+        assert!(output.contains("talos> /bin/stdout | /bin/stdin\n"));
+        assert!(output.contains("talos: exec path=/bin/stdout source=vfs-open-read\n"));
+        assert!(output.contains("talos: exec path=/bin/stdin source=vfs-open-read\n"));
+        assert!(output.contains(
+            "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-to-stdin\n"
+        ));
+        assert!(output.contains(
+            "talos: pipeline-lifecycle-status record=phase12-local-pipeline-distinct-process-lifecycle-status-record-v1 pipeline=0x0000000000000001 producer-pid=0x0000000000100001 producer-path=/bin/stdout producer-state=exited producer-status=0x0000000000000000 producer-observed-status=0x0000000000000000 producer-reaped=true consumer-pid=0x0000000000100002 consumer-path=/bin/stdin consumer-state=exited consumer-status=0x0000000000000000 consumer-observed-status=0x0000000000000000 consumer-reaped=true source=kernel-owned-pipeline-lifecycle-status-record\n"
+        ));
+        assert!(
+            output.contains("Talos userspace stdin fixture read: Talos userspace stdout fixture\n")
+        );
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=explicit-pid-lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=explicit-pid-lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: last-process pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: pipestatus participants=0x0000000000000002 default-status=0x0000000000000000 pipefail-status=0x0000000000000000 semantics=bounded-observation-not-posix-shell source=bounded-process-table-pipeline-status\n"
+        ));
+        assert!(output.contains(
+            "slot=0 capacity=3 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true wait-consumed=true job-state=foreground source=bounded-process-table\n"
+        ));
+        assert!(output.contains(
+            "slot=1 capacity=3 pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true wait-consumed=true job-state=foreground source=bounded-process-table\n"
+        ));
+        assert_eq!(output.matches("talos-processes-v1\n").count(), 2);
+    }
+
+    #[test_case]
+    fn local_command_loop_rejects_unsupported_path_form_pipeline_forms() {
+        let bytes = *b"/bin/stdout | exec stdin\rexec stdout | /bin/stdin\rstatus42 | /bin/stdin\r/bin/stdout | /missing\r/bin/stdout | /bin/stdin | /bin/stdin\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (mixed_consumer, mixed_producer, bare_producer, unsupported_consumer, multistage) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            let mixed_consumer = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(
+                io.process_table_records(),
+                [None; LOCAL_COMMAND_PROCESS_TABLE_CAPACITY]
+            );
+            let mixed_producer = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(
+                io.process_table_records(),
+                [None; LOCAL_COMMAND_PROCESS_TABLE_CAPACITY]
+            );
+            let bare_producer = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(
+                io.process_table_records(),
+                [None; LOCAL_COMMAND_PROCESS_TABLE_CAPACITY]
+            );
+            let unsupported_consumer = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(
+                io.process_table_records(),
+                [None; LOCAL_COMMAND_PROCESS_TABLE_CAPACITY]
+            );
+            let multistage = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(
+                io.process_table_records(),
+                [None; LOCAL_COMMAND_PROCESS_TABLE_CAPACITY]
+            );
+            (
+                mixed_consumer,
+                mixed_producer,
+                bare_producer,
+                unsupported_consumer,
+                multistage,
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(mixed_consumer.line(), b"/bin/stdout | exec stdin");
+        assert_eq!(
+            mixed_consumer.status(),
+            LocalCommandStatus::UnexpectedArgument
+        );
+        assert_eq!(mixed_producer.line(), b"exec stdout | /bin/stdin");
+        assert_eq!(
+            mixed_producer.status(),
+            LocalCommandStatus::UnexpectedArgument
+        );
+        assert_eq!(bare_producer.line(), b"status42 | /bin/stdin");
+        assert_eq!(bare_producer.status(), LocalCommandStatus::UnknownCommand);
+        assert_eq!(unsupported_consumer.line(), b"/bin/stdout | /missing");
+        assert_eq!(
+            unsupported_consumer.status(),
+            LocalCommandStatus::UnexpectedArgument
+        );
+        assert_eq!(multistage.line(), b"/bin/stdout | /bin/stdin | /bin/stdin");
+        assert_eq!(multistage.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(output.matches("talos: exec-invalid-path").count(), 4);
+        assert_eq!(output.matches("talos: unknown-command").count(), 1);
     }
 
     #[test_case]
