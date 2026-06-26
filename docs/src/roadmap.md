@@ -18200,6 +18200,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   waitpid regression transcripts. No broad process table API, procfs/ps,
   scheduler concurrency, fork/signals, process groups/sessions, live
   networking, SSH, Pi 5 hardware proof, or phase transition is accepted.
+- phase12-local-process-table-direct-vfs-exec-closeout-20260626 accepts the
+  static closeout for the direct foreground VFS exec process-table frontier.
+  The evidence map cites the accepted direct core task, direct process-table
+  classification/evidence JSON, retained vfs-exec and waitpid QEMU/substitute
+  transcripts, and the prior process-observation closeout. The accepted
+  boundary remains bounded direct foreground VFS exec process-table records
+  only; pipeline/background process-table migration, public process
+  enumeration, procfs/ps, true scheduler concurrency, fork/signals, process
+  groups/sessions, live networking, SSH, Pi 5 hardware proof, and phase
+  transition remain deferred. selected_next_task is
+  phase12-local-process-table-pipeline-background-core-20260626 because that
+  queued follow-up is mechanically objective after the accepted direct
+  frontier.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

@@ -1,0 +1,50 @@
+{
+  "task_id": "phase12-local-process-table-direct-vfs-exec-closeout-20260626",
+  "classification": "local-process-table-direct-vfs-exec-closeout-accepted",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "QEMU/substitute",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_frontier": {
+    "direct_foreground_vfs_exec_process_table": true,
+    "fixed_paths": [
+      "/bin/init",
+      "/bin/zero",
+      "/bin/status42"
+    ],
+    "stable_pid": "0x100001",
+    "parent": "shell",
+    "owner": "0x1",
+    "records_path": true,
+    "records_exited_state": true,
+    "records_status": true,
+    "records_observed_status": true,
+    "records_reaped": true,
+    "waitpid_consuming_observation_preserved": true,
+    "laststatus_non_consuming_preserved": true
+  },
+  "selected_next_task": "phase12-local-process-table-pipeline-background-core-20260626",
+  "deferred": [
+    "pipeline/background process-table migration until selected follow-up",
+    "public process enumeration",
+    "procfs/ps",
+    "scheduler concurrency",
+    "fork/signals",
+    "process groups/sessions",
+    "waitpid options",
+    "pid reuse policy beyond bounded deterministic controls",
+    "multi-stage pipelines",
+    "pipefail",
+    "persistent storage",
+    "live networking",
+    "SSH",
+    "Pi 5 hardware proof",
+    "phase transition"
+  ],
+  "hardware_claim": false,
+  "live_network_claim": false,
+  "commit": "recorded in durable supervisor state after commit"
+}

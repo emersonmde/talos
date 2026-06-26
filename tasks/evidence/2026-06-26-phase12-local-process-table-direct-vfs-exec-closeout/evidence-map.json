@@ -1,0 +1,59 @@
+{
+  "task_id": "phase12-local-process-table-direct-vfs-exec-closeout-20260626",
+  "classification": "local-process-table-direct-vfs-exec-closeout-accepted",
+  "source_changes": [],
+  "static_inputs": [
+    "tasks/2026-06-26-phase12-local-process-table-direct-vfs-exec-core.md",
+    "tasks/evidence/2026-06-26-phase12-local-process-table-direct-vfs-exec-core/classification.json",
+    "tasks/evidence/2026-06-26-phase12-local-process-table-direct-vfs-exec-core/evidence-map.json",
+    "tasks/2026-06-26-phase12-local-waitpid-process-observation-closeout.md",
+    "docs/src/roadmap.md",
+    "docs/src/project/phase12-networking-ssh.md"
+  ],
+  "retained_qemu_substitute": [
+    {
+      "path": "tasks/evidence/2026-06-26-phase12-local-process-table-direct-vfs-exec-core/qemu-local-shell-vfs-exec-smoke.log",
+      "covers": [
+        "direct /bin/init",
+        "direct /bin/zero",
+        "direct /bin/status42",
+        "negative exec controls",
+        "descriptor-backed VFS cat"
+      ]
+    },
+    {
+      "path": "tasks/evidence/2026-06-26-phase12-local-process-table-direct-vfs-exec-core/qemu-local-shell-waitpid-lifecycle-smoke.log",
+      "covers": [
+        "waitpid",
+        "laststatus",
+        "exact pipeline regression",
+        "background jobs regression",
+        "jobs accounting"
+      ]
+    }
+  ],
+  "selected_next_task": "phase12-local-process-table-pipeline-background-core-20260626",
+  "validation": [
+    {
+      "command": "jq -e empty tasks/evidence/2026-06-26-phase12-local-process-table-direct-vfs-exec-closeout/classification.json tasks/evidence/2026-06-26-phase12-local-process-table-direct-vfs-exec-closeout/evidence-map.json",
+      "level": "static inspection",
+      "result": "pass"
+    },
+    {
+      "command": "git diff --check",
+      "level": "diff checks",
+      "result": "pass"
+    },
+    {
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "level": "docs build",
+      "result": "pass"
+    },
+    {
+      "command": "git diff --cached --check",
+      "level": "diff checks",
+      "result": "pass"
+    }
+  ],
+  "commit": "recorded in durable supervisor state after commit"
+}
