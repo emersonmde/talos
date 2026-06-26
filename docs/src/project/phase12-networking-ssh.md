@@ -9018,6 +9018,23 @@ tables, pid reuse policy, process groups/sessions, multi-stage pipelines,
 pipefail, background jobs, fork/signals, arbitrary descriptor syntax, live
 networking, SSH, Pi 5 hardware proof, and phase transition remain unaccepted.
 
+phase12-local-pipeline-distinct-process-identity-closeout-20260626 accepts
+local-pipeline-distinct-process-identity-closeout. The closeout maps the
+accepted distinct serialized pipeline identity frontier to the retained core
+task record, the `c1821e91fdff1a79149e8112d79b85555326b3e5` core commit, and
+the combined and per-scenario QEMU/substitute transcripts proving producer pid
+`0x100001`, consumer pid `0x100002`, consumer `waitpid`/`laststatus`,
+descriptor-backed VFS exec/open/read, descriptor dup/redirect controls,
+stdout-only pipe behavior, fd restoration, and descriptor-backed VFS cat
+regressions.
+selected_next_task is
+`phase12-local-waitpid-explicit-pipeline-process-observation-core-20260626`.
+Explicit producer/consumer pid-based wait/status observation is not accepted
+until that follow-up. Concurrent scheduling, multi-stage pipelines, pipefail,
+background jobs, broad process tables, async jobs, fork/signals, broader
+descriptor grammar, persistent filesystem semantics, live networking, SSH, Pi 5
+hardware proof, and phase transition remain unaccepted.
+
 phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624 accepts
 the live reachability source reconciliation as
 live-reachability-source-reconciliation-paused-no-defensible-discriminator.

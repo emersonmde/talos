@@ -18111,6 +18111,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   process tables, pid reuse policy, process groups/sessions, fork/signals,
   descriptor grammar expansion, live networking, SSH, Pi 5 hardware proof, or
   a phase transition.
+- phase12-local-pipeline-distinct-process-identity-closeout-20260626 accepts
+  the static closeout for that distinct serialized pipeline identity frontier.
+  The evidence map points to the retained core task record, the
+  c1821e91fdff1a79149e8112d79b85555326b3e5 core commit, and the combined and
+  per-scenario QEMU/substitute transcripts proving producer pid '0x100001',
+  consumer pid '0x100002', consumer 'waitpid'/'laststatus', descriptor-backed
+  VFS exec/open/read, descriptor dup/redirect controls, and VFS cat
+  regressions. The accepted boundary remains exact two-stage serialized local
+  pipeline identity/accounting only. selected_next_task is
+  'phase12-local-waitpid-explicit-pipeline-process-observation-core-20260626';
+  explicit producer/consumer pid-based wait/status observation is not accepted
+  until that follow-up. Concurrent scheduling, multi-stage pipelines, pipefail,
+  broad process tables, async jobs, fork/signals, broader descriptor grammar,
+  persistent filesystem semantics, live networking, SSH, Pi 5 hardware proof,
+  and phase transition remain deferred.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
