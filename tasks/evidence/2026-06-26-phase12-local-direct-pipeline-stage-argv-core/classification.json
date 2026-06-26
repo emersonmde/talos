@@ -1,0 +1,51 @@
+{
+  "classification": "local-direct-pipeline-stage-argv-core-accepted",
+  "task_id": "phase12-local-direct-pipeline-stage-argv-core-20260626",
+  "accepted": true,
+  "command": "/bin/stdout alpha | /bin/stdin beta",
+  "pipeline": {
+    "form": "direct path-form two-stage",
+    "producer": {
+      "path": "/bin/stdout",
+      "argc": 2,
+      "argv0": "/bin/stdout",
+      "argv1": "alpha",
+      "envp": "empty-envp0",
+      "fd1": "pipe-endpoint",
+      "loader_temp_descriptor_open": false,
+      "status": "0x0"
+    },
+    "consumer": {
+      "path": "/bin/stdin",
+      "argc": 2,
+      "argv0": "/bin/stdin",
+      "argv1": "beta",
+      "envp": "empty-envp0",
+      "fd0": "pipe-endpoint",
+      "loader_temp_descriptor_open": false,
+      "status": "0x0"
+    },
+    "source": "descriptor-backed-vfs-open-read-loader-userspace-pipe"
+  },
+  "evidence_level": [
+    "fmt/lint",
+    "unit tests",
+    "QEMU/substitute",
+    "static inspection"
+  ],
+  "no_hardware_claim": true,
+  "live_network_ssh_paused": true,
+  "selected_next_task": "phase12-local-direct-pipeline-stage-argv-closeout-20260626",
+  "deferred": [
+    "bare-name pipeline argv",
+    "multistage pipeline argv",
+    "redirections",
+    "environment-backed PATH",
+    "current-directory search",
+    "arbitrary shell grammar",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "phase transition"
+  ]
+}

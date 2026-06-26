@@ -18600,6 +18600,26 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   planningNeeded=true because no later queued same-lane local POSIX/shell task
   exists with complete objective dependencies, acceptance criteria, validation
   gates, docs, and evidence requirements.
+- phase12-local-direct-pipeline-stage-argv-core-20260626 accepts
+  local-direct-pipeline-stage-argv-core. The local shell now carries one
+  bounded literal argument on each stage of the direct path-form two-stage
+  pipeline: '/bin/stdout alpha | /bin/stdin beta'. Both stages still load
+  through descriptor-backed VFS open/read, the accepted loader, userspace
+  startup/status, and the serialized pipe descriptor handoff. QEMU/substitute
+  evidence records producer argc=2 argv0=/bin/stdout argv1=alpha, consumer
+  argc=2 argv0=/bin/stdin argv1=beta, deterministic empty envp, inherited
+  standard descriptors plus fd1/fd0 pipe endpoints, closed loader temporary
+  descriptors, pipeline lifecycle/status records, waitpid, laststatus,
+  /proc/talos/processes, zero-argument ps, and pipestatus compatibility.
+  Existing direct/bare-name command argv, no-argument direct and bare-name
+  commands, direct and bare-name no-argument pipelines, multistage pipeline,
+  process-status VFS, ps, and pipestatus regressions remain passing. Too many
+  path-form pipeline stage arguments and unsupported literal characters fail
+  closed without accepted process records. Bare-name pipeline argv, multistage
+  pipeline argv, redirections, environment-backed PATH, arbitrary shell
+  grammar, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
+  phase transition remain deferred. selected_next_task is
+  phase12-local-direct-pipeline-stage-argv-closeout-20260626.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

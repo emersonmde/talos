@@ -170,6 +170,7 @@
             talos_boot_scenario = "qemu_local_serial_command_loop",
             talos_boot_scenario = "qemu_local_shell_absolute_path_vfs_command",
             talos_boot_scenario = "qemu_local_shell_absolute_path_vfs_pipeline",
+            talos_boot_scenario = "qemu_local_shell_direct_pipeline_stage_argv",
             talos_boot_scenario = "qemu_local_shell_distinct_stderr_routing",
             talos_boot_scenario = "qemu_readonly_initramfs_vfs_smoke",
             talos_boot_scenario = "qemu_open_read_syscall_surface_smoke",

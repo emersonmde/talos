@@ -9165,6 +9165,26 @@ selected_next_task is null and planningNeeded=true because no later queued
 same-lane local POSIX/shell task exists with complete objective dependencies,
 acceptance criteria, validation gates, docs, and evidence requirements.
 
+phase12-local-direct-pipeline-stage-argv-core-20260626 accepts
+local-direct-pipeline-stage-argv-core. The local shell now accepts one bounded
+literal argument per stage for the direct path-form two-stage pipeline:
+'/bin/stdout alpha | /bin/stdin beta'. Both stages still execute through
+descriptor-backed VFS open/read, the accepted loader, userspace startup/status,
+the accepted pipe descriptor handoff, and bounded process-table observations.
+The startup evidence records producer argc=2 argv0=/bin/stdout argv1=alpha
+with fd1 as the pipe endpoint, consumer argc=2 argv0=/bin/stdin argv1=beta
+with fd0 as the pipe endpoint, deterministic empty envp, inherited standard
+descriptors, and closed loader temporary descriptors. Existing direct/bare-name
+command argv, no-argument direct and bare-name commands, direct and bare-name
+no-argument pipelines, multistage pipeline, process-status VFS, ps, and
+pipestatus regressions remain intact. Too many path-form pipeline stage
+arguments and unsupported literal characters fail closed without accepted
+process records. This does not accept bare-name pipeline argv, multistage
+pipeline argv, redirections, environment-backed PATH, arbitrary shell grammar,
+live networking/SSH, Pi 5 hardware proof, generated-root retry, or a phase
+transition. selected_next_task is
+phase12-local-direct-pipeline-stage-argv-closeout-20260626.
+
 phase12-local-vfs-exec-lifecycle-record-generalization-core-20260626
 accepts local-vfs-exec-lifecycle-record-generalization-core. This local
 POSIX/VFS/userspace continuation preserves the accepted
