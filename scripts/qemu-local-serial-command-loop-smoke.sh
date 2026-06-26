@@ -646,6 +646,48 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                     sent=18
                 fi
                 ;;
+            *"$LABEL: ready command=18"*)
+                if [ "$sent" -eq 18 ] && [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                    printf 'exec stdout | exec stdin\r' >&3
+                    sent=19
+                fi
+                ;;
+            *"$LABEL: ready command=19"*)
+                if [ "$sent" -eq 19 ] && [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                    printf 'waitpid 0x100001\r' >&3
+                    sent=20
+                fi
+                ;;
+            *"$LABEL: ready command=20"*)
+                if [ "$sent" -eq 20 ] && [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                    printf 'waitpid 0x100002\r' >&3
+                    sent=21
+                fi
+                ;;
+            *"$LABEL: ready command=21"*)
+                if [ "$sent" -eq 21 ] && [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                    printf 'waitpid 0x100001\r' >&3
+                    sent=22
+                fi
+                ;;
+            *"$LABEL: ready command=22"*)
+                if [ "$sent" -eq 22 ] && [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                    printf 'waitpid bogus\r' >&3
+                    sent=23
+                fi
+                ;;
+            *"$LABEL: ready command=23"*)
+                if [ "$sent" -eq 23 ] && [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                    printf 'waitpid 0x0\r' >&3
+                    sent=24
+                fi
+                ;;
+            *"$LABEL: ready command=24"*)
+                if [ "$sent" -eq 24 ] && [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
+                    printf 'cat /etc/banner.txt\r' >&3
+                    sent=25
+                fi
+                ;;
             *"$LABEL: ready command=0"*)
                 if [ "$sent" -eq 0 ]; then
                     printf 'help\r' >&3
@@ -1377,6 +1419,13 @@ if [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=15" "$LOG_FILE"
     grep -q "$LABEL: ready command=16" "$LOG_FILE"
     grep -q "$LABEL: ready command=17" "$LOG_FILE"
+    grep -q "$LABEL: ready command=18" "$LOG_FILE"
+    grep -q "$LABEL: ready command=19" "$LOG_FILE"
+    grep -q "$LABEL: ready command=20" "$LOG_FILE"
+    grep -q "$LABEL: ready command=21" "$LOG_FILE"
+    grep -q "$LABEL: ready command=22" "$LOG_FILE"
+    grep -q "$LABEL: ready command=23" "$LOG_FILE"
+    grep -q "$LABEL: ready command=24" "$LOG_FILE"
 fi
 if [ "$SHELL_BACKGROUND_VFS_EXEC_LIFECYCLE_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=7" "$LOG_FILE"
@@ -2168,9 +2217,20 @@ elif [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
     grep -q "talos> exec /etc/banner.txt" "$LOG_FILE"
     grep -q "talos> exec /empty" "$LOG_FILE"
     grep -q "talos: exec-not-executable" "$LOG_FILE"
+    grep -q "talos> exec stdout | exec stdin" "$LOG_FILE"
+    grep -q "talos: pipeline-lifecycle-status record=phase12-local-pipeline-distinct-process-lifecycle-status-record-v1 pipeline=0x0000000000000001 producer-pid=0x0000000000100001 producer-path=/bin/stdout producer-state=exited producer-status=0x0000000000000000 producer-observed-status=0x0000000000000000 producer-reaped=true consumer-pid=0x0000000000100002 consumer-path=/bin/stdin consumer-state=exited consumer-status=0x0000000000000000 consumer-observed-status=0x0000000000000000 consumer-reaped=true source=kernel-owned-pipeline-lifecycle-status-record" "$LOG_FILE"
+    grep -q "talos> waitpid 0x100001" "$LOG_FILE"
+    grep -q "talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=explicit-pid-lifecycle-record" "$LOG_FILE"
+    grep -q "talos> waitpid 0x100002" "$LOG_FILE"
+    grep -q "talos: waitpid pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=explicit-pid-lifecycle-record" "$LOG_FILE"
+    grep -q "talos: waitpid no-child pid=0x0000000000100001 source=explicit-pid-lifecycle-record" "$LOG_FILE"
+    grep -q "talos> waitpid bogus" "$LOG_FILE"
+    grep -q "talos: waitpid invalid-pid source=explicit-pid-lifecycle-record" "$LOG_FILE"
+    grep -q "talos> waitpid 0x0" "$LOG_FILE"
+    grep -q "talos: waitpid unsupported-pid pid=0x0000000000000000 source=explicit-pid-lifecycle-record" "$LOG_FILE"
     grep -q "talos> cat /etc/banner.txt" "$LOG_FILE"
     grep -q "^Talos initramfs fixture" "$LOG_FILE"
-    grep -q "$LABEL: final participants=18 expected=18 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+    grep -q "$LABEL: final participants=25 expected=25 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
 elif [ "$SHELL_PATH_LOOKUP_SMOKE" -eq 1 ]; then
     grep -q "talos> exec status42 alpha beta" "$LOG_FILE"
     grep -q "talos: exec path=/bin/status42 source=vfs-open-read" "$LOG_FILE"

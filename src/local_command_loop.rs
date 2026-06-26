@@ -42,7 +42,8 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+shell-sockdiag-vfs-userspace-socket-blocking-poll-wait",
     "+shell-sockdiag-vfs-userspace-cross-process-local-socket",
     "+shell-sockdiag-vfs-userspace-smoltcp-tcp",
-    "+pipeline-distinct-serialized-process-identities"
+    "+pipeline-distinct-serialized-process-identities",
+    "+explicit-pid-wait-status-observation"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -76,6 +77,7 @@ const LOCAL_COMMAND_EXEC_ADDRESS_SPACE_ID: u64 = 0x0010_0001;
 const LOCAL_COMMAND_EXEC_PROCESS_ID: u64 = 0x0010_0001;
 const LOCAL_COMMAND_PIPELINE_PRODUCER_PROCESS_ID: u64 = LOCAL_COMMAND_EXEC_PROCESS_ID;
 const LOCAL_COMMAND_PIPELINE_CONSUMER_PROCESS_ID: u64 = LOCAL_COMMAND_EXEC_PROCESS_ID + 1;
+const LOCAL_COMMAND_EXPLICIT_WAIT_RECORD_CAPACITY: usize = 2;
 const LOCAL_COMMAND_BACKGROUND_JOB_CAPACITY: usize = 2;
 const LOCAL_COMMAND_BACKGROUND_JOB_FIRST_ID: u64 = 0x0000_0001;
 const LOCAL_COMMAND_EXEC_TEMP_DESCRIPTOR: usize = posix::STDERR_FD + 1;
@@ -972,6 +974,13 @@ impl LocalCommandProcessState {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum LocalCommandExplicitWaitResult {
+    Record(LocalCommandProcessLifecycleRecord),
+    NoChild,
+    UnsupportedPid,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct LocalCommandBackgroundJobRecord {
     job_id: u64,
     lifecycle: LocalCommandProcessLifecycleRecord,
@@ -1132,6 +1141,13 @@ pub trait LocalCommandSink {
     fn wait_process_lifecycle_record(&mut self) -> Option<LocalCommandProcessLifecycleRecord> {
         None
     }
+
+    fn wait_process_lifecycle_record_by_pid(
+        &mut self,
+        _process_id: u64,
+    ) -> LocalCommandExplicitWaitResult {
+        LocalCommandExplicitWaitResult::UnsupportedPid
+    }
 }
 
 impl<B> LocalCommandSink for runtime_console::RuntimeConsole<B>
@@ -1164,6 +1180,8 @@ pub struct DescriptorBackedLocalCommandIo<
     read_only_files: initramfs::ReadOnlyFileDescriptions<LOCAL_COMMAND_READ_ONLY_FILE_CAPACITY>,
     last_process: Option<LocalCommandProcessLifecycleRecord>,
     waitable_process: Option<LocalCommandProcessLifecycleRecord>,
+    explicit_wait_records:
+        [Option<LocalCommandProcessLifecycleRecord>; LOCAL_COMMAND_EXPLICIT_WAIT_RECORD_CAPACITY],
     background_jobs:
         [Option<LocalCommandBackgroundJobRecord>; LOCAL_COMMAND_BACKGROUND_JOB_CAPACITY],
     next_background_job_id: u64,
@@ -1403,6 +1421,7 @@ where
             read_only_files: initramfs::ReadOnlyFileDescriptions::new_empty(),
             last_process: None,
             waitable_process: None,
+            explicit_wait_records: [None; LOCAL_COMMAND_EXPLICIT_WAIT_RECORD_CAPACITY],
             background_jobs: [None; LOCAL_COMMAND_BACKGROUND_JOB_CAPACITY],
             next_background_job_id: LOCAL_COMMAND_BACKGROUND_JOB_FIRST_ID,
             pipe: LocalCommandPipeState::new_empty(),
@@ -1836,6 +1855,7 @@ where
             LocalCommandVfsExecLifecycleStatusRecord::from_lifecycle(lifecycle);
         self.last_process = Some(lifecycle);
         self.waitable_process = Some(lifecycle);
+        self.explicit_wait_records = [Some(lifecycle), None];
 
         Ok(LocalCommandExecSummary {
             source_path: image.source_path(),
@@ -3782,6 +3802,32 @@ where
         self.waitable_process.take()
     }
 
+    fn wait_process_lifecycle_record_by_pid(
+        &mut self,
+        process_id: u64,
+    ) -> LocalCommandExplicitWaitResult {
+        if process_id == 0 {
+            return LocalCommandExplicitWaitResult::UnsupportedPid;
+        }
+        for record in &mut self.explicit_wait_records {
+            if let Some(lifecycle) = record {
+                if lifecycle.process_id == process_id {
+                    let lifecycle = *lifecycle;
+                    *record = None;
+                    if self
+                        .waitable_process
+                        .map(|waitable| waitable.process_id == process_id)
+                        .unwrap_or(false)
+                    {
+                        self.waitable_process = None;
+                    }
+                    return LocalCommandExplicitWaitResult::Record(lifecycle);
+                }
+            }
+        }
+        LocalCommandExplicitWaitResult::NoChild
+    }
+
     fn exec_vfs_pipeline(
         &mut self,
         request: LocalCommandPipelineRequest,
@@ -3848,6 +3894,7 @@ where
             .with_process_id(LOCAL_COMMAND_PIPELINE_CONSUMER_PROCESS_ID);
         self.last_process = Some(consumer.lifecycle);
         self.waitable_process = Some(consumer.lifecycle);
+        self.explicit_wait_records = [Some(producer.lifecycle), Some(consumer.lifecycle)];
         let pipe_source = match (request.producer.redirection, request.consumer.redirection) {
             (None, Some(LocalCommandExecRedirection::StdoutToTmpStdout(_))) => {
                 "shell-pipe-consumer-stdout-redirection"
@@ -6089,9 +6136,34 @@ fn dispatch_local_command(
             }
         }
         "waitpid" => {
-            if command.arguments.is_some() {
-                write_line(sink, responses, "talos: unexpected-argument")?;
-                return Ok(LocalCommandStatus::UnexpectedArgument);
+            if let Some(arguments) = command.arguments {
+                let Some(process_id) = parse_waitpid_process_id(arguments) else {
+                    write_line(
+                        sink,
+                        responses,
+                        "talos: waitpid invalid-pid source=explicit-pid-lifecycle-record",
+                    )?;
+                    return Ok(LocalCommandStatus::UnexpectedArgument);
+                };
+                match sink.wait_process_lifecycle_record_by_pid(process_id) {
+                    LocalCommandExplicitWaitResult::Record(record) => {
+                        write_waitpid_status_line_with_source(
+                            sink,
+                            responses,
+                            record,
+                            "explicit-pid-lifecycle-record",
+                        )?;
+                        return Ok(LocalCommandStatus::Handled);
+                    }
+                    LocalCommandExplicitWaitResult::NoChild => {
+                        write_waitpid_no_child_pid_line(sink, responses, process_id)?;
+                        return Ok(LocalCommandStatus::Handled);
+                    }
+                    LocalCommandExplicitWaitResult::UnsupportedPid => {
+                        write_waitpid_unsupported_pid_line(sink, responses, process_id)?;
+                        return Ok(LocalCommandStatus::UnexpectedArgument);
+                    }
+                }
             }
             match sink.wait_process_lifecycle_record() {
                 Some(record) => {
@@ -6113,6 +6185,31 @@ fn dispatch_local_command(
             Ok(LocalCommandStatus::UnknownCommand)
         }
     }
+}
+
+fn parse_waitpid_process_id(arguments: &str) -> Option<u64> {
+    if arguments.as_bytes().contains(&b' ') {
+        return None;
+    }
+    if arguments.is_empty() {
+        return None;
+    }
+    let digits = arguments.strip_prefix("0x").unwrap_or(arguments);
+    if digits.is_empty() {
+        return None;
+    }
+    let mut value = 0u64;
+    for byte in digits.as_bytes() {
+        let digit = match *byte {
+            b'0'..=b'9' => byte - b'0',
+            b'a'..=b'f' => byte - b'a' + 10,
+            b'A'..=b'F' => byte - b'A' + 10,
+            _ => return None,
+        };
+        value = value.checked_mul(16)?;
+        value = value.checked_add(digit as u64)?;
+    }
+    Some(value)
 }
 
 fn parse_pipeline_request(
@@ -7607,6 +7704,15 @@ fn write_waitpid_status_line(
     response_lines: &mut usize,
     lifecycle: LocalCommandProcessLifecycleRecord,
 ) -> Result<(), LocalCommandCycleError> {
+    write_waitpid_status_line_with_source(sink, response_lines, lifecycle, "lifecycle-record")
+}
+
+fn write_waitpid_status_line_with_source(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    lifecycle: LocalCommandProcessLifecycleRecord,
+    source: &str,
+) -> Result<(), LocalCommandCycleError> {
     write_str_part(sink, "talos: waitpid pid=")?;
     write_hex_u64_part(sink, lifecycle.process_id)?;
     write_str_part(sink, " parent=shell owner=")?;
@@ -7619,7 +7725,30 @@ fn write_waitpid_status_line(
     write_hex_u64_part(sink, lifecycle.status)?;
     write_str_part(sink, " observed-status=")?;
     write_hex_u64_part(sink, lifecycle.observed_status)?;
-    write_str_part(sink, " reaped=true source=lifecycle-record")?;
+    write_str_part(sink, " reaped=true source=")?;
+    write_str_part(sink, source)?;
+    finish_dynamic_line(sink, response_lines)
+}
+
+fn write_waitpid_no_child_pid_line(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    process_id: u64,
+) -> Result<(), LocalCommandCycleError> {
+    write_str_part(sink, "talos: waitpid no-child pid=")?;
+    write_hex_u64_part(sink, process_id)?;
+    write_str_part(sink, " source=explicit-pid-lifecycle-record")?;
+    finish_dynamic_line(sink, response_lines)
+}
+
+fn write_waitpid_unsupported_pid_line(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    process_id: u64,
+) -> Result<(), LocalCommandCycleError> {
+    write_str_part(sink, "talos: waitpid unsupported-pid pid=")?;
+    write_hex_u64_part(sink, process_id)?;
+    write_str_part(sink, " source=explicit-pid-lifecycle-record")?;
     finish_dynamic_line(sink, response_lines)
 }
 
@@ -9807,6 +9936,84 @@ talos> talos: exec-invalid-path\n"
         assert!(output.contains(
             "talos> talos: last-process pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
         ));
+    }
+
+    #[test_case]
+    fn local_command_loop_waitpid_observes_pipeline_records_by_explicit_pid() {
+        let bytes = *b"waitpid 0x100001\rwaitpid bogus\rwaitpid 0x0\rexec stdout | exec stdin\rwaitpid 0x100001\rwaitpid 0x100002\rwaitpid 0x100001\rwaitpid\rlaststatus\rcat /etc/banner.txt\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (
+            initial_no_child,
+            malformed,
+            unsupported,
+            pipeline,
+            producer_wait,
+            consumer_wait,
+            stale_wait,
+            consumed_wait,
+            observed,
+            cat,
+        ) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(initial_no_child.line(), b"waitpid 0x100001");
+        assert_eq!(initial_no_child.status(), LocalCommandStatus::Handled);
+        assert_eq!(malformed.line(), b"waitpid bogus");
+        assert_eq!(malformed.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(unsupported.line(), b"waitpid 0x0");
+        assert_eq!(unsupported.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(pipeline.line(), b"exec stdout | exec stdin");
+        assert_eq!(pipeline.status(), LocalCommandStatus::Handled);
+        assert_eq!(producer_wait.line(), b"waitpid 0x100001");
+        assert_eq!(producer_wait.status(), LocalCommandStatus::Handled);
+        assert_eq!(consumer_wait.line(), b"waitpid 0x100002");
+        assert_eq!(consumer_wait.status(), LocalCommandStatus::Handled);
+        assert_eq!(stale_wait.line(), b"waitpid 0x100001");
+        assert_eq!(stale_wait.status(), LocalCommandStatus::Handled);
+        assert_eq!(consumed_wait.line(), b"waitpid");
+        assert_eq!(consumed_wait.status(), LocalCommandStatus::Handled);
+        assert_eq!(observed.line(), b"laststatus");
+        assert_eq!(observed.status(), LocalCommandStatus::Handled);
+        assert_eq!(cat.line(), b"cat /etc/banner.txt");
+        assert_eq!(cat.status(), LocalCommandStatus::Handled);
+        assert!(output.contains(
+            "talos> talos: waitpid no-child pid=0x0000000000100001 source=explicit-pid-lifecycle-record\n"
+        ));
+        assert!(
+            output.contains(
+                "talos> talos: waitpid invalid-pid source=explicit-pid-lifecycle-record\n"
+            )
+        );
+        assert!(output.contains(
+            "talos> talos: waitpid unsupported-pid pid=0x0000000000000000 source=explicit-pid-lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=explicit-pid-lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=explicit-pid-lifecycle-record\n"
+        ));
+        assert!(output.contains("talos> talos: waitpid no-child source=lifecycle-record\n"));
+        assert!(output.contains(
+            "talos> talos: last-process pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains("talos> Talos initramfs banner: descriptor-backed VFS\n"));
     }
 
     #[test_case]

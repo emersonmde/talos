@@ -15233,7 +15233,7 @@ const fn local_command_loop_smoke_command_count() -> usize {
     } else if cfg!(talos_boot_scenario = "qemu_local_cat_cwd") {
         7
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid") {
-        18
+        25
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_path_lookup") {
         17
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_stdout_to_stderr_redirection") {
@@ -17177,6 +17177,27 @@ fn expected_local_command_loop_dispatch(
             line == b"exec /bin/status42 *" && status == UnexpectedArgument && response_lines == 1
         }
         17 if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid") => {
+            line == b"cat /etc/banner.txt" && status == Handled && response_lines == 1
+        }
+        18 if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid") => {
+            line == b"exec stdout | exec stdin" && status == Handled && response_lines == 22
+        }
+        19 if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid") => {
+            line == b"waitpid 0x100001" && status == Handled && response_lines == 1
+        }
+        20 if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid") => {
+            line == b"waitpid 0x100002" && status == Handled && response_lines == 1
+        }
+        21 if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid") => {
+            line == b"waitpid 0x100001" && status == Handled && response_lines == 1
+        }
+        22 if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid") => {
+            line == b"waitpid bogus" && status == UnexpectedArgument && response_lines == 1
+        }
+        23 if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid") => {
+            line == b"waitpid 0x0" && status == UnexpectedArgument && response_lines == 1
+        }
+        24 if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid") => {
             line == b"cat /etc/banner.txt" && status == Handled && response_lines == 1
         }
         17 if cfg!(talos_boot_scenario = "qemu_local_shell_stdout") => {

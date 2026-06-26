@@ -18126,6 +18126,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   broad process tables, async jobs, fork/signals, broader descriptor grammar,
   persistent filesystem semantics, live networking, SSH, Pi 5 hardware proof,
   and phase transition remain deferred.
+- phase12-local-waitpid-explicit-pipeline-process-observation-core-20260626
+  accepts the bounded local explicit pid-based wait/status observation
+  frontier. The local shell now supports explicit waitpid-by-pid observation
+  over the latest retained lifecycle records. For accepted exact two-stage
+  pipeline evidence, waitpid 0x100001 observes the serialized producer
+  /bin/stdout record and waitpid 0x100002 observes the serialized consumer
+  /bin/stdin record through source=explicit-pid-lifecycle-record. Existing
+  no-argument consumer waitpid and non-consuming laststatus remain regression
+  surfaces. Unknown/stale explicit pids fail closed with no-child; malformed
+  pids report invalid-pid; pid zero reports unsupported-pid. This does not
+  accept POSIX waitpid completeness, broad process tables, concurrent
+  scheduling, multi-stage pipelines, pipefail, async jobs, fork/signals,
+  broader descriptor grammar, persistent filesystem semantics, live
+  networking, SSH, Pi 5 hardware proof, or a phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

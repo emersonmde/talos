@@ -9035,6 +9035,21 @@ background jobs, broad process tables, async jobs, fork/signals, broader
 descriptor grammar, persistent filesystem semantics, live networking, SSH, Pi 5
 hardware proof, and phase transition remain unaccepted.
 
+phase12-local-waitpid-explicit-pipeline-process-observation-core-20260626
+accepts local-waitpid-explicit-pipeline-process-observation-core. The local
+shell now has a bounded explicit waitpid-by-pid observation surface over the
+latest retained lifecycle records. For accepted exact two-stage pipeline
+evidence, waitpid 0x100001 reports the serialized producer record and waitpid
+0x100002 reports the serialized consumer record through
+source=explicit-pid-lifecycle-record while existing no-argument consumer
+waitpid and laststatus behavior remains passing. Unknown/stale explicit pids
+return no-child, malformed pids return invalid-pid, and pid zero returns
+unsupported-pid without mutating descriptor-backed VFS exec, pipeline,
+redirection, or cat behavior. This is not POSIX waitpid completeness and does
+not accept broad process tables, concurrent scheduling, multi-stage pipelines,
+pipefail, fork/signals, live networking, SSH, Pi 5 hardware proof, or phase
+transition.
+
 phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624 accepts
 the live reachability source reconciliation as
 live-reachability-source-reconciliation-paused-no-defensible-discriminator.
