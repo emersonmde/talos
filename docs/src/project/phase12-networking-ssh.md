@@ -8975,6 +8975,22 @@ direct path arguments, redirections, path-form pipelines, arbitrary shell
 grammar, live network/SSH reachability, Pi 5 hardware proof, or a phase
 transition.
 
+phase12-local-absolute-path-vfs-command-closeout-20260626 accepts
+local-absolute-path-vfs-command-closeout. The closeout maps direct
+/bin/status42 command execution to the retained core task record,
+classification, evidence map, QEMU/substitute transcript, roadmap entry, and
+early POSIX note. The accepted boundary remains local-only direct
+absolute-path VFS command execution through VFS open/read, loader, userspace
+launch, lifecycle/status, process-table, waitpid, laststatus,
+/proc/talos/processes, and zero-argument ps. Unsupported direct paths,
+relative paths, and bare command names still fail closed; PATH lookup,
+bare-name lookup, direct path arguments/redirections, arbitrary shell grammar,
+unbounded pipelines, live networking/SSH, Pi 5 hardware proof, and phase
+transition remain deferred. selected_next_task is
+phase12-local-absolute-path-vfs-pipeline-core-20260626 because that queued
+path-form pipeline task is mechanically objective after this accepted direct
+command closeout.
+
 phase12-local-vfs-exec-lifecycle-record-generalization-core-20260626
 accepts local-vfs-exec-lifecycle-record-generalization-core. This local
 POSIX/VFS/userspace continuation preserves the accepted

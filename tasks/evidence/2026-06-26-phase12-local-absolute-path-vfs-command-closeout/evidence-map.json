@@ -1,0 +1,51 @@
+{
+  "task_id": "phase12-local-absolute-path-vfs-command-closeout-20260626",
+  "classification": "local-absolute-path-vfs-command-closeout-accepted",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "path": "tasks/2026-06-26-phase12-local-absolute-path-vfs-command-core.md",
+      "summary": "Core task record accepts direct /bin/status42 absolute-path VFS command dispatch, records findings, negative controls, accepted/deferred frontier, validation, and selected closeout follow-up."
+    },
+    {
+      "level": "static inspection",
+      "path": "tasks/evidence/2026-06-26-phase12-local-absolute-path-vfs-command-core/classification.json",
+      "summary": "Core classification records the accepted direct absolute-path command surface, retained observations, negative controls, deferred surfaces, and selected closeout task."
+    },
+    {
+      "level": "static inspection",
+      "path": "tasks/evidence/2026-06-26-phase12-local-absolute-path-vfs-command-core/evidence-map.json",
+      "summary": "Core evidence map cites focused unit tests, QEMU/substitute transcript, fmt/diff/docs/JSON validation, and retained implementation paths."
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-26-phase12-local-absolute-path-vfs-command-core/qemu-local-shell-absolute-path-vfs-command-smoke.log",
+      "summary": "Transcript records direct /bin/status42 launch through VFS open/read, loader, startup ABI, userspace launch, lifecycle/status, waitpid, laststatus, /proc/talos/processes, ps, and fail-closed negative controls."
+    },
+    {
+      "level": "static inspection",
+      "path": "docs/src/roadmap.md",
+      "summary": "Roadmap records the direct absolute-path command core and closeout-selected path-form pipeline follow-up."
+    },
+    {
+      "level": "static inspection",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "summary": "Phase 12 project notes record the local-only direct absolute-path command closeout and keep live networking/SSH paused."
+    },
+    {
+      "level": "static inspection",
+      "path": "docs/src/project/early-posix-shape.md",
+      "summary": "Early POSIX notes record direct absolute-path VFS command execution only, with PATH lookup, bare-name lookup, arguments, redirection, and path-form pipeline support deferred."
+    }
+  ],
+  "validation": [
+    "static inspection of retained core task record, classification, evidence map, QEMU/substitute transcript, roadmap, Phase 12 project notes, and early POSIX notes",
+    "jq empty tasks/evidence/2026-06-26-phase12-local-absolute-path-vfs-command-closeout/classification.json tasks/evidence/2026-06-26-phase12-local-absolute-path-vfs-command-closeout/evidence-map.json",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "git diff --cached --check"
+  ],
+  "selected_next_task": "phase12-local-absolute-path-vfs-pipeline-core-20260626",
+  "hardware_claim": false,
+  "live_network_ssh_paused": true
+}

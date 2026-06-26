@@ -1,0 +1,36 @@
+{
+  "task_id": "phase12-local-absolute-path-vfs-command-closeout-20260626",
+  "classification": "local-absolute-path-vfs-command-closeout-accepted",
+  "accepted": [
+    "static closeout of direct absolute-path VFS command execution",
+    "retained /bin/status42 direct command evidence through VFS open/read, loader, startup ABI, userspace launch, lifecycle/status, and process-table records",
+    "retained waitpid, laststatus, /proc/talos/processes, and zero-argument ps observations for /bin/status42",
+    "retained fail-closed controls for unsupported absolute paths, relative paths, and bare command names"
+  ],
+  "deferred": [
+    "PATH lookup",
+    "bare command lookup",
+    "direct path arguments",
+    "direct path redirections",
+    "arbitrary shell grammar",
+    "path-form pipelines beyond the selected follow-up",
+    "unbounded pipelines",
+    "pipeline concurrency",
+    "scheduler concurrency",
+    "fork/signals",
+    "process groups/sessions",
+    "waitpid options",
+    "broad procfs or Linux ps compatibility",
+    "public process enumeration ABI",
+    "PID policy expansion",
+    "persistent storage",
+    "live networking",
+    "SSH",
+    "Pi 5 hardware proof",
+    "generated-root command-input retry",
+    "phase transition"
+  ],
+  "selected_next_task": "phase12-local-absolute-path-vfs-pipeline-core-20260626",
+  "hardware_claim": false,
+  "live_network_ssh_paused": true
+}
