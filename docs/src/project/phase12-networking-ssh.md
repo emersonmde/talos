@@ -8974,6 +8974,19 @@ lifecycle, `waitpid`, `laststatus`, deterministic negative exec controls, and
 receipt, compatibility, ssh-ready=true, Pi 5 hardware proof, pipeline lifecycle
 expansion, broad process tables, and phase transition remain unaccepted.
 
+phase12-local-vfs-exec-lifecycle-record-generalization-closeout-20260626
+accepts local-vfs-exec-lifecycle-record-generalization-closeout. The closeout
+maps the accepted direct VFS exec lifecycle/status frontier to the retained
+core task record, the `1036973d36fa3d50eed142cc9a04712b3ddc42e4` core commit,
+and the task-owned QEMU/substitute transcript for `/bin/init`, `/bin/zero`,
+`/bin/status42`, negative exec controls, `waitpid`/`laststatus`, and
+descriptor-backed VFS cat. selected_next_task is
+`phase12-local-pipeline-dual-lifecycle-record-core-20260626`. Pipeline
+dual-lifecycle accounting, broad process tables, async jobs, fork/signals,
+multi-stage or concurrent pipelines, pipefail, broader descriptor grammar,
+persistent filesystem semantics, live networking, SSH, Pi 5 hardware proof,
+and phase transition remain unaccepted.
+
 phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624 accepts
 the live reachability source reconciliation as
 live-reachability-source-reconciliation-paused-no-defensible-discriminator.

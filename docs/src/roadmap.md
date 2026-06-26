@@ -18060,6 +18060,16 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   process tables, async jobs, fork/signals, broader descriptor grammar,
   persistent filesystem semantics, live networking, SSH, Pi 5 hardware proof,
   and phase transition remain deferred.
+- phase12-local-vfs-exec-lifecycle-record-generalization-closeout-20260626
+  accepts the static closeout for that direct VFS exec lifecycle/status
+  frontier. The evidence map points to the retained core task record, the
+  `1036973d36fa3d50eed142cc9a04712b3ddc42e4` core commit, and the
+  task-owned QEMU/substitute transcript proving `/bin/init`, `/bin/zero`,
+  and `/bin/status42` v2 records plus negative exec controls and
+  descriptor-backed VFS cat. selected_next_task is
+  `phase12-local-pipeline-dual-lifecycle-record-core-20260626`; pipeline
+  dual-lifecycle accounting remains unaccepted until that task, and live
+  networking, SSH, Pi 5 hardware proof, and phase transition remain deferred.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
