@@ -9208,6 +9208,18 @@ because the queued `ps` task is mechanically objective only as a thin
 presentation over the accepted VFS status file and not as a direct
 process-table dump or fake command expansion.
 
+phase12-local-ps-command-vfs-backed-core-20260626 accepts
+local-ps-command-vfs-backed-core-accepted. The local shell now exposes `ps` as
+a zero-argument Talos-private process-status view backed by the accepted
+`/proc/talos/processes` descriptor read helper. The retained QEMU/substitute
+transcript shows `ps` after direct `/bin/status42`, exact
+`/bin/stdout | /bin/stdin` pipeline, and background `/bin/status42` fixtures,
+paired with `cat /proc/talos/processes` controls and unsupported `ps -a` / `ps
+extra` negative controls. This is not Linux `ps`/procfs compatibility,
+`/proc/self`, `/proc/<pid>`, public process enumeration ABI, scheduler
+concurrency, fork/signals, process groups/sessions, waitpid options, PID reuse
+policy, hardware proof, live networking, SSH, or phase transition work.
+
 phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624 accepts
 the live reachability source reconciliation as
 live-reachability-source-reconciliation-paused-no-defensible-discriminator.

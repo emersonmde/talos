@@ -1058,6 +1058,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[],
     },
     BootScenario {
+        value: "qemu_local_shell_ps_command_vfs",
+        implied_values: &["qemu_local_serial_command_loop"],
+        asm_defines: &[],
+    },
+    BootScenario {
         value: "qemu_local_cd_fixed_dirs",
         implied_values: &["qemu_local_serial_command_loop"],
         asm_defines: &[],

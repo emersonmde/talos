@@ -18286,6 +18286,18 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   phase12-local-ps-command-vfs-backed-core-20260626 because the queued ps task
   is mechanically objective only as a thin presentation over the accepted VFS
   status file and not as a direct process-table dump or fake command expansion.
+- phase12-local-ps-command-vfs-backed-core-20260626 accepts
+  local-ps-command-vfs-backed-core-accepted. The local shell now accepts a
+  zero-argument `ps` command as a thin presentation of the accepted
+  `/proc/talos/processes` VFS status file. The implementation reuses the
+  descriptor-backed process-status read helper; it does not dump the process
+  table directly. QEMU/substitute evidence covers direct `/bin/status42`, exact
+  `/bin/stdout | /bin/stdin` pipeline, and background `/bin/status42` fixtures,
+  compares them with `cat /proc/talos/processes`, and proves unsupported `ps`
+  arguments/options fail closed. This remains Talos-private process status, not
+  Linux `ps`/procfs compatibility, `/proc/self`, `/proc/<pid>`, public process
+  enumeration ABI, scheduler concurrency, fork/signals, PID policy expansion,
+  hardware proof, live networking, SSH, or a phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

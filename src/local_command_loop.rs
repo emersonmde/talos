@@ -46,7 +46,7 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+explicit-pid-wait-status-observation+waitpid-completed-child-observation",
     "+bounded-process-table-direct-vfs-exec-lifecycle",
     "+bounded-process-table-pipeline-background-lifecycle",
-    "+proc-talos-processes-descriptor-backed-status-vfs"
+    "+proc-talos-processes-descriptor-backed-status-vfs+ps-command-vfs-backed-process-status"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -6137,7 +6137,7 @@ fn dispatch_local_command(
             write_line(
                 sink,
                 responses,
-                "talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid jobs",
+                "talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid jobs ps",
             )?;
             write_line(
                 sink,
@@ -6175,7 +6175,7 @@ fn dispatch_local_command(
             write_line(
                 sink,
                 responses,
-                "talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid jobs",
+                "talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid jobs ps",
             )?;
             Ok(LocalCommandStatus::Handled)
         }
@@ -6325,6 +6325,14 @@ fn dispatch_local_command(
                     return Ok(LocalCommandStatus::UnexpectedArgument);
                 }
             }
+            Ok(LocalCommandStatus::Handled)
+        }
+        "ps" => {
+            if command.arguments.is_some() {
+                write_line(sink, responses, "talos: unexpected-argument")?;
+                return Ok(LocalCommandStatus::UnexpectedArgument);
+            }
+            write_initramfs_text_file(sink, responses, LOCAL_COMMAND_PROC_TALOS_PROCESSES_PATH)?;
             Ok(LocalCommandStatus::Handled)
         }
         "exec" => {
@@ -8357,7 +8365,7 @@ mod tests {
         assert_eq!(
             sink.as_str(),
             "talos> talos: ok help\n\
-	talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid jobs\n\
+	talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid jobs ps\n\
 	talos: echo forms echo hello; echo local serial works\n\
 	talos: editing backspace delete ctrl-c ctrl-u\n"
         );
@@ -11786,6 +11794,52 @@ talos> talos: exec-not-executable\n"
         assert!(output.contains(
             "slot=0 capacity=3 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true wait-consumed=true job-state=foreground source=bounded-process-table\n"
         ));
+    }
+
+    #[test_case]
+    fn local_command_loop_ps_reads_proc_talos_processes_status_file() {
+        let bytes = *b"exec /bin/status42\rps\rwaitpid\rps\rps -a\rps extra\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (exec, first_ps, wait, second_ps, option, extra) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(exec.status(), LocalCommandStatus::Handled);
+        assert_eq!(first_ps.line(), b"ps");
+        assert_eq!(first_ps.status(), LocalCommandStatus::Handled);
+        assert_eq!(first_ps.response_lines(), 1);
+        assert_eq!(wait.status(), LocalCommandStatus::Handled);
+        assert_eq!(second_ps.line(), b"ps");
+        assert_eq!(second_ps.status(), LocalCommandStatus::Handled);
+        assert_eq!(second_ps.response_lines(), 1);
+        assert_eq!(option.line(), b"ps -a");
+        assert_eq!(option.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(extra.line(), b"ps extra");
+        assert_eq!(extra.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(output.matches("talos-processes-v1\n").count(), 2);
+        assert!(output.contains(
+            "slot=0 capacity=3 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true wait-consumed=false job-state=foreground source=bounded-process-table\n"
+        ));
+        assert!(output.contains(
+            "slot=0 capacity=3 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true wait-consumed=true job-state=foreground source=bounded-process-table\n"
+        ));
+        assert_eq!(
+            output
+                .matches("talos> talos: unexpected-argument\n")
+                .count(),
+            2
+        );
     }
 
     #[test_case]

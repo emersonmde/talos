@@ -1,0 +1,68 @@
+{
+  "task_id": "phase12-local-ps-command-vfs-backed-core-20260626",
+  "evidence": [
+    {
+      "kind": "static inspection",
+      "path": "src/local_command_loop.rs",
+      "summary": "Adds ps to the bounded shell command set, rejects arguments, and routes zero-argument ps through the accepted LOCAL_COMMAND_PROC_TALOS_PROCESSES_PATH read helper instead of directly dumping the process table."
+    },
+    {
+      "kind": "static inspection",
+      "path": "src/target/qemu_virt.rs",
+      "summary": "Adds qemu_local_shell_ps_command_vfs with 23 explicit command expectations and qemu-local-shell-ps-command-vfs-complete classification."
+    },
+    {
+      "kind": "static inspection",
+      "path": "scripts/qemu-local-shell-ps-command-vfs-smoke.sh",
+      "summary": "Adds the task-owned QEMU/substitute smoke wrapper for the VFS-backed ps command."
+    },
+    {
+      "kind": "QEMU/substitute",
+      "command": "./scripts/qemu-local-shell-ps-command-vfs-smoke.sh --quiet",
+      "path": "tasks/evidence/2026-06-26-phase12-local-ps-command-vfs-backed-core/qemu-local-shell-ps-command-vfs-smoke.log",
+      "summary": "Passed with participants=23 expected=23 errors=0 and classification qemu-local-shell-ps-command-vfs-complete."
+    },
+    {
+      "kind": "QEMU/substitute regression",
+      "command": "./scripts/qemu-local-shell-process-status-vfs-smoke.sh --quiet",
+      "path": "tasks/evidence/2026-06-26-phase12-local-process-status-vfs-core/qemu-local-shell-process-status-vfs-smoke.log",
+      "summary": "Passed with participants=19 expected=19 errors=0 and classification qemu-local-shell-process-status-vfs-complete after ps was added to the command inventory."
+    },
+    {
+      "kind": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop_ps_reads_proc_talos_processes_status_file",
+      "summary": "Passed the focused ps unit test for direct /bin/status42 records, wait-consumed transition, and unsupported argument controls."
+    },
+    {
+      "kind": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "summary": "Passed the local command loop regression filter; the harness reported 831 no_std tests passed."
+    },
+    {
+      "kind": "fmt/lint/typecheck",
+      "command": "cargo fmt --all -- --check",
+      "summary": "Passed formatting check."
+    },
+    {
+      "kind": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "summary": "Passed; mdbook reported the existing large search-index warning."
+    },
+    {
+      "kind": "diff hygiene",
+      "command": "git diff --check",
+      "summary": "Passed unstaged diff whitespace check before staging."
+    },
+    {
+      "kind": "diff hygiene",
+      "command": "git diff --cached --check",
+      "summary": "Passed staged diff whitespace check before commit."
+    }
+  ],
+  "docs": [
+    "tasks/2026-06-26-phase12-local-ps-command-vfs-backed-core.md",
+    "docs/src/roadmap.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/project/early-posix-shape.md"
+  ]
+}

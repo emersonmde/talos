@@ -14401,6 +14401,7 @@ pub fn run_diagnostic_command_channel_smoke() -> bool {
     talos_boot_scenario = "qemu_local_shell_waitpid",
     talos_boot_scenario = "qemu_local_shell_waitpid_any_completed_child",
     talos_boot_scenario = "qemu_local_shell_process_status_vfs",
+    talos_boot_scenario = "qemu_local_shell_ps_command_vfs",
     talos_boot_scenario = "qemu_local_cd_fixed_dirs",
     talos_boot_scenario = "qemu_local_ls_cwd",
     talos_boot_scenario = "qemu_local_line_editing",
@@ -14782,6 +14783,11 @@ const fn local_command_loop_smoke_label() -> &'static str {
     "qemu-local-shell-process-status-vfs"
 }
 
+#[cfg(talos_boot_scenario = "qemu_local_shell_ps_command_vfs")]
+const fn local_command_loop_smoke_label() -> &'static str {
+    "qemu-local-shell-ps-command-vfs"
+}
+
 #[cfg(talos_boot_scenario = "qemu_local_cd_fixed_dirs")]
 const fn local_command_loop_smoke_label() -> &'static str {
     "qemu-local-cd-fixed-dirs"
@@ -14857,6 +14863,7 @@ const fn local_command_loop_smoke_label() -> &'static str {
     not(talos_boot_scenario = "qemu_local_shell_waitpid"),
     not(talos_boot_scenario = "qemu_local_shell_waitpid_any_completed_child"),
     not(talos_boot_scenario = "qemu_local_shell_process_status_vfs"),
+    not(talos_boot_scenario = "qemu_local_shell_ps_command_vfs"),
     not(talos_boot_scenario = "qemu_local_cd_fixed_dirs"),
     not(talos_boot_scenario = "qemu_local_ls_cwd"),
     not(talos_boot_scenario = "qemu_local_line_editing"),
@@ -15107,6 +15114,11 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     "qemu-local-shell-process-status-vfs-complete"
 }
 
+#[cfg(talos_boot_scenario = "qemu_local_shell_ps_command_vfs")]
+const fn local_command_loop_smoke_classification() -> &'static str {
+    "qemu-local-shell-ps-command-vfs-complete"
+}
+
 #[cfg(talos_boot_scenario = "qemu_local_cd_fixed_dirs")]
 const fn local_command_loop_smoke_classification() -> &'static str {
     "qemu-local-cd-fixed-dirs-complete"
@@ -15182,6 +15194,7 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     not(talos_boot_scenario = "qemu_local_shell_waitpid"),
     not(talos_boot_scenario = "qemu_local_shell_waitpid_any_completed_child"),
     not(talos_boot_scenario = "qemu_local_shell_process_status_vfs"),
+    not(talos_boot_scenario = "qemu_local_shell_ps_command_vfs"),
     not(talos_boot_scenario = "qemu_local_cd_fixed_dirs"),
     not(talos_boot_scenario = "qemu_local_ls_cwd"),
     not(talos_boot_scenario = "qemu_local_line_editing"),
@@ -15240,6 +15253,7 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     talos_boot_scenario = "qemu_local_shell_waitpid",
     talos_boot_scenario = "qemu_local_shell_waitpid_any_completed_child",
     talos_boot_scenario = "qemu_local_shell_process_status_vfs",
+    talos_boot_scenario = "qemu_local_shell_ps_command_vfs",
     talos_boot_scenario = "qemu_local_cd_fixed_dirs",
     talos_boot_scenario = "qemu_local_ls_cwd",
     talos_boot_scenario = "qemu_local_line_editing",
@@ -15265,6 +15279,8 @@ const fn local_command_loop_smoke_command_count() -> usize {
         talos_boot_scenario = "qemu_local_shell_process_status_vfs"
     )) {
         19
+    } else if cfg!(talos_boot_scenario = "qemu_local_shell_ps_command_vfs") {
+        23
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid") {
         33
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_path_lookup") {
@@ -15414,6 +15430,7 @@ const fn local_command_loop_smoke_command_count() -> usize {
     talos_boot_scenario = "qemu_local_shell_waitpid",
     talos_boot_scenario = "qemu_local_shell_waitpid_any_completed_child",
     talos_boot_scenario = "qemu_local_shell_process_status_vfs",
+    talos_boot_scenario = "qemu_local_shell_ps_command_vfs",
     talos_boot_scenario = "qemu_local_cd_fixed_dirs",
     talos_boot_scenario = "qemu_local_ls_cwd",
     talos_boot_scenario = "qemu_local_line_editing",
@@ -15434,6 +15451,66 @@ fn expected_local_command_loop_dispatch(
         0 => line == b"help" && status == Handled && response_lines == 4,
         1 => line == b"status" && status == Handled && response_lines == 5,
         2 => line == b"stdio" && status == Handled && response_lines == 7,
+        3 if cfg!(talos_boot_scenario = "qemu_local_shell_ps_command_vfs") => {
+            line == b"exec /bin/status42" && status == Handled && response_lines == 10
+        }
+        4 if cfg!(talos_boot_scenario = "qemu_local_shell_ps_command_vfs") => {
+            line == b"cat /proc/talos/processes" && status == Handled && response_lines == 1
+        }
+        5 if cfg!(talos_boot_scenario = "qemu_local_shell_ps_command_vfs") => {
+            line == b"ps" && status == Handled && response_lines == 1
+        }
+        6 if cfg!(talos_boot_scenario = "qemu_local_shell_ps_command_vfs") => {
+            line == b"waitpid" && status == Handled && response_lines == 1
+        }
+        7 if cfg!(talos_boot_scenario = "qemu_local_shell_ps_command_vfs") => {
+            line == b"ps" && status == Handled && response_lines == 1
+        }
+        8 if cfg!(talos_boot_scenario = "qemu_local_shell_ps_command_vfs") => {
+            line == b"exec stdout | exec stdin" && status == Handled && response_lines == 22
+        }
+        9 if cfg!(talos_boot_scenario = "qemu_local_shell_ps_command_vfs") => {
+            line == b"cat /proc/talos/processes" && status == Handled && response_lines == 1
+        }
+        10 if cfg!(talos_boot_scenario = "qemu_local_shell_ps_command_vfs") => {
+            line == b"ps" && status == Handled && response_lines == 1
+        }
+        11 if cfg!(talos_boot_scenario = "qemu_local_shell_ps_command_vfs") => {
+            line == b"waitpid 0x100001" && status == Handled && response_lines == 1
+        }
+        12 if cfg!(talos_boot_scenario = "qemu_local_shell_ps_command_vfs") => {
+            line == b"waitpid 0x100002" && status == Handled && response_lines == 1
+        }
+        13 if cfg!(talos_boot_scenario = "qemu_local_shell_ps_command_vfs") => {
+            line == b"ps" && status == Handled && response_lines == 1
+        }
+        14 if cfg!(talos_boot_scenario = "qemu_local_shell_ps_command_vfs") => {
+            line == b"exec /bin/status42 &" && status == Handled && response_lines == 8
+        }
+        15 if cfg!(talos_boot_scenario = "qemu_local_shell_ps_command_vfs") => {
+            line == b"cat /proc/talos/processes" && status == Handled && response_lines == 2
+        }
+        16 if cfg!(talos_boot_scenario = "qemu_local_shell_ps_command_vfs") => {
+            line == b"ps" && status == Handled && response_lines == 1
+        }
+        17 if cfg!(talos_boot_scenario = "qemu_local_shell_ps_command_vfs") => {
+            line == b"waitpid 0x100001" && status == Handled && response_lines == 1
+        }
+        18 if cfg!(talos_boot_scenario = "qemu_local_shell_ps_command_vfs") => {
+            line == b"ps" && status == Handled && response_lines == 1
+        }
+        19 if cfg!(talos_boot_scenario = "qemu_local_shell_ps_command_vfs") => {
+            line == b"ps -a" && status == UnexpectedArgument && response_lines == 1
+        }
+        20 if cfg!(talos_boot_scenario = "qemu_local_shell_ps_command_vfs") => {
+            line == b"ps extra" && status == UnexpectedArgument && response_lines == 1
+        }
+        21 if cfg!(talos_boot_scenario = "qemu_local_shell_ps_command_vfs") => {
+            line == b"cat /etc/banner.txt" && status == Handled && response_lines == 1
+        }
+        22 if cfg!(talos_boot_scenario = "qemu_local_shell_ps_command_vfs") => {
+            line == b"jobs" && status == Handled && response_lines == 1
+        }
         3 if cfg!(talos_boot_scenario = "qemu_local_shell_process_status_vfs") => {
             line == b"exec /bin/status42" && status == Handled && response_lines == 10
         }

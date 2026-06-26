@@ -1,0 +1,40 @@
+{
+  "task_id": "phase12-local-ps-command-vfs-backed-core-20260626",
+  "classification": "local-ps-command-vfs-backed-core-accepted",
+  "command": "ps",
+  "status_path": "/proc/talos/processes",
+  "schema": "talos-processes-v1",
+  "descriptor_backed": true,
+  "vfs_backing": "read_process_status_file_via_descriptor",
+  "accepted_surface": [
+    "zero-argument ps reads the accepted /proc/talos/processes status file",
+    "direct /bin/status42 status records are visible through ps",
+    "exact two-stage /bin/stdout | /bin/stdin producer and consumer records are visible through ps",
+    "background /bin/status42 records are visible through ps before and after explicit waitpid consumption",
+    "unsupported ps arguments and options fail closed",
+    "cat /proc/talos/processes remains the underlying regression/control surface"
+  ],
+  "deferred": [
+    "Linux ps compatibility",
+    "Linux procfs compatibility",
+    "/proc/self",
+    "/proc/<pid>",
+    "public stable process enumeration ABI",
+    "ps arguments/options",
+    "sorting/filtering",
+    "scheduler-concurrent execution",
+    "fork/signals",
+    "process groups/sessions",
+    "waitpid options",
+    "PID reuse policy",
+    "multi-stage pipelines",
+    "pipefail",
+    "persistent storage",
+    "live networking",
+    "SSH",
+    "Pi 5 hardware proof",
+    "phase transition"
+  ],
+  "hardware_claim": false,
+  "live_network_ssh_paused": true
+}
