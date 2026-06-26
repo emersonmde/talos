@@ -15439,7 +15439,7 @@ const fn local_command_loop_smoke_command_count() -> usize {
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_literal_argv") {
         12
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_absolute_path_vfs_command") {
-        13
+        18
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_absolute_path_vfs_pipeline") {
         15
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_bare_name_vfs_pipeline") {
@@ -15545,15 +15545,30 @@ fn expected_local_command_loop_dispatch(
                     line == b"cat /proc/talos/processes" && status == Handled && response_lines == 1
                 }
                 7 => line == b"ps" && status == Handled && response_lines == 1,
-                8 => line == b"/missing" && status == UnexpectedArgument && response_lines == 1,
-                9 => line == b"bin/status42" && status == UnknownCommand && response_lines == 1,
-                10 => line == b"/bin" && status == UnexpectedArgument && response_lines == 1,
+                8 => {
+                    line == b"/bin/status42 alpha beta" && status == Handled && response_lines == 10
+                }
+                9 => line == b"waitpid" && status == Handled && response_lines == 1,
+                10 => line == b"laststatus" && status == Handled && response_lines == 1,
                 11 => {
+                    line == b"/bin/status42 alpha beta gamma delta"
+                        && status == UnexpectedArgument
+                        && response_lines == 1
+                }
+                12 => {
+                    line == b"/bin/status42 *"
+                        && status == UnexpectedArgument
+                        && response_lines == 1
+                }
+                13 => line == b"/missing" && status == UnexpectedArgument && response_lines == 1,
+                14 => line == b"bin/status42" && status == UnknownCommand && response_lines == 1,
+                15 => line == b"/bin" && status == UnexpectedArgument && response_lines == 1,
+                16 => {
                     line == b"/etc/banner.txt"
                         && status == UnexpectedArgument
                         && response_lines == 1
                 }
-                12 => line == b"status42" && status == Handled && response_lines == 10,
+                17 => line == b"status42" && status == Handled && response_lines == 10,
                 _ => false,
             }
         }

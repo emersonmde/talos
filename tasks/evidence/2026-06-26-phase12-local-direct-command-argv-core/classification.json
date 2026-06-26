@@ -1,0 +1,34 @@
+{
+  "classification": "local-direct-command-argv-core-accepted",
+  "task_id": "phase12-local-direct-command-argv-core-20260626",
+  "evidence_level": [
+    "fmt/lint",
+    "unit tests",
+    "QEMU/substitute",
+    "static inspection",
+    "docs"
+  ],
+  "accepted_surface": {
+    "command": "/bin/status42 alpha beta",
+    "resolved_path": "/bin/status42",
+    "argv": [
+      "/bin/status42",
+      "alpha",
+      "beta"
+    ],
+    "execution_path": "VFS open/read -> accepted loader -> userspace launch/status -> bounded process table"
+  },
+  "deferred_surface": [
+    "bare-name argv",
+    "pipeline stage argv",
+    "redirections",
+    "environment-backed PATH",
+    "command lookup beyond existing bounded surfaces",
+    "arbitrary shell grammar",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root command-input retry",
+    "phase transition"
+  ],
+  "hardware_claim": false
+}

@@ -18531,6 +18531,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   scheduler concurrency, fork/signals, process groups/sessions, persistent
   storage, generated-root command-input retry, and phase transition remain
   deferred.
+- phase12-local-direct-command-argv-core-20260626 accepts
+  local-direct-command-argv-core. The local shell now carries a small literal
+  argv vector for the direct absolute-path command form:
+  '/bin/status42 alpha beta'. The executable still comes from
+  descriptor-backed VFS open/read and the accepted loader/userspace
+  launch/status path. Unit and QEMU/substitute evidence records argc=3,
+  argv0=/bin/status42, argv1=alpha, argv2=beta, deterministic empty envp,
+  inherited standard descriptors, closed loader temporary descriptor, status
+  0x2a, waitpid, laststatus, /proc/talos/processes, and zero-argument ps
+  compatibility. Existing no-argument direct path command, bare-name command,
+  bare-name pipeline, exec-prefixed literal argv, process-status VFS, ps, and
+  pipestatus regressions remain passing. Too many direct path literal
+  arguments and unsupported literal characters fail closed. Bare-name argv,
+  pipeline stage argv, redirections, environment-backed PATH, arbitrary shell
+  grammar, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
+  phase transition remain deferred. selected_next_task is
+  phase12-local-direct-command-argv-closeout-20260626.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

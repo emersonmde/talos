@@ -1,0 +1,74 @@
+{
+  "task_id": "phase12-local-direct-command-argv-core-20260626",
+  "classification": "local-direct-command-argv-core-accepted",
+  "evidence": [
+    {
+      "level": "fmt/lint",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "result": "passed, including direct absolute-path command literal argv and fail-closed controls"
+    },
+    {
+      "level": "QEMU/substitute",
+      "command": "scripts/qemu-local-shell-absolute-path-vfs-command-smoke.sh with task-owned evidence paths",
+      "result": "passed; transcript contains talos> /bin/status42 alpha beta with argc=3 literal argv startup ABI",
+      "path": "tasks/evidence/2026-06-26-phase12-local-direct-command-argv-core/qemu-local-shell-direct-command-argv-smoke.log"
+    },
+    {
+      "level": "QEMU/substitute regression",
+      "command": "scripts/qemu-local-shell-bare-name-vfs-command-smoke.sh",
+      "result": "passed"
+    },
+    {
+      "level": "QEMU/substitute regression",
+      "command": "scripts/qemu-local-shell-bare-name-vfs-pipeline-smoke.sh",
+      "result": "passed"
+    },
+    {
+      "level": "QEMU/substitute regression",
+      "command": "scripts/qemu-local-shell-literal-argv-smoke.sh",
+      "result": "passed"
+    },
+    {
+      "level": "QEMU/substitute regression",
+      "command": "scripts/qemu-local-shell-process-status-vfs-smoke.sh",
+      "result": "passed"
+    },
+    {
+      "level": "QEMU/substitute regression",
+      "command": "scripts/qemu-local-shell-ps-command-vfs-smoke.sh",
+      "result": "passed"
+    },
+    {
+      "level": "QEMU/substitute regression",
+      "command": "scripts/qemu-local-shell-pipeline-status-smoke.sh",
+      "result": "passed"
+    },
+    {
+      "level": "docs",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty tasks/evidence/2026-06-26-phase12-local-direct-command-argv-core/classification.json tasks/evidence/2026-06-26-phase12-local-direct-command-argv-core/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "diff hygiene",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "staged diff hygiene",
+      "command": "git diff --cached --check",
+      "result": "passed before commit"
+    }
+  ],
+  "no_pi5_hardware_claim": true,
+  "live_network_ssh_status": "paused"
+}

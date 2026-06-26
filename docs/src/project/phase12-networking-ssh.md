@@ -9097,6 +9097,23 @@ pipeline concurrency, scheduler concurrency, fork/signals, process
 groups/sessions, persistent storage, generated-root command-input retry, and
 phase transition remain deferred.
 
+phase12-local-direct-command-argv-core-20260626 accepts
+local-direct-command-argv-core. The local shell now accepts the bounded direct
+absolute-path argv form '/bin/status42 alpha beta'. The executable still opens
+and reads '/bin/status42' from VFS, loads through the accepted loader,
+launches through the existing userspace startup/status path, and exits with
+status 0x2a. The startup evidence records argc=3, canonical
+argv0=/bin/status42, argv1=alpha, argv2=beta, deterministic empty envp,
+inherited standard descriptors, and a closed loader temporary descriptor.
+Existing no-argument direct path commands, bare-name commands, bare-name
+pipelines, exec-prefixed literal argv, process-status VFS, ps, and pipestatus
+regressions remain intact. Too many direct path literal arguments and
+unsupported literal characters fail closed without accepted process records.
+This does not accept bare-name argv, pipeline stage argv, redirections,
+environment-backed PATH, arbitrary shell grammar, live networking/SSH, Pi 5
+hardware proof, generated-root retry, or a phase transition.
+selected_next_task is phase12-local-direct-command-argv-closeout-20260626.
+
 phase12-local-vfs-exec-lifecycle-record-generalization-core-20260626
 accepts local-vfs-exec-lifecycle-record-generalization-core. This local
 POSIX/VFS/userspace continuation preserves the accepted
