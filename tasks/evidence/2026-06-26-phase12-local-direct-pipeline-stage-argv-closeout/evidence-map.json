@@ -1,0 +1,60 @@
+{
+  "task_id": "phase12-local-direct-pipeline-stage-argv-closeout-20260626",
+  "classification": "local-direct-pipeline-stage-argv-closeout-accepted",
+  "task_record": "tasks/2026-06-26-phase12-local-direct-pipeline-stage-argv-closeout.md",
+  "accepted_core_records": [
+    "tasks/2026-06-26-phase12-local-direct-pipeline-stage-argv-core.md",
+    "tasks/2026-06-26-phase12-local-direct-command-argv-core.md",
+    "tasks/2026-06-26-phase12-local-bare-name-command-argv-core.md",
+    "tasks/2026-06-26-phase12-local-command-argv-frontier-checkpoint.md"
+  ],
+  "accepted_core_evidence": [
+    "tasks/evidence/2026-06-26-phase12-local-direct-pipeline-stage-argv-core/classification.json",
+    "tasks/evidence/2026-06-26-phase12-local-direct-pipeline-stage-argv-core/evidence-map.json",
+    "tasks/evidence/2026-06-26-phase12-local-direct-pipeline-stage-argv-core/qemu-local-shell-direct-pipeline-stage-argv-smoke.log"
+  ],
+  "retained_regression_records": [
+    "tasks/2026-06-26-phase12-local-absolute-path-vfs-pipeline-core.md",
+    "tasks/2026-06-26-phase12-local-bare-name-vfs-pipeline-core.md",
+    "tasks/2026-06-26-phase12-local-multistage-pipeline-core.md",
+    "tasks/2026-06-26-phase12-local-process-status-vfs-core.md",
+    "tasks/2026-06-26-phase12-local-ps-command-vfs-backed-core.md",
+    "tasks/2026-06-26-phase12-local-pipeline-frontier-checkpoint.md"
+  ],
+  "docs": [
+    "docs/src/roadmap.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/project/early-posix-shape.md"
+  ],
+  "validation": [
+    {
+      "level": "static inspection",
+      "command": "Static inspection of direct pipeline stage argv core task, retained evidence paths, regression records, docs, and git diff.",
+      "result": "passed"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty tasks/evidence/2026-06-26-phase12-local-direct-pipeline-stage-argv-closeout/classification.json tasks/evidence/2026-06-26-phase12-local-direct-pipeline-stage-argv-closeout/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "level": "staged diff validation",
+      "command": "git diff --cached --check",
+      "result": "passed"
+    }
+  ],
+  "selected_next_task": "phase12-local-bare-name-pipeline-stage-argv-core-20260626",
+  "planning_needed": false,
+  "hardware_claim": "none",
+  "live_network_ssh": "paused"
+}

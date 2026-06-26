@@ -18620,6 +18620,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   grammar, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
   phase transition remain deferred. selected_next_task is
   phase12-local-direct-pipeline-stage-argv-closeout-20260626.
+- phase12-local-direct-pipeline-stage-argv-closeout-20260626 accepts
+  local-direct-pipeline-stage-argv-closeout. The checkpoint reconciles the
+  accepted direct path-form pipeline stage argv frontier against retained task
+  records, task-owned classification/evidence JSON, QEMU/substitute
+  transcript, docs, and regression records. The accepted surface remains
+  exactly '/bin/stdout alpha | /bin/stdin beta' through descriptor-backed VFS
+  open/read, the accepted loader, userspace startup/status, inherited standard
+  descriptors, pipe descriptor handoff, closed loader temporary descriptors,
+  bounded process-table observations, waitpid, laststatus,
+  /proc/talos/processes, zero-argument ps, and pipestatus compatibility.
+  Bare-name pipeline argv is now mechanically objective through the accepted
+  fixed /bin lookup policy; multistage pipeline argv, redirections,
+  environment-backed PATH, arbitrary shell grammar, live networking/SSH, Pi 5
+  hardware proof, generated-root retry, and phase transition remain deferred.
+  selected_next_task is
+  phase12-local-bare-name-pipeline-stage-argv-core-20260626.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
