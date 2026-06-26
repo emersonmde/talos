@@ -1,0 +1,46 @@
+{
+  "task_id": "phase12-local-pipeline-frontier-checkpoint-20260626",
+  "classification": "local-pipeline-frontier-checkpoint-accepted-planning-needed",
+  "status": "accepted",
+  "evidence_level": [
+    "static inspection",
+    "JSON validation",
+    "diff validation",
+    "docs validation",
+    "staged diff validation"
+  ],
+  "accepted_frontier": {
+    "direct_vfs_exec": true,
+    "descriptor_backed_vfs_file_io": true,
+    "two_stage_pipeline": "accepted exact local forms",
+    "three_stage_pipeline": "exec stdout | exec stdin | exec stdin",
+    "process_table_records": "bounded accepted local fixtures",
+    "waitpid_laststatus_jobs": "accepted bounded observation surfaces",
+    "process_status_vfs": "/proc/talos/processes talos-processes-v1",
+    "ps": "zero-argument VFS-backed presentation",
+    "pipestatus": "bounded process-table-backed observation",
+    "pipefail_status": "bounded-observation-not-posix-shell"
+  },
+  "deferred_frontier": [
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "scheduler concurrency",
+    "fork/signals",
+    "process groups/sessions",
+    "broad procfs/Linux ps",
+    "PID policy expansion",
+    "waitpid options",
+    "persistent storage",
+    "arbitrary shell grammar",
+    "unbounded pipelines",
+    "pipeline concurrency",
+    "POSIX pipefail compatibility",
+    "generated-root command-input retry",
+    "phase transition"
+  ],
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "No later queued same-lane local POSIX/pipeline task exists with complete objective dependencies, acceptance criteria, validation gates, docs, and evidence requirements.",
+  "hardware_claim": "none",
+  "live_networking_ssh": "paused"
+}

@@ -126,6 +126,18 @@ observation for a nonzero producer case. This is not POSIX shell
 compatibility and does not accept arbitrary pipeline grammar, unbounded
 pipeline length, pipeline concurrency, or a shell option framework.
 
+The 2026-06-26 local pipeline frontier checkpoint keeps that pipeline layer at
+static/unit/QEMU-substitute evidence level. Accepted pipeline behavior is still
+limited to exact two-stage local forms, the accepted
+`exec stdout | exec stdin | exec stdin` three-stage form, bounded
+process-table records, `/proc/talos/processes`, zero-argument VFS-backed
+`ps`, and `pipestatus` with `pipefail-status` labeled
+`bounded-observation-not-posix-shell`. Live networking/SSH, Pi 5 hardware
+proof, scheduler concurrency, fork/signals, process groups/sessions, broad
+procfs/Linux `ps`, persistent storage, arbitrary shell grammar, unbounded
+pipelines, POSIX pipefail compatibility, and phase transition remain deferred
+pending supervisor planning.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

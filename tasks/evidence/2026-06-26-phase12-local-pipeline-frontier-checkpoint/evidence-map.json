@@ -1,0 +1,102 @@
+{
+  "task_id": "phase12-local-pipeline-frontier-checkpoint-20260626",
+  "classification": "local-pipeline-frontier-checkpoint-accepted-planning-needed",
+  "retained_evidence": [
+    {
+      "level": "task record",
+      "path": "tasks/2026-06-26-phase12-local-multistage-pipeline-core.md",
+      "covers": "accepted exact three-stage VFS-backed pipeline implementation boundary"
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-26-phase12-local-multistage-pipeline-core/qemu-local-shell-multistage-pipeline-smoke.log",
+      "covers": "three-stage byte flow, three process-table records, waitpid, /proc/talos/processes, and ps transcript"
+    },
+    {
+      "level": "task record",
+      "path": "tasks/2026-06-26-phase12-local-multistage-pipeline-closeout.md",
+      "covers": "accepted/deferred multistage pipeline closeout boundary"
+    },
+    {
+      "level": "task record",
+      "path": "tasks/2026-06-26-phase12-local-pipefail-status-core.md",
+      "covers": "bounded pipestatus implementation boundary"
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-26-phase12-local-pipefail-status-core/qemu-local-shell-pipeline-status-smoke.log",
+      "covers": "zero-status two-stage, nonzero producer, and three-stage pipestatus transcript"
+    },
+    {
+      "level": "task record",
+      "path": "tasks/2026-06-26-phase12-local-pipefail-status-closeout.md",
+      "covers": "accepted/deferred pipeline status closeout boundary and selected checkpoint"
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-26-phase12-local-process-status-vfs-core/qemu-local-shell-process-status-vfs-smoke.log",
+      "covers": "/proc/talos/processes regression evidence"
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-26-phase12-local-ps-command-vfs-backed-core/qemu-local-shell-ps-command-vfs-smoke.log",
+      "covers": "zero-argument VFS-backed ps regression evidence"
+    },
+    {
+      "level": "static inspection",
+      "path": "tasks/2026-06-26-phase12-local-process-table-frontier-checkpoint.md",
+      "covers": "prior process-table frontier checkpoint"
+    },
+    {
+      "level": "static inspection",
+      "path": "tasks/2026-06-26-phase12-local-posix-frontier-checkpoint.md",
+      "covers": "prior local POSIX/VFS/process frontier checkpoint"
+    },
+    {
+      "level": "documentation",
+      "path": "docs/src/roadmap.md",
+      "covers": "roadmap frontier entry"
+    },
+    {
+      "level": "documentation",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "covers": "Phase 12 project frontier entry"
+    },
+    {
+      "level": "documentation",
+      "path": "docs/src/project/early-posix-shape.md",
+      "covers": "early POSIX architecture frontier note"
+    }
+  ],
+  "validation": [
+    {
+      "level": "static inspection",
+      "command": "Static inspection of task records, retained evidence paths, docs, and git diff.",
+      "result": "passed"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty tasks/evidence/2026-06-26-phase12-local-pipeline-frontier-checkpoint/classification.json tasks/evidence/2026-06-26-phase12-local-pipeline-frontier-checkpoint/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "level": "staged diff validation",
+      "command": "git diff --cached --check",
+      "result": "passed"
+    }
+  ],
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "hardware_claim": "none",
+  "live_networking_ssh": "paused"
+}

@@ -18393,6 +18393,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   procfs/Linux `ps`, persistent storage, live networking, SSH, Pi 5 hardware
   proof, generated-root command-input retry, and phase transition remain
   deferred.
+- phase12-local-pipeline-frontier-checkpoint-20260626 accepts
+  local-pipeline-frontier-checkpoint-accepted-planning-needed. The checkpoint
+  reconciles the accepted local pipeline/POSIX frontier against retained direct
+  VFS exec, descriptor-backed VFS file I/O, exact two-stage pipeline,
+  accepted three-stage pipeline, process-table, waitpid/laststatus/jobs,
+  `/proc/talos/processes`, VFS-backed `ps`, and bounded `pipestatus` evidence.
+  The accepted boundary remains static/unit/QEMU-substitute only: exact
+  two-stage local pipelines, the accepted `exec stdout | exec stdin | exec
+  stdin` three-stage form, and process-table-backed `pipestatus` with
+  `pipefail-status=bounded-observation-not-posix-shell`. Live networking/SSH,
+  Pi 5 hardware proof, scheduler concurrency, fork/signals, process
+  groups/sessions, broad procfs/Linux `ps`, PID policy expansion, persistent
+  storage, arbitrary shell grammar, unbounded pipelines, POSIX pipefail
+  compatibility, generated-root command-input retry, and phase transition
+  remain deferred. selected_next_task is null and planningNeeded=true because
+  no later queued same-lane local POSIX/pipeline task exists with complete
+  objective dependencies, acceptance criteria, validation gates, docs, and
+  evidence requirements.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
