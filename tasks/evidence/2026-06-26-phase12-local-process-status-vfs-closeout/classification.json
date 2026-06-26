@@ -1,0 +1,42 @@
+{
+  "task_id": "phase12-local-process-status-vfs-closeout-20260626",
+  "classification": "local-process-status-vfs-closeout-accepted",
+  "core_task_id": "phase12-local-process-status-vfs-core-20260626",
+  "core_commit": "21cda14fb10afabf8f0dfc52fc306302f62a7ba4",
+  "status_path": "/proc/talos/processes",
+  "schema": "talos-processes-v1",
+  "descriptor_backed": true,
+  "accepted_surface": [
+    "Talos-private read-only /proc/talos/processes VFS file",
+    "descriptor-backed cat/open/read route",
+    "bounded direct VFS exec process records",
+    "bounded exact two-stage pipeline producer and consumer records",
+    "bounded accepted background job records",
+    "wait-consumed/reaped state for accepted waitpid fixtures",
+    "unsupported proc paths fail closed",
+    "existing non-proc VFS cat behavior remains accepted"
+  ],
+  "selected_next_task": "phase12-local-ps-command-vfs-backed-core-20260626",
+  "selected_next_task_reason": "The queued ps task is mechanically objective only as a thin presentation over the accepted descriptor-backed /proc/talos/processes surface; direct process-table dumps remain rejected.",
+  "planning_needed": false,
+  "deferred": [
+    "Linux procfs compatibility",
+    "/proc/self",
+    "/proc/<pid>",
+    "public stable process enumeration ABI",
+    "scheduler-concurrent execution",
+    "fork/signals",
+    "process groups/sessions",
+    "waitpid options",
+    "PID reuse policy",
+    "multi-stage pipelines",
+    "pipefail",
+    "persistent storage",
+    "live networking",
+    "SSH",
+    "Pi 5 hardware proof",
+    "phase transition"
+  ],
+  "hardware_claim": false,
+  "live_network_ssh_paused": true
+}

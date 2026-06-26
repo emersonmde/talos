@@ -1,0 +1,42 @@
+{
+  "task_id": "phase12-local-process-status-vfs-closeout-20260626",
+  "evidence": [
+    {
+      "kind": "static inspection",
+      "path": "tasks/2026-06-26-phase12-local-process-status-vfs-core.md",
+      "summary": "Accepted core task record lists fixed/deferred findings, the talos-processes-v1 schema, validation, and the descriptor-backed /proc/talos/processes result."
+    },
+    {
+      "kind": "static inspection",
+      "path": "tasks/evidence/2026-06-26-phase12-local-process-status-vfs-core/classification.json",
+      "summary": "Core classification accepts /proc/talos/processes as descriptor-backed and defers ps, Linux procfs, hardware proof, live networking, SSH, and phase transition."
+    },
+    {
+      "kind": "static inspection",
+      "path": "tasks/evidence/2026-06-26-phase12-local-process-status-vfs-core/evidence-map.json",
+      "summary": "Core evidence map cites source, QEMU/substitute, unit-test, docs, and diff hygiene evidence for the accepted process-status VFS surface."
+    },
+    {
+      "kind": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-26-phase12-local-process-status-vfs-core/qemu-local-shell-process-status-vfs-smoke.log",
+      "summary": "Retained transcript proves cat /proc/talos/processes through descriptor-backed shell/VFS path after direct, exact pipeline, and background fixtures, with negative controls."
+    },
+    {
+      "kind": "static inspection",
+      "path": "docs/src/roadmap.md",
+      "summary": "Roadmap records the accepted/deferred process-status frontier and the selected VFS-backed ps follow-up."
+    },
+    {
+      "kind": "static inspection",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "summary": "Phase 12 project notes record live network/SSH pause, no hardware claim, and the selected VFS-backed ps boundary."
+    }
+  ],
+  "selected_next_task": "phase12-local-ps-command-vfs-backed-core-20260626",
+  "validation": [
+    "jq empty on task-owned JSON evidence",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "git diff --cached --check before commit"
+  ]
+}

@@ -9193,6 +9193,21 @@ ABI, hardware proof, networking, SSH, or a phase transition. selected_next_task
 is phase12-local-process-status-vfs-closeout-20260626 because the queued
 closeout is mechanically objective after this accepted core task.
 
+phase12-local-process-status-vfs-closeout-20260626 accepts
+local-process-status-vfs-closeout-accepted. The closeout reconciles the
+accepted `/proc/talos/processes` surface against retained bounded
+process-table, descriptor-backed VFS, waitpid/jobs, exact pipeline/background,
+unsupported-proc, and non-proc VFS cat evidence. The accepted frontier remains
+the Talos-private, read-only, versioned `talos-processes-v1` VFS file. Linux
+procfs compatibility, `/proc/self`, `/proc/<pid>`, public process
+enumeration ABI, scheduler concurrency, fork/signals, process groups/sessions,
+waitpid options, PID reuse policy, multi-stage pipelines, pipefail, hardware
+proof, live networking, SSH, and phase transition remain deferred.
+selected_next_task is phase12-local-ps-command-vfs-backed-core-20260626
+because the queued `ps` task is mechanically objective only as a thin
+presentation over the accepted VFS status file and not as a direct
+process-table dump or fake command expansion.
+
 phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624 accepts
 the live reachability source reconciliation as
 live-reachability-source-reconciliation-paused-no-defensible-discriminator.
