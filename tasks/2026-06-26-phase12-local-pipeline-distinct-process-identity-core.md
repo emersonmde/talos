@@ -116,4 +116,4 @@ hardware action ran, no packet I/O or OpenSSH attempt ran, and no ssh-ready,
 remote-receipt, compatibility, live reachability, or phase-transition claim is
 accepted.
 
-Acceptance commit: recorded in durable supervisor state after commit creation.
+Implementation commit: fdb636a5ae2f460320ded924050d7a8e7d854610.
