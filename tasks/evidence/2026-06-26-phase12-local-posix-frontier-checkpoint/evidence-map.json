@@ -1,0 +1,57 @@
+{
+  "task_id": "phase12-local-posix-frontier-checkpoint-20260626",
+  "classification": "local-posix-frontier-checkpoint-accepted-planning-needed",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "path": "tasks/2026-06-26-phase12-local-process-table-frontier-checkpoint.md",
+      "summary": "Accepted process-table checkpoint reconciles direct VFS exec, exact pipeline, background jobs, waitpid, laststatus, jobs, descriptor-backed VFS, and redirection controls."
+    },
+    {
+      "level": "static inspection",
+      "path": "tasks/2026-06-26-phase12-local-process-status-vfs-core.md",
+      "summary": "Accepted /proc/talos/processes as a Talos-private read-only descriptor-backed process-status VFS file."
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-26-phase12-local-process-status-vfs-core/qemu-local-shell-process-status-vfs-smoke.log",
+      "summary": "Retained process-status VFS smoke passed with participants=19 expected=19 errors=0."
+    },
+    {
+      "level": "static inspection",
+      "path": "tasks/2026-06-26-phase12-local-ps-command-vfs-backed-core.md",
+      "summary": "Accepted zero-argument ps as a thin VFS-backed presentation over /proc/talos/processes."
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-26-phase12-local-ps-command-vfs-backed-core/qemu-local-shell-ps-command-vfs-smoke.log",
+      "summary": "Retained ps smoke passed with participants=23 expected=23 errors=0 and included direct, exact pipeline, background, cat /proc/talos/processes, and unsupported-argument controls."
+    },
+    {
+      "level": "static inspection",
+      "path": "docs/src/project/early-posix-shape.md",
+      "summary": "Early POSIX notes record the bounded process-table, /proc/talos/processes, and VFS-backed ps boundaries plus remaining gaps."
+    },
+    {
+      "level": "static inspection",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "summary": "Phase 12 project notes record the local POSIX checkpoint and keep live networking/SSH, hardware proof, and phase transition deferred."
+    },
+    {
+      "level": "static inspection",
+      "path": "docs/src/roadmap.md",
+      "summary": "Roadmap records the accepted local POSIX frontier checkpoint and planning-needed result."
+    }
+  ],
+  "validation": [
+    "static inspection of task records, retained evidence paths, docs, and git diff",
+    "jq empty on checkpoint classification/evidence-map JSON",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "git diff --cached --check"
+  ],
+  "selected_next_task": null,
+  "planning_needed": true,
+  "hardware_claim": false,
+  "live_network_ssh_paused": true
+}

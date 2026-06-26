@@ -9234,6 +9234,22 @@ scheduler concurrency, fork/signals, process groups/sessions, waitpid options,
 PID reuse/zombie policy, hardware proof, live networking, SSH, and phase
 transition work remain deferred.
 
+phase12-local-posix-frontier-checkpoint-20260626 accepts
+local-posix-frontier-checkpoint-accepted-planning-needed. The checkpoint
+reconciles the accepted local POSIX/VFS/process frontier after the descriptor,
+VFS/open/read/cat, direct VFS program loading, local userspace launch/status,
+bounded process-table, waitpid/jobs, `/proc/talos/processes`, and VFS-backed
+`ps` slices. The accepted evidence remains static inspection, unit-test
+references from accepted task records, and QEMU/substitute transcripts only.
+Live networking/SSH, Pi 5 hardware proof, scheduler concurrency, fork/signals,
+process groups/sessions, broad procfs, `/proc/self`, `/proc/<pid>`, Linux
+`ps` compatibility, public process enumeration, PID policy expansion,
+persistent storage, multi-stage pipelines, pipefail, generated-root
+command-input retry, and phase transition remain deferred. selected_next_task
+is null and planningNeeded=true because no later queued same-lane local POSIX
+task exists with complete objective dependencies, acceptance criteria,
+validation gates, docs, and evidence requirements.
+
 phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624 accepts
 the live reachability source reconciliation as
 live-reachability-source-reconciliation-paused-no-defensible-discriminator.

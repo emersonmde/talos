@@ -1,0 +1,38 @@
+{
+  "task_id": "phase12-local-posix-frontier-checkpoint-20260626",
+  "classification": "local-posix-frontier-checkpoint-accepted-planning-needed",
+  "selected_next_task": null,
+  "planning_needed": true,
+  "accepted": [
+    "descriptor-backed local VFS/open/read/cat over the accepted initramfs VFS",
+    "direct VFS program loading for accepted local fixtures",
+    "local userspace launch/status path retained through accepted task evidence",
+    "bounded internal process-table lifecycle/status records for direct VFS exec, exact two-stage pipelines, and accepted background jobs",
+    "shell-visible explicit-pid waitpid, no-argument waitpid, non-consuming laststatus, and jobs accounting over accepted fixtures",
+    "Talos-private read-only /proc/talos/processes VFS status file",
+    "zero-argument ps as a thin presentation over /proc/talos/processes"
+  ],
+  "deferred": [
+    "live networking",
+    "SSH",
+    "Pi 5 hardware proof",
+    "scheduler concurrency",
+    "fork/signals",
+    "process groups/sessions",
+    "broad procfs",
+    "/proc/self",
+    "/proc/<pid>",
+    "Linux ps compatibility",
+    "public process enumeration ABI",
+    "PID reuse/zombie policy beyond bounded deterministic controls",
+    "waitpid options",
+    "persistent storage",
+    "multi-stage pipelines",
+    "pipefail",
+    "generated-root command-input retry",
+    "phase transition"
+  ],
+  "hardware_claim": false,
+  "live_network_ssh_paused": true,
+  "planning_reason": "No later queued same-lane local POSIX task exists with complete objective dependencies, acceptance criteria, validation gates, docs, and evidence requirements."
+}

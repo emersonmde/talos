@@ -18312,6 +18312,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   selected_next_task is phase12-local-posix-frontier-checkpoint-20260626
   because the queued checkpoint is mechanically objective after this accepted
   closeout.
+- phase12-local-posix-frontier-checkpoint-20260626 accepts
+  local-posix-frontier-checkpoint-accepted-planning-needed. The checkpoint
+  reconciles the accepted local POSIX/VFS/process frontier after the
+  descriptor-backed file I/O, VFS program loading, direct userspace launch,
+  bounded process-table, waitpid/jobs, `/proc/talos/processes`, and
+  VFS-backed `ps` slices. Accepted evidence remains static inspection,
+  unit-test references from accepted task records, and QEMU/substitute
+  transcripts only; no Pi 5 hardware or live network/SSH claim is made. Live
+  networking/SSH, scheduler concurrency, fork/signals, process
+  groups/sessions, broad procfs, Linux `ps` compatibility, public process
+  enumeration, PID policy expansion, persistent storage, multi-stage
+  pipelines, pipefail, generated-root command-input retry, hardware proof, and
+  phase transition remain deferred. selected_next_task is null and
+  planningNeeded=true because no later queued same-lane local POSIX task exists
+  with complete objective dependencies, acceptance criteria, validation gates,
+  docs, and evidence requirements.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

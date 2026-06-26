@@ -105,6 +105,15 @@ scheduler-concurrent process model. The zero-argument `ps` shell view is a
 thin presentation of that same Talos-private VFS file; unsupported arguments
 or options are outside the accepted boundary.
 
+The 2026-06-26 local POSIX frontier checkpoint keeps that whole chain at
+static/unit/QEMU-substitute evidence level: descriptor-backed VFS file I/O,
+direct fixture loading, local userspace launch/status, bounded process-table
+records, waitpid/laststatus/jobs accounting, `/proc/talos/processes`, and
+zero-argument VFS-backed `ps` are accepted; live networking/SSH, Pi 5 hardware
+proof, scheduler concurrency, fork/signals, process groups/sessions, broad
+procfs, PID policy expansion, persistent storage, multi-stage pipelines,
+pipefail, and phase transition remain deferred pending supervisor planning.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
