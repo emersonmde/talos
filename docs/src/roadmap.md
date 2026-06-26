@@ -18083,6 +18083,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   scheduling, separate process-table identities, multi-stage pipelines,
   pipefail, background jobs, fork/signals, live networking, SSH, Pi 5 hardware
   proof, and phase transition remain deferred.
+- phase12-local-pipeline-dual-lifecycle-record-closeout-20260626 accepts the
+  static closeout for the exact two-stage pipeline lifecycle/status frontier.
+  The evidence map points to the retained core task record, the
+  3a18a68e6201025471cb286640dc47f2936856a8 core commit, the combined and
+  per-scenario QEMU/substitute pipeline transcripts, and the direct VFS exec
+  lifecycle/status regression transcript. The accepted boundary remains exact
+  two-stage pipeline producer/consumer accounting only; consumer waitpid and
+  laststatus remain the shell status observation, and producer status remains
+  pipeline-local accounting. selected_next_task is null and
+  planningNeeded=true because no mechanically objective same-slice local
+  follow-up is defined. Multi-stage or concurrent pipelines, pipefail, separate
+  process-table identities, broad process accounting, async jobs, fork/signals,
+  broader descriptor grammar, file/device semantics, persistent filesystem
+  semantics, live networking, SSH, Pi 5 hardware proof, and phase transition
+  remain deferred pending supervisor planning.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
