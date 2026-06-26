@@ -1,0 +1,14 @@
+{
+  "task_id": "phase12-local-pipeline-stage-argv-frontier-checkpoint-20260626",
+  "classification": "local-pipeline-stage-argv-frontier-checkpoint-accepted-planning-needed",
+  "accepted_frontier": "direct path-form and bare-name two-stage pipelines with one bounded literal argument per stage",
+  "feature_witnesses": [
+    "/bin/stdout alpha | /bin/stdin beta",
+    "stdout alpha | stdin beta"
+  ],
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "No later queued same-lane local POSIX/shell task exists with complete objective dependencies, acceptance criteria, validation gates, docs, and evidence requirements after the accepted pipeline stage argv frontier.",
+  "hardware_claim": "none",
+  "live_network_ssh": "paused"
+}

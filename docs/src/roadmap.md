@@ -18675,6 +18675,25 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
   transition remain deferred. selected_next_task is
   phase12-local-pipeline-stage-argv-frontier-checkpoint-20260626.
+- phase12-local-pipeline-stage-argv-frontier-checkpoint-20260626 accepts
+  local-pipeline-stage-argv-frontier-checkpoint-accepted-planning-needed. The
+  checkpoint reconciles the accepted direct path-form and bare-name two-stage
+  pipeline argv frontier against retained task records, classification/evidence
+  JSON, QEMU/substitute transcripts, docs, and regression records. The accepted
+  surfaces remain exactly '/bin/stdout alpha | /bin/stdin beta' and
+  'stdout alpha | stdin beta'. Both forms execute through descriptor-backed VFS
+  open/read, the accepted loader, userspace startup/status, serialized pipe
+  descriptor handoff, bounded process-table observations, waitpid, laststatus,
+  /proc/talos/processes, zero-argument ps, and pipestatus compatibility. The
+  bare-name form still resolves only through fixed bounded /bin lookup.
+  Multistage pipeline argv, redirections, environment-backed PATH, command
+  lookup beyond bounded /bin, arbitrary shell grammar, unbounded pipelines,
+  pipeline concurrency, scheduler concurrency, fork/signals, process
+  groups/sessions, persistent storage, live networking/SSH, Pi 5 hardware
+  proof, generated-root retry, and phase transition remain deferred.
+  selected_next_task is null and planningNeeded=true because no later queued
+  same-lane local POSIX/shell task exists with complete objective dependencies,
+  acceptance criteria, validation gates, docs, and evidence requirements.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

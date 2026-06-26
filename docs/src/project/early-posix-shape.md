@@ -304,6 +304,19 @@ bounded /bin, arbitrary shell grammar, live networking/SSH, Pi 5 hardware
 proof, generated-root retry, and phase transition remain deferred until the
 selected pipeline stage argv frontier checkpoint.
 
+The pipeline stage argv frontier checkpoint reconciles the accepted direct
+path-form and bare-name two-stage pipeline argv surfaces without adding runtime
+behavior. The accepted frontier remains exactly '/bin/stdout alpha |
+/bin/stdin beta' and 'stdout alpha | stdin beta' through VFS open/read, loader,
+userspace startup/status, pipe descriptors, process-table records, waitpid,
+/proc/talos/processes, zero-argument ps, and pipestatus; the bare-name form
+still resolves only through fixed bounded /bin lookup. Multistage pipeline
+argv, redirections, environment-backed PATH, command lookup beyond bounded
+/bin, arbitrary shell grammar, unbounded pipelines, pipeline concurrency,
+scheduler concurrency, fork/signals, process groups/sessions, persistent
+storage, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
+phase transition remain deferred pending supervisor planning.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
