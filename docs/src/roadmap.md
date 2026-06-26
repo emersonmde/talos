@@ -18494,6 +18494,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   networking/SSH, Pi 5 hardware proof, generated-root command-input retry, or
   a phase transition. selected_next_task is
   phase12-local-bare-name-vfs-pipeline-core-20260626.
+- phase12-local-bare-name-vfs-pipeline-core-20260626 accepts
+  local-bare-name-vfs-pipeline-core. The local shell now resolves the bounded
+  two-stage bare-name pipeline `stdout | stdin` through the fixed `/bin` VFS
+  lookup to `/bin/stdout` and `/bin/stdin`, then opens and reads both VFS
+  executables through the accepted loader, userspace launch/status,
+  descriptor-backed pipe handoff, lifecycle/status, and bounded process-table
+  path. Unit and QEMU/substitute evidence preserve pipeline byte flow,
+  distinct producer/consumer lifecycle records, waitpid observations,
+  laststatus, `/proc/talos/processes`, zero-argument `ps`, and pipestatus.
+  Mixed path/bare/exec forms, unsupported stage names, bare pipeline
+  arguments/redirections, and bare-name multistage pipelines fail closed
+  without successful process records. This is not POSIX PATH environment
+  compatibility, command lookup beyond the bounded `/bin` surface, arbitrary
+  shell grammar, unbounded pipelines, live networking/SSH, Pi 5 hardware
+  proof, generated-root command-input retry, or a phase transition.
+  selected_next_task is
+  phase12-local-bare-name-path-frontier-checkpoint-20260626.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

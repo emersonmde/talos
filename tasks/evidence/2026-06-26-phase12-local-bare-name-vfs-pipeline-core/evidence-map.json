@@ -1,0 +1,69 @@
+{
+  "task_id": "phase12-local-bare-name-vfs-pipeline-core-20260626",
+  "classification": "local-bare-name-vfs-pipeline-core-accepted",
+  "evidence": [
+    {
+      "level": "fmt/lint",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed after formatting"
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "result": "passed, including bare-name VFS pipeline and fail-closed controls"
+    },
+    {
+      "level": "QEMU/substitute",
+      "command": "scripts/qemu-local-shell-bare-name-vfs-pipeline-smoke.sh",
+      "result": "passed; transcript contains talos> stdout | stdin resolving /bin/stdout and /bin/stdin through vfs-open-read",
+      "path": "tasks/evidence/2026-06-26-phase12-local-bare-name-vfs-pipeline-core/qemu-local-shell-bare-name-vfs-pipeline-smoke.log"
+    },
+    {
+      "level": "QEMU/substitute regression",
+      "command": "scripts/qemu-local-shell-bare-name-vfs-command-smoke.sh",
+      "result": "passed"
+    },
+    {
+      "level": "QEMU/substitute regression",
+      "command": "scripts/qemu-local-shell-absolute-path-vfs-pipeline-smoke.sh",
+      "result": "passed"
+    },
+    {
+      "level": "QEMU/substitute regression",
+      "command": "scripts/qemu-local-shell-vfs-exec-smoke.sh",
+      "result": "passed"
+    },
+    {
+      "level": "QEMU/substitute regression",
+      "command": "scripts/qemu-local-shell-process-status-vfs-smoke.sh",
+      "result": "passed"
+    },
+    {
+      "level": "QEMU/substitute regression",
+      "command": "scripts/qemu-local-shell-pipeline-status-smoke.sh",
+      "result": "passed"
+    },
+    {
+      "level": "docs",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed; mdBook emitted the existing large-search-index warning"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty tasks/evidence/2026-06-26-phase12-local-bare-name-vfs-pipeline-core/classification.json tasks/evidence/2026-06-26-phase12-local-bare-name-vfs-pipeline-core/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "diff hygiene",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "staged diff hygiene",
+      "command": "git diff --cached --check",
+      "result": "passed before commit"
+    }
+  ],
+  "no_pi5_hardware_claim": true,
+  "live_network_ssh_status": "paused"
+}

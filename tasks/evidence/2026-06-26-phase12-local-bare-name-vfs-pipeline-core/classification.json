@@ -1,0 +1,32 @@
+{
+  "classification": "local-bare-name-vfs-pipeline-core-accepted",
+  "task_id": "phase12-local-bare-name-vfs-pipeline-core-20260626",
+  "evidence_level": [
+    "fmt/lint",
+    "unit tests",
+    "QEMU/substitute",
+    "static inspection",
+    "docs"
+  ],
+  "accepted_surface": {
+    "pipeline": "stdout | stdin",
+    "producer_resolved_path": "/bin/stdout",
+    "consumer_resolved_path": "/bin/stdin",
+    "resolution": "bounded /bin VFS lookup for each stage",
+    "execution_path": "VFS open/read -> accepted loader -> userspace launch/status -> descriptor-backed pipe handoff -> bounded process table"
+  },
+  "deferred_surface": [
+    "POSIX PATH environment compatibility",
+    "command lookup beyond the bounded /bin surface",
+    "mixed bare/path/exec pipeline forms",
+    "bare-name arguments and redirections",
+    "arbitrary shell grammar",
+    "unbounded pipelines",
+    "pipeline concurrency",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root command-input retry",
+    "phase transition"
+  ],
+  "hardware_claim": false
+}

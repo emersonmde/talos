@@ -9057,6 +9057,25 @@ phase12-local-bare-name-vfs-pipeline-core-20260626 because that queued bounded
 bare-name pipeline task is mechanically objective after this accepted direct
 bare-name command.
 
+phase12-local-bare-name-vfs-pipeline-core-20260626 accepts
+local-bare-name-vfs-pipeline-core. The local shell now accepts the bounded
+two-stage bare-name pipeline `stdout | stdin`; each stage resolves through
+the fixed `/bin` VFS lookup to `/bin/stdout` and `/bin/stdin`, then opens and
+reads the VFS executable through the accepted loader, userspace launch/status,
+descriptor-backed pipe handoff, lifecycle/status, and bounded process-table
+path. Unit and QEMU/substitute evidence preserve pipeline byte flow, distinct
+producer/consumer lifecycle records, explicit waitpid observations,
+laststatus, `/proc/talos/processes`, zero-argument `ps`, and pipestatus.
+Mixed path/bare/exec forms, unsupported stage names, bare pipeline
+arguments/redirections, and bare-name multistage pipelines fail closed
+without successful process records. This is not POSIX PATH environment
+compatibility, command lookup beyond the bounded `/bin` surface, arbitrary
+shell grammar, unbounded pipeline support, live networking/SSH, Pi 5 hardware
+proof, generated-root command-input retry, or a phase transition.
+selected_next_task is
+phase12-local-bare-name-path-frontier-checkpoint-20260626 because that queued
+checkpoint is mechanically objective after this accepted bare-name pipeline.
+
 phase12-local-vfs-exec-lifecycle-record-generalization-core-20260626
 accepts local-vfs-exec-lifecycle-record-generalization-core. This local
 POSIX/VFS/userspace continuation preserves the accepted

@@ -176,11 +176,16 @@ The first direct bare-name command is narrower than POSIX PATH. A shell input
 of status42 is resolved through the fixed bounded /bin lookup to /bin/status42
 and then follows the same VFS open/read, loader, userspace launch,
 lifecycle/status, waitpid, laststatus, /proc/talos/processes, and
-zero-argument ps path accepted for /bin/status42. Relative names with slashes,
-unsupported bare arguments/redirections, and the still-deferred bare pipeline
-form fail closed without successful process records. This does not accept
-environment-backed PATH compatibility, command lookup beyond the bounded /bin
-surface, arbitrary shell grammar, generated-root command-input retry, live
+zero-argument ps path accepted for /bin/status42. The first bare-name pipeline
+is equally bounded: `stdout | stdin` resolves each stage through the fixed
+/bin lookup to /bin/stdout and /bin/stdin before using the accepted VFS
+open/read, loader, userspace launch/status, descriptor-backed pipe handoff,
+and bounded process-table path. Relative names with slashes, unsupported bare
+arguments/redirections, mixed bare/path/exec pipeline forms, unsupported
+stage names, and bare-name multistage pipelines fail closed without
+successful process records. This does not accept environment-backed PATH
+compatibility, command lookup beyond the bounded /bin surface, arbitrary shell
+grammar, unbounded pipelines, generated-root command-input retry, live
 networking/SSH, Pi 5 hardware proof, or a phase transition.
 
 ## Scheduler Implications

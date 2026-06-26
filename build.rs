@@ -878,6 +878,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[],
     },
     BootScenario {
+        value: "qemu_local_shell_bare_name_vfs_pipeline",
+        implied_values: &["qemu_local_serial_command_loop"],
+        asm_defines: &[],
+    },
+    BootScenario {
         value: "qemu_local_shell_literal_argv",
         implied_values: &["qemu_local_serial_command_loop"],
         asm_defines: &[],
