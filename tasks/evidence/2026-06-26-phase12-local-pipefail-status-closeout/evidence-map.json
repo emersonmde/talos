@@ -1,0 +1,66 @@
+{
+  "task_id": "phase12-local-pipefail-status-closeout-20260626",
+  "classification": "local-pipeline-status-closeout-accepted",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "path": "tasks/2026-06-26-phase12-local-pipefail-status-core.md",
+      "summary": "Core task record accepts the bounded pipestatus surface, lists findings, accepted behavior, deferred frontier, and validation."
+    },
+    {
+      "level": "static inspection",
+      "path": "tasks/evidence/2026-06-26-phase12-local-pipefail-status-core/classification.json",
+      "summary": "Core classification records accepted participant status observation, nonzero producer status, preserved default pipeline status, and deferred surfaces."
+    },
+    {
+      "level": "static inspection",
+      "path": "tasks/evidence/2026-06-26-phase12-local-pipefail-status-core/evidence-map.json",
+      "summary": "Core evidence map cites focused unit tests, QEMU/substitute pipeline-status transcript, regression evidence, and docs."
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-26-phase12-local-pipefail-status-core/qemu-local-shell-pipeline-status-smoke.log",
+      "summary": "Transcript records no-prior-pipeline behavior, zero-status two-stage pipeline, nonzero status42 producer case, preserved final-stage laststatus, three-stage pipeline participants, and PASS classification."
+    },
+    {
+      "level": "static inspection",
+      "path": "tasks/2026-06-26-phase12-local-multistage-pipeline-closeout.md",
+      "summary": "Multistage closeout records the accepted exact three-stage pipeline frontier that pipestatus observes."
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-26-phase12-local-process-status-vfs-core/qemu-local-shell-process-status-vfs-smoke.log",
+      "summary": "Process-status VFS regression remains retained for the bounded /proc/talos/processes surface."
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-26-phase12-local-ps-command-vfs-backed-core/qemu-local-shell-ps-command-vfs-smoke.log",
+      "summary": "VFS-backed ps regression remains retained for zero-argument ps over /proc/talos/processes."
+    },
+    {
+      "level": "static inspection",
+      "path": "docs/src/roadmap.md",
+      "summary": "Roadmap records the pipeline-status closeout and selected dependency-gated local pipeline frontier checkpoint."
+    },
+    {
+      "level": "static inspection",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "summary": "Phase 12 project notes record the local-only pipeline-status closeout and keep live networking/SSH paused."
+    },
+    {
+      "level": "static inspection",
+      "path": "docs/src/project/early-posix-shape.md",
+      "summary": "Early POSIX notes already record the bounded pipestatus shape; closeout does not change process/wait/status semantics."
+    }
+  ],
+  "validation": [
+    "static inspection of retained core task record, classification, evidence map, QEMU/substitute transcript paths, multistage closeout, roadmap, Phase 12 project notes, and early POSIX notes",
+    "jq empty tasks/evidence/2026-06-26-phase12-local-pipefail-status-closeout/classification.json tasks/evidence/2026-06-26-phase12-local-pipefail-status-closeout/evidence-map.json",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "git diff --cached --check"
+  ],
+  "selected_next_task": "phase12-local-pipeline-frontier-checkpoint-20260626",
+  "hardware_claim": false,
+  "live_network_ssh_paused": true
+}

@@ -18375,6 +18375,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   pipelines, scheduler concurrency, fork/signals, process groups/sessions, live
   networking, SSH, Pi 5 hardware proof, and phase transition remain deferred.
   selected_next_task is phase12-local-pipefail-status-closeout-20260626.
+- phase12-local-pipefail-status-closeout-20260626 accepts
+  local-pipeline-status-closeout-accepted. The closeout maps the bounded
+  `pipestatus` surface to the retained core task record, classification,
+  evidence map, QEMU/substitute transcript, multistage pipeline closeout,
+  process-status VFS regression, and VFS-backed `ps` regression. The accepted
+  boundary remains a process-table-backed status observation over exact
+  two-stage and accepted three-stage local pipelines. Default pipeline status
+  remains final-stage status, `laststatus` remains the latest-process
+  lifecycle observation, and `pipefail-status` remains explicitly
+  `bounded-observation-not-posix-shell`. selected_next_task is
+  phase12-local-pipeline-frontier-checkpoint-20260626 because the queued local
+  pipeline frontier checkpoint is mechanically objective after the accepted
+  multistage and pipeline-status closeouts. POSIX shell compatibility,
+  arbitrary shell grammar, unbounded pipelines, pipeline concurrency,
+  scheduler concurrency, fork/signals, process groups/sessions, broad
+  procfs/Linux `ps`, persistent storage, live networking, SSH, Pi 5 hardware
+  proof, generated-root command-input retry, and phase transition remain
+  deferred.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

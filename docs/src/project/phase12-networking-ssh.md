@@ -9302,6 +9302,24 @@ Linux `ps`, persistent storage, live networking, SSH, Pi 5 hardware proof, and
 phase transition remain deferred. selected_next_task is
 phase12-local-pipefail-status-closeout-20260626.
 
+phase12-local-pipefail-status-closeout-20260626 accepts
+local-pipeline-status-closeout-accepted. The closeout reconciles the bounded
+`pipestatus` surface against the retained core task record, classification,
+evidence map, QEMU/substitute transcript, multistage pipeline closeout,
+process-status VFS regression, and VFS-backed `ps` regression. The accepted
+boundary remains local-only and process-table-backed: exact two-stage
+pipelines, the accepted three-stage pipeline, and the bounded nonzero producer
+case `exec status42 | exec stdin` expose participant statuses while default
+pipeline status remains the final stage. `laststatus` remains the latest
+process lifecycle observation, and `pipefail-status` remains a labeled
+`bounded-observation-not-posix-shell` field. selected_next_task is
+phase12-local-pipeline-frontier-checkpoint-20260626. POSIX shell
+compatibility, arbitrary shell grammar, unbounded pipelines, pipeline
+concurrency, scheduler concurrency, fork/signals, process groups/sessions,
+public procfs or Linux `ps`, persistent storage, live networking, SSH, Pi 5
+hardware proof, generated-root command-input retry, and phase transition
+remain deferred.
+
 phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624 accepts
 the live reachability source reconciliation as
 live-reachability-source-reconciliation-paused-no-defensible-discriminator.

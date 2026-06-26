@@ -1,0 +1,34 @@
+{
+  "task_id": "phase12-local-pipefail-status-closeout-20260626",
+  "classification": "local-pipeline-status-closeout-accepted",
+  "accepted": [
+    "static closeout of bounded pipestatus observation surface",
+    "retained participant status evidence for exact two-stage pipelines",
+    "retained nonzero producer evidence for exec status42 | exec stdin",
+    "retained participant status evidence for accepted three-stage pipeline",
+    "preserved default final-stage pipeline status and laststatus behavior"
+  ],
+  "deferred": [
+    "POSIX shell compatibility",
+    "set -o pipefail",
+    "arbitrary shell grammar",
+    "unbounded or arbitrary-length pipelines",
+    "pipeline concurrency",
+    "scheduler concurrency",
+    "fork/signals",
+    "process groups/sessions",
+    "waitpid options",
+    "broad procfs or Linux ps compatibility",
+    "public process enumeration ABI",
+    "PID policy expansion",
+    "persistent storage",
+    "live networking",
+    "SSH",
+    "Pi 5 hardware proof",
+    "generated-root command-input retry",
+    "phase transition"
+  ],
+  "selected_next_task": "phase12-local-pipeline-frontier-checkpoint-20260626",
+  "hardware_claim": false,
+  "live_network_ssh_paused": true
+}
