@@ -210,11 +210,12 @@ records argc=3, argv0=/bin/status42, argv1=alpha, argv2=beta, an empty envp,
 inherited standard descriptors, and a closed loader temporary descriptor.
 No-argument direct path commands, bare-name commands, bare-name pipelines,
 exec-prefixed literal argv, process-status VFS, zero-argument 'ps', and
-'pipestatus' remain regression surfaces. Bare-name argv, pipeline stage argv,
+'pipestatus' remain regression surfaces. The direct argv closeout reconciles
+that surface and selects bounded bare-name argv as the next objective local
+step through the accepted fixed /bin lookup policy. Pipeline stage argv,
 redirections, environment-backed PATH, arbitrary shell grammar, unbounded
 pipelines, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
-phase transition remain deferred pending the direct argv closeout and
-supervisor planning.
+phase transition remain deferred pending supervisor planning.
 
 ## Scheduler Implications
 
