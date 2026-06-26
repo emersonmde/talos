@@ -50,7 +50,7 @@ The file intentionally has no Linux procfs compatibility promise. Field names an
 - passed: `jq empty tasks/evidence/2026-06-26-phase12-local-process-status-vfs-core/classification.json tasks/evidence/2026-06-26-phase12-local-process-status-vfs-core/evidence-map.json`
 - passed: `git diff --check`
 - passed: `/home/node/.cargo/bin/mdbook build`
-- pending: `git diff --cached --check`
+- passed: `git diff --cached --check`
 
 ## Result
 

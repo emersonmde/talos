@@ -46,6 +46,11 @@
       "kind": "diff hygiene",
       "command": "git diff --check",
       "summary": "Passed unstaged diff whitespace check before staging."
+    },
+    {
+      "kind": "diff hygiene",
+      "command": "git diff --cached --check",
+      "summary": "Passed staged diff whitespace check before commit."
     }
   ],
   "docs": [
