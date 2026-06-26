@@ -50,6 +50,7 @@ SHELL_BACKGROUND_VFS_EXEC_LIFECYCLE_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL
 SHELL_JOBS_ACCOUNTING_LIST_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_JOBS_ACCOUNTING_LIST_SMOKE:-0}"
 SHELL_MULTIPLE_BACKGROUND_JOBS_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_MULTIPLE_BACKGROUND_JOBS_SMOKE:-0}"
 SHELL_BACKGROUND_JOBS_STALE_ENTRY_POLICY_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_BACKGROUND_JOBS_STALE_ENTRY_POLICY_SMOKE:-0}"
+SHELL_WAITPID_ANY_COMPLETED_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_WAITPID_ANY_COMPLETED_SMOKE:-0}"
 SHELL_GENERATED_USERLAND_MANIFEST_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_GENERATED_USERLAND_MANIFEST_SMOKE:-0}"
 GENERATED_ROOT_ARTIFACT="${TALOS_QEMU_LOCAL_COMMAND_LOOP_GENERATED_ROOT_ARTIFACT:-}"
 GENERATED_ROOT_EXPECTED_SOURCE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_GENERATED_ROOT_EXPECTED_SOURCE:-compiled-fallback}"
@@ -315,6 +316,35 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
             command_index="${BASH_REMATCH[1]}"
             if [ "$sent" -eq "$command_index" ] && [ "$command_index" -lt "${#generated_userland_manifest_commands[@]}" ]; then
                 printf '%s\r' "${generated_userland_manifest_commands[$command_index]}" >&3
+                sent=$((command_index + 1))
+            fi
+            continue
+        fi
+        if [ "$SHELL_WAITPID_ANY_COMPLETED_SMOKE" -eq 1 ] && [[ "$line" =~ ready\ command=([0-9]+) ]]; then
+            waitpid_any_completed_commands=(
+                "help"
+                "status"
+                "stdio"
+                "waitpid"
+                "exec /bin/status42"
+                "waitpid"
+                "waitpid"
+                "laststatus"
+                "exec stdout | exec stdin"
+                "waitpid"
+                "waitpid 0x100001"
+                "waitpid 0x100002"
+                "exec /bin/status42 &"
+                "waitpid"
+                "jobs"
+                "exec /bin/zero &"
+                "cat /etc/banner.txt"
+                "jobs"
+                "jobs"
+            )
+            command_index="${BASH_REMATCH[1]}"
+            if [ "$sent" -eq "$command_index" ] && [ "$command_index" -lt "${#waitpid_any_completed_commands[@]}" ]; then
+                printf '%s\r' "${waitpid_any_completed_commands[$command_index]}" >&3
                 sent=$((command_index + 1))
             fi
             continue
@@ -1287,6 +1317,22 @@ if [ "$SHELL_GENERATED_USERLAND_MANIFEST_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=13" "$LOG_FILE"
     grep -q "$LABEL: ready command=14" "$LOG_FILE"
 fi
+if [ "$SHELL_WAITPID_ANY_COMPLETED_SMOKE" -eq 1 ]; then
+    grep -q "$LABEL: ready command=5" "$LOG_FILE"
+    grep -q "$LABEL: ready command=6" "$LOG_FILE"
+    grep -q "$LABEL: ready command=7" "$LOG_FILE"
+    grep -q "$LABEL: ready command=8" "$LOG_FILE"
+    grep -q "$LABEL: ready command=9" "$LOG_FILE"
+    grep -q "$LABEL: ready command=10" "$LOG_FILE"
+    grep -q "$LABEL: ready command=11" "$LOG_FILE"
+    grep -q "$LABEL: ready command=12" "$LOG_FILE"
+    grep -q "$LABEL: ready command=13" "$LOG_FILE"
+    grep -q "$LABEL: ready command=14" "$LOG_FILE"
+    grep -q "$LABEL: ready command=15" "$LOG_FILE"
+    grep -q "$LABEL: ready command=16" "$LOG_FILE"
+    grep -q "$LABEL: ready command=17" "$LOG_FILE"
+    grep -q "$LABEL: ready command=18" "$LOG_FILE"
+fi
 if [ "$CD_FIXED_DIRS_SMOKE" -eq 1 ] || [ "$LS_CWD_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=7" "$LOG_FILE"
     grep -q "$LABEL: ready command=8" "$LOG_FILE"
@@ -2236,6 +2282,27 @@ elif [ "$SHELL_STDOUT_SMOKE" -eq 1 ]; then
     grep -q "talos> cat /etc/banner.txt" "$LOG_FILE"
     grep -q "^Talos initramfs fixture" "$LOG_FILE"
     grep -q "$LABEL: final participants=18 expected=18 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+elif [ "$SHELL_WAITPID_ANY_COMPLETED_SMOKE" -eq 1 ]; then
+    grep -q "talos> waitpid" "$LOG_FILE"
+    grep -q "talos: waitpid no-child source=lifecycle-record" "$LOG_FILE"
+    grep -q "talos> exec /bin/status42" "$LOG_FILE"
+    grep -q "talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=5 status=handled responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=6 status=handled responses=1" "$LOG_FILE"
+    grep -q "talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -q "talos> exec stdout | exec stdin" "$LOG_FILE"
+    grep -q "talos: pipeline-lifecycle-status record=phase12-local-pipeline-distinct-process-lifecycle-status-record-v1 pipeline=0x0000000000000001 producer-pid=0x0000000000100001 producer-path=/bin/stdout producer-state=exited producer-status=0x0000000000000000 producer-observed-status=0x0000000000000000 producer-reaped=true consumer-pid=0x0000000000100002 consumer-path=/bin/stdin consumer-state=exited consumer-status=0x0000000000000000 consumer-observed-status=0x0000000000000000 consumer-reaped=true source=kernel-owned-pipeline-lifecycle-status-record" "$LOG_FILE"
+    grep -q "talos: waitpid pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -q "talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=explicit-pid-lifecycle-record" "$LOG_FILE"
+    grep -q "talos: waitpid no-child pid=0x0000000000100002 source=explicit-pid-lifecycle-record" "$LOG_FILE"
+    grep -q "talos> exec /bin/status42 &" "$LOG_FILE"
+    grep -q "talos: background-job id=0x0000000000000001 pid=0x0000000000100001 command=/bin/status42 state=completed status=0x000000000000002a observed-status=0x000000000000002a reaped=true shell-responsive=observed source=background-vfs-exec-accounting" "$LOG_FILE"
+    grep -q "talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=background-job-lifecycle-record" "$LOG_FILE"
+    grep -q "talos: jobs none source=background-vfs-exec-accounting" "$LOG_FILE"
+    grep -q "talos> exec /bin/zero &" "$LOG_FILE"
+    grep -q "talos: background-job id=0x0000000000000002 pid=0x0000000000100002 command=/bin/zero state=completed status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true shell-responsive=observed source=background-vfs-exec-accounting" "$LOG_FILE"
+    grep -q "talos: jobs id=0x0000000000000002 pid=0x0000000000100002 command=/bin/zero state=completed status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=background-vfs-exec-accounting" "$LOG_FILE"
+    grep -q "$LABEL: final participants=19 expected=19 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
 elif [ "$SHELL_WAITPID_SMOKE" -eq 1 ]; then
     grep -q "talos> waitpid" "$LOG_FILE"
     grep -q "talos: waitpid no-child source=lifecycle-record" "$LOG_FILE"

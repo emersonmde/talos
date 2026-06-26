@@ -43,7 +43,7 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+shell-sockdiag-vfs-userspace-cross-process-local-socket",
     "+shell-sockdiag-vfs-userspace-smoltcp-tcp",
     "+pipeline-distinct-serialized-process-identities",
-    "+explicit-pid-wait-status-observation"
+    "+explicit-pid-wait-status-observation+waitpid-completed-child-observation"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -1141,6 +1141,13 @@ pub trait LocalCommandSink {
 
     fn wait_process_lifecycle_record(&mut self) -> Option<LocalCommandProcessLifecycleRecord> {
         None
+    }
+
+    fn wait_process_lifecycle_record_with_source(
+        &mut self,
+    ) -> Option<(LocalCommandProcessLifecycleRecord, &'static str)> {
+        self.wait_process_lifecycle_record()
+            .map(|record| (record, "lifecycle-record"))
     }
 
     fn wait_process_lifecycle_record_by_pid(
@@ -3803,6 +3810,32 @@ where
         self.waitable_process.take()
     }
 
+    fn wait_process_lifecycle_record_with_source(
+        &mut self,
+    ) -> Option<(LocalCommandProcessLifecycleRecord, &'static str)> {
+        if let Some(record) = self.waitable_process.take() {
+            for explicit in &mut self.explicit_wait_records {
+                if explicit
+                    .map(|candidate| candidate.process_id == record.process_id)
+                    .unwrap_or(false)
+                {
+                    *explicit = None;
+                }
+            }
+            return Some((record, "lifecycle-record"));
+        }
+        for slot in &mut self.background_jobs {
+            let Some(job) = *slot else {
+                continue;
+            };
+            if job.state == LocalCommandBackgroundJobState::Completed && job.reaped {
+                *slot = None;
+                return Some((job.lifecycle, "background-job-lifecycle-record"));
+            }
+        }
+        None
+    }
+
     fn wait_process_lifecycle_record_by_pid(
         &mut self,
         process_id: u64,
@@ -6187,9 +6220,9 @@ fn dispatch_local_command(
                     }
                 }
             }
-            match sink.wait_process_lifecycle_record() {
-                Some(record) => {
-                    write_waitpid_status_line(sink, responses, record)?;
+            match sink.wait_process_lifecycle_record_with_source() {
+                Some((record, source)) => {
+                    write_waitpid_status_line_with_source(sink, responses, record, source)?;
                     Ok(LocalCommandStatus::Handled)
                 }
                 None => {
@@ -7719,14 +7752,6 @@ fn write_last_process_status_line(
     write_str_part(sink, if lifecycle.reaped { "true" } else { "false" })?;
     write_str_part(sink, " source=lifecycle-record")?;
     finish_dynamic_line(sink, response_lines)
-}
-
-fn write_waitpid_status_line(
-    sink: &mut impl LocalCommandSink,
-    response_lines: &mut usize,
-    lifecycle: LocalCommandProcessLifecycleRecord,
-) -> Result<(), LocalCommandCycleError> {
-    write_waitpid_status_line_with_source(sink, response_lines, lifecycle, "lifecycle-record")
 }
 
 fn write_waitpid_status_line_with_source(

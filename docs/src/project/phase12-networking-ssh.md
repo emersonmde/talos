@@ -9066,6 +9066,23 @@ scheduler concurrency, waitpid options, pid reuse/zombie policy, multi-stage
 pipelines, pipefail, fork/signals, live networking, SSH, Pi 5 hardware proof,
 or phase transition.
 
+phase12-local-waitpid-any-completed-child-observation-core-20260626 accepts
+local-waitpid-any-completed-child-observation-core. No-argument waitpid now
+consumes exactly one accepted completed-child lifecycle/status record from the
+local shell surface: direct foreground VFS exec, exact two-stage pipeline
+consumer, or a completed background job. The retained QEMU/substitute evidence
+proves exec /bin/status42 -> waitpid status 0x2a with repeated no-child,
+exec stdout | exec stdin -> no-argument waitpid of consumer pid 0x100002 while
+explicit waitpid 0x100001 still observes the producer, explicit waitpid
+0x100002 returns no-child after consumer consumption, and exec /bin/status42 &
+-> no-argument waitpid through source=background-job-lifecycle-record with jobs
+none afterward. Unconsumed background jobs remain visible through jobs
+accounting, laststatus remains non-consuming, and direct/pipeline/background
+explicit-pid waitpid regressions remain passing. This is not POSIX waitpid
+completeness and does not accept broad process tables, scheduler concurrency,
+waitpid options, pid reuse/zombie policy, multi-stage pipelines, pipefail,
+fork/signals, live networking, SSH, Pi 5 hardware proof, or phase transition.
+
 phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624 accepts
 the live reachability source reconciliation as
 live-reachability-source-reconciliation-paused-no-defensible-discriminator.
