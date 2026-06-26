@@ -18098,6 +18098,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   broader descriptor grammar, file/device semantics, persistent filesystem
   semantics, live networking, SSH, Pi 5 hardware proof, and phase transition
   remain deferred pending supervisor planning.
+- phase12-local-pipeline-distinct-process-identity-core-20260626 accepts the
+  bounded local pipeline process-identity refinement. The accepted exact
+  two-stage forms now emit the versioned
+  'phase12-local-pipeline-distinct-process-lifecycle-status-record-v1' record
+  with distinct serialized producer and consumer pids: producer '0x100001' and
+  consumer '0x100002', while preserving each role's path, exited state, zero
+  status/observed-status, and reaped flag. Consumer 'waitpid' and 'laststatus'
+  remain the shell status observation for the bounded pipeline form; producer
+  status remains visible only through the pipeline-local accounting record. This
+  does not accept concurrent scheduling, multi-stage pipelines, pipefail, broad
+  process tables, pid reuse policy, process groups/sessions, fork/signals,
+  descriptor grammar expansion, live networking, SSH, Pi 5 hardware proof, or
+  a phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

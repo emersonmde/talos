@@ -41,7 +41,8 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+shell-sockdiag-vfs-userspace-socket-readiness-poll",
     "+shell-sockdiag-vfs-userspace-socket-blocking-poll-wait",
     "+shell-sockdiag-vfs-userspace-cross-process-local-socket",
-    "+shell-sockdiag-vfs-userspace-smoltcp-tcp"
+    "+shell-sockdiag-vfs-userspace-smoltcp-tcp",
+    "+pipeline-distinct-serialized-process-identities"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -73,6 +74,8 @@ const LOCAL_COMMAND_STDERR_USER_BASE: u64 = 0x0000_0000_0014_0000;
 const LOCAL_COMMAND_STDERR_USER_MEMORY_LEN: usize = 128;
 const LOCAL_COMMAND_EXEC_ADDRESS_SPACE_ID: u64 = 0x0010_0001;
 const LOCAL_COMMAND_EXEC_PROCESS_ID: u64 = 0x0010_0001;
+const LOCAL_COMMAND_PIPELINE_PRODUCER_PROCESS_ID: u64 = LOCAL_COMMAND_EXEC_PROCESS_ID;
+const LOCAL_COMMAND_PIPELINE_CONSUMER_PROCESS_ID: u64 = LOCAL_COMMAND_EXEC_PROCESS_ID + 1;
 const LOCAL_COMMAND_BACKGROUND_JOB_CAPACITY: usize = 2;
 const LOCAL_COMMAND_BACKGROUND_JOB_FIRST_ID: u64 = 0x0000_0001;
 const LOCAL_COMMAND_EXEC_TEMP_DESCRIPTOR: usize = posix::STDERR_FD + 1;
@@ -653,7 +656,8 @@ pub struct LocalCommandPipelineLifecycleStatusRecord {
 }
 
 impl LocalCommandPipelineLifecycleStatusRecord {
-    const IDENTITY: &'static str = "phase12-local-pipeline-dual-lifecycle-status-record-v1";
+    const IDENTITY: &'static str =
+        "phase12-local-pipeline-distinct-process-lifecycle-status-record-v1";
 
     const fn from_pipeline(
         pipe_id: usize,
@@ -3826,7 +3830,10 @@ where
         let producer = self.exec_vfs_program(request.producer);
         self.pipe.close_writer();
         self.restore_pipe_endpoint(posix::STDOUT_FD, stdout_restore)?;
-        let producer = producer?;
+        let mut producer = producer?;
+        producer.lifecycle = producer
+            .lifecycle
+            .with_process_id(LOCAL_COMMAND_PIPELINE_PRODUCER_PROCESS_ID);
 
         let stdin_restore =
             self.install_pipe_endpoint(posix::STDIN_FD, posix::DescriptorAccess::ReadOnly)?;
@@ -3835,7 +3842,12 @@ where
             .exec_vfs_program_with_policy(request.consumer, consumer_output_redirection_supported);
         self.pipe.close_reader();
         self.restore_pipe_endpoint(posix::STDIN_FD, stdin_restore)?;
-        let consumer = consumer?;
+        let mut consumer = consumer?;
+        consumer.lifecycle = consumer
+            .lifecycle
+            .with_process_id(LOCAL_COMMAND_PIPELINE_CONSUMER_PROCESS_ID);
+        self.last_process = Some(consumer.lifecycle);
+        self.waitable_process = Some(consumer.lifecycle);
         let pipe_source = match (request.producer.redirection, request.consumer.redirection) {
             (None, Some(LocalCommandExecRedirection::StdoutToTmpStdout(_))) => {
                 "shell-pipe-consumer-stdout-redirection"
@@ -9772,7 +9784,7 @@ talos> talos: exec-invalid-path\n"
             "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-to-stdin\n"
         ));
         assert!(output.contains(
-            "talos: pipeline-lifecycle-status record=phase12-local-pipeline-dual-lifecycle-status-record-v1 pipeline=0x0000000000000001 producer-pid=0x0000000000100001 producer-path=/bin/stdout producer-state=exited producer-status=0x0000000000000000 producer-observed-status=0x0000000000000000 producer-reaped=true consumer-pid=0x0000000000100001 consumer-path=/bin/stdin consumer-state=exited consumer-status=0x0000000000000000 consumer-observed-status=0x0000000000000000 consumer-reaped=true source=kernel-owned-pipeline-lifecycle-status-record\n"
+            "talos: pipeline-lifecycle-status record=phase12-local-pipeline-distinct-process-lifecycle-status-record-v1 pipeline=0x0000000000000001 producer-pid=0x0000000000100001 producer-path=/bin/stdout producer-state=exited producer-status=0x0000000000000000 producer-observed-status=0x0000000000000000 producer-reaped=true consumer-pid=0x0000000000100002 consumer-path=/bin/stdin consumer-state=exited consumer-status=0x0000000000000000 consumer-observed-status=0x0000000000000000 consumer-reaped=true source=kernel-owned-pipeline-lifecycle-status-record\n"
         ));
         assert!(output.contains(
             "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=pipe-endpoint fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
@@ -9790,10 +9802,10 @@ talos> talos: exec-invalid-path\n"
             "talos: exec-stdin fd=0x0000000000000000 bytes=0x000000000000001f return=0x000000000000001f read-source=pipe:stdout-to-stdin stdout-fd=0x0000000000000001 stdout-bytes=0x0000000000000044 stdout-return=0x0000000000000044 source=userspace-talos-read+userspace-talos-write read-result=pipe-eof-after-writer-close\n"
         ));
         assert!(output.contains(
-            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+            "talos> talos: waitpid pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
         ));
         assert!(output.contains(
-            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+            "talos> talos: last-process pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
         ));
     }
 
@@ -9823,7 +9835,7 @@ talos> talos: exec-invalid-path\n"
             "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stderr consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x0000000000000000 bytes-read=0x0000000000000000 writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-only-stderr-not-piped\n"
         ));
         assert!(output.contains(
-            "talos: pipeline-lifecycle-status record=phase12-local-pipeline-dual-lifecycle-status-record-v1 pipeline=0x0000000000000001 producer-pid=0x0000000000100001 producer-path=/bin/stderr producer-state=exited producer-status=0x0000000000000000 producer-observed-status=0x0000000000000000 producer-reaped=true consumer-pid=0x0000000000100001 consumer-path=/bin/stdin consumer-state=exited consumer-status=0x0000000000000000 consumer-observed-status=0x0000000000000000 consumer-reaped=true source=kernel-owned-pipeline-lifecycle-status-record\n"
+            "talos: pipeline-lifecycle-status record=phase12-local-pipeline-distinct-process-lifecycle-status-record-v1 pipeline=0x0000000000000001 producer-pid=0x0000000000100001 producer-path=/bin/stderr producer-state=exited producer-status=0x0000000000000000 producer-observed-status=0x0000000000000000 producer-reaped=true consumer-pid=0x0000000000100002 consumer-path=/bin/stdin consumer-state=exited consumer-status=0x0000000000000000 consumer-observed-status=0x0000000000000000 consumer-reaped=true source=kernel-owned-pipeline-lifecycle-status-record\n"
         ));
         assert!(output.contains(
             "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=pipe-endpoint fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
@@ -9837,10 +9849,10 @@ talos> talos: exec-invalid-path\n"
             "talos: exec-stdin fd=0x0000000000000000 bytes=0x0000000000000000 return=0x0000000000000000 read-source=pipe:stdout-to-stdin stdout-fd=0x0000000000000001 stdout-bytes=0x000000000000003c stdout-return=0x000000000000003c source=userspace-talos-read+userspace-talos-write read-result=pipe-eof/no-data\n"
         ));
         assert!(output.contains(
-            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+            "talos> talos: waitpid pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
         ));
         assert!(output.contains(
-            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+            "talos> talos: last-process pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
         ));
     }
 
@@ -9877,7 +9889,7 @@ talos> talos: exec-invalid-path\n"
             "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stderr consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stderr-dup-to-stdout\n"
         ));
         assert!(output.contains(
-            "talos: pipeline-lifecycle-status record=phase12-local-pipeline-dual-lifecycle-status-record-v1 pipeline=0x0000000000000001 producer-pid=0x0000000000100001 producer-path=/bin/stderr producer-state=exited producer-status=0x0000000000000000 producer-observed-status=0x0000000000000000 producer-reaped=true consumer-pid=0x0000000000100001 consumer-path=/bin/stdin consumer-state=exited consumer-status=0x0000000000000000 consumer-observed-status=0x0000000000000000 consumer-reaped=true source=kernel-owned-pipeline-lifecycle-status-record\n"
+            "talos: pipeline-lifecycle-status record=phase12-local-pipeline-distinct-process-lifecycle-status-record-v1 pipeline=0x0000000000000001 producer-pid=0x0000000000100001 producer-path=/bin/stderr producer-state=exited producer-status=0x0000000000000000 producer-observed-status=0x0000000000000000 producer-reaped=true consumer-pid=0x0000000000100002 consumer-path=/bin/stdin consumer-state=exited consumer-status=0x0000000000000000 consumer-observed-status=0x0000000000000000 consumer-reaped=true source=kernel-owned-pipeline-lifecycle-status-record\n"
         ));
         assert!(output.contains(
             "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=pipe-endpoint fd2=pipe-endpoint loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
@@ -9895,10 +9907,10 @@ talos> talos: exec-invalid-path\n"
             "talos: exec-stdin fd=0x0000000000000000 bytes=0x000000000000001f return=0x000000000000001f read-source=pipe:stdout-to-stdin stdout-fd=0x0000000000000001 stdout-bytes=0x0000000000000044 stdout-return=0x0000000000000044 source=userspace-talos-read+userspace-talos-write read-result=pipe-eof-after-writer-close\n"
         ));
         assert!(output.contains(
-            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+            "talos> talos: waitpid pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
         ));
         assert!(output.contains(
-            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+            "talos> talos: last-process pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
         ));
         assert!(output.contains(
             "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stderr consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x0000000000000000 bytes-read=0x0000000000000000 writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-only-stderr-not-piped\n"
@@ -9941,7 +9953,7 @@ talos> talos: exec-invalid-path\n"
             "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x0000000000000000 bytes-read=0x0000000000000000 writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-redirect-away\n"
         ));
         assert!(output.contains(
-            "talos: pipeline-lifecycle-status record=phase12-local-pipeline-dual-lifecycle-status-record-v1 pipeline=0x0000000000000001 producer-pid=0x0000000000100001 producer-path=/bin/stdout producer-state=exited producer-status=0x0000000000000000 producer-observed-status=0x0000000000000000 producer-reaped=true consumer-pid=0x0000000000100001 consumer-path=/bin/stdin consumer-state=exited consumer-status=0x0000000000000000 consumer-observed-status=0x0000000000000000 consumer-reaped=true source=kernel-owned-pipeline-lifecycle-status-record\n"
+            "talos: pipeline-lifecycle-status record=phase12-local-pipeline-distinct-process-lifecycle-status-record-v1 pipeline=0x0000000000000001 producer-pid=0x0000000000100001 producer-path=/bin/stdout producer-state=exited producer-status=0x0000000000000000 producer-observed-status=0x0000000000000000 producer-reaped=true consumer-pid=0x0000000000100002 consumer-path=/bin/stdin consumer-state=exited consumer-status=0x0000000000000000 consumer-observed-status=0x0000000000000000 consumer-reaped=true source=kernel-owned-pipeline-lifecycle-status-record\n"
         ));
         assert!(output.contains(
             "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
@@ -9957,10 +9969,10 @@ talos> talos: exec-invalid-path\n"
             "talos: exec-stdin fd=0x0000000000000000 bytes=0x0000000000000000 return=0x0000000000000000 read-source=pipe:stdout-to-stdin stdout-fd=0x0000000000000001 stdout-bytes=0x000000000000003c stdout-return=0x000000000000003c source=userspace-talos-read+userspace-talos-write read-result=pipe-eof/no-data\n"
         ));
         assert!(output.contains(
-            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+            "talos> talos: waitpid pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
         ));
         assert!(output.contains(
-            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+            "talos> talos: last-process pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
         ));
         assert!(output.contains(
             "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stderr consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stderr-dup-to-stdout\n"
@@ -10023,7 +10035,7 @@ talos> talos: exec-invalid-path\n"
             "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-consumer-stdout-redirection\n"
         ));
         assert!(output.contains(
-            "talos: pipeline-lifecycle-status record=phase12-local-pipeline-dual-lifecycle-status-record-v1 pipeline=0x0000000000000001 producer-pid=0x0000000000100001 producer-path=/bin/stdout producer-state=exited producer-status=0x0000000000000000 producer-observed-status=0x0000000000000000 producer-reaped=true consumer-pid=0x0000000000100001 consumer-path=/bin/stdin consumer-state=exited consumer-status=0x0000000000000000 consumer-observed-status=0x0000000000000000 consumer-reaped=true source=kernel-owned-pipeline-lifecycle-status-record\n"
+            "talos: pipeline-lifecycle-status record=phase12-local-pipeline-distinct-process-lifecycle-status-record-v1 pipeline=0x0000000000000001 producer-pid=0x0000000000100001 producer-path=/bin/stdout producer-state=exited producer-status=0x0000000000000000 producer-observed-status=0x0000000000000000 producer-reaped=true consumer-pid=0x0000000000100002 consumer-path=/bin/stdin consumer-state=exited consumer-status=0x0000000000000000 consumer-observed-status=0x0000000000000000 consumer-reaped=true source=kernel-owned-pipeline-lifecycle-status-record\n"
         ));
         assert!(output.contains(
             "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=pipe-endpoint fd1=regular-file fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
@@ -10041,10 +10053,10 @@ talos> talos: exec-invalid-path\n"
             "talos: cat path=/tmp/pipe-consumer.txt bytes=0x0000000000000044 source=volatile-vfs-descriptor-read\n"
         ));
         assert!(output.contains(
-            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+            "talos> talos: waitpid pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
         ));
         assert!(output.contains(
-            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+            "talos> talos: last-process pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
         ));
         assert!(output.contains(
             "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-to-stdin\n"
@@ -10104,7 +10116,7 @@ talos> talos: exec-invalid-path\n"
             "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x0000000000000000 bytes-read=0x0000000000000000 writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-producer-file-redirection-away\n"
         ));
         assert!(output.contains(
-            "talos: pipeline-lifecycle-status record=phase12-local-pipeline-dual-lifecycle-status-record-v1 pipeline=0x0000000000000001 producer-pid=0x0000000000100001 producer-path=/bin/stdout producer-state=exited producer-status=0x0000000000000000 producer-observed-status=0x0000000000000000 producer-reaped=true consumer-pid=0x0000000000100001 consumer-path=/bin/stdin consumer-state=exited consumer-status=0x0000000000000000 consumer-observed-status=0x0000000000000000 consumer-reaped=true source=kernel-owned-pipeline-lifecycle-status-record\n"
+            "talos: pipeline-lifecycle-status record=phase12-local-pipeline-distinct-process-lifecycle-status-record-v1 pipeline=0x0000000000000001 producer-pid=0x0000000000100001 producer-path=/bin/stdout producer-state=exited producer-status=0x0000000000000000 producer-observed-status=0x0000000000000000 producer-reaped=true consumer-pid=0x0000000000100002 consumer-path=/bin/stdin consumer-state=exited consumer-status=0x0000000000000000 consumer-observed-status=0x0000000000000000 consumer-reaped=true source=kernel-owned-pipeline-lifecycle-status-record\n"
         ));
         assert!(output.contains(
             "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=regular-file fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
@@ -10123,10 +10135,10 @@ talos> talos: exec-invalid-path\n"
         ));
         assert!(output.contains("talos> Talos userspace stdout fixture\n"));
         assert!(output.contains(
-            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+            "talos> talos: waitpid pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
         ));
         assert!(output.contains(
-            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+            "talos> talos: last-process pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
         ));
         assert!(output.contains(
             "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-stdout-to-stdin\n"

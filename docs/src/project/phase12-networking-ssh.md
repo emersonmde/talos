@@ -9003,6 +9003,21 @@ scheduling, distinct process-table identities, multi-stage pipelines, pipefail,
 background jobs, fork/signals, arbitrary descriptor syntax, live networking,
 SSH, Pi 5 hardware proof, and phase transition remain unaccepted.
 
+phase12-local-pipeline-distinct-process-identity-core-20260626 accepts
+local-pipeline-distinct-process-identity-core. The exact accepted two-stage
+pipeline forms now emit
+`phase12-local-pipeline-distinct-process-lifecycle-status-record-v1` with
+distinct serialized producer and consumer pids: producer `0x100001` and
+consumer `0x100002`. The record preserves each role's path, exited state,
+zero status/observed-status, and reaped flag while preserving descriptor-backed
+VFS exec/open/read, loader, startup ABI, pipe EOF, fd restoration, stdout-only
+pipe semantics, and descriptor dup/redirect controls. Consumer `waitpid` and
+`laststatus` remain the accepted shell status observation; producer status
+remains pipeline-local accounting only. Concurrent scheduling, broad process
+tables, pid reuse policy, process groups/sessions, multi-stage pipelines,
+pipefail, background jobs, fork/signals, arbitrary descriptor syntax, live
+networking, SSH, Pi 5 hardware proof, and phase transition remain unaccepted.
+
 phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624 accepts
 the live reachability source reconciliation as
 live-reachability-source-reconciliation-paused-no-defensible-discriminator.
