@@ -590,6 +590,7 @@ pub struct LocalCommandExecSummary {
     sockdiag_controls: Option<LocalCommandSockdiagControlRecord>,
     lifecycle: LocalCommandProcessLifecycleRecord,
     init_lifecycle_status: Option<LocalCommandInitLifecycleStatusRecord>,
+    vfs_exec_lifecycle_status: Option<LocalCommandVfsExecLifecycleStatusRecord>,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -893,6 +894,31 @@ impl LocalCommandInitLifecycleStatusRecord {
 
     fn from_lifecycle(lifecycle: LocalCommandProcessLifecycleRecord) -> Option<Self> {
         if lifecycle.source_path != initramfs::PHASE8_INIT_PATH {
+            return None;
+        }
+        Some(Self {
+            identity: Self::IDENTITY,
+            lifecycle,
+        })
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct LocalCommandVfsExecLifecycleStatusRecord {
+    identity: &'static str,
+    lifecycle: LocalCommandProcessLifecycleRecord,
+}
+
+impl LocalCommandVfsExecLifecycleStatusRecord {
+    const IDENTITY: &'static str = "phase12-local-vfs-exec-lifecycle-status-record-v2";
+
+    fn from_lifecycle(lifecycle: LocalCommandProcessLifecycleRecord) -> Option<Self> {
+        if !matches!(
+            lifecycle.source_path,
+            initramfs::PHASE8_INIT_PATH
+                | initramfs::PHASE10_ZERO_PATH
+                | initramfs::PHASE10_STATUS42_PATH
+        ) {
             return None;
         }
         Some(Self {
@@ -1776,6 +1802,8 @@ where
         );
         let init_lifecycle_status =
             LocalCommandInitLifecycleStatusRecord::from_lifecycle(lifecycle);
+        let vfs_exec_lifecycle_status =
+            LocalCommandVfsExecLifecycleStatusRecord::from_lifecycle(lifecycle);
         self.last_process = Some(lifecycle);
         self.waitable_process = Some(lifecycle);
 
@@ -1815,6 +1843,7 @@ where
             sockdiag_controls,
             lifecycle,
             init_lifecycle_status,
+            vfs_exec_lifecycle_status,
         })
     }
 
@@ -6609,6 +6638,9 @@ fn write_exec_summary(
     if let Some(record) = summary.init_lifecycle_status {
         write_exec_init_lifecycle_status_line(sink, response_lines, record)?;
     }
+    if let Some(record) = summary.vfs_exec_lifecycle_status {
+        write_exec_vfs_exec_lifecycle_status_line(sink, response_lines, record)?;
+    }
     write_exec_status_line(sink, response_lines, summary)?;
     write_line(
         sink,
@@ -7013,6 +7045,35 @@ fn write_exec_init_lifecycle_status_line(
     write_str_part(sink, " reaped=")?;
     write_str_part(sink, if lifecycle.reaped { "true" } else { "false" })?;
     write_str_part(sink, " source=kernel-owned-lifecycle-status-record")?;
+    finish_dynamic_line(sink, response_lines)
+}
+
+fn write_exec_vfs_exec_lifecycle_status_line(
+    sink: &mut impl LocalCommandSink,
+    response_lines: &mut usize,
+    record: LocalCommandVfsExecLifecycleStatusRecord,
+) -> Result<(), LocalCommandCycleError> {
+    let lifecycle = record.lifecycle;
+    write_str_part(sink, "talos: vfs-exec-lifecycle-status record=")?;
+    write_str_part(sink, record.identity)?;
+    write_str_part(sink, " pid=")?;
+    write_hex_u64_part(sink, lifecycle.process_id)?;
+    write_str_part(sink, " parent=shell owner=")?;
+    write_hex_u64_part(sink, lifecycle.parent_owner_id)?;
+    write_str_part(sink, " path=")?;
+    write_byte_path_part(sink, lifecycle.source_path)?;
+    write_str_part(sink, " state=")?;
+    write_str_part(sink, lifecycle.state.name())?;
+    write_str_part(sink, " status=")?;
+    write_hex_u64_part(sink, lifecycle.status)?;
+    write_str_part(sink, " observed-status=")?;
+    write_hex_u64_part(sink, lifecycle.observed_status)?;
+    write_str_part(sink, " reaped=")?;
+    write_str_part(sink, if lifecycle.reaped { "true" } else { "false" })?;
+    write_str_part(
+        sink,
+        " source=kernel-owned-vfs-exec-lifecycle-status-record",
+    )?;
     finish_dynamic_line(sink, response_lines)
 }
 
@@ -8154,7 +8215,7 @@ talos> Talos initramfs fixture\n"
 
         assert_eq!(result.line(), b"exec /bin/init");
         assert_eq!(result.status(), LocalCommandStatus::Handled);
-        assert_eq!(result.response_lines(), 10);
+        assert_eq!(result.response_lines(), 11);
         assert!(output.contains("talos> talos: exec path=/bin/init source=vfs-open-read\n"));
         assert!(output.contains("talos: exec-source bytes=0x0000000000000204 digest=0x"));
         assert!(output.contains(
@@ -8179,6 +8240,9 @@ talos> Talos initramfs fixture\n"
             "talos: init-lifecycle-status record=phase12-local-process-lifecycle-status-record-v1 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/init state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=kernel-owned-lifecycle-status-record\n"
         ));
         assert!(output.contains(
+            "talos: vfs-exec-lifecycle-status record=phase12-local-vfs-exec-lifecycle-status-record-v2 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/init state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=kernel-owned-vfs-exec-lifecycle-status-record\n"
+        ));
+        assert!(output.contains(
             "talos: exec-status boundary=lower-aarch64-svc-status-equivalent marker=0x0000000000007a10 status=0x0000000000000000 complete=true source=lifecycle-record\n"
         ));
         assert!(
@@ -8199,7 +8263,7 @@ talos> Talos initramfs fixture\n"
 
         assert_eq!(result.line(), b"exec /bin/zero");
         assert_eq!(result.status(), LocalCommandStatus::Handled);
-        assert_eq!(result.response_lines(), 9);
+        assert_eq!(result.response_lines(), 10);
         assert!(output.contains("talos> talos: exec path=/bin/zero source=vfs-open-read\n"));
         assert!(output.contains("talos: exec-source bytes=0x0000000000000204 digest=0x"));
         assert!(output.contains(
@@ -8213,6 +8277,9 @@ talos> Talos initramfs fixture\n"
         ));
         assert!(output.contains(
             "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/zero state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true\n"
+        ));
+        assert!(output.contains(
+            "talos: vfs-exec-lifecycle-status record=phase12-local-vfs-exec-lifecycle-status-record-v2 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/zero state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=kernel-owned-vfs-exec-lifecycle-status-record\n"
         ));
         assert!(output.contains(
             "talos: exec-status boundary=lower-aarch64-svc-status-equivalent marker=0x0000000000007a10 status=0x0000000000000000 complete=true source=lifecycle-record\n"
@@ -8235,7 +8302,7 @@ talos> Talos initramfs fixture\n"
 
         assert_eq!(exec.line(), b"exec /bin/status42");
         assert_eq!(exec.status(), LocalCommandStatus::Handled);
-        assert_eq!(exec.response_lines(), 9);
+        assert_eq!(exec.response_lines(), 10);
         assert_eq!(observed.line(), b"laststatus");
         assert_eq!(observed.status(), LocalCommandStatus::Handled);
         assert_eq!(observed.response_lines(), 1);
@@ -8248,6 +8315,9 @@ talos> Talos initramfs fixture\n"
         ));
         assert!(output.contains(
             "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true\n"
+        ));
+        assert!(output.contains(
+            "talos: vfs-exec-lifecycle-status record=phase12-local-vfs-exec-lifecycle-status-record-v2 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=kernel-owned-vfs-exec-lifecycle-status-record\n"
         ));
         assert!(output.contains(
             "talos: exec-status boundary=lower-aarch64-svc-status-equivalent marker=0x0000000000007a10 status=0x000000000000002a complete=true source=lifecycle-record\n"
@@ -10222,7 +10292,7 @@ talos> talos: exec-invalid-path\n"
 
         assert_eq!(exec.line(), b"exec /bin/status42 alpha beta");
         assert_eq!(exec.status(), LocalCommandStatus::Handled);
-        assert_eq!(exec.response_lines(), 9);
+        assert_eq!(exec.response_lines(), 10);
         assert_eq!(waited.line(), b"waitpid");
         assert_eq!(waited.status(), LocalCommandStatus::Handled);
         assert_eq!(waited.response_lines(), 1);
@@ -10235,6 +10305,9 @@ talos> talos: exec-invalid-path\n"
         ));
         assert!(output.contains(
             "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true\n"
+        ));
+        assert!(output.contains(
+            "talos: vfs-exec-lifecycle-status record=phase12-local-vfs-exec-lifecycle-status-record-v2 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=kernel-owned-vfs-exec-lifecycle-status-record\n"
         ));
         assert!(output.contains(
             "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record\n"
@@ -10258,7 +10331,7 @@ talos> talos: exec-invalid-path\n"
 
         assert_eq!(exec.line(), b"exec status42 alpha beta");
         assert_eq!(exec.status(), LocalCommandStatus::Handled);
-        assert_eq!(exec.response_lines(), 9);
+        assert_eq!(exec.response_lines(), 10);
         assert_eq!(waited.line(), b"waitpid");
         assert_eq!(waited.status(), LocalCommandStatus::Handled);
         assert_eq!(waited.response_lines(), 1);
@@ -10271,6 +10344,9 @@ talos> talos: exec-invalid-path\n"
         ));
         assert!(output.contains(
             "talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true\n"
+        ));
+        assert!(output.contains(
+            "talos: vfs-exec-lifecycle-status record=phase12-local-vfs-exec-lifecycle-status-record-v2 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=kernel-owned-vfs-exec-lifecycle-status-record\n"
         ));
         assert!(output.contains(
             "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record\n"
@@ -10298,7 +10374,7 @@ talos> talos: exec-invalid-path\n"
 
         assert_eq!(exec.line(), b"exec /generated/status7 alpha");
         assert_eq!(exec.status(), LocalCommandStatus::Handled);
-        assert_eq!(exec.response_lines(), 9);
+        assert_eq!(exec.response_lines(), 10);
         assert_eq!(waited.line(), b"waitpid");
         assert_eq!(waited.status(), LocalCommandStatus::Handled);
         assert_eq!(observed.line(), b"laststatus");
@@ -10374,7 +10450,7 @@ talos> talos: exec-invalid-path\n"
         assert_eq!(empty.response_lines(), 1);
         assert_eq!(exec.line(), b"exec /bin/status42");
         assert_eq!(exec.status(), LocalCommandStatus::Handled);
-        assert_eq!(exec.response_lines(), 9);
+        assert_eq!(exec.response_lines(), 10);
         assert_eq!(waited.line(), b"waitpid");
         assert_eq!(waited.status(), LocalCommandStatus::Handled);
         assert_eq!(waited.response_lines(), 1);
@@ -10387,6 +10463,9 @@ talos> talos: exec-invalid-path\n"
         assert!(output.contains("talos> talos: waitpid no-child source=lifecycle-record\n"));
         assert!(output.contains(
             "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
+        ));
+        assert!(output.contains(
+            "talos: vfs-exec-lifecycle-status record=phase12-local-vfs-exec-lifecycle-status-record-v2 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=kernel-owned-vfs-exec-lifecycle-status-record\n"
         ));
         assert!(output.contains(
             "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/status42 state=exited status=0x000000000000002a observed-status=0x000000000000002a reaped=true source=lifecycle-record\n"
@@ -10515,7 +10594,7 @@ talos> talos: exec-invalid-path\n"
         assert_eq!(empty_last.status(), LocalCommandStatus::Handled);
         assert_eq!(foreground.line(), b"exec /bin/zero");
         assert_eq!(foreground.status(), LocalCommandStatus::Handled);
-        assert_eq!(foreground.response_lines(), 9);
+        assert_eq!(foreground.response_lines(), 10);
         assert_eq!(foreground_wait.line(), b"waitpid");
         assert_eq!(foreground_wait.status(), LocalCommandStatus::Handled);
         assert_eq!(foreground_last.line(), b"laststatus");
@@ -10585,7 +10664,7 @@ talos> talos: exec-invalid-path\n"
         assert_eq!(none.response_lines(), 1);
         assert_eq!(exec.line(), b"exec /bin/init");
         assert_eq!(exec.status(), LocalCommandStatus::Handled);
-        assert_eq!(exec.response_lines(), 10);
+        assert_eq!(exec.response_lines(), 11);
         assert_eq!(observed.line(), b"laststatus");
         assert_eq!(observed.status(), LocalCommandStatus::Handled);
         assert_eq!(observed.response_lines(), 1);
@@ -10598,6 +10677,9 @@ talos> talos: exec-invalid-path\n"
         ));
         assert!(output.contains(
             "talos: init-lifecycle-status record=phase12-local-process-lifecycle-status-record-v1 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/init state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=kernel-owned-lifecycle-status-record\n"
+        ));
+        assert!(output.contains(
+            "talos: vfs-exec-lifecycle-status record=phase12-local-vfs-exec-lifecycle-status-record-v2 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/init state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=kernel-owned-vfs-exec-lifecycle-status-record\n"
         ));
         assert!(output.contains(
             "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/init state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"

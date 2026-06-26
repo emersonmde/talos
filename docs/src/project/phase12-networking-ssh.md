@@ -8961,6 +8961,19 @@ planningNeeded=true. No live reachability, remote receipt, compatibility,
 PTY/SCP/SFTP, broad command expansion, phase transition, or ssh-ready=true is
 accepted.
 
+phase12-local-vfs-exec-lifecycle-record-generalization-core-20260626
+accepts local-vfs-exec-lifecycle-record-generalization-core. This local
+POSIX/VFS/userspace continuation preserves the accepted
+`phase12-local-process-lifecycle-status-record-v1` `/bin/init` regression
+control and adds `phase12-local-vfs-exec-lifecycle-status-record-v2` as the
+path-aware shell-visible lifecycle/status surface for direct `/bin/init`,
+`/bin/zero`, and `/bin/status42` VFS exec. The retained QEMU/substitute
+transcript proves descriptor-backed VFS/open/read, loader, startup ABI,
+lifecycle, `waitpid`, `laststatus`, deterministic negative exec controls, and
+`cat /etc/banner.txt`. Live Ethernet/TCP reachability, OpenSSH, remote
+receipt, compatibility, ssh-ready=true, Pi 5 hardware proof, pipeline lifecycle
+expansion, broad process tables, and phase transition remain unaccepted.
+
 phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624 accepts
 the live reachability source reconciliation as
 live-reachability-source-reconciliation-paused-no-defensible-discriminator.

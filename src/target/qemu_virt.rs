@@ -15418,7 +15418,7 @@ fn expected_local_command_loop_dispatch(
             line == b"laststatus" && status == Handled && response_lines == 1
         }
         9 if cfg!(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest") => {
-            line == b"exec /bin/status42" && status == Handled && response_lines == 9
+            line == b"exec /bin/status42" && status == Handled && response_lines == 10
         }
         10 if cfg!(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest") => {
             line == b"waitpid" && status == Handled && response_lines == 1
@@ -15594,7 +15594,7 @@ fn expected_local_command_loop_dispatch(
             line == b"laststatus" && status == Handled && response_lines == 1
         }
         7 if cfg!(talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle") => {
-            line == b"exec /bin/zero" && status == Handled && response_lines == 9
+            line == b"exec /bin/zero" && status == Handled && response_lines == 10
         }
         8 if cfg!(talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle") => {
             line == b"waitpid" && status == Handled && response_lines == 1
@@ -15633,7 +15633,7 @@ fn expected_local_command_loop_dispatch(
             line == b"laststatus" && status == Handled && response_lines == 1
         }
         9 if cfg!(talos_boot_scenario = "qemu_local_shell_jobs_accounting_list") => {
-            line == b"exec /bin/zero" && status == Handled && response_lines == 9
+            line == b"exec /bin/zero" && status == Handled && response_lines == 10
         }
         10 if cfg!(talos_boot_scenario = "qemu_local_shell_jobs_accounting_list") => {
             line == b"waitpid" && status == Handled && response_lines == 1
@@ -15678,7 +15678,7 @@ fn expected_local_command_loop_dispatch(
             line == b"laststatus" && status == Handled && response_lines == 1
         }
         10 if cfg!(talos_boot_scenario = "qemu_local_shell_multiple_background_jobs") => {
-            line == b"exec /bin/zero" && status == Handled && response_lines == 9
+            line == b"exec /bin/zero" && status == Handled && response_lines == 10
         }
         11 if cfg!(talos_boot_scenario = "qemu_local_shell_multiple_background_jobs") => {
             line == b"waitpid" && status == Handled && response_lines == 1
@@ -15717,7 +15717,7 @@ fn expected_local_command_loop_dispatch(
             line == b"laststatus" && status == Handled && response_lines == 1
         }
         11 if cfg!(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy") => {
-            line == b"exec /bin/zero" && status == Handled && response_lines == 9
+            line == b"exec /bin/zero" && status == Handled && response_lines == 10
         }
         12 if cfg!(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy") => {
             line == b"waitpid" && status == Handled && response_lines == 1
@@ -16016,13 +16016,13 @@ fn expected_local_command_loop_dispatch(
             line == b"cd /etc" && status == Handled && response_lines == 0
         }
         3 if cfg!(talos_boot_scenario = "qemu_local_shell_vfs_exec") => {
-            line == b"exec /bin/status42" && status == Handled && response_lines == 9
+            line == b"exec /bin/status42" && status == Handled && response_lines == 10
         }
         3 if cfg!(talos_boot_scenario = "qemu_local_shell_literal_argv") => {
-            line == b"exec /bin/status42 alpha beta" && status == Handled && response_lines == 9
+            line == b"exec /bin/status42 alpha beta" && status == Handled && response_lines == 10
         }
         3 if cfg!(talos_boot_scenario = "qemu_local_shell_path_lookup") => {
-            line == b"exec status42 alpha beta" && status == Handled && response_lines == 9
+            line == b"exec status42 alpha beta" && status == Handled && response_lines == 10
         }
         3 if cfg!(talos_boot_scenario = "qemu_local_shell_stdout") => {
             line == b"exec stdout" && status == Handled && response_lines == 10
@@ -16236,7 +16236,7 @@ fn expected_local_command_loop_dispatch(
             line == b"waitpid" && status == Handled && response_lines == 1
         }
         4 if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid") => {
-            line == b"exec /bin/status42" && status == Handled && response_lines == 9
+            line == b"exec /bin/status42" && status == Handled && response_lines == 10
         }
         4 if cfg!(talos_boot_scenario = "qemu_local_cd_fixed_dirs") => {
             line == b"cd /etc" && status == Handled && response_lines == 0
@@ -16279,7 +16279,7 @@ fn expected_local_command_loop_dispatch(
             line == b"cd /" && status == Handled && response_lines == 0
         }
         5 if cfg!(talos_boot_scenario = "qemu_local_shell_vfs_exec") => {
-            line == b"exec /bin/init" && status == Handled && response_lines == 10
+            line == b"exec /bin/init" && status == Handled && response_lines == 11
         }
         5 if cfg!(talos_boot_scenario = "qemu_local_shell_literal_argv") => {
             line == b"laststatus" && status == Handled && response_lines == 1
@@ -16401,13 +16401,13 @@ fn expected_local_command_loop_dispatch(
             line == b"laststatus" && status == Handled && response_lines == 1
         }
         6 if cfg!(talos_boot_scenario = "qemu_local_shell_literal_argv") => {
-            line == b"exec /bin/init" && status == Handled && response_lines == 10
+            line == b"exec /bin/init" && status == Handled && response_lines == 11
         }
         6 if cfg!(talos_boot_scenario = "qemu_local_shell_path_lookup") => {
-            line == b"exec init" && status == Handled && response_lines == 10
+            line == b"exec init" && status == Handled && response_lines == 11
         }
         6 if cfg!(talos_boot_scenario = "qemu_local_shell_stdout") => {
-            line == b"exec status42" && status == Handled && response_lines == 9
+            line == b"exec status42" && status == Handled && response_lines == 10
         }
         6 if cfg!(talos_boot_scenario = "qemu_local_shell_stdout_to_stderr_redirection") => {
             line == b"exec stdout" && status == Handled && response_lines == 10
@@ -16492,13 +16492,13 @@ fn expected_local_command_loop_dispatch(
             talos_boot_scenario = "qemu_local_shell_distinct_stderr_routing"
         )) =>
         {
-            line == b"exec status42" && status == Handled && response_lines == 9
+            line == b"exec status42" && status == Handled && response_lines == 10
         }
         6 if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid") => {
             line == b"waitpid" && status == Handled && response_lines == 1
         }
         7 if cfg!(talos_boot_scenario = "qemu_local_shell_vfs_exec") => {
-            line == b"exec /bin/zero" && status == Handled && response_lines == 9
+            line == b"exec /bin/zero" && status == Handled && response_lines == 10
         }
         7 if cfg!(talos_boot_scenario = "qemu_local_shell_pipeline_stderr_not_piped") => {
             line == b"cat /etc/banner.txt" && status == Handled && response_lines == 1
@@ -16510,10 +16510,10 @@ fn expected_local_command_loop_dispatch(
             line == b"exec stdout | exec stdin" && status == Handled && response_lines == 21
         }
         7 if cfg!(talos_boot_scenario = "qemu_local_shell_literal_argv") => {
-            line == b"exec /bin/zero" && status == Handled && response_lines == 9
+            line == b"exec /bin/zero" && status == Handled && response_lines == 10
         }
         7 if cfg!(talos_boot_scenario = "qemu_local_shell_path_lookup") => {
-            line == b"exec zero" && status == Handled && response_lines == 9
+            line == b"exec zero" && status == Handled && response_lines == 10
         }
         7 if cfg!(talos_boot_scenario = "qemu_local_shell_stdout") => {
             line == b"waitpid" && status == Handled && response_lines == 1
@@ -16631,10 +16631,10 @@ fn expected_local_command_loop_dispatch(
             line == b"exec /bin/status42 *" && status == UnexpectedArgument && response_lines == 1
         }
         8 if cfg!(talos_boot_scenario = "qemu_local_shell_path_lookup") => {
-            line == b"exec /bin/status42 gamma" && status == Handled && response_lines == 9
+            line == b"exec /bin/status42 gamma" && status == Handled && response_lines == 10
         }
         8 if cfg!(talos_boot_scenario = "qemu_local_shell_stdout") => {
-            line == b"exec init" && status == Handled && response_lines == 10
+            line == b"exec init" && status == Handled && response_lines == 11
         }
         8 if cfg!(talos_boot_scenario = "qemu_local_shell_stdout_to_stderr_redirection") => {
             line == b"exec stdout 2>&3" && status == UnexpectedArgument && response_lines == 1
@@ -16704,17 +16704,17 @@ fn expected_local_command_loop_dispatch(
             line == b"exec stdout 1>&-" && status == Handled && response_lines == 11
         }
         8 if cfg!(talos_boot_scenario = "qemu_local_shell_stdin") => {
-            line == b"exec init" && status == Handled && response_lines == 10
+            line == b"exec init" && status == Handled && response_lines == 11
         }
         8 if cfg!(any(
             talos_boot_scenario = "qemu_local_shell_stderr",
             talos_boot_scenario = "qemu_local_shell_distinct_stderr_routing"
         )) =>
         {
-            line == b"exec init" && status == Handled && response_lines == 10
+            line == b"exec init" && status == Handled && response_lines == 11
         }
         8 if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid") => {
-            line == b"exec /bin/init" && status == Handled && response_lines == 10
+            line == b"exec /bin/init" && status == Handled && response_lines == 11
         }
         9 if cfg!(talos_boot_scenario = "qemu_local_shell_vfs_exec") => {
             line == b"exec /missing" && status == UnexpectedArgument && response_lines == 1
@@ -16726,7 +16726,7 @@ fn expected_local_command_loop_dispatch(
             line == b"laststatus" && status == Handled && response_lines == 1
         }
         9 if cfg!(talos_boot_scenario = "qemu_local_shell_stdout") => {
-            line == b"exec zero" && status == Handled && response_lines == 9
+            line == b"exec zero" && status == Handled && response_lines == 10
         }
         9 if cfg!(talos_boot_scenario = "qemu_local_shell_stdout_to_stderr_redirection") => {
             line == b"exec stdout 1>file" && status == UnexpectedArgument && response_lines == 1
@@ -16800,14 +16800,14 @@ fn expected_local_command_loop_dispatch(
             line == b"waitpid" && status == Handled && response_lines == 1
         }
         9 if cfg!(talos_boot_scenario = "qemu_local_shell_stdin") => {
-            line == b"exec zero" && status == Handled && response_lines == 9
+            line == b"exec zero" && status == Handled && response_lines == 10
         }
         9 if cfg!(any(
             talos_boot_scenario = "qemu_local_shell_stderr",
             talos_boot_scenario = "qemu_local_shell_distinct_stderr_routing"
         )) =>
         {
-            line == b"exec zero" && status == Handled && response_lines == 9
+            line == b"exec zero" && status == Handled && response_lines == 10
         }
         9 if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid") => {
             line == b"waitpid" && status == Handled && response_lines == 1
@@ -16822,7 +16822,7 @@ fn expected_local_command_loop_dispatch(
             line == b"exec missing" && status == UnexpectedArgument && response_lines == 1
         }
         10 if cfg!(talos_boot_scenario = "qemu_local_shell_stdout") => {
-            line == b"exec /bin/status42 gamma" && status == Handled && response_lines == 9
+            line == b"exec /bin/status42 gamma" && status == Handled && response_lines == 10
         }
         10 if cfg!(talos_boot_scenario = "qemu_local_shell_stdout_to_stderr_redirection") => {
             line == b"exec stdout | stderr" && status == UnexpectedArgument && response_lines == 1
@@ -16898,17 +16898,17 @@ fn expected_local_command_loop_dispatch(
             line == b"exec stderr 2>file" && status == UnexpectedArgument && response_lines == 1
         }
         10 if cfg!(talos_boot_scenario = "qemu_local_shell_stdin") => {
-            line == b"exec /bin/status42 gamma" && status == Handled && response_lines == 9
+            line == b"exec /bin/status42 gamma" && status == Handled && response_lines == 10
         }
         10 if cfg!(any(
             talos_boot_scenario = "qemu_local_shell_stderr",
             talos_boot_scenario = "qemu_local_shell_distinct_stderr_routing"
         )) =>
         {
-            line == b"exec /bin/status42 gamma" && status == Handled && response_lines == 9
+            line == b"exec /bin/status42 gamma" && status == Handled && response_lines == 10
         }
         10 if cfg!(talos_boot_scenario = "qemu_local_shell_waitpid") => {
-            line == b"exec /bin/zero" && status == Handled && response_lines == 9
+            line == b"exec /bin/zero" && status == Handled && response_lines == 10
         }
         11 if cfg!(talos_boot_scenario = "qemu_local_shell_vfs_exec") => {
             line == b"exec /bin" && status == UnexpectedArgument && response_lines == 1

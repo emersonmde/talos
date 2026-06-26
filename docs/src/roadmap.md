@@ -18047,6 +18047,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   process replacement, arbitrary executable dispatch, PATH lookup, writable
   filesystem support, packet I/O, live networking, SSH, Pi 5 hardware evidence,
   or a phase transition.
+- phase12-local-vfs-exec-lifecycle-record-generalization-core-20260626
+  accepts the local direct-VFS-exec lifecycle/status generalization. The
+  accepted `/bin/init` v1 record remains as a regression control, and direct
+  `/bin/init`, `/bin/zero`, and `/bin/status42` now emit the versioned
+  `phase12-local-vfs-exec-lifecycle-status-record-v2` path-aware
+  `vfs-exec-lifecycle-status` surface through descriptor-backed VFS/open/read,
+  loader, startup ABI, lifecycle, `waitpid`, and `laststatus` lineage.
+  Missing, relative/PATH-invalid, directory, non-ELF, and empty-file exec
+  controls remain fail-closed, and `cat /etc/banner.txt` remains the retained
+  descriptor-backed VFS cat regression. Pipeline lifecycle accounting, broad
+  process tables, async jobs, fork/signals, broader descriptor grammar,
+  persistent filesystem semantics, live networking, SSH, Pi 5 hardware proof,
+  and phase transition remain deferred.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
