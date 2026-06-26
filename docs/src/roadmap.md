@@ -18461,6 +18461,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   phase12-local-path-command-frontier-checkpoint-20260626 because that queued
   checkpoint is mechanically objective after the accepted path-form pipeline
   closeout.
+- phase12-local-path-command-frontier-checkpoint-20260626 accepts
+  local-path-command-frontier-checkpoint-accepted-planning-needed. The
+  checkpoint reconciles the accepted direct '/bin/status42' command and
+  bounded '/bin/stdout | /bin/stdin' path-form pipeline against retained direct
+  path-command, path-form pipeline, exec-prefixed pipeline, multistage
+  pipeline, process-table, waitpid/jobs, '/proc/talos/processes',
+  zero-argument 'ps', and 'pipestatus' evidence. The accepted boundary remains
+  local-only static/unit/QEMU-substitute evidence through descriptor-backed
+  VFS open/read, loader, userspace launch, serialized pipe handoff,
+  lifecycle/status, and bounded process-table observations.
+  selected_next_task=null and planningNeeded=true because no later queued
+  same-lane local POSIX/shell task exists with complete objective
+  dependencies, acceptance criteria, validation gates, docs, and evidence
+  requirements. Live networking/SSH, Pi 5 hardware proof, PATH lookup,
+  bare-name lookup, path-form arguments/redirections, arbitrary shell grammar,
+  unbounded pipelines, pipeline concurrency, scheduler concurrency,
+  fork/signals, process groups/sessions, persistent storage, generated-root
+  command-input retry, and phase transition remain deferred.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

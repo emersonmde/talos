@@ -159,6 +159,19 @@ shell grammar, unbounded pipelines, pipeline concurrency, scheduler
 concurrency, fork/signals, live networking/SSH, Pi 5 hardware proof, and phase
 transition remain deferred.
 
+The 2026-06-26 local path-command frontier checkpoint keeps direct
+absolute-path commands and the bounded path-form pipeline at static/unit/QEMU
+substitute evidence level. The accepted boundary is only '/bin/status42' as a
+direct VFS command and '/bin/stdout | /bin/stdin' as a two-stage path-form
+pipeline, both backed by VFS open/read, loader, userspace launch,
+process-table, waitpid, '/proc/talos/processes', zero-argument 'ps', and
+'pipestatus' observations. Live networking/SSH, Pi 5 hardware proof, PATH or
+bare-name lookup, path-form arguments/redirections, arbitrary shell grammar,
+unbounded pipelines, pipeline concurrency, scheduler concurrency,
+fork/signals, process groups/sessions, persistent storage, generated-root
+command-input retry, and phase transition remain deferred pending supervisor
+planning.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

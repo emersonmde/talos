@@ -1,0 +1,43 @@
+{
+  "task_id": "phase12-local-path-command-frontier-checkpoint-20260626",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "paths": [
+        "tasks/2026-06-26-phase12-local-absolute-path-vfs-command-core.md",
+        "tasks/2026-06-26-phase12-local-absolute-path-vfs-command-closeout.md",
+        "tasks/2026-06-26-phase12-local-absolute-path-vfs-pipeline-core.md",
+        "tasks/2026-06-26-phase12-local-absolute-path-vfs-pipeline-closeout.md",
+        "tasks/2026-06-26-phase12-local-multistage-pipeline-core.md",
+        "tasks/2026-06-26-phase12-local-pipefail-status-core.md",
+        "tasks/2026-06-26-phase12-local-process-table-frontier-checkpoint.md",
+        "tasks/2026-06-26-phase12-local-posix-frontier-checkpoint.md",
+        "tasks/2026-06-26-phase12-local-pipeline-frontier-checkpoint.md",
+        "docs/src/roadmap.md",
+        "docs/src/project/phase12-networking-ssh.md",
+        "docs/src/project/early-posix-shape.md"
+      ]
+    },
+    {
+      "level": "QEMU/substitute retained",
+      "paths": [
+        "tasks/evidence/2026-06-26-phase12-local-absolute-path-vfs-command-core/qemu-local-shell-absolute-path-vfs-command-smoke.log",
+        "tasks/evidence/2026-06-26-phase12-local-absolute-path-vfs-pipeline-core/qemu-local-shell-absolute-path-vfs-pipeline-smoke.log"
+      ]
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed; existing large-search-index warning retained"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check && git diff --cached --check",
+      "result": "passed"
+    }
+  ],
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "live_network_ssh": "paused",
+  "hardware_claim": "none"
+}

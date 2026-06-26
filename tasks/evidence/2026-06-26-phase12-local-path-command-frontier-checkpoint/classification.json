@@ -1,0 +1,32 @@
+{
+  "task_id": "phase12-local-path-command-frontier-checkpoint-20260626",
+  "classification": "local-path-command-frontier-checkpoint-accepted-planning-needed",
+  "status": "accepted",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "accepted_frontier": [
+    "direct absolute-path VFS command execution for /bin/status42",
+    "bounded two-stage path-form VFS pipeline /bin/stdout | /bin/stdin",
+    "static/unit/QEMU-substitute evidence only",
+    "process-table, waitpid, laststatus, /proc/talos/processes, zero-argument ps, and pipestatus observations retained"
+  ],
+  "deferred_frontier": [
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "PATH lookup",
+    "bare-name lookup",
+    "path-form arguments/redirections",
+    "arbitrary shell grammar",
+    "unbounded pipelines",
+    "pipeline concurrency",
+    "scheduler concurrency",
+    "fork/signals",
+    "process groups/sessions",
+    "persistent storage",
+    "generated-root command-input retry",
+    "phase transition"
+  ],
+  "live_network_ssh": "paused",
+  "hardware_claim": "none",
+  "planning_reason": "No later queued same-lane local POSIX/shell task exists with complete objective dependencies, acceptance criteria, validation gates, docs, and evidence requirements."
+}
