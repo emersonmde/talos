@@ -9161,6 +9161,23 @@ deferred. selected_next_task is
 phase12-local-process-table-frontier-checkpoint-20260626 because the queued
 checkpoint is mechanically objective after this accepted closeout.
 
+phase12-local-process-table-frontier-checkpoint-20260626 accepts
+local-process-table-frontier-checkpoint-accepted-planning-needed. The
+checkpoint reconciles the accepted local process-table frontier across direct
+VFS exec, exact pipeline producer/consumer records, accepted background jobs,
+explicit-pid waitpid, no-argument waitpid, non-consuming laststatus, jobs
+accounting, descriptor-backed VFS controls, and redirection controls. Retained
+evidence is static/unit-test/QEMU-substitute evidence only; no Pi 5 hardware or
+live network claim is made. Public process enumeration/procfs,
+scheduler-concurrent execution, fork/signals, process groups/sessions, waitpid
+options, PID reuse/zombie policy beyond bounded deterministic controls,
+multi-stage pipelines, pipefail, persistent storage, live networking, SSH, Pi 5
+hardware proof, and phase transition remain deferred. selected_next_task=null
+and planningNeeded=true because no queued same-lane local
+POSIX/process-table follow-up exists after this checkpoint with explicit
+dependencies, acceptance criteria, validation gates, docs, and evidence
+requirements.
+
 phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624 accepts
 the live reachability source reconciliation as
 live-reachability-source-reconciliation-paused-no-defensible-discriminator.

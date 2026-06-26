@@ -18242,6 +18242,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   transition remain deferred. selected_next_task is
   phase12-local-process-table-frontier-checkpoint-20260626 because the queued
   checkpoint is mechanically objective after this accepted closeout.
+- phase12-local-process-table-frontier-checkpoint-20260626 accepts
+  local-process-table-frontier-checkpoint-accepted-planning-needed. The
+  checkpoint reconciles the accepted local process-table frontier against
+  retained direct VFS exec, exact pipeline, background job, explicit-pid
+  waitpid, no-argument waitpid, laststatus, jobs accounting, descriptor-backed
+  VFS, and redirection evidence. The accepted boundary remains a bounded
+  internal process-table lifecycle/status substrate for accepted local fixtures
+  only, with static/unit-test/QEMU-substitute evidence and no Pi 5 hardware
+  claim. Public process enumeration/procfs, scheduler-concurrent execution,
+  fork/signals, process groups/sessions, waitpid options, PID reuse/zombie
+  policy, multi-stage pipelines, pipefail, persistent storage, live networking,
+  SSH, Pi 5 hardware proof, and phase transition remain deferred.
+  selected_next_task is null and planningNeeded=true because no queued
+  same-lane local POSIX/process-table follow-up exists after this checkpoint
+  with explicit dependencies, acceptance criteria, validation gates, docs, and
+  evidence requirements.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

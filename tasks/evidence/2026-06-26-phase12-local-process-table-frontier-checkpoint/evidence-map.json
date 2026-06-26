@@ -1,0 +1,44 @@
+{
+  "task_id": "phase12-local-process-table-frontier-checkpoint-20260626",
+  "classification": "local-process-table-frontier-checkpoint-accepted-planning-needed",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "path": "tasks/2026-06-26-phase12-local-process-table-direct-vfs-exec-core.md",
+      "summary": "Accepted direct foreground VFS exec process-table records for /bin/init, /bin/zero, and /bin/status42."
+    },
+    {
+      "level": "static inspection",
+      "path": "tasks/2026-06-26-phase12-local-process-table-pipeline-background-core.md",
+      "summary": "Accepted exact pipeline producer/consumer and background job records through the same bounded process-table substrate."
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-26-phase12-local-process-table-pipeline-background-core/qemu-local-shell-waitpid-any-completed-child-smoke.log",
+      "summary": "Retained smoke passed with direct exec, exact pipeline, background job, jobs, descriptor-backed VFS, stale/no-child, explicit-pid waitpid, and no-argument waitpid coverage; final participants=19 expected=19 errors=0."
+    },
+    {
+      "level": "static inspection",
+      "path": "tasks/2026-06-26-phase12-local-process-table-pipeline-background-closeout.md",
+      "summary": "Accepted closeout reconciles the direct, pipeline, and background process-table frontier before this checkpoint."
+    },
+    {
+      "level": "documentation",
+      "paths": [
+        "docs/src/roadmap.md",
+        "docs/src/project/phase12-networking-ssh.md",
+        "docs/src/project/early-posix-shape.md",
+        "tasks/2026-06-26-phase12-local-process-table-frontier-checkpoint.md"
+      ],
+      "summary": "Checkpoint records accepted/deferred frontier and planning-needed status for any next local POSIX feature."
+    }
+  ],
+  "validation": {
+    "static_inspection": "passed",
+    "jq_empty": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed"
+  },
+  "commit": "recorded in durable supervisor state after commit"
+}

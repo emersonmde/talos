@@ -1,0 +1,30 @@
+{
+  "task_id": "phase12-local-process-table-frontier-checkpoint-20260626",
+  "classification": "local-process-table-frontier-checkpoint-accepted-planning-needed",
+  "accepted_frontier": "bounded internal process-table lifecycle/status records for direct foreground VFS exec, exact two-stage pipelines, accepted background VFS exec jobs, explicit-pid waitpid, no-argument waitpid, non-consuming laststatus, and jobs accounting",
+  "deferred": [
+    "public process enumeration",
+    "procfs/ps command",
+    "scheduler-concurrent execution",
+    "fork/signals",
+    "process groups/sessions",
+    "waitpid options",
+    "PID reuse/zombie policy beyond bounded deterministic controls",
+    "multi-stage pipelines",
+    "pipefail",
+    "persistent storage",
+    "live networking",
+    "SSH",
+    "Pi 5 hardware proof",
+    "phase transition"
+  ],
+  "hardware": {
+    "hardwareTestLock_acquired": false,
+    "pi5_hardware_action": false,
+    "claim": "no hardware proof claimed"
+  },
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "No queued same-lane local POSIX/process-table follow-up exists after this checkpoint with explicit dependencies, acceptance criteria, validation gates, docs, and evidence requirements.",
+  "commit": "recorded in durable supervisor state after commit"
+}
