@@ -9098,6 +9098,23 @@ policy, multi-stage pipelines, pipefail, persistent filesystem semantics, live
 networking, SSH, Pi 5 hardware proof, and phase transition remain deferred
 pending supervisor planning.
 
+phase12-local-process-table-direct-vfs-exec-core-20260626 accepts the bounded
+direct foreground VFS exec process-table substrate. Direct accepted fixed
+fixtures /bin/init, /bin/zero, and /bin/status42 now record a kernel-owned
+bounded process-table lifecycle/status entry with stable pid 0x100001,
+parent=shell, owner=0x1, path, exited state, status, observed-status, and
+reaped state while preserving the accepted shell-visible exec lifecycle,
+waitpid, and non-consuming laststatus output. The retained focused unit tests
+inspect the process-table entry directly and prove rejected exec targets do not
+create records; the retained QEMU/substitute vfs-exec and waitpid transcripts
+preserve direct exec, negative exec, explicit/no-argument waitpid, pipeline,
+background, jobs, and descriptor-backed VFS regressions. Exact pipeline and
+background jobs intentionally remain on their previously accepted record
+sources until the queued pipeline/background process-table integration task. No
+broad process enumeration, procfs/ps command, true scheduler concurrency,
+fork/signals, process groups/sessions, live networking, SSH, Pi 5 hardware
+proof, or phase transition is accepted.
+
 phase12-rp1-ethernet-live-reachability-source-reconciliation-20260624 accepts
 the live reachability source reconciliation as
 live-reachability-source-reconciliation-paused-no-defensible-discriminator.

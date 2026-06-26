@@ -18186,6 +18186,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   transition is accepted. selected_next_task=null and planningNeeded=true
   because no queued same-slice local process-observation follow-up remains;
   supervisor planning is required before further worker promotion.
+- phase12-local-process-table-direct-vfs-exec-core-20260626 accepts the bounded
+  direct foreground VFS exec process-table substrate. Direct accepted fixed
+  fixtures /bin/init, /bin/zero, and /bin/status42 now record an internal
+  kernel-owned bounded process-table lifecycle/status entry with stable pid
+  0x100001, parent=shell, owner=0x1, path, exited state, status,
+  observed-status, and reaped state. Existing shell-visible direct exec,
+  waitpid, and non-consuming laststatus behavior is preserved; negative exec
+  targets and rejected syntax do not create successful process-table records.
+  Exact pipeline and background jobs remain on their previously accepted record
+  sources until the queued process-table pipeline/background task. Retained
+  evidence is focused unit test inspection plus QEMU/substitute vfs-exec and
+  waitpid regression transcripts. No broad process table API, procfs/ps,
+  scheduler concurrency, fork/signals, process groups/sessions, live
+  networking, SSH, Pi 5 hardware proof, or phase transition is accepted.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

@@ -83,6 +83,15 @@ The first implementation can choose a small subset, but it should keep these con
 
 A shell-only command dispatcher is acceptable as a diagnostic tool, but it should not become the only way programs run.
 
+Phase 12's local POSIX continuation adds the first bounded process-table
+substrate for direct foreground VFS exec. For the accepted fixed fixtures
+/bin/init, /bin/zero, and /bin/status42, the shell records an internal
+kernel-owned process-table lifecycle/status entry with stable pid, shell parent,
+owner, path, exited state, status, observed-status, and reaped state. That is
+still not a public process enumeration API, procfs, ps, fork, process groups,
+or scheduler-concurrent process model; exact pipelines and background jobs are
+integrated only by later explicitly accepted tasks.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

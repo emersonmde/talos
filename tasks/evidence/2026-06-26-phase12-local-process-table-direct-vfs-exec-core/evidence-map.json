@@ -1,0 +1,65 @@
+{
+  "task_id": "phase12-local-process-table-direct-vfs-exec-core-20260626",
+  "classification": "local-process-table-direct-vfs-exec-core-accepted",
+  "source_changes": [
+    {
+      "path": "src/local_command_loop.rs",
+      "summary": "Adds a bounded internal process-table record for direct foreground VFS exec of /bin/init, /bin/zero, and /bin/status42 while preserving existing shell-visible waitpid and laststatus behavior."
+    }
+  ],
+  "docs": [
+    "docs/src/roadmap.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/project/early-posix-shape.md",
+    "tasks/2026-06-26-phase12-local-process-table-direct-vfs-exec-core.md"
+  ],
+  "unit_tests": [
+    {
+      "command": "cargo test -Zjson-target-spec process_table --quiet",
+      "level": "unit tests",
+      "result": "pass",
+      "covers": [
+        "direct /bin/init process-table record",
+        "direct /bin/zero process-table record",
+        "direct /bin/status42 process-table record",
+        "waitpid consumes the direct waitable record",
+        "laststatus remains non-consuming",
+        "rejected exec targets do not create process-table records"
+      ]
+    },
+    {
+      "command": "cargo test -Zjson-target-spec local_command_loop --quiet",
+      "level": "unit tests",
+      "result": "pass",
+      "covers": [
+        "local command loop regressions",
+        "direct VFS exec",
+        "waitpid",
+        "laststatus",
+        "pipeline",
+        "background jobs",
+        "descriptor-backed VFS controls"
+      ]
+    }
+  ],
+  "qemu_substitute": [
+    {
+      "command": "./scripts/qemu-local-shell-vfs-exec-smoke.sh",
+      "level": "QEMU/substitute",
+      "result": "pass",
+      "log": "tasks/evidence/2026-06-26-phase12-local-process-table-direct-vfs-exec-core/qemu-local-shell-vfs-exec-smoke.log"
+    },
+    {
+      "command": "./scripts/qemu-local-shell-waitpid-lifecycle-smoke.sh",
+      "level": "QEMU/substitute",
+      "result": "pass",
+      "log": "tasks/evidence/2026-06-26-phase12-local-process-table-direct-vfs-exec-core/qemu-local-shell-waitpid-lifecycle-smoke.log"
+    }
+  ],
+  "negative_controls": [
+    "exec /missing",
+    "exec /bin/status42 *",
+    "exec /bin"
+  ],
+  "commit": "recorded in durable supervisor state after commit"
+}
