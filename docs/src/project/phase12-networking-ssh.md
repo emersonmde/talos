@@ -460,6 +460,22 @@ POSIX/VFS task is the queued direct pipeline-output append closeout. No Pi 5
 hardware, live network/SSH, generated-root retry, persistent storage, or
 phase-transition claim is made.
 
+The direct pipeline-output append regular-file redirection closeout reconciles
+that accepted local-only direct append boundary without runtime feature
+changes. The accepted sequence remains exactly
+'/bin/stdout | /bin/stdin >/tmp/pipeline-report.txt' followed by
+'/bin/stdout | /bin/stdin >>/tmp/pipeline-report.txt'. Retained evidence
+records descriptor-backed VFS loading for both stages in both commands,
+producer fd1 to the pipe endpoint, consumer fd0 from the pipe endpoint,
+consumer fd1 child-only to 'volatile-vfs:/tmp/pipeline-report.txt', initial
+truncate/sink then append-at-EOF operations, descriptor-backed readback of two
+userspace stdin reports in order, shell fd1 restoration, and coherent process
+status observations. Fixed-/bin bare-name pipeline-output append is the next
+mechanically objective local POSIX/VFS task; stderr pipeline append,
+input/combined pipeline redirections, arbitrary paths, persistent storage,
+generated-root retry, live network/SSH, Pi 5 hardware proof, and phase
+transition remain deferred.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1

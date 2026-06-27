@@ -1078,6 +1078,25 @@ persistent storage, live networking/SSH, Pi 5 hardware proof, generated-root
 retry, and phase transition remain deferred. The next local POSIX/VFS task is
 the direct path-form pipeline-output append closeout.
 
+The direct pipeline-output append regular-file redirection closeout freezes the
+accepted local-only direct path-form append boundary without runtime feature
+changes. The accepted sequence remains exactly
+'/bin/stdout | /bin/stdin >/tmp/pipeline-report.txt' followed by
+'/bin/stdout | /bin/stdin >>/tmp/pipeline-report.txt'. Retained evidence keeps
+both stages on descriptor-backed VFS open/read and accepted userspace
+launch/status, routes the producer fd1 to the pipe endpoint, routes consumer
+fd0 from that pipe endpoint, and routes consumer fd1 child-only to
+'volatile-vfs:/tmp/pipeline-report.txt' first with truncate/sink semantics and
+then append-at-EOF semantics. Descriptor-backed 'cat /tmp/pipeline-report.txt'
+reads two userspace stdin reports in order, shell fd1 is restored afterward,
+and waitpid, laststatus, /proc/talos/processes, zero-argument ps, and
+pipestatus-compatible observations remain coherent. Fixed-/bin bare-name
+append is separate queued implementation work; stderr pipeline append,
+input/combined pipeline redirections, arbitrary paths, persistent storage,
+live networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
+transition remain deferred. The next local POSIX/VFS task is the fixed-/bin
+bare-name pipeline-output append core.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

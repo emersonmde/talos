@@ -1,0 +1,49 @@
+{
+  "task_id": "phase12-local-direct-pipeline-output-append-regular-file-redirection-closeout-20260627",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "paths": [
+        "tasks/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-core.md",
+        "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-core/classification.json",
+        "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-core/evidence-map.json",
+        "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-core/qemu-local-shell-direct-pipeline-output-append-regular-file-redirection-smoke.log",
+        "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-core/retained-regression-smoke-summary.txt",
+        "docs/src/project/early-posix-shape.md",
+        "docs/src/project/phase12-networking-ssh.md",
+        "docs/src/roadmap.md",
+        "tasks/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-closeout.md"
+      ],
+      "result": "accepted direct path-form pipeline-output append redirection boundary reconciled; no runtime code change required"
+    },
+    {
+      "level": "retained QEMU/substitute transcript",
+      "source_task": "phase12-local-direct-pipeline-output-append-regular-file-redirection-core-20260627",
+      "command": "scripts/qemu-local-shell-direct-pipeline-output-append-regular-file-redirection-smoke.sh",
+      "result": "retained core evidence passed; the direct truncate-then-append sequence records final-stage fd1 sink then append, descriptor-backed cat readback bytes=0x88 with two reports, shell restoration, process-status coherence, and fail-closed negatives"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-closeout/classification.json tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-closeout/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed; HTML backend wrote book"
+    },
+    {
+      "level": "lab-controller API",
+      "result": "not run; no Pi 5 hardware gate"
+    },
+    {
+      "level": "serial hardware boot/output",
+      "result": "not run; no Pi 5 hardware gate"
+    }
+  ]
+}
