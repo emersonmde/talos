@@ -1,0 +1,71 @@
+{
+  "task_id": "phase12-local-stdout-regular-file-redirection-frontier-checkpoint-20260627",
+  "evidence": [
+    {
+      "kind": "static-inspection",
+      "result": "pass",
+      "paths": [
+        "tasks/2026-06-27-phase12-local-direct-stdout-regular-file-redirection-core.md",
+        "tasks/evidence/2026-06-27-phase12-local-direct-stdout-regular-file-redirection-core/classification.json",
+        "tasks/evidence/2026-06-27-phase12-local-direct-stdout-regular-file-redirection-core/evidence-map.json",
+        "tasks/evidence/2026-06-27-phase12-local-direct-stdout-regular-file-redirection-core/qemu-local-shell-stdout-regular-file-redirection-smoke.log",
+        "tasks/2026-06-27-phase12-local-direct-stdout-regular-file-redirection-closeout.md",
+        "tasks/evidence/2026-06-27-phase12-local-direct-stdout-regular-file-redirection-closeout/classification.json",
+        "tasks/evidence/2026-06-27-phase12-local-direct-stdout-regular-file-redirection-closeout/evidence-map.json",
+        "tasks/2026-06-27-phase12-local-bare-name-stdout-regular-file-redirection-core.md",
+        "tasks/evidence/2026-06-27-phase12-local-bare-name-stdout-regular-file-redirection-core/classification.json",
+        "tasks/evidence/2026-06-27-phase12-local-bare-name-stdout-regular-file-redirection-core/evidence-map.json",
+        "tasks/evidence/2026-06-27-phase12-local-bare-name-stdout-regular-file-redirection-core/qemu-local-shell-bare-name-stdout-regular-file-redirection-smoke.log",
+        "tasks/2026-06-27-phase12-local-bare-name-stdout-regular-file-redirection-closeout.md",
+        "tasks/evidence/2026-06-27-phase12-local-bare-name-stdout-regular-file-redirection-closeout/classification.json",
+        "tasks/evidence/2026-06-27-phase12-local-bare-name-stdout-regular-file-redirection-closeout/evidence-map.json",
+        "docs/src/roadmap.md",
+        "docs/src/project/phase12-networking-ssh.md",
+        "docs/src/project/early-posix-shape.md"
+      ]
+    },
+    {
+      "kind": "retained-direct-qemu-substitute-smoke",
+      "command": "scripts/qemu-local-shell-stdout-regular-file-redirection-smoke.sh",
+      "result": "pass",
+      "path": "tasks/evidence/2026-06-27-phase12-local-direct-stdout-regular-file-redirection-core/qemu-local-shell-stdout-regular-file-redirection-smoke.log",
+      "accepted_witness": "/bin/stdout >/tmp/stdout.txt",
+      "readback_witness": "cat /tmp/stdout.txt",
+      "restoration_witness": "/bin/stdout"
+    },
+    {
+      "kind": "retained-bare-name-qemu-substitute-smoke",
+      "command": "scripts/qemu-local-shell-bare-name-stdout-regular-file-redirection-smoke.sh",
+      "result": "pass",
+      "path": "tasks/evidence/2026-06-27-phase12-local-bare-name-stdout-regular-file-redirection-core/qemu-local-shell-bare-name-stdout-regular-file-redirection-smoke.log",
+      "accepted_witness": "stdout >/tmp/stdout.txt",
+      "readback_witness": "cat /tmp/stdout.txt",
+      "restoration_witness": "stdout"
+    },
+    {
+      "kind": "json-check",
+      "command": "jq empty tasks/evidence/2026-06-27-phase12-local-stdout-regular-file-redirection-frontier-checkpoint/classification.json tasks/evidence/2026-06-27-phase12-local-stdout-regular-file-redirection-frontier-checkpoint/evidence-map.json",
+      "result": "pass"
+    },
+    {
+      "kind": "diff-check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "kind": "docs",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "kind": "staged-diff-check",
+      "command": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "No later queued same-lane local POSIX/VFS task exists after phase12-local-stdout-regular-file-redirection-frontier-checkpoint-20260627 with complete objective dependencies, acceptance criteria, validation gates, docs requirements, and evidence requirements. Supervisor planning is required before the worker can promote more work.",
+  "live_networking_or_ssh": false,
+  "pi5_hardware_claim": false
+}

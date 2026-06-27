@@ -2,7 +2,7 @@
 
 Task: phase12-local-bare-name-stdout-regular-file-redirection-core-20260627
 
-Status: accepted; commit pending.
+Status: accepted and committed at 56b9fcd7154c71f7017fbe77724d3f57a0696ab5.
 
 ## Scope
 

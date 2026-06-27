@@ -1,0 +1,57 @@
+{
+  "task_id": "phase12-local-stdout-regular-file-redirection-frontier-checkpoint-20260627",
+  "classification": "accepted",
+  "boundary": "local-only stdout regular-file output redirection frontier checkpointed",
+  "accepted_witnesses": [
+    "/bin/stdout >/tmp/stdout.txt",
+    "stdout >/tmp/stdout.txt"
+  ],
+  "accepted_bare_name_lookup": {
+    "input_name": "stdout",
+    "resolved_path": "/bin/stdout",
+    "policy": "fixed bounded /bin lookup only"
+  },
+  "accepted_readback": "cat /tmp/stdout.txt",
+  "normal_stdout_restoration_witnesses": [
+    "/bin/stdout",
+    "stdout"
+  ],
+  "retained_direct_core_task": "phase12-local-direct-stdout-regular-file-redirection-core-20260627",
+  "retained_direct_closeout_task": "phase12-local-direct-stdout-regular-file-redirection-closeout-20260627",
+  "retained_bare_name_core_task": "phase12-local-bare-name-stdout-regular-file-redirection-core-20260627",
+  "retained_bare_name_closeout_task": "phase12-local-bare-name-stdout-regular-file-redirection-closeout-20260627",
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "No later queued same-lane local POSIX/VFS task exists after phase12-local-stdout-regular-file-redirection-frontier-checkpoint-20260627 with complete objective dependencies, acceptance criteria, validation gates, docs requirements, and evidence requirements. Supervisor planning is required before the worker can promote more work.",
+  "disposition": {
+    "fixed": [
+      "accepted direct and bare-name stdout regular-file redirection frontiers reconciled against retained evidence",
+      "retained bare-name stdout core task record status corrected to the accepted commit hash",
+      "planningNeeded selected because no later queued same-lane task is mechanically objective"
+    ],
+    "removed": [],
+    "deferred": [
+      "stderr redirection",
+      "append/truncate",
+      "arbitrary output paths",
+      "pipeline-output redirection",
+      "combined input/output redirection",
+      "persistent writable filesystem behavior",
+      "environment-backed PATH",
+      "current-directory search",
+      "command lookup beyond bounded /bin",
+      "broad shell grammar",
+      "live networking/SSH",
+      "Pi 5 hardware proof",
+      "generated-root retry",
+      "phase transition"
+    ],
+    "not_an_issue": [
+      "no implementation change required; retained core tasks already accepted the behavior with static/unit/QEMU-substitute evidence"
+    ]
+  },
+  "hardware": {
+    "pi5_hardware_claim": false,
+    "live_networking_or_ssh": false
+  }
+}

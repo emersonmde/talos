@@ -19122,6 +19122,25 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   Pi 5 hardware proof, generated-root retry, and phase transition remain
   deferred. selected_next_task is
   phase12-local-stdout-regular-file-redirection-frontier-checkpoint-20260627.
+- phase12-local-stdout-regular-file-redirection-frontier-checkpoint-20260627
+  accepts local-stdout-regular-file-redirection-frontier-checkpoint. The
+  checkpoint freezes the local-only static/unit/QEMU-substitute boundary after
+  the accepted direct path-form and fixed-/bin bare-name stdout redirection
+  closeouts. The accepted witnesses remain exactly
+  '/bin/stdout >/tmp/stdout.txt' and 'stdout >/tmp/stdout.txt'; both keep
+  child-only fd1 rebinding to 'volatile-vfs:/tmp/stdout.txt',
+  descriptor-backed 'cat /tmp/stdout.txt' readback, closed loader temporary
+  descriptors, restored shell stdout, and coherent
+  waitpid/laststatus/process-table observations. Stderr redirection,
+  append/truncate, arbitrary output paths, pipeline-output redirection,
+  combined input/output redirection, persistent writable filesystem behavior,
+  environment-backed PATH, current-directory search, command lookup beyond
+  bounded /bin, arbitrary shell grammar, live networking/SSH, Pi 5 hardware
+  proof, generated-root retry, and phase transition remain deferred.
+  selected_next_task is null; planningNeeded=true because no later queued
+  same-lane local POSIX/VFS task has complete objective dependencies,
+  acceptance criteria, validation gates, docs requirements, and evidence
+  requirements.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

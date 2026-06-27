@@ -78,6 +78,20 @@ shell fd1 restoration. The next mechanically objective local POSIX/VFS task is
 the queued stdout regular-file redirection frontier checkpoint; live
 networking/SSH and Pi 5 hardware proof remain paused.
 
+The stdout regular-file redirection frontier checkpoint freezes the accepted
+local-only static/unit/QEMU-substitute boundary after the direct path-form and
+fixed-/bin bare-name closeouts. The accepted witnesses remain exactly
+'/bin/stdout >/tmp/stdout.txt' and 'stdout >/tmp/stdout.txt'; both keep
+child-only fd1 rebinding to 'volatile-vfs:/tmp/stdout.txt',
+descriptor-backed 'cat /tmp/stdout.txt' readback, and later normal stdout
+restoration. Stderr redirection, append/truncate, arbitrary output paths,
+pipeline-output redirection, combined input/output redirection, persistent
+writable filesystem behavior, environment-backed PATH, current-directory
+search, command lookup beyond bounded /bin, live networking/SSH, Pi 5 hardware
+proof, generated-root retry, and phase transition remain deferred. No later
+queued same-lane local POSIX/VFS task is mechanically objective, so supervisor
+planning is required before additional worker promotion.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1

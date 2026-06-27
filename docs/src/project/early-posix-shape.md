@@ -666,6 +666,22 @@ combined input/output redirection, persistent writable filesystem behavior,
 live networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
 transition remain deferred.
 
+The stdout regular-file redirection frontier checkpoint reconciles the accepted
+direct path-form and fixed-/bin bare-name output redirection pair. The accepted
+witnesses remain exactly '/bin/stdout >/tmp/stdout.txt' and
+'stdout >/tmp/stdout.txt', with child-only fd1 rebinding to
+volatile-vfs:/tmp/stdout.txt, userspace TalosWrite provenance,
+descriptor-backed 'cat /tmp/stdout.txt' readback, restored shell stdout, closed
+loader temporary descriptors, and retained waitpid/laststatus/process-table
+observability. Stderr redirection, append/truncate, arbitrary output paths,
+pipeline-output redirection, combined input/output redirection, persistent
+writable filesystem behavior, environment-backed PATH, current-directory
+search, command lookup beyond bounded /bin, arbitrary shell grammar, live
+networking/SSH, Pi 5 hardware proof, generated-root retry, and phase transition
+remain deferred. No later queued same-lane local POSIX/VFS task is
+mechanically objective, so supervisor planning is required before further
+worker promotion.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
