@@ -434,8 +434,12 @@ Consumer-stage redirection, redirection on multiple pipeline stages, output
 redirection, append/truncate, writable filesystem behavior, environment-backed
 PATH, command lookup beyond bounded surfaces, arbitrary shell grammar, live
 networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
-transition remain deferred pending the bare-name pipeline stdin redirection
-closeout.
+transition remain deferred. The accepted bare-name pipeline stdin redirection
+closeout reconciles the direct path-form and fixed-/bin bare-name
+producer-stage pipeline redirection evidence, then selects a local pipeline
+stdin redirection frontier checkpoint before any consumer-stage redirection,
+output redirection, writable filesystem, PATH, hardware, generated-root, or
+live network/SSH work.
 
 ## Scheduler Implications
 

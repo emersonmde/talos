@@ -1,0 +1,10 @@
+{
+  "task_id": "phase12-local-bare-name-pipeline-stdin-redirection-closeout-20260627",
+  "classification": "local-bare-name-pipeline-stdin-redirection-closeout-accepted",
+  "accepted_frontier": "fixed-/bin bare-name two-stage pipeline with producer fd0 redirected from initramfs:/etc/banner.txt",
+  "feature_witness": "stdin </etc/banner.txt | stdin",
+  "selected_next_task": "phase12-local-pipeline-stdin-redirection-frontier-checkpoint-20260627",
+  "planning_needed": false,
+  "hardware_claim": "none",
+  "live_network_ssh": "paused"
+}

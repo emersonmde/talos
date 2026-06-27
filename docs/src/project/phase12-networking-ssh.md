@@ -9127,6 +9127,23 @@ hardware proof, generated-root retry, and phase transition remain deferred.
 selected_next_task is
 phase12-local-bare-name-pipeline-stdin-redirection-closeout-20260627.
 
+phase12-local-bare-name-pipeline-stdin-redirection-closeout-20260627 accepts
+local-bare-name-pipeline-stdin-redirection-closeout. The closeout reconciles
+the accepted fixed-/bin bare-name pipeline-stage stdin redirection frontier
+against the retained core task record, task-owned classification/evidence
+JSON, QEMU/substitute transcript, docs, and regression evidence. The accepted
+witness remains exactly 'stdin </etc/banner.txt | stdin': both stages
+canonicalize through bounded /bin lookup to /bin/stdin, producer fd0 is
+sourced from initramfs:/etc/banner.txt, producer fd1 stays the pipe endpoint,
+loader temporary descriptors close, shell fd0 restoration stays coherent, and
+waitpid, laststatus, /proc/talos/processes, zero-argument ps, and pipestatus
+remain intact. Consumer-stage redirection, multistage pipeline redirection,
+output redirection, append/truncate, writable filesystem behavior,
+environment-backed PATH, arbitrary shell grammar, live networking/SSH, Pi 5
+hardware proof, generated-root retry, and phase transition remain deferred.
+selected_next_task is
+phase12-local-pipeline-stdin-redirection-frontier-checkpoint-20260627.
+
 phase12-local-absolute-path-vfs-command-core-20260626 accepts
 local-absolute-path-vfs-command-core. The local shell now dispatches a direct
 absolute-path command, /bin/status42, through the same accepted VFS open/read,
