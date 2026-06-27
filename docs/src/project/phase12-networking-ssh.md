@@ -396,6 +396,22 @@ direct variants remain fail-closed, and fixed-/bin bare-name pipeline-output
 redirection is the separate selected follow-up. No Pi 5 hardware, live
 network/SSH, generated-root retry, or phase transition claim is made.
 
+The bare-name pipeline-output regular-file redirection core accepts exactly
+'stdout | stdin >/tmp/pipeline-report.txt'. The command names resolve only
+through the bounded fixed-/bin lookup to '/bin/stdout' and '/bin/stdin', both
+stages load through descriptor-backed VFS open/read and the accepted userspace
+launch/status path, the producer writes to the pipe endpoint, and the consumer
+reads from that pipe on fd0 before writing the userspace stdin report through
+child-only fd1 to 'volatile-vfs:/tmp/pipeline-report.txt'. Descriptor-backed
+'cat /tmp/pipeline-report.txt' reads the file back, and 'waitpid',
+'laststatus', '/proc/talos/processes', zero-argument 'ps', and 'pipestatus'
+remain coherent. Unsupported bare-name variants remain fail-closed, including
+alternate output targets, append syntax, wrong final-stage programs, explicit
+'1>', spaced output grammar, and consumer names containing path separators. No
+Pi 5 hardware, live network/SSH, generated-root retry, append/stderr
+pipeline-output form, arbitrary-path, persistence, or phase-transition claim is
+made.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1

@@ -1,0 +1,46 @@
+{
+  "task_id": "phase12-local-bare-name-pipeline-output-regular-file-redirection-core-20260627",
+  "classification": "local-bare-name-pipeline-output-regular-file-redirection-core-accepted",
+  "accepted_witness": "stdout | stdin >/tmp/pipeline-report.txt",
+  "resolved_paths": [
+    "/bin/stdout",
+    "/bin/stdin"
+  ],
+  "accepted_boundary": {
+    "producer_fd1": "pipe:stdout-to-stdin",
+    "consumer_fd0": "pipe:stdout-to-stdin",
+    "consumer_fd1": "volatile-vfs:/tmp/pipeline-report.txt",
+    "readback": "cat /tmp/pipeline-report.txt",
+    "shell_fd1_restored": true
+  },
+  "evidence_levels": [
+    "static inspection",
+    "fmt/lint/typecheck",
+    "unit tests / QEMU-substitute",
+    "QEMU/substitute transcript",
+    "JSON validation",
+    "diff validation",
+    "docs validation",
+    "staged diff validation",
+    "commit"
+  ],
+  "rejected_claims": [
+    "append pipeline-output redirection",
+    "stderr pipeline-output redirection",
+    "input pipeline redirection",
+    "combined pipeline redirection",
+    "arbitrary output paths",
+    "persistent writable filesystem behavior",
+    "environment-backed PATH search",
+    "current-directory executable search",
+    "command lookup beyond bounded /bin",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "phase transition"
+  ],
+  "hardware": {
+    "lab_controller_api": "not run; local POSIX/VFS task had no Pi 5 hardware gate",
+    "serial_hardware_boot_output": "not run; local POSIX/VFS task had no Pi 5 hardware gate"
+  }
+}

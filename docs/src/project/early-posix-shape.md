@@ -1014,6 +1014,21 @@ persistent storage, live networking/SSH, Pi 5 hardware proof, generated-root
 retry, and phase transition remain deferred. The next local POSIX/VFS task is
 the queued fixed-/bin bare-name pipeline-output redirection core.
 
+The bare-name pipeline-output regular-file redirection core accepts exactly
+'stdout | stdin >/tmp/pipeline-report.txt'. Both stages resolve only through
+the bounded fixed-/bin lookup to '/bin/stdout' and '/bin/stdin', then load
+through descriptor-backed VFS open/read and the accepted userspace
+launch/status path before the pipe handoff. Only the final stage receives
+child-only fd1 redirection to 'volatile-vfs:/tmp/pipeline-report.txt';
+descriptor-backed 'cat /tmp/pipeline-report.txt' reads back the userspace stdin
+report, and the shell fd1 is restored afterward. Direct path-form
+pipeline-output redirection and process-status controls remain passing.
+Alternate output targets, append syntax, wrong final-stage programs, explicit
+'1>', spaced output grammar, and consumer names containing path separators fail
+closed. Append pipeline-output forms, stderr forms, input/combined pipeline
+redirections, arbitrary paths, persistent storage, live networking/SSH, Pi 5
+hardware proof, generated-root retry, and phase transition remain deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

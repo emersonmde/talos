@@ -1,0 +1,57 @@
+{
+  "task_id": "phase12-local-bare-name-pipeline-output-regular-file-redirection-core-20260627",
+  "witness": {
+    "command": "stdout | stdin >/tmp/pipeline-report.txt",
+    "producer": "/bin/stdout",
+    "consumer": "/bin/stdin",
+    "output_path": "/tmp/pipeline-report.txt",
+    "output_route": "volatile-vfs:/tmp/pipeline-report.txt",
+    "readback_command": "cat /tmp/pipeline-report.txt"
+  },
+  "source_changes": [
+    {
+      "path": "src/local_command_loop.rs",
+      "evidence": "parse_bare_bin_pipeline_consumer_request accepts only stdin >/tmp/pipeline-report.txt for bare-name pipeline consumer output redirection; regression test covers accepted witness and fail-closed negatives"
+    }
+  ],
+  "docs": [
+    "tasks/2026-06-27-phase12-local-bare-name-pipeline-output-regular-file-redirection-core.md",
+    "docs/src/roadmap.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/project/early-posix-shape.md"
+  ],
+  "transcripts": [
+    {
+      "level": "QEMU/substitute transcript",
+      "path": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-output-regular-file-redirection-core/qemu-substitute-focused-test.log",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop_redirects_bare_name_pipeline_consumer_stdout_to_volatile_regular_file",
+      "result": "passed; test result: ok. 864 passed"
+    }
+  ],
+  "fail_closed_negatives": [
+    "stdout | stdin >/tmp/stdout.txt",
+    "stdout | stdin >>/tmp/pipeline-report.txt",
+    "stdout | stderr >/tmp/pipeline-report.txt",
+    "stdout | stdin 1>/tmp/pipeline-report.txt",
+    "stdout | stdin > /tmp/pipeline-report.txt",
+    "stdout | bin/stdin >/tmp/pipeline-report.txt"
+  ],
+  "retained_controls": [
+    "direct path-form pipeline-output redirection",
+    "process-status VFS",
+    "ps",
+    "pipestatus",
+    "previous command, pipeline, and redirection local POSIX/VFS frontiers through local_command_loop test suite"
+  ],
+  "deferred": [
+    "append pipeline-output forms",
+    "stderr forms",
+    "input/combined pipeline redirections",
+    "arbitrary paths",
+    "persistent storage",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "phase transition"
+  ]
+}
