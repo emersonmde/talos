@@ -1,0 +1,145 @@
+# Phase 12 Local Bare-Name Pipeline Consumer Stdin Redirection Core
+
+Task id: phase12-local-bare-name-pipeline-consumer-stdin-redirection-core-20260627
+
+Status: accepted; commit hash recorded in durable supervisor state after
+commit.
+
+## Scope
+
+Implement the thinnest fixed-/bin bare-name two-stage pipeline consumer stdin
+redirection path:
+
+~~~text
+stdin | stdin </etc/banner.txt
+~~~
+
+Both stages canonicalize through the accepted bounded /bin lookup to
+/bin/stdin, then load from descriptor-backed VFS through the accepted loader
+and userspace launch/status path. The producer keeps inherited fd0, writes
+fd1 to the pipe endpoint, and inherits fd2. The consumer starts from the
+accepted pipeline fd0 handoff, then replaces only the child fd0 with
+initramfs:/etc/banner.txt before launch and restores shell fd0 after launch.
+
+This task does not accept redirection on multiple pipeline stages, multistage
+pipeline redirection, output redirection, append/truncate, writable filesystem
+behavior, environment-backed PATH, current-directory search, command lookup
+beyond bounded /bin, broad shell grammar, live networking/SSH, Pi 5 hardware
+proof, generated-root retry, or a phase transition.
+
+## Findings
+
+- fixed: Bare-name two-stage pipelines now accept exactly
+  'stdin | stdin </etc/banner.txt' without admitting general redirection
+  grammar or treating the redirection token as argv.
+- fixed: Both stage names canonicalize through fixed bounded /bin lookup to
+  /bin/stdin; no environment PATH or current-directory search is involved.
+- fixed: Producer execution records argv0=/bin/stdin, fd0 as inherited stdio
+  input, fd1 as the pipe endpoint, inherited fd2, a closed loader temporary
+  descriptor, and a no-data runtime stdin observation when no console byte is
+  ready under QEMU.
+- fixed: Consumer execution records argv0=/bin/stdin, fd0 as the read-only
+  initramfs regular file from child-only redirection, inherited fd1/fd2, a
+  closed loader temporary descriptor, successful launch/status, and regular
+  file EOF after reading /etc/banner.txt.
+- fixed: Pipeline lifecycle/status, explicit waitpid for producer and
+  consumer, laststatus, /proc/talos/processes, zero-argument ps, and
+  pipestatus-compatible observations remain attached to the two participants.
+- fixed: Unsupported bare-name variants such as stdout producer, producer
+  argv, consumer argv plus redirection, /dev/null consumer redirection,
+  separated '<' syntax, multistage consumer redirection, and redirection on
+  both stages fail closed without additional successful process records.
+- fixed: The QEMU/substitute smoke harness now has a dedicated
+  qemu_local_shell_bare_name_pipeline_consumer_stdin_redirection boot
+  scenario and task-owned transcript.
+- not-an-issue: Existing direct path-form consumer-stage and producer-stage
+  pipeline stdin redirection remain separate accepted regression/control
+  paths; this task only accepts the fixed-/bin bare-name consumer-stage form.
+- deferred: Redirection on multiple pipeline stages, multistage pipeline
+  redirection, combined input/output redirection, output regular-file
+  redirection, append/truncate, writable filesystem behavior,
+  environment-backed PATH, current-directory search, command lookup beyond
+  bounded /bin, quoting, escaping, globbing, variables, arbitrary shell
+  grammar, unbounded pipelines, pipeline concurrency, scheduler concurrency,
+  fork/signals, process groups/sessions, persistent storage, live
+  networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
+  transition.
+
+## Evidence Map
+
+- Classification and evidence JSON:
+  tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-consumer-stdin-redirection-core/classification.json
+  and
+  tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-consumer-stdin-redirection-core/evidence-map.json.
+- QEMU/substitute transcript:
+  tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-consumer-stdin-redirection-core/qemu-local-shell-bare-name-pipeline-consumer-stdin-redirection-smoke.log.
+- Task-owned regression transcripts:
+  tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-consumer-stdin-redirection-core/regressions/.
+- Implementation and smoke harness:
+  build.rs, src/main.rs, src/local_command_loop.rs,
+  src/target/qemu_virt.rs, scripts/qemu-local-serial-command-loop-smoke.sh,
+  and
+  scripts/qemu-local-shell-bare-name-pipeline-consumer-stdin-redirection-smoke.sh.
+- Project notes:
+  docs/src/roadmap.md, docs/src/project/phase12-networking-ssh.md, and
+  docs/src/project/early-posix-shape.md.
+
+## Accepted Frontier
+
+The accepted bare-name consumer-stage stdin redirection frontier is local-only
+and static/unit/QEMU-substitute backed. A fixed-/bin bare-name two-stage
+pipeline can now redirect the consumer's fd0 from a read-only initramfs file
+while the producer still launches through VFS and keeps fd1 as the pipe
+endpoint:
+
+~~~text
+stdin | stdin </etc/banner.txt
+~~~
+
+The producer records fd0 as stdio input, fd1 as the pipe endpoint, inherited
+fd2, loader-temp-open=false, and a readiness/no-data stdin observation when no
+console byte is available. The consumer records fd0
+source-route=initramfs:/etc/banner.txt, inherited fd1/fd2,
+loader-temp-open=false, and regular-file EOF after read. The shell restores
+fd0, the pipeline lifecycle/status record is coherent, explicit waitpid
+observes both participants, and laststatus, /proc/talos/processes,
+zero-argument ps, and pipestatus remain coherent.
+
+Live network/SSH reachability remains paused. No Pi 5 hardware claim is made.
+
+## Deferred Frontier
+
+Deferred surfaces remain redirection on multiple pipeline stages, multistage
+pipeline redirection, combined input/output redirection, output regular-file
+redirection, append/truncate, writable filesystem behavior,
+environment-backed PATH, current-directory search, command lookup beyond
+bounded /bin, quoting, escaping, globbing, variables, arbitrary shell grammar,
+unbounded pipelines, pipeline concurrency, scheduler concurrency,
+fork/signals, process groups/sessions, broad procfs/Linux ps, PID policy
+expansion, waitpid options, persistent storage, live networking/SSH, Pi 5
+hardware proof, generated-root command-input retry, and phase transition.
+
+## Validation
+
+- cargo fmt --all -- --check: passed.
+- cargo -Zjson-target-spec test --quiet local_command_loop: passed.
+- QEMU/substitute bare-name consumer-stage stdin redirection smoke using
+  scripts/qemu-local-shell-bare-name-pipeline-consumer-stdin-redirection-smoke.sh
+  with task-owned evidence path: passed.
+- Task-owned QEMU/substitute regressions passed: direct and bare-name stdin
+  redirection, direct and bare-name producer-stage pipeline stdin redirection,
+  direct consumer-stage pipeline stdin redirection, direct and bare-name
+  command argv, direct and bare-name pipeline argv, process-status VFS,
+  zero-argument ps, pipestatus, and cat-banner.
+- jq empty on task-owned JSON evidence: passed.
+- git diff --check: passed.
+- /home/node/.cargo/bin/mdbook build: passed.
+- git diff --cached --check: passed before commit.
+
+## Result
+
+selected_next_task: phase12-local-bare-name-pipeline-consumer-stdin-redirection-closeout-20260627.
+
+The bare-name consumer-stage stdin redirection closeout is mechanically
+unblocked after this accepted core task is committed, provided the hardware
+lock remains restored/unlocked and supervisor intervention remains inactive.

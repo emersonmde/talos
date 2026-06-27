@@ -1,0 +1,71 @@
+{
+  "task_id": "phase12-local-bare-name-pipeline-consumer-stdin-redirection-core-20260627",
+  "classification": "local-bare-name-pipeline-consumer-stdin-redirection-core-accepted",
+  "accepted": true,
+  "blocked": false,
+  "evidence_level": [
+    "static inspection",
+    "fmt/lint/typecheck",
+    "unit tests",
+    "QEMU/substitute"
+  ],
+  "accepted_witness": "stdin | stdin </etc/banner.txt",
+  "accepted_boundary": {
+    "producer": {
+      "input": "stdin",
+      "canonical_path": "/bin/stdin",
+      "fd0": "inherited stdio input",
+      "fd1": "pipe endpoint",
+      "fd2": "inherited stdio output",
+      "loader_temp_open": false
+    },
+    "consumer": {
+      "input": "stdin </etc/banner.txt",
+      "canonical_path": "/bin/stdin",
+      "fd0": "initramfs:/etc/banner.txt regular file via child-only stdin redirection",
+      "fd1": "inherited stdio output",
+      "fd2": "inherited stdio output",
+      "loader_temp_open": false
+    },
+    "lookup": "fixed bounded /bin lookup only; no environment PATH or current-directory search",
+    "process_observation": [
+      "explicit waitpid for producer and consumer",
+      "laststatus",
+      "/proc/talos/processes",
+      "zero-argument ps",
+      "pipestatus"
+    ]
+  },
+  "fail_closed_variants": [
+    "stdout | stdin </etc/banner.txt",
+    "stdin alpha | stdin </etc/banner.txt",
+    "stdin | stdin beta </etc/banner.txt",
+    "stdin | stdin </dev/null",
+    "stdin | stdin < /etc/banner.txt",
+    "stdin | stdin </etc/banner.txt | stdin",
+    "stdin </etc/banner.txt | stdin </etc/banner.txt"
+  ],
+  "rejected_claims": [
+    "redirection on multiple pipeline stages",
+    "multistage pipeline redirection",
+    "output regular-file redirection expansion",
+    "append/truncate",
+    "writable filesystem behavior",
+    "environment-backed PATH",
+    "current-directory search",
+    "command lookup beyond bounded /bin",
+    "arbitrary shell grammar",
+    "unbounded pipelines",
+    "pipeline concurrency",
+    "scheduler concurrency",
+    "fork/signals",
+    "process groups/sessions",
+    "persistent storage",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "phase transition"
+  ],
+  "selected_next_task": "phase12-local-bare-name-pipeline-consumer-stdin-redirection-closeout-20260627",
+  "notes": "Live network/SSH remains paused. No Pi 5 hardware claim is made."
+}

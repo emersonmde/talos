@@ -1,0 +1,74 @@
+{
+  "task_id": "phase12-local-bare-name-pipeline-consumer-stdin-redirection-core-20260627",
+  "classification": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-consumer-stdin-redirection-core/classification.json",
+  "primary_smoke": {
+    "level": "QEMU/substitute",
+    "path": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-consumer-stdin-redirection-core/qemu-local-shell-bare-name-pipeline-consumer-stdin-redirection-smoke.log",
+    "result": "PASS; final participants=17 expected=17 errors=0 classification=qemu-local-shell-bare-name-pipeline-consumer-stdin-redirection-complete"
+  },
+  "regressions": [
+    {
+      "name": "direct stdin redirection",
+      "path": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-consumer-stdin-redirection-core/regressions/direct-stdin-redirection.log"
+    },
+    {
+      "name": "bare-name stdin redirection",
+      "path": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-consumer-stdin-redirection-core/regressions/bare-name-stdin-redirection.log"
+    },
+    {
+      "name": "direct producer-stage pipeline stdin redirection",
+      "path": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-consumer-stdin-redirection-core/regressions/direct-pipeline-producer-stdin-redirection.log"
+    },
+    {
+      "name": "bare-name producer-stage pipeline stdin redirection",
+      "path": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-consumer-stdin-redirection-core/regressions/bare-name-pipeline-producer-stdin-redirection.log"
+    },
+    {
+      "name": "direct consumer-stage pipeline stdin redirection",
+      "path": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-consumer-stdin-redirection-core/regressions/direct-pipeline-consumer-stdin-redirection.log"
+    },
+    {
+      "name": "direct command argv",
+      "path": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-consumer-stdin-redirection-core/regressions/direct-command-argv.log"
+    },
+    {
+      "name": "bare-name command argv",
+      "path": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-consumer-stdin-redirection-core/regressions/bare-name-command-argv.log"
+    },
+    {
+      "name": "direct pipeline argv",
+      "path": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-consumer-stdin-redirection-core/regressions/direct-pipeline-stage-argv.log"
+    },
+    {
+      "name": "bare-name pipeline argv",
+      "path": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-consumer-stdin-redirection-core/regressions/bare-name-pipeline-stage-argv.log"
+    },
+    {
+      "name": "process-status VFS",
+      "path": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-consumer-stdin-redirection-core/regressions/process-status-vfs.log"
+    },
+    {
+      "name": "zero-argument ps",
+      "path": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-consumer-stdin-redirection-core/regressions/ps-command-vfs.log"
+    },
+    {
+      "name": "pipestatus",
+      "path": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-consumer-stdin-redirection-core/regressions/pipestatus.log"
+    },
+    {
+      "name": "cat-banner",
+      "path": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-consumer-stdin-redirection-core/regressions/cat-banner.log"
+    }
+  ],
+  "validation": {
+    "cargo_fmt_check": "passed",
+    "cargo_test_local_command_loop": "passed",
+    "primary_qemu_substitute_smoke": "passed",
+    "retained_qemu_substitute_regressions": "passed",
+    "jq_empty": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed"
+  },
+  "scope_statement": "Live network/SSH remains paused; no Pi 5 hardware claim is made."
+}

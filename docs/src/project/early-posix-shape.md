@@ -499,6 +499,24 @@ The fixed bounded /bin lookup and retained bare-name pipeline evidence make
 bare-name consumer-stage stdin redirection the mechanically objective next
 task.
 
+The bare-name consumer-stage pipeline stdin redirection slice accepts exactly
+`stdin | stdin </etc/banner.txt`. Both stage names canonicalize through fixed
+bounded /bin lookup to /bin/stdin, then load through descriptor-backed VFS
+open/read and the accepted loader/userspace launch/status path. The producer
+keeps inherited fd0/fd2 and fd1 as the pipe endpoint; under QEMU/substitute
+evidence it records readiness/no-data when no console byte is available. The
+consumer replaces only child fd0 with initramfs:/etc/banner.txt, reads the
+banner file to EOF, and restores shell fd0 afterward. Direct consumer-stage,
+direct/bare producer-stage, command/stdin/process/ps/pipestatus/cat-banner
+regression surfaces remain coherent. Redirection on multiple pipeline stages,
+multistage pipeline redirection, output redirection, writable filesystem
+behavior, environment-backed PATH, current-directory search, command lookup
+beyond bounded /bin, arbitrary shell grammar, live networking/SSH, Pi 5
+hardware proof, generated-root retry, and phase transition remain deferred.
+The accepted core selects a bare-name consumer-stage closeout before any
+output redirection, writable filesystem, PATH, hardware, generated-root, or
+live network/SSH work.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

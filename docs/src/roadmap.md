@@ -18937,6 +18937,29 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   hardware proof, generated-root retry, and phase transition remain deferred.
   selected_next_task is
   phase12-local-bare-name-pipeline-consumer-stdin-redirection-core-20260627.
+- phase12-local-bare-name-pipeline-consumer-stdin-redirection-core-20260627
+  accepts local-bare-name-pipeline-consumer-stdin-redirection-core. The
+  accepted witness is exactly 'stdin | stdin </etc/banner.txt'. Both stages
+  canonicalize through fixed bounded /bin lookup to /bin/stdin, then load
+  through descriptor-backed VFS open/read and the accepted loader/userspace
+  launch/status path. The producer keeps inherited fd0/fd2 and fd1 as the
+  pipe endpoint; under QEMU/substitute evidence it records readiness/no-data
+  when no console byte is available. The consumer replaces only child fd0
+  with initramfs:/etc/banner.txt, reads the banner file to EOF, and restores
+  shell fd0 afterward. Explicit waitpid, laststatus, /proc/talos/processes,
+  zero-argument ps, and pipestatus remain coherent. Direct consumer-stage,
+  direct/bare producer-stage, command/stdin/process/ps/pipestatus/cat-banner
+  regression surfaces remain coherent. Unsupported bare-name variants fail
+  closed without additional successful process records. Redirection on
+  multiple pipeline stages, multistage pipeline redirection, output
+  regular-file redirection, append/truncate, writable filesystem behavior,
+  environment-backed PATH, current-directory search, command lookup beyond
+  bounded /bin, arbitrary shell grammar, unbounded pipelines, pipeline
+  concurrency, scheduler concurrency, fork/signals, process groups/sessions,
+  persistent storage, live networking/SSH, Pi 5 hardware proof,
+  generated-root retry, and phase transition remain deferred.
+  selected_next_task is
+  phase12-local-bare-name-pipeline-consumer-stdin-redirection-closeout-20260627.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
