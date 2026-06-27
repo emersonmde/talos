@@ -1,0 +1,68 @@
+{
+  "task": "phase12-local-bare-name-stderr-append-regular-file-redirection-core-20260627",
+  "classification": "local-bare-name-stderr-append-regular-file-redirection-core-accepted",
+  "status": "accepted",
+  "selected_next_task": "phase12-local-bare-name-stderr-append-regular-file-redirection-closeout-20260627",
+  "evidence": {
+    "task_record": "tasks/2026-06-27-phase12-local-bare-name-stderr-append-regular-file-redirection-core.md",
+    "classification": "tasks/evidence/2026-06-27-phase12-local-bare-name-stderr-append-regular-file-redirection-core/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-27-phase12-local-bare-name-stderr-append-regular-file-redirection-core/evidence-map.json",
+    "focused_qemu_substitute_smoke": "tasks/evidence/2026-06-27-phase12-local-bare-name-stderr-append-regular-file-redirection-core/qemu-local-shell-bare-name-stderr-regular-file-append-redirection-smoke.log",
+    "focused_wrapper": "scripts/qemu-local-shell-bare-name-stderr-regular-file-append-redirection-smoke.sh",
+    "shared_qemu_driver": "scripts/qemu-local-serial-command-loop-smoke.sh",
+    "local_command_loop": "src/local_command_loop.rs",
+    "qemu_target_scenario": "src/target/qemu_virt.rs"
+  },
+  "validation": [
+    {
+      "level": "fmt/lint/typecheck",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "result": "passed"
+    },
+    {
+      "level": "QEMU/substitute",
+      "command": "scripts/qemu-local-shell-bare-name-stderr-regular-file-append-redirection-smoke.sh --quiet",
+      "result": "passed; transcript records initial sink write, append write, 0x3e descriptor-backed readback, stderr restoration, waitpid/laststatus, and fail-closed negatives"
+    },
+    {
+      "level": "QEMU/substitute regression batch",
+      "command": "direct stdout append, bare-name stdout append, stdout regular-file, stderr regular-file, direct stdin, direct pipeline stdin, direct pipeline consumer stdin, process-status VFS, ps, pipestatus, and cat-banner smoke scripts",
+      "result": "passed"
+    },
+    {
+      "level": "shell syntax",
+      "command": "bash -n scripts/qemu-local-serial-command-loop-smoke.sh scripts/qemu-local-shell-bare-name-stderr-regular-file-append-redirection-smoke.sh",
+      "result": "passed"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty task-owned classification/evidence-map JSON",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "level": "staged diff validation",
+      "command": "git diff --cached --check",
+      "result": "passed"
+    }
+  ],
+  "notes": [
+    "No live network/SSH action was performed.",
+    "No Pi 5 hardware action or hardware claim was made.",
+    "Arbitrary output paths, pipeline-output append, combined redirection, persistent filesystem behavior, generated-root retry, and phase transition remain deferred."
+  ]
+}

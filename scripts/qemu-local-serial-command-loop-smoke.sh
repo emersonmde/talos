@@ -76,6 +76,7 @@ GENERATED_ROOT_EXPECTED_CONTENT="${TALOS_QEMU_LOCAL_COMMAND_LOOP_GENERATED_ROOT_
 GENERATED_ROOT_EXPECTED_STATUS_HEX="${TALOS_QEMU_LOCAL_COMMAND_LOOP_GENERATED_ROOT_EXPECTED_STATUS_HEX:-0x0000000000000007}"
 SHELL_STDERR_REGULAR_FILE_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDERR_REGULAR_FILE_REDIRECTION_SMOKE:-0}"
 SHELL_DIRECT_STDERR_REGULAR_FILE_APPEND_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_DIRECT_STDERR_REGULAR_FILE_APPEND_REDIRECTION_SMOKE:-0}"
+SHELL_BARE_NAME_STDERR_REGULAR_FILE_APPEND_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_BARE_NAME_STDERR_REGULAR_FILE_APPEND_REDIRECTION_SMOKE:-0}"
 SHELL_STDERR_REGULAR_FILE_APPEND_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDERR_REGULAR_FILE_APPEND_REDIRECTION_SMOKE:-0}"
 SHELL_STDERR_REGULAR_FILE_APPEND_CREATE_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDERR_REGULAR_FILE_APPEND_CREATE_REDIRECTION_SMOKE:-0}"
 SHELL_STDERR_TO_STDOUT_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDERR_TO_STDOUT_REDIRECTION_SMOKE:-0}"
@@ -862,7 +863,7 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                 "laststatus"
                 "cat /tmp/stdout.txt"
                 "stdout"
-                "stdout >>/tmp/stdout.txt"
+                "stdout >>/var/append.txt"
                 "stdout >/var/other.txt"
                 "stdout | stdin >/tmp/stdout.txt"
                 "stdin </etc/banner.txt >/tmp/stdout.txt"
@@ -890,7 +891,7 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                 "cat /tmp/stderr.txt"
                 "/bin/stderr"
                 "/bin/stderr 2>>/tmp/other.txt"
-                "stderr 2>>/tmp/stderr.txt"
+                "stderr 2>>/tmp/other.txt"
                 "/bin/stderr | /bin/stdin 2>>/tmp/stderr.txt"
                 "/bin/stdin </etc/banner.txt 2>>/tmp/stderr.txt"
                 "/bin/stdout >>/tmp/stdout.txt"
@@ -899,6 +900,34 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
             command_index="${BASH_REMATCH[1]}"
             if [ "$sent" -eq "$command_index" ] && [ "$command_index" -lt "${#direct_stderr_regular_file_append_redirection_commands[@]}" ]; then
                 printf '%s\r' "${direct_stderr_regular_file_append_redirection_commands[$command_index]}" >&3
+                sent=$((command_index + 1))
+            fi
+            continue
+        fi
+        if [ "$SHELL_BARE_NAME_STDERR_REGULAR_FILE_APPEND_REDIRECTION_SMOKE" -eq 1 ] && [[ "$line" =~ ready\ command=([0-9]+) ]]; then
+            bare_name_stderr_regular_file_append_redirection_commands=(
+                "help"
+                "status"
+                "stdio"
+                "stderr 2>/tmp/stderr.txt"
+                "waitpid"
+                "laststatus"
+                "cat /tmp/stderr.txt"
+                "stderr 2>>/tmp/stderr.txt"
+                "waitpid"
+                "laststatus"
+                "cat /tmp/stderr.txt"
+                "stderr"
+                "stderr 2>>/tmp/other.txt"
+                "stderr 2>>/var/err.txt"
+                "stderr | stdin 2>>/tmp/stderr.txt"
+                "stdin </etc/banner.txt 2>>/tmp/stderr.txt"
+                "missing 2>>/tmp/stderr.txt"
+                "cat /etc/banner.txt"
+            )
+            command_index="${BASH_REMATCH[1]}"
+            if [ "$sent" -eq "$command_index" ] && [ "$command_index" -lt "${#bare_name_stderr_regular_file_append_redirection_commands[@]}" ]; then
+                printf '%s\r' "${bare_name_stderr_regular_file_append_redirection_commands[$command_index]}" >&3
                 sent=$((command_index + 1))
             fi
             continue
@@ -1074,7 +1103,7 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                     printf '/bin/stderr 2>>/tmp/stderr.txt\r' >&3
                     sent=13
                 elif [ "$sent" -eq 12 ] && [ "$SHELL_BARE_NAME_STDOUT_REGULAR_FILE_APPEND_REDIRECTION_SMOKE" -eq 1 ]; then
-                    printf 'stderr 2>>/tmp/stderr.txt\r' >&3
+                    printf 'stderr 2>>/tmp/other.txt\r' >&3
                     sent=13
                 elif [ "$sent" -eq 12 ] && [ "$SHELL_STDOUT_REGULAR_FILE_APPEND_REDIRECTION_SMOKE" -eq 1 ]; then
                     printf 'exec stderr 2>>/tmp/stderr.txt\r' >&3
@@ -2672,7 +2701,7 @@ elif [ "$SHELL_BARE_NAME_STDOUT_REGULAR_FILE_REDIRECTION_SMOKE" -eq 1 ]; then
     grep -q "talos: cat path=/tmp/stdout.txt bytes=0x000000000000001f source=volatile-vfs-descriptor-read" "$LOG_FILE"
     grep -q "talos> stdout" "$LOG_FILE"
     grep -q "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=stdout route=runtime-console0/stdout source=userspace-talos-write" "$LOG_FILE"
-    grep -q "talos> stdout >>/tmp/stdout.txt" "$LOG_FILE"
+    grep -q "talos> stdout >>/var/append.txt" "$LOG_FILE"
     grep -q "talos> stdout >/var/other.txt" "$LOG_FILE"
     grep -q "talos> stdout | stdin >/tmp/stdout.txt" "$LOG_FILE"
     grep -q "talos> stdin </etc/banner.txt >/tmp/stdout.txt" "$LOG_FILE"
@@ -2741,7 +2770,7 @@ elif [ "$SHELL_BARE_NAME_STDOUT_REGULAR_FILE_APPEND_REDIRECTION_SMOKE" -eq 1 ]; 
     grep -q "talos> stdout" "$LOG_FILE"
     grep -q "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=stdout route=runtime-console0/stdout source=userspace-talos-write" "$LOG_FILE"
     grep -q "talos> stdout >>/var/other.txt" "$LOG_FILE"
-    grep -q "talos> stderr 2>>/tmp/stderr.txt" "$LOG_FILE"
+    grep -q "talos> stderr 2>>/tmp/other.txt" "$LOG_FILE"
     grep -c "talos: exec-invalid-path" "$LOG_FILE" | grep -q "^2$"
     grep -q "talos> cat /etc/banner.txt" "$LOG_FILE"
     grep -q "^Talos initramfs fixture" "$LOG_FILE"
@@ -2884,12 +2913,42 @@ elif [ "$SHELL_DIRECT_STDERR_REGULAR_FILE_APPEND_REDIRECTION_SMOKE" -eq 1 ]; the
     grep -q "talos> /bin/stderr" "$LOG_FILE"
     grep -q "talos: exec-stderr fd=0x0000000000000002 bytes=0x000000000000001f return=0x000000000000001f stream=stderr route=runtime-console0/stderr source=userspace-talos-write" "$LOG_FILE"
     grep -q "talos> /bin/stderr 2>>/tmp/other.txt" "$LOG_FILE"
-    grep -q "talos> stderr 2>>/tmp/stderr.txt" "$LOG_FILE"
+    grep -q "talos> stderr 2>>/tmp/other.txt" "$LOG_FILE"
     grep -q "talos> /bin/stderr | /bin/stdin 2>>/tmp/stderr.txt" "$LOG_FILE"
     grep -q "talos> /bin/stdin </etc/banner.txt 2>>/tmp/stderr.txt" "$LOG_FILE"
     grep -q "talos> /bin/stdout >>/tmp/stdout.txt" "$LOG_FILE"
     grep -c "talos: exec-invalid-path" "$LOG_FILE" | grep -q "^4$"
-    grep -c "talos: unexpected-argument" "$LOG_FILE" | grep -q "^1$"
+    ! grep -q "talos: unexpected-argument" "$LOG_FILE"
+    grep -q "talos> cat /etc/banner.txt" "$LOG_FILE"
+    grep -q "^Talos initramfs fixture" "$LOG_FILE"
+    grep -q "$LABEL: final participants=18 expected=18 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+elif [ "$SHELL_BARE_NAME_STDERR_REGULAR_FILE_APPEND_REDIRECTION_SMOKE" -eq 1 ]; then
+    grep -q "talos> stderr 2>/tmp/stderr.txt" "$LOG_FILE"
+    grep -q "talos: exec path=/bin/stderr source=vfs-open-read" "$LOG_FILE"
+    grep -q "talos: exec-startup-abi state=minimal-argc1-argv0-absolute-empty-envp argc=0x0000000000000001 argv0=/bin/stderr" "$LOG_FILE"
+    grep -q "talos: exec-redirection op=sink source-fd=0x0000000000000002 target-path=/tmp/stderr.txt target-stream=regular-file target-route=volatile-vfs:/tmp/stderr.txt child-only=true shell-restored=true source=shell-redirection-stderr-tmp-stderr" "$LOG_FILE"
+    grep -q "talos> stderr 2>>/tmp/stderr.txt" "$LOG_FILE"
+    grep -q "talos: exec-redirection op=append source-fd=0x0000000000000002 target-path=/tmp/stderr.txt target-stream=regular-file target-route=volatile-vfs:/tmp/stderr.txt child-only=true shell-restored=true source=shell-redirection-stderr-tmp-stderr-append" "$LOG_FILE"
+    grep -q "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=stdio-output fd2=regular-file loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table" "$LOG_FILE"
+    grep -q "talos: exec-stderr fd=0x0000000000000002 bytes=0x000000000000001f return=0x000000000000001f stream=regular-file route=volatile-vfs:/tmp/stderr.txt source=userspace-talos-write" "$LOG_FILE"
+    grep -Eq "talos: waitpid pid=0x[0-9a-f]+ parent=shell owner=0x[0-9a-f]+ path=/bin/stderr state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -Eq "talos: last-process pid=0x[0-9a-f]+ parent=shell owner=0x[0-9a-f]+ path=/bin/stderr state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record" "$LOG_FILE"
+    grep -q "talos> cat /tmp/stderr.txt" "$LOG_FILE"
+    grep -q "talos: cat path=/tmp/stderr.txt bytes=0x000000000000003e source=volatile-vfs-descriptor-read" "$LOG_FILE"
+    grep -q "talos> stderr" "$LOG_FILE"
+    grep -q "talos: exec-stderr fd=0x0000000000000002 bytes=0x000000000000001f return=0x000000000000001f stream=stderr route=runtime-console0/stderr source=userspace-talos-write" "$LOG_FILE"
+    grep -q "talos> stderr 2>>/tmp/other.txt" "$LOG_FILE"
+    grep -q "talos> stderr 2>>/var/err.txt" "$LOG_FILE"
+    grep -q "talos> stderr | stdin 2>>/tmp/stderr.txt" "$LOG_FILE"
+    grep -q "talos> stdin </etc/banner.txt 2>>/tmp/stderr.txt" "$LOG_FILE"
+    grep -q "talos> missing 2>>/tmp/stderr.txt" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=12 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=13 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=14 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=15 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=16 status=unknown-command responses=1" "$LOG_FILE"
+    grep -c "talos: exec-invalid-path" "$LOG_FILE" | grep -q "^4$"
+    ! grep -q "talos: unexpected-argument" "$LOG_FILE"
     grep -q "talos> cat /etc/banner.txt" "$LOG_FILE"
     grep -q "^Talos initramfs fixture" "$LOG_FILE"
     grep -q "$LABEL: final participants=18 expected=18 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"

@@ -862,6 +862,21 @@ append, combined input/output redirection, persistent writable filesystem
 behavior, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
 phase transition remain deferred.
 
+The bare-name stderr append regular-file redirection core accepts exactly
+'stderr 2>/tmp/stderr.txt' followed by 'stderr 2>>/tmp/stderr.txt'. Each command
+name resolves only through the fixed bounded /bin lookup to '/bin/stderr'; the
+child fd2 is rebound only for each process to
+volatile-vfs:/tmp/stderr.txt; the first command uses truncate/sink semantics;
+the second records op=append at regular-file EOF; and descriptor-backed
+'cat /tmp/stderr.txt' reads both stderr fixture writes in order with
+bytes=0x3e. A later normal 'stderr' proves shell fd2 restoration to
+runtime-console0/stderr. Direct path-form stderr append remains accepted, while
+unsupported bare-name append paths, arbitrary output paths, pipeline-output
+append, combined input/output redirection, persistent writable filesystem
+behavior, PATH/current-directory search, command lookup beyond bounded /bin,
+arbitrary shell grammar, live networking/SSH, Pi 5 hardware proof,
+generated-root retry, and phase transition remain deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

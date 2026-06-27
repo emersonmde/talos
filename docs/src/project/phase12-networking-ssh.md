@@ -247,10 +247,27 @@ and project docs. The accepted surface remains exactly the direct sequence
 commands keep child-only fd2 rebinding to 'volatile-vfs:/tmp/stderr.txt',
 truncate/sink then append-at-EOF semantics, descriptor-backed
 'cat /tmp/stderr.txt' readback of both stderr fixture writes, and later normal
-'/bin/stderr' restoration. Unsupported direct and bare-name append forms remain
-fail-closed. The next mechanically objective local POSIX/VFS task is the queued
-bare-name stderr append regular-file redirection core; live networking/SSH,
-Pi 5 hardware proof, generated-root retry, and phase transition remain paused.
+'/bin/stderr' restoration. Unsupported direct append paths and unsupported
+bare-name append forms remain fail-closed. The next mechanically objective
+local POSIX/VFS task is the queued bare-name stderr append regular-file
+redirection core; live networking/SSH, Pi 5 hardware proof, generated-root
+retry, and phase transition remain paused.
+
+The bare-name stderr append regular-file redirection core accepts exactly
+'stderr 2>/tmp/stderr.txt' followed by 'stderr 2>>/tmp/stderr.txt'. The command
+name resolves through the fixed bounded /bin lookup to '/bin/stderr', then uses
+the same descriptor-backed VFS open/read, loader, userspace launch/status, and
+volatile VFS regular-file descriptor path as the accepted direct path-form
+append surface. The first child fd2 write uses truncate/sink semantics, the
+second uses append-at-EOF semantics, and 'cat /tmp/stderr.txt' reads both
+stderr fixture writes in order with bytes=0x3e. A later normal 'stderr'
+records restored runtime-console0/stderr. Direct stderr append remains
+accepted. Unsupported bare-name append paths such as
+'stderr 2>>/tmp/other.txt', pipeline-output append, combined input/output
+redirection, arbitrary output paths, persistent writable filesystem behavior,
+live networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
+transition remain deferred. The next mechanically objective local POSIX/VFS
+task is the queued bare-name stderr append closeout.
 
 ## RP1 Ethernet Source Inventory
 
