@@ -1,0 +1,37 @@
+{
+  "task": "phase12-local-stderr-append-regular-file-redirection-frontier-checkpoint-20260627",
+  "classification": "local-stderr-append-regular-file-redirection-frontier-checkpoint-accepted-planning-needed",
+  "status": "accepted",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "accepted_frontier": [
+    "/bin/stderr 2>/tmp/stderr.txt",
+    "/bin/stderr 2>>/tmp/stderr.txt",
+    "stderr 2>/tmp/stderr.txt",
+    "stderr 2>>/tmp/stderr.txt"
+  ],
+  "deferred_frontier": [
+    "arbitrary output path policy",
+    "pipeline-output redirection and append",
+    "combined input/output redirection",
+    "persistent writable filesystem behavior",
+    "environment-backed PATH",
+    "current-directory search",
+    "command lookup beyond bounded /bin",
+    "arbitrary shell grammar",
+    "unbounded and concurrent pipelines",
+    "scheduler concurrency",
+    "fork/signals",
+    "process groups/sessions",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "phase transition"
+  ],
+  "notes": [
+    "Static checkpoint only; no source behavior changed.",
+    "Live network/SSH remains paused.",
+    "No Pi 5 hardware action or hardware claim was made.",
+    "No later queued same-lane local POSIX/VFS task is mechanically objective; supervisor planning is required."
+  ]
+}

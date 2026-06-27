@@ -892,6 +892,24 @@ generated-root retry, and phase transition remain deferred. The next
 mechanically objective local POSIX/VFS task is the queued stderr append
 frontier checkpoint.
 
+The stderr append regular-file redirection frontier checkpoint freezes the
+accepted local-only append boundary after the direct path-form and fixed-/bin
+bare-name closeouts. The accepted witnesses remain exactly the direct sequence
+'/bin/stderr 2>/tmp/stderr.txt' then '/bin/stderr 2>>/tmp/stderr.txt' and the
+bare-name sequence 'stderr 2>/tmp/stderr.txt' then
+'stderr 2>>/tmp/stderr.txt'. Both forms keep child-only fd2 rebinding to
+volatile-vfs:/tmp/stderr.txt, truncate/sink then append-at-EOF operations,
+descriptor-backed 'cat /tmp/stderr.txt' readback of both stderr fixture writes
+in order, closed loader temporary descriptors, and coherent
+waitpid/laststatus/process observations. Arbitrary output paths,
+pipeline-output redirection and append, combined input/output redirection,
+persistent writable filesystem behavior, environment-backed PATH,
+current-directory search, command lookup beyond bounded /bin, arbitrary shell
+grammar, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
+phase transition remain deferred. No later queued same-lane local POSIX/VFS
+task is mechanically objective; supervisor planning is required before the
+next worker promotion.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
