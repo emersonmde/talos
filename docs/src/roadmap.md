@@ -18694,6 +18694,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   selected_next_task is null and planningNeeded=true because no later queued
   same-lane local POSIX/shell task exists with complete objective dependencies,
   acceptance criteria, validation gates, docs, and evidence requirements.
+- phase12-local-direct-stdin-redirection-core-20260626 accepts
+  local-direct-stdin-redirection-core. The local shell now accepts the exact
+  direct absolute-path input redirection form `/bin/stdin </etc/banner.txt`.
+  The executable still comes from descriptor-backed VFS open/read and the
+  accepted loader/userspace launch/status path, while child fd0 is replaced
+  with the read-only initramfs regular file `initramfs:/etc/banner.txt`.
+  Evidence records op=source, source-path=/etc/banner.txt,
+  source-route=initramfs:/etc/banner.txt, child-only restoration, inherited
+  fd1/fd2, closed loader temporary descriptor, successful userspace stdin read,
+  waitpid, laststatus, `/proc/talos/processes`, zero-argument `ps`, and
+  pipestatus compatibility. Unsupported direct redirection variants fail
+  closed without additional successful process records. Bare-name stdin
+  redirection, pipeline-stage redirection, output redirection expansion,
+  append/truncate, writable filesystem behavior, environment-backed PATH,
+  arbitrary shell grammar, live networking/SSH, Pi 5 hardware proof,
+  generated-root retry, and phase transition remain deferred.
+  selected_next_task is phase12-local-direct-stdin-redirection-closeout-20260626.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

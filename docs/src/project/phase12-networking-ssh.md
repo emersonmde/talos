@@ -8961,6 +8961,24 @@ planningNeeded=true. No live reachability, remote receipt, compatibility,
 PTY/SCP/SFTP, broad command expansion, phase transition, or ssh-ready=true is
 accepted.
 
+phase12-local-direct-stdin-redirection-core-20260626 accepts
+local-direct-stdin-redirection-core. The local shell now accepts the exact
+direct absolute-path input redirection form `/bin/stdin </etc/banner.txt`.
+The command reaches `/bin/stdin` through descriptor-backed VFS open/read, the
+accepted loader, userspace startup/status, and a child-only fd0 replacement
+from `initramfs:/etc/banner.txt`. The evidence records op=source,
+source-path=/etc/banner.txt, source-route=initramfs:/etc/banner.txt,
+shell-restored=true, inherited fd1/fd2, a closed loader temporary descriptor,
+successful userspace stdin read from the redirected file, waitpid, laststatus,
+bounded process-table, `/proc/talos/processes`, zero-argument `ps`, and
+pipestatus-compatible observations. Unsupported direct path redirection
+variants fail closed without additional successful process records. Bare-name
+stdin redirection, pipeline-stage redirection, output redirection expansion,
+append/truncate, writable filesystem behavior, environment-backed PATH,
+arbitrary shell grammar, live networking/SSH, Pi 5 hardware proof,
+generated-root retry, and phase transition remain deferred.
+selected_next_task is phase12-local-direct-stdin-redirection-closeout-20260626.
+
 phase12-local-absolute-path-vfs-command-core-20260626 accepts
 local-absolute-path-vfs-command-core. The local shell now dispatches a direct
 absolute-path command, /bin/status42, through the same accepted VFS open/read,

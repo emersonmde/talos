@@ -317,6 +317,24 @@ scheduler concurrency, fork/signals, process groups/sessions, persistent
 storage, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
 phase transition remain deferred pending supervisor planning.
 
+The first direct stdin redirection slice extends only the accepted direct
+absolute-path command form. A shell input of `/bin/stdin </etc/banner.txt`
+opens and reads `/bin/stdin` from VFS, launches through the accepted
+loader/userspace startup/status path, and replaces only child fd0 with the
+read-only initramfs regular file `initramfs:/etc/banner.txt`. The redirection
+evidence records op=source, source-path=/etc/banner.txt,
+source-route=initramfs:/etc/banner.txt, child-only shell restoration, inherited
+fd1/fd2, a closed loader temporary descriptor, and a userspace stdin read that
+ends with regular-file EOF after the read. waitpid, laststatus,
+/proc/talos/processes, zero-argument ps, and pipestatus-compatible
+observations remain regression surfaces. Unsupported direct path redirection
+variants fail closed without additional successful process records. Bare-name
+stdin redirection, pipeline-stage redirection, output redirection expansion,
+append/truncate, writable filesystem behavior, environment-backed PATH,
+arbitrary shell grammar, live networking/SSH, Pi 5 hardware proof,
+generated-root retry, and phase transition remain deferred pending the direct
+stdin redirection closeout.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
