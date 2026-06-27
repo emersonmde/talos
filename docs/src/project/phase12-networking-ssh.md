@@ -428,6 +428,21 @@ checkpoint. No Pi 5 hardware, live network/SSH, generated-root retry, append or
 stderr pipeline-output form, arbitrary-path, persistence, or phase-transition
 claim is made.
 
+The pipeline-output regular-file redirection frontier checkpoint freezes the
+accepted local-only direct path-form and fixed-/bin bare-name pipeline-output
+frontier. The accepted witnesses remain exactly
+'/bin/stdout | /bin/stdin >/tmp/pipeline-report.txt' and
+'stdout | stdin >/tmp/pipeline-report.txt'. Both forms keep descriptor-backed
+VFS program loading, accepted userspace launch/status, producer fd1 to the pipe
+endpoint, consumer fd0 from that pipe endpoint, child-only consumer fd1 to
+'volatile-vfs:/tmp/pipeline-report.txt', descriptor-backed readback, and shell
+fd1 restoration. Unsupported direct and bare-name variants remain fail-closed.
+No later queued same-lane local POSIX/VFS task is mechanically objective, so
+supervisor planning is required before another worker promotion. No Pi 5
+hardware, live network/SSH, generated-root retry, append or stderr
+pipeline-output form, arbitrary-path, persistence, or phase-transition claim is
+made.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1

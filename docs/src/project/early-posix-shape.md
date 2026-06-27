@@ -1044,6 +1044,25 @@ live networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
 transition remain deferred. The next local POSIX/VFS task is the
 pipeline-output regular-file redirection frontier checkpoint.
 
+The pipeline-output regular-file redirection frontier checkpoint freezes the
+accepted local-only direct path-form and fixed-/bin bare-name pipeline-output
+boundary without runtime feature changes. The accepted witnesses remain exactly
+'/bin/stdout | /bin/stdin >/tmp/pipeline-report.txt' and
+'stdout | stdin >/tmp/pipeline-report.txt'. Both forms use descriptor-backed
+VFS program loading, accepted userspace launch/status, producer fd1 to the pipe
+endpoint, consumer fd0 from the pipe endpoint, child-only consumer fd1 to
+'volatile-vfs:/tmp/pipeline-report.txt', descriptor-backed readback, and shell
+fd1 restoration. Unsupported direct and bare-name variants remain fail-closed.
+Append pipeline-output redirection, stderr forms, input/combined pipeline
+redirections, arbitrary paths, persistent writable filesystem behavior,
+environment-backed PATH, current-directory search, command lookup beyond
+bounded /bin, arbitrary shell grammar, unbounded/concurrent pipelines,
+scheduler concurrency, fork/signals, process groups/sessions, live
+networking/SSH, Pi 5 hardware proof, generated-root retry, and phase transition
+remain deferred. No later queued same-lane local POSIX/VFS task is
+mechanically objective, so supervisor planning is required before another
+worker promotion.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
