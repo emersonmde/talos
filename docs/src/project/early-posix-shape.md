@@ -349,6 +349,23 @@ environment-backed PATH, command lookup beyond bounded /bin, arbitrary shell
 grammar, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
 phase transition remain deferred.
 
+The bare-name stdin redirection slice accepts the corresponding bounded
+fixed-/bin form only. A shell input of `stdin </etc/banner.txt` resolves
+`stdin` through the accepted fixed `/bin` lookup to `/bin/stdin`, loads the
+executable through descriptor-backed VFS open/read, and launches through the
+same loader/userspace startup/status path. The child sees fd0 rebound to
+`initramfs:/etc/banner.txt`, inherited fd1/fd2 remain stdio output, the loader
+temporary descriptor is closed, and the shell restores fd0 afterward. waitpid,
+laststatus, `/proc/talos/processes`, zero-argument `ps`, pipestatus, direct
+path-form stdin redirection, exec-prefixed stdin redirection, command argv,
+pipeline argv, and cat-banner controls remain regression surfaces. Unsupported
+bare-name redirection variants such as `stdout </etc/banner.txt`,
+`stdin </dev/null`, and `stdin < /etc/banner.txt` fail closed without
+additional successful process records. Environment-backed PATH, command lookup
+beyond bounded `/bin`, pipeline-stage redirection, output redirection,
+append/truncate, writable filesystem behavior, generated-root retry, live
+network/SSH, Pi 5 hardware proof, and phase transition remain deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

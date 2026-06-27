@@ -8999,6 +8999,29 @@ bounded /bin, arbitrary shell grammar, live networking/SSH, Pi 5 hardware
 proof, generated-root retry, and phase transition remain deferred.
 selected_next_task is phase12-local-bare-name-stdin-redirection-core-20260626.
 
+phase12-local-bare-name-stdin-redirection-core-20260626 accepts
+local-bare-name-stdin-redirection-core. The local shell now accepts the exact
+bounded fixed-/bin input redirection form `stdin </etc/banner.txt`. The
+command resolves `stdin` to `/bin/stdin`, loads that executable through
+descriptor-backed VFS open/read, launches through the accepted loader/userspace
+startup/status path, and replaces only child fd0 with
+`initramfs:/etc/banner.txt`. Evidence records canonical argv0=/bin/stdin,
+op=source, source-path=/etc/banner.txt,
+source-route=initramfs:/etc/banner.txt, shell-restored=true, inherited fd1/fd2,
+a closed loader temporary descriptor, successful userspace stdin read from the
+redirected file, waitpid, laststatus, bounded process-table,
+`/proc/talos/processes`, zero-argument `ps`, and pipestatus-compatible
+observations. Direct path-form stdin redirection, exec-prefixed stdin
+redirection, direct/bare command argv, direct/bare pipeline argv,
+process-status VFS, zero-argument ps, pipeline status, and cat-banner
+regressions remain coherent. Unsupported bare-name redirection variants fail
+closed without additional successful process records. Environment-backed PATH,
+command lookup beyond bounded /bin, pipeline-stage redirection, output
+redirection, append/truncate, writable filesystem behavior, generated-root
+retry, live network/SSH, Pi 5 hardware proof, and phase transition remain
+deferred. selected_next_task is
+phase12-local-bare-name-stdin-redirection-closeout-20260626.
+
 phase12-local-absolute-path-vfs-command-core-20260626 accepts
 local-absolute-path-vfs-command-core. The local shell now dispatches a direct
 absolute-path command, /bin/status42, through the same accepted VFS open/read,

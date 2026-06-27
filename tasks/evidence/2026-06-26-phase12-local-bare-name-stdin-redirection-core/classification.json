@@ -1,0 +1,52 @@
+{
+  "classification": "local-bare-name-stdin-redirection-core-accepted",
+  "task_id": "phase12-local-bare-name-stdin-redirection-core-20260626",
+  "accepted": true,
+  "command": "stdin </etc/banner.txt",
+  "resolved_path": "/bin/stdin",
+  "stdin_redirection": {
+    "operation": "source",
+    "source_path": "/etc/banner.txt",
+    "source_route": "initramfs:/etc/banner.txt",
+    "source_stream": "regular-file",
+    "child_only": true,
+    "shell_restored": true
+  },
+  "exec": {
+    "path": "/bin/stdin",
+    "argv0": "/bin/stdin",
+    "argc": 1,
+    "envp": "empty-envp0",
+    "fd0": "regular-file",
+    "fd1": "stdio-output",
+    "fd2": "stdio-output",
+    "loader_temp_descriptor_open": false,
+    "status": "0x0",
+    "stdin_read_source": "initramfs:/etc/banner.txt",
+    "stdin_read_result": "regular-file-eof-after-read"
+  },
+  "evidence_level": [
+    "fmt/lint",
+    "unit tests",
+    "QEMU/substitute",
+    "static inspection",
+    "JSON validation",
+    "mdbook docs build"
+  ],
+  "no_hardware_claim": true,
+  "live_network_ssh_paused": true,
+  "selected_next_task": "phase12-local-bare-name-stdin-redirection-closeout-20260626",
+  "deferred": [
+    "pipeline-stage redirection",
+    "output redirection expansion",
+    "append/truncate",
+    "writable filesystem behavior",
+    "environment-backed PATH",
+    "command lookup beyond bounded /bin",
+    "arbitrary shell grammar",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "phase transition"
+  ]
+}
