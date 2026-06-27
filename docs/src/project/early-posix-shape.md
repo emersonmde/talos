@@ -816,6 +816,23 @@ filesystem behavior, PATH/current-directory search, command lookup beyond
 bounded /bin, arbitrary shell grammar, live networking/SSH, Pi 5 hardware
 proof, generated-root retry, and phase transition remain deferred.
 
+The stdout append regular-file redirection frontier checkpoint freezes the
+accepted local-only append boundary after the direct path-form and fixed-/bin
+bare-name closeouts. The accepted witnesses remain exactly the direct sequence
+'/bin/stdout >/tmp/stdout.txt' then '/bin/stdout >>/tmp/stdout.txt' and the
+bare-name sequence 'stdout >/tmp/stdout.txt' then 'stdout >>/tmp/stdout.txt'.
+Both forms keep child-only fd1 rebinding to volatile-vfs:/tmp/stdout.txt,
+truncate/sink then append-at-EOF operations, descriptor-backed
+'cat /tmp/stdout.txt' readback of both stdout fixture writes in order, closed
+loader temporary descriptors, and coherent waitpid/laststatus/process
+observations. Stderr append, arbitrary output paths, pipeline-output
+redirection, combined input/output redirection, persistent writable filesystem
+behavior, environment-backed PATH, current-directory search, command lookup
+beyond bounded /bin, arbitrary shell grammar, live networking/SSH, Pi 5
+hardware proof, generated-root retry, and phase transition remain deferred.
+No later queued same-lane local POSIX/VFS task is mechanically objective;
+supervisor planning is required before the next worker promotion.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

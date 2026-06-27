@@ -210,6 +210,21 @@ restoration. Unsupported append forms remain fail-closed. The next mechanically
 objective local POSIX/VFS task is the queued stdout append frontier checkpoint;
 live networking/SSH and Pi 5 hardware proof remain paused.
 
+The stdout append regular-file redirection frontier checkpoint freezes the
+accepted local-only static/unit/QEMU-substitute boundary after the direct
+path-form and fixed-/bin bare-name closeouts. The accepted witnesses remain
+exactly '/bin/stdout >/tmp/stdout.txt', '/bin/stdout >>/tmp/stdout.txt',
+'stdout >/tmp/stdout.txt', and 'stdout >>/tmp/stdout.txt'. Both forms keep
+child-only fd1 rebinding to 'volatile-vfs:/tmp/stdout.txt', truncate/sink then
+append-at-EOF operations, descriptor-backed 'cat /tmp/stdout.txt' readback of
+both stdout fixture writes in order, and later normal stdout restoration.
+Stderr append, arbitrary output paths, pipeline-output redirection, combined
+input/output redirection, persistent writable filesystem behavior,
+environment-backed PATH, current-directory search, command lookup beyond
+bounded /bin, live networking/SSH, Pi 5 hardware proof, generated-root retry,
+and phase transition remain deferred. No later queued same-lane local POSIX/VFS
+task is mechanically objective; supervisor planning is required.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1

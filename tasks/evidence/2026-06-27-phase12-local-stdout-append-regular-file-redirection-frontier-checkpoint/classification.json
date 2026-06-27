@@ -1,0 +1,41 @@
+{
+  "task": "phase12-local-stdout-append-regular-file-redirection-frontier-checkpoint-20260627",
+  "classification": "local-stdout-append-regular-file-redirection-frontier-checkpoint-accepted-planning-needed",
+  "status": "accepted",
+  "accepted_witnesses": [
+    "/bin/stdout >/tmp/stdout.txt",
+    "/bin/stdout >>/tmp/stdout.txt",
+    "stdout >/tmp/stdout.txt",
+    "stdout >>/tmp/stdout.txt"
+  ],
+  "accepted_surface": {
+    "direct_path": "/bin/stdout through descriptor-backed VFS open/read",
+    "bare_name_resolution": "bounded fixed /bin lookup to /bin/stdout",
+    "redirected_descriptor": "child fd1 only",
+    "target": "volatile-vfs:/tmp/stdout.txt",
+    "first_operation": "truncate/sink",
+    "second_operation": "append at regular-file EOF",
+    "readback": "cat /tmp/stdout.txt through descriptor-backed VFS reads both stdout fixture writes in order",
+    "restoration": "later normal stdout routes fd1 to runtime-console0/stdout"
+  },
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "No later queued same-lane local POSIX/VFS task exists after phase12-local-stdout-append-regular-file-redirection-frontier-checkpoint-20260627 with complete objective dependencies, acceptance criteria, validation gates, docs requirements, and evidence requirements.",
+  "deferred": [
+    "stderr append",
+    "arbitrary output path policy",
+    "pipeline-output redirection",
+    "combined input/output redirection",
+    "persistent writable filesystem behavior",
+    "environment-backed PATH",
+    "current-directory search",
+    "command lookup beyond bounded /bin",
+    "arbitrary shell grammar",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "phase transition"
+  ],
+  "hardware_claim": "none",
+  "live_network_ssh": "paused"
+}

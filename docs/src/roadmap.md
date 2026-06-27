@@ -19288,6 +19288,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   generated-root retry, and phase transition remain deferred.
   selected_next_task is
   phase12-local-stdout-append-regular-file-redirection-frontier-checkpoint-20260627.
+- phase12-local-stdout-append-regular-file-redirection-frontier-checkpoint-20260627
+  reconciles the accepted local-only direct path-form and fixed-/bin bare-name
+  stdout append frontier against retained task records, classifications,
+  evidence maps, QEMU/substitute transcripts, regression summaries, and project
+  docs. The accepted witnesses remain exactly '/bin/stdout >/tmp/stdout.txt',
+  '/bin/stdout >>/tmp/stdout.txt', 'stdout >/tmp/stdout.txt', and
+  'stdout >>/tmp/stdout.txt'. Both forms bind child fd1 only for the launched
+  process to 'volatile-vfs:/tmp/stdout.txt', use truncate/sink then
+  append-at-EOF semantics, and retain descriptor-backed
+  'cat /tmp/stdout.txt' readback of both stdout fixture writes in order. Stderr
+  append, arbitrary output paths, pipeline-output append, combined input/output
+  redirection, persistent writable filesystem behavior, live networking/SSH,
+  Pi 5 hardware proof, generated-root retry, and phase transition remain
+  deferred. selected_next_task is null and planningNeeded=true because no later
+  queued same-lane local POSIX/VFS task is mechanically objective.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
