@@ -729,6 +729,18 @@ behavior, environment-backed PATH, current-directory search, command lookup
 beyond bounded /bin, arbitrary shell grammar, live networking/SSH, Pi 5
 hardware proof, generated-root retry, and phase transition remain deferred.
 
+The bare-name stderr regular-file redirection closeout reconciles that accepted
+boundary against the retained core task, classification, evidence map,
+QEMU/substitute transcript, regression summary, and project docs. The accepted
+surface remains exactly 'stderr 2>/tmp/stderr.txt',
+'cat /tmp/stderr.txt' descriptor-backed readback, and later normal 'stderr'
+shell fd2 restoration. Direct and bare-name stderr regular-file evidence make
+the stderr regular-file redirection frontier checkpoint mechanically objective,
+but append/truncate, arbitrary paths, pipeline-output redirection, persistent
+writable filesystem behavior, PATH/current-directory search, live
+networking/SSH, Pi 5 hardware proof, generated-root retry, and phase transition
+remain deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

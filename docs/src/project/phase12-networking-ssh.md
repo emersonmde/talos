@@ -130,6 +130,15 @@ input/output redirection, persistent writable filesystem behavior, live
 networking/SSH, Pi 5 hardware proof, generated-root retry, and phase transition
 remain deferred.
 
+The bare-name stderr regular-file redirection closeout reconciles that accepted
+boundary against the retained core task, classification, evidence map,
+QEMU/substitute transcript, regression summary, and project docs. The accepted
+surface remains exactly 'stderr 2>/tmp/stderr.txt', descriptor-backed
+'cat /tmp/stderr.txt' readback, and later normal 'stderr' shell fd2
+restoration. The next mechanically objective local POSIX/VFS task is the
+queued stderr regular-file redirection frontier checkpoint; live networking/SSH
+and Pi 5 hardware proof remain paused.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1

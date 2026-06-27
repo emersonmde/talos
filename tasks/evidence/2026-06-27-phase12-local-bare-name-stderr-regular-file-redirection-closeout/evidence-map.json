@@ -1,0 +1,45 @@
+{
+  "task": "phase12-local-bare-name-stderr-regular-file-redirection-closeout-20260627",
+  "classification": "local-bare-name-stderr-regular-file-redirection-closeout-accepted",
+  "status": "accepted",
+  "selected_next_task": "phase12-local-stderr-regular-file-redirection-frontier-checkpoint-20260627",
+  "evidence": {
+    "closeout_task_record": "tasks/2026-06-27-phase12-local-bare-name-stderr-regular-file-redirection-closeout.md",
+    "core_task_record": "tasks/2026-06-27-phase12-local-bare-name-stderr-regular-file-redirection-core.md",
+    "core_classification": "tasks/evidence/2026-06-27-phase12-local-bare-name-stderr-regular-file-redirection-core/classification.json",
+    "core_evidence_map": "tasks/evidence/2026-06-27-phase12-local-bare-name-stderr-regular-file-redirection-core/evidence-map.json",
+    "core_qemu_substitute_smoke": "tasks/evidence/2026-06-27-phase12-local-bare-name-stderr-regular-file-redirection-core/qemu-local-shell-stderr-regular-file-redirection-smoke.log",
+    "core_regression_summary": "tasks/evidence/2026-06-27-phase12-local-bare-name-stderr-regular-file-redirection-core/regressions/regression-summary.txt"
+  },
+  "validation": [
+    {
+      "level": "static inspection",
+      "result": "core task record, classification, evidence map, QEMU/substitute transcript, regression summary, and project docs inspected"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty core classification/evidence-map and closeout evidence-map",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed with existing large search-index warning only"
+    },
+    {
+      "level": "staged diff validation",
+      "command": "git diff --cached --check",
+      "result": "passed"
+    }
+  ],
+  "notes": [
+    "No live network/SSH action was performed.",
+    "No Pi 5 hardware action or hardware claim was made.",
+    "Generated-root retry, append/truncate, arbitrary output paths, pipeline-output redirection, persistent filesystem behavior, and phase transition remain deferred."
+  ]
+}
