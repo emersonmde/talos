@@ -1,0 +1,47 @@
+{
+  "task_id": "phase12-local-direct-pipeline-output-regular-file-redirection-closeout-20260627",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "paths": [
+        "tasks/2026-06-27-phase12-local-direct-pipeline-output-regular-file-redirection-core.md",
+        "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-regular-file-redirection-core/classification.json",
+        "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-regular-file-redirection-core/evidence-map.json",
+        "docs/src/project/early-posix-shape.md",
+        "docs/src/project/phase12-networking-ssh.md",
+        "docs/src/roadmap.md",
+        "tasks/2026-06-27-phase12-local-direct-pipeline-output-regular-file-redirection-closeout.md"
+      ],
+      "result": "accepted direct path-form pipeline-output redirection boundary reconciled; no runtime code change required"
+    },
+    {
+      "level": "retained QEMU/substitute transcript",
+      "source_task": "phase12-local-direct-pipeline-output-regular-file-redirection-core-20260627",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop_redirects_direct_path_pipeline_consumer_stdout_to_volatile_regular_file",
+      "result": "retained core evidence passed; witness /bin/stdout | /bin/stdin >/tmp/pipeline-report.txt records final-stage fd1 sink, cat readback, shell restoration, process-status coherence, and fail-closed negatives"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-regular-file-redirection-closeout/classification.json tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-regular-file-redirection-closeout/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed; HTML backend wrote book, with existing large search-index warning"
+    },
+    {
+      "level": "lab-controller API",
+      "result": "not run; no Pi 5 hardware gate"
+    },
+    {
+      "level": "serial hardware boot/output",
+      "result": "not run; no Pi 5 hardware gate"
+    }
+  ]
+}

@@ -1001,6 +1001,19 @@ input/stderr/combined pipeline redirections, arbitrary output paths,
 persistent writable filesystem behavior, generated-root retry, live
 networking/SSH, Pi 5 hardware proof, and phase transition remain deferred.
 
+The direct pipeline-output regular-file redirection closeout freezes that
+accepted absolute path-form boundary without runtime expansion. The accepted
+witness remains exactly `/bin/stdout | /bin/stdin >/tmp/pipeline-report.txt`:
+the producer fd1 is the pipe endpoint, the consumer fd0 is the same pipe
+endpoint, the consumer fd1 is child-only redirected to
+`volatile-vfs:/tmp/pipeline-report.txt`, and descriptor-backed
+`cat /tmp/pipeline-report.txt` reads back the userspace stdin report.
+Alternate output targets, append syntax, wrong final-stage programs, fixed-/bin
+bare-name forms, input/stderr/combined pipeline redirections, arbitrary paths,
+persistent storage, live networking/SSH, Pi 5 hardware proof, generated-root
+retry, and phase transition remain deferred. The next local POSIX/VFS task is
+the queued fixed-/bin bare-name pipeline-output redirection core.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

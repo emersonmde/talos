@@ -384,6 +384,18 @@ output paths, persistent writable filesystem behavior, generated-root retry,
 live networking/SSH, Pi 5 hardware proof, and phase transition remain
 deferred.
 
+The direct pipeline-output regular-file redirection closeout reconciles that
+accepted absolute path-form boundary without runtime expansion. The accepted
+witness remains exactly `/bin/stdout | /bin/stdin >/tmp/pipeline-report.txt`:
+both stages load through descriptor-backed VFS and the accepted userspace
+launch/status path, the producer writes to the pipe endpoint, the consumer
+reads from that pipe on fd0, writes the userspace stdin report through
+child-only fd1 to `volatile-vfs:/tmp/pipeline-report.txt`, and
+descriptor-backed `cat /tmp/pipeline-report.txt` reads it back. Unsupported
+direct variants remain fail-closed, and fixed-/bin bare-name pipeline-output
+redirection is the separate selected follow-up. No Pi 5 hardware, live
+network/SSH, generated-root retry, or phase transition claim is made.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1
