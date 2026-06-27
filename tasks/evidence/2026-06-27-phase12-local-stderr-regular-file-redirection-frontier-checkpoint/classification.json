@@ -1,0 +1,37 @@
+{
+  "task": "phase12-local-stderr-regular-file-redirection-frontier-checkpoint-20260627",
+  "classification": "local-stderr-regular-file-redirection-frontier-checkpoint-accepted-planning-needed",
+  "status": "accepted",
+  "accepted_witnesses": [
+    "/bin/stderr 2>/tmp/stderr.txt",
+    "stderr 2>/tmp/stderr.txt"
+  ],
+  "accepted_surface": {
+    "direct_path": "/bin/stderr through descriptor-backed VFS open/read",
+    "bare_name_resolution": "bounded fixed /bin lookup to /bin/stderr",
+    "redirected_descriptor": "child fd2 only",
+    "target": "volatile-vfs:/tmp/stderr.txt",
+    "readback": "cat /tmp/stderr.txt through descriptor-backed VFS",
+    "restoration": "later normal stderr routes fd2 to runtime-console0/stderr"
+  },
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "No later queued same-lane local POSIX/VFS task exists after phase12-local-stderr-regular-file-redirection-frontier-checkpoint-20260627 with complete objective dependencies, acceptance criteria, validation gates, docs requirements, and evidence requirements.",
+  "deferred": [
+    "append/truncate",
+    "arbitrary /tmp policy",
+    "pipeline-output redirection",
+    "combined input/output redirection",
+    "persistent writable filesystem behavior",
+    "environment-backed PATH",
+    "current-directory search",
+    "command lookup beyond bounded /bin",
+    "arbitrary shell grammar",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "phase transition"
+  ],
+  "hardware_claim": "none",
+  "live_network_ssh": "paused"
+}

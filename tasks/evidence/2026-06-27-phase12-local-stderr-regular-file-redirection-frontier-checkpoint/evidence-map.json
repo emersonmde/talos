@@ -1,0 +1,50 @@
+{
+  "task": "phase12-local-stderr-regular-file-redirection-frontier-checkpoint-20260627",
+  "classification": "local-stderr-regular-file-redirection-frontier-checkpoint-accepted-planning-needed",
+  "status": "accepted",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "evidence": {
+    "checkpoint_task_record": "tasks/2026-06-27-phase12-local-stderr-regular-file-redirection-frontier-checkpoint.md",
+    "direct_core_task_record": "tasks/2026-06-27-phase12-local-direct-stderr-regular-file-redirection-core.md",
+    "direct_closeout_task_record": "tasks/2026-06-27-phase12-local-direct-stderr-regular-file-redirection-closeout.md",
+    "bare_name_core_task_record": "tasks/2026-06-27-phase12-local-bare-name-stderr-regular-file-redirection-core.md",
+    "bare_name_closeout_task_record": "tasks/2026-06-27-phase12-local-bare-name-stderr-regular-file-redirection-closeout.md",
+    "bare_name_core_classification": "tasks/evidence/2026-06-27-phase12-local-bare-name-stderr-regular-file-redirection-core/classification.json",
+    "bare_name_core_evidence_map": "tasks/evidence/2026-06-27-phase12-local-bare-name-stderr-regular-file-redirection-core/evidence-map.json",
+    "bare_name_core_qemu_substitute_smoke": "tasks/evidence/2026-06-27-phase12-local-bare-name-stderr-regular-file-redirection-core/qemu-local-shell-stderr-regular-file-redirection-smoke.log",
+    "bare_name_core_regression_summary": "tasks/evidence/2026-06-27-phase12-local-bare-name-stderr-regular-file-redirection-core/regressions/regression-summary.txt"
+  },
+  "validation": [
+    {
+      "level": "static inspection",
+      "result": "direct and bare-name stderr core/closeout records, classification/evidence JSON, QEMU/substitute transcripts, regression summaries, project docs, and git diff inspected"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty task-owned classification/evidence-map JSON",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed with existing large search-index warning only"
+    },
+    {
+      "level": "staged diff validation",
+      "command": "git diff --cached --check",
+      "result": "passed"
+    }
+  ],
+  "notes": [
+    "No live network/SSH action was performed.",
+    "No Pi 5 hardware action or hardware claim was made.",
+    "Generated-root retry, append/truncate, arbitrary output paths, pipeline-output redirection, persistent filesystem behavior, and phase transition remain deferred.",
+    "No later queued same-lane local POSIX/VFS task is mechanically objective; supervisor planning is required."
+  ]
+}

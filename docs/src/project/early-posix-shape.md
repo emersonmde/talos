@@ -741,6 +741,21 @@ writable filesystem behavior, PATH/current-directory search, live
 networking/SSH, Pi 5 hardware proof, generated-root retry, and phase transition
 remain deferred.
 
+The stderr regular-file redirection frontier checkpoint reconciles the accepted
+direct path-form and fixed-/bin bare-name fd2 output redirection pair. The
+accepted witnesses remain exactly '/bin/stderr 2>/tmp/stderr.txt' and
+'stderr 2>/tmp/stderr.txt', with child-only fd2 rebinding to
+volatile-vfs:/tmp/stderr.txt, descriptor-backed 'cat /tmp/stderr.txt'
+readback, normal stderr restoration, closed loader temporary descriptors, and
+coherent waitpid/laststatus/process observations. Append/truncate, arbitrary
+output paths, pipeline-output redirection, combined input/output redirection,
+persistent writable filesystem behavior, environment-backed PATH,
+current-directory search, command lookup beyond bounded /bin, arbitrary shell
+grammar, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
+phase transition remain deferred. No later queued same-lane local POSIX/VFS
+task is mechanically objective, so supervisor planning is required before
+further worker promotion.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
