@@ -848,6 +848,20 @@ search, command lookup beyond bounded /bin, arbitrary shell grammar, live
 networking/SSH, Pi 5 hardware proof, generated-root retry, and phase transition
 remain deferred.
 
+The direct stderr append regular-file redirection closeout freezes that
+accepted local-only direct stderr append boundary. The accepted sequence remains
+'/bin/stderr 2>/tmp/stderr.txt' then '/bin/stderr 2>>/tmp/stderr.txt'; both
+commands keep child-only fd2 rebinding to volatile-vfs:/tmp/stderr.txt,
+truncate/sink then append-at-EOF operations, descriptor-backed
+'cat /tmp/stderr.txt' readback of both stderr fixture writes, and later normal
+'/bin/stderr' restoration. Unsupported direct and bare-name append forms remain
+fail-closed. The direct append evidence makes bare-name stderr append
+regular-file redirection mechanically objective, but arbitrary paths,
+pipeline-output
+append, combined input/output redirection, persistent writable filesystem
+behavior, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
+phase transition remain deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

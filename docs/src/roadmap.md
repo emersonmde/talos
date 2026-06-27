@@ -19318,6 +19318,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   persistent writable filesystem behavior, live networking/SSH, Pi 5 hardware
   proof, generated-root retry, and phase transition remain deferred. The queued
   direct stderr append closeout is the next same-lane local POSIX/VFS task.
+- phase12-local-direct-stderr-append-regular-file-redirection-closeout-20260627
+  reconciles that accepted direct stderr append regular-file redirection
+  frontier against retained task records, classification, evidence map,
+  QEMU/substitute transcript, regression summaries, and project docs. The
+  accepted direct sequence remains exactly
+  '/bin/stderr 2>/tmp/stderr.txt' followed by
+  '/bin/stderr 2>>/tmp/stderr.txt'; both commands bind child fd2 only to
+  'volatile-vfs:/tmp/stderr.txt', use truncate/sink then append-at-EOF
+  semantics, and retain descriptor-backed 'cat /tmp/stderr.txt' readback plus
+  later normal '/bin/stderr' fd2 restoration. Unsupported direct and bare-name
+  append forms remain fail-closed, and bare-name stderr append remains separate
+  implementation work. Arbitrary output paths, pipeline-output append, combined
+  input/output redirection, persistent writable filesystem behavior, live
+  networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
+  transition remain deferred. The next mechanically objective task is
+  phase12-local-bare-name-stderr-append-regular-file-redirection-core-20260627.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

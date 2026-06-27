@@ -239,6 +239,19 @@ proof, generated-root retry, and phase transition remain deferred. The next
 mechanically objective local POSIX/VFS task is the queued direct stderr append
 closeout.
 
+The direct stderr append regular-file redirection closeout reconciles that
+accepted direct stderr append frontier against retained task records,
+classification, evidence map, QEMU/substitute transcript, regression summaries,
+and project docs. The accepted surface remains exactly the direct sequence
+'/bin/stderr 2>/tmp/stderr.txt' then '/bin/stderr 2>>/tmp/stderr.txt'; both
+commands keep child-only fd2 rebinding to 'volatile-vfs:/tmp/stderr.txt',
+truncate/sink then append-at-EOF semantics, descriptor-backed
+'cat /tmp/stderr.txt' readback of both stderr fixture writes, and later normal
+'/bin/stderr' restoration. Unsupported direct and bare-name append forms remain
+fail-closed. The next mechanically objective local POSIX/VFS task is the queued
+bare-name stderr append regular-file redirection core; live networking/SSH,
+Pi 5 hardware proof, generated-root retry, and phase transition remain paused.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1
