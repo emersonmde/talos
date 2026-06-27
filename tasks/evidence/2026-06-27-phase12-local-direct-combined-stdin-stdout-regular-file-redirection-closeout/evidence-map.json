@@ -1,0 +1,51 @@
+{
+  "task": "phase12-local-direct-combined-stdin-stdout-regular-file-redirection-closeout-20260627",
+  "classification": "local-direct-combined-stdin-stdout-regular-file-redirection-closeout-accepted",
+  "status": "accepted",
+  "selected_next_task": "phase12-local-bare-name-combined-stdin-stdout-regular-file-redirection-core-20260627",
+  "evidence": {
+    "task_record": "tasks/2026-06-27-phase12-local-direct-combined-stdin-stdout-regular-file-redirection-closeout.md",
+    "evidence_map": "tasks/evidence/2026-06-27-phase12-local-direct-combined-stdin-stdout-regular-file-redirection-closeout/evidence-map.json",
+    "direct_core_task": "tasks/2026-06-27-phase12-local-direct-combined-stdin-stdout-regular-file-redirection-core.md",
+    "direct_core_classification": "tasks/evidence/2026-06-27-phase12-local-direct-combined-stdin-stdout-regular-file-redirection-core/classification.json",
+    "direct_core_evidence_map": "tasks/evidence/2026-06-27-phase12-local-direct-combined-stdin-stdout-regular-file-redirection-core/evidence-map.json",
+    "direct_qemu_substitute_smoke": "tasks/evidence/2026-06-27-phase12-local-direct-combined-stdin-stdout-regular-file-redirection-core/qemu-local-shell-direct-combined-stdin-stdout-redirection-smoke.log",
+    "roadmap": "docs/src/roadmap.md",
+    "phase12_doc": "docs/src/project/phase12-networking-ssh.md",
+    "early_posix_doc": "docs/src/project/early-posix-shape.md"
+  },
+  "validation": [
+    {
+      "level": "static inspection",
+      "command": "inspection of retained task record, QEMU/substitute transcript, evidence map, classification, and docs",
+      "result": "passed; retained evidence reconciles direct combined stdin/stdout into /tmp/stdin-report.txt through child fd0/fd1, descriptor-backed readback, restoration, and fail-closed boundaries"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty task-owned and retained direct combined stdin/stdout JSON evidence",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "level": "staged diff validation",
+      "command": "git diff --cached --check",
+      "result": "passed"
+    }
+  ],
+  "notes": [
+    "Closeout-only task; no runtime feature implementation was performed.",
+    "No live network/SSH action was performed.",
+    "No Pi 5 hardware action or hardware claim was made.",
+    "Direct path-form combined stdin/stdout redirection into /tmp/stdin-report.txt remains accepted.",
+    "Bare-name combined redirection, arbitrary input/output paths, append, stderr combined forms, pipeline-output redirection, persistent filesystem behavior, generated-root retry, and phase transition remain deferred."
+  ]
+}

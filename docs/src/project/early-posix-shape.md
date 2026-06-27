@@ -928,6 +928,16 @@ search, command lookup beyond bounded /bin, arbitrary shell grammar, live
 networking/SSH, Pi 5 hardware proof, generated-root retry, and phase transition
 remain deferred.
 
+The direct combined stdin/stdout closeout freezes that direct path-form
+frontier without adding runtime behavior. The accepted surface remains exactly
+'/bin/stdin </etc/banner.txt >/tmp/stdin-report.txt', with fd0 sourced from
+initramfs:/etc/banner.txt, fd1 targeting volatile-vfs:/tmp/stdin-report.txt,
+descriptor-backed readback through 'cat /tmp/stdin-report.txt', and
+fail-closed unsupported direct forms. The next local POSIX/VFS task is the
+separate fixed-/bin bare-name combined core; live networking/SSH, Pi 5 hardware
+proof, generated-root retry, arbitrary paths, append/stderr variants, and phase
+transition remain paused/deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

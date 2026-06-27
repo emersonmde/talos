@@ -9270,6 +9270,18 @@ input grammar, /dev/null input, explicit fd1 output, append output, stderr
 output, and arbitrary output paths. No Pi 5 hardware, live network/SSH,
 generated-root retry, or phase transition claim is made.
 
+phase12-local-direct-combined-stdin-stdout-regular-file-redirection-closeout-20260627
+reconciles that accepted direct combined boundary without runtime expansion.
+The retained evidence still accepts only
+'/bin/stdin </etc/banner.txt >/tmp/stdin-report.txt', records fd0 from
+initramfs:/etc/banner.txt and fd1 to volatile-vfs:/tmp/stdin-report.txt as
+child-only mutations, preserves descriptor-backed 'cat /tmp/stdin-report.txt'
+readback, and keeps output-first ordering, spaced input grammar, /dev/null
+input, explicit 1>, append output, stderr output, and arbitrary output paths
+fail-closed. The selected local follow-up is the queued fixed-/bin bare-name
+combined core. No Pi 5 hardware, live network/SSH, generated-root retry, or
+phase transition claim is made.
+
 While live networking/SSH remains paused, the local POSIX/VFS continuation
 accepted the direct stderr regular-file redirection core
 phase12-local-direct-stderr-regular-file-redirection-core-20260627. The
