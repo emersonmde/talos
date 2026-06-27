@@ -1,0 +1,51 @@
+{
+  "task": "phase12-local-bare-name-stderr-append-regular-file-redirection-closeout-20260627",
+  "classification": "local-bare-name-stderr-append-regular-file-redirection-closeout-accepted",
+  "status": "accepted",
+  "selected_next_task": "phase12-local-stderr-append-regular-file-redirection-frontier-checkpoint-20260627",
+  "evidence": {
+    "task_record": "tasks/2026-06-27-phase12-local-bare-name-stderr-append-regular-file-redirection-closeout.md",
+    "evidence_map": "tasks/evidence/2026-06-27-phase12-local-bare-name-stderr-append-regular-file-redirection-closeout/evidence-map.json",
+    "bare_name_core_task": "tasks/2026-06-27-phase12-local-bare-name-stderr-append-regular-file-redirection-core.md",
+    "bare_name_core_classification": "tasks/evidence/2026-06-27-phase12-local-bare-name-stderr-append-regular-file-redirection-core/classification.json",
+    "bare_name_core_evidence_map": "tasks/evidence/2026-06-27-phase12-local-bare-name-stderr-append-regular-file-redirection-core/evidence-map.json",
+    "bare_name_qemu_substitute_smoke": "tasks/evidence/2026-06-27-phase12-local-bare-name-stderr-append-regular-file-redirection-core/qemu-local-shell-bare-name-stderr-regular-file-append-redirection-smoke.log",
+    "roadmap": "docs/src/roadmap.md",
+    "phase12_doc": "docs/src/project/phase12-networking-ssh.md",
+    "early_posix_doc": "docs/src/project/early-posix-shape.md"
+  },
+  "validation": [
+    {
+      "level": "static inspection",
+      "command": "inspection of retained task record, QEMU/substitute transcript, evidence map, classification, and docs",
+      "result": "passed; retained evidence reconciles fixed-/bin bare-name stderr append into /tmp/stderr.txt through child fd2, descriptor-backed readback, restoration, and fail-closed boundaries"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty task-owned and retained bare-name stderr append JSON evidence",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "level": "staged diff validation",
+      "command": "git diff --cached --check",
+      "result": "passed"
+    }
+  ],
+  "notes": [
+    "Closeout-only task; no runtime feature implementation was performed.",
+    "No live network/SSH action was performed.",
+    "No Pi 5 hardware action or hardware claim was made.",
+    "Fixed-/bin bare-name stderr append into /tmp/stderr.txt remains accepted.",
+    "Arbitrary output paths, pipeline-output append, combined redirection, persistent filesystem behavior, generated-root retry, and phase transition remain deferred."
+  ]
+}

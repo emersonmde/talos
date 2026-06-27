@@ -877,6 +877,21 @@ behavior, PATH/current-directory search, command lookup beyond bounded /bin,
 arbitrary shell grammar, live networking/SSH, Pi 5 hardware proof,
 generated-root retry, and phase transition remain deferred.
 
+The bare-name stderr append regular-file redirection closeout freezes that
+accepted fixed-/bin bare-name stderr append boundary. The accepted sequence
+remains 'stderr 2>/tmp/stderr.txt' then 'stderr 2>>/tmp/stderr.txt'; both
+commands canonicalize only through bounded /bin to '/bin/stderr', keep
+child-only fd2 rebinding to volatile-vfs:/tmp/stderr.txt, use truncate/sink
+then append-at-EOF operations, descriptor-backed 'cat /tmp/stderr.txt' readback
+of both stderr fixture writes, and later normal 'stderr' restoration.
+Unsupported bare-name append forms, arbitrary output paths, pipeline-output
+append, combined input/output redirection, persistent writable filesystem
+behavior, PATH/current-directory search, command lookup beyond bounded /bin,
+arbitrary shell grammar, live networking/SSH, Pi 5 hardware proof,
+generated-root retry, and phase transition remain deferred. The next
+mechanically objective local POSIX/VFS task is the queued stderr append
+frontier checkpoint.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
