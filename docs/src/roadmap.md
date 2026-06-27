@@ -19093,6 +19093,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   generated-root retry, and phase transition remain deferred.
   selected_next_task is
   phase12-local-bare-name-stdout-regular-file-redirection-core-20260627.
+- phase12-local-bare-name-stdout-regular-file-redirection-core-20260627
+  accepts the fixed-/bin bare-name stdout output redirection witness
+  'stdout >/tmp/stdout.txt'. The command name resolves only through the
+  bounded /bin policy to '/bin/stdout'; child fd1 is rebound only for that
+  process to 'volatile-vfs:/tmp/stdout.txt'; 'cat /tmp/stdout.txt' reads the
+  userspace stdout fixture back through descriptor-backed VFS; and a later
+  normal 'stdout' command records fd1 restored to runtime-console0/stdout.
+  Direct path-form stdout redirection remains accepted. Environment-backed
+  PATH lookup, current-directory search, command lookup beyond bounded /bin,
+  stderr redirection, append/truncate, arbitrary output paths, pipeline output
+  redirection, combined input/output redirection, persistent writable
+  filesystem behavior, live networking/SSH, Pi 5 hardware proof,
+  generated-root retry, and phase transition remain deferred.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

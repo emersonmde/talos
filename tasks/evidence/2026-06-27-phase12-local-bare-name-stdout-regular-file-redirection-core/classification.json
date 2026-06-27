@@ -1,0 +1,60 @@
+{
+  "task_id": "phase12-local-bare-name-stdout-regular-file-redirection-core-20260627",
+  "classification": "accepted",
+  "accepted_witness": "stdout >/tmp/stdout.txt",
+  "boundary": "local-only bounded /bin bare-name stdout regular-file output redirection",
+  "accepted_lookup": {
+    "input_name": "stdout",
+    "resolved_path": "/bin/stdout",
+    "policy": "fixed bounded /bin lookup only"
+  },
+  "accepted_readback": "cat /tmp/stdout.txt",
+  "normal_stdout_restoration_witness": "stdout",
+  "descriptor_effect": {
+    "child_fd1": "volatile-vfs:/tmp/stdout.txt",
+    "scope": "child-only",
+    "shell_fd1_restored": true,
+    "loader_temporary_descriptor_closed": true
+  },
+  "fail_closed_witnesses": [
+    "stdout >>/tmp/stdout.txt",
+    "stdout >/var/other.txt",
+    "stdout | stdin >/tmp/stdout.txt",
+    "stdin </etc/banner.txt >/tmp/stdout.txt"
+  ],
+  "retained_boundaries": [
+    "direct path-form stdout regular-file redirection",
+    "direct VFS exec",
+    "cat /etc/banner.txt",
+    "command argv",
+    "pipeline argv",
+    "process-status VFS",
+    "zero-argument ps",
+    "pipestatus",
+    "command stdin redirection",
+    "producer-stage pipeline stdin redirection",
+    "consumer-stage pipeline stdin redirection",
+    "dual-stage pipeline stdin redirection"
+  ],
+  "rejected_claims": [
+    "environment-backed PATH lookup",
+    "current-directory search",
+    "command lookup beyond bounded /bin",
+    "stderr file redirection",
+    "append or truncate semantics",
+    "arbitrary output paths",
+    "pipeline output redirection",
+    "combined input/output redirection",
+    "kernel-backed command redirection",
+    "writable persistent filesystem behavior",
+    "live networking",
+    "SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "phase transition"
+  ],
+  "hardware": {
+    "pi5_hardware_claim": false,
+    "live_networking_or_ssh": false
+  }
+}

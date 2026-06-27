@@ -643,6 +643,18 @@ redirection, persistent writable filesystem behavior, live networking/SSH,
 Pi 5 hardware proof, generated-root retry, and phase transition remain
 deferred.
 
+The bare-name stdout regular-file redirection core extends only that accepted
+surface through the fixed bounded /bin lookup policy. The accepted witness is
+exactly 'stdout >/tmp/stdout.txt': the command name resolves to '/bin/stdout',
+the child fd1 is rebound to 'volatile-vfs:/tmp/stdout.txt', and
+'cat /tmp/stdout.txt' reads the userspace stdout fixture back through
+descriptor-backed VFS. A later normal 'stdout' command proves shell fd1
+restoration. Environment-backed PATH lookup, current-directory search, command
+lookup beyond bounded /bin, stderr redirection, append/truncate, arbitrary
+output paths, pipeline output redirection, combined input/output redirection,
+writable persistent filesystem behavior, live networking/SSH, Pi 5 hardware
+proof, generated-root retry, and phase transition remain deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

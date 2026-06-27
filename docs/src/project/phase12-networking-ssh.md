@@ -56,6 +56,18 @@ restoration. The next mechanically objective local POSIX/VFS task is the
 queued bare-name stdout regular-file redirection core; live networking/SSH and
 Pi 5 hardware proof remain paused.
 
+The bare-name stdout regular-file redirection core accepts exactly
+'stdout >/tmp/stdout.txt' through the fixed bounded /bin lookup to
+'/bin/stdout'. It reuses the direct path-form descriptor behavior: child fd1 is
+regular-file scoped only to the launched process, the volatile VFS file is read
+back by 'cat /tmp/stdout.txt', and a later normal 'stdout' records restored
+runtime-console0 stdout. Direct path-form stdout redirection remains accepted.
+Environment-backed PATH lookup, current-directory search, command lookup beyond
+bounded /bin, stderr redirection, append/truncate, arbitrary output paths,
+pipeline output redirection, combined input/output redirection, writable
+persistent filesystem behavior, live networking/SSH, Pi 5 hardware proof,
+generated-root retry, and phase transition remain deferred.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1
