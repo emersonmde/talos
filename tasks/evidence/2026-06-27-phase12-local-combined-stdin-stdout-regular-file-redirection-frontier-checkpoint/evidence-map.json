@@ -1,0 +1,56 @@
+{
+  "task_id": "phase12-local-combined-stdin-stdout-regular-file-redirection-frontier-checkpoint-20260627",
+  "classification": "local-combined-stdin-stdout-regular-file-redirection-frontier-checkpoint-accepted",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "evidence": [
+    {
+      "level": "static inspection",
+      "paths": [
+        "tasks/2026-06-27-phase12-local-direct-combined-stdin-stdout-regular-file-redirection-core.md",
+        "tasks/2026-06-27-phase12-local-direct-combined-stdin-stdout-regular-file-redirection-closeout.md",
+        "tasks/2026-06-27-phase12-local-bare-name-combined-stdin-stdout-regular-file-redirection-core.md",
+        "tasks/2026-06-27-phase12-local-bare-name-combined-stdin-stdout-regular-file-redirection-closeout.md",
+        "tasks/evidence/2026-06-27-phase12-local-direct-combined-stdin-stdout-regular-file-redirection-core/classification.json",
+        "tasks/evidence/2026-06-27-phase12-local-direct-combined-stdin-stdout-regular-file-redirection-core/evidence-map.json",
+        "tasks/evidence/2026-06-27-phase12-local-direct-combined-stdin-stdout-regular-file-redirection-core/qemu-local-shell-direct-combined-stdin-stdout-redirection-smoke.log",
+        "tasks/evidence/2026-06-27-phase12-local-bare-name-combined-stdin-stdout-regular-file-redirection-core/classification.json",
+        "tasks/evidence/2026-06-27-phase12-local-bare-name-combined-stdin-stdout-regular-file-redirection-core/evidence-map.json",
+        "tasks/evidence/2026-06-27-phase12-local-bare-name-combined-stdin-stdout-regular-file-redirection-core/qemu-local-shell-bare-name-combined-stdin-stdout-redirection-smoke.log",
+        "tasks/evidence/2026-06-27-phase12-local-bare-name-combined-stdin-stdout-regular-file-redirection-core/regression-smokes-summary.txt",
+        "docs/src/roadmap.md",
+        "docs/src/project/phase12-networking-ssh.md",
+        "docs/src/project/early-posix-shape.md"
+      ],
+      "result": "accepted combined stdin/stdout regular-file frontier reconciled; accepted direct and bare-name witnesses remain exact and unsupported forms remain fail-closed"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty tasks/evidence/2026-06-27-phase12-local-direct-combined-stdin-stdout-regular-file-redirection-core/classification.json tasks/evidence/2026-06-27-phase12-local-direct-combined-stdin-stdout-regular-file-redirection-core/evidence-map.json tasks/evidence/2026-06-27-phase12-local-bare-name-combined-stdin-stdout-regular-file-redirection-core/classification.json tasks/evidence/2026-06-27-phase12-local-bare-name-combined-stdin-stdout-regular-file-redirection-core/evidence-map.json tasks/evidence/2026-06-27-phase12-local-combined-stdin-stdout-regular-file-redirection-frontier-checkpoint/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed; HTML backend wrote book"
+    },
+    {
+      "level": "staged diff validation",
+      "command": "git diff --cached --check",
+      "result": "passed before commit"
+    },
+    {
+      "level": "lab-controller API",
+      "result": "not run; checkpoint-only local POSIX/VFS task had no Pi 5 hardware gate"
+    },
+    {
+      "level": "serial hardware boot/output",
+      "result": "not run; checkpoint-only local POSIX/VFS task had no Pi 5 hardware gate"
+    }
+  ]
+}

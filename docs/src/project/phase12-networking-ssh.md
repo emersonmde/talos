@@ -300,6 +300,76 @@ networking/SSH, Pi 5 hardware proof, generated-root retry, and phase transition
 remain deferred. No later queued same-lane local POSIX/VFS task is
 mechanically objective; supervisor planning is required.
 
+The direct combined stdin/stdout regular-file redirection core accepts exactly
+'/bin/stdin </etc/banner.txt >/tmp/stdin-report.txt'. The command loads
+'/bin/stdin' from descriptor-backed VFS, binds child fd0 to
+initramfs:/etc/banner.txt, binds child fd1 to
+volatile-vfs:/tmp/stdin-report.txt, leaves fd2 on stdio output, writes the
+userspace stdin report through redirected fd1, and reads the report back with
+descriptor-backed 'cat /tmp/stdin-report.txt'. Unsupported direct forms fail
+closed for output-first ordering, spaced input grammar, /dev/null input,
+explicit 1> output, append output, stderr output, and arbitrary output paths.
+Bare-name combined redirection, append/stderr variants, pipeline-output
+redirection, persistent writable filesystem behavior, live networking/SSH,
+Pi 5 hardware proof, generated-root retry, and phase transition remain
+deferred. The next mechanically objective local POSIX/VFS task is the queued
+direct combined closeout.
+
+The direct combined stdin/stdout closeout freezes that accepted direct
+path-form boundary without adding runtime behavior. The accepted witness
+remains exactly '/bin/stdin </etc/banner.txt >/tmp/stdin-report.txt': fd0 is
+sourced from initramfs:/etc/banner.txt, fd1 targets
+volatile-vfs:/tmp/stdin-report.txt, fd2 remains stdio output, and
+descriptor-backed 'cat /tmp/stdin-report.txt' reads the userspace stdin report
+back. Unsupported direct combined forms remain fail-closed. The next
+mechanically objective local POSIX/VFS task is the queued fixed-/bin bare-name
+combined core.
+
+The bare-name combined stdin/stdout regular-file redirection core accepts
+exactly 'stdin </etc/banner.txt >/tmp/stdin-report.txt'. The command name
+resolves only through bounded fixed /bin lookup to '/bin/stdin', then uses the
+same descriptor-backed launch and child-only descriptor mutation path as the
+direct witness: fd0 from initramfs:/etc/banner.txt, fd1 to
+volatile-vfs:/tmp/stdin-report.txt, and fd2 on stdio output. Unsupported
+bare-name combined forms fail closed for output-first ordering, spaced input
+grammar, /dev/null input, explicit 1> output, append output, stderr output,
+unsupported command names, and arbitrary output paths. Direct combined,
+direct/bare stdin, direct/bare stdout regular-file, append, process-status,
+ps, pipestatus, and cat-banner controls remain passing. Arbitrary paths,
+append/stderr combined variants, pipeline-output redirection, persistent
+writable filesystem behavior, live networking/SSH, Pi 5 hardware proof,
+generated-root retry, and phase transition remain deferred. The next
+mechanically objective local POSIX/VFS task is the queued bare-name combined
+closeout.
+
+The bare-name combined stdin/stdout closeout reconciles that accepted
+fixed-/bin boundary without runtime expansion. The accepted witness remains
+exactly 'stdin </etc/banner.txt >/tmp/stdin-report.txt', resolved only to
+'/bin/stdin', with child fd0 from initramfs:/etc/banner.txt, child fd1 to
+volatile-vfs:/tmp/stdin-report.txt, fd2 on stdio output, descriptor-backed
+'cat /tmp/stdin-report.txt' readback, and retained fail-closed unsupported
+bare-name combined forms. Direct combined evidence remains the comparison
+baseline. The next mechanically objective local POSIX/VFS task is the queued
+combined stdin/stdout frontier checkpoint.
+
+The combined stdin/stdout regular-file redirection frontier checkpoint freezes
+the accepted local-only static/unit/QEMU-substitute boundary after the direct
+path-form and fixed-/bin bare-name closeouts. The accepted witnesses remain
+exactly '/bin/stdin </etc/banner.txt >/tmp/stdin-report.txt' and
+'stdin </etc/banner.txt >/tmp/stdin-report.txt'. Both forms keep child-only fd0
+from initramfs:/etc/banner.txt, child-only fd1 to
+volatile-vfs:/tmp/stdin-report.txt, fd2 on stdio output, descriptor-backed
+'cat /tmp/stdin-report.txt' readback of the userspace stdin report, and shell
+descriptor restoration. Arbitrary input/output paths, append in combined
+forms, stderr combined forms, pipeline-output redirection and append,
+persistent writable filesystem behavior, environment-backed PATH,
+current-directory search, command lookup beyond bounded /bin, arbitrary shell
+grammar, unbounded/concurrent pipelines, scheduler concurrency, fork/signals,
+process groups/sessions, live networking/SSH, Pi 5 hardware proof,
+generated-root retry, and phase transition remain deferred. No later queued
+same-lane local POSIX/VFS task is mechanically objective; supervisor planning
+is required.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1

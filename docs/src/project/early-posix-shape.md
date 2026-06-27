@@ -968,6 +968,25 @@ checkpoint; arbitrary paths, append/stderr combined variants, pipeline-output
 redirection, persistence, live networking/SSH, Pi 5 hardware proof,
 generated-root retry, and phase transition remain deferred.
 
+The combined stdin/stdout regular-file redirection frontier checkpoint freezes
+the accepted local-only static/unit/QEMU-substitute boundary after the direct
+path-form and fixed-/bin bare-name closeouts. The accepted witnesses remain
+exactly '/bin/stdin </etc/banner.txt >/tmp/stdin-report.txt' and
+'stdin </etc/banner.txt >/tmp/stdin-report.txt'. Both forms keep child-only fd0
+from initramfs:/etc/banner.txt, child-only fd1 to
+volatile-vfs:/tmp/stdin-report.txt, fd2 on stdio output, descriptor-backed
+'cat /tmp/stdin-report.txt' readback of the userspace stdin report, closed
+loader temporary descriptors, coherent waitpid/laststatus observations, and
+shell descriptor restoration. Arbitrary input/output paths, append in combined
+forms, stderr combined forms, pipeline-output redirection and append,
+persistent writable filesystem behavior, environment-backed PATH,
+current-directory search, command lookup beyond bounded /bin, arbitrary shell
+grammar, unbounded/concurrent pipelines, scheduler concurrency, fork/signals,
+process groups/sessions, live networking/SSH, Pi 5 hardware proof,
+generated-root retry, and phase transition remain deferred. No later queued
+same-lane local POSIX/VFS task is mechanically objective; supervisor planning
+is required before the next worker promotion.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

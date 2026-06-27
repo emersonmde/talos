@@ -19442,6 +19442,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   behavior, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
   phase transition remain deferred. The selected next task is
   phase12-local-combined-stdin-stdout-regular-file-redirection-frontier-checkpoint-20260627.
+- phase12-local-combined-stdin-stdout-regular-file-redirection-frontier-checkpoint-20260627
+  reconciles the accepted local-only combined stdin/stdout regular-file
+  redirection frontier after the direct path-form and fixed-/bin bare-name
+  closeouts. The accepted witnesses remain exactly
+  '/bin/stdin </etc/banner.txt >/tmp/stdin-report.txt' and
+  'stdin </etc/banner.txt >/tmp/stdin-report.txt'. Both forms bind child fd0
+  to initramfs:/etc/banner.txt, bind child fd1 to
+  volatile-vfs:/tmp/stdin-report.txt, leave fd2 on stdio output, retain
+  descriptor-backed 'cat /tmp/stdin-report.txt' readback of the userspace
+  stdin report, and restore shell descriptors. Arbitrary input/output paths,
+  append in combined forms, stderr combined forms, pipeline-output redirection
+  and append, persistent writable filesystem behavior, environment-backed
+  PATH, current-directory search, command lookup beyond bounded /bin,
+  arbitrary shell grammar, unbounded/concurrent pipelines, scheduler
+  concurrency, fork/signals, process groups/sessions, live networking/SSH,
+  Pi 5 hardware proof, generated-root retry, and phase transition remain
+  deferred. selected_next_task is null and planningNeeded=true because no
+  later queued same-lane local POSIX/VFS task is mechanically objective.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
