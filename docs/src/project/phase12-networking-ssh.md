@@ -18,6 +18,13 @@ additional successful process records. It does not accept live network
 reachability, SSH, Pi 5 hardware proof, generated-root retry, writable
 filesystem behavior, output redirection, or a phase transition.
 
+The dual-stage pipeline stdin redirection closeout reconciles the accepted
+core against retained evidence and docs. It keeps the exact accepted witnesses
+and fail-closed mixed direct/bare variants, records no Pi 5 hardware or live
+network claim, and selects only the local dual-stage frontier checkpoint before
+any output redirection, writable filesystem, multistage pipeline, generated-root
+retry, hardware, network, SSH, or phase-transition work.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1

@@ -1,0 +1,40 @@
+{
+  "task_id": "phase12-local-dual-stage-pipeline-stdin-redirection-closeout-20260627",
+  "evidence": [
+    {
+      "kind": "static-inspection",
+      "result": "pass",
+      "paths": [
+        "tasks/2026-06-27-phase12-local-dual-stage-pipeline-stdin-redirection-core.md",
+        "tasks/evidence/2026-06-27-phase12-local-dual-stage-pipeline-stdin-redirection-core/classification.json",
+        "tasks/evidence/2026-06-27-phase12-local-dual-stage-pipeline-stdin-redirection-core/evidence-map.json",
+        "docs/src/roadmap.md",
+        "docs/src/project/phase12-networking-ssh.md",
+        "docs/src/project/early-posix-shape.md"
+      ]
+    },
+    {
+      "kind": "retained-core-evidence",
+      "result": "accepted",
+      "path": "tasks/evidence/2026-06-27-phase12-local-dual-stage-pipeline-stdin-redirection-core"
+    },
+    {
+      "kind": "json-check",
+      "command": "jq empty tasks/evidence/2026-06-27-phase12-local-dual-stage-pipeline-stdin-redirection-closeout/classification.json tasks/evidence/2026-06-27-phase12-local-dual-stage-pipeline-stdin-redirection-closeout/evidence-map.json",
+      "result": "pass"
+    },
+    {
+      "kind": "diff-check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "kind": "docs",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    }
+  ],
+  "selected_next_task": "phase12-local-dual-stage-pipeline-stdin-redirection-frontier-checkpoint-20260627",
+  "live_networking_or_ssh": false,
+  "pi5_hardware_claim": false
+}

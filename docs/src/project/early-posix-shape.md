@@ -582,6 +582,23 @@ unbounded or concurrent pipelines, scheduler concurrency, fork/signals,
 process groups/sessions, persistent storage, live networking/SSH, Pi 5
 hardware proof, generated-root retry, and phase transition remain deferred.
 
+The dual-stage pipeline stdin redirection closeout reconciles that accepted
+frontier against retained task records, classification/evidence JSON,
+QEMU/substitute transcripts, regression transcripts, and project docs. The
+accepted witnesses remain exactly
+`/bin/stdin </etc/banner.txt | /bin/stdin </etc/banner.txt` and
+`stdin </etc/banner.txt | stdin </etc/banner.txt`. Both forms keep
+independent initramfs:/etc/banner.txt fd0 replacement for each child, producer
+fd1 pipe-endpoint coherence, closed loader temporary descriptors, restored
+shell descriptors, waitpid/laststatus/process-table/procfs/ps/pipestatus
+observability, and fail-closed mixed direct/bare variants. Live networking/SSH,
+Pi 5 hardware proof, generated-root retry, writable filesystem behavior,
+output redirection, append/truncate, multistage or concurrent pipelines,
+arbitrary shell grammar, and phase transition remain deferred. The closeout
+selects the dual-stage pipeline stdin redirection frontier checkpoint before
+any output redirection, writable filesystem, multistage pipeline, hardware,
+network, or phase-transition work.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

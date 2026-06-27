@@ -19027,6 +19027,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   generated-root retry, writable filesystem/output
   redirection, arbitrary shell grammar, broader pipeline semantics, and phase
   transition remain deferred.
+- phase12-local-dual-stage-pipeline-stdin-redirection-closeout-20260627
+  reconciles the accepted dual-stage pipeline stdin redirection core against
+  retained task records, classification/evidence JSON, QEMU/substitute
+  transcripts, regression transcripts, roadmap, Phase 12 note, and early POSIX
+  note. The accepted witnesses remain exactly
+  '/bin/stdin </etc/banner.txt | /bin/stdin </etc/banner.txt' and
+  'stdin </etc/banner.txt | stdin </etc/banner.txt'; both children retain
+  independent initramfs:/etc/banner.txt fd0 replacement, the producer fd1 pipe
+  endpoint remains coherent, loader temporary descriptors close, shell
+  descriptors restore, and waitpid/laststatus/process-table/procfs/ps/pipestatus
+  observations remain intact. Mixed direct/bare dual-stage variants remain
+  fail-closed. Live networking/SSH, Pi 5 hardware proof, generated-root retry,
+  writable filesystem/output redirection, append/truncate, multistage or
+  concurrent pipelines, broad shell grammar, and phase transition remain
+  deferred. selected_next_task is
+  phase12-local-dual-stage-pipeline-stdin-redirection-frontier-checkpoint-20260627.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
