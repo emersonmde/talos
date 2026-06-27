@@ -25,6 +25,16 @@ network claim, and selects only the local dual-stage frontier checkpoint before
 any output redirection, writable filesystem, multistage pipeline, generated-root
 retry, hardware, network, SSH, or phase-transition work.
 
+The dual-stage pipeline stdin redirection frontier checkpoint keeps that
+boundary closed at local static/unit/QEMU-substitute evidence. The accepted
+surface remains only the exact direct path-form and fixed-/bin bare-name
+two-stage stdin redirection witnesses; multistage pipeline redirection, output
+regular-file redirection, append/truncate, writable filesystem behavior,
+combined redirections, broader shell grammar, live networking/SSH, Pi 5
+hardware proof, generated-root retry, and phase transition remain deferred.
+No later queued same-lane local POSIX task is mechanically objective, so
+supervisor planning is required before additional worker promotion.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1

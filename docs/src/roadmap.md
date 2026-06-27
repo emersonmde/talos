@@ -19043,6 +19043,25 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   concurrent pipelines, broad shell grammar, and phase transition remain
   deferred. selected_next_task is
   phase12-local-dual-stage-pipeline-stdin-redirection-frontier-checkpoint-20260627.
+- phase12-local-dual-stage-pipeline-stdin-redirection-frontier-checkpoint-20260627
+  accepts local-dual-stage-pipeline-stdin-redirection-frontier-checkpoint. The
+  checkpoint freezes the local-only static/unit/QEMU-substitute boundary after
+  the accepted dual-stage core and closeout. The accepted witnesses remain
+  exactly '/bin/stdin </etc/banner.txt | /bin/stdin </etc/banner.txt' and
+  'stdin </etc/banner.txt | stdin </etc/banner.txt'; both children retain
+  independent initramfs:/etc/banner.txt fd0 replacement, producer fd1 pipe
+  endpoint coherence, closed loader temporary descriptors, restored shell
+  descriptors, and coherent waitpid/laststatus/process-table/procfs/ps/pipestatus
+  observations. Multistage pipeline redirection, output regular-file
+  redirection, append/truncate, writable filesystem behavior, combined
+  redirections beyond accepted exact forms, environment-backed PATH,
+  current-directory search, command lookup beyond bounded /bin, arbitrary shell
+  grammar, unbounded or concurrent pipelines, scheduler concurrency,
+  fork/signals, process groups/sessions, persistent storage, live
+  networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
+  transition remain deferred. No later queued same-lane local POSIX task is
+  mechanically objective; planningNeeded=true and supervisor planning is
+  required before further worker promotion.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

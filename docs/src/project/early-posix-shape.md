@@ -599,6 +599,23 @@ selects the dual-stage pipeline stdin redirection frontier checkpoint before
 any output redirection, writable filesystem, multistage pipeline, hardware,
 network, or phase-transition work.
 
+The dual-stage pipeline stdin redirection frontier checkpoint freezes that
+local-only static/unit/QEMU-substitute boundary. The accepted frontier remains
+exactly `/bin/stdin </etc/banner.txt | /bin/stdin </etc/banner.txt` and
+`stdin </etc/banner.txt | stdin </etc/banner.txt`, with independent
+initramfs:/etc/banner.txt fd0 replacement for both children, coherent producer
+fd1 pipe setup, restored shell descriptors, closed loader temporary
+descriptors, and retained waitpid/laststatus/process-table/procfs/ps/pipestatus
+observability. Multistage pipeline redirection, output regular-file
+redirection, append/truncate, writable filesystem behavior, combined
+redirections beyond the accepted exact forms, environment-backed PATH,
+current-directory search, command lookup beyond bounded /bin, arbitrary shell
+grammar, unbounded or concurrent pipelines, scheduler concurrency,
+fork/signals, process groups/sessions, persistent storage, live networking/SSH,
+Pi 5 hardware proof, generated-root retry, and phase transition remain
+deferred. No later queued same-lane local POSIX task is mechanically objective,
+so supervisor planning is required before further worker promotion.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
