@@ -181,6 +181,22 @@ remain fail-closed. The next mechanically objective local POSIX/VFS task is the
 queued bare-name stdout append regular-file redirection core; live
 networking/SSH and Pi 5 hardware proof remain paused.
 
+The bare-name stdout append regular-file redirection core accepts exactly
+'stdout >/tmp/stdout.txt' followed by 'stdout >>/tmp/stdout.txt'. The command
+name resolves through the fixed bounded /bin lookup to '/bin/stdout', then uses
+the same descriptor-backed VFS open/read, loader, userspace launch/status, and
+volatile VFS regular-file descriptor path as the accepted direct path-form
+append surface. The first child fd1 write uses truncate/sink semantics, the
+second uses append-at-EOF semantics, and 'cat /tmp/stdout.txt' reads both
+stdout fixture writes in order. A later normal 'stdout' records restored
+runtime-console0 stdout. Unsupported bare-name forms such as
+'stdout >>/var/other.txt' and 'stderr 2>>/tmp/stderr.txt' fail closed. Stderr
+append, arbitrary output paths, pipeline-output append, combined input/output
+redirection, persistent writable filesystem behavior, live networking/SSH,
+Pi 5 hardware proof, generated-root retry, and phase transition remain
+deferred. The next mechanically objective local POSIX/VFS task is the queued
+bare-name stdout append closeout.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1

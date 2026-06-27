@@ -1,0 +1,15 @@
+{
+  "task": "phase12-local-bare-name-stdout-append-regular-file-redirection-core-20260627",
+  "classification": "local-bare-name-stdout-append-regular-file-redirection-core-accepted",
+  "status": "accepted",
+  "accepted_witnesses": [
+    "stdout >/tmp/stdout.txt",
+    "stdout >>/tmp/stdout.txt",
+    "cat /tmp/stdout.txt",
+    "stdout"
+  ],
+  "selected_next_task": "phase12-local-bare-name-stdout-append-regular-file-redirection-closeout-20260627",
+  "hardware_claim": false,
+  "live_network_or_ssh_action": false,
+  "phase_transition": false
+}

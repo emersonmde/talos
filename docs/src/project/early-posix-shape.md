@@ -786,6 +786,21 @@ PATH/current-directory search, command lookup beyond bounded /bin, arbitrary
 shell grammar, live networking/SSH, Pi 5 hardware proof, generated-root retry,
 and phase transition remain deferred.
 
+The bare-name stdout append regular-file redirection core accepts exactly
+'stdout >/tmp/stdout.txt' followed by 'stdout >>/tmp/stdout.txt'. Each command
+name resolves only through the fixed bounded /bin lookup to '/bin/stdout';
+the child fd1 is rebound only for each process to
+volatile-vfs:/tmp/stdout.txt; the first command uses truncate/sink semantics;
+the second records op=append at regular-file EOF; and descriptor-backed
+'cat /tmp/stdout.txt' reads both stdout fixture writes in order with
+bytes=0x3e. A later normal 'stdout' proves shell fd1 restoration. Direct
+path-form stdout append remains accepted, while unsupported bare-name append
+paths, stderr append, pipeline-output append, combined input/output
+redirection, persistent writable filesystem behavior, PATH/current-directory
+search, command lookup beyond bounded /bin, arbitrary shell grammar, live
+networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
+transition remain deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
