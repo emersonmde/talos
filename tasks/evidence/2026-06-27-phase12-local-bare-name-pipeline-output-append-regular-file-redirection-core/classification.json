@@ -1,0 +1,67 @@
+{
+  "task_id": "phase12-local-bare-name-pipeline-output-append-regular-file-redirection-core-20260627",
+  "classification": "local-bare-name-pipeline-output-append-regular-file-redirection-core-accepted",
+  "accepted_witnesses": [
+    "stdout | stdin >/tmp/pipeline-report.txt",
+    "stdout | stdin >>/tmp/pipeline-report.txt"
+  ],
+  "accepted_surface": {
+    "lookup_policy": "bounded-fixed-bin-only",
+    "producer": {
+      "input": "stdout",
+      "path": "/bin/stdout",
+      "fd1": {
+        "kind": "pipe-endpoint",
+        "route": "pipe:stdout-to-stdin"
+      },
+      "bytes_written_each_pipeline": "0x1f"
+    },
+    "consumer": {
+      "input": "stdin",
+      "path": "/bin/stdin",
+      "fd0": {
+        "kind": "pipe-endpoint",
+        "route": "pipe:stdout-to-stdin"
+      },
+      "fd1": {
+        "kind": "regular-file",
+        "route": "volatile-vfs:/tmp/pipeline-report.txt",
+        "child_only": true,
+        "operations": [
+          "sink",
+          "append"
+        ]
+      },
+      "stdout_bytes_written_each_pipeline": "0x44"
+    },
+    "readback": {
+      "path": "/tmp/pipeline-report.txt",
+      "bytes": "0x88",
+      "reports": 2,
+      "source": "volatile-vfs-descriptor-read"
+    },
+    "shell_restored": true,
+    "loader_temporary_descriptor_open": false
+  },
+  "unsupported_forms_fail_closed": [
+    "stdout | stdin >/tmp/stdout.txt",
+    "stdout | stderr >/tmp/pipeline-report.txt",
+    "stdout | stdin 1>/tmp/pipeline-report.txt",
+    "stdout | stdin > /tmp/pipeline-report.txt",
+    "stdout | bin/stdin >/tmp/pipeline-report.txt",
+    "stdout | stdin 2>>/tmp/x",
+    "stdout | stdin </etc/banner.txt",
+    "stdout | stdin >> /tmp/pipeline-report.txt",
+    "stdout | stdin >>/var/x"
+  ],
+  "retained_controls": [
+    "/bin/stdout | /bin/stdin >/tmp/pipeline-report.txt",
+    "/bin/stdout | /bin/stdin >>/tmp/pipeline-report.txt"
+  ],
+  "hardware": {
+    "lab_controller_api": "not-run",
+    "serial_hardware_boot_output": "not-run",
+    "reason": "local POSIX/VFS task has no Pi 5 hardware gate"
+  },
+  "selected_next_task": "phase12-local-bare-name-pipeline-output-append-regular-file-redirection-closeout-20260627"
+}

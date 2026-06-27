@@ -476,6 +476,23 @@ input/combined pipeline redirections, arbitrary paths, persistent storage,
 generated-root retry, live network/SSH, Pi 5 hardware proof, and phase
 transition remain deferred.
 
+The bare-name pipeline-output append regular-file redirection core accepts the
+exact fixed-/bin sequence 'stdout | stdin >/tmp/pipeline-report.txt' followed
+by 'stdout | stdin >>/tmp/pipeline-report.txt'. Both stages resolve only
+through bounded /bin lookup to '/bin/stdout' and '/bin/stdin', then use
+descriptor-backed VFS open/read, accepted userspace launch/status, and the
+accepted pipe handoff. The final stage receives child-only fd1 redirection to
+'volatile-vfs:/tmp/pipeline-report.txt' with truncate/sink semantics for the
+first command and append-at-EOF semantics for the second. Descriptor-backed
+'cat /tmp/pipeline-report.txt' reads two reports in order, shell fd1 is
+restored afterward, and direct path-form pipeline-output append remains
+accepted. Unsupported PATH/current-directory lookup, unsupported command names,
+path-containing consumer names, explicit '1>', spaced output grammar,
+malformed append grammar, stderr forms, input redirection on pipelines,
+arbitrary paths, persistent storage, generated-root retry, live network/SSH,
+Pi 5 hardware proof, and phase transition remain deferred. The next local
+POSIX/VFS task is the queued bare-name pipeline-output append closeout.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1

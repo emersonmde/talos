@@ -19572,6 +19572,25 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   live networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
   transition remain deferred. The selected next task is
   phase12-local-bare-name-pipeline-output-append-regular-file-redirection-core-20260627.
+- phase12-local-bare-name-pipeline-output-append-regular-file-redirection-core-20260627
+  accepts the exact fixed-/bin bare-name append sequence
+  'stdout | stdin >/tmp/pipeline-report.txt' followed by
+  'stdout | stdin >>/tmp/pipeline-report.txt'. Both stages in both pipelines
+  resolve only through bounded /bin lookup to /bin/stdout and /bin/stdin, then
+  load through descriptor-backed VFS open/read and the accepted userspace
+  launch/status path. The first pipeline writes the final-stage stdout report
+  through a child-only truncate/sink regular-file descriptor; the second writes
+  the same report at EOF through child-only append to
+  volatile-vfs:/tmp/pipeline-report.txt. Descriptor-backed
+  'cat /tmp/pipeline-report.txt' reads two reports in order with bytes=0x88,
+  and a later normal 'stdout' proves shell fd1 restoration. Direct path-form
+  pipeline-output append remains accepted. Unsupported PATH/current-directory
+  lookup, unsupported command names, path-containing consumer names, explicit
+  '1>', spaced output grammar, malformed append grammar, stderr forms, input
+  redirection on pipelines, arbitrary output paths, persistent storage, live
+  networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
+  transition remain deferred. The selected next task is
+  phase12-local-bare-name-pipeline-output-append-regular-file-redirection-closeout-20260627.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

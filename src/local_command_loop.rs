@@ -67,7 +67,8 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+direct-absolute-path-vfs-command-combined-stdin-stdout-regular-file-redirection",
     "+bounded-bare-name-bin-vfs-command-combined-stdin-stdout-regular-file-redirection",
     "+bounded-bare-name-bin-vfs-pipeline-consumer-volatile-stdout-regular-file-redirection",
-    "+direct-absolute-path-vfs-pipeline-consumer-volatile-stdout-append-redirection"
+    "+direct-absolute-path-vfs-pipeline-consumer-volatile-stdout-append-redirection",
+    "+bounded-bare-name-bin-vfs-pipeline-consumer-volatile-stdout-append-redirection"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -7193,6 +7194,21 @@ fn parse_bare_bin_pipeline_consumer_request(
     };
     let arguments = trim_ascii_space(arguments);
     if name.as_bytes() == b"stdin" {
+        if let Some(target) = arguments.strip_prefix(">>") {
+            if let Some(path) =
+                LocalCommandVolatilePath::from_exact_pipeline_report_path(target.as_bytes())
+            {
+                let exec_path = LocalCommandExecPath::from_fixed_bin_name(name.as_bytes())?;
+                let argv = LocalCommandLiteralArgv::from_tokens(&[name.as_bytes()])?
+                    .with_resolved_argv0(exec_path.as_bytes())?;
+                return Ok(LocalCommandExecRequest {
+                    path: exec_path,
+                    argv,
+                    redirection: Some(LocalCommandExecRedirection::StdoutAppendTmpStdout(path)),
+                    stdin_redirection: None,
+                });
+            }
+        }
         if let Some(target) = arguments.strip_prefix('>') {
             if let Some(path) =
                 LocalCommandVolatilePath::from_exact_pipeline_report_path(target.as_bytes())
@@ -9419,7 +9435,7 @@ mod tests {
     }
 
     struct CaptureSink {
-        bytes: [u8; 16384],
+        bytes: [u8; 32768],
         len: usize,
         fail_after: usize,
         writes: usize,
@@ -9428,7 +9444,7 @@ mod tests {
     impl CaptureSink {
         const fn new() -> Self {
             Self {
-                bytes: [0; 16384],
+                bytes: [0; 32768],
                 len: 0,
                 fail_after: usize::MAX,
                 writes: 0,
@@ -9437,7 +9453,7 @@ mod tests {
 
         const fn failing_after(fail_after: usize) -> Self {
             Self {
-                bytes: [0; 16384],
+                bytes: [0; 32768],
                 len: 0,
                 fail_after,
                 writes: 0,
@@ -14504,9 +14520,9 @@ talos> talos: exec-not-executable\n"
         assert_eq!(ps.status(), LocalCommandStatus::Handled);
         assert_eq!(readback.status(), LocalCommandStatus::Handled);
         assert_eq!(normal.status(), LocalCommandStatus::Handled);
+        assert_eq!(bare_name_append.status(), LocalCommandStatus::Handled);
         for rejected in [
             unsupported_path,
-            bare_name_append,
             wrong_consumer,
             stderr_form,
             input_redirection,
@@ -14557,16 +14573,17 @@ talos> talos: exec-not-executable\n"
             "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=stdout route=runtime-console0/stdout source=userspace-talos-write\n"
         ));
         assert_eq!(output.matches("talos-processes-v1\n").count(), 2);
-        assert_eq!(output.matches("talos: exec-invalid-path").count(), 7);
+        assert_eq!(output.matches("talos: exec-invalid-path").count(), 6);
     }
 
     #[test_case]
     fn local_command_loop_redirects_bare_name_pipeline_consumer_stdout_to_volatile_regular_file() {
-        let bytes = *b"stdout | stdin >/tmp/pipeline-report.txt\rwaitpid 0x100001\rwaitpid 0x100002\rlaststatus\rpipestatus\rcat /proc/talos/processes\rps\rcat /tmp/pipeline-report.txt\rstdout\rstdout | stdin >/tmp/stdout.txt\rstdout | stdin >>/tmp/pipeline-report.txt\rstdout | stderr >/tmp/pipeline-report.txt\rstdout | stdin 1>/tmp/pipeline-report.txt\rstdout | stdin > /tmp/pipeline-report.txt\rstdout | bin/stdin >/tmp/pipeline-report.txt\r";
+        let bytes = *b"stdout | stdin >/tmp/pipeline-report.txt\rstdout | stdin >>/tmp/pipeline-report.txt\rwaitpid 0x100001\rwaitpid 0x100002\rlaststatus\rpipestatus\rcat /proc/talos/processes\rps\rcat /tmp/pipeline-report.txt\rstdout\rstdout | stdin >/tmp/stdout.txt\rstdout | stderr >/tmp/pipeline-report.txt\rstdout | stdin 1>/tmp/pipeline-report.txt\rstdout | stdin > /tmp/pipeline-report.txt\rstdout | bin/stdin >/tmp/pipeline-report.txt\rstdout | stdin 2>>/tmp/x\rstdout | stdin </etc/banner.txt\rstdout | stdin >> /tmp/pipeline-report.txt\rstdout | stdin >>/var/x\r";
         let input = ScriptedInput::new(bytes, bytes.len());
         let mut backend = CaptureSink::new();
         let (
             pipeline,
+            append_pipeline,
             producer_wait,
             consumer_wait,
             last,
@@ -14576,15 +14593,22 @@ talos> talos: exec-not-executable\n"
             readback,
             normal,
             unsupported_path,
-            append,
             wrong_consumer,
             explicit_fd,
             spaced_output,
             slash_consumer,
+            stderr_form,
+            input_redirection,
+            malformed_append,
+            persistent_path,
         ) = {
             let mut io =
                 DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
             (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
                 run_one_descriptor_backed_serial_command(&mut io).unwrap(),
                 run_one_descriptor_backed_serial_command(&mut io).unwrap(),
                 run_one_descriptor_backed_serial_command(&mut io).unwrap(),
@@ -14605,7 +14629,12 @@ talos> talos: exec-not-executable\n"
         let output = backend.as_str();
 
         assert_eq!(pipeline.line(), b"stdout | stdin >/tmp/pipeline-report.txt");
+        assert_eq!(
+            append_pipeline.line(),
+            b"stdout | stdin >>/tmp/pipeline-report.txt"
+        );
         assert_eq!(pipeline.status(), LocalCommandStatus::Handled);
+        assert_eq!(append_pipeline.status(), LocalCommandStatus::Handled);
         assert_eq!(producer_wait.status(), LocalCommandStatus::Handled);
         assert_eq!(consumer_wait.status(), LocalCommandStatus::Handled);
         assert_eq!(last.status(), LocalCommandStatus::Handled);
@@ -14616,11 +14645,14 @@ talos> talos: exec-not-executable\n"
         assert_eq!(normal.status(), LocalCommandStatus::Handled);
         for rejected in [
             unsupported_path,
-            append,
             wrong_consumer,
             explicit_fd,
             spaced_output,
             slash_consumer,
+            stderr_form,
+            input_redirection,
+            malformed_append,
+            persistent_path,
         ] {
             assert_eq!(rejected.status(), LocalCommandStatus::UnexpectedArgument);
         }
@@ -14639,16 +14671,25 @@ talos> talos: exec-not-executable\n"
             "talos: exec-redirection op=sink source-fd=0x0000000000000001 target-path=/tmp/pipeline-report.txt target-stream=regular-file target-route=volatile-vfs:/tmp/pipeline-report.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout\n"
         ));
         assert!(output.contains(
+            "talos: exec-redirection op=append source-fd=0x0000000000000001 target-path=/tmp/pipeline-report.txt target-stream=regular-file target-route=volatile-vfs:/tmp/pipeline-report.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout-append\n"
+        ));
+        assert!(output.contains(
             "talos: exec-stdin fd=0x0000000000000000 bytes=0x000000000000001f return=0x000000000000001f read-source=pipe:stdout-to-stdin stdout-fd=0x0000000000000001"
         ));
         assert!(output.contains(
             "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-consumer-stdout-redirection\n"
         ));
         assert!(output.contains(
-            "talos: cat path=/tmp/pipeline-report.txt bytes=0x0000000000000044 source=volatile-vfs-descriptor-read\n"
+            "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdout consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000001f bytes-read=0x000000000000001f writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-consumer-stdout-append-redirection\n"
         ));
-        assert!(
-            output.contains("Talos userspace stdin fixture read: Talos userspace stdout fixture\n")
+        assert!(output.contains(
+            "talos: cat path=/tmp/pipeline-report.txt bytes=0x0000000000000088 source=volatile-vfs-descriptor-read\n"
+        ));
+        assert_eq!(
+            output
+                .matches("Talos userspace stdin fixture read: Talos userspace stdout fixture\n")
+                .count(),
+            2
         );
         assert!(output.contains(
             "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=explicit-pid-lifecycle-record\n"
@@ -14663,7 +14704,7 @@ talos> talos: exec-not-executable\n"
             "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=stdout route=runtime-console0/stdout source=userspace-talos-write\n"
         ));
         assert_eq!(output.matches("talos-processes-v1\n").count(), 2);
-        assert_eq!(output.matches("talos: exec-invalid-path").count(), 6);
+        assert_eq!(output.matches("talos: exec-invalid-path").count(), 9);
     }
 
     #[test_case]
