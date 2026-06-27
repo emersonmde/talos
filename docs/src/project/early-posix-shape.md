@@ -517,6 +517,25 @@ The accepted core selects a bare-name consumer-stage closeout before any
 output redirection, writable filesystem, PATH, hardware, generated-root, or
 live network/SSH work.
 
+The bare-name consumer-stage pipeline stdin redirection closeout reconciles
+that accepted surface against retained task records, task-owned JSON,
+QEMU/substitute evidence, regression transcripts, and project docs. The
+accepted witness remains exactly 'stdin | stdin </etc/banner.txt': both stages
+resolve only through the fixed bounded /bin lookup, the producer keeps fd1 as
+the pipe endpoint, the consumer replaces only child fd0 with
+initramfs:/etc/banner.txt, loader temporary descriptors close, shell fd0 is
+restored, and waitpid, laststatus, /proc/talos/processes, zero-argument ps,
+and pipestatus remain coherent. Redirection on multiple pipeline stages,
+multistage pipeline redirection, output regular-file redirection,
+append/truncate, writable filesystem behavior, environment-backed PATH,
+current-directory search, command lookup beyond bounded /bin, arbitrary shell
+grammar, unbounded pipelines, pipeline concurrency, scheduler concurrency,
+fork/signals, process groups/sessions, persistent storage, live
+networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
+transition remain deferred. The closeout selects a consumer-stage stdin
+redirection frontier checkpoint before any output redirection, writable
+filesystem, PATH, hardware, generated-root, or live network/SSH work.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

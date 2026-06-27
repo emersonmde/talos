@@ -18960,6 +18960,28 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   generated-root retry, and phase transition remain deferred.
   selected_next_task is
   phase12-local-bare-name-pipeline-consumer-stdin-redirection-closeout-20260627.
+- phase12-local-bare-name-pipeline-consumer-stdin-redirection-closeout-20260627
+  accepts local-bare-name-pipeline-consumer-stdin-redirection-closeout. The
+  closeout reconciles the accepted fixed-/bin bare-name consumer-stage stdin
+  redirection frontier against the retained core task record, task-owned
+  classification/evidence JSON, QEMU/substitute transcript, regression
+  transcripts, roadmap entry, Phase 12 note, and early POSIX note. The
+  accepted witness remains exactly 'stdin | stdin </etc/banner.txt': both
+  stages canonicalize through fixed bounded /bin lookup to /bin/stdin, the
+  producer keeps fd1 as the pipe endpoint, the consumer replaces only child
+  fd0 with initramfs:/etc/banner.txt, both stages load through
+  descriptor-backed VFS open/read and the accepted loader/userspace path,
+  loader temporary descriptors close, shell fd0 restoration stays coherent,
+  and waitpid, laststatus, /proc/talos/processes, zero-argument ps, and
+  pipestatus remain intact. Redirection on multiple pipeline stages,
+  multistage pipeline redirection, output redirection, append/truncate,
+  writable filesystem behavior, environment-backed PATH, current-directory
+  search, command lookup beyond bounded /bin, arbitrary shell grammar,
+  unbounded pipelines, pipeline concurrency, scheduler concurrency,
+  fork/signals, process groups/sessions, persistent storage, live
+  networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
+  transition remain deferred. selected_next_task is
+  phase12-local-pipeline-consumer-stdin-redirection-frontier-checkpoint-20260627.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
