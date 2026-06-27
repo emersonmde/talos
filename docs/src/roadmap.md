@@ -19502,6 +19502,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   closed. Append pipeline-output forms, stderr forms, input/combined pipeline
   redirections, arbitrary paths, persistent storage, live networking/SSH, Pi 5
   hardware proof, generated-root retry, and phase transition remain deferred.
+- phase12-local-bare-name-pipeline-output-regular-file-redirection-closeout-20260627
+  reconciles the accepted direct path-form and fixed-/bin bare-name
+  pipeline-output regular-file redirection frontier. The accepted witnesses
+  remain exactly '/bin/stdout | /bin/stdin >/tmp/pipeline-report.txt' and
+  'stdout | stdin >/tmp/pipeline-report.txt'. Both forms load through
+  descriptor-backed VFS open/read and the accepted userspace launch/status
+  path, route producer fd1 to the pipe endpoint, route consumer fd0 from that
+  pipe endpoint, route consumer fd1 child-only to
+  volatile-vfs:/tmp/pipeline-report.txt, read back the userspace stdin report
+  with descriptor-backed 'cat /tmp/pipeline-report.txt', and restore shell fd1.
+  Unsupported direct and bare-name variants remain fail-closed. Append
+  pipeline-output forms, stderr forms, input/combined pipeline redirections,
+  arbitrary paths, persistent storage, live networking/SSH, Pi 5 hardware
+  proof, generated-root retry, and phase transition remain deferred. The
+  selected next task is
+  phase12-local-pipeline-output-regular-file-redirection-frontier-checkpoint-20260627.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

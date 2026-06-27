@@ -412,6 +412,22 @@ Pi 5 hardware, live network/SSH, generated-root retry, append/stderr
 pipeline-output form, arbitrary-path, persistence, or phase-transition claim is
 made.
 
+The bare-name pipeline-output regular-file redirection closeout reconciles the
+accepted direct path-form and fixed-/bin bare-name pipeline-output frontier.
+The accepted witnesses remain exactly
+'/bin/stdout | /bin/stdin >/tmp/pipeline-report.txt' and
+'stdout | stdin >/tmp/pipeline-report.txt'. Both forms load through
+descriptor-backed VFS open/read and the accepted userspace launch/status path,
+route producer fd1 to the pipe endpoint, route consumer fd0 from that pipe,
+route consumer fd1 child-only to 'volatile-vfs:/tmp/pipeline-report.txt', read
+the userspace stdin report back with descriptor-backed
+'cat /tmp/pipeline-report.txt', and restore shell fd1. Unsupported direct and
+bare-name variants remain fail-closed. The next mechanically objective local
+POSIX/VFS task is the queued pipeline-output regular-file redirection frontier
+checkpoint. No Pi 5 hardware, live network/SSH, generated-root retry, append or
+stderr pipeline-output form, arbitrary-path, persistence, or phase-transition
+claim is made.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1

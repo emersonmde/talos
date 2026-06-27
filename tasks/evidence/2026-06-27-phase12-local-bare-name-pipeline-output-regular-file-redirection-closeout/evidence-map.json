@@ -1,0 +1,64 @@
+{
+  "task_id": "phase12-local-bare-name-pipeline-output-regular-file-redirection-closeout-20260627",
+  "closeout": {
+    "classification": "local-bare-name-pipeline-output-regular-file-redirection-closeout-accepted",
+    "selected_next_task": "phase12-local-pipeline-output-regular-file-redirection-frontier-checkpoint-20260627",
+    "scope": "static closeout/reconciliation only"
+  },
+  "accepted_witnesses": [
+    {
+      "command": "/bin/stdout | /bin/stdin >/tmp/pipeline-report.txt",
+      "task_record": "tasks/2026-06-27-phase12-local-direct-pipeline-output-regular-file-redirection-core.md",
+      "closeout_record": "tasks/2026-06-27-phase12-local-direct-pipeline-output-regular-file-redirection-closeout.md"
+    },
+    {
+      "command": "stdout | stdin >/tmp/pipeline-report.txt",
+      "resolved_paths": [
+        "/bin/stdout",
+        "/bin/stdin"
+      ],
+      "task_record": "tasks/2026-06-27-phase12-local-bare-name-pipeline-output-regular-file-redirection-core.md",
+      "evidence_dir": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-output-regular-file-redirection-core"
+    }
+  ],
+  "retained_evidence": [
+    {
+      "level": "QEMU/substitute transcript",
+      "path": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-output-regular-file-redirection-core/qemu-substitute-focused-test.log",
+      "result": "passed; retained transcript reports exact bare-name witness and fail-closed negatives under local_command_loop test coverage"
+    },
+    {
+      "level": "classification",
+      "path": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-output-regular-file-redirection-core/classification.json"
+    },
+    {
+      "level": "evidence map",
+      "path": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-output-regular-file-redirection-core/evidence-map.json"
+    }
+  ],
+  "docs": [
+    "tasks/2026-06-27-phase12-local-bare-name-pipeline-output-regular-file-redirection-closeout.md",
+    "docs/src/roadmap.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/project/early-posix-shape.md"
+  ],
+  "fail_closed_negatives": [
+    "stdout | stdin >/tmp/stdout.txt",
+    "stdout | stdin >>/tmp/pipeline-report.txt",
+    "stdout | stderr >/tmp/pipeline-report.txt",
+    "stdout | stdin 1>/tmp/pipeline-report.txt",
+    "stdout | stdin > /tmp/pipeline-report.txt",
+    "stdout | bin/stdin >/tmp/pipeline-report.txt"
+  ],
+  "deferred": [
+    "append pipeline-output forms",
+    "stderr forms",
+    "input/combined pipeline redirections",
+    "arbitrary paths",
+    "persistent storage",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "phase transition"
+  ]
+}
