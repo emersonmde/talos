@@ -1115,6 +1115,27 @@ live networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
 transition remain deferred. The next local POSIX/VFS task is the fixed-/bin
 bare-name pipeline-output append closeout.
 
+The bare-name pipeline-output append regular-file redirection closeout freezes
+the accepted direct path-form and fixed-/bin bare-name append boundary without
+runtime feature changes. The accepted witnesses remain exactly
+'/bin/stdout | /bin/stdin >/tmp/pipeline-report.txt' followed by
+'/bin/stdout | /bin/stdin >>/tmp/pipeline-report.txt', and
+'stdout | stdin >/tmp/pipeline-report.txt' followed by
+'stdout | stdin >>/tmp/pipeline-report.txt'. Retained evidence keeps direct
+forms on explicit '/bin/stdout' and '/bin/stdin' paths and bare-name forms on
+the bounded fixed-/bin lookup policy. Both forms keep descriptor-backed VFS
+loading, accepted userspace launch/status, producer fd1 to the pipe endpoint,
+consumer fd0 from that pipe endpoint, child-only consumer fd1 to
+'volatile-vfs:/tmp/pipeline-report.txt', first-command truncate/sink
+semantics, second-command append-at-EOF semantics, descriptor-backed readback
+of two userspace stdin reports in order, shell fd1 restoration, and coherent
+process-status observations. Stderr pipeline append, input/combined pipeline
+redirections, arbitrary paths, persistent storage, PATH/current-directory
+lookup, command lookup beyond bounded /bin, live networking/SSH, Pi 5 hardware
+proof, generated-root retry, and phase transition remain deferred. The next
+local POSIX/VFS task is the pipeline-output append regular-file redirection
+frontier checkpoint.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

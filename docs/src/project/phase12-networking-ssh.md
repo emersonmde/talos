@@ -493,6 +493,25 @@ arbitrary paths, persistent storage, generated-root retry, live network/SSH,
 Pi 5 hardware proof, and phase transition remain deferred. The next local
 POSIX/VFS task is the queued bare-name pipeline-output append closeout.
 
+The bare-name pipeline-output append regular-file redirection closeout
+reconciles the accepted direct path-form and fixed-/bin bare-name append
+frontier without runtime feature changes. The accepted witnesses remain
+exactly '/bin/stdout | /bin/stdin >/tmp/pipeline-report.txt' followed by
+'/bin/stdout | /bin/stdin >>/tmp/pipeline-report.txt', and
+'stdout | stdin >/tmp/pipeline-report.txt' followed by
+'stdout | stdin >>/tmp/pipeline-report.txt'. Direct forms keep explicit
+program paths; bare-name forms resolve only through bounded /bin lookup. Both
+forms keep descriptor-backed VFS loading, accepted userspace launch/status,
+producer fd1 to the pipe endpoint, consumer fd0 from that pipe endpoint,
+child-only consumer fd1 to 'volatile-vfs:/tmp/pipeline-report.txt', initial
+truncate/sink then append-at-EOF operations, descriptor-backed readback of two
+reports, shell fd1 restoration, and coherent process status observations.
+Stderr pipeline append, input/combined pipeline redirections, arbitrary paths,
+persistent storage, PATH/current-directory lookup, command lookup beyond
+bounded /bin, generated-root retry, live network/SSH, Pi 5 hardware proof, and
+phase transition remain deferred. The next local POSIX/VFS task is the queued
+pipeline-output append regular-file redirection frontier checkpoint.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1

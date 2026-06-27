@@ -1,0 +1,66 @@
+{
+  "task_id": "phase12-local-bare-name-pipeline-output-append-regular-file-redirection-closeout-20260627",
+  "classification": "local-bare-name-pipeline-output-append-regular-file-redirection-closeout-accepted",
+  "accepted_witnesses": [
+    "/bin/stdout | /bin/stdin >/tmp/pipeline-report.txt",
+    "/bin/stdout | /bin/stdin >>/tmp/pipeline-report.txt",
+    "stdout | stdin >/tmp/pipeline-report.txt",
+    "stdout | stdin >>/tmp/pipeline-report.txt"
+  ],
+  "accepted_surface": {
+    "direct_path_form": {
+      "producer": "/bin/stdout",
+      "consumer": "/bin/stdin"
+    },
+    "bare_name_form": {
+      "lookup_policy": "bounded-fixed-bin-only",
+      "producer_input": "stdout",
+      "producer_path": "/bin/stdout",
+      "consumer_input": "stdin",
+      "consumer_path": "/bin/stdin"
+    },
+    "pipe": {
+      "route": "pipe:stdout-to-stdin",
+      "producer_fd1": "pipe-endpoint",
+      "consumer_fd0": "pipe-endpoint"
+    },
+    "consumer_fd1": {
+      "kind": "regular-file",
+      "route": "volatile-vfs:/tmp/pipeline-report.txt",
+      "child_only": true,
+      "operations": [
+        "sink",
+        "append"
+      ]
+    },
+    "readback": {
+      "path": "/tmp/pipeline-report.txt",
+      "bytes": "0x88",
+      "reports": 2,
+      "source": "volatile-vfs-descriptor-read"
+    },
+    "shell_restored": true,
+    "loader_temporary_descriptor_open": false
+  },
+  "unsupported_forms_remain_deferred": [
+    "stderr pipeline append",
+    "input redirection on pipelines",
+    "combined pipeline redirections",
+    "arbitrary output paths",
+    "persistent writable filesystem behavior",
+    "environment-backed PATH",
+    "current-directory search",
+    "command lookup beyond bounded /bin",
+    "arbitrary shell grammar",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "phase transition"
+  ],
+  "hardware": {
+    "lab_controller_api": "not-run",
+    "serial_hardware_boot_output": "not-run",
+    "reason": "static closeout for local POSIX/VFS task has no Pi 5 hardware gate"
+  },
+  "selected_next_task": "phase12-local-pipeline-output-append-regular-file-redirection-frontier-checkpoint-20260627"
+}
