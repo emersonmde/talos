@@ -1,0 +1,42 @@
+{
+  "task_id": "phase12-local-direct-stdout-regular-file-redirection-closeout-20260627",
+  "classification": "accepted",
+  "boundary": "local-only direct path-form stdout regular-file output redirection closeout",
+  "retained_core_task": "phase12-local-direct-stdout-regular-file-redirection-core-20260627",
+  "accepted_witness": "/bin/stdout >/tmp/stdout.txt",
+  "accepted_readback": "cat /tmp/stdout.txt",
+  "normal_stdout_restoration_witness": "/bin/stdout",
+  "descriptor_effect": {
+    "child_fd1": "volatile-vfs:/tmp/stdout.txt",
+    "scope": "child-only",
+    "shell_fd1_restored": true,
+    "loader_temporary_descriptor_closed": true
+  },
+  "retained_evidence": [
+    "tasks/2026-06-27-phase12-local-direct-stdout-regular-file-redirection-core.md",
+    "tasks/evidence/2026-06-27-phase12-local-direct-stdout-regular-file-redirection-core/classification.json",
+    "tasks/evidence/2026-06-27-phase12-local-direct-stdout-regular-file-redirection-core/evidence-map.json",
+    "tasks/evidence/2026-06-27-phase12-local-direct-stdout-regular-file-redirection-core/qemu-local-shell-stdout-regular-file-redirection-smoke.log"
+  ],
+  "selected_next_task": "phase12-local-bare-name-stdout-regular-file-redirection-core-20260627",
+  "deferred_frontier": [
+    "bare-name stdout output redirection",
+    "stderr redirection",
+    "append or truncate expansion",
+    "arbitrary output paths",
+    "pipeline-output redirection",
+    "combined input/output redirection",
+    "persistent writable filesystem behavior",
+    "PATH/current-directory search",
+    "broad shell grammar",
+    "live networking",
+    "SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "phase transition"
+  ],
+  "hardware": {
+    "pi5_hardware_claim": false,
+    "live_networking_or_ssh": false
+  }
+}

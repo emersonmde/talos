@@ -1,0 +1,51 @@
+{
+  "task_id": "phase12-local-direct-stdout-regular-file-redirection-closeout-20260627",
+  "evidence": [
+    {
+      "kind": "static-inspection",
+      "result": "pass",
+      "paths": [
+        "tasks/2026-06-27-phase12-local-direct-stdout-regular-file-redirection-core.md",
+        "tasks/evidence/2026-06-27-phase12-local-direct-stdout-regular-file-redirection-core/classification.json",
+        "tasks/evidence/2026-06-27-phase12-local-direct-stdout-regular-file-redirection-core/evidence-map.json",
+        "tasks/evidence/2026-06-27-phase12-local-direct-stdout-regular-file-redirection-core/qemu-local-shell-stdout-regular-file-redirection-smoke.log",
+        "docs/src/roadmap.md",
+        "docs/src/project/phase12-networking-ssh.md",
+        "docs/src/project/early-posix-shape.md"
+      ]
+    },
+    {
+      "kind": "retained-core-qemu-substitute",
+      "result": "pass",
+      "path": "tasks/evidence/2026-06-27-phase12-local-direct-stdout-regular-file-redirection-core/qemu-local-shell-stdout-regular-file-redirection-smoke.log",
+      "accepted_witness": "/bin/stdout >/tmp/stdout.txt",
+      "readback_witness": "cat /tmp/stdout.txt",
+      "restoration_witness": "/bin/stdout"
+    },
+    {
+      "kind": "json-check",
+      "command": "jq empty tasks/evidence/2026-06-27-phase12-local-direct-stdout-regular-file-redirection-closeout/classification.json tasks/evidence/2026-06-27-phase12-local-direct-stdout-regular-file-redirection-closeout/evidence-map.json",
+      "result": "pass"
+    },
+    {
+      "kind": "diff-check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "kind": "docs",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "kind": "staged-diff-check",
+      "command": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "selected_next_task": "phase12-local-bare-name-stdout-regular-file-redirection-core-20260627",
+  "notes": [
+    "Closeout is docs/evidence reconciliation only; no source behavior changed.",
+    "Live networking/SSH remains paused and no Pi 5 hardware claim is made."
+  ]
+}

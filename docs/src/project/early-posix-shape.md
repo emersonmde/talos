@@ -632,6 +632,17 @@ redirection, persistent writable filesystem behavior, PATH/current-directory
 search, arbitrary shell grammar, live networking/SSH, Pi 5 hardware proof,
 generated-root retry, and phase transition remain deferred.
 
+The direct stdout regular-file redirection closeout freezes that accepted
+local-only boundary. The retained evidence remains the exact
+'/bin/stdout >/tmp/stdout.txt' witness, descriptor-backed
+'cat /tmp/stdout.txt' readback, and a later normal '/bin/stdout' restoration
+control. The next mechanically objective same-lane task is the already queued
+bare-name stdout regular-file redirection core; stderr redirection, append,
+arbitrary output paths, pipeline-output redirection, combined input/output
+redirection, persistent writable filesystem behavior, live networking/SSH,
+Pi 5 hardware proof, generated-root retry, and phase transition remain
+deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

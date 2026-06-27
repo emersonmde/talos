@@ -48,6 +48,14 @@ redirection, kernel-backed command redirection, writable persistent filesystem
 behavior, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
 phase transition remain deferred.
 
+The direct stdout regular-file redirection closeout reconciles that accepted
+boundary against the retained task record and evidence. The accepted surface is
+still only the exact direct path-form witness, descriptor-backed
+'cat /tmp/stdout.txt' readback, and later normal '/bin/stdout' shell fd1
+restoration. The next mechanically objective local POSIX/VFS task is the
+queued bare-name stdout regular-file redirection core; live networking/SSH and
+Pi 5 hardware proof remain paused.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1

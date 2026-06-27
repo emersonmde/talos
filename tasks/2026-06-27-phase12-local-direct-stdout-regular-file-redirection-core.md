@@ -2,7 +2,7 @@
 
 Task: phase12-local-direct-stdout-regular-file-redirection-core-20260627
 
-Status: accepted pending commit.
+Status: accepted and committed at e3f76d17a5b5fd9c51843ebf14487bbfbd056e7c.
 
 ## Scope
 
