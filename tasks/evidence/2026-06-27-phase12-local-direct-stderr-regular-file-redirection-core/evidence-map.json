@@ -1,0 +1,69 @@
+{
+  "task_id": "phase12-local-direct-stderr-regular-file-redirection-core-20260627",
+  "evidence": [
+    {
+      "kind": "fmt",
+      "command": "cargo fmt --all -- --check",
+      "result": "pass"
+    },
+    {
+      "kind": "unit-test",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "result": "pass",
+      "note": "Focused local command-loop unit gate passed after adding direct stderr redirection parser coverage and fail-closed direct-form negatives."
+    },
+    {
+      "kind": "qemu-substitute-smoke",
+      "command": "scripts/qemu-local-shell-stderr-regular-file-redirection-smoke.sh",
+      "result": "pass",
+      "path": "tasks/evidence/2026-06-27-phase12-local-direct-stderr-regular-file-redirection-core/qemu-local-shell-stderr-regular-file-redirection-smoke.log",
+      "accepted_witness": "/bin/stderr 2>/tmp/stderr.txt",
+      "readback_witness": "cat /tmp/stderr.txt",
+      "restoration_witness": "/bin/stderr"
+    },
+    {
+      "kind": "retained-regression-surface",
+      "command": "task-owned QEMU/substitute regression smoke batch",
+      "result": "pass",
+      "path": "tasks/evidence/2026-06-27-phase12-local-direct-stderr-regular-file-redirection-core/regressions/",
+      "surfaces": [
+        "direct stdout regular-file redirection",
+        "bare-name stdout regular-file redirection",
+        "direct stdin redirection",
+        "bare-name stdin redirection",
+        "direct pipeline stdin redirection",
+        "bare-name pipeline stdin redirection",
+        "direct pipeline consumer stdin redirection",
+        "bare-name pipeline consumer stdin redirection",
+        "cat-banner",
+        "command argv",
+        "direct pipeline argv",
+        "bare-name pipeline argv",
+        "process-status VFS",
+        "zero-argument ps",
+        "pipestatus"
+      ]
+    },
+    {
+      "kind": "json-check",
+      "command": "jq empty tasks/evidence/2026-06-27-phase12-local-direct-stderr-regular-file-redirection-core/classification.json tasks/evidence/2026-06-27-phase12-local-direct-stderr-regular-file-redirection-core/evidence-map.json",
+      "result": "pass"
+    },
+    {
+      "kind": "diff-check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "kind": "docs",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass",
+      "note": "Existing large search-index warning only."
+    },
+    {
+      "kind": "staged-diff-check",
+      "command": "git diff --cached --check",
+      "result": "pass"
+    }
+  ]
+}

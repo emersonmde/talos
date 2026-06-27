@@ -9049,6 +9049,16 @@ planningNeeded=true. No live reachability, remote receipt, compatibility,
 PTY/SCP/SFTP, broad command expansion, phase transition, or ssh-ready=true is
 accepted.
 
+While live networking/SSH remains paused, the local POSIX/VFS continuation
+accepted the direct stderr regular-file redirection core
+phase12-local-direct-stderr-regular-file-redirection-core-20260627. The
+accepted witness is exactly '/bin/stderr 2>/tmp/stderr.txt': the child loads
+from descriptor-backed VFS, fd2 is rebound only for that process to
+'volatile-vfs:/tmp/stderr.txt', 'cat /tmp/stderr.txt' reads back the userspace
+stderr fixture, and a later '/bin/stderr' proves fd2 restored to
+runtime-console0/stderr. The task makes no live networking, SSH reachability,
+Pi 5 hardware, generated-root retry, or phase-transition claim.
+
 phase12-local-direct-stdin-redirection-core-20260626 accepts
 local-direct-stdin-redirection-core. The local shell now accepts the exact
 direct absolute-path input redirection form `/bin/stdin </etc/banner.txt`.

@@ -682,6 +682,23 @@ remain deferred. No later queued same-lane local POSIX/VFS task is
 mechanically objective, so supervisor planning is required before further
 worker promotion.
 
+The direct stderr regular-file redirection core extends the same local-only
+output-file model to fd2. The accepted witness is exactly
+'/bin/stderr 2>/tmp/stderr.txt': the executable loads through
+descriptor-backed VFS open/read and the accepted loader/userspace
+launch/status path; child fd2 is rebound only for that process to
+volatile-vfs:/tmp/stderr.txt; and 'cat /tmp/stderr.txt' reads back the
+userspace stderr fixture bytes through descriptor-backed VFS readback. A
+subsequent '/bin/stderr' normal-output command proves shell fd2 restoration,
+while fd0/fd1 inheritance, loader temporary descriptor closure,
+waitpid/laststatus/process-table observations, and retained stdout
+regular-file redirection surfaces remain coherent. Bare-name stderr output
+redirection, append/truncate, arbitrary output paths, pipeline output
+redirection, combined input/output redirection, kernel-backed command
+redirection, persistent writable filesystem behavior, PATH/current-directory
+search, arbitrary shell grammar, live networking/SSH, Pi 5 hardware proof,
+generated-root retry, and phase transition remain deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

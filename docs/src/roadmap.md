@@ -19141,6 +19141,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   same-lane local POSIX/VFS task has complete objective dependencies,
   acceptance criteria, validation gates, docs requirements, and evidence
   requirements.
+- phase12-local-direct-stderr-regular-file-redirection-core-20260627 accepts
+  the narrow direct path-form stderr regular-file output redirection surface.
+  The exact witness is '/bin/stderr 2>/tmp/stderr.txt'. The child loads
+  '/bin/stderr' through descriptor-backed VFS open/read and the accepted
+  loader/userspace launch/status path; fd2 is rebound only for that process to
+  'volatile-vfs:/tmp/stderr.txt'; 'cat /tmp/stderr.txt' reads back the
+  userspace stderr fixture bytes; and a later normal '/bin/stderr' records fd2
+  restored to route=runtime-console0/stderr. fd0/fd1 inheritance, closed loader
+  temporary descriptors, waitpid, laststatus, and process-table observations
+  remain coherent. Bare-name stderr output redirection, append/truncate,
+  arbitrary output paths, pipeline-output redirection, combined input/output
+  redirection, persistent writable filesystem behavior, environment-backed
+  PATH, current-directory search, command lookup beyond bounded /bin, arbitrary
+  shell grammar, live networking/SSH, Pi 5 hardware proof, generated-root
+  retry, and phase transition remain deferred. selected_next_task is
+  phase12-local-direct-stderr-regular-file-redirection-closeout-20260627.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

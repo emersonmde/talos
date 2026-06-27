@@ -1,0 +1,59 @@
+{
+  "task_id": "phase12-local-direct-stderr-regular-file-redirection-core-20260627",
+  "classification": "accepted",
+  "accepted_witness": "/bin/stderr 2>/tmp/stderr.txt",
+  "boundary": "local-only direct path-form stderr regular-file output redirection",
+  "accepted_readback": "cat /tmp/stderr.txt",
+  "normal_stderr_restoration_witness": "/bin/stderr",
+  "descriptor_effect": {
+    "child_fd2": "volatile-vfs:/tmp/stderr.txt",
+    "scope": "child-only",
+    "shell_fd2_restored": true,
+    "fd0_inherited": "stdio-input",
+    "fd1_inherited": "stdio-output",
+    "loader_temporary_descriptor_closed": true
+  },
+  "fail_closed_witnesses": [
+    "stderr 2>/tmp/stderr.txt",
+    "/bin/stderr 2> /tmp/stderr.txt",
+    "/bin/stderr 2>>/tmp/stderr.txt",
+    "/bin/stderr 2>/var/err.txt",
+    "/bin/stderr | /bin/stdin 2>/tmp/stderr.txt",
+    "/bin/stdin </etc/banner.txt 2>/tmp/stderr.txt",
+    "cat /etc/banner.txt 2>/tmp/stderr.txt",
+    "exec stdout >/tmp/stderr.txt"
+  ],
+  "retained_boundaries": [
+    "direct stdout regular-file redirection",
+    "bare-name stdout regular-file redirection",
+    "direct VFS exec",
+    "cat /etc/banner.txt",
+    "command argv",
+    "pipeline argv",
+    "process-status VFS",
+    "zero-argument ps",
+    "pipestatus",
+    "command stdin redirection",
+    "producer-stage pipeline stdin redirection",
+    "consumer-stage pipeline stdin redirection",
+    "dual-stage pipeline stdin redirection"
+  ],
+  "rejected_claims": [
+    "bare-name stderr output redirection",
+    "append or truncate semantics",
+    "unsupported output paths beyond /tmp/stderr.txt",
+    "pipeline output redirection",
+    "combined input/output redirection",
+    "kernel-backed command redirection",
+    "writable persistent filesystem behavior",
+    "live networking",
+    "SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "phase transition"
+  ],
+  "hardware": {
+    "pi5_hardware_claim": false,
+    "live_networking_or_ssh": false
+  }
+}
