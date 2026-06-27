@@ -9298,6 +9298,18 @@ passed. No Pi 5 hardware, live network/SSH, generated-root retry, or phase
 transition claim is made; the selected local follow-up is the bare-name
 combined closeout.
 
+phase12-local-bare-name-combined-stdin-stdout-regular-file-redirection-closeout-20260627
+freezes that accepted fixed-/bin bare-name combined boundary without runtime
+feature changes. The accepted command remains exactly
+'stdin </etc/banner.txt >/tmp/stdin-report.txt', with bounded resolution to
+'/bin/stdin', child fd0 sourced from initramfs:/etc/banner.txt, child fd1
+targeting volatile-vfs:/tmp/stdin-report.txt, fd2 remaining stdio output, and
+descriptor-backed 'cat /tmp/stdin-report.txt' readback retained. Unsupported
+bare-name combined forms remain fail-closed, and direct combined evidence is
+the retained comparison baseline. No Pi 5 hardware, live network/SSH,
+generated-root retry, or phase transition claim is made; the selected local
+follow-up is the combined stdin/stdout frontier checkpoint.
+
 While live networking/SSH remains paused, the local POSIX/VFS continuation
 accepted the direct stderr regular-file redirection core
 phase12-local-direct-stderr-regular-file-redirection-core-20260627. The

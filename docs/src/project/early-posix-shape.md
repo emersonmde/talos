@@ -956,6 +956,18 @@ PATH/current-directory search, command lookup beyond bounded /bin, arbitrary
 shell grammar, live networking/SSH, Pi 5 hardware proof, generated-root retry,
 and phase transition remain deferred.
 
+The bare-name combined stdin/stdout closeout freezes that fixed-/bin boundary
+without runtime feature changes. The accepted command remains exactly
+'stdin </etc/banner.txt >/tmp/stdin-report.txt', resolved only to '/bin/stdin',
+with child fd0 from initramfs:/etc/banner.txt, child fd1 to
+volatile-vfs:/tmp/stdin-report.txt, fd2 on stdio output, descriptor-backed
+'cat /tmp/stdin-report.txt' readback, and retained fail-closed unsupported
+bare-name combined forms. Direct combined evidence remains the comparison
+baseline. The next local POSIX/VFS task is the combined stdin/stdout frontier
+checkpoint; arbitrary paths, append/stderr combined variants, pipeline-output
+redirection, persistence, live networking/SSH, Pi 5 hardware proof,
+generated-root retry, and phase transition remain deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

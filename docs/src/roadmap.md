@@ -19429,6 +19429,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   generated-root retry, and phase transition remain deferred. The selected next
   task is
   phase12-local-bare-name-combined-stdin-stdout-regular-file-redirection-closeout-20260627.
+- phase12-local-bare-name-combined-stdin-stdout-regular-file-redirection-closeout-20260627
+  reconciles that accepted fixed-/bin bare-name combined boundary without
+  runtime expansion. The accepted form remains exactly
+  'stdin </etc/banner.txt >/tmp/stdin-report.txt': the command resolves only
+  to '/bin/stdin', binds child fd0 to initramfs:/etc/banner.txt, binds child
+  fd1 to volatile-vfs:/tmp/stdin-report.txt, leaves fd2 on stdio output, and
+  retains descriptor-backed 'cat /tmp/stdin-report.txt' readback plus
+  fail-closed unsupported bare-name combined forms. Direct combined evidence
+  remains the comparison baseline. Arbitrary paths, append/stderr combined
+  variants, pipeline-output redirection, persistent writable filesystem
+  behavior, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
+  phase transition remain deferred. The selected next task is
+  phase12-local-combined-stdin-stdout-regular-file-redirection-frontier-checkpoint-20260627.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
