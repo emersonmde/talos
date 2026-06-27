@@ -1,0 +1,54 @@
+{
+  "task": "phase12-local-bare-name-stdout-append-regular-file-redirection-closeout-20260627",
+  "classification": "local-bare-name-stdout-append-regular-file-redirection-closeout-accepted",
+  "status": "accepted",
+  "selected_next_task": "phase12-local-stdout-append-regular-file-redirection-frontier-checkpoint-20260627",
+  "evidence": {
+    "task_record": "tasks/2026-06-27-phase12-local-bare-name-stdout-append-regular-file-redirection-closeout.md",
+    "evidence_map": "tasks/evidence/2026-06-27-phase12-local-bare-name-stdout-append-regular-file-redirection-closeout/evidence-map.json",
+    "direct_core_task": "tasks/2026-06-27-phase12-local-direct-stdout-append-regular-file-redirection-core.md",
+    "direct_closeout_task": "tasks/2026-06-27-phase12-local-direct-stdout-append-regular-file-redirection-closeout.md",
+    "bare_name_core_task": "tasks/2026-06-27-phase12-local-bare-name-stdout-append-regular-file-redirection-core.md",
+    "direct_core_evidence_map": "tasks/evidence/2026-06-27-phase12-local-direct-stdout-append-regular-file-redirection-core/evidence-map.json",
+    "bare_name_core_evidence_map": "tasks/evidence/2026-06-27-phase12-local-bare-name-stdout-append-regular-file-redirection-core/evidence-map.json",
+    "direct_qemu_substitute_smoke": "tasks/evidence/2026-06-27-phase12-local-direct-stdout-append-regular-file-redirection-core/qemu-local-shell-direct-stdout-regular-file-append-redirection-smoke.log",
+    "bare_name_qemu_substitute_smoke": "tasks/evidence/2026-06-27-phase12-local-bare-name-stdout-append-regular-file-redirection-core/qemu-local-shell-bare-name-stdout-regular-file-append-redirection-smoke.log",
+    "roadmap": "docs/src/roadmap.md",
+    "phase12_doc": "docs/src/project/phase12-networking-ssh.md",
+    "early_posix_doc": "docs/src/project/early-posix-shape.md"
+  },
+  "validation": [
+    {
+      "level": "static inspection",
+      "command": "inspection of retained task records, QEMU/substitute transcripts, evidence maps, and docs",
+      "result": "passed; retained evidence reconciles direct and fixed-/bin bare-name stdout append boundaries"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty task-owned and retained direct/bare-name stdout append JSON evidence",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "level": "staged diff validation",
+      "command": "git diff --cached --check",
+      "result": "passed"
+    }
+  ],
+  "notes": [
+    "Closeout-only task; no runtime feature implementation was performed.",
+    "No live network/SSH action was performed.",
+    "No Pi 5 hardware action or hardware claim was made.",
+    "Direct and fixed-/bin bare-name stdout append into /tmp/stdout.txt remain accepted.",
+    "Stderr append, arbitrary output paths, pipeline-output append, combined redirection, persistent filesystem behavior, generated-root retry, and phase transition remain deferred."
+  ]
+}

@@ -801,6 +801,21 @@ search, command lookup beyond bounded /bin, arbitrary shell grammar, live
 networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
 transition remain deferred.
 
+The bare-name stdout append regular-file redirection closeout freezes the
+accepted local-only direct and fixed-/bin bare-name stdout append boundary. The
+retained surface remains exactly '/bin/stdout >/tmp/stdout.txt' then
+'/bin/stdout >>/tmp/stdout.txt' and 'stdout >/tmp/stdout.txt' then
+'stdout >>/tmp/stdout.txt', with child-only fd1 rebinding to
+volatile-vfs:/tmp/stdout.txt, truncate/sink then append-at-EOF operations, and
+descriptor-backed 'cat /tmp/stdout.txt' readback of both stdout fixture writes
+in order. Unsupported append forms remain fail-closed. The direct and
+bare-name append evidence make the stdout append regular-file redirection
+frontier checkpoint mechanically objective, but stderr append, arbitrary paths,
+pipeline-output append, combined input/output redirection, persistent writable
+filesystem behavior, PATH/current-directory search, command lookup beyond
+bounded /bin, arbitrary shell grammar, live networking/SSH, Pi 5 hardware
+proof, generated-root retry, and phase transition remain deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
