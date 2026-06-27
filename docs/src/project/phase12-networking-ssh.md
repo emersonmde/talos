@@ -6,12 +6,13 @@ Ethernet implementation, packet I/O, live DMA, networking, sockets, or SSH.
 
 Live networking/SSH remains paused while the local POSIX/VFS/userspace
 continuation advances. The accepted direct consumer-stage pipeline stdin
-redirection core is local-only: '/bin/stdin | /bin/stdin </etc/banner.txt'
-uses descriptor-backed VFS open/read, the accepted loader/userspace
-launch/status path, child-only fd0 replacement for the consumer, process-table
-observability, and QEMU/substitute evidence. It does not accept live network
-reachability, SSH, Pi 5 hardware proof, generated-root retry, writable
-filesystem behavior, output redirection, or a phase transition.
+redirection closeout reconciles the local-only
+'/bin/stdin | /bin/stdin </etc/banner.txt' frontier against retained task
+records, descriptor-backed VFS open/read evidence, accepted loader/userspace
+launch/status evidence, child-only fd0 replacement for the consumer,
+process-table observability, and QEMU/substitute evidence. It does not accept
+live network reachability, SSH, Pi 5 hardware proof, generated-root retry,
+writable filesystem behavior, output redirection, or a phase transition.
 
 ## RP1 Ethernet Source Inventory
 

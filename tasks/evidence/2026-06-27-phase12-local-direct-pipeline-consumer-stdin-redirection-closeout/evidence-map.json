@@ -1,0 +1,24 @@
+{
+  "task_id": "phase12-local-direct-pipeline-consumer-stdin-redirection-closeout-20260627",
+  "classification": "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-consumer-stdin-redirection-closeout/classification.json",
+  "retained_core": {
+    "task_record": "tasks/2026-06-27-phase12-local-direct-pipeline-consumer-stdin-redirection-core.md",
+    "classification": "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-consumer-stdin-redirection-core/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-consumer-stdin-redirection-core/evidence-map.json",
+    "commit": "8da884cea5f31064ba44cba9addd14e897bd5315"
+  },
+  "docs": [
+    "docs/src/roadmap.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/project/early-posix-shape.md"
+  ],
+  "validation": {
+    "static_inspection": "passed",
+    "jq_empty_task_owned_json": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed"
+  },
+  "selected_next_task": "phase12-local-bare-name-pipeline-consumer-stdin-redirection-core-20260627",
+  "scope_statement": "Live network/SSH remains paused; no Pi 5 hardware claim is made."
+}

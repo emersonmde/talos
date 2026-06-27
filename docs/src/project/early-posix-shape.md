@@ -479,6 +479,26 @@ transition remain deferred. The accepted core selects a direct consumer-stage
 closeout before any bare-name consumer-stage, output redirection, writable
 filesystem, PATH, hardware, generated-root, or live network/SSH work.
 
+The direct consumer-stage pipeline stdin redirection closeout reconciles that
+frontier against the retained core task record, classification/evidence JSON,
+QEMU/substitute transcript, regression transcripts, and project docs. The
+accepted witness remains exactly
+`/bin/stdin | /bin/stdin </etc/banner.txt`: the producer keeps fd1 as the pipe
+endpoint while the consumer replaces only child fd0 with
+initramfs:/etc/banner.txt, both stages load /bin/stdin through
+descriptor-backed VFS, loader temporary descriptors close, shell fd0
+restoration remains coherent, and waitpid, laststatus,
+/proc/talos/processes, zero-argument ps, and pipestatus remain intact.
+Bare-name consumer-stage stdin redirection, redirection on multiple pipeline
+stages, multistage pipeline redirection, combined input/output redirection,
+output regular-file redirection, append/truncate, writable filesystem
+behavior, environment-backed PATH, current-directory search, command lookup
+beyond bounded /bin, arbitrary shell grammar, live networking/SSH, Pi 5
+hardware proof, generated-root retry, and phase transition remain deferred.
+The fixed bounded /bin lookup and retained bare-name pipeline evidence make
+bare-name consumer-stage stdin redirection the mechanically objective next
+task.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

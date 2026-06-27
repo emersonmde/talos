@@ -1,0 +1,18 @@
+{
+  "task_id": "phase12-local-direct-pipeline-consumer-stdin-redirection-closeout-20260627",
+  "classification": "local-direct-pipeline-consumer-stdin-redirection-closeout-accepted",
+  "accepted": true,
+  "blocked": false,
+  "evidence_level": [
+    "static inspection",
+    "JSON validation",
+    "diff validation",
+    "docs validation"
+  ],
+  "reconciled_core_task": "phase12-local-direct-pipeline-consumer-stdin-redirection-core-20260627",
+  "reconciled_core_commit": "8da884cea5f31064ba44cba9addd14e897bd5315",
+  "accepted_witness": "/bin/stdin | /bin/stdin </etc/banner.txt",
+  "selected_next_task": "phase12-local-bare-name-pipeline-consumer-stdin-redirection-core-20260627",
+  "planning_needed": false,
+  "notes": "Live network/SSH remains paused. No Pi 5 hardware claim is made."
+}
