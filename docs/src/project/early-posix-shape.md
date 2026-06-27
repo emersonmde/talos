@@ -536,6 +536,27 @@ transition remain deferred. The closeout selects a consumer-stage stdin
 redirection frontier checkpoint before any output redirection, writable
 filesystem, PATH, hardware, generated-root, or live network/SSH work.
 
+The consumer-stage pipeline stdin redirection frontier checkpoint reconciles
+the accepted direct path-form and fixed-/bin bare-name consumer-stage
+redirection pair:
+`/bin/stdin | /bin/stdin </etc/banner.txt` and
+`stdin | stdin </etc/banner.txt`. Both surfaces remain local-only and
+static/unit/QEMU-substitute backed. The producer keeps inherited fd0/fd2 and
+fd1 as the pipe endpoint. The consumer replaces only child fd0 with
+initramfs:/etc/banner.txt, inherits fd1/fd2, closes loader temporary
+descriptors, reads the redirected file to EOF, and exits successfully.
+Pipeline lifecycle/status, explicit waitpid for both participants,
+laststatus, /proc/talos/processes, zero-argument ps, and pipestatus remain
+coherent. Redirection on multiple pipeline stages, multistage pipeline
+redirection, output regular-file redirection, append/truncate, writable
+filesystem behavior, combined redirections beyond accepted exact forms,
+environment-backed PATH, current-directory search, command lookup beyond
+bounded /bin, arbitrary shell grammar, unbounded pipelines, pipeline
+concurrency, scheduler concurrency, fork/signals, process groups/sessions,
+persistent storage, live networking/SSH, Pi 5 hardware proof,
+generated-root retry, and phase transition remain deferred pending supervisor
+planning.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

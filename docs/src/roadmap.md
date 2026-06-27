@@ -18982,6 +18982,29 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
   transition remain deferred. selected_next_task is
   phase12-local-pipeline-consumer-stdin-redirection-frontier-checkpoint-20260627.
+- phase12-local-pipeline-consumer-stdin-redirection-frontier-checkpoint-20260627
+  accepts local-pipeline-consumer-stdin-redirection-frontier-checkpoint. The
+  checkpoint reconciles the accepted direct path-form and fixed-/bin bare-name
+  consumer-stage stdin redirection surfaces:
+  '/bin/stdin | /bin/stdin </etc/banner.txt' and
+  'stdin | stdin </etc/banner.txt'. Both surfaces remain local-only and
+  static/unit/QEMU-substitute backed. The producer keeps inherited fd0/fd2 and
+  fd1 as the pipe endpoint. The consumer replaces only child fd0 with
+  initramfs:/etc/banner.txt, inherits fd1/fd2, closes loader temporary
+  descriptors, reads the redirected file to EOF, and exits successfully.
+  Pipeline lifecycle/status, explicit waitpid for both participants,
+  laststatus, /proc/talos/processes, zero-argument ps, and pipestatus remain
+  coherent. Redirection on multiple pipeline stages, multistage pipeline
+  redirection, output regular-file redirection, append/truncate, writable
+  filesystem behavior, combined redirections beyond accepted exact forms,
+  environment-backed PATH, current-directory search, command lookup beyond
+  bounded /bin, arbitrary shell grammar, unbounded pipelines, pipeline
+  concurrency, scheduler concurrency, fork/signals, process groups/sessions,
+  persistent storage, live networking/SSH, Pi 5 hardware proof, generated-root
+  retry, and phase transition remain deferred. selected_next_task is null and
+  planningNeeded=true because no later queued same-lane local POSIX/shell task
+  exists with complete objective dependencies, acceptance criteria, validation
+  gates, docs, and evidence requirements.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

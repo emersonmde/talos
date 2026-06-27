@@ -1,0 +1,14 @@
+{
+  "task_id": "phase12-local-pipeline-consumer-stdin-redirection-frontier-checkpoint-20260627",
+  "classification": "local-pipeline-consumer-stdin-redirection-frontier-checkpoint-accepted-planning-needed",
+  "accepted_frontier": "direct path-form and fixed-/bin bare-name two-stage pipelines with consumer fd0 redirected from initramfs:/etc/banner.txt",
+  "feature_witnesses": [
+    "/bin/stdin | /bin/stdin </etc/banner.txt",
+    "stdin | stdin </etc/banner.txt"
+  ],
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "No later queued same-lane local POSIX/shell task exists with complete objective dependencies, acceptance criteria, validation gates, docs, and evidence requirements after the accepted consumer-stage pipeline stdin redirection frontier.",
+  "hardware_claim": "none",
+  "live_network_ssh": "paused"
+}

@@ -5,16 +5,18 @@ frontier allows source inventory and design selection, but it does not accept
 Ethernet implementation, packet I/O, live DMA, networking, sockets, or SSH.
 
 Live networking/SSH remains paused while the local POSIX/VFS/userspace
-continuation advances. The accepted bare-name consumer-stage pipeline stdin
-redirection closeout now covers the local-only
-'stdin | stdin </etc/banner.txt' frontier against retained task records,
+continuation advances. The accepted consumer-stage pipeline stdin redirection
+frontier checkpoint now covers the local-only direct path-form and fixed-/bin
+bare-name surfaces '/bin/stdin | /bin/stdin </etc/banner.txt' and
+'stdin | stdin </etc/banner.txt' against retained task records,
 descriptor-backed VFS open/read evidence, accepted loader/userspace
-launch/status evidence, fixed bounded /bin lookup, child-only fd0 replacement
-for the consumer, process-table observability, and QEMU/substitute evidence.
-It does not accept live network reachability, SSH, Pi 5 hardware proof,
-generated-root retry, writable filesystem behavior, output redirection, or a
-phase transition. The selected next local-only checkpoint is
-phase12-local-pipeline-consumer-stdin-redirection-frontier-checkpoint-20260627.
+launch/status evidence, child-only fd0 replacement for the consumer,
+process-table observability, and QEMU/substitute evidence. It does not accept
+live network reachability, SSH, Pi 5 hardware proof, generated-root retry,
+writable filesystem behavior, output redirection, or a phase transition.
+planningNeeded=true because no later queued same-lane local POSIX/shell task
+exists with complete objective dependencies, acceptance criteria, validation
+gates, docs, and evidence requirements.
 
 ## RP1 Ethernet Source Inventory
 
