@@ -1,0 +1,14 @@
+{
+  "task_id": "phase12-local-stdin-redirection-frontier-checkpoint-20260626",
+  "classification": "local-stdin-redirection-frontier-checkpoint-accepted-planning-needed",
+  "accepted_frontier": "direct path-form and bare-name read-only stdin redirection from initramfs:/etc/banner.txt",
+  "feature_witnesses": [
+    "/bin/stdin </etc/banner.txt",
+    "stdin </etc/banner.txt"
+  ],
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "No later queued same-lane local POSIX/shell task exists with complete objective dependencies, acceptance criteria, validation gates, docs, and evidence requirements after the accepted stdin redirection frontier.",
+  "hardware_claim": "none",
+  "live_network_ssh": "paused"
+}

@@ -383,6 +383,24 @@ grammar, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
 phase transition remain deferred pending the stdin redirection frontier
 checkpoint.
 
+The stdin redirection frontier checkpoint reconciles the accepted local-only
+read-only stdin redirection pair. The accepted forms remain
+`/bin/stdin </etc/banner.txt` and `stdin </etc/banner.txt`; both load
+`/bin/stdin` through descriptor-backed VFS open/read and the accepted
+loader/userspace launch/status path, then replace only child fd0 with
+`initramfs:/etc/banner.txt` before shell restoration. The bare-name form
+still canonicalizes only through fixed bounded `/bin` lookup. Direct
+path-form stdin redirection, bare-name stdin redirection, exec-prefixed stdin
+redirection, command argv, pipeline argv, process-status VFS, zero-argument
+`ps`, pipestatus, and cat-banner controls remain coherent. Output
+regular-file redirection, append/truncate, writable filesystem behavior,
+pipeline-stage redirection, combined redirections beyond accepted exact forms,
+environment-backed PATH, current-directory search, command lookup beyond
+bounded `/bin`, arbitrary shell grammar, unbounded pipelines, pipeline
+concurrency, scheduler concurrency, fork/signals, process groups/sessions,
+persistent storage, live networking/SSH, Pi 5 hardware proof, generated-root
+retry, and phase transition remain deferred pending supervisor planning.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

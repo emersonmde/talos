@@ -1,0 +1,71 @@
+{
+  "task_id": "phase12-local-stdin-redirection-frontier-checkpoint-20260626",
+  "classification": "local-stdin-redirection-frontier-checkpoint-accepted-planning-needed",
+  "task_record": "tasks/2026-06-26-phase12-local-stdin-redirection-frontier-checkpoint.md",
+  "accepted_core_records": [
+    "tasks/2026-06-26-phase12-local-direct-stdin-redirection-core.md",
+    "tasks/2026-06-26-phase12-local-direct-stdin-redirection-closeout.md",
+    "tasks/2026-06-26-phase12-local-bare-name-stdin-redirection-core.md",
+    "tasks/2026-06-26-phase12-local-bare-name-stdin-redirection-closeout.md"
+  ],
+  "accepted_core_evidence": [
+    "tasks/evidence/2026-06-26-phase12-local-direct-stdin-redirection-core/classification.json",
+    "tasks/evidence/2026-06-26-phase12-local-direct-stdin-redirection-core/evidence-map.json",
+    "tasks/evidence/2026-06-26-phase12-local-direct-stdin-redirection-core/qemu-local-shell-direct-stdin-redirection-smoke.log",
+    "tasks/evidence/2026-06-26-phase12-local-direct-stdin-redirection-closeout/classification.json",
+    "tasks/evidence/2026-06-26-phase12-local-direct-stdin-redirection-closeout/evidence-map.json",
+    "tasks/evidence/2026-06-26-phase12-local-bare-name-stdin-redirection-core/classification.json",
+    "tasks/evidence/2026-06-26-phase12-local-bare-name-stdin-redirection-core/evidence-map.json",
+    "tasks/evidence/2026-06-26-phase12-local-bare-name-stdin-redirection-core/qemu-local-shell-bare-name-stdin-redirection-smoke.log",
+    "tasks/evidence/2026-06-26-phase12-local-bare-name-stdin-redirection-closeout/classification.json",
+    "tasks/evidence/2026-06-26-phase12-local-bare-name-stdin-redirection-closeout/evidence-map.json"
+  ],
+  "retained_regression_records": [
+    "tasks/2026-06-04-phase10-readonly-regular-file-stdin-redirection-core.md",
+    "tasks/2026-06-26-phase12-local-absolute-path-vfs-command-core.md",
+    "tasks/2026-06-26-phase12-local-bare-name-command-argv-core.md",
+    "tasks/2026-06-26-phase12-local-direct-pipeline-stage-argv-core.md",
+    "tasks/2026-06-26-phase12-local-bare-name-pipeline-stage-argv-core.md",
+    "tasks/2026-06-26-phase12-local-process-status-vfs-core.md",
+    "tasks/2026-06-26-phase12-local-ps-command-vfs-backed-core.md",
+    "tasks/2026-06-26-phase12-local-pipefail-status-core.md",
+    "tasks/2026-06-02-qemu-local-cat-banner-core.md"
+  ],
+  "docs": [
+    "docs/src/roadmap.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/project/early-posix-shape.md"
+  ],
+  "validation": [
+    {
+      "level": "static inspection",
+      "command": "Static inspection of direct and bare-name stdin redirection core/closeout task records, retained evidence paths, regression records, docs, and git diff.",
+      "result": "passed"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty tasks/evidence/2026-06-26-phase12-local-stdin-redirection-frontier-checkpoint/classification.json tasks/evidence/2026-06-26-phase12-local-stdin-redirection-frontier-checkpoint/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed; html backend written with existing large search-index warning"
+    },
+    {
+      "level": "staged diff validation",
+      "command": "git diff --cached --check",
+      "result": "passed"
+    }
+  ],
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "No later queued same-lane local POSIX/shell task exists with complete objective dependencies, acceptance criteria, validation gates, docs, and evidence requirements after the accepted stdin redirection frontier.",
+  "hardware_claim": "none",
+  "live_network_ssh": "paused"
+}
