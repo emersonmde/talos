@@ -19381,6 +19381,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   generated-root retry, and phase transition remain deferred.
   selected_next_task is null and planningNeeded=true because no later queued
   same-lane local POSIX/VFS task is mechanically objective.
+- phase12-local-direct-combined-stdin-stdout-regular-file-redirection-core-20260627
+  accepts the first direct path-form combined stdin/stdout regular-file
+  redirection witness: '/bin/stdin </etc/banner.txt >/tmp/stdin-report.txt'.
+  The command loads '/bin/stdin' from descriptor-backed VFS, binds child fd0 to
+  initramfs:/etc/banner.txt, binds child fd1 to
+  volatile-vfs:/tmp/stdin-report.txt, leaves fd2 on stdio output, writes the
+  userspace stdin report through redirected fd1, and reads the report back with
+  descriptor-backed 'cat /tmp/stdin-report.txt'. Unsupported direct forms fail
+  closed: output-first ordering, spaced input grammar, /dev/null input,
+  explicit 1> output, append output, stderr output, and arbitrary output paths.
+  Bare-name combined redirection, append/stderr variants, pipeline-output
+  redirection, persistent writable filesystem behavior, live networking/SSH,
+  Pi 5 hardware proof, generated-root retry, and phase transition remain
+  deferred. The selected next task is
+  phase12-local-direct-combined-stdin-stdout-regular-file-redirection-closeout-20260627.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

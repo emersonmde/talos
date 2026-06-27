@@ -9257,6 +9257,19 @@ planningNeeded=true. No live reachability, remote receipt, compatibility,
 PTY/SCP/SFTP, broad command expansion, phase transition, or ssh-ready=true is
 accepted.
 
+phase12-local-direct-combined-stdin-stdout-regular-file-redirection-core-20260627
+continues the local POSIX/VFS lane while live network/SSH work remains paused.
+The accepted witness is exactly
+'/bin/stdin </etc/banner.txt >/tmp/stdin-report.txt': '/bin/stdin' is loaded
+through descriptor-backed VFS, child fd0 is sourced from
+initramfs:/etc/banner.txt, child fd1 is redirected to
+volatile-vfs:/tmp/stdin-report.txt, fd2 remains stdio output, and
+descriptor-backed 'cat /tmp/stdin-report.txt' reads back the userspace stdin
+report. Unsupported direct forms fail closed for output-first ordering, spaced
+input grammar, /dev/null input, explicit fd1 output, append output, stderr
+output, and arbitrary output paths. No Pi 5 hardware, live network/SSH,
+generated-root retry, or phase transition claim is made.
+
 While live networking/SSH remains paused, the local POSIX/VFS continuation
 accepted the direct stderr regular-file redirection core
 phase12-local-direct-stderr-regular-file-redirection-core-20260627. The

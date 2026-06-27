@@ -910,6 +910,24 @@ phase transition remain deferred. No later queued same-lane local POSIX/VFS
 task is mechanically objective; supervisor planning is required before the
 next worker promotion.
 
+The direct combined stdin/stdout regular-file redirection core accepts exactly
+'/bin/stdin </etc/banner.txt >/tmp/stdin-report.txt'. The command still loads
+'/bin/stdin' through descriptor-backed VFS. For the launched child only, fd0 is
+sourced from initramfs:/etc/banner.txt and fd1 is rebound to
+volatile-vfs:/tmp/stdin-report.txt while fd2 remains stdio output. The
+userspace stdin fixture reads the banner and writes its report through
+redirected fd1; descriptor-backed 'cat /tmp/stdin-report.txt' reads the report
+back; and a later normal '/bin/stdin' unit control proves shell fd0/fd1
+restoration and closed loader temporary descriptors. Unsupported direct
+combined forms fail closed for output-first ordering, spaced input grammar,
+/dev/null input, explicit 1> output, append output, stderr output, and
+arbitrary output path forms. Bare-name combined redirection, arbitrary
+input/output paths, append/stderr combined variants, pipeline-output
+redirection, persistent writable filesystem behavior, PATH/current-directory
+search, command lookup beyond bounded /bin, arbitrary shell grammar, live
+networking/SSH, Pi 5 hardware proof, generated-root retry, and phase transition
+remain deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

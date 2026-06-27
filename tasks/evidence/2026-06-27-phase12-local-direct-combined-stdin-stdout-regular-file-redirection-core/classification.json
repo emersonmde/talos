@@ -1,0 +1,47 @@
+{
+  "task_id": "phase12-local-direct-combined-stdin-stdout-regular-file-redirection-core-20260627",
+  "classification": "local-direct-combined-stdin-stdout-regular-file-redirection-core-accepted",
+  "accepted_witness": "/bin/stdin </etc/banner.txt >/tmp/stdin-report.txt",
+  "accepted_surface": {
+    "path": "/bin/stdin",
+    "stdin": {
+      "fd": 0,
+      "kind": "regular-file",
+      "route": "initramfs:/etc/banner.txt",
+      "child_only": true
+    },
+    "stdout": {
+      "fd": 1,
+      "kind": "regular-file",
+      "route": "volatile-vfs:/tmp/stdin-report.txt",
+      "child_only": true
+    },
+    "stderr": {
+      "fd": 2,
+      "kind": "stdio-output",
+      "route": "runtime-console0/stderr"
+    },
+    "shell_restored": true,
+    "loader_temporary_descriptor_open": false
+  },
+  "qemu_substitute": {
+    "script": "scripts/qemu-local-shell-direct-combined-stdin-stdout-redirection-smoke.sh",
+    "classification": "qemu-local-shell-direct-combined-stdin-stdout-redirection-complete",
+    "log": "tasks/evidence/2026-06-27-phase12-local-direct-combined-stdin-stdout-regular-file-redirection-core/qemu-local-shell-direct-combined-stdin-stdout-redirection-smoke.log"
+  },
+  "unsupported_forms_fail_closed": [
+    "/bin/stdin >/tmp/stdin-report.txt </etc/banner.txt",
+    "/bin/stdin </dev/null >/tmp/stdin-report.txt",
+    "/bin/stdin </etc/banner.txt 1>/tmp/stdin-report.txt",
+    "/bin/stdin < /etc/banner.txt >/tmp/stdin-report.txt",
+    "/bin/stdin </etc/banner.txt >>/tmp/stdin-report.txt",
+    "/bin/stdin </etc/banner.txt 2>/tmp/stdin-report.txt",
+    "/bin/stdin </etc/banner.txt >/tmp/other.txt"
+  ],
+  "hardware": {
+    "lab_controller_api": "not-run",
+    "serial_hardware_boot_output": "not-run",
+    "reason": "local POSIX/VFS task has no Pi 5 hardware gate"
+  },
+  "selected_next_task": "phase12-local-direct-combined-stdin-stdout-regular-file-redirection-closeout-20260627"
+}
