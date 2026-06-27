@@ -1,0 +1,10 @@
+{
+  "task_id": "phase12-local-direct-pipeline-stdin-redirection-closeout-20260627",
+  "classification": "local-direct-pipeline-stdin-redirection-closeout-accepted",
+  "accepted_frontier": "direct path-form two-stage pipeline with producer fd0 redirected from initramfs:/etc/banner.txt",
+  "feature_witness": "/bin/stdin </etc/banner.txt | /bin/stdin",
+  "selected_next_task": "phase12-local-bare-name-pipeline-stdin-redirection-core-20260627",
+  "planning_needed": false,
+  "hardware_claim": "none",
+  "live_network_ssh": "paused"
+}

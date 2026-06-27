@@ -18819,6 +18819,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
   transition remain deferred. selected_next_task is
   phase12-local-direct-pipeline-stdin-redirection-closeout-20260627.
+- phase12-local-direct-pipeline-stdin-redirection-closeout-20260627 accepts
+  local-direct-pipeline-stdin-redirection-closeout. The closeout reconciles the
+  accepted direct path-form pipeline-stage stdin redirection frontier against
+  the retained core task record, task-owned classification/evidence JSON,
+  QEMU/substitute transcript, docs, and regression evidence. The accepted
+  witness remains exactly '/bin/stdin </etc/banner.txt | /bin/stdin': producer
+  fd0 is sourced from initramfs:/etc/banner.txt, producer fd1 stays the pipe
+  endpoint, both stages run /bin/stdin through descriptor-backed VFS open/read
+  and the accepted loader/userspace path, loader temporary descriptors close,
+  shell fd0 restoration stays coherent, and waitpid, laststatus,
+  /proc/talos/processes, zero-argument ps, and pipestatus remain intact.
+  Bare-name pipeline-stage stdin redirection, consumer-stage redirection,
+  multistage pipeline redirection, output redirection, append/truncate,
+  writable filesystem behavior, environment-backed PATH, arbitrary shell
+  grammar, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
+  phase transition remain deferred. selected_next_task is
+  phase12-local-bare-name-pipeline-stdin-redirection-core-20260627.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
