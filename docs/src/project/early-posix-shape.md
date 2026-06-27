@@ -616,6 +616,22 @@ Pi 5 hardware proof, generated-root retry, and phase transition remain
 deferred. No later queued same-lane local POSIX task is mechanically objective,
 so supervisor planning is required before further worker promotion.
 
+The direct stdout regular-file redirection core accepts the first narrow
+output file surface after that checkpoint. The accepted witness is exactly
+'/bin/stdout >/tmp/stdout.txt': the executable loads through descriptor-backed
+VFS open/read and the accepted loader/userspace launch/status path; child fd1
+is rebound only for that process to a volatile regular-file descriptor for
+'/tmp/stdout.txt'; and 'cat /tmp/stdout.txt' reads back the userspace stdout
+fixture bytes through descriptor-backed VFS readback. A subsequent
+'/bin/stdout' normal-output command proves shell fd1 restoration, while
+waitpid, laststatus, process-table/procfs/ps, and pipestatus-compatible
+observations remain coherent. Bare-name output redirection, stderr file
+redirection, append/truncate, unsupported output paths, pipeline output
+redirection, combined input/output redirection, kernel-backed command
+redirection, persistent writable filesystem behavior, PATH/current-directory
+search, arbitrary shell grammar, live networking/SSH, Pi 5 hardware proof,
+generated-root retry, and phase transition remain deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

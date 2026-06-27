@@ -9,7 +9,7 @@ export TALOS_QEMU_LOCAL_COMMAND_LOOP_CLASSIFICATION="qemu-local-shell-stdout-reg
 export TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDOUT_REGULAR_FILE_REDIRECTION_SMOKE=1
 export TALOS_QEMU_LOCAL_COMMAND_LOOP_LOG_FILE="target/qemu-local-shell-stdout-regular-file-redirection-smoke.log"
 export TALOS_QEMU_LOCAL_COMMAND_LOOP_QEMU_LOG_FILE="target/qemu-local-shell-stdout-regular-file-redirection-smoke.qemu.log"
-export TALOS_QEMU_LOCAL_COMMAND_LOOP_EVIDENCE_DIR="tasks/evidence/2026-06-04-phase10-stdout-regular-file-redirection-core"
+export TALOS_QEMU_LOCAL_COMMAND_LOOP_EVIDENCE_DIR="tasks/evidence/2026-06-27-phase12-local-direct-stdout-regular-file-redirection-core"
 export TALOS_QEMU_LOCAL_COMMAND_LOOP_EVIDENCE_LOG="$TALOS_QEMU_LOCAL_COMMAND_LOOP_EVIDENCE_DIR/qemu-local-shell-stdout-regular-file-redirection-smoke.log"
 export TALOS_QEMU_LOCAL_COMMAND_LOOP_PORT="${TALOS_QEMU_LOCAL_COMMAND_LOOP_PORT:-54388}"
 

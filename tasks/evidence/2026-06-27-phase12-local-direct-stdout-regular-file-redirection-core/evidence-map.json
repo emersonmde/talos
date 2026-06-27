@@ -1,0 +1,64 @@
+{
+  "task_id": "phase12-local-direct-stdout-regular-file-redirection-core-20260627",
+  "evidence": [
+    {
+      "kind": "fmt",
+      "command": "cargo fmt --all -- --check",
+      "result": "pass"
+    },
+    {
+      "kind": "unit-test",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "result": "pass",
+      "tests": 853,
+      "note": "Initial run without QEMU on PATH failed before assertions; rerun with the Talos QEMU tool path passed."
+    },
+    {
+      "kind": "qemu-substitute-smoke",
+      "command": "scripts/qemu-local-shell-stdout-regular-file-redirection-smoke.sh",
+      "result": "pass",
+      "path": "tasks/evidence/2026-06-27-phase12-local-direct-stdout-regular-file-redirection-core/qemu-local-shell-stdout-regular-file-redirection-smoke.log",
+      "accepted_witness": "/bin/stdout >/tmp/stdout.txt",
+      "readback_witness": "cat /tmp/stdout.txt",
+      "restoration_witness": "/bin/stdout"
+    },
+    {
+      "kind": "retained-regression-surface",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "result": "pass",
+      "surfaces": [
+        "direct VFS exec",
+        "cat-banner",
+        "command argv",
+        "pipeline argv",
+        "process-status VFS",
+        "zero-argument ps",
+        "pipestatus",
+        "stdin redirection",
+        "producer-stage pipeline stdin redirection",
+        "consumer-stage pipeline stdin redirection",
+        "dual-stage pipeline stdin redirection"
+      ]
+    },
+    {
+      "kind": "json-check",
+      "command": "jq empty tasks/evidence/2026-06-27-phase12-local-direct-stdout-regular-file-redirection-core/classification.json tasks/evidence/2026-06-27-phase12-local-direct-stdout-regular-file-redirection-core/evidence-map.json",
+      "result": "pass"
+    },
+    {
+      "kind": "diff-check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "kind": "docs",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "kind": "staged-diff-check",
+      "command": "git diff --cached --check",
+      "result": "pass"
+    }
+  ]
+}

@@ -35,6 +35,19 @@ hardware proof, generated-root retry, and phase transition remain deferred.
 No later queued same-lane local POSIX task is mechanically objective, so
 supervisor planning is required before additional worker promotion.
 
+The direct stdout regular-file redirection core accepts one local-only output
+redirection witness: '/bin/stdout >/tmp/stdout.txt'. The child still loads
+'/bin/stdout' through descriptor-backed VFS open/read and the accepted
+loader/userspace launch/status path, but child fd1 is rebound only for that
+process to the volatile VFS regular file 'volatile-vfs:/tmp/stdout.txt'.
+'cat /tmp/stdout.txt' reads back the userspace stdout fixture bytes through
+descriptor-backed VFS readback, and a later '/bin/stdout' proves shell fd1 was
+restored. Bare-name output redirection, stderr file redirection, append,
+unsupported output paths, pipeline output redirection, combined input/output
+redirection, kernel-backed command redirection, writable persistent filesystem
+behavior, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
+phase transition remain deferred.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1

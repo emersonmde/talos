@@ -16985,7 +16985,7 @@ fn expected_local_command_loop_dispatch(
             line == b"exec stdin </etc/banner.txt" && status == Handled && response_lines == 11
         }
         3 if cfg!(talos_boot_scenario = "qemu_local_shell_stdout_regular_file_redirection") => {
-            line == b"exec stdout >/tmp/stdout.txt" && status == Handled && response_lines == 11
+            line == b"/bin/stdout >/tmp/stdout.txt" && status == Handled && response_lines == 11
         }
         3 if cfg!(
             talos_boot_scenario = "qemu_local_shell_stdout_regular_file_append_redirection"
@@ -17508,7 +17508,7 @@ fn expected_local_command_loop_dispatch(
             line == b"waitpid" && status == Handled && response_lines == 1
         }
         7 if cfg!(talos_boot_scenario = "qemu_local_shell_stdout_regular_file_redirection") => {
-            line == b"exec stdout" && status == Handled && response_lines == 10
+            line == b"/bin/stdout" && status == Handled && response_lines == 10
         }
         7 if cfg!(
             talos_boot_scenario = "qemu_local_shell_stdout_regular_file_append_redirection"
