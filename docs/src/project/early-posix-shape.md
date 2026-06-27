@@ -366,6 +366,23 @@ beyond bounded `/bin`, pipeline-stage redirection, output redirection,
 append/truncate, writable filesystem behavior, generated-root retry, live
 network/SSH, Pi 5 hardware proof, and phase transition remain deferred.
 
+The bare-name stdin redirection closeout reconciles that boundary against
+retained task records, task-owned classification/evidence JSON, the
+QEMU/substitute transcript, docs, and regression evidence. The accepted
+surface remains only 'stdin </etc/banner.txt': the command resolves through
+fixed bounded /bin lookup to /bin/stdin, the executable comes through
+descriptor-backed VFS open/read and the accepted loader/userspace launch/status
+path, and fd0 is replaced only for the child by
+initramfs:/etc/banner.txt before being restored for the shell. Direct
+path-form stdin redirection, exec-prefixed stdin redirection, command argv,
+pipeline argv, process-status VFS, zero-argument ps, pipestatus, and
+cat-banner controls remain coherent. Pipeline-stage redirection, output
+redirection expansion, append/truncate, writable filesystem behavior,
+environment-backed PATH, command lookup beyond bounded /bin, arbitrary shell
+grammar, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
+phase transition remain deferred pending the stdin redirection frontier
+checkpoint.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
