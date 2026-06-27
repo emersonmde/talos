@@ -983,9 +983,23 @@ persistent writable filesystem behavior, environment-backed PATH,
 current-directory search, command lookup beyond bounded /bin, arbitrary shell
 grammar, unbounded/concurrent pipelines, scheduler concurrency, fork/signals,
 process groups/sessions, live networking/SSH, Pi 5 hardware proof,
-generated-root retry, and phase transition remain deferred. No later queued
-same-lane local POSIX/VFS task is mechanically objective; supervisor planning
-is required before the next worker promotion.
+generated-root retry, and phase transition remain deferred. The next
+same-lane local POSIX/VFS task is the direct path-form pipeline-output
+regular-file redirection core.
+
+The direct pipeline-output regular-file redirection core accepts exactly
+`/bin/stdout | /bin/stdin >/tmp/pipeline-report.txt`. Both stages remain
+absolute paths loaded through descriptor-backed VFS open/read, the accepted
+loader, userspace launch/status path, and the bounded foreground process table.
+The producer writes only to the accepted pipe endpoint; the consumer reads from
+that pipe through fd0, writes the userspace stdin report through child-only fd1
+to `volatile-vfs:/tmp/pipeline-report.txt`, restores shell descriptors, and is
+read back with `cat /tmp/pipeline-report.txt`. `waitpid`, `laststatus`,
+`/proc/talos/processes`, zero-argument `ps`, and `pipestatus` remain coherent.
+Bare-name pipeline-output redirection, append pipeline-output forms,
+input/stderr/combined pipeline redirections, arbitrary output paths,
+persistent writable filesystem behavior, generated-root retry, live
+networking/SSH, Pi 5 hardware proof, and phase transition remain deferred.
 
 ## Scheduler Implications
 

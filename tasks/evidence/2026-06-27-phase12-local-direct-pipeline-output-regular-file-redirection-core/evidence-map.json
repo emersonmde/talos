@@ -1,0 +1,54 @@
+{
+  "task_id": "phase12-local-direct-pipeline-output-regular-file-redirection-core-20260627",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "paths": [
+        "src/local_command_loop.rs",
+        "docs/src/project/early-posix-shape.md",
+        "docs/src/project/phase12-networking-ssh.md",
+        "docs/src/roadmap.md",
+        "tasks/2026-06-27-phase12-local-direct-pipeline-output-regular-file-redirection-core.md"
+      ],
+      "result": "accepted direct path-form pipeline-output parser and volatile output path are scoped to /bin/stdout | /bin/stdin >/tmp/pipeline-report.txt"
+    },
+    {
+      "level": "QEMU/substitute transcript",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop_redirects_direct_path_pipeline_consumer_stdout_to_volatile_regular_file",
+      "result": "passed after exact transcript assertions; witness line /bin/stdout | /bin/stdin >/tmp/pipeline-report.txt, producer fd1 pipe-endpoint, consumer fd0 pipe-endpoint, consumer fd1 regular-file, exec-redirection op=sink target-path=/tmp/pipeline-report.txt, cat readback bytes=0x44, normal /bin/stdout shell restoration, and three fail-closed negatives"
+    },
+    {
+      "level": "fmt/lint/typecheck",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "level": "unit tests / QEMU-substitute",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "result": "passed; 863 tests passed"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-regular-file-redirection-core/classification.json tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-regular-file-redirection-core/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed; HTML backend wrote book, with existing large search-index warning"
+    },
+    {
+      "level": "lab-controller API",
+      "result": "not run; no Pi 5 hardware gate"
+    },
+    {
+      "level": "serial hardware boot/output",
+      "result": "not run; no Pi 5 hardware gate"
+    }
+  ]
+}

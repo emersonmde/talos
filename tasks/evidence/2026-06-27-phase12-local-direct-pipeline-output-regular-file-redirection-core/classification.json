@@ -1,0 +1,42 @@
+{
+  "task_id": "phase12-local-direct-pipeline-output-regular-file-redirection-core-20260627",
+  "classification": "local-direct-pipeline-output-regular-file-redirection-core-accepted",
+  "accepted_witness": "/bin/stdout | /bin/stdin >/tmp/pipeline-report.txt",
+  "accepted_surface": {
+    "producer": {
+      "path": "/bin/stdout",
+      "fd1": {
+        "kind": "pipe-endpoint",
+        "route": "pipe:stdout-to-stdin"
+      },
+      "bytes_written": "0x1f"
+    },
+    "consumer": {
+      "path": "/bin/stdin",
+      "fd0": {
+        "kind": "pipe-endpoint",
+        "route": "pipe:stdout-to-stdin"
+      },
+      "fd1": {
+        "kind": "regular-file",
+        "route": "volatile-vfs:/tmp/pipeline-report.txt",
+        "operation": "sink",
+        "child_only": true
+      },
+      "stdout_bytes_written": "0x44"
+    },
+    "shell_restored": true,
+    "loader_temporary_descriptor_open": false
+  },
+  "unsupported_forms_fail_closed": [
+    "/bin/stdout | /bin/stdin >/tmp/stdout.txt",
+    "/bin/stdout | /bin/stdin >>/tmp/pipeline-report.txt",
+    "/bin/stdout | /bin/stderr >/tmp/pipeline-report.txt"
+  ],
+  "hardware": {
+    "lab_controller_api": "not-run",
+    "serial_hardware_boot_output": "not-run",
+    "reason": "local POSIX/VFS task has no Pi 5 hardware gate"
+  },
+  "selected_next_task": "phase12-local-direct-pipeline-output-regular-file-redirection-closeout-20260627"
+}
