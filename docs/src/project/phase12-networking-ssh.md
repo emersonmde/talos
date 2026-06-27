@@ -8979,6 +8979,26 @@ arbitrary shell grammar, live networking/SSH, Pi 5 hardware proof,
 generated-root retry, and phase transition remain deferred.
 selected_next_task is phase12-local-direct-stdin-redirection-closeout-20260626.
 
+phase12-local-direct-stdin-redirection-closeout-20260626 accepts
+local-direct-stdin-redirection-closeout. The checkpoint reconciles the accepted
+direct path-form stdin redirection frontier against retained task records,
+classification/evidence JSON, QEMU/substitute transcript, docs, and regression
+records. The accepted surface remains exactly '/bin/stdin </etc/banner.txt':
+the executable is loaded through descriptor-backed VFS open/read and the
+accepted loader/userspace startup/status path, while fd0 is replaced only for
+the child by 'initramfs:/etc/banner.txt' and restored for the shell afterward.
+waitpid, laststatus, bounded process-table state, /proc/talos/processes,
+zero-argument ps, pipestatus-compatible observations, and retained
+exec-prefixed stdin redirection controls remain coherent. The fixed bounded
+/bin lookup plus direct redirection evidence make
+phase12-local-bare-name-stdin-redirection-core-20260626 the selected next
+mechanically objective task. Bare-name stdin redirection implementation,
+pipeline-stage redirection, output redirection expansion, append/truncate,
+writable filesystem behavior, environment-backed PATH, command lookup beyond
+bounded /bin, arbitrary shell grammar, live networking/SSH, Pi 5 hardware
+proof, generated-root retry, and phase transition remain deferred.
+selected_next_task is phase12-local-bare-name-stdin-redirection-core-20260626.
+
 phase12-local-absolute-path-vfs-command-core-20260626 accepts
 local-absolute-path-vfs-command-core. The local shell now dispatches a direct
 absolute-path command, /bin/status42, through the same accepted VFS open/read,

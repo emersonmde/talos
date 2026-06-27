@@ -1,0 +1,52 @@
+{
+  "classification": "local-direct-stdin-redirection-closeout-accepted",
+  "task_id": "phase12-local-direct-stdin-redirection-closeout-20260626",
+  "accepted": true,
+  "reconciled_command": "/bin/stdin </etc/banner.txt",
+  "accepted_boundary": {
+    "command_form": "direct absolute path",
+    "exec_path": "/bin/stdin",
+    "stdin_source_path": "/etc/banner.txt",
+    "stdin_source_route": "initramfs:/etc/banner.txt",
+    "stdin_source_stream": "regular-file",
+    "child_only": true,
+    "shell_restored": true,
+    "fd1": "inherited stdio-output",
+    "fd2": "inherited stdio-output",
+    "loader_temp_descriptor_open": false
+  },
+  "retained_observations": [
+    "waitpid",
+    "laststatus",
+    "bounded process-table",
+    "/proc/talos/processes",
+    "zero-argument ps",
+    "pipestatus-compatible observations"
+  ],
+  "selected_next_task": "phase12-local-bare-name-stdin-redirection-core-20260626",
+  "planningNeeded": false,
+  "evidence_level": [
+    "static inspection",
+    "JSON validation",
+    "diff hygiene",
+    "mdbook docs build"
+  ],
+  "no_hardware_claim": true,
+  "live_network_ssh_paused": true,
+  "deferred": [
+    "bare-name stdin redirection implementation",
+    "pipeline-stage redirection",
+    "output redirection expansion",
+    "append/truncate",
+    "writable filesystem behavior",
+    "combined redirections beyond accepted exact forms",
+    "environment-backed PATH",
+    "current-directory search",
+    "command lookup beyond bounded /bin",
+    "arbitrary shell grammar",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "phase transition"
+  ]
+}

@@ -335,6 +335,20 @@ arbitrary shell grammar, live networking/SSH, Pi 5 hardware proof,
 generated-root retry, and phase transition remain deferred pending the direct
 stdin redirection closeout.
 
+The direct stdin redirection closeout reconciles that boundary against retained
+task records, task-owned classification/evidence JSON, the QEMU/substitute
+transcript, docs, and regression evidence. The accepted surface remains only
+'/bin/stdin </etc/banner.txt': the executable comes through descriptor-backed
+VFS open/read and the accepted loader/userspace launch/status path, while fd0
+is replaced only for the child by 'initramfs:/etc/banner.txt' and restored for
+the shell afterward. The fixed bounded /bin lookup and direct redirection
+evidence make bare-name stdin redirection a mechanically objective next task,
+but it remains separate implementation work. Pipeline-stage redirection,
+output redirection expansion, append/truncate, writable filesystem behavior,
+environment-backed PATH, command lookup beyond bounded /bin, arbitrary shell
+grammar, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
+phase transition remain deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
