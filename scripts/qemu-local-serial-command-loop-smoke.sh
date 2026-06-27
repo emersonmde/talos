@@ -980,7 +980,7 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                     printf 'cat /tmp/stdout.txt\r' >&3
                     sent=12
                 elif [ "$sent" -eq 11 ] && [ "$SHELL_STDERR_REGULAR_FILE_REDIRECTION_SMOKE" -eq 1 ]; then
-                    printf 'stderr 2>/tmp/stderr.txt\r' >&3
+                    printf '/bin/stderr 2> /tmp/stderr.txt\r' >&3
                     sent=12
                 elif [ "$sent" -eq 11 ] && [ "$SHELL_STDERR_REGULAR_FILE_APPEND_REDIRECTION_SMOKE" -eq 1 ]; then
                     printf 'exec stdout\r' >&3
@@ -1274,7 +1274,7 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                     elif [ "$SHELL_EXPLICIT_FD1_REGULAR_FILE_REDIRECTION_SMOKE" -eq 1 ]; then
                         printf 'exec stdout 1>/tmp/stdout.txt\r' >&3
                     elif [ "$SHELL_STDERR_REGULAR_FILE_REDIRECTION_SMOKE" -eq 1 ]; then
-                        printf '/bin/stderr 2>/tmp/stderr.txt\r' >&3
+                        printf 'stderr 2>/tmp/stderr.txt\r' >&3
                     elif [ "$SHELL_STDERR_REGULAR_FILE_APPEND_REDIRECTION_SMOKE" -eq 1 ]; then
                         printf 'exec stderr 2>/tmp/stderr.txt\r' >&3
                     elif [ "$SHELL_STDERR_REGULAR_FILE_APPEND_CREATE_REDIRECTION_SMOKE" -eq 1 ]; then
@@ -1570,7 +1570,7 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
                     elif [ "$SHELL_EXPLICIT_FD1_REGULAR_FILE_REDIRECTION_SMOKE" -eq 1 ]; then
                         printf 'exec stdout\r' >&3
                     elif [ "$SHELL_STDERR_REGULAR_FILE_REDIRECTION_SMOKE" -eq 1 ]; then
-                        printf '/bin/stderr\r' >&3
+                        printf 'stderr\r' >&3
                     elif [ "$SHELL_STDERR_REGULAR_FILE_APPEND_REDIRECTION_SMOKE" -eq 1 ]; then
                         printf 'waitpid\r' >&3
                     elif [ "$SHELL_STDERR_REGULAR_FILE_APPEND_CREATE_REDIRECTION_SMOKE" -eq 1 ]; then
@@ -2795,7 +2795,7 @@ elif [ "$SHELL_STDERR_REGULAR_FILE_APPEND_REDIRECTION_SMOKE" -eq 1 ]; then
     grep -q "^Talos initramfs fixture" "$LOG_FILE"
     grep -q "$LABEL: final participants=16 expected=16 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
 elif [ "$SHELL_STDERR_REGULAR_FILE_REDIRECTION_SMOKE" -eq 1 ]; then
-    grep -q "talos> /bin/stderr 2>/tmp/stderr.txt" "$LOG_FILE"
+    grep -q "talos> stderr 2>/tmp/stderr.txt" "$LOG_FILE"
     grep -q "talos: exec path=/bin/stderr source=vfs-open-read" "$LOG_FILE"
     grep -Eq "talos: exec-source bytes=0x[0-9a-f]+ digest=0x[0-9a-f]+" "$LOG_FILE"
     grep -Eq "talos: exec-loader fixture=phase8-program-loader-elf64-aarch64-v1 entry=0x[0-9a-f]+ segments=0x[0-9a-f]+" "$LOG_FILE"
@@ -2810,12 +2810,12 @@ elif [ "$SHELL_STDERR_REGULAR_FILE_REDIRECTION_SMOKE" -eq 1 ]; then
     grep -q "talos> cat /tmp/stderr.txt" "$LOG_FILE"
     grep -q "^Talos userspace stderr fixture" "$LOG_FILE"
     grep -q "talos: cat path=/tmp/stderr.txt bytes=0x000000000000001f source=volatile-vfs-descriptor-read" "$LOG_FILE"
-    grep -q "talos> /bin/stderr" "$LOG_FILE"
+    grep -q "talos> stderr" "$LOG_FILE"
     grep -q "talos: exec-stderr fd=0x0000000000000002 bytes=0x000000000000001f return=0x000000000000001f stream=stderr route=runtime-console0/stderr source=userspace-talos-write" "$LOG_FILE"
     grep -q "talos> exec stdout" "$LOG_FILE"
     grep -q "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=stdout route=runtime-console0/stdout source=userspace-talos-write" "$LOG_FILE"
     grep -q "talos> /bin/stderr 2>>/tmp/stderr.txt" "$LOG_FILE"
-    grep -q "talos> stderr 2>/tmp/stderr.txt" "$LOG_FILE"
+    grep -q "talos> /bin/stderr 2> /tmp/stderr.txt" "$LOG_FILE"
     grep -q "talos> exec stdout >/tmp/stderr.txt" "$LOG_FILE"
     grep -c "talos: exec-invalid-path" "$LOG_FILE" | grep -q "^3$"
     grep -q "talos> cat /etc/banner.txt" "$LOG_FILE"

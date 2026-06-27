@@ -1,0 +1,59 @@
+{
+  "task": "phase12-local-bare-name-stderr-regular-file-redirection-core-20260627",
+  "classification": "local-bare-name-stderr-regular-file-redirection-core-accepted",
+  "evidence": {
+    "task_record": "tasks/2026-06-27-phase12-local-bare-name-stderr-regular-file-redirection-core.md",
+    "focused_qemu_substitute_smoke": "tasks/evidence/2026-06-27-phase12-local-bare-name-stderr-regular-file-redirection-core/qemu-local-shell-stderr-regular-file-redirection-smoke.log",
+    "regression_summary": "tasks/evidence/2026-06-27-phase12-local-bare-name-stderr-regular-file-redirection-core/regressions/regression-summary.txt",
+    "regression_transcripts": "tasks/evidence/2026-06-27-phase12-local-bare-name-stderr-regular-file-redirection-core/regressions/",
+    "retained_direct_stderr_qemu_evidence": "tasks/evidence/2026-06-27-phase12-local-direct-stderr-regular-file-redirection-core/qemu-local-shell-stderr-regular-file-redirection-smoke.log",
+    "retained_direct_stderr_task": "tasks/2026-06-27-phase12-local-direct-stderr-regular-file-redirection-core.md"
+  },
+  "validation": [
+    {
+      "level": "fmt/lint/typecheck",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "result": "passed"
+    },
+    {
+      "level": "QEMU/substitute",
+      "command": "scripts/qemu-local-shell-stderr-regular-file-redirection-smoke.sh --quiet",
+      "result": "passed"
+    },
+    {
+      "level": "QEMU/substitute regressions",
+      "command": "task-owned regression smoke batch",
+      "result": "passed"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty classification.json evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "level": "staged diff validation",
+      "command": "git diff --cached --check",
+      "result": "passed"
+    }
+  ],
+  "notes": [
+    "No live network/SSH action was performed.",
+    "No Pi 5 hardware action or hardware claim was made.",
+    "Generated-root retry, append/truncate, arbitrary output paths, pipeline-output redirection, persistent filesystem behavior, and phase transition remain deferred."
+  ]
+}

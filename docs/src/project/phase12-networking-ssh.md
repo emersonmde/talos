@@ -115,6 +115,21 @@ mechanically objective local POSIX/VFS task is the queued bare-name stderr
 regular-file redirection core; live networking/SSH and Pi 5 hardware proof
 remain paused.
 
+The bare-name stderr regular-file redirection core accepts exactly
+'stderr 2>/tmp/stderr.txt'. The command name resolves only through the fixed
+bounded /bin lookup to '/bin/stderr'; the child loads through descriptor-backed
+VFS open/read and the accepted loader/userspace launch/status path; fd2 is
+rebound only for that child to 'volatile-vfs:/tmp/stderr.txt'; and
+'cat /tmp/stderr.txt' reads the userspace stderr fixture back through
+descriptor-backed VFS. A later normal 'stderr' proves shell fd2 restoration to
+runtime-console0/stderr. Direct stderr redirection, stdout regular-file
+redirection, stdin redirection, pipeline stdin redirection, command argv,
+pipeline argv, process-status VFS/ps, and pipestatus regressions remain green.
+Append/truncate, arbitrary output paths, pipeline-output redirection, combined
+input/output redirection, persistent writable filesystem behavior, live
+networking/SSH, Pi 5 hardware proof, generated-root retry, and phase transition
+remain deferred.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1

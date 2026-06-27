@@ -713,6 +713,22 @@ environment-backed PATH, current-directory search, command lookup beyond
 bounded /bin, arbitrary shell grammar, live networking/SSH, Pi 5 hardware
 proof, generated-root retry, and phase transition remain deferred.
 
+The bare-name stderr regular-file redirection core accepts exactly
+'stderr 2>/tmp/stderr.txt'. The command name resolves through the accepted
+fixed /bin lookup to '/bin/stderr'; the child fd2 is rebound only for that
+process to volatile-vfs:/tmp/stderr.txt; and 'cat /tmp/stderr.txt' reads the
+userspace stderr fixture bytes back through descriptor-backed VFS. A later
+normal 'stderr' command proves shell fd2 restoration to runtime-console0/stderr,
+while fd0/fd1 inheritance, loader temporary descriptor closure,
+waitpid/laststatus/process-table observations, direct stderr, stdout
+regular-file redirection, stdin redirection, pipeline stdin redirection,
+command argv, pipeline argv, process-status VFS/ps, and pipestatus regressions
+remain coherent. Append/truncate, arbitrary output paths, pipeline-output
+redirection, combined input/output redirection, persistent writable filesystem
+behavior, environment-backed PATH, current-directory search, command lookup
+beyond bounded /bin, arbitrary shell grammar, live networking/SSH, Pi 5
+hardware proof, generated-root retry, and phase transition remain deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

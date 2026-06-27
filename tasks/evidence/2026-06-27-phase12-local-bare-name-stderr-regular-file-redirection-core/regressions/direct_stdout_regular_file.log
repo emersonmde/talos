@@ -1,0 +1,124 @@
+
+Talos 0.1.0 booting on talos-aarch64-virt
+boot-info: dtb_pa=0x0000000048000000 core=0 el=2 target=talos-aarch64-virt
+target-services: uart=pl011 timer=arm-generic irq=gic-v2 dtb=Some(
+    0x0000000048000000,
+)
+mmio-regions: 3
+qemu-local-shell-stdout-regular-file-redirection: start command-count=13 backend=runtime-console0/qemu-virt-pl011 input=fd0/runtime-console0/tty-canonical-lite builtins=kernel-backed-regression-control+vfs-syscall-cat+vfs-userspace-exec-boundary+lifecycle-laststatus+waitpid-lifecycle-observation+standard-descriptor-inheritance+userspace-stdout-through-inherited-fd1+userspace-stdin-through-inherited-fd0+userspace-stderr-through-inherited-fd2+descriptor-dup-redirection-1-to-2+descriptor-dup-redirection-2-to-1+descriptor-close-redirection-1+descriptor-close-redirection-2+minimal-stdout-to-stdin-pipeline+stdout-only-pipeline-stderr-not-piped+pipeline-stderr-dup-to-stdout+pipeline-stdout-redirect-away+stdout-dev-null-redirection+stderr-dev-null-redirection+stdin-dev-null-redirection+readonly-regular-file-stdin-redirection+volatile-stdout-regular-file-redirection+volatile-stderr-regular-file-redirection+explicit-fd1-regular-file-redirection+stdout-arbitrary-tmp-output-redirection+stderr-arbitrary-tmp-output-redirection+combined-stdin-stdout-redirection+pipeline-consumer-output-redirection+pipeline-producer-file-redirection-away+background-vfs-exec-lifecycle+jobs-accounting-list+multiple-background-vfs-exec-records+background-jobs-stale-entry-policy+generated-root-manifest-read+generated-root-executable-vfs-exec+shell-pingdiag-vfs-userspace-diagnostic+shell-sockdiag-vfs-userspace-socket-open-close+shell-sockdiag-vfs-userspace-socket-bind-listen+shell-sockdiag-vfs-userspace-socket-connect-accept+shell-sockdiag-vfs-userspace-socket-send-recv+shell-sockdiag-vfs-userspace-socket-readiness-poll+shell-sockdiag-vfs-userspace-socket-blocking-poll-wait+shell-sockdiag-vfs-userspace-cross-process-local-socket+shell-sockdiag-vfs-userspace-smoltcp-tcp+pipeline-distinct-serialized-process-identities+explicit-pid-wait-status-observation+waitpid-completed-child-observation+bounded-process-table-direct-vfs-exec-lifecycle+bounded-process-table-pipeline-background-lifecycle+proc-talos-processes-descriptor-backed-status-vfs+ps-command-vfs-backed-process-status+multistage-pipeline-bounded-process-table+bounded-pipeline-status-observation+direct-absolute-path-vfs-command+bounded-absolute-path-vfs-pipeline+bounded-bare-name-bin-vfs-command+bounded-bare-name-bin-vfs-pipeline+direct-absolute-path-vfs-command-literal-argv+bounded-bare-name-bin-vfs-command-literal-argv+direct-absolute-path-vfs-pipeline-stage-literal-argv+bounded-bare-name-bin-vfs-pipeline-stage-literal-argv+direct-absolute-path-vfs-command-readonly-stdin-redirection+bounded-bare-name-bin-vfs-command-readonly-stdin-redirection+direct-absolute-path-vfs-pipeline-producer-readonly-stdin-redirection+bounded-bare-name-bin-vfs-pipeline-producer-readonly-stdin-redirection+direct-absolute-path-vfs-pipeline-consumer-readonly-stdin-redirection+bounded-bare-name-bin-vfs-pipeline-consumer-readonly-stdin-redirection+bounded-dual-stage-vfs-pipeline-readonly-stdin-redirection+bounded-bare-name-bin-vfs-command-volatile-stdout-regular-file-redirection+bounded-bare-name-bin-vfs-command-volatile-stderr-regular-file-redirection descriptor-backed-input=true descriptor-backed-output=true
+qemu-local-shell-stdout-regular-file-redirection: ready command=0
+talos> help
+talos: ok help
+talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid jobs ps pipestatus
+talos: echo forms echo hello; echo local serial works
+talos: editing backspace delete ctrl-c ctrl-u
+
+qemu-local-shell-stdout-regular-file-redirection: line command=0 hex=68 65 6c 70
+qemu-local-shell-stdout-regular-file-redirection: dispatch command=0 status=handled responses=4 raw-bytes=5 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-stdout-regular-file-redirection: ready command=1
+talos> status
+talos: ok status
+talos: version phase10.2-kernel-builtins-v2
+talos: runtime-console runtime-console0
+talos: builtins kernel-backed-regression-control+vfs-syscall-cat+vfs-userspace-exec-boundary+lifecycle-laststatus+waitpid-lifecycle-observation+standard-descriptor-inheritance+userspace-stdout-through-inherited-fd1+userspace-stdin-through-inherited-fd0+userspace-stderr-through-inherited-fd2+descriptor-dup-redirection-1-to-2+descriptor-dup-redirection-2-to-1+descriptor-close-redirection-1+descriptor-close-redirection-2+minimal-stdout-to-stdin-pipeline+stdout-only-pipeline-stderr-not-piped+pipeline-stderr-dup-to-stdout+pipeline-stdout-redirect-away+stdout-dev-null-redirection+stderr-dev-null-redirection+stdin-dev-null-redirection+readonly-regular-file-stdin-redirection+volatile-stdout-regular-file-redirection+volatile-stderr-regular-file-redirection+explicit-fd1-regular-file-redirection+stdout-arbitrary-tmp-output-redirection+stderr-arbitrary-tmp-output-redirection+combined-stdin-stdout-redirection+pipeline-consumer-output-redirection+pipeline-producer-file-redirection-away+background-vfs-exec-lifecycle+jobs-accounting-list+multiple-background-vfs-exec-records+background-jobs-stale-entry-policy+generated-root-manifest-read+generated-root-executable-vfs-exec+shell-pingdiag-vfs-userspace-diagnostic+shell-sockdiag-vfs-userspace-socket-open-close+shell-sockdiag-vfs-userspace-socket-bind-listen+shell-sockdiag-vfs-userspace-socket-connect-accept+shell-sockdiag-vfs-userspace-socket-send-recv+shell-sockdiag-vfs-userspace-socket-readiness-poll+shell-sockdiag-vfs-userspace-socket-blocking-poll-wait+shell-sockdiag-vfs-userspace-cross-process-local-socket+shell-sockdiag-vfs-userspace-smoltcp-tcp+pipeline-distinct-serialized-process-identities+explicit-pid-wait-status-observation+waitpid-completed-child-observation+bounded-process-table-direct-vfs-exec-lifecycle+bounded-process-table-pipeline-background-lifecycle+proc-talos-processes-descriptor-backed-status-vfs+ps-command-vfs-backed-process-status+multistage-pipeline-bounded-process-table+bounded-pipeline-status-observation+direct-absolute-path-vfs-command+bounded-absolute-path-vfs-pipeline+bounded-bare-name-bin-vfs-command+bounded-bare-name-bin-vfs-pipeline+direct-absolute-path-vfs-command-literal-argv+bounded-bare-name-bin-vfs-command-literal-argv+direct-absolute-path-vfs-pipeline-stage-literal-argv+bounded-bare-name-bin-vfs-pipeline-stage-literal-argv+direct-absolute-path-vfs-command-readonly-stdin-redirection+bounded-bare-name-bin-vfs-command-readonly-stdin-redirection+direct-absolute-path-vfs-pipeline-producer-readonly-stdin-redirection+bounded-bare-name-bin-vfs-pipeline-producer-readonly-stdin-redirection+direct-absolute-path-vfs-pipeline-consumer-readonly-stdin-redirection+bounded-bare-name-bin-vfs-pipeline-consumer-readonly-stdin-redirection+bounded-dual-stage-vfs-pipeline-readonly-stdin-redirection+bounded-bare-name-bin-vfs-command-volatile-stdout-regular-file-redirection+bounded-bare-name-bin-vfs-command-volatile-stderr-regular-file-redirection
+talos: commands help status stdio pwd echo ls cat cd exec laststatus waitpid jobs ps pipestatus
+
+qemu-local-shell-stdout-regular-file-redirection: line command=1 hex=73 74 61 74 75 73
+qemu-local-shell-stdout-regular-file-redirection: dispatch command=1 status=handled responses=5 raw-bytes=7 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-stdout-regular-file-redirection: ready command=2
+talos> stdio
+talos: ok stdio
+talos: fd 0 stdio-input
+talos: fd 1 stdio-output
+talos: fd 2 stdio-output
+talos: runtime-console runtime-console0
+talos: descriptor-backed-input=true
+talos: descriptor-backed-output=true
+
+qemu-local-shell-stdout-regular-file-redirection: line command=2 hex=73 74 64 69 6f
+qemu-local-shell-stdout-regular-file-redirection: dispatch command=2 status=handled responses=7 raw-bytes=6 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-stdout-regular-file-redirection: ready command=3
+talos> /bin/stdout >/tmp/stdout.txt
+talos: exec path=/bin/stdout source=vfs-open-read
+talos: exec-source bytes=0x0000000000000204 digest=0x96ee5866736d445b
+talos: exec-loader fixture=phase8-program-loader-elf64-aarch64-v1 entry=0x0000000000010100 segments=0x0000000000000002
+talos: exec-launch launch-boundary=phase8-initial-process-launch-plan-v1 stack-boundary=phase8-initial-user-stack-plan-v1 address-space=0x0000000000100001 materialization=0x0000000830100001 initial-sp=0x00007fffffffffd0
+talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=regular-file fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table
+talos: exec-startup-abi state=minimal-argc1-argv0-absolute-empty-envp argc=0x0000000000000001 argv0=/bin/stdout argv0-ptr=0x00007ffffffffff0 argv-null=false envp-null=true envp-state=empty-envp0 envp-entries=0x0000000000000000 envp0-ptr=0x00007fffffffffe8 copied-startup-bytes=0x000000000000002c source=initial-user-stack-record
+talos: exec-redirection op=sink source-fd=0x0000000000000001 target-path=/tmp/stdout.txt target-stream=regular-file target-route=volatile-vfs:/tmp/stdout.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout
+talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=regular-file route=volatile-vfs:/tmp/stdout.txt source=userspace-talos-write
+talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true
+talos: exec-status boundary=lower-aarch64-svc-status-equivalent marker=0x0000000000007a10 status=0x0000000000000000 complete=true source=lifecycle-record
+talos: exec-signal lower-aarch64-svc-launch-boundary-equivalent
+
+qemu-local-shell-stdout-regular-file-redirection: line command=3 hex=2f 62 69 6e 2f 73 74 64 6f 75 74 20 3e 2f 74 6d 70 2f 73 74 64 6f 75 74 2e 74 78 74
+qemu-local-shell-stdout-regular-file-redirection: dispatch command=3 status=handled responses=11 raw-bytes=29 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-stdout-regular-file-redirection: ready command=4
+talos> waitpid
+talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record
+
+qemu-local-shell-stdout-regular-file-redirection: line command=4 hex=77 61 69 74 70 69 64
+qemu-local-shell-stdout-regular-file-redirection: dispatch command=4 status=handled responses=1 raw-bytes=8 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-stdout-regular-file-redirection: ready command=5
+talos> laststatus
+talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record
+
+qemu-local-shell-stdout-regular-file-redirection: line command=5 hex=6c 61 73 74 73 74 61 74 75 73
+qemu-local-shell-stdout-regular-file-redirection: dispatch command=5 status=handled responses=1 raw-bytes=11 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-stdout-regular-file-redirection: ready command=6
+talos> cat /tmp/stdout.txt
+Talos userspace stdout fixture
+talos: cat path=/tmp/stdout.txt bytes=0x000000000000001f source=volatile-vfs-descriptor-read
+
+qemu-local-shell-stdout-regular-file-redirection: line command=6 hex=63 61 74 20 2f 74 6d 70 2f 73 74 64 6f 75 74 2e 74 78 74
+qemu-local-shell-stdout-regular-file-redirection: dispatch command=6 status=handled responses=2 raw-bytes=20 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-stdout-regular-file-redirection: ready command=7
+talos> /bin/stdout
+Talos userspace stdout fixture
+talos: exec path=/bin/stdout source=vfs-open-read
+talos: exec-source bytes=0x0000000000000204 digest=0x96ee5866736d445b
+talos: exec-loader fixture=phase8-program-loader-elf64-aarch64-v1 entry=0x0000000000010100 segments=0x0000000000000002
+talos: exec-launch launch-boundary=phase8-initial-process-launch-plan-v1 stack-boundary=phase8-initial-user-stack-plan-v1 address-space=0x0000000000100001 materialization=0x0000000830100001 initial-sp=0x00007fffffffffd0
+talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table
+talos: exec-startup-abi state=minimal-argc1-argv0-absolute-empty-envp argc=0x0000000000000001 argv0=/bin/stdout argv0-ptr=0x00007ffffffffff0 argv-null=false envp-null=true envp-state=empty-envp0 envp-entries=0x0000000000000000 envp0-ptr=0x00007fffffffffe8 copied-startup-bytes=0x000000000000002c source=initial-user-stack-record
+talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=stdout route=runtime-console0/stdout source=userspace-talos-write
+talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true
+talos: exec-status boundary=lower-aarch64-svc-status-equivalent marker=0x0000000000007a10 status=0x0000000000000000 complete=true source=lifecycle-record
+talos: exec-signal lower-aarch64-svc-launch-boundary-equivalent
+
+qemu-local-shell-stdout-regular-file-redirection: line command=7 hex=2f 62 69 6e 2f 73 74 64 6f 75 74
+qemu-local-shell-stdout-regular-file-redirection: dispatch command=7 status=handled responses=10 raw-bytes=12 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-stdout-regular-file-redirection: ready command=8
+talos> waitpid
+talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdout state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record
+
+qemu-local-shell-stdout-regular-file-redirection: line command=8 hex=77 61 69 74 70 69 64
+qemu-local-shell-stdout-regular-file-redirection: dispatch command=8 status=handled responses=1 raw-bytes=8 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-stdout-regular-file-redirection: ready command=9
+talos> exec stdout >>/var/other.txt
+talos: exec-invalid-path
+
+qemu-local-shell-stdout-regular-file-redirection: line command=9 hex=65 78 65 63 20 73 74 64 6f 75 74 20 3e 3e 2f 76 61 72 2f 6f 74 68 65 72 2e 74 78 74
+qemu-local-shell-stdout-regular-file-redirection: dispatch command=9 status=unexpected-argument responses=1 raw-bytes=29 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-stdout-regular-file-redirection: ready command=10
+talos> exec stdout >/var/other.txt
+talos: exec-invalid-path
+
+qemu-local-shell-stdout-regular-file-redirection: line command=10 hex=65 78 65 63 20 73 74 64 6f 75 74 20 3e 2f 76 61 72 2f 6f 74 68 65 72 2e 74 78 74
+qemu-local-shell-stdout-regular-file-redirection: dispatch command=10 status=unexpected-argument responses=1 raw-bytes=28 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-stdout-regular-file-redirection: ready command=11
+talos> exec stderr 2>/tmp/stdout.txt
+talos: exec-invalid-path
+
+qemu-local-shell-stdout-regular-file-redirection: line command=11 hex=65 78 65 63 20 73 74 64 65 72 72 20 32 3e 2f 74 6d 70 2f 73 74 64 6f 75 74 2e 74 78 74
+qemu-local-shell-stdout-regular-file-redirection: dispatch command=11 status=unexpected-argument responses=1 raw-bytes=30 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-stdout-regular-file-redirection: ready command=12
+talos> cat /etc/banner.txt
+Talos initramfs fixture
+
+qemu-local-shell-stdout-regular-file-redirection: line command=12 hex=63 61 74 20 2f 65 74 63 2f 62 61 6e 6e 65 72 2e 74 78 74
+qemu-local-shell-stdout-regular-file-redirection: dispatch command=12 status=handled responses=1 raw-bytes=20 backspaces=0 deletes=0 truncated=false controls=0
+talos>
+qemu-local-shell-stdout-regular-file-redirection: ready-for-next prompt=true
+qemu-local-shell-stdout-regular-file-redirection: final participants=13 expected=13 errors=0 classification=qemu-local-shell-stdout-regular-file-redirection-complete
+qemu-local-shell-stdout-regular-file-redirection: PASS
