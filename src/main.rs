@@ -171,6 +171,7 @@
             talos_boot_scenario = "qemu_local_shell_absolute_path_vfs_command",
             talos_boot_scenario = "qemu_local_shell_absolute_path_vfs_pipeline",
             talos_boot_scenario = "qemu_local_shell_direct_pipeline_stage_argv",
+            talos_boot_scenario = "qemu_local_shell_direct_pipeline_stdin_redirection",
             talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_stage_argv",
             talos_boot_scenario = "qemu_local_shell_direct_stdin_redirection",
             talos_boot_scenario = "qemu_local_shell_bare_name_stdin_redirection",

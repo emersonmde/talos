@@ -1,0 +1,8 @@
+{
+  "task_id": "phase12-local-direct-pipeline-stdin-redirection-core-20260627",
+  "classification": "local-direct-pipeline-stdin-redirection-core-accepted",
+  "selected_next_task": "phase12-local-direct-pipeline-stdin-redirection-closeout-20260627",
+  "live_network_ssh_paused": true,
+  "no_pi5_hardware_claim": true,
+  "accepted_witness": "/bin/stdin </etc/banner.txt | /bin/stdin"
+}

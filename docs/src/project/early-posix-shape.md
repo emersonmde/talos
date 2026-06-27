@@ -401,6 +401,24 @@ concurrency, scheduler concurrency, fork/signals, process groups/sessions,
 persistent storage, live networking/SSH, Pi 5 hardware proof, generated-root
 retry, and phase transition remain deferred pending supervisor planning.
 
+The direct pipeline stdin redirection slice extends read-only stdin
+redirection into only the producer stage of the accepted direct path-form
+two-stage pipeline. A shell input of
+`/bin/stdin </etc/banner.txt | /bin/stdin` loads both stages through
+descriptor-backed VFS open/read and the accepted loader/userspace
+launch/status path. The producer sees fd0 rebound to
+`initramfs:/etc/banner.txt`, keeps fd1 as the pipe endpoint, inherits fd2, and
+writes the userspace stdin fixture output into the pipe. The consumer sees fd0
+as that pipe endpoint, inherits fd1/fd2, reads to pipe EOF, and exits
+successfully. Explicit waitpid for both participants, laststatus,
+`/proc/talos/processes`, zero-argument `ps`, and pipestatus remain coherent.
+Bare-name pipeline-stage stdin redirection, consumer-stage redirection,
+multistage pipeline redirection, output redirection, append/truncate, writable
+filesystem behavior, environment-backed PATH, command lookup beyond bounded
+surfaces, arbitrary shell grammar, live networking/SSH, Pi 5 hardware proof,
+generated-root retry, and phase transition remain deferred pending the direct
+pipeline stdin redirection closeout.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

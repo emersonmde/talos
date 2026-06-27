@@ -9068,6 +9068,26 @@ planningNeeded=true because no later queued same-lane local POSIX/shell task
 exists with complete objective dependencies, acceptance criteria, validation
 gates, docs, and evidence requirements.
 
+phase12-local-direct-pipeline-stdin-redirection-core-20260627 accepts
+local-direct-pipeline-stdin-redirection-core. The local shell now accepts the
+exact direct path-form two-stage pipeline producer redirection witness
+'/bin/stdin </etc/banner.txt | /bin/stdin'. The producer and consumer both
+load /bin/stdin through descriptor-backed VFS open/read and the accepted
+loader/userspace startup/status path. The producer sees fd0 replaced only for
+the child by 'initramfs:/etc/banner.txt', keeps fd1 as the pipe endpoint,
+inherits fd2, writes the userspace stdin fixture output into the pipe, and
+closes its loader temporary descriptor. The consumer sees fd0 as the pipe
+endpoint, inherits fd1/fd2, closes its loader temporary descriptor, reads the
+producer output to pipe EOF, and exits successfully. Pipeline lifecycle/status,
+explicit waitpid for both participants, laststatus, /proc/talos/processes,
+zero-argument ps, and pipestatus remain coherent. Unsupported pipeline
+redirection variants fail closed without additional successful process records.
+Bare-name pipeline-stage stdin redirection, consumer-stage redirection, output
+redirection, append/truncate, writable filesystem behavior, environment-backed
+PATH, arbitrary shell grammar, live networking/SSH, Pi 5 hardware proof,
+generated-root retry, and phase transition remain deferred. selected_next_task
+is phase12-local-direct-pipeline-stdin-redirection-closeout-20260627.
+
 phase12-local-absolute-path-vfs-command-core-20260626 accepts
 local-absolute-path-vfs-command-core. The local shell now dispatches a direct
 absolute-path command, /bin/status42, through the same accepted VFS open/read,

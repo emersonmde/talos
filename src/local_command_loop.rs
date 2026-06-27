@@ -55,7 +55,8 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+direct-absolute-path-vfs-pipeline-stage-literal-argv",
     "+bounded-bare-name-bin-vfs-pipeline-stage-literal-argv",
     "+direct-absolute-path-vfs-command-readonly-stdin-redirection",
-    "+bounded-bare-name-bin-vfs-command-readonly-stdin-redirection"
+    "+bounded-bare-name-bin-vfs-command-readonly-stdin-redirection",
+    "+direct-absolute-path-vfs-pipeline-producer-readonly-stdin-redirection"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -4163,6 +4164,11 @@ where
                 None | Some(LocalCommandExecRedirection::StderrToStdout),
             ) => true,
             (initramfs::PHASE10_STATUS42_PATH, None, None) => true,
+            (
+                initramfs::PHASE10_STDIN_PATH,
+                Some(LocalCommandExecRedirection::StdinFromEtcBanner),
+                None,
+            ) => true,
             _ => false,
         };
         let consumer_output_redirection_supported = request.producer.path()
@@ -4175,6 +4181,13 @@ where
                 request.consumer.redirection,
                 Some(LocalCommandExecRedirection::StdoutToTmpStdout(_))
             );
+        if request.producer.stdin_redirection.is_some()
+            && (request.producer.argv.argc() != 1
+                || request.consumer.argv.argc() != 1
+                || request.consumer.redirection.is_some())
+        {
+            return Err(LocalCommandExecError::InvalidPath);
+        }
         if !producer_redirection_supported
             || request.consumer.path() != initramfs::PHASE10_STDIN_PATH
             || request.consumer.stdin_redirection.is_some()
@@ -4236,6 +4249,9 @@ where
             }
             (None, None) if producer.source_path == initramfs::PHASE10_STATUS42_PATH => {
                 "shell-pipe-status42-to-stdin"
+            }
+            (None, None) if request.producer.stdin_redirection.is_some() => {
+                "shell-pipe-producer-stdin-redirection-to-stdin"
             }
             (None, None) => "shell-pipe-stdout-to-stdin",
             _ => return Err(LocalCommandExecError::InvalidPath),
@@ -5586,8 +5602,16 @@ where
             let read_end = read_start + expected_read_bytes;
             let read_input = &user_memory[read_start..read_end];
             if read_source == "pipe:stdout-to-stdin" {
+                let stdin_prefix = initramfs::PHASE10_STDIN_STDOUT_PREFIX;
+                let banner = initramfs::PHASE8_BANNER_BYTES;
+                let pipe_from_stdin_banner = read_input.len()
+                    == stdin_prefix.len() + banner.len() + 1
+                    && &read_input[..stdin_prefix.len()] == stdin_prefix
+                    && &read_input[stdin_prefix.len()..stdin_prefix.len() + banner.len()] == banner
+                    && read_input[read_input.len() - 1] == b'\n';
                 if read_input != initramfs::PHASE10_STDOUT_PAYLOAD
                     && read_input != initramfs::PHASE10_STDERR_PAYLOAD
+                    && !pipe_from_stdin_banner
                 {
                     return Err(LocalCommandExecError::SyscallFailed);
                 }
@@ -7117,7 +7141,7 @@ fn parse_absolute_path_pipeline_request(
         return Err(LocalCommandExecError::InvalidPath);
     }
     let (consumer_path, consumer_arguments) = split_pipeline_stage_path_and_arguments(consumer)?;
-    reject_unbounded_pipeline_stage_arguments(producer_arguments)?;
+    reject_unbounded_pipeline_producer_arguments(producer_arguments)?;
     reject_unbounded_pipeline_stage_arguments(consumer_arguments.unwrap_or(""))?;
     Ok(LocalCommandPipelineRequest {
         producer: parse_absolute_path_exec_request_with_arguments(
@@ -7225,6 +7249,34 @@ fn reject_unbounded_pipeline_stage_arguments(arguments: &str) -> Result<(), Loca
             continue;
         }
         if !is_supported_literal_exec_token(token) {
+            return Err(LocalCommandExecError::InvalidPath);
+        }
+        count += 1;
+        if count > 1 {
+            return Err(LocalCommandExecError::InvalidPath);
+        }
+    }
+    Ok(())
+}
+
+fn reject_unbounded_pipeline_producer_arguments(
+    arguments: &str,
+) -> Result<(), LocalCommandExecError> {
+    let mut count = 0usize;
+    let mut saw_stdin_redirection = false;
+    for token in arguments.as_bytes().split(|byte| is_space(*byte)) {
+        if token.is_empty() {
+            continue;
+        }
+        if token == b"</etc/banner.txt" {
+            if count != 0 || saw_stdin_redirection {
+                return Err(LocalCommandExecError::InvalidPath);
+            }
+            saw_stdin_redirection = true;
+            count += 1;
+            continue;
+        }
+        if saw_stdin_redirection || !is_supported_literal_exec_token(token) {
             return Err(LocalCommandExecError::InvalidPath);
         }
         count += 1;
@@ -12616,6 +12668,135 @@ talos> talos: exec-not-executable\n"
             "slot=0 capacity=3 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true wait-consumed=true job-state=foreground source=bounded-process-table\n"
         ));
         assert_eq!(output.matches("talos: exec-invalid-path\n").count(), 3);
+    }
+
+    #[test_case]
+    fn local_command_loop_runs_direct_path_pipeline_producer_stdin_redirection() {
+        let bytes = *b"/bin/stdin </etc/banner.txt | /bin/stdin\rwaitpid 0x100001\rwaitpid 0x100002\rlaststatus\rpipestatus\rcat /proc/talos/processes\rps\r/bin/stdin </etc/banner.txt | /bin/stdout\r/bin/stdin alpha </etc/banner.txt | /bin/stdin\r/bin/stdin </etc/banner.txt | /bin/stdin beta\r/bin/stdin </dev/null | /bin/stdin\r/bin/stdin < /etc/banner.txt | /bin/stdin\r/bin/stdin </etc/banner.txt | /bin/stdin | /bin/stdin\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (
+            pipeline,
+            producer_wait,
+            consumer_wait,
+            last,
+            status,
+            cat,
+            ps,
+            unsupported_consumer,
+            producer_arg,
+            consumer_arg,
+            dev_null,
+            spaced,
+            multistage,
+        ) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            let pipeline = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let producer_record = io.process_table_records()[0].unwrap();
+            let consumer_record = io.process_table_records()[1].unwrap();
+            assert_eq!(
+                producer_record.lifecycle.process_id,
+                LOCAL_COMMAND_PIPELINE_PRODUCER_PROCESS_ID
+            );
+            assert_eq!(
+                producer_record.lifecycle.source_path,
+                initramfs::PHASE10_STDIN_PATH
+            );
+            assert_eq!(
+                consumer_record.lifecycle.process_id,
+                LOCAL_COMMAND_PIPELINE_CONSUMER_PROCESS_ID
+            );
+            assert_eq!(
+                consumer_record.lifecycle.source_path,
+                initramfs::PHASE10_STDIN_PATH
+            );
+            assert_eq!(io.process_table_records()[2], None);
+            (
+                pipeline,
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(pipeline.line(), b"/bin/stdin </etc/banner.txt | /bin/stdin");
+        assert_eq!(pipeline.status(), LocalCommandStatus::Handled);
+        assert_eq!(pipeline.response_lines(), 23);
+        assert_eq!(producer_wait.status(), LocalCommandStatus::Handled);
+        assert_eq!(consumer_wait.status(), LocalCommandStatus::Handled);
+        assert_eq!(last.status(), LocalCommandStatus::Handled);
+        assert_eq!(status.status(), LocalCommandStatus::Handled);
+        assert_eq!(cat.status(), LocalCommandStatus::Handled);
+        assert_eq!(ps.status(), LocalCommandStatus::Handled);
+        assert_eq!(
+            unsupported_consumer.status(),
+            LocalCommandStatus::UnexpectedArgument
+        );
+        assert_eq!(
+            producer_arg.status(),
+            LocalCommandStatus::UnexpectedArgument
+        );
+        assert_eq!(
+            consumer_arg.status(),
+            LocalCommandStatus::UnexpectedArgument
+        );
+        assert_eq!(dev_null.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(spaced.status(), LocalCommandStatus::UnexpectedArgument);
+        assert_eq!(multistage.status(), LocalCommandStatus::UnexpectedArgument);
+        assert!(output.contains("talos: exec path=/bin/stdin source=vfs-open-read\n"));
+        assert!(output.contains(
+            "talos: exec-startup-abi state=minimal-argc1-argv0-absolute-empty-envp argc=0x0000000000000001 argv0=/bin/stdin"
+        ));
+        assert!(output.contains(
+            "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=regular-file fd1=pipe-endpoint fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=pipe-endpoint fd1=stdio-output fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-redirection op=source source-fd=0x0000000000000000 source-path=/etc/banner.txt source-stream=regular-file source-route=initramfs:/etc/banner.txt child-only=true shell-restored=true source=shell-redirection-stdin-etc-banner\n"
+        ));
+        assert!(output.contains("Talos userspace stdin fixture read: Talos initramfs fixture\n"));
+        assert!(output.contains(
+            "talos: exec-stdin fd=0x0000000000000000 bytes=0x0000000000000018 return=0x0000000000000018 read-source=initramfs:/etc/banner.txt stdout-fd=0x0000000000000001 stdout-bytes=0x000000000000003d stdout-return=0x000000000000003d source=userspace-talos-read+userspace-talos-write read-result=regular-file-eof-after-read\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stdin fd=0x0000000000000000 bytes=0x000000000000003d return=0x000000000000003d read-source=pipe:stdout-to-stdin stdout-fd=0x0000000000000001 stdout-bytes=0x0000000000000062 stdout-return=0x0000000000000062 source=userspace-talos-read+userspace-talos-write read-result=pipe-eof-after-writer-close\n"
+        ));
+        assert!(output.contains(
+            "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdin consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000003d bytes-read=0x000000000000003d writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-producer-stdin-redirection-to-stdin\n"
+        ));
+        assert!(output.contains(
+            "talos: pipeline-lifecycle-status record=phase12-local-pipeline-distinct-process-lifecycle-status-record-v1 pipeline=0x0000000000000001 producer-pid=0x0000000000100001 producer-path=/bin/stdin producer-state=exited producer-status=0x0000000000000000 producer-observed-status=0x0000000000000000 producer-reaped=true consumer-pid=0x0000000000100002 consumer-path=/bin/stdin consumer-state=exited consumer-status=0x0000000000000000 consumer-observed-status=0x0000000000000000 consumer-reaped=true source=kernel-owned-pipeline-lifecycle-status-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=explicit-pid-lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=explicit-pid-lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: pipestatus participants=0x0000000000000002 default-status=0x0000000000000000 pipefail-status=0x0000000000000000 semantics=bounded-observation-not-posix-shell source=bounded-process-table-pipeline-status\n"
+        ));
+        assert!(output.contains(
+            "slot=0 capacity=3 pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true wait-consumed=true job-state=foreground source=bounded-process-table\n"
+        ));
+        assert!(output.contains(
+            "slot=1 capacity=3 pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true wait-consumed=true job-state=foreground source=bounded-process-table\n"
+        ));
+        assert_eq!(output.matches("talos-processes-v1\n").count(), 2);
+        assert_eq!(output.matches("talos: exec-invalid-path\n").count(), 6);
     }
 
     #[test_case]

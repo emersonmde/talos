@@ -1,0 +1,71 @@
+{
+  "task_id": "phase12-local-direct-pipeline-stdin-redirection-core-20260627",
+  "classification": "local-direct-pipeline-stdin-redirection-core-accepted",
+  "task_record": "tasks/2026-06-27-phase12-local-direct-pipeline-stdin-redirection-core.md",
+  "implementation": [
+    "build.rs",
+    "src/main.rs",
+    "src/local_command_loop.rs",
+    "src/target/qemu_virt.rs",
+    "scripts/qemu-local-serial-command-loop-smoke.sh",
+    "scripts/qemu-local-shell-direct-pipeline-stdin-redirection-smoke.sh"
+  ],
+  "docs": [
+    "docs/src/roadmap.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/project/early-posix-shape.md"
+  ],
+  "transcript": "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-stdin-redirection-core/qemu-local-shell-direct-pipeline-stdin-redirection-smoke.log",
+  "retained_regressions": [
+    "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-stdin-redirection-core/regressions/qemu-local-shell-direct-stdin-redirection-smoke.log",
+    "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-stdin-redirection-core/regressions/qemu-local-shell-bare-name-stdin-redirection-smoke.log",
+    "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-stdin-redirection-core/regressions/qemu-local-shell-direct-pipeline-stage-argv-smoke.log",
+    "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-stdin-redirection-core/regressions/qemu-local-shell-bare-name-pipeline-stage-argv-smoke.log",
+    "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-stdin-redirection-core/regressions/qemu-local-shell-absolute-path-vfs-command-smoke.log",
+    "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-stdin-redirection-core/regressions/qemu-local-shell-bare-name-command-argv-smoke.log",
+    "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-stdin-redirection-core/regressions/qemu-local-shell-process-status-vfs-smoke.log",
+    "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-stdin-redirection-core/regressions/qemu-local-shell-ps-command-vfs-smoke.log",
+    "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-stdin-redirection-core/regressions/qemu-local-shell-pipeline-status-smoke.log",
+    "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-stdin-redirection-core/regressions/qemu-local-cat-banner-smoke.log"
+  ],
+  "validation": [
+    {
+      "level": "fmt/lint",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "result": "passed; 848 no_std tests executed by harness filter run"
+    },
+    {
+      "level": "QEMU/substitute",
+      "command": "scripts/qemu-local-shell-direct-pipeline-stdin-redirection-smoke.sh --quiet",
+      "result": "passed; final participants=16 expected=16 errors=0 classification=qemu-local-shell-direct-pipeline-stdin-redirection-complete"
+    },
+    {
+      "level": "QEMU/substitute regression",
+      "command": "direct/bare stdin redirection; direct/bare pipeline argv; absolute-path command argv; bare-name command argv; process-status VFS; ps; pipestatus; cat-banner",
+      "result": "passed; retained local POSIX/VFS/shell regression surfaces green with task-owned transcripts"
+    },
+    {
+      "level": "JSON",
+      "command": "jq empty tasks/evidence/2026-06-27-phase12-local-direct-pipeline-stdin-redirection-core/classification.json tasks/evidence/2026-06-27-phase12-local-direct-pipeline-stdin-redirection-core/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "diff inspection",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    }
+  ],
+  "selected_next_task": "phase12-local-direct-pipeline-stdin-redirection-closeout-20260627",
+  "no_hardware_claim": true,
+  "live_network_ssh_paused": true
+}

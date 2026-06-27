@@ -888,6 +888,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[],
     },
     BootScenario {
+        value: "qemu_local_shell_direct_pipeline_stdin_redirection",
+        implied_values: &["qemu_local_serial_command_loop"],
+        asm_defines: &[],
+    },
+    BootScenario {
         value: "qemu_local_shell_bare_name_pipeline_stage_argv",
         implied_values: &["qemu_local_serial_command_loop"],
         asm_defines: &[],
