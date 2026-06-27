@@ -19220,10 +19220,25 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   persistent writable filesystem behavior, environment-backed PATH,
   current-directory search, command lookup beyond bounded /bin, arbitrary shell
   grammar, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
-  phase transition remain deferred. selected_next_task is null;
-  planningNeeded=true because no later queued same-lane local POSIX/VFS task
-  has complete objective dependencies, acceptance criteria, validation gates,
-  docs requirements, and evidence requirements.
+  phase transition remain deferred. Supervisor planning later selected the
+  direct stdout append regular-file redirection core as the next same-lane
+  local POSIX/VFS task.
+- phase12-local-direct-stdout-append-regular-file-redirection-core-20260627
+  accepts exactly '/bin/stdout >/tmp/stdout.txt' followed by
+  '/bin/stdout >>/tmp/stdout.txt'. Each child loads '/bin/stdout' through
+  descriptor-backed VFS open/read and the accepted userspace launch/status path;
+  fd1 is rebound only for that process to 'volatile-vfs:/tmp/stdout.txt'. The
+  first command uses the accepted truncate/sink output operation, the second
+  records op=append and writes at regular-file EOF, and
+  'cat /tmp/stdout.txt' reads both stdout fixture writes in order with
+  bytes=0x3e. A later normal '/bin/stdout' proves shell fd1 restoration. Direct
+  unsupported append forms including '/bin/stdout >>/var/other.txt' and
+  '/bin/stderr 2>>/tmp/stderr.txt' fail closed. Bare-name stdout append,
+  stderr append, arbitrary output paths, pipeline-output append, combined
+  input/output redirection, persistent writable filesystem behavior, live
+  networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
+  transition remain deferred. selected_next_task is
+  phase12-local-direct-stdout-append-regular-file-redirection-closeout-20260627.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

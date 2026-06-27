@@ -1,0 +1,55 @@
+{
+  "task": "phase12-local-direct-stdout-append-regular-file-redirection-core-20260627",
+  "classification": "local-direct-stdout-append-regular-file-redirection-core-accepted",
+  "status": "accepted",
+  "accepted_witnesses": [
+    "/bin/stdout >/tmp/stdout.txt",
+    "/bin/stdout >>/tmp/stdout.txt"
+  ],
+  "accepted_surface": {
+    "command_resolution": "direct absolute /bin/stdout through descriptor-backed VFS open/read",
+    "redirected_descriptor": "child fd1 only",
+    "target": "volatile-vfs:/tmp/stdout.txt",
+    "initial_operation": "truncate/sink redirection for /bin/stdout >/tmp/stdout.txt",
+    "append_operation": "append redirection opens/writes at volatile regular-file EOF for /bin/stdout >>/tmp/stdout.txt",
+    "readback": "cat /tmp/stdout.txt through descriptor-backed VFS reads both stdout fixture writes in order",
+    "restoration": "later normal /bin/stdout routes fd1 to runtime-console0/stdout"
+  },
+  "retained_surfaces": [
+    "direct and bare-name stdout regular-file truncate redirection",
+    "direct and bare-name stderr regular-file truncate redirection",
+    "direct and bare-name stdin redirection",
+    "direct and bare-name pipeline stdin redirection",
+    "process-status VFS and ps",
+    "pipestatus",
+    "cat-banner"
+  ],
+  "fail_closed_negatives": [
+    "/bin/stdout >>/var/other.txt",
+    "/bin/stderr 2>>/tmp/stderr.txt",
+    "stderr append remains unsupported",
+    "pipeline-output append remains unsupported",
+    "combined input/output redirection remains unsupported",
+    "PATH/current-directory lookup remains unsupported",
+    "command lookup beyond bounded /bin remains unsupported"
+  ],
+  "deferred": [
+    "bare-name stdout append",
+    "stderr append",
+    "arbitrary output paths",
+    "pipeline-output append",
+    "combined input/output redirection",
+    "persistent writable filesystem behavior",
+    "environment-backed PATH",
+    "current-directory search",
+    "command lookup beyond bounded /bin",
+    "arbitrary shell grammar",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "phase transition"
+  ],
+  "selected_next_task": "phase12-local-direct-stdout-append-regular-file-redirection-closeout-20260627",
+  "hardware_claim": "none",
+  "live_network_ssh": "paused"
+}

@@ -149,9 +149,24 @@ restoration. Append/truncate, arbitrary output paths, pipeline-output
 redirection, combined input/output redirection, persistent writable filesystem
 behavior, environment-backed PATH, current-directory search, command lookup
 beyond bounded /bin, live networking/SSH, Pi 5 hardware proof, generated-root
-retry, and phase transition remain deferred. No later queued same-lane local
-POSIX/VFS task is mechanically objective, so supervisor planning is required
-before additional worker promotion.
+retry, and phase transition remain deferred. Supervisor planning later selected
+the direct stdout append regular-file redirection core as the next same-lane
+local POSIX/VFS task.
+
+The direct stdout append regular-file redirection core accepts exactly
+'/bin/stdout >/tmp/stdout.txt' followed by
+'/bin/stdout >>/tmp/stdout.txt'. The child fd1 is rebound only for each process
+to 'volatile-vfs:/tmp/stdout.txt'; the first command uses the accepted
+truncate/sink operation, the second records op=append at regular-file EOF, and
+'cat /tmp/stdout.txt' reads both stdout fixture writes in order with
+bytes=0x3e. A later normal '/bin/stdout' proves shell fd1 restoration. Direct
+unsupported append forms such as '/bin/stdout >>/var/other.txt' and
+'/bin/stderr 2>>/tmp/stderr.txt' fail closed. Bare-name stdout append, stderr
+append, arbitrary paths, pipeline-output append, combined input/output
+redirection, persistent writable filesystem behavior, live networking/SSH,
+Pi 5 hardware proof, generated-root retry, and phase transition remain
+deferred. The next mechanically objective local POSIX/VFS task is the queued
+direct stdout append closeout.
 
 ## RP1 Ethernet Source Inventory
 

@@ -752,9 +752,24 @@ output paths, pipeline-output redirection, combined input/output redirection,
 persistent writable filesystem behavior, environment-backed PATH,
 current-directory search, command lookup beyond bounded /bin, arbitrary shell
 grammar, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
-phase transition remain deferred. No later queued same-lane local POSIX/VFS
-task is mechanically objective, so supervisor planning is required before
-further worker promotion.
+phase transition remain deferred. Supervisor planning later selected the direct
+stdout append regular-file redirection core as the next same-lane local
+POSIX/VFS task.
+
+The direct stdout append regular-file redirection core accepts exactly
+'/bin/stdout >/tmp/stdout.txt' followed by
+'/bin/stdout >>/tmp/stdout.txt'. Each launch still uses descriptor-backed VFS
+open/read and the accepted userspace launch/status path. The first command
+reuses the accepted child-only fd1 truncate/sink redirection to
+volatile-vfs:/tmp/stdout.txt; the second command records op=append and writes at
+regular-file EOF; 'cat /tmp/stdout.txt' reads both stdout fixture writes in
+order with bytes=0x3e; and a later normal '/bin/stdout' proves shell fd1
+restoration. Unsupported append forms such as
+'/bin/stdout >>/var/other.txt' and '/bin/stderr 2>>/tmp/stderr.txt' fail
+closed. Bare-name stdout append, stderr append, arbitrary paths,
+pipeline-output append, combined input/output redirection, persistent writable
+filesystem behavior, live networking/SSH, Pi 5 hardware proof, generated-root
+retry, and phase transition remain deferred.
 
 ## Scheduler Implications
 
