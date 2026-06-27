@@ -1,0 +1,68 @@
+{
+  "task": "phase12-local-direct-stdout-append-regular-file-redirection-closeout-20260627",
+  "classification": "local-direct-stdout-append-regular-file-redirection-closeout-accepted",
+  "status": "accepted",
+  "accepted_core_task": "phase12-local-direct-stdout-append-regular-file-redirection-core-20260627",
+  "accepted_witnesses": [
+    "/bin/stdout >/tmp/stdout.txt",
+    "/bin/stdout >>/tmp/stdout.txt"
+  ],
+  "selected_next_task": "phase12-local-bare-name-stdout-append-regular-file-redirection-core-20260627",
+  "evidence": {
+    "closeout_task_record": "tasks/2026-06-27-phase12-local-direct-stdout-append-regular-file-redirection-closeout.md",
+    "core_task_record": "tasks/2026-06-27-phase12-local-direct-stdout-append-regular-file-redirection-core.md",
+    "core_classification": "tasks/evidence/2026-06-27-phase12-local-direct-stdout-append-regular-file-redirection-core/classification.json",
+    "core_evidence_map": "tasks/evidence/2026-06-27-phase12-local-direct-stdout-append-regular-file-redirection-core/evidence-map.json",
+    "focused_qemu_substitute_smoke": "tasks/evidence/2026-06-27-phase12-local-direct-stdout-append-regular-file-redirection-core/qemu-local-shell-direct-stdout-regular-file-append-redirection-smoke.log",
+    "roadmap": "docs/src/roadmap.md",
+    "phase12_project_doc": "docs/src/project/phase12-networking-ssh.md",
+    "early_posix_shape": "docs/src/project/early-posix-shape.md"
+  },
+  "validation": [
+    {
+      "level": "static inspection",
+      "result": "inspected accepted core task record, classification, evidence map, QEMU/substitute transcript, retained project docs, and git diff"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty task-owned direct stdout append core and closeout JSON",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed with existing large search-index warning only"
+    },
+    {
+      "level": "staged diff validation",
+      "command": "git diff --cached --check",
+      "result": "passed"
+    }
+  ],
+  "deferred": [
+    "bare-name stdout append implementation",
+    "stderr append",
+    "arbitrary output paths",
+    "pipeline-output append",
+    "combined input/output redirection",
+    "persistent writable filesystem behavior",
+    "environment-backed PATH",
+    "current-directory search",
+    "command lookup beyond bounded /bin",
+    "arbitrary shell grammar",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "phase transition"
+  ],
+  "notes": [
+    "No live network/SSH action was performed.",
+    "No Pi 5 hardware action or hardware claim was made.",
+    "No bare-name stdout append implementation started during this closeout."
+  ]
+}

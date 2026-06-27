@@ -168,6 +168,19 @@ Pi 5 hardware proof, generated-root retry, and phase transition remain
 deferred. The next mechanically objective local POSIX/VFS task is the queued
 direct stdout append closeout.
 
+The direct stdout append regular-file redirection closeout reconciles that
+accepted boundary against the retained core task, classification, evidence map,
+QEMU/substitute transcript, regression summaries, and project docs. The
+accepted surface remains exactly the direct path-form sequence
+'/bin/stdout >/tmp/stdout.txt' followed by
+'/bin/stdout >>/tmp/stdout.txt', with child-only fd1 rebinding to
+'volatile-vfs:/tmp/stdout.txt', truncate/sink then append-at-EOF operations,
+descriptor-backed 'cat /tmp/stdout.txt' readback of both stdout fixture writes,
+and later normal '/bin/stdout' restoration. Unsupported direct append forms
+remain fail-closed. The next mechanically objective local POSIX/VFS task is the
+queued bare-name stdout append regular-file redirection core; live
+networking/SSH and Pi 5 hardware proof remain paused.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1

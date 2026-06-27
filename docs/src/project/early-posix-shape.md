@@ -771,6 +771,21 @@ pipeline-output append, combined input/output redirection, persistent writable
 filesystem behavior, live networking/SSH, Pi 5 hardware proof, generated-root
 retry, and phase transition remain deferred.
 
+The direct stdout append regular-file redirection closeout freezes that
+accepted local-only boundary. The retained surface remains exactly
+'/bin/stdout >/tmp/stdout.txt' followed by
+'/bin/stdout >>/tmp/stdout.txt', with the first child fd1 write using
+truncate/sink semantics, the second using append-at-EOF semantics, and
+descriptor-backed 'cat /tmp/stdout.txt' reading both stdout fixtures in order
+from volatile-vfs:/tmp/stdout.txt. The fixed bounded /bin lookup and direct
+append evidence make bare-name stdout append regular-file redirection a
+mechanically objective next task, but it remains separate implementation work.
+Stderr append, arbitrary output paths, pipeline-output append, combined
+input/output redirection, persistent writable filesystem behavior,
+PATH/current-directory search, command lookup beyond bounded /bin, arbitrary
+shell grammar, live networking/SSH, Pi 5 hardware proof, generated-root retry,
+and phase transition remain deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
