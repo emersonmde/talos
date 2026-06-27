@@ -833,6 +833,21 @@ hardware proof, generated-root retry, and phase transition remain deferred.
 No later queued same-lane local POSIX/VFS task is mechanically objective;
 supervisor planning is required before the next worker promotion.
 
+The direct stderr append regular-file redirection core accepts exactly
+'/bin/stderr 2>/tmp/stderr.txt' followed by
+'/bin/stderr 2>>/tmp/stderr.txt'. Both commands load '/bin/stderr' through the
+descriptor-backed VFS open/read and userspace launch path; child fd2 is rebound
+to volatile-vfs:/tmp/stderr.txt only for each launched process; the first write
+uses truncate/sink semantics; the second write records op=append at regular-file
+EOF; and descriptor-backed 'cat /tmp/stderr.txt' reads both stderr fixture
+writes in order. A later normal '/bin/stderr' proves shell fd2 restoration.
+Direct stdout append remains accepted, while arbitrary stderr append paths,
+bare-name stderr append, pipeline-output append, combined input/output
+redirection, persistent writable filesystem behavior, PATH/current-directory
+search, command lookup beyond bounded /bin, arbitrary shell grammar, live
+networking/SSH, Pi 5 hardware proof, generated-root retry, and phase transition
+remain deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

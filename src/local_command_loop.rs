@@ -7330,6 +7330,20 @@ fn parse_absolute_path_exec_request_with_arguments(
                 redirection = Some(LocalCommandExecRedirection::StderrToTmpStderr(path));
                 continue;
             }
+            if let Some(path) = token
+                .strip_prefix(b"2>>")
+                .and_then(LocalCommandVolatilePath::from_exact_stderr_path)
+            {
+                if path_text.as_bytes() != initramfs::PHASE10_STDERR_PATH
+                    || redirection_started
+                    || count != 1
+                {
+                    return Err(LocalCommandExecError::InvalidPath);
+                }
+                redirection_started = true;
+                redirection = Some(LocalCommandExecRedirection::StderrAppendTmpStderr(path));
+                continue;
+            }
             if redirection_started {
                 return Err(LocalCommandExecError::InvalidPath);
             }
@@ -10961,12 +10975,13 @@ talos> Talos initramfs fixture\n"
 
     #[test_case]
     fn local_command_loop_rejects_unaccepted_direct_stderr_output_redirection_forms() {
-        let bytes = *b"/bin/stderr 2> /tmp/stderr.txt\r/bin/stderr 2>>/tmp/stderr.txt\r/bin/stderr 2>/var/err.txt\r/bin/stderr | /bin/stdin 2>/tmp/stderr.txt\r/bin/stdin </etc/banner.txt 2>/tmp/stderr.txt\rcat /etc/banner.txt 2>/tmp/stderr.txt\rwaitpid\r";
+        let bytes = *b"/bin/stderr 2> /tmp/stderr.txt\r/bin/stderr 2>>/tmp/other.txt\rstderr 2>>/tmp/stderr.txt\r/bin/stderr 2>/var/err.txt\r/bin/stderr | /bin/stdin 2>/tmp/stderr.txt\r/bin/stdin </etc/banner.txt 2>/tmp/stderr.txt\rcat /etc/banner.txt 2>/tmp/stderr.txt\rwaitpid\r";
         let input = ScriptedInput::new(bytes, bytes.len());
         let mut backend = CaptureSink::new();
         let (
             separated,
-            append,
+            arbitrary_append,
+            bare_name_append,
             unsupported_path,
             pipeline_output,
             combined_io,
@@ -10983,13 +10998,15 @@ talos> Talos initramfs fixture\n"
                 run_one_descriptor_backed_serial_command(&mut io).unwrap(),
                 run_one_descriptor_backed_serial_command(&mut io).unwrap(),
                 run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
             )
         };
         let output = backend.as_str();
 
         for rejected in [
             separated,
-            append,
+            arbitrary_append,
+            bare_name_append,
             unsupported_path,
             pipeline_output,
             combined_io,
@@ -11002,8 +11019,76 @@ talos> Talos initramfs fixture\n"
         assert_eq!(waited.status(), LocalCommandStatus::Handled);
         assert!(output.contains("talos: waitpid no-child source=lifecycle-record\n"));
         assert_eq!(output.matches("talos: exec-invalid-path").count(), 5);
-        assert_eq!(output.matches("talos: unexpected-argument").count(), 1);
+        assert_eq!(output.matches("talos: unexpected-argument").count(), 2);
         assert_eq!(output.matches("path=/bin/stderr state=exited").count(), 0);
+    }
+
+    #[test_case]
+    fn local_command_loop_appends_direct_child_stderr_to_existing_volatile_regular_file() {
+        let bytes = *b"/bin/stderr 2>/tmp/stderr.txt\r/bin/stderr 2>>/tmp/stderr.txt\rwaitpid\rlaststatus\rcat /tmp/stderr.txt\r/bin/stderr\rexec stdout\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (created, appended, waited, observed, readback, normal_stderr, normal_stdout) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            (
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+                run_one_descriptor_backed_serial_command(&mut io).unwrap(),
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(created.line(), b"/bin/stderr 2>/tmp/stderr.txt");
+        assert_eq!(created.status(), LocalCommandStatus::Handled);
+        assert_eq!(appended.line(), b"/bin/stderr 2>>/tmp/stderr.txt");
+        assert_eq!(appended.status(), LocalCommandStatus::Handled);
+        assert_eq!(appended.response_lines(), 11);
+        assert_eq!(waited.line(), b"waitpid");
+        assert_eq!(waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(observed.line(), b"laststatus");
+        assert_eq!(observed.status(), LocalCommandStatus::Handled);
+        assert_eq!(readback.line(), b"cat /tmp/stderr.txt");
+        assert_eq!(readback.status(), LocalCommandStatus::Handled);
+        assert_eq!(normal_stderr.line(), b"/bin/stderr");
+        assert_eq!(normal_stderr.status(), LocalCommandStatus::Handled);
+        assert_eq!(normal_stdout.line(), b"exec stdout");
+        assert_eq!(normal_stdout.status(), LocalCommandStatus::Handled);
+        assert_eq!(
+            output.matches("Talos userspace stderr fixture\n").count(),
+            3
+        );
+        assert_eq!(
+            output
+                .matches("talos> Talos userspace stdout fixture\n")
+                .count(),
+            1
+        );
+        assert!(output.contains(
+            "talos: exec-redirection op=sink source-fd=0x0000000000000002 target-path=/tmp/stderr.txt target-stream=regular-file target-route=volatile-vfs:/tmp/stderr.txt child-only=true shell-restored=true source=shell-redirection-stderr-tmp-stderr\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-redirection op=append source-fd=0x0000000000000002 target-path=/tmp/stderr.txt target-stream=regular-file target-route=volatile-vfs:/tmp/stderr.txt child-only=true shell-restored=true source=shell-redirection-stderr-tmp-stderr-append\n"
+        ));
+        assert!(output.contains(
+            "talos: cat path=/tmp/stderr.txt bytes=0x000000000000003e source=volatile-vfs-descriptor-read\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stderr state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stderr state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stderr fd=0x0000000000000002 bytes=0x000000000000001f return=0x000000000000001f stream=stderr route=runtime-console0/stderr source=userspace-talos-write\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=stdout route=runtime-console0/stdout source=userspace-talos-write\n"
+        ));
     }
 
     #[test_case]

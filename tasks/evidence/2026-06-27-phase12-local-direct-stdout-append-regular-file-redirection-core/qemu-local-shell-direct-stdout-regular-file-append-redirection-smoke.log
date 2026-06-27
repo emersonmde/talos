@@ -125,10 +125,20 @@ qemu-local-shell-direct-stdout-regular-file-append-redirection: line command=11 
 qemu-local-shell-direct-stdout-regular-file-append-redirection: dispatch command=11 status=unexpected-argument responses=1 raw-bytes=29 backspaces=0 deletes=0 truncated=false controls=0
 qemu-local-shell-direct-stdout-regular-file-append-redirection: ready command=12
 talos> /bin/stderr 2>>/tmp/stderr.txt
-talos: exec-invalid-path
+talos: exec path=/bin/stderr source=vfs-open-read
+talos: exec-source bytes=0x0000000000000204 digest=0x96ee5866736d445b
+talos: exec-loader fixture=phase8-program-loader-elf64-aarch64-v1 entry=0x0000000000010100 segments=0x0000000000000002
+talos: exec-launch launch-boundary=phase8-initial-process-launch-plan-v1 stack-boundary=phase8-initial-user-stack-plan-v1 address-space=0x0000000000100001 materialization=0x0000000830100001 initial-sp=0x00007fffffffffd0
+talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=stdio-output fd2=regular-file loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table
+talos: exec-startup-abi state=minimal-argc1-argv0-absolute-empty-envp argc=0x0000000000000001 argv0=/bin/stderr argv0-ptr=0x00007ffffffffff0 argv-null=false envp-null=true envp-state=empty-envp0 envp-entries=0x0000000000000000 envp0-ptr=0x00007fffffffffe8 copied-startup-bytes=0x000000000000002c source=initial-user-stack-record
+talos: exec-redirection op=append source-fd=0x0000000000000002 target-path=/tmp/stderr.txt target-stream=regular-file target-route=volatile-vfs:/tmp/stderr.txt child-only=true shell-restored=true source=shell-redirection-stderr-tmp-stderr-append
+talos: exec-stderr fd=0x0000000000000002 bytes=0x000000000000001f return=0x000000000000001f stream=regular-file route=volatile-vfs:/tmp/stderr.txt source=userspace-talos-write
+talos: exec-lifecycle pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stderr state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true
+talos: exec-status boundary=lower-aarch64-svc-status-equivalent marker=0x0000000000007a10 status=0x0000000000000000 complete=true source=lifecycle-record
+talos: exec-signal lower-aarch64-svc-launch-boundary-equivalent
 
 qemu-local-shell-direct-stdout-regular-file-append-redirection: line command=12 hex=2f 62 69 6e 2f 73 74 64 65 72 72 20 32 3e 3e 2f 74 6d 70 2f 73 74 64 65 72 72 2e 74 78 74
-qemu-local-shell-direct-stdout-regular-file-append-redirection: dispatch command=12 status=unexpected-argument responses=1 raw-bytes=31 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-direct-stdout-regular-file-append-redirection: dispatch command=12 status=handled responses=11 raw-bytes=31 backspaces=0 deletes=0 truncated=false controls=0
 qemu-local-shell-direct-stdout-regular-file-append-redirection: ready command=13
 talos> cat /etc/banner.txt
 Talos initramfs fixture

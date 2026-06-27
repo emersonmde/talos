@@ -14399,6 +14399,7 @@ pub fn run_diagnostic_command_channel_smoke() -> bool {
     talos_boot_scenario = "qemu_local_shell_multiple_background_jobs",
     talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection",
+    talos_boot_scenario = "qemu_local_shell_direct_stderr_regular_file_append_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_create_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_to_stdout_redirection",
@@ -14815,6 +14816,11 @@ const fn local_command_loop_smoke_label() -> &'static str {
     "qemu-local-shell-stderr-regular-file-redirection"
 }
 
+#[cfg(talos_boot_scenario = "qemu_local_shell_direct_stderr_regular_file_append_redirection")]
+const fn local_command_loop_smoke_label() -> &'static str {
+    "qemu-local-shell-direct-stderr-regular-file-append-redirection"
+}
+
 #[cfg(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection")]
 const fn local_command_loop_smoke_label() -> &'static str {
     "qemu-local-shell-stderr-regular-file-append-redirection"
@@ -14968,6 +14974,7 @@ const fn local_command_loop_smoke_label() -> &'static str {
     not(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy"),
     not(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection"),
+    not(talos_boot_scenario = "qemu_local_shell_direct_stderr_regular_file_append_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_create_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_to_stdout_redirection"),
@@ -15248,6 +15255,11 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     "qemu-local-shell-stderr-regular-file-redirection-complete"
 }
 
+#[cfg(talos_boot_scenario = "qemu_local_shell_direct_stderr_regular_file_append_redirection")]
+const fn local_command_loop_smoke_classification() -> &'static str {
+    "qemu-local-shell-direct-stderr-regular-file-append-redirection-complete"
+}
+
 #[cfg(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection")]
 const fn local_command_loop_smoke_classification() -> &'static str {
     "qemu-local-shell-stderr-regular-file-append-redirection-complete"
@@ -15401,6 +15413,7 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     not(talos_boot_scenario = "qemu_local_shell_background_jobs_stale_entry_policy"),
     not(talos_boot_scenario = "qemu_local_shell_generated_userland_manifest"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection"),
+    not(talos_boot_scenario = "qemu_local_shell_direct_stderr_regular_file_append_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_create_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_stderr_to_stdout_redirection"),
@@ -15464,6 +15477,7 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     talos_boot_scenario = "qemu_local_shell_bare_name_stdout_regular_file_redirection",
     talos_boot_scenario = "qemu_local_shell_direct_stdout_regular_file_append_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection",
+    talos_boot_scenario = "qemu_local_shell_direct_stderr_regular_file_append_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection",
     talos_boot_scenario = "qemu_local_shell_stdout_regular_file_append_create_redirection",
     talos_boot_scenario = "qemu_local_shell_explicit_fd1_regular_file_redirection",
@@ -15585,6 +15599,10 @@ const fn local_command_loop_smoke_command_count() -> usize {
         15
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection") {
         14
+    } else if cfg!(
+        talos_boot_scenario = "qemu_local_shell_direct_stderr_regular_file_append_redirection"
+    ) {
+        18
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection")
     {
         16
@@ -15713,6 +15731,7 @@ const fn local_command_loop_smoke_command_count() -> usize {
     talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle",
     talos_boot_scenario = "qemu_local_shell_generated_userland_manifest",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection",
+    talos_boot_scenario = "qemu_local_shell_direct_stderr_regular_file_append_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_create_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_to_stdout_redirection",
@@ -15748,6 +15767,57 @@ fn expected_local_command_loop_dispatch(
         0 => line == b"help" && status == Handled && response_lines == 4,
         1 => line == b"status" && status == Handled && response_lines == 5,
         2 => line == b"stdio" && status == Handled && response_lines == 7,
+        index if cfg!(
+            talos_boot_scenario = "qemu_local_shell_direct_stderr_regular_file_append_redirection"
+        ) =>
+        {
+            match index {
+                3 => {
+                    line == b"/bin/stderr 2>/tmp/stderr.txt"
+                        && status == Handled
+                        && response_lines == 11
+                }
+                4 => line == b"waitpid" && status == Handled && response_lines == 1,
+                5 => line == b"laststatus" && status == Handled && response_lines == 1,
+                6 => line == b"cat /tmp/stderr.txt" && status == Handled && response_lines == 2,
+                7 => {
+                    line == b"/bin/stderr 2>>/tmp/stderr.txt"
+                        && status == Handled
+                        && response_lines == 11
+                }
+                8 => line == b"waitpid" && status == Handled && response_lines == 1,
+                9 => line == b"laststatus" && status == Handled && response_lines == 1,
+                10 => line == b"cat /tmp/stderr.txt" && status == Handled && response_lines == 2,
+                11 => line == b"/bin/stderr" && status == Handled && response_lines == 10,
+                12 => {
+                    line == b"/bin/stderr 2>>/tmp/other.txt"
+                        && status == UnexpectedArgument
+                        && response_lines == 1
+                }
+                13 => {
+                    line == b"stderr 2>>/tmp/stderr.txt"
+                        && status == UnexpectedArgument
+                        && response_lines == 1
+                }
+                14 => {
+                    line == b"/bin/stderr | /bin/stdin 2>>/tmp/stderr.txt"
+                        && status == UnexpectedArgument
+                        && response_lines == 1
+                }
+                15 => {
+                    line == b"/bin/stdin </etc/banner.txt 2>>/tmp/stderr.txt"
+                        && status == UnexpectedArgument
+                        && response_lines == 1
+                }
+                16 => {
+                    line == b"/bin/stdout >>/tmp/stdout.txt"
+                        && status == Handled
+                        && response_lines == 11
+                }
+                17 => line == b"cat /etc/banner.txt" && status == Handled && response_lines == 1,
+                _ => false,
+            }
+        }
         index if cfg!(talos_boot_scenario = "qemu_local_shell_direct_stdin_redirection") => {
             match index {
                 3 => {
@@ -18002,9 +18072,7 @@ fn expected_local_command_loop_dispatch(
             line == b"laststatus" && status == Handled && response_lines == 1
         }
         10 if cfg!(talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection") => {
-            line == b"/bin/stderr 2>>/tmp/stderr.txt"
-                && status == UnexpectedArgument
-                && response_lines == 1
+            line == b"/bin/stderr 2>>/tmp/stderr.txt" && status == Handled && response_lines == 11
         }
         10 if cfg!(
             talos_boot_scenario = "qemu_local_shell_stderr_regular_file_append_redirection"
@@ -18172,9 +18240,7 @@ fn expected_local_command_loop_dispatch(
             talos_boot_scenario = "qemu_local_shell_direct_stdout_regular_file_append_redirection"
         ) =>
         {
-            line == b"/bin/stderr 2>>/tmp/stderr.txt"
-                && status == UnexpectedArgument
-                && response_lines == 1
+            line == b"/bin/stderr 2>>/tmp/stderr.txt" && status == Handled && response_lines == 11
         }
         12 if cfg!(
             talos_boot_scenario =

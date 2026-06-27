@@ -225,6 +225,20 @@ bounded /bin, live networking/SSH, Pi 5 hardware proof, generated-root retry,
 and phase transition remain deferred. No later queued same-lane local POSIX/VFS
 task is mechanically objective; supervisor planning is required.
 
+The direct stderr append regular-file redirection core accepts exactly
+'/bin/stderr 2>/tmp/stderr.txt' followed by
+'/bin/stderr 2>>/tmp/stderr.txt'. The child fd2 is rebound only for each
+process to 'volatile-vfs:/tmp/stderr.txt'; the first command uses the accepted
+truncate/sink operation, the second records op=append at regular-file EOF, and
+'cat /tmp/stderr.txt' reads both stderr fixture writes in order with
+bytes=0x3e. A later normal '/bin/stderr' proves shell fd2 restoration to
+runtime-console0/stderr. Unsupported direct stderr append paths, bare-name
+stderr append, pipeline-output append, combined input/output redirection,
+persistent writable filesystem behavior, live networking/SSH, Pi 5 hardware
+proof, generated-root retry, and phase transition remain deferred. The next
+mechanically objective local POSIX/VFS task is the queued direct stderr append
+closeout.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1
