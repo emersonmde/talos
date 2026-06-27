@@ -64,7 +64,8 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+bounded-bare-name-bin-vfs-command-volatile-stdout-regular-file-redirection",
     "+bounded-bare-name-bin-vfs-command-volatile-stderr-regular-file-redirection",
     "+bounded-bare-name-bin-vfs-command-volatile-stdout-append-redirection",
-    "+direct-absolute-path-vfs-command-combined-stdin-stdout-regular-file-redirection"
+    "+direct-absolute-path-vfs-command-combined-stdin-stdout-regular-file-redirection",
+    "+bounded-bare-name-bin-vfs-command-combined-stdin-stdout-regular-file-redirection"
 );
 pub const LOCAL_COMMAND_LOOP_PROMPT: &str = "talos> ";
 pub const DEFAULT_LOCAL_COMMAND_COUNT: usize = 8;
@@ -7182,11 +7183,22 @@ fn parse_bare_bin_exec_request_with_arguments(
                 stdin_redirection = Some(LocalCommandExecRedirection::StdinFromEtcBanner);
                 continue;
             }
-            if let Some(path) = token
-                .strip_prefix(b">")
-                .and_then(LocalCommandVolatilePath::from_exact_stdout_path)
-            {
-                if name.as_bytes() != b"stdout" || redirection_started || count != 1 {
+            if let Some(path) = token.strip_prefix(b">").and_then(|path| {
+                if name.as_bytes() == b"stdin"
+                    && stdin_redirection == Some(LocalCommandExecRedirection::StdinFromEtcBanner)
+                {
+                    LocalCommandVolatilePath::from_exact_stdin_report_path(path)
+                } else {
+                    LocalCommandVolatilePath::from_exact_stdout_path(path)
+                }
+            }) {
+                let bare_name_combined_stdin_stdout = name.as_bytes() == b"stdin"
+                    && stdin_redirection == Some(LocalCommandExecRedirection::StdinFromEtcBanner)
+                    && redirection.is_none()
+                    && count == 1;
+                if !(name.as_bytes() == b"stdout" && !redirection_started && count == 1)
+                    && !bare_name_combined_stdin_stdout
+                {
                     return Err(LocalCommandExecError::InvalidPath);
                 }
                 redirection_started = true;
@@ -13519,6 +13531,125 @@ talos> talos: exec-not-executable\n"
             "talos: exec-stdin fd=0x0000000000000000 bytes=0x000000000000000e return=0x000000000000000e read-source=runtime-console0/local-input stdout-fd=0x0000000000000001 stdout-bytes=0x0000000000000033 stdout-return=0x0000000000000033 source=userspace-talos-read+userspace-talos-write\n"
         ));
         assert_eq!(output.matches("talos: exec-invalid-path\n").count(), 7);
+    }
+
+    #[test_case]
+    fn local_command_loop_runs_bare_name_vfs_command_with_combined_stdin_stdout_redirection() {
+        let bytes = *b"stdin </etc/banner.txt >/tmp/stdin-report.txt\rwaitpid\rlaststatus\rcat /tmp/stdin-report.txt\rstdin >/tmp/stdin-report.txt </etc/banner.txt\rstdin </dev/null >/tmp/stdin-report.txt\rstdin </etc/banner.txt 1>/tmp/stdin-report.txt\rstdin < /etc/banner.txt >/tmp/stdin-report.txt\rstdin </etc/banner.txt >>/tmp/stdin-report.txt\rstdin </etc/banner.txt 2>/tmp/stdin-report.txt\rstdout </etc/banner.txt >/tmp/stdin-report.txt\rstdin </etc/banner.txt >/tmp/other.txt\rstdin\rtalos-console0";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (
+            redirected,
+            waited,
+            observed,
+            readback,
+            output_first,
+            dev_null_input,
+            explicit_fd1,
+            spaced_input,
+            append_output,
+            stderr_output,
+            unsupported_command,
+            arbitrary_output,
+            normal,
+        ) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            let redirected = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let record = io.process_table_records()[0].unwrap();
+            assert_eq!(record.lifecycle.source_path, initramfs::PHASE10_STDIN_PATH);
+            assert_eq!(record.lifecycle.status, 0);
+            assert_eq!(record.lifecycle.observed_status, 0);
+            let waited = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let observed = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let readback = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let output_first = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let dev_null_input = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let explicit_fd1 = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let spaced_input = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let append_output = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let stderr_output = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let unsupported_command = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let arbitrary_output = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let normal = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(io.process_table_records()[0], Some(record));
+            assert_eq!(io.process_table_records()[1], None);
+            (
+                redirected,
+                waited,
+                observed,
+                readback,
+                output_first,
+                dev_null_input,
+                explicit_fd1,
+                spaced_input,
+                append_output,
+                stderr_output,
+                unsupported_command,
+                arbitrary_output,
+                normal,
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(
+            redirected.line(),
+            b"stdin </etc/banner.txt >/tmp/stdin-report.txt"
+        );
+        assert_eq!(redirected.status(), LocalCommandStatus::Handled);
+        assert_eq!(redirected.response_lines(), 12);
+        assert_eq!(waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(observed.status(), LocalCommandStatus::Handled);
+        assert_eq!(readback.line(), b"cat /tmp/stdin-report.txt");
+        assert_eq!(readback.status(), LocalCommandStatus::Handled);
+        assert_eq!(readback.response_lines(), 2);
+        assert_eq!(normal.line(), b"stdin");
+        assert_eq!(normal.status(), LocalCommandStatus::Handled);
+        assert_eq!(normal.response_lines(), 10);
+        for rejected in [
+            output_first,
+            dev_null_input,
+            explicit_fd1,
+            spaced_input,
+            append_output,
+            stderr_output,
+            unsupported_command,
+            arbitrary_output,
+        ] {
+            assert_eq!(rejected.status(), LocalCommandStatus::UnexpectedArgument);
+            assert_eq!(rejected.response_lines(), 1);
+        }
+        assert!(output.contains("talos: exec path=/bin/stdin source=vfs-open-read\n"));
+        assert!(output.contains(
+            "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=regular-file fd1=regular-file fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-redirection op=source source-fd=0x0000000000000000 source-path=/etc/banner.txt source-stream=regular-file source-route=initramfs:/etc/banner.txt child-only=true shell-restored=true source=shell-redirection-stdin-etc-banner\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-redirection op=sink source-fd=0x0000000000000001 target-path=/tmp/stdin-report.txt target-stream=regular-file target-route=volatile-vfs:/tmp/stdin-report.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-startup-abi state=minimal-argc1-argv0-absolute-empty-envp argc=0x0000000000000001 argv0=/bin/stdin"
+        ));
+        assert!(output.contains(
+            "talos: exec-stdin fd=0x0000000000000000 bytes=0x0000000000000018 return=0x0000000000000018 read-source=initramfs:/etc/banner.txt stdout-fd=0x0000000000000001 stdout-bytes=0x000000000000003d stdout-return=0x000000000000003d source=userspace-talos-read+userspace-talos-write read-result=regular-file-eof-after-read\n"
+        ));
+        assert!(output.contains(
+            "talos: cat path=/tmp/stdin-report.txt bytes=0x000000000000003d source=volatile-vfs-descriptor-read\n"
+        ));
+        assert!(output.contains("Talos userspace stdin fixture read: Talos initramfs fixture\n"));
+        assert!(output.contains(
+            "talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos: last-process pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=lifecycle-record\n"
+        ));
+        assert!(output.contains("Talos userspace stdin fixture read: talos-console0\n"));
+        assert!(output.contains(
+            "talos: exec-stdin fd=0x0000000000000000 bytes=0x000000000000000e return=0x000000000000000e read-source=runtime-console0/local-input stdout-fd=0x0000000000000001 stdout-bytes=0x0000000000000033 stdout-return=0x0000000000000033 source=userspace-talos-read+userspace-talos-write\n"
+        ));
+        assert_eq!(output.matches("talos: exec-invalid-path\n").count(), 8);
     }
 
     #[test_case]

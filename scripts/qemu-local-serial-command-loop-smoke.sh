@@ -49,6 +49,7 @@ SHELL_DEV_NULL_STDIN_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_DE
 SHELL_READONLY_REGULAR_FILE_STDIN_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_READONLY_REGULAR_FILE_STDIN_REDIRECTION_SMOKE:-0}"
 SHELL_DIRECT_STDIN_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_DIRECT_STDIN_REDIRECTION_SMOKE:-0}"
 SHELL_DIRECT_COMBINED_STDIN_STDOUT_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_DIRECT_COMBINED_STDIN_STDOUT_REDIRECTION_SMOKE:-0}"
+SHELL_BARE_NAME_COMBINED_STDIN_STDOUT_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_BARE_NAME_COMBINED_STDIN_STDOUT_REDIRECTION_SMOKE:-0}"
 SHELL_BARE_NAME_STDIN_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_BARE_NAME_STDIN_REDIRECTION_SMOKE:-0}"
 SHELL_BARE_NAME_STDOUT_REGULAR_FILE_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_BARE_NAME_STDOUT_REGULAR_FILE_REDIRECTION_SMOKE:-0}"
 SHELL_STDOUT_REGULAR_FILE_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_STDOUT_REGULAR_FILE_REDIRECTION_SMOKE:-0}"
@@ -852,6 +853,31 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
             command_index="${BASH_REMATCH[1]}"
             if [ "$sent" -eq "$command_index" ] && [ "$command_index" -lt "${#direct_combined_redirection_commands[@]}" ]; then
                 printf '%s\r' "${direct_combined_redirection_commands[$command_index]}" >&3
+                sent=$((command_index + 1))
+            fi
+            continue
+        fi
+        if [ "$SHELL_BARE_NAME_COMBINED_STDIN_STDOUT_REDIRECTION_SMOKE" -eq 1 ] && [[ "$line" =~ ready\ command=([0-9]+) ]]; then
+            bare_name_combined_redirection_commands=(
+                "help"
+                "status"
+                "stdio"
+                "stdin </etc/banner.txt >/tmp/stdin-report.txt"
+                "waitpid"
+                "laststatus"
+                "cat /tmp/stdin-report.txt"
+                "stdin >/tmp/stdin-report.txt </etc/banner.txt"
+                "stdin </dev/null >/tmp/stdin-report.txt"
+                "stdin </etc/banner.txt 1>/tmp/stdin-report.txt"
+                "stdin < /etc/banner.txt >/tmp/stdin-report.txt"
+                "stdin </etc/banner.txt >>/tmp/stdin-report.txt"
+                "stdin </etc/banner.txt 2>/tmp/stdin-report.txt"
+                "stdout </etc/banner.txt >/tmp/stdin-report.txt"
+                "stdin </etc/banner.txt >/tmp/other.txt"
+            )
+            command_index="${BASH_REMATCH[1]}"
+            if [ "$sent" -eq "$command_index" ] && [ "$command_index" -lt "${#bare_name_combined_redirection_commands[@]}" ]; then
+                printf '%s\r' "${bare_name_combined_redirection_commands[$command_index]}" >&3
                 sent=$((command_index + 1))
             fi
             continue
@@ -2094,6 +2120,18 @@ if [ "$SHELL_DIRECT_COMBINED_STDIN_STDOUT_REDIRECTION_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=12" "$LOG_FILE"
     grep -q "$LABEL: ready command=13" "$LOG_FILE"
 fi
+if [ "$SHELL_BARE_NAME_COMBINED_STDIN_STDOUT_REDIRECTION_SMOKE" -eq 1 ]; then
+    grep -q "$LABEL: ready command=5" "$LOG_FILE"
+    grep -q "$LABEL: ready command=6" "$LOG_FILE"
+    grep -q "$LABEL: ready command=7" "$LOG_FILE"
+    grep -q "$LABEL: ready command=8" "$LOG_FILE"
+    grep -q "$LABEL: ready command=9" "$LOG_FILE"
+    grep -q "$LABEL: ready command=10" "$LOG_FILE"
+    grep -q "$LABEL: ready command=11" "$LOG_FILE"
+    grep -q "$LABEL: ready command=12" "$LOG_FILE"
+    grep -q "$LABEL: ready command=13" "$LOG_FILE"
+    grep -q "$LABEL: ready command=14" "$LOG_FILE"
+fi
 if [ "$SHELL_BARE_NAME_STDIN_REDIRECTION_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: ready command=5" "$LOG_FILE"
     grep -q "$LABEL: ready command=6" "$LOG_FILE"
@@ -2557,6 +2595,37 @@ elif [ "$SHELL_DIRECT_COMBINED_STDIN_STDOUT_REDIRECTION_SMOKE" -eq 1 ]; then
     grep -q "$LABEL: dispatch command=13 status=unexpected-argument responses=1" "$LOG_FILE"
     grep -c "talos: exec-invalid-path" "$LOG_FILE" | grep -q "^7$"
     grep -q "$LABEL: final participants=14 expected=14 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+elif [ "$SHELL_BARE_NAME_COMBINED_STDIN_STDOUT_REDIRECTION_SMOKE" -eq 1 ]; then
+    grep -q "talos> stdin </etc/banner.txt >/tmp/stdin-report.txt" "$LOG_FILE"
+    grep -q "talos: exec path=/bin/stdin source=vfs-open-read" "$LOG_FILE"
+    grep -Eq "talos: exec-source bytes=0x[0-9a-f]+ digest=0x[0-9a-f]+" "$LOG_FILE"
+    grep -Eq "talos: exec-loader fixture=phase8-program-loader-elf64-aarch64-v1 entry=0x[0-9a-f]+ segments=0x[0-9a-f]+" "$LOG_FILE"
+    grep -Eq "talos: exec-launch launch-boundary=phase8-initial-process-launch-plan-v1 stack-boundary=phase8-initial-user-stack-plan-v1 address-space=0x[0-9a-f]+ materialization=0x[0-9a-f]+ initial-sp=0x[0-9a-f]+" "$LOG_FILE"
+    grep -q "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=regular-file fd1=regular-file fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table" "$LOG_FILE"
+    grep -Eq "talos: exec-startup-abi state=minimal-argc1-argv0-absolute-empty-envp argc=0x0000000000000001 argv0=/bin/stdin argv0-ptr=0x[0-9a-f]+ argv-null=false envp-null=true envp-state=empty-envp0 envp-entries=0x0000000000000000 envp0-ptr=0x[0-9a-f]+ copied-startup-bytes=0x000000000000002b source=initial-user-stack-record" "$LOG_FILE"
+    grep -q "talos: exec-redirection op=source source-fd=0x0000000000000000 source-path=/etc/banner.txt source-stream=regular-file source-route=initramfs:/etc/banner.txt child-only=true shell-restored=true source=shell-redirection-stdin-etc-banner" "$LOG_FILE"
+    grep -q "talos: exec-redirection op=sink source-fd=0x0000000000000001 target-path=/tmp/stdin-report.txt target-stream=regular-file target-route=volatile-vfs:/tmp/stdin-report.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout" "$LOG_FILE"
+    grep -q "talos: exec-stdin fd=0x0000000000000000 bytes=0x0000000000000018 return=0x0000000000000018 read-source=initramfs:/etc/banner.txt stdout-fd=0x0000000000000001 stdout-bytes=0x000000000000003d stdout-return=0x000000000000003d source=userspace-talos-read+userspace-talos-write read-result=regular-file-eof-after-read" "$LOG_FILE"
+    grep -q "Talos userspace stdin fixture read: Talos initramfs fixture" "$LOG_FILE"
+    grep -q "talos: cat path=/tmp/stdin-report.txt bytes=0x000000000000003d source=volatile-vfs-descriptor-read" "$LOG_FILE"
+    grep -q "talos> stdin >/tmp/stdin-report.txt </etc/banner.txt" "$LOG_FILE"
+    grep -q "talos> stdin </dev/null >/tmp/stdin-report.txt" "$LOG_FILE"
+    grep -q "talos> stdin </etc/banner.txt 1>/tmp/stdin-report.txt" "$LOG_FILE"
+    grep -q "talos> stdin < /etc/banner.txt >/tmp/stdin-report.txt" "$LOG_FILE"
+    grep -q "talos> stdin </etc/banner.txt >>/tmp/stdin-report.txt" "$LOG_FILE"
+    grep -q "talos> stdin </etc/banner.txt 2>/tmp/stdin-report.txt" "$LOG_FILE"
+    grep -q "talos> stdout </etc/banner.txt >/tmp/stdin-report.txt" "$LOG_FILE"
+    grep -q "talos> stdin </etc/banner.txt >/tmp/other.txt" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=7 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=8 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=9 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=10 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=11 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=12 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=13 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=14 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -c "talos: exec-invalid-path" "$LOG_FILE" | grep -q "^8$"
+    grep -q "$LABEL: final participants=15 expected=15 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
 elif [ "$SHELL_DIRECT_PIPELINE_STDIN_REDIRECTION_SMOKE" -eq 1 ]; then
     grep -q "talos> /bin/stdin </etc/banner.txt | /bin/stdin" "$LOG_FILE"
     grep -q "talos: exec path=/bin/stdin source=vfs-open-read" "$LOG_FILE"

@@ -1,0 +1,70 @@
+RUN scripts/qemu-local-shell-bare-name-combined-stdin-stdout-redirection-smoke.sh
+TAIL qemu-local-shell-bare-name-combined-stdin-stdout-redirection-smoke.sh: qemu-local-shell-bare-name-combined-stdin-stdout-redirection: ready-for-next prompt=true
+TAIL qemu-local-shell-bare-name-combined-stdin-stdout-redirection-smoke.sh: qemu-local-shell-bare-name-combined-stdin-stdout-redirection: final participants=15 expected=15 errors=0 classification=qemu-local-shell-bare-name-combined-stdin-stdout-redirection-complete
+TAIL qemu-local-shell-bare-name-combined-stdin-stdout-redirection-smoke.sh: qemu-local-shell-bare-name-combined-stdin-stdout-redirection: PASS
+PASS scripts/qemu-local-shell-bare-name-combined-stdin-stdout-redirection-smoke.sh
+RUN scripts/qemu-local-shell-direct-combined-stdin-stdout-redirection-smoke.sh
+TAIL qemu-local-shell-direct-combined-stdin-stdout-redirection-smoke.sh: qemu-local-shell-direct-combined-stdin-stdout-redirection: ready-for-next prompt=true
+TAIL qemu-local-shell-direct-combined-stdin-stdout-redirection-smoke.sh: qemu-local-shell-direct-combined-stdin-stdout-redirection: final participants=14 expected=14 errors=0 classification=qemu-local-shell-direct-combined-stdin-stdout-redirection-complete
+TAIL qemu-local-shell-direct-combined-stdin-stdout-redirection-smoke.sh: qemu-local-shell-direct-combined-stdin-stdout-redirection: PASS
+PASS scripts/qemu-local-shell-direct-combined-stdin-stdout-redirection-smoke.sh
+RUN scripts/qemu-local-shell-direct-stdin-redirection-smoke.sh
+TAIL qemu-local-shell-direct-stdin-redirection-smoke.sh: qemu-local-shell-direct-stdin-redirection: ready-for-next prompt=true
+TAIL qemu-local-shell-direct-stdin-redirection-smoke.sh: qemu-local-shell-direct-stdin-redirection: final participants=12 expected=12 errors=0 classification=qemu-local-shell-direct-stdin-redirection-complete
+TAIL qemu-local-shell-direct-stdin-redirection-smoke.sh: qemu-local-shell-direct-stdin-redirection: PASS
+PASS scripts/qemu-local-shell-direct-stdin-redirection-smoke.sh
+RUN scripts/qemu-local-shell-bare-name-stdin-redirection-smoke.sh
+TAIL qemu-local-shell-bare-name-stdin-redirection-smoke.sh: qemu-local-shell-bare-name-stdin-redirection: ready-for-next prompt=true
+TAIL qemu-local-shell-bare-name-stdin-redirection-smoke.sh: qemu-local-shell-bare-name-stdin-redirection: final participants=12 expected=12 errors=0 classification=qemu-local-shell-bare-name-stdin-redirection-complete
+TAIL qemu-local-shell-bare-name-stdin-redirection-smoke.sh: qemu-local-shell-bare-name-stdin-redirection: PASS
+PASS scripts/qemu-local-shell-bare-name-stdin-redirection-smoke.sh
+RUN scripts/qemu-local-shell-stdout-regular-file-redirection-smoke.sh
+TAIL qemu-local-shell-stdout-regular-file-redirection-smoke.sh: qemu-local-shell-stdout-regular-file-redirection: ready-for-next prompt=true
+TAIL qemu-local-shell-stdout-regular-file-redirection-smoke.sh: qemu-local-shell-stdout-regular-file-redirection: final participants=13 expected=13 errors=0 classification=qemu-local-shell-stdout-regular-file-redirection-complete
+TAIL qemu-local-shell-stdout-regular-file-redirection-smoke.sh: qemu-local-shell-stdout-regular-file-redirection: PASS
+PASS scripts/qemu-local-shell-stdout-regular-file-redirection-smoke.sh
+RUN scripts/qemu-local-shell-bare-name-stdout-regular-file-redirection-smoke.sh
+TAIL qemu-local-shell-bare-name-stdout-regular-file-redirection-smoke.sh: qemu-local-shell-bare-name-stdout-regular-file-redirection: ready-for-next prompt=true
+TAIL qemu-local-shell-bare-name-stdout-regular-file-redirection-smoke.sh: qemu-local-shell-bare-name-stdout-regular-file-redirection: final participants=13 expected=13 errors=0 classification=qemu-local-shell-bare-name-stdout-regular-file-redirection-complete
+TAIL qemu-local-shell-bare-name-stdout-regular-file-redirection-smoke.sh: qemu-local-shell-bare-name-stdout-regular-file-redirection: PASS
+PASS scripts/qemu-local-shell-bare-name-stdout-regular-file-redirection-smoke.sh
+RUN scripts/qemu-local-shell-direct-stdout-regular-file-append-redirection-smoke.sh
+TAIL qemu-local-shell-direct-stdout-regular-file-append-redirection-smoke.sh: qemu-local-shell-direct-stdout-regular-file-append-redirection: ready-for-next prompt=true
+TAIL qemu-local-shell-direct-stdout-regular-file-append-redirection-smoke.sh: qemu-local-shell-direct-stdout-regular-file-append-redirection: final participants=14 expected=14 errors=0 classification=qemu-local-shell-direct-stdout-regular-file-append-redirection-complete
+TAIL qemu-local-shell-direct-stdout-regular-file-append-redirection-smoke.sh: qemu-local-shell-direct-stdout-regular-file-append-redirection: PASS
+PASS scripts/qemu-local-shell-direct-stdout-regular-file-append-redirection-smoke.sh
+RUN scripts/qemu-local-shell-bare-name-stdout-regular-file-append-redirection-smoke.sh
+TAIL qemu-local-shell-bare-name-stdout-regular-file-append-redirection-smoke.sh: qemu-local-shell-bare-name-stdout-regular-file-append-redirection: ready-for-next prompt=true
+TAIL qemu-local-shell-bare-name-stdout-regular-file-append-redirection-smoke.sh: qemu-local-shell-bare-name-stdout-regular-file-append-redirection: final participants=14 expected=14 errors=0 classification=qemu-local-shell-bare-name-stdout-regular-file-append-redirection-complete
+TAIL qemu-local-shell-bare-name-stdout-regular-file-append-redirection-smoke.sh: qemu-local-shell-bare-name-stdout-regular-file-append-redirection: PASS
+PASS scripts/qemu-local-shell-bare-name-stdout-regular-file-append-redirection-smoke.sh
+RUN scripts/qemu-local-shell-direct-stderr-regular-file-append-redirection-smoke.sh
+TAIL qemu-local-shell-direct-stderr-regular-file-append-redirection-smoke.sh: qemu-local-shell-direct-stderr-regular-file-append-redirection: ready-for-next prompt=true
+TAIL qemu-local-shell-direct-stderr-regular-file-append-redirection-smoke.sh: qemu-local-shell-direct-stderr-regular-file-append-redirection: final participants=18 expected=18 errors=0 classification=qemu-local-shell-direct-stderr-regular-file-append-redirection-complete
+TAIL qemu-local-shell-direct-stderr-regular-file-append-redirection-smoke.sh: qemu-local-shell-direct-stderr-regular-file-append-redirection: PASS
+PASS scripts/qemu-local-shell-direct-stderr-regular-file-append-redirection-smoke.sh
+RUN scripts/qemu-local-shell-bare-name-stderr-regular-file-append-redirection-smoke.sh
+TAIL qemu-local-shell-bare-name-stderr-regular-file-append-redirection-smoke.sh: qemu-local-shell-bare-name-stderr-regular-file-append-redirection: ready-for-next prompt=true
+TAIL qemu-local-shell-bare-name-stderr-regular-file-append-redirection-smoke.sh: qemu-local-shell-bare-name-stderr-regular-file-append-redirection: final participants=18 expected=18 errors=0 classification=qemu-local-shell-bare-name-stderr-regular-file-append-redirection-complete
+TAIL qemu-local-shell-bare-name-stderr-regular-file-append-redirection-smoke.sh: qemu-local-shell-bare-name-stderr-regular-file-append-redirection: PASS
+PASS scripts/qemu-local-shell-bare-name-stderr-regular-file-append-redirection-smoke.sh
+RUN scripts/qemu-local-shell-process-status-vfs-smoke.sh
+TAIL qemu-local-shell-process-status-vfs-smoke.sh: qemu-local-shell-process-status-vfs: ready-for-next prompt=true
+TAIL qemu-local-shell-process-status-vfs-smoke.sh: qemu-local-shell-process-status-vfs: final participants=19 expected=19 errors=0 classification=qemu-local-shell-process-status-vfs-complete
+TAIL qemu-local-shell-process-status-vfs-smoke.sh: qemu-local-shell-process-status-vfs: PASS
+PASS scripts/qemu-local-shell-process-status-vfs-smoke.sh
+RUN scripts/qemu-local-shell-ps-command-vfs-smoke.sh
+TAIL qemu-local-shell-ps-command-vfs-smoke.sh: qemu-local-shell-ps-command-vfs: ready-for-next prompt=true
+TAIL qemu-local-shell-ps-command-vfs-smoke.sh: qemu-local-shell-ps-command-vfs: final participants=23 expected=23 errors=0 classification=qemu-local-shell-ps-command-vfs-complete
+TAIL qemu-local-shell-ps-command-vfs-smoke.sh: qemu-local-shell-ps-command-vfs: PASS
+PASS scripts/qemu-local-shell-ps-command-vfs-smoke.sh
+RUN scripts/qemu-local-shell-pipeline-status-smoke.sh
+TAIL qemu-local-shell-pipeline-status-smoke.sh: qemu-local-shell-pipeline-status: ready-for-next prompt=true
+TAIL qemu-local-shell-pipeline-status-smoke.sh: qemu-local-shell-pipeline-status: final participants=12 expected=12 errors=0 classification=qemu-local-shell-pipeline-status-complete
+TAIL qemu-local-shell-pipeline-status-smoke.sh: qemu-local-shell-pipeline-status: PASS
+PASS scripts/qemu-local-shell-pipeline-status-smoke.sh
+RUN scripts/qemu-local-cat-banner-smoke.sh
+TAIL qemu-local-cat-banner-smoke.sh: qemu-local-cat-banner: ready-for-next prompt=true
+TAIL qemu-local-cat-banner-smoke.sh: qemu-local-cat-banner: final participants=7 expected=7 errors=0 classification=qemu-local-cat-banner-complete
+TAIL qemu-local-cat-banner-smoke.sh: qemu-local-cat-banner: PASS
+PASS scripts/qemu-local-cat-banner-smoke.sh

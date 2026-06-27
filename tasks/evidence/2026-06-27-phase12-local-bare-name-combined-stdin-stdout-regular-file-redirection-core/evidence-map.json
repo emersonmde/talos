@@ -1,0 +1,67 @@
+{
+  "task_id": "phase12-local-bare-name-combined-stdin-stdout-regular-file-redirection-core-20260627",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "paths": [
+        "src/local_command_loop.rs",
+        "src/target/qemu_virt.rs",
+        "src/main.rs",
+        "build.rs",
+        "scripts/qemu-local-serial-command-loop-smoke.sh",
+        "scripts/qemu-local-shell-bare-name-combined-stdin-stdout-redirection-smoke.sh"
+      ],
+      "result": "accepted fixed-/bin bare-name combined parser and QEMU/smoke plumbing are scoped to stdin </etc/banner.txt >/tmp/stdin-report.txt"
+    },
+    {
+      "level": "fmt/lint/typecheck",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "result": "passed; 862 tests passed"
+    },
+    {
+      "level": "QEMU/substitute",
+      "command": "scripts/qemu-local-shell-bare-name-combined-stdin-stdout-redirection-smoke.sh",
+      "result": "passed; final participants=15 expected=15 errors=0 classification=qemu-local-shell-bare-name-combined-stdin-stdout-redirection-complete",
+      "log": "tasks/evidence/2026-06-27-phase12-local-bare-name-combined-stdin-stdout-regular-file-redirection-core/qemu-local-shell-bare-name-combined-stdin-stdout-redirection-smoke.log"
+    },
+    {
+      "level": "QEMU/substitute retained regressions",
+      "command": "batched retained local POSIX/VFS regression smokes listed in regression-smokes-summary.txt",
+      "result": "passed; direct combined, direct/bare stdin redirection, direct/bare stdout regular-file redirection, direct/bare stdout append, direct/bare stderr append, process-status VFS, ps, pipestatus, and cat-banner surfaces passed",
+      "summary": "tasks/evidence/2026-06-27-phase12-local-bare-name-combined-stdin-stdout-regular-file-redirection-core/regression-smokes-summary.txt"
+    },
+    {
+      "level": "shell syntax",
+      "command": "bash -n scripts/qemu-local-serial-command-loop-smoke.sh scripts/qemu-local-shell-bare-name-combined-stdin-stdout-redirection-smoke.sh",
+      "result": "passed"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty tasks/evidence/2026-06-27-phase12-local-bare-name-combined-stdin-stdout-regular-file-redirection-core/classification.json tasks/evidence/2026-06-27-phase12-local-bare-name-combined-stdin-stdout-regular-file-redirection-core/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed; HTML backend wrote book, with existing large search-index warning"
+    },
+    {
+      "level": "lab-controller API",
+      "result": "not run; no Pi 5 hardware gate"
+    },
+    {
+      "level": "serial hardware boot/output",
+      "result": "not run; no Pi 5 hardware gate"
+    }
+  ]
+}

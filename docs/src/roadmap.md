@@ -19411,6 +19411,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   Pi 5 hardware proof, generated-root retry, and phase transition remain
   deferred. The selected next task is
   phase12-local-bare-name-combined-stdin-stdout-regular-file-redirection-core-20260627.
+- phase12-local-bare-name-combined-stdin-stdout-regular-file-redirection-core-20260627
+  accepts the fixed-/bin bare-name combined stdin/stdout regular-file
+  redirection witness: 'stdin </etc/banner.txt >/tmp/stdin-report.txt'. The
+  command resolves only to '/bin/stdin', binds child fd0 to
+  initramfs:/etc/banner.txt, binds child fd1 to
+  volatile-vfs:/tmp/stdin-report.txt, leaves fd2 on stdio output, writes the
+  userspace stdin report through redirected fd1, and reads it back with
+  descriptor-backed 'cat /tmp/stdin-report.txt'. Unsupported bare-name combined
+  forms fail closed: output-first ordering, /dev/null input, explicit 1>,
+  spaced input grammar, append output, stderr output, unsupported command
+  names, and arbitrary output paths. Direct combined, direct/bare stdin,
+  direct/bare stdout regular-file, direct/bare append, process-status VFS, ps,
+  pipestatus, and cat-banner controls remain passing. Arbitrary paths,
+  append/stderr combined variants, pipeline-output redirection, persistent
+  writable filesystem behavior, live networking/SSH, Pi 5 hardware proof,
+  generated-root retry, and phase transition remain deferred. The selected next
+  task is
+  phase12-local-bare-name-combined-stdin-stdout-regular-file-redirection-closeout-20260627.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

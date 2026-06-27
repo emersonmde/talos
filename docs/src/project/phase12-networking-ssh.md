@@ -9282,6 +9282,22 @@ fail-closed. The selected local follow-up is the queued fixed-/bin bare-name
 combined core. No Pi 5 hardware, live network/SSH, generated-root retry, or
 phase transition claim is made.
 
+phase12-local-bare-name-combined-stdin-stdout-regular-file-redirection-core-20260627
+continues the paused-network local POSIX/VFS lane with the fixed-/bin
+bare-name witness 'stdin </etc/banner.txt >/tmp/stdin-report.txt'. The command
+canonicalizes only to '/bin/stdin', records child fd0 as
+initramfs:/etc/banner.txt, child fd1 as
+volatile-vfs:/tmp/stdin-report.txt, fd2 as stdio output, and preserves
+descriptor-backed 'cat /tmp/stdin-report.txt' readback of the userspace stdin
+report. Unsupported bare-name combined forms fail closed for output-first
+ordering, /dev/null input, explicit 1>, spaced input grammar, append output,
+stderr output, unsupported command names, and arbitrary output paths. Retained
+direct combined, direct/bare stdin, direct/bare stdout regular-file,
+direct/bare append, process-status VFS, ps, pipestatus, and cat-banner controls
+passed. No Pi 5 hardware, live network/SSH, generated-root retry, or phase
+transition claim is made; the selected local follow-up is the bare-name
+combined closeout.
+
 While live networking/SSH remains paused, the local POSIX/VFS continuation
 accepted the direct stderr regular-file redirection core
 phase12-local-direct-stderr-regular-file-redirection-core-20260627. The

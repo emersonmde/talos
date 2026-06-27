@@ -938,6 +938,24 @@ separate fixed-/bin bare-name combined core; live networking/SSH, Pi 5 hardware
 proof, generated-root retry, arbitrary paths, append/stderr variants, and phase
 transition remain paused/deferred.
 
+The bare-name combined stdin/stdout regular-file redirection core accepts
+exactly 'stdin </etc/banner.txt >/tmp/stdin-report.txt'. The command resolves
+only through bounded fixed /bin lookup to '/bin/stdin', then uses the same
+descriptor-backed launch path as the direct witness. For the launched child
+only, fd0 is sourced from initramfs:/etc/banner.txt, fd1 targets
+volatile-vfs:/tmp/stdin-report.txt, and fd2 remains stdio output. The userspace
+stdin fixture writes its report through redirected fd1, descriptor-backed
+'cat /tmp/stdin-report.txt' reads it back, and retained direct/bare stdin,
+stdout regular-file, append, process-status, ps, pipestatus, and cat-banner
+controls remain passing. Unsupported bare-name combined forms fail closed for
+output-first ordering, spaced input grammar, /dev/null input, explicit 1>
+output, append output, stderr output, unsupported command names, and arbitrary
+output paths. Arbitrary paths, append/stderr combined variants,
+pipeline-output redirection, persistent writable filesystem behavior,
+PATH/current-directory search, command lookup beyond bounded /bin, arbitrary
+shell grammar, live networking/SSH, Pi 5 hardware proof, generated-root retry,
+and phase transition remain deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
