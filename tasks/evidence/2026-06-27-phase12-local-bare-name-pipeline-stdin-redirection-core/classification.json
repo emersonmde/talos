@@ -1,0 +1,12 @@
+{
+  "classification": "qemu-local-shell-bare-name-pipeline-stdin-redirection-complete",
+  "task_id": "phase12-local-bare-name-pipeline-stdin-redirection-core-20260627",
+  "accepted": true,
+  "evidence_level": "QEMU/substitute",
+  "witness": "stdin </etc/banner.txt | stdin",
+  "selected_next_task": "phase12-local-bare-name-pipeline-stdin-redirection-closeout-20260627",
+  "hardware_claim": false,
+  "live_network_ssh_claim": false,
+  "generated_root_retry": false,
+  "phase_transition": false
+}

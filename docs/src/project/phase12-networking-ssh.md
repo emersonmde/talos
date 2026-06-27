@@ -9106,6 +9106,27 @@ networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
 transition remain deferred. selected_next_task is
 phase12-local-bare-name-pipeline-stdin-redirection-core-20260627.
 
+phase12-local-bare-name-pipeline-stdin-redirection-core-20260627 accepts
+local-bare-name-pipeline-stdin-redirection-core. The local shell now accepts
+the exact fixed-/bin bare-name two-stage pipeline producer redirection witness
+'stdin </etc/banner.txt | stdin'. Both stages canonicalize through bounded
+/bin lookup to /bin/stdin before descriptor-backed VFS open/read and the
+accepted loader/userspace startup/status path. The producer sees fd0 replaced
+only for the child by 'initramfs:/etc/banner.txt', keeps fd1 as the pipe
+endpoint, inherits fd2, writes the userspace stdin fixture output into the
+pipe, and closes its loader temporary descriptor. The consumer sees fd0 as the
+pipe endpoint, inherits fd1/fd2, closes its loader temporary descriptor, reads
+the producer output to pipe EOF, and exits successfully. Pipeline
+lifecycle/status, explicit waitpid for both participants, laststatus,
+/proc/talos/processes, zero-argument ps, and pipestatus remain coherent.
+Unsupported bare-name pipeline redirection variants fail closed without
+additional successful process records. Consumer-stage redirection, output
+redirection, append/truncate, writable filesystem behavior,
+environment-backed PATH, arbitrary shell grammar, live networking/SSH, Pi 5
+hardware proof, generated-root retry, and phase transition remain deferred.
+selected_next_task is
+phase12-local-bare-name-pipeline-stdin-redirection-closeout-20260627.
+
 phase12-local-absolute-path-vfs-command-core-20260626 accepts
 local-absolute-path-vfs-command-core. The local shell now dispatches a direct
 absolute-path command, /bin/status42, through the same accepted VFS open/read,

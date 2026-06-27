@@ -421,6 +421,22 @@ direct path-form closeout selects bare-name pipeline-stage stdin redirection
 as the next local POSIX/VFS shell surface through the existing fixed bounded
 `/bin` lookup policy.
 
+The bare-name pipeline stdin redirection slice accepts the corresponding
+fixed-/bin lookup form: 'stdin </etc/banner.txt | stdin'. Both stages resolve
+to /bin/stdin before descriptor-backed VFS open/read and the accepted
+loader/userspace launch/status path. The producer sees fd0 rebound to
+initramfs:/etc/banner.txt, keeps fd1 as the pipe endpoint, inherits fd2, and
+writes the userspace stdin fixture output into the pipe. The consumer sees fd0
+as that pipe endpoint, inherits fd1/fd2, reads to pipe EOF, and exits
+successfully. Explicit waitpid for both participants, laststatus,
+/proc/talos/processes, zero-argument ps, and pipestatus remain coherent.
+Consumer-stage redirection, redirection on multiple pipeline stages, output
+redirection, append/truncate, writable filesystem behavior, environment-backed
+PATH, command lookup beyond bounded surfaces, arbitrary shell grammar, live
+networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
+transition remain deferred pending the bare-name pipeline stdin redirection
+closeout.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

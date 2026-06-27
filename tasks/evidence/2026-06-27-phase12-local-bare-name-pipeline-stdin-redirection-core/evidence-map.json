@@ -1,0 +1,34 @@
+{
+  "task_id": "phase12-local-bare-name-pipeline-stdin-redirection-core-20260627",
+  "classification": "qemu-local-shell-bare-name-pipeline-stdin-redirection-complete",
+  "primary_transcript": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-stdin-redirection-core/qemu-local-shell-bare-name-pipeline-stdin-redirection-smoke.log",
+  "regressions": [
+    "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-stdin-redirection-core/regressions/qemu-local-shell-direct-pipeline-stdin-redirection-smoke.log",
+    "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-stdin-redirection-core/regressions/qemu-local-shell-direct-stdin-redirection-smoke.log",
+    "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-stdin-redirection-core/regressions/qemu-local-shell-bare-name-stdin-redirection-smoke.log",
+    "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-stdin-redirection-core/regressions/qemu-local-shell-direct-pipeline-stage-argv-smoke.log",
+    "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-stdin-redirection-core/regressions/qemu-local-shell-bare-name-pipeline-stage-argv-smoke.log",
+    "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-stdin-redirection-core/regressions/qemu-local-shell-absolute-path-vfs-command-smoke.log",
+    "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-stdin-redirection-core/regressions/qemu-local-shell-bare-name-command-argv-smoke.log",
+    "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-stdin-redirection-core/regressions/qemu-local-shell-process-status-vfs-smoke.log",
+    "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-stdin-redirection-core/regressions/qemu-local-shell-ps-command-vfs-smoke.log",
+    "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-stdin-redirection-core/regressions/qemu-local-shell-pipeline-status-smoke.log",
+    "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-stdin-redirection-core/regressions/qemu-local-cat-banner-smoke.log"
+  ],
+  "validation": {
+    "cargo_fmt": "passed",
+    "cargo_test_local_command_loop": "passed",
+    "qemu_primary": "passed",
+    "qemu_regressions": "passed",
+    "jq_empty": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed"
+  },
+  "scope": {
+    "live_network_ssh_paused": true,
+    "pi5_hardware_claim": false,
+    "generated_root_retry": false,
+    "phase_transition": false
+  }
+}
