@@ -460,6 +460,25 @@ groups/sessions, persistent storage, live networking/SSH, Pi 5 hardware
 proof, generated-root retry, and phase transition remain deferred pending
 supervisor planning.
 
+The direct consumer-stage pipeline stdin redirection slice accepts exactly
+`/bin/stdin | /bin/stdin </etc/banner.txt`. Both stages still load through
+descriptor-backed VFS open/read and the accepted loader/userspace
+launch/status path. The producer keeps inherited fd0 and fd2 while fd1 is the
+pipe endpoint; under QEMU/substitute evidence it records a readiness/no-data
+stdin observation when no console byte is available. The consumer starts from
+the accepted pipeline fd0 handoff, then replaces only child fd0 with
+initramfs:/etc/banner.txt before launch, reads the banner file to EOF, and
+restores shell fd0 afterward. Explicit waitpid for both participants,
+laststatus, /proc/talos/processes, zero-argument ps, and pipestatus remain
+coherent. Bare-name consumer-stage stdin redirection, redirection on multiple
+pipeline stages, multistage pipeline redirection, output redirection,
+append/truncate, writable filesystem behavior, environment-backed PATH,
+command lookup beyond bounded surfaces, arbitrary shell grammar, live
+networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
+transition remain deferred. The accepted core selects a direct consumer-stage
+closeout before any bare-name consumer-stage, output redirection, writable
+filesystem, PATH, hardware, generated-root, or live network/SSH work.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

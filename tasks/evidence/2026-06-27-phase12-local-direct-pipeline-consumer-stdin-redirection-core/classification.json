@@ -1,0 +1,69 @@
+{
+  "task_id": "phase12-local-direct-pipeline-consumer-stdin-redirection-core-20260627",
+  "classification": "local-direct-pipeline-consumer-stdin-redirection-core-accepted",
+  "accepted": true,
+  "blocked": false,
+  "evidence_level": [
+    "static inspection",
+    "fmt/lint/typecheck",
+    "unit tests",
+    "QEMU/substitute"
+  ],
+  "accepted_witness": "/bin/stdin | /bin/stdin </etc/banner.txt",
+  "accepted_boundary": {
+    "producer": {
+      "path": "/bin/stdin",
+      "fd0": "inherited stdio input",
+      "fd1": "pipe endpoint",
+      "fd2": "inherited stdio output",
+      "loader_temp_open": false
+    },
+    "consumer": {
+      "path": "/bin/stdin",
+      "fd0": "initramfs:/etc/banner.txt regular file via child-only stdin redirection",
+      "fd1": "inherited stdio output",
+      "fd2": "inherited stdio output",
+      "loader_temp_open": false
+    },
+    "process_observation": [
+      "explicit waitpid for producer and consumer",
+      "laststatus",
+      "/proc/talos/processes",
+      "zero-argument ps",
+      "pipestatus"
+    ]
+  },
+  "fail_closed_variants": [
+    "/bin/stdout | /bin/stdin </etc/banner.txt",
+    "/bin/stdin alpha | /bin/stdin </etc/banner.txt",
+    "/bin/stdin | /bin/stdin beta </etc/banner.txt",
+    "/bin/stdin | /bin/stdin </dev/null",
+    "/bin/stdin | /bin/stdin < /etc/banner.txt",
+    "/bin/stdin | /bin/stdin </etc/banner.txt | /bin/stdin",
+    "/bin/stdin </etc/banner.txt | /bin/stdin </etc/banner.txt"
+  ],
+  "rejected_claims": [
+    "bare-name consumer-stage stdin redirection",
+    "redirection on multiple pipeline stages",
+    "multistage pipeline redirection",
+    "output regular-file redirection expansion",
+    "append/truncate",
+    "writable filesystem behavior",
+    "environment-backed PATH",
+    "current-directory search",
+    "command lookup beyond bounded /bin",
+    "arbitrary shell grammar",
+    "unbounded pipelines",
+    "pipeline concurrency",
+    "scheduler concurrency",
+    "fork/signals",
+    "process groups/sessions",
+    "persistent storage",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "phase transition"
+  ],
+  "selected_next_task": "phase12-local-direct-pipeline-consumer-stdin-redirection-closeout-20260627",
+  "notes": "Live network/SSH remains paused. No Pi 5 hardware claim is made."
+}

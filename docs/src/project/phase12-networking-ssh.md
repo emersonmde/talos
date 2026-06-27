@@ -4,6 +4,15 @@ Phase 12 starts with source-only RP1 Ethernet research. The accepted Phase 11
 frontier allows source inventory and design selection, but it does not accept
 Ethernet implementation, packet I/O, live DMA, networking, sockets, or SSH.
 
+Live networking/SSH remains paused while the local POSIX/VFS/userspace
+continuation advances. The accepted direct consumer-stage pipeline stdin
+redirection core is local-only: '/bin/stdin | /bin/stdin </etc/banner.txt'
+uses descriptor-backed VFS open/read, the accepted loader/userspace
+launch/status path, child-only fd0 replacement for the consumer, process-table
+observability, and QEMU/substitute evidence. It does not accept live network
+reachability, SSH, Pi 5 hardware proof, generated-root retry, writable
+filesystem behavior, output redirection, or a phase transition.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1
