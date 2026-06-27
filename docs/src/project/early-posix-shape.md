@@ -699,6 +699,20 @@ redirection, persistent writable filesystem behavior, PATH/current-directory
 search, arbitrary shell grammar, live networking/SSH, Pi 5 hardware proof,
 generated-root retry, and phase transition remain deferred.
 
+The direct stderr regular-file redirection closeout reconciles that accepted
+boundary against the retained core task, classification, evidence map,
+QEMU/substitute transcript, regression summary, and project docs. The accepted
+surface remains exactly '/bin/stderr 2>/tmp/stderr.txt',
+'cat /tmp/stderr.txt' descriptor-backed readback, and later normal
+'/bin/stderr' shell fd2 restoration. The fixed bounded /bin lookup and direct
+stderr descriptor evidence make bare-name stderr regular-file redirection a
+mechanically objective next task, but it remains separate implementation work.
+Append/truncate, arbitrary output paths, pipeline-output redirection, combined
+input/output redirection, persistent writable filesystem behavior,
+environment-backed PATH, current-directory search, command lookup beyond
+bounded /bin, arbitrary shell grammar, live networking/SSH, Pi 5 hardware
+proof, generated-root retry, and phase transition remain deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

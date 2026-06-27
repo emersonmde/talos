@@ -92,6 +92,29 @@ proof, generated-root retry, and phase transition remain deferred. No later
 queued same-lane local POSIX/VFS task is mechanically objective, so supervisor
 planning is required before additional worker promotion.
 
+The direct stderr regular-file redirection core accepts exactly
+'/bin/stderr 2>/tmp/stderr.txt'. The child loads '/bin/stderr' through
+descriptor-backed VFS open/read and the accepted loader/userspace
+launch/status path, but child fd2 is rebound only for that process to the
+volatile VFS regular file 'volatile-vfs:/tmp/stderr.txt'. 'cat /tmp/stderr.txt'
+reads back the userspace stderr fixture bytes through descriptor-backed VFS
+readback, and a later '/bin/stderr' proves shell fd2 was restored to
+runtime-console0/stderr. Bare-name stderr redirection, append/truncate,
+arbitrary output paths, pipeline-output redirection, combined input/output
+redirection, persistent writable filesystem behavior, live networking/SSH,
+Pi 5 hardware proof, generated-root retry, and phase transition remain
+deferred.
+
+The direct stderr regular-file redirection closeout reconciles that accepted
+boundary against the retained core task, classification, evidence map,
+QEMU/substitute transcript, regression summary, and project docs. The accepted
+surface is still only the exact direct path-form witness
+'/bin/stderr 2>/tmp/stderr.txt', descriptor-backed 'cat /tmp/stderr.txt'
+readback, and later normal '/bin/stderr' shell fd2 restoration. The next
+mechanically objective local POSIX/VFS task is the queued bare-name stderr
+regular-file redirection core; live networking/SSH and Pi 5 hardware proof
+remain paused.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1

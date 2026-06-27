@@ -1,0 +1,63 @@
+{
+  "task_id": "phase12-local-direct-stderr-regular-file-redirection-closeout-20260627",
+  "classification": "accepted",
+  "reconciled_core_task": "phase12-local-direct-stderr-regular-file-redirection-core-20260627",
+  "accepted_witness": "/bin/stderr 2>/tmp/stderr.txt",
+  "selected_next_task": "phase12-local-bare-name-stderr-regular-file-redirection-core-20260627",
+  "hardware": {
+    "pi5_hardware_claim": false,
+    "live_networking_or_ssh": false
+  },
+  "evidence": [
+    {
+      "kind": "static-inspection",
+      "path": "tasks/2026-06-27-phase12-local-direct-stderr-regular-file-redirection-core.md",
+      "result": "accepted direct stderr regular-file witness, findings, validation, and deferred frontier inspected"
+    },
+    {
+      "kind": "static-inspection",
+      "path": "tasks/evidence/2026-06-27-phase12-local-direct-stderr-regular-file-redirection-core/classification.json",
+      "result": "accepted witness, readback witness, restoration witness, fail-closed controls, retained boundaries, and rejected claims inspected"
+    },
+    {
+      "kind": "static-inspection",
+      "path": "tasks/evidence/2026-06-27-phase12-local-direct-stderr-regular-file-redirection-core/evidence-map.json",
+      "result": "fmt, unit, QEMU/substitute smoke, retained regressions, JSON, diff, docs, and staged diff evidence inspected"
+    },
+    {
+      "kind": "static-inspection",
+      "path": "tasks/evidence/2026-06-27-phase12-local-direct-stderr-regular-file-redirection-core/regressions/regression-summary.txt",
+      "result": "retained local POSIX/VFS regression surfaces inspected"
+    },
+    {
+      "kind": "docs",
+      "paths": [
+        "docs/src/roadmap.md",
+        "docs/src/project/phase12-networking-ssh.md",
+        "docs/src/project/early-posix-shape.md"
+      ],
+      "result": "updated to record direct stderr closeout and selected bare-name stderr follow-up"
+    },
+    {
+      "kind": "json-check",
+      "command": "jq empty tasks/evidence/2026-06-27-phase12-local-direct-stderr-regular-file-redirection-closeout/evidence-map.json",
+      "result": "pass"
+    },
+    {
+      "kind": "diff-check",
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "kind": "docs",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass",
+      "note": "Existing large search-index warning only."
+    },
+    {
+      "kind": "staged-diff-check",
+      "command": "git diff --cached --check",
+      "result": "pass"
+    }
+  ]
+}
