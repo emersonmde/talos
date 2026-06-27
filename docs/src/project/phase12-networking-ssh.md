@@ -443,6 +443,23 @@ hardware, live network/SSH, generated-root retry, append or stderr
 pipeline-output form, arbitrary-path, persistence, or phase-transition claim is
 made.
 
+The direct pipeline-output append regular-file redirection core accepts the
+exact direct path-form sequence
+'/bin/stdout | /bin/stdin >/tmp/pipeline-report.txt' followed by
+'/bin/stdout | /bin/stdin >>/tmp/pipeline-report.txt'. Both pipelines load
+both stages through descriptor-backed VFS open/read and the accepted userspace
+launch/status path; only the final stage receives child-only fd1 redirection to
+'volatile-vfs:/tmp/pipeline-report.txt'. The first command uses truncate/sink
+semantics and the second records append-at-EOF semantics. Descriptor-backed
+'cat /tmp/pipeline-report.txt' reads the two userspace stdin reports in order,
+and a later normal '/bin/stdout' proves shell fd1 restoration. Unsupported
+direct output targets, fixed-/bin bare-name append, wrong final-stage programs,
+stderr forms, input redirection on pipelines, malformed append grammar, and
+arbitrary/persistent paths fail closed. The next mechanically objective local
+POSIX/VFS task is the queued direct pipeline-output append closeout. No Pi 5
+hardware, live network/SSH, generated-root retry, persistent storage, or
+phase-transition claim is made.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1

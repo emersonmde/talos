@@ -1063,6 +1063,21 @@ remain deferred. No later queued same-lane local POSIX/VFS task is
 mechanically objective, so supervisor planning is required before another
 worker promotion.
 
+The direct pipeline-output append regular-file redirection core accepts exactly
+'/bin/stdout | /bin/stdin >/tmp/pipeline-report.txt' followed by
+'/bin/stdout | /bin/stdin >>/tmp/pipeline-report.txt'. Both stages in both
+pipelines load through descriptor-backed VFS open/read and the accepted
+userspace launch/status path before pipe handoff. Only the final stage receives
+child-only fd1 redirection to 'volatile-vfs:/tmp/pipeline-report.txt'; the
+first command truncates/sinks and the second appends at EOF. Descriptor-backed
+'cat /tmp/pipeline-report.txt' reads two userspace stdin reports in order, and
+a later normal '/bin/stdout' proves shell fd1 restoration. Unsupported direct
+targets, fixed-/bin bare-name append, wrong final-stage programs, stderr forms,
+input redirection on pipelines, malformed append grammar, arbitrary paths,
+persistent storage, live networking/SSH, Pi 5 hardware proof, generated-root
+retry, and phase transition remain deferred. The next local POSIX/VFS task is
+the direct path-form pipeline-output append closeout.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

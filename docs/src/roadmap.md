@@ -19537,6 +19537,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   retry, and phase transition remain deferred. selected_next_task is null and
   planningNeeded=true because no later queued same-lane local POSIX/VFS task is
   mechanically objective.
+- phase12-local-direct-pipeline-output-append-regular-file-redirection-core-20260627
+  accepts the exact direct path-form append sequence
+  '/bin/stdout | /bin/stdin >/tmp/pipeline-report.txt' followed by
+  '/bin/stdout | /bin/stdin >>/tmp/pipeline-report.txt'. Both stages in both
+  pipelines load through descriptor-backed VFS open/read and the accepted
+  userspace launch/status path. The first pipeline writes the final-stage
+  stdout report through a child-only truncate/sink regular-file descriptor;
+  the second writes the same report at EOF through child-only append to
+  volatile-vfs:/tmp/pipeline-report.txt. Descriptor-backed
+  'cat /tmp/pipeline-report.txt' reads two reports in order with bytes=0x88,
+  and a later normal '/bin/stdout' proves shell fd1 restoration. Unsupported
+  direct output targets, fixed-/bin bare-name append, wrong final-stage
+  programs, stderr forms, input redirection on pipelines, malformed append
+  grammar, and arbitrary/persistent paths fail closed. Live network/SSH,
+  generated-root retry, Pi 5 hardware proof, persistent storage, and phase
+  transition remain deferred. The selected next task is
+  phase12-local-direct-pipeline-output-append-regular-file-redirection-closeout-20260627.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

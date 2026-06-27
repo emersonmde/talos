@@ -1,0 +1,72 @@
+{
+  "task_id": "phase12-local-direct-pipeline-output-append-regular-file-redirection-core-20260627",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "paths": [
+        "src/local_command_loop.rs",
+        "src/target/qemu_virt.rs",
+        "build.rs",
+        "src/main.rs",
+        "scripts/qemu-local-serial-command-loop-smoke.sh",
+        "scripts/qemu-local-shell-direct-pipeline-output-append-regular-file-redirection-smoke.sh",
+        "docs/src/project/early-posix-shape.md",
+        "docs/src/project/phase12-networking-ssh.md",
+        "docs/src/roadmap.md",
+        "tasks/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-core.md"
+      ],
+      "result": "direct path-form pipeline-output append parser and volatile output path are scoped to /bin/stdout | /bin/stdin >>/tmp/pipeline-report.txt after the existing truncating pipeline write"
+    },
+    {
+      "level": "QEMU/substitute transcript",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop_redirects_direct_path_pipeline_consumer_stdout_to_volatile_regular_file",
+      "artifact": "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-core/qemu-substitute-focused-test.log",
+      "result": "passed; transcript asserts initial sink then append pipeline commands, VFS open/read for both stages, consumer fd0 pipe endpoint, consumer fd1 regular-file, exec-redirection op=sink and op=append, descriptor-backed cat readback bytes=0x88 with two reports, shell fd1 restoration, lifecycle/status records, and seven fail-closed negatives"
+    },
+    {
+      "level": "fmt/lint/typecheck",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "level": "unit tests / QEMU-substitute",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "artifact": "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-core/local-command-loop-test.log",
+      "result": "passed; 864 tests passed"
+    },
+    {
+      "level": "QEMU/substitute local shell smoke",
+      "command": "scripts/qemu-local-shell-direct-pipeline-output-append-regular-file-redirection-smoke.sh",
+      "artifact": "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-core/qemu-local-shell-direct-pipeline-output-append-regular-file-redirection-smoke.log",
+      "result": "passed; final participants=20 expected=20 errors=0 classification=qemu-local-shell-direct-pipeline-output-append-regular-file-redirection-complete"
+    },
+    {
+      "level": "QEMU/substitute retained regression smokes",
+      "artifact": "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-core/retained-regression-smoke-summary.txt",
+      "result": "passed cat-banner, absolute-path VFS command, process-status VFS/ps, pipestatus, direct stdin redirection, direct stdout append, direct stderr append, direct combined stdin/stdout redirection, and existing pipeline-output regular-file redirection smoke gates"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-core/classification.json tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-core/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed; HTML backend wrote book"
+    },
+    {
+      "level": "lab-controller API",
+      "result": "not run; no Pi 5 hardware gate"
+    },
+    {
+      "level": "serial hardware boot/output",
+      "result": "not run; no Pi 5 hardware gate"
+    }
+  ]
+}

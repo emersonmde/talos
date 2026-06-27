@@ -1,0 +1,27 @@
+qemu-local-cat-banner-smoke
+qemu-local-cat-banner: final participants=7 expected=7 errors=0 classification=qemu-local-cat-banner-complete
+qemu-local-cat-banner: PASS
+qemu-local-shell-absolute-path-vfs-command-smoke
+qemu-local-shell-absolute-path-vfs-command: final participants=18 expected=18 errors=0 classification=qemu-local-shell-absolute-path-vfs-command-complete
+qemu-local-shell-absolute-path-vfs-command: PASS
+qemu-local-shell-direct-combined-stdin-stdout-redirection-smoke
+qemu-local-shell-direct-combined-stdin-stdout-redirection: final participants=14 expected=14 errors=0 classification=qemu-local-shell-direct-combined-stdin-stdout-redirection-complete
+qemu-local-shell-direct-combined-stdin-stdout-redirection: PASS
+qemu-local-shell-direct-stderr-regular-file-append-redirection-smoke
+qemu-local-shell-direct-stderr-regular-file-append-redirection: final participants=18 expected=18 errors=0 classification=qemu-local-shell-direct-stderr-regular-file-append-redirection-complete
+qemu-local-shell-direct-stderr-regular-file-append-redirection: PASS
+qemu-local-shell-direct-stdin-redirection-smoke
+qemu-local-shell-direct-stdin-redirection: final participants=12 expected=12 errors=0 classification=qemu-local-shell-direct-stdin-redirection-complete
+qemu-local-shell-direct-stdin-redirection: PASS
+qemu-local-shell-direct-stdout-regular-file-append-redirection-smoke
+qemu-local-shell-direct-stdout-regular-file-append-redirection: final participants=14 expected=14 errors=0 classification=qemu-local-shell-direct-stdout-regular-file-append-redirection-complete
+qemu-local-shell-direct-stdout-regular-file-append-redirection: PASS
+qemu-local-shell-pipeline-consumer-output-redirection-smoke
+qemu-local-shell-pipeline-consumer-output-redirection: final participants=11 expected=11 errors=0 classification=qemu-local-shell-pipeline-consumer-output-redirection-complete
+qemu-local-shell-pipeline-consumer-output-redirection: PASS
+qemu-local-shell-pipeline-status-smoke
+qemu-local-shell-pipeline-status: final participants=12 expected=12 errors=0 classification=qemu-local-shell-pipeline-status-complete
+qemu-local-shell-pipeline-status: PASS
+qemu-local-shell-process-status-vfs-smoke
+qemu-local-shell-process-status-vfs: final participants=19 expected=19 errors=0 classification=qemu-local-shell-process-status-vfs-complete
+qemu-local-shell-process-status-vfs: PASS
