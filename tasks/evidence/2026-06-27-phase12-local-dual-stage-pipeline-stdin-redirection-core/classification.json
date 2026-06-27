@@ -1,0 +1,53 @@
+{
+  "task_id": "phase12-local-dual-stage-pipeline-stdin-redirection-core-20260627",
+  "classification": "accepted",
+  "accepted_witnesses": [
+    "/bin/stdin </etc/banner.txt | /bin/stdin </etc/banner.txt",
+    "stdin </etc/banner.txt | stdin </etc/banner.txt"
+  ],
+  "boundary": "local-only descriptor-backed dual-stage read-only pipeline stdin redirection",
+  "pipe_source": "shell-pipe-dual-stdin-redirection-from-file",
+  "observed_pipe_summary": {
+    "producer_fd": "0x0000000000000001",
+    "consumer_fd": "0x0000000000000000",
+    "bytes_written": "0x000000000000003d",
+    "bytes_read": "0x0000000000000000",
+    "writer_closed": true,
+    "reader_eof": false,
+    "shell_restored": true
+  },
+  "fail_closed_witnesses": [
+    "/bin/stdin </etc/banner.txt | stdin </etc/banner.txt",
+    "stdin </etc/banner.txt | /bin/stdin </etc/banner.txt"
+  ],
+  "retained_boundaries": [
+    "command stdin redirection",
+    "producer-stage pipeline stdin redirection",
+    "consumer-stage pipeline stdin redirection",
+    "direct and bare command argv",
+    "direct and bare pipeline argv",
+    "process-status VFS",
+    "zero-argument ps",
+    "pipestatus",
+    "cat-banner"
+  ],
+  "rejected_claims": [
+    "live networking",
+    "SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "writable filesystem behavior",
+    "output regular-file redirection",
+    "append or truncate semantics",
+    "mixed direct/bare forms",
+    "multistage pipelines",
+    "pipeline concurrency",
+    "scheduler concurrency",
+    "arbitrary shell grammar",
+    "phase transition"
+  ],
+  "hardware": {
+    "pi5_hardware_claim": false,
+    "live_networking_or_ssh": false
+  }
+}

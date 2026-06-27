@@ -1,0 +1,61 @@
+{
+  "task_id": "phase12-local-dual-stage-pipeline-stdin-redirection-core-20260627",
+  "evidence": [
+    {
+      "kind": "fmt",
+      "command": "cargo fmt --all -- --check",
+      "result": "pass"
+    },
+    {
+      "kind": "unit-test",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "result": "pass",
+      "tests": 851
+    },
+    {
+      "kind": "qemu-substitute-smoke",
+      "command": "scripts/qemu-local-shell-direct-pipeline-consumer-stdin-redirection-smoke.sh --quiet",
+      "result": "pass",
+      "path": "tasks/evidence/2026-06-27-phase12-local-dual-stage-pipeline-stdin-redirection-core/qemu-local-shell-direct-pipeline-consumer-stdin-redirection-smoke.log",
+      "fail_closed_witness": "/bin/stdin </etc/banner.txt | stdin </etc/banner.txt"
+    },
+    {
+      "kind": "qemu-substitute-smoke",
+      "command": "scripts/qemu-local-shell-bare-name-pipeline-consumer-stdin-redirection-smoke.sh --quiet",
+      "result": "pass",
+      "path": "tasks/evidence/2026-06-27-phase12-local-dual-stage-pipeline-stdin-redirection-core/qemu-local-shell-bare-name-pipeline-consumer-stdin-redirection-smoke.log",
+      "fail_closed_witness": "stdin </etc/banner.txt | /bin/stdin </etc/banner.txt"
+    },
+    {
+      "kind": "qemu-substitute-regressions",
+      "result": "pass",
+      "path": "tasks/evidence/2026-06-27-phase12-local-dual-stage-pipeline-stdin-redirection-core/regressions",
+      "surfaces": [
+        "direct command stdin redirection",
+        "bare-name command stdin redirection",
+        "direct producer-stage pipeline stdin redirection",
+        "bare-name producer-stage pipeline stdin redirection",
+        "direct consumer-stage pipeline stdin redirection",
+        "bare-name consumer-stage pipeline stdin redirection",
+        "direct command argv",
+        "bare-name command argv",
+        "direct pipeline argv",
+        "bare-name pipeline argv",
+        "process-status VFS",
+        "zero-argument ps",
+        "pipestatus",
+        "cat-banner"
+      ]
+    },
+    {
+      "kind": "json-check",
+      "command": "jq empty classification.json evidence-map.json",
+      "result": "pass"
+    },
+    {
+      "kind": "docs",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    }
+  ]
+}

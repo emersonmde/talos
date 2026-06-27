@@ -19005,6 +19005,28 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   planningNeeded=true because no later queued same-lane local POSIX/shell task
   exists with complete objective dependencies, acceptance criteria, validation
   gates, docs, and evidence requirements.
+- phase12-local-dual-stage-pipeline-stdin-redirection-core-20260627 accepts
+  the smallest local-only dual-stage read-only stdin redirection pipeline
+  core. The accepted witnesses are exactly
+  '/bin/stdin </etc/banner.txt | /bin/stdin </etc/banner.txt' and
+  'stdin </etc/banner.txt | stdin </etc/banner.txt'. Both stages load through
+  descriptor-backed VFS open/read and the accepted loader/userspace
+  launch/status path; both child fd0 entries are independent regular-file
+  descriptors for initramfs:/etc/banner.txt; the producer fd1 remains the pipe
+  endpoint; the consumer reads its own redirected regular file. The
+  QEMU/substitute evidence records
+  source=shell-pipe-dual-stdin-redirection-from-file, bytes-written=0x3d,
+  bytes-read=0x0, reader-eof=false, restored shell descriptors, closed loader
+  temporary descriptors, coherent explicit waitpid for both participants,
+  laststatus, /proc/talos/processes, zero-argument ps, and pipestatus.
+  Unsupported variants, including mixed direct/bare dual-stage forms, fail
+  closed, and retained command stdin redirection, producer-stage and
+  consumer-stage pipeline stdin redirection, command argv, pipeline argv,
+  process-status VFS, zero-argument ps, pipestatus, and cat-banner regression
+  surfaces remain green. Live networking/SSH, Pi 5 hardware proof,
+  generated-root retry, writable filesystem/output
+  redirection, arbitrary shell grammar, broader pipeline semantics, and phase
+  transition remain deferred.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

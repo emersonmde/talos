@@ -557,6 +557,31 @@ persistent storage, live networking/SSH, Pi 5 hardware proof,
 generated-root retry, and phase transition remain deferred pending supervisor
 planning.
 
+The dual-stage pipeline stdin redirection core accepts the smallest
+two-stage form where both participants independently receive read-only
+stdin redirection from initramfs:
+\`/bin/stdin </etc/banner.txt | /bin/stdin </etc/banner.txt\` and
+\`stdin </etc/banner.txt | stdin </etc/banner.txt\`. Both stages still load
+through descriptor-backed VFS open/read and the accepted loader/userspace
+launch/status path. Each child fd0 is replaced with
+initramfs:/etc/banner.txt; the producer keeps fd1 as the pipe endpoint and
+writes the redirected banner bytes to the pipe surface, while the consumer
+reads its own regular-file fd0 to EOF. QEMU/substitute evidence records
+\`source=shell-pipe-dual-stdin-redirection-from-file\`, \`bytes-written=0x3d\`,
+\`bytes-read=0x0\`, \`reader-eof=false\`, restored shell descriptors, closed
+loader temporary descriptors, and coherent waitpid, laststatus,
+/proc/talos/processes, zero-argument ps, and pipestatus observations.
+Consumer-stage-only and producer-stage-only stdin redirection, command argv,
+pipeline argv, process-status VFS, ps, pipestatus, and cat-banner surfaces
+remain retained regressions. Mixed direct/bare dual-stage forms fail closed
+without additional successful process records. Separated \`<\` syntax,
+unsupported paths, output redirection, append/truncate, multistage
+redirection, arbitrary stage redirection, writable filesystem behavior,
+environment-backed PATH, current-directory search, broader shell grammar,
+unbounded or concurrent pipelines, scheduler concurrency, fork/signals,
+process groups/sessions, persistent storage, live networking/SSH, Pi 5
+hardware proof, generated-root retry, and phase transition remain deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

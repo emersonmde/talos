@@ -15581,13 +15581,13 @@ const fn local_command_loop_smoke_command_count() -> usize {
     } else if cfg!(
         talos_boot_scenario = "qemu_local_shell_direct_pipeline_consumer_stdin_redirection"
     ) {
-        17
+        18
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_stdin_redirection") {
         16
     } else if cfg!(
         talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_consumer_stdin_redirection"
     ) {
-        17
+        18
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_stage_argv") {
         15
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_bare_name_vfs_pipeline") {
@@ -15952,6 +15952,11 @@ fn expected_local_command_loop_dispatch(
                 }
                 16 => {
                     line == b"/bin/stdin </etc/banner.txt | /bin/stdin </etc/banner.txt"
+                        && status == Handled
+                        && response_lines == 24
+                }
+                17 => {
+                    line == b"/bin/stdin </etc/banner.txt | stdin </etc/banner.txt"
                         && status == UnexpectedArgument
                         && response_lines == 1
                 }
@@ -16012,7 +16017,8 @@ fn expected_local_command_loop_dispatch(
         }
         index
             if cfg!(
-                talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_consumer_stdin_redirection"
+                talos_boot_scenario =
+                    "qemu_local_shell_bare_name_pipeline_consumer_stdin_redirection"
             ) =>
         {
             match index {
@@ -16061,6 +16067,11 @@ fn expected_local_command_loop_dispatch(
                 }
                 16 => {
                     line == b"stdin </etc/banner.txt | stdin </etc/banner.txt"
+                        && status == Handled
+                        && response_lines == 24
+                }
+                17 => {
+                    line == b"stdin </etc/banner.txt | /bin/stdin </etc/banner.txt"
                         && status == UnexpectedArgument
                         && response_lines == 1
                 }
