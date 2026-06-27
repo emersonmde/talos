@@ -441,6 +441,25 @@ stdin redirection frontier checkpoint before any consumer-stage redirection,
 output redirection, writable filesystem, PATH, hardware, generated-root, or
 live network/SSH work.
 
+The pipeline stdin redirection frontier checkpoint reconciles the accepted
+direct path-form and fixed-/bin bare-name producer-stage redirection pair:
+'/bin/stdin </etc/banner.txt | /bin/stdin' and
+'stdin </etc/banner.txt | stdin'. Both surfaces remain local-only and
+static/unit/QEMU-substitute backed. Producer fd0 is sourced from
+initramfs:/etc/banner.txt, producer fd1 stays the pipe endpoint, consumer fd0
+reads that pipe endpoint to EOF, loader temporary descriptors close, shell
+fd0 restoration stays coherent, and waitpid, laststatus,
+/proc/talos/processes, zero-argument ps, and pipestatus remain intact.
+Consumer-stage redirection, redirection on multiple pipeline stages,
+multistage pipeline redirection, output regular-file redirection,
+append/truncate, writable filesystem behavior, combined redirections beyond
+accepted exact forms, environment-backed PATH, current-directory search,
+command lookup beyond bounded /bin, arbitrary shell grammar, unbounded
+pipelines, pipeline concurrency, scheduler concurrency, fork/signals, process
+groups/sessions, persistent storage, live networking/SSH, Pi 5 hardware
+proof, generated-root retry, and phase transition remain deferred pending
+supervisor planning.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
