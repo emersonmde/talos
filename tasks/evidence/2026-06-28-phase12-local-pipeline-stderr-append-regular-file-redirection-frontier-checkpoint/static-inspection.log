@@ -1,0 +1,21 @@
+Static inspection for phase12-local-pipeline-stderr-append-regular-file-redirection-frontier-checkpoint-20260628
+
+Inspected retained direct and fixed-/bin bare-name pipeline stderr append core
+and closeout task records, task-owned classifications, evidence maps,
+QEMU/substitute transcripts, retained regression summaries, and docs.
+
+Retained accepted witnesses:
+- /bin/stdout | /bin/stderr 2>/tmp/pipeline-stderr.txt
+- /bin/stdout | /bin/stderr 2>>/tmp/pipeline-stderr.txt
+- stdout | stderr 2>/tmp/pipeline-stderr.txt
+- stdout | stderr 2>>/tmp/pipeline-stderr.txt
+
+Finding: accepted frontier is local-only static/unit/QEMU-substitute evidence;
+no runtime feature change, lab-controller API check, serial hardware boot, live
+networking/SSH, Pi 5 hardware proof, generated-root retry, or phase transition
+is accepted by this checkpoint.
+
+Finding: no later queued same-lane local POSIX/VFS task has complete objective
+dependencies, acceptance criteria, validation gates, docs requirements, and
+evidence requirements; selected_next_task remains null and planningNeeded is
+true for supervisor planning.

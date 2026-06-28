@@ -1,0 +1,62 @@
+{
+  "task_id": "phase12-local-pipeline-stderr-append-regular-file-redirection-frontier-checkpoint-20260628",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "paths": [
+        "tasks/2026-06-28-phase12-local-direct-pipeline-stderr-append-regular-file-redirection-core.md",
+        "tasks/2026-06-28-phase12-local-direct-pipeline-stderr-append-regular-file-redirection-closeout.md",
+        "tasks/2026-06-28-phase12-local-bare-name-pipeline-stderr-append-regular-file-redirection-core.md",
+        "tasks/2026-06-28-phase12-local-bare-name-pipeline-stderr-append-regular-file-redirection-closeout.md",
+        "tasks/evidence/2026-06-28-phase12-local-direct-pipeline-stderr-append-regular-file-redirection-core/classification.json",
+        "tasks/evidence/2026-06-28-phase12-local-direct-pipeline-stderr-append-regular-file-redirection-core/evidence-map.json",
+        "tasks/evidence/2026-06-28-phase12-local-direct-pipeline-stderr-append-regular-file-redirection-closeout/classification.json",
+        "tasks/evidence/2026-06-28-phase12-local-direct-pipeline-stderr-append-regular-file-redirection-closeout/evidence-map.json",
+        "tasks/evidence/2026-06-28-phase12-local-bare-name-pipeline-stderr-append-regular-file-redirection-core/classification.json",
+        "tasks/evidence/2026-06-28-phase12-local-bare-name-pipeline-stderr-append-regular-file-redirection-core/evidence-map.json",
+        "tasks/evidence/2026-06-28-phase12-local-bare-name-pipeline-stderr-append-regular-file-redirection-closeout/classification.json",
+        "tasks/evidence/2026-06-28-phase12-local-bare-name-pipeline-stderr-append-regular-file-redirection-closeout/evidence-map.json",
+        "docs/src/project/early-posix-shape.md",
+        "docs/src/project/phase12-networking-ssh.md",
+        "docs/src/roadmap.md",
+        "tasks/2026-06-28-phase12-local-pipeline-stderr-append-regular-file-redirection-frontier-checkpoint.md"
+      ],
+      "result": "accepted direct path-form and fixed-/bin bare-name pipeline stderr append boundary reconciled; no runtime code change required"
+    },
+    {
+      "level": "retained QEMU/substitute transcript",
+      "source_task": "phase12-local-direct-pipeline-stderr-append-regular-file-redirection-core-20260628",
+      "command": "scripts/qemu-local-shell-direct-pipeline-stderr-append-regular-file-redirection-smoke.sh",
+      "result": "retained core evidence passed; direct pipeline stderr append witness records final-stage fd2 sink followed by append, descriptor-backed cat readback bytes=0x3e, shell fd2 restoration, process-status coherence, and fail-closed negatives"
+    },
+    {
+      "level": "retained QEMU/substitute transcript",
+      "source_task": "phase12-local-bare-name-pipeline-stderr-append-regular-file-redirection-core-20260628",
+      "command": "scripts/qemu-local-shell-bare-name-pipeline-stderr-regular-file-redirection-smoke.sh",
+      "result": "retained core evidence passed; fixed-/bin bare-name pipeline stderr append witness records final-stage fd2 sink followed by append, descriptor-backed cat readback bytes=0x3e, shell fd2 restoration, process-status coherence, and fail-closed negatives"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty over task-owned direct pipeline stderr append, bare-name pipeline stderr append, and checkpoint JSON evidence",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed; HTML backend wrote book"
+    },
+    {
+      "level": "lab-controller API",
+      "result": "not run; no Pi 5 hardware gate"
+    },
+    {
+      "level": "serial hardware boot/output",
+      "result": "not run; no Pi 5 hardware gate"
+    }
+  ]
+}
