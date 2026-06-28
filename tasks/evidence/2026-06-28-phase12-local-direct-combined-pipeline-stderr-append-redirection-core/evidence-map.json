@@ -1,0 +1,32 @@
+{
+  "task_id": "phase12-local-direct-combined-pipeline-stderr-append-redirection-core-20260628",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "paths": [
+        "src/local_command_loop.rs",
+        "src/target/qemu_virt.rs",
+        "src/main.rs",
+        "build.rs",
+        "scripts/qemu-local-serial-command-loop-smoke.sh",
+        "scripts/qemu-local-shell-direct-combined-pipeline-stderr-append-redirection-smoke.sh"
+      ],
+      "result": "Exact direct combined stderr append path admitted while bare-name successor, arbitrary paths, persistent targets, separated forms, and multistage broadening remain outside the accepted boundary."
+    },
+    {
+      "level": "QEMU/substitute unit tests",
+      "path": "tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-stderr-append-redirection-core/qemu-substitute-focused-test.log",
+      "result": "Focused command completed with test result ok, 873 passed."
+    },
+    {
+      "level": "QEMU/substitute regression tests",
+      "path": "tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-stderr-append-redirection-core/local-command-loop-regression-test.log",
+      "result": "local_command_loop command completed with test result ok, 873 passed."
+    },
+    {
+      "level": "QEMU/substitute local shell smoke",
+      "path": "tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-stderr-append-redirection-core/qemu-local-shell-direct-combined-pipeline-stderr-append-redirection-smoke.log",
+      "result": "Transcript reached final participants=24 expected=24 errors=0 classification=qemu-local-shell-direct-combined-pipeline-stderr-append-redirection-complete."
+    }
+  ]
+}

@@ -785,6 +785,25 @@ generated-root retry, and phase transition remain deferred. selected_next_task
 is null and planningNeeded=true because no later queued same-lane local
 POSIX/VFS task is mechanically objective.
 
+The
+phase12-local-direct-combined-pipeline-stderr-append-redirection-core-20260628
+task accepts the exact direct path-form truncate-then-append sequence
+'/bin/stdin </etc/banner.txt | /bin/stderr 2>/tmp/pipeline-combined-stderr-append.txt'
+followed by
+'/bin/stdin </etc/banner.txt | /bin/stderr 2>>/tmp/pipeline-combined-stderr-append.txt'.
+Both stages load through descriptor-backed VFS/userspace execution. The
+producer keeps fd0 from initramfs:/etc/banner.txt and fd1 to the pipe endpoint;
+the final-stage consumer keeps fd0 from that pipe endpoint, inherited fd1, and
+child-only fd2 to volatile-vfs:/tmp/pipeline-combined-stderr-append.txt. The
+first command truncates/sinks and the second appends at EOF.
+Descriptor-backed 'cat /tmp/pipeline-combined-stderr-append.txt' reads two
+userspace stderr fixture writes in order. Fixed-/bin bare-name combined stderr
+append, arbitrary input/output paths, persistent storage, mixed direct/bare
+path forms, broad shell grammar, live networking/SSH, Pi 5 hardware proof,
+generated-root retry, and phase transition remain deferred. The selected next
+local POSIX/VFS task is
+phase12-local-bare-name-combined-pipeline-stderr-append-redirection-core-20260628.
+
 The direct combined pipeline stdout append redirection core accepts the exact
 direct path-form sequence
 '/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-combined-append.txt'

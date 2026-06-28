@@ -176,6 +176,7 @@
             talos_boot_scenario = "qemu_local_shell_direct_combined_pipeline_stdin_stdout_redirection",
             talos_boot_scenario = "qemu_local_shell_direct_combined_pipeline_stdout_append_redirection",
             talos_boot_scenario = "qemu_local_shell_direct_combined_pipeline_stderr_regular_file_redirection",
+            talos_boot_scenario = "qemu_local_shell_direct_combined_pipeline_stderr_append_redirection",
             talos_boot_scenario = "qemu_local_shell_bare_name_combined_pipeline_stdout_append_redirection",
             talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_stdin_redirection",
             talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_consumer_stdin_redirection",
