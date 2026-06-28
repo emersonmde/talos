@@ -11231,3 +11231,20 @@ process/status observations. Fixed-/bin bare-name combined pipeline output-path
 append remains the selected next local task. Live networking/SSH, Pi 5 hardware
 proof, generated-root retry, boot publication, persistence, broad path support,
 and phase transition remain deferred.
+
+The accepted
+phase12-local-bare-name-combined-pipeline-bounded-tmp-output-path-append-redirection-core-20260628
+task extends that bounded output-path append frontier to fixed-/bin bare-name
+combined pipelines. The accepted witnesses are exactly
+'stdin </etc/banner.txt | stdin >/tmp/talos-pipeline-output-alpha.txt' followed
+by 'stdin </etc/banner.txt | stdin >>/tmp/talos-pipeline-output-alpha.txt', and
+'stdin </etc/banner.txt | stderr 2>/tmp/talos-pipeline-error-beta.log' followed
+by 'stdin </etc/banner.txt | stderr 2>>/tmp/talos-pipeline-error-beta.log'. Both
+stages resolve only through bounded /bin lookup before descriptor-backed VFS
+open/read, loader, userspace launch/status, serialized pipe handoff, and volatile
+VFS file rebinding. Descriptor-backed cat readback proves stdout bytes=0xc4 and
+stderr bytes=0x3e after truncate-then-append. Mixed direct/bare forms, command
+lookup beyond bounded /bin, persistence, broad path support, live networking/SSH,
+Pi 5 hardware proof, generated-root retry, boot publication, and phase
+transition remain deferred. The selected next local task is the combined
+pipeline bounded /tmp output-path append frontier checkpoint.

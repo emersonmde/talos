@@ -1729,9 +1729,30 @@ initramfs:/etc/banner.txt, producer fd1 pipe handoff, final-stage fd0 from the
 pipe, child-only fd1/fd2 volatile-vfs rebinding, append-at-EOF semantics,
 descriptor-backed cat readback, lifecycle/status/process observations, and
 later descriptor restoration controls. Fixed-/bin bare-name combined pipeline
-output-path append, persistence, path broadening beyond safe volatile /tmp leaf
-targets, live networking/SSH, generated-root retry, Pi 5 hardware proof, boot
-publication, and phase transition remain deferred.
+output-path append remains the selected next local task; persistence, path
+broadening beyond safe volatile /tmp leaf targets, live networking/SSH,
+generated-root retry, Pi 5 hardware proof, boot publication, and phase
+transition remain deferred.
+
+The fixed-/bin bare-name combined-pipeline bounded volatile /tmp output-path
+append core accepts the same local output-path policy after both stages resolve
+only through bounded /bin lookup. The accepted stdout sequence is
+'stdin </etc/banner.txt | stdin >/tmp/talos-pipeline-output-alpha.txt' followed
+by 'stdin </etc/banner.txt | stdin >>/tmp/talos-pipeline-output-alpha.txt'. The
+accepted stderr sequence is
+'stdin </etc/banner.txt | stderr 2>/tmp/talos-pipeline-error-beta.log' followed
+by 'stdin </etc/banner.txt | stderr 2>>/tmp/talos-pipeline-error-beta.log'.
+Both sequences keep descriptor-backed VFS/userspace execution, producer fd0 from
+initramfs:/etc/banner.txt, producer fd1 pipe handoff, final-stage fd0 from the
+pipe, child-only fd1/fd2 volatile-vfs rebinding, append-at-EOF semantics,
+descriptor-backed cat readback, lifecycle/status/process observations, closed
+loader temporaries, and later descriptor restoration controls. Mixed direct/bare
+stage forms, command lookup beyond bounded /bin, persistence, nested/traversal
+paths, paths outside volatile /tmp, separated redirection-token grammar,
+explicit alternate fd syntax, live networking/SSH, generated-root retry, Pi 5
+hardware proof, boot publication, and phase transition remain deferred. The
+selected next local task is the combined pipeline bounded /tmp output-path
+append frontier checkpoint.
 
 ## Scheduler Implications
 
