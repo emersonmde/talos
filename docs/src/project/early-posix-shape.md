@@ -1256,6 +1256,22 @@ pipeline shape, arbitrary paths, persistent storage, generated-root retry, live
 networking/SSH, Pi 5 hardware proof, and phase transition remain deferred. The
 next local POSIX/VFS task is the queued direct pipeline stderr append closeout.
 
+The direct pipeline stderr append regular-file redirection closeout reconciles
+that accepted local-only boundary against retained task records, classification
+JSON, evidence maps, QEMU/substitute transcript, retained regression controls,
+and docs. The accepted sequence remains exactly
+'/bin/stdout | /bin/stderr 2>/tmp/pipeline-stderr.txt' followed by
+'/bin/stdout | /bin/stderr 2>>/tmp/pipeline-stderr.txt'. Retained evidence
+records the producer fd1 pipe endpoint, final-stage consumer fd0 pipe endpoint,
+child-only fd2 targeting volatile-vfs:/tmp/pipeline-stderr.txt with sink then
+append semantics, descriptor-backed readback bytes=0x3e, shell fd2 restoration,
+and coherent process-status observations. Fixed-/bin bare-name pipeline stderr
+append remains separate queued implementation work; input/combined pipeline
+redirections, stdout final-stage redirection for this pipeline shape,
+arbitrary paths, persistent storage, generated-root retry, live networking/SSH,
+Pi 5 hardware proof, and phase transition remain deferred. The next local
+POSIX/VFS task is the queued fixed-/bin bare-name pipeline stderr append core.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
