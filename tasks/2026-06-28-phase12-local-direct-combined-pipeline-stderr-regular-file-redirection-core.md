@@ -3,8 +3,8 @@
 Task id:
 phase12-local-direct-combined-pipeline-stderr-regular-file-redirection-core-20260628
 
-Status: accepted; commit hash recorded in durable supervisor state after
-commit.
+Status: accepted; committed at
+209de86c201762e5e18a258b1dbe7e0217654ade.
 
 ## Scope
 
