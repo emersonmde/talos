@@ -1807,6 +1807,26 @@ Pi 5 hardware proof, boot publication, live networking/SSH, and phase
 transition remain deferred. The selected next local task is fixed-/bin
 bare-name separated redirection-token support.
 
+The fixed-/bin bare-name separated redirection-token core extends the same
+grammar only after bounded /bin lookup. The accepted local witnesses are
+'stdin < /etc/banner.txt', 'stdout > /tmp/talos-output-alpha.txt' followed by
+'stdout >> /tmp/talos-output-alpha.txt', and
+'stderr 2> /tmp/talos-error-beta.log' followed by
+'stderr 2>> /tmp/talos-error-beta.log'. The canonical executable path still
+resolves to /bin/stdin, /bin/stdout, or /bin/stderr before descriptor-backed
+VFS open/read and userspace launch/status. Successful runs preserve child-only
+fd0 source rebinding for initramfs:/etc/banner.txt, child-only fd1/fd2
+rebinding to safe volatile-vfs /tmp leaf files, append-at-EOF semantics,
+descriptor-backed cat readback, waitpid/laststatus observations, and later
+descriptor restoration controls. Direct separated-token and no-space forms
+remain regression controls. Pipeline separated tokens, separated explicit fd
+syntax such as '1 > path' or '2 > path', mixed direct/bare broadening,
+PATH/current-directory lookup, command lookup beyond bounded /bin, arbitrary
+shell grammar, persistent writable filesystem behavior, generated-root retry,
+Pi 5 hardware proof, boot publication, live networking/SSH, and phase
+transition remain deferred. The selected next local task is direct path-form
+pipeline separated redirection-token support.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

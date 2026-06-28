@@ -20273,6 +20273,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   persistence, live networking/SSH, Pi 5 hardware proof, generated-root retry,
   boot publication, and phase transition remain deferred. The selected next
   local task is the fixed-/bin bare-name separated-token counterpart.
+- Fixed-/bin bare-name commands now accept the same separated redirection
+  operator and path tokens after bounded /bin lookup. The accepted witnesses
+  are 'stdin < /etc/banner.txt',
+  'stdout > /tmp/talos-output-alpha.txt' followed by
+  'stdout >> /tmp/talos-output-alpha.txt', and
+  'stderr 2> /tmp/talos-error-beta.log' followed by
+  'stderr 2>> /tmp/talos-error-beta.log'. The implementation stays within the
+  descriptor-backed VFS/userspace path and safe volatile /tmp leaf policy while
+  preserving direct separated-token and no-space controls. Pipeline separated
+  tokens, separated explicit fd syntax, mixed direct/bare broadening,
+  PATH/current-directory lookup, command lookup beyond bounded /bin,
+  arbitrary shell grammar, persistence, live networking/SSH, Pi 5 hardware
+  proof, generated-root retry, boot publication, and phase transition remain
+  deferred. The selected next local task is the direct path-form pipeline
+  separated-token counterpart.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

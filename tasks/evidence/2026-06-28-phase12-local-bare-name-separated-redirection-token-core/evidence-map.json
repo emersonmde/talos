@@ -1,0 +1,43 @@
+{
+  "task_id": "phase12-local-bare-name-separated-redirection-token-core-20260628",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "paths": [
+        "src/local_command_loop.rs",
+        "docs/src/roadmap.md",
+        "docs/src/project/early-posix-shape.md",
+        "tasks/2026-06-28-phase12-local-bare-name-separated-redirection-token-core.md"
+      ],
+      "result": "Bare-name separated redirection-token parsing is bounded to fixed /bin stdin/stdout/stderr surfaces and preserves direct/no-space controls."
+    },
+    {
+      "level": "QEMU/substitute unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "path": "tasks/evidence/2026-06-28-phase12-local-bare-name-separated-redirection-token-core/qemu-substitute-local-command-loop.log",
+      "result": "passed; 882 Talos no_std tests"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    }
+  ],
+  "negative_controls": [
+    "unsupported paths outside volatile /tmp",
+    "nested/traversal paths",
+    "missing separated operands",
+    "unsupported separated operators",
+    "separated explicit fd forms",
+    "pipeline separated-token forms"
+  ],
+  "scope_exclusions": [
+    "Pi 5 hardware/lab action",
+    "boot publication",
+    "generated-root retry",
+    "live networking/SSH",
+    "persistence",
+    "arbitrary paths",
+    "phase transition"
+  ]
+}
