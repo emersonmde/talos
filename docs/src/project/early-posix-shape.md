@@ -1349,6 +1349,20 @@ networking/SSH, Pi 5 hardware proof, generated-root retry, and phase transition
 remain deferred. The accepted core selects the direct combined pipeline
 stdin/stdout closeout before any bare-name expansion.
 
+The direct combined pipeline stdin/stdout closeout freezes that direct
+path-form boundary without adding runtime behavior. The accepted witness
+remains exactly
+'/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-combined.txt':
+producer fd0 comes from initramfs:/etc/banner.txt, producer fd1 is the pipe
+endpoint, consumer fd0 is the pipe endpoint, consumer fd1 targets
+volatile-vfs:/tmp/pipeline-combined.txt, inherited fd2 is preserved for both
+stages, and descriptor-backed 'cat /tmp/pipeline-combined.txt' reads the
+nested userspace stdin report back. Unsupported direct forms stay fail-closed.
+The selected next local POSIX/VFS task is the queued fixed-/bin bare-name
+combined pipeline stdin/stdout core; live networking/SSH, Pi 5 hardware proof,
+generated-root retry, arbitrary paths, append/stderr variants, and phase
+transition remain paused/deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

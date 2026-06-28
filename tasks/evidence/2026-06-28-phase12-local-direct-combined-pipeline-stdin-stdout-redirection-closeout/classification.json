@@ -1,0 +1,80 @@
+{
+  "task_id": "phase12-local-direct-combined-pipeline-stdin-stdout-redirection-closeout-20260628",
+  "classification": "direct-combined-pipeline-stdin-stdout-redirection-closeout-accepted",
+  "accepted_witness": "/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-combined.txt",
+  "accepted_surface": {
+    "direct_paths": true,
+    "bare_name_lookup": false,
+    "producer": {
+      "path": "/bin/stdin",
+      "fd0": {
+        "kind": "regular-file",
+        "route": "initramfs:/etc/banner.txt",
+        "child_only": true
+      },
+      "fd1": {
+        "kind": "pipe-endpoint",
+        "route": "pipe:stdin-to-stdin"
+      },
+      "fd2": "inherited",
+      "loader_temporary_descriptor_open": false
+    },
+    "consumer": {
+      "path": "/bin/stdin",
+      "fd0": {
+        "kind": "pipe-endpoint",
+        "route": "pipe:stdin-to-stdin"
+      },
+      "fd1": {
+        "kind": "regular-file",
+        "route": "volatile-vfs:/tmp/pipeline-combined.txt",
+        "operation": "sink",
+        "child_only": true
+      },
+      "fd2": "inherited",
+      "loader_temporary_descriptor_open": false
+    },
+    "readback": {
+      "path": "/tmp/pipeline-combined.txt",
+      "source": "volatile-vfs-descriptor-read",
+      "content": "nested userspace stdin report from piped banner input"
+    },
+    "shell_restored": [
+      "fd0",
+      "fd1"
+    ],
+    "process_status_observations": [
+      "waitpid",
+      "laststatus",
+      "/proc/talos/processes",
+      "ps",
+      "pipestatus-compatible accounting"
+    ]
+  },
+  "unsupported_forms_remain_deferred": [
+    "fixed-/bin bare-name combined pipeline redirection",
+    "append combined pipeline forms",
+    "stderr combined pipeline forms",
+    "wrong output path",
+    "stdout producer with the combined path",
+    "explicit fd1 syntax",
+    "separated redirection tokens",
+    "persistent /var target",
+    "unsupported stage names",
+    "arbitrary input/output paths",
+    "persistent writable filesystem behavior",
+    "environment-backed PATH",
+    "current-directory search",
+    "command lookup beyond bounded /bin",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "phase transition"
+  ],
+  "hardware": {
+    "lab_controller_api": "not-run",
+    "serial_hardware_boot_output": "not-run",
+    "reason": "static closeout for local POSIX/VFS task has no Pi 5 hardware gate"
+  },
+  "selected_next_task": "phase12-local-bare-name-combined-pipeline-stdin-stdout-redirection-core-20260628"
+}

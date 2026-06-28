@@ -720,6 +720,17 @@ bounded /bin, live networking/SSH, Pi 5 hardware proof, generated-root retry,
 and phase transition remain deferred. The next local POSIX/VFS task is the
 queued direct combined pipeline stdin/stdout closeout.
 
+The direct combined pipeline stdin/stdout closeout freezes that accepted
+direct boundary without adding runtime behavior. The accepted witness remains
+exactly '/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-combined.txt':
+producer fd0 is sourced from initramfs:/etc/banner.txt, producer fd1 is the
+pipe endpoint, consumer fd0 is that pipe endpoint, consumer fd1 targets
+volatile-vfs:/tmp/pipeline-combined.txt, inherited fd2 is preserved for both
+stages, and descriptor-backed 'cat /tmp/pipeline-combined.txt' reads the
+nested userspace stdin report back. Unsupported direct combined forms remain
+fail-closed. The next mechanically objective local POSIX/VFS task is the
+queued fixed-/bin bare-name combined pipeline stdin/stdout core.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1

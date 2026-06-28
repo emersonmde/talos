@@ -19834,6 +19834,18 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   generated-root retry, and phase transition remain deferred. The selected
   next task is
   phase12-local-direct-combined-pipeline-stdin-stdout-redirection-closeout-20260628.
+- phase12-local-direct-combined-pipeline-stdin-stdout-redirection-closeout-20260628
+  freezes that accepted direct path-form combined pipeline stdin/stdout
+  boundary without adding runtime behavior. The accepted witness remains
+  exactly
+  '/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-combined.txt':
+  producer fd0 is sourced from initramfs:/etc/banner.txt, producer fd1 is the
+  pipe endpoint, consumer fd0 is that pipe endpoint, consumer fd1 targets
+  volatile-vfs:/tmp/pipeline-combined.txt, inherited fd2 is preserved for both
+  stages, and descriptor-backed 'cat /tmp/pipeline-combined.txt' reads the
+  nested userspace stdin report back. Unsupported direct forms remain
+  fail-closed. The selected next task is
+  phase12-local-bare-name-combined-pipeline-stdin-stdout-redirection-core-20260628.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
