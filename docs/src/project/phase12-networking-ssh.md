@@ -532,6 +532,34 @@ hardware proof, and phase transition remain deferred. No later queued same-lane
 local POSIX/VFS task is mechanically objective, so supervisor planning is
 required before another worker promotion.
 
+The direct pipeline stderr regular-file redirection core accepts exactly
+'/bin/stdout | /bin/stderr 2>/tmp/pipeline-stderr.txt'. Both stages load
+through descriptor-backed VFS open/read and the accepted userspace
+launch/status path. The producer records fd1 as the pipe endpoint; the
+final-stage consumer records fd0 as that pipe endpoint and fd2 child-only as
+'volatile-vfs:/tmp/pipeline-stderr.txt'. Descriptor-backed
+'cat /tmp/pipeline-stderr.txt' reads the 0x1f-byte stderr fixture, and a later
+normal '/bin/stderr' proves shell fd2 restoration. Stderr append, stdout
+final-stage redirection for this pipeline shape, input/combined pipeline
+redirections, fixed-/bin bare-name pipeline stderr redirection, arbitrary
+paths, persistent storage, generated-root retry, live networking/SSH, Pi 5
+hardware proof, and phase transition remain deferred. The next local POSIX/VFS
+task is the queued direct pipeline stderr closeout.
+
+The direct pipeline stderr regular-file redirection closeout reconciles that
+accepted local-only boundary without runtime feature changes. The accepted
+witness remains exactly
+'/bin/stdout | /bin/stderr 2>/tmp/pipeline-stderr.txt'. Retained evidence
+records descriptor-backed VFS loading for both stages, producer fd1 to the pipe
+endpoint, consumer fd0 from that pipe endpoint, child-only consumer fd2 to
+'volatile-vfs:/tmp/pipeline-stderr.txt', descriptor-backed readback of the
+0x1f-byte stderr fixture, shell fd2 restoration, and coherent process status
+observations. Fixed-/bin bare-name pipeline stderr redirection is the next
+mechanically objective local POSIX/VFS task; stderr append,
+stdout-final-stage redirection for this pipeline shape, input/combined pipeline
+redirections, arbitrary paths, persistent storage, generated-root retry, live
+networking/SSH, Pi 5 hardware proof, and phase transition remain deferred.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1
@@ -10485,6 +10513,14 @@ append, stdout final-stage redirection for this pipeline shape, input/combined
 pipeline redirections, fixed-/bin bare-name pipeline stderr redirection, live
 networking/SSH, Pi 5 hardware, generated-root retry, and phase transition
 remain unaccepted.
+
+The direct pipeline stderr closeout reconciled that boundary without runtime
+feature changes and selected
+phase12-local-bare-name-pipeline-stderr-regular-file-redirection-core-20260627
+as the next local POSIX/VFS task. Fixed-/bin bare-name pipeline stderr
+redirection remains unimplemented until that task; stderr append,
+input/combined pipeline redirections, arbitrary paths, live networking/SSH,
+Pi 5 hardware, generated-root retry, and phase transition remain unaccepted.
 
 phase12-ssh-tftp-capture-invariant-reconciliation-v9-20260624 accepts the
 no-hardware reconciliation as capture-helper-timing-root-cause-ready. Read-only

@@ -1,0 +1,59 @@
+{
+  "task_id": "phase12-local-direct-pipeline-stderr-regular-file-redirection-closeout-20260627",
+  "classification": "local-direct-pipeline-stderr-regular-file-redirection-closeout-accepted",
+  "accepted_witnesses": [
+    "/bin/stdout | /bin/stderr 2>/tmp/pipeline-stderr.txt"
+  ],
+  "accepted_surface": {
+    "producer": {
+      "path": "/bin/stdout",
+      "fd1": {
+        "kind": "pipe-endpoint",
+        "route": "pipe:stdout-to-stderr"
+      },
+      "bytes_written": "0x1f"
+    },
+    "consumer": {
+      "path": "/bin/stderr",
+      "fd0": {
+        "kind": "pipe-endpoint",
+        "route": "pipe:stdout-to-stderr"
+      },
+      "fd2": {
+        "kind": "regular-file",
+        "route": "volatile-vfs:/tmp/pipeline-stderr.txt",
+        "operation": "sink",
+        "child_only": true
+      },
+      "stderr_bytes_written": "0x1f",
+      "pipe_bytes_read": "0x0",
+      "reader_eof": false
+    },
+    "readback": {
+      "path": "/tmp/pipeline-stderr.txt",
+      "bytes": "0x1f",
+      "source": "volatile-vfs-descriptor-read"
+    },
+    "shell_restored": true,
+    "loader_temporary_descriptor_open": false
+  },
+  "unsupported_forms_remain_deferred": [
+    "fixed-/bin bare-name pipeline stderr redirection",
+    "stderr append forms",
+    "stdout final-stage redirection for this pipeline shape",
+    "input redirection on pipelines",
+    "combined pipeline redirections",
+    "arbitrary output paths",
+    "persistent writable filesystem behavior",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "phase transition"
+  ],
+  "hardware": {
+    "lab_controller_api": "not-run",
+    "serial_hardware_boot_output": "not-run",
+    "reason": "static closeout for local POSIX/VFS task has no Pi 5 hardware gate"
+  },
+  "selected_next_task": "phase12-local-bare-name-pipeline-stderr-regular-file-redirection-core-20260627"
+}

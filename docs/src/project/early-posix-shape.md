@@ -1174,6 +1174,20 @@ persistent storage, live networking/SSH, Pi 5 hardware proof, generated-root
 retry, and phase transition remain deferred. The next local POSIX/VFS task is
 the direct pipeline stderr redirection closeout.
 
+The direct pipeline stderr regular-file redirection closeout reconciles that
+accepted local-only boundary without runtime feature changes. The accepted
+witness remains exactly
+'/bin/stdout | /bin/stderr 2>/tmp/pipeline-stderr.txt'. Retained evidence
+records descriptor-backed VFS loading for both stages, producer fd1 to the pipe
+endpoint, consumer fd0 from that pipe endpoint, child-only consumer fd2 to
+'volatile-vfs:/tmp/pipeline-stderr.txt', descriptor-backed readback of the
+0x1f-byte stderr fixture, shell fd2 restoration, and coherent process status
+observations. Fixed-/bin bare-name pipeline stderr redirection is the next
+mechanically objective local POSIX/VFS task; stderr append,
+stdout-final-stage redirection for this pipeline shape, input/combined pipeline
+redirections, arbitrary paths, persistent storage, generated-root retry, live
+networking/SSH, Pi 5 hardware proof, and phase transition remain deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
