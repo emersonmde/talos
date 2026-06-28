@@ -785,6 +785,24 @@ generated-root retry, and phase transition remain deferred. selected_next_task
 is null and planningNeeded=true because no later queued same-lane local
 POSIX/VFS task is mechanically objective.
 
+The accepted
+phase12-local-direct-bounded-tmp-output-path-redirection-core-20260628 task
+keeps Phase 12 live networking/SSH paused and advances only the local
+POSIX/VFS command path. Direct path-form '/bin/stdout
+>/tmp/talos-output-alpha.txt' and '/bin/stderr
+2>/tmp/talos-error-beta.log' now write through child-only fd1/fd2 redirection
+to safe volatile-vfs /tmp leaf files, and descriptor-backed cat reads the
+userspace fixture bytes back from those selected paths. Later normal
+'/bin/stdout' and '/bin/stderr' controls prove shell descriptor restoration.
+Unsupported paths outside the accepted policy fail before file creation/write
+or new successful process records. The accepted policy is limited to
+non-empty ASCII leaf names directly under /tmp, with no nested slash, no
+dot/dotdot basename, no writes outside volatile /tmp, and no cross-stream
+reserved basename alias. Bare-name use of the same policy is the selected next
+local task; append-path generalization, persistence, pipeline path
+generalization, live networking/SSH, Pi 5 hardware proof, generated-root retry,
+boot publication, and phase transition remain deferred.
+
 The
 phase12-local-direct-combined-pipeline-stderr-append-redirection-core-20260628
 task accepts the exact direct path-form truncate-then-append sequence

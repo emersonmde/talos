@@ -1612,6 +1612,22 @@ proof, generated-root retry, and phase transition remain deferred.
 selected_next_task=null and planningNeeded=true because no later queued
 same-lane local POSIX/VFS task is mechanically objective.
 
+The direct bounded volatile /tmp output-path redirection core accepts direct
+path-form stdout/stderr truncate/create redirection to safe caller-chosen /tmp
+leaf paths. The accepted witnesses are
+'/bin/stdout >/tmp/talos-output-alpha.txt' and
+'/bin/stderr 2>/tmp/talos-error-beta.log'. Both continue through
+descriptor-backed VFS/userspace execution, child-only fd1/fd2 rebinding,
+volatile-vfs regular-file writes, descriptor-backed cat readback, lifecycle
+status records, and later direct stdout/stderr descriptor restoration controls.
+The accepted policy is limited to absolute '/tmp/<basename>' paths with a
+non-empty ASCII leaf, no nested slash, no dot/dotdot basename, no writes
+outside volatile /tmp, and no cross-stream reserved basename alias.
+Append-path generalization, bare-name coverage for this policy, persistent
+writable filesystem behavior, pipeline path generalization, live
+networking/SSH, generated-root retry, Pi 5 hardware proof, and phase
+transition remain deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

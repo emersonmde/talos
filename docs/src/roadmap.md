@@ -20078,6 +20078,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   generated-root retry, and phase transition remain deferred.
   selected_next_task=null and planningNeeded=true because no later queued
   same-lane local POSIX/VFS task is mechanically objective.
+- phase12-local-direct-bounded-tmp-output-path-redirection-core-20260628
+  accepts the next local POSIX/VFS slice: direct path-form stdout/stderr
+  truncate/create redirection to safe caller-chosen volatile /tmp leaf paths.
+  The accepted witnesses are exactly
+  '/bin/stdout >/tmp/talos-output-alpha.txt' and
+  '/bin/stderr 2>/tmp/talos-error-beta.log'. Both commands still launch
+  descriptor-backed VFS/userspace programs; child fd1 or fd2 is rebound only
+  for the launched process, descriptor-backed cat reads the expected fixture
+  bytes back from the chosen volatile-vfs path, and later normal direct
+  stdout/stderr controls prove shell descriptor restoration. The path policy is
+  absolute '/tmp/<basename>' with a non-empty ASCII leaf, no nested slash, no
+  dot/dotdot basename, no writes outside volatile /tmp, and no cross-stream
+  reserved basename alias. Append-path generalization, bare-name use of this
+  policy, persistent writable filesystem behavior, pipeline path
+  generalization, live networking/SSH, Pi 5 hardware proof, generated-root
+  retry, and phase transition remain deferred. selected_next_task is
+  phase12-local-bare-name-bounded-tmp-output-path-redirection-core-20260628.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

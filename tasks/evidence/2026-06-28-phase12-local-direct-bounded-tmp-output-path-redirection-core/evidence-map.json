@@ -1,0 +1,49 @@
+{
+  "task": "phase12-local-direct-bounded-tmp-output-path-redirection-core-20260628",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "path": "src/local_command_loop.rs",
+      "result": "Direct absolute path-form stdout/stderr truncate/create redirection now uses LocalCommandVolatilePath supported /tmp leaf policy; append and combined/pipeline exact gates remain unchanged."
+    },
+    {
+      "level": "unit tests / QEMU-substitute",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop_redirects_direct_path_stdout_stderr_to_bounded_tmp_leaf_paths",
+      "log": "tasks/evidence/2026-06-28-phase12-local-direct-bounded-tmp-output-path-redirection-core/focused-local-command-loop.log",
+      "result": "passed; saved log reports test result: ok. 875 passed"
+    },
+    {
+      "level": "regression tests / QEMU-substitute",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "log": "tasks/evidence/2026-06-28-phase12-local-direct-bounded-tmp-output-path-redirection-core/local-command-loop-regression.log",
+      "result": "passed; saved log reports test result: ok. 875 passed"
+    },
+    {
+      "level": "fmt/lint/typecheck",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    }
+  ],
+  "negative_path_matrix": [
+    "/var/out.txt",
+    "/tmp/nested/out.txt",
+    "/tmp/",
+    "/tmp/../bad.txt",
+    "/tmp/stderr.txt",
+    "/var/err.txt",
+    "/tmp/n/e",
+    "/tmp/stdout.txt",
+    "stderr stdout-operator misbind"
+  ],
+  "selected_next_task": "phase12-local-bare-name-bounded-tmp-output-path-redirection-core-20260628"
+}
