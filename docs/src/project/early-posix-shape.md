@@ -1586,6 +1586,32 @@ generated-root retry, and phase transition remain deferred. The selected next
 local POSIX/VFS task is the queued combined pipeline stderr append frontier
 checkpoint.
 
+The combined pipeline stderr append redirection frontier checkpoint freezes
+the accepted local-only direct path-form and fixed-/bin bare-name
+truncate-then-append frontier without adding runtime behavior. The accepted
+witnesses remain exactly
+'/bin/stdin </etc/banner.txt | /bin/stderr 2>/tmp/pipeline-combined-stderr-append.txt'
+followed by
+'/bin/stdin </etc/banner.txt | /bin/stderr 2>>/tmp/pipeline-combined-stderr-append.txt',
+and
+'stdin </etc/banner.txt | stderr 2>/tmp/pipeline-combined-stderr-append.txt'
+followed by
+'stdin </etc/banner.txt | stderr 2>>/tmp/pipeline-combined-stderr-append.txt'.
+Direct path loading and fixed bounded /bin lookup both converge on the same
+descriptor-backed contract: producer fd0 comes from
+initramfs:/etc/banner.txt, producer fd1 is the pipe endpoint, consumer fd0 is
+that pipe endpoint, child-only fd2 targets
+volatile-vfs:/tmp/pipeline-combined-stderr-append.txt, inherited fd1 is
+preserved, loader temporaries are closed, the first consumer truncates/sinks,
+the second appends at EOF, and descriptor-backed
+'cat /tmp/pipeline-combined-stderr-append.txt' reads two userspace stderr
+fixture writes in order. Arbitrary paths, persistent storage, mixed
+direct/bare path forms, PATH/current-directory lookup, command lookup beyond
+bounded /bin, arbitrary shell grammar, live networking/SSH, Pi 5 hardware
+proof, generated-root retry, and phase transition remain deferred.
+selected_next_task=null and planningNeeded=true because no later queued
+same-lane local POSIX/VFS task is mechanically objective.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

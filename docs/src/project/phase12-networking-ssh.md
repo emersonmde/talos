@@ -823,6 +823,27 @@ grammar, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
 phase transition remain deferred. The selected next local POSIX/VFS task is
 phase12-local-combined-pipeline-stderr-append-redirection-frontier-checkpoint-20260628.
 
+The
+phase12-local-combined-pipeline-stderr-append-redirection-frontier-checkpoint-20260628
+checkpoint freezes the accepted local-only direct path-form and fixed-/bin
+bare-name combined pipeline stderr append frontier without adding runtime
+behavior. The accepted witnesses remain exactly the direct path-form
+truncate-then-append sequence and the fixed-/bin bare-name
+truncate-then-append sequence targeting
+volatile-vfs:/tmp/pipeline-combined-stderr-append.txt. Direct path loading and
+fixed bounded /bin lookup both preserve the same descriptor-backed contract:
+producer fd0 from initramfs:/etc/banner.txt, producer fd1 as the pipe
+endpoint, consumer fd0 from that pipe endpoint, child-only fd2 to
+volatile-vfs:/tmp/pipeline-combined-stderr-append.txt, inherited fd1, closed
+loader temporaries, first-command truncate/sink semantics, second-command
+append-at-EOF semantics, descriptor-backed cat readback of two userspace
+stderr fixture writes in order, and later descriptor restoration controls.
+Arbitrary paths, persistent storage, mixed direct/bare path forms, broad shell
+grammar, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
+phase transition remain deferred. selected_next_task is null and
+planningNeeded=true because no later queued same-lane local POSIX/VFS task is
+mechanically objective.
+
 The direct combined pipeline stdout append redirection core accepts the exact
 direct path-form sequence
 '/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-combined-append.txt'

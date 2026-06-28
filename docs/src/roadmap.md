@@ -20058,6 +20058,26 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   grammar, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
   phase transition remain deferred. The selected next local POSIX/VFS task is
   phase12-local-combined-pipeline-stderr-append-redirection-frontier-checkpoint-20260628.
+- phase12-local-combined-pipeline-stderr-append-redirection-frontier-checkpoint-20260628
+  reconciles the accepted local-only direct path-form and fixed-/bin bare-name
+  combined pipeline stderr append frontier without adding runtime behavior.
+  The accepted witnesses remain exactly the direct path-form
+  truncate-then-append sequence and the fixed-/bin bare-name
+  truncate-then-append sequence targeting
+  volatile-vfs:/tmp/pipeline-combined-stderr-append.txt. Direct path loading
+  and fixed bounded /bin lookup both preserve the same descriptor-backed
+  contract: producer fd0 from initramfs:/etc/banner.txt, producer fd1 as the
+  pipe endpoint, consumer fd0 from that pipe endpoint, child-only fd2 to the
+  volatile VFS append target, inherited fd1, closed loader temporaries,
+  truncate/sink semantics for the first command, append-at-EOF semantics for
+  the second command, descriptor-backed cat readback of two userspace stderr
+  fixture writes in order, and later descriptor restoration controls.
+  Arbitrary input/output paths, persistent storage, mixed direct/bare path
+  forms, PATH/current-directory lookup, command lookup beyond bounded /bin,
+  broad shell grammar, live networking/SSH, Pi 5 hardware proof,
+  generated-root retry, and phase transition remain deferred.
+  selected_next_task=null and planningNeeded=true because no later queued
+  same-lane local POSIX/VFS task is mechanically objective.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
