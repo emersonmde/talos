@@ -20088,13 +20088,27 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   for the launched process, descriptor-backed cat reads the expected fixture
   bytes back from the chosen volatile-vfs path, and later normal direct
   stdout/stderr controls prove shell descriptor restoration. The path policy is
-  absolute '/tmp/<basename>' with a non-empty ASCII leaf, no nested slash, no
+  absolute `/tmp/<basename>` with a non-empty ASCII leaf, no nested slash, no
   dot/dotdot basename, no writes outside volatile /tmp, and no cross-stream
   reserved basename alias. Append-path generalization, bare-name use of this
   policy, persistent writable filesystem behavior, pipeline path
   generalization, live networking/SSH, Pi 5 hardware proof, generated-root
   retry, and phase transition remain deferred. selected_next_task is
   phase12-local-bare-name-bounded-tmp-output-path-redirection-core-20260628.
+- phase12-local-bare-name-bounded-tmp-output-path-redirection-core-20260628
+  extends the same safe volatile /tmp leaf policy to fixed-/bin bare-name
+  stdout/stderr truncate/create redirection. The accepted witnesses are exactly
+  'stdout >/tmp/talos-output-alpha.txt' and
+  'stderr 2>/tmp/talos-error-beta.log'. Both resolve only through bounded /bin
+  lookup to '/bin/stdout' or '/bin/stderr', launch descriptor-backed
+  VFS/userspace programs, rebind child fd1/fd2 only for the launched process,
+  and use descriptor-backed cat readback plus later normal 'stdout'/'stderr'
+  controls for restoration evidence. Environment-backed PATH,
+  current-directory search, command lookup beyond bounded /bin, append-path
+  generalization, persistence, pipeline path generalization, live
+  networking/SSH, Pi 5 hardware proof, generated-root retry, boot publication,
+  and phase transition remain deferred. selected_next_task is
+  phase12-local-bounded-tmp-output-path-redirection-frontier-checkpoint-20260628.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

@@ -1620,13 +1620,27 @@ leaf paths. The accepted witnesses are
 descriptor-backed VFS/userspace execution, child-only fd1/fd2 rebinding,
 volatile-vfs regular-file writes, descriptor-backed cat readback, lifecycle
 status records, and later direct stdout/stderr descriptor restoration controls.
-The accepted policy is limited to absolute '/tmp/<basename>' paths with a
+The accepted policy is limited to absolute `/tmp/<basename>` paths with a
 non-empty ASCII leaf, no nested slash, no dot/dotdot basename, no writes
 outside volatile /tmp, and no cross-stream reserved basename alias.
-Append-path generalization, bare-name coverage for this policy, persistent
-writable filesystem behavior, pipeline path generalization, live
-networking/SSH, generated-root retry, Pi 5 hardware proof, and phase
-transition remain deferred.
+Bare-name coverage for this policy is accepted by the following bounded /bin
+lookup slice. Append-path generalization, persistent writable filesystem
+behavior, pipeline path generalization, live networking/SSH, generated-root
+retry, Pi 5 hardware proof, and phase transition remain deferred.
+
+The bare-name bounded volatile /tmp output-path redirection core extends the
+same accepted policy to 'stdout >/tmp/talos-output-alpha.txt' and
+'stderr 2>/tmp/talos-error-beta.log'. Both commands resolve only through the
+fixed bounded /bin lookup to '/bin/stdout' or '/bin/stderr', then continue
+through descriptor-backed VFS/userspace execution, child-only fd1/fd2
+rebinding, volatile-vfs regular-file writes, descriptor-backed cat readback,
+lifecycle status records, and later bare-name stdout/stderr descriptor
+restoration controls. Unsupported paths and unsupported bare command names
+fail before file creation/write or new successful process records. PATH,
+current-directory lookup, command lookup beyond bounded /bin, append-path
+generalization, persistence, pipeline path generalization, live networking/SSH,
+generated-root retry, Pi 5 hardware proof, and phase transition remain
+deferred.
 
 ## Scheduler Implications
 

@@ -1,0 +1,37 @@
+{
+  "task": "phase12-local-bare-name-bounded-tmp-output-path-redirection-core-20260628",
+  "classification": "phase12-local-bare-name-bounded-tmp-output-path-redirection-core-accepted",
+  "accepted": true,
+  "accepted_boundary": {
+    "command_forms": [
+      "stdout >/tmp/talos-output-alpha.txt",
+      "stderr 2>/tmp/talos-error-beta.log"
+    ],
+    "command_lookup": "fixed bounded /bin lookup to /bin/stdout and /bin/stderr only",
+    "path_policy": "absolute volatile /tmp leaf path, non-empty ASCII basename, no nested slash, no dot or dotdot basename, no writes outside /tmp, no cross-stream reserved basename alias",
+    "execution": "descriptor-backed VFS/userspace launch with child-only fd1/fd2 truncate/create redirection and descriptor-backed cat readback"
+  },
+  "retained_controls": [
+    "/bin/stdout >/tmp/talos-output-alpha.txt",
+    "/bin/stderr 2>/tmp/talos-error-beta.log",
+    "/bin/stdout >/tmp/stdout.txt",
+    "stdout >/tmp/stdout.txt",
+    "/bin/stderr 2>/tmp/stderr.txt",
+    "stderr 2>/tmp/stderr.txt"
+  ],
+  "deferred": [
+    "environment-backed PATH",
+    "current-directory search",
+    "command lookup beyond bounded /bin",
+    "append-path generalization",
+    "persistent writable filesystem behavior",
+    "nested or traversal paths",
+    "paths outside volatile /tmp",
+    "pipeline path generalization",
+    "live networking/SSH",
+    "generated-root retry",
+    "Pi 5 hardware proof",
+    "phase transition"
+  ],
+  "hardware_claim": false
+}

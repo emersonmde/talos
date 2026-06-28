@@ -798,8 +798,22 @@ Unsupported paths outside the accepted policy fail before file creation/write
 or new successful process records. The accepted policy is limited to
 non-empty ASCII leaf names directly under /tmp, with no nested slash, no
 dot/dotdot basename, no writes outside volatile /tmp, and no cross-stream
-reserved basename alias. Bare-name use of the same policy is the selected next
-local task; append-path generalization, persistence, pipeline path
+reserved basename alias. Bare-name use of the same policy is accepted by the
+following bounded /bin lookup slice; append-path generalization, persistence,
+pipeline path generalization, live networking/SSH, Pi 5 hardware proof,
+generated-root retry, boot publication, and phase transition remain deferred.
+
+The
+phase12-local-bare-name-bounded-tmp-output-path-redirection-core-20260628 task
+keeps the same local POSIX/VFS-only lane and accepts 'stdout
+>/tmp/talos-output-alpha.txt' and 'stderr
+2>/tmp/talos-error-beta.log'. Both commands resolve only through the fixed
+bounded /bin lookup to '/bin/stdout' and '/bin/stderr', then write through
+child-only fd1/fd2 redirection to safe volatile-vfs /tmp leaf files. The
+direct path-form bounded /tmp witnesses remain retained controls. Unsupported
+paths and unsupported bare command names fail before file creation/write or new
+successful process records. PATH/current-directory lookup, command lookup
+beyond bounded /bin, append-path generalization, persistence, pipeline path
 generalization, live networking/SSH, Pi 5 hardware proof, generated-root retry,
 boot publication, and phase transition remain deferred.
 

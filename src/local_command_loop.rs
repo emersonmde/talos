@@ -7515,6 +7515,8 @@ fn parse_bare_bin_exec_request_with_arguments(
                     && stdin_redirection == Some(LocalCommandExecRedirection::StdinFromEtcBanner)
                 {
                     LocalCommandVolatilePath::from_exact_stdin_report_path(path)
+                } else if name.as_bytes() == b"stdout" {
+                    LocalCommandVolatilePath::from_supported_stdout_path(path)
                 } else {
                     LocalCommandVolatilePath::from_exact_stdout_path(path)
                 }
@@ -7545,7 +7547,7 @@ fn parse_bare_bin_exec_request_with_arguments(
             }
             if let Some(path) = token
                 .strip_prefix(b"2>")
-                .and_then(LocalCommandVolatilePath::from_exact_stderr_path)
+                .and_then(LocalCommandVolatilePath::from_supported_stderr_path)
             {
                 if name.as_bytes() != b"stderr" || redirection_started || count != 1 {
                     return Err(LocalCommandExecError::InvalidPath);
@@ -11388,6 +11390,165 @@ talos> Talos initramfs fixture\n"
             assert_eq!(rejected.status(), LocalCommandStatus::UnexpectedArgument);
             assert_eq!(rejected.response_lines(), 1);
         }
+        assert!(output.contains(
+            "talos: exec-redirection op=sink source-fd=0x0000000000000001 target-path=/tmp/talos-output-alpha.txt target-stream=regular-file target-route=volatile-vfs:/tmp/talos-output-alpha.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=regular-file route=volatile-vfs:/tmp/talos-output-alpha.txt source=userspace-talos-write\n"
+        ));
+        assert!(output.contains(
+            "talos: cat path=/tmp/talos-output-alpha.txt bytes=0x000000000000001f source=volatile-vfs-descriptor-read\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-redirection op=sink source-fd=0x0000000000000002 target-path=/tmp/talos-error-beta.log target-stream=regular-file target-route=volatile-vfs:/tmp/talos-error-beta.log child-only=true shell-restored=true source=shell-redirection-stderr-tmp-stderr\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stderr fd=0x0000000000000002 bytes=0x000000000000001f return=0x000000000000001f stream=regular-file route=volatile-vfs:/tmp/talos-error-beta.log source=userspace-talos-write\n"
+        ));
+        assert!(output.contains(
+            "talos: cat path=/tmp/talos-error-beta.log bytes=0x000000000000001f source=volatile-vfs-descriptor-read\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=stdout route=runtime-console0/stdout source=userspace-talos-write\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stderr fd=0x0000000000000002 bytes=0x000000000000001f return=0x000000000000001f stream=stderr route=runtime-console0/stderr source=userspace-talos-write\n"
+        ));
+        assert_eq!(output.matches("talos: exec-invalid-path\n").count(), 11);
+    }
+
+    #[test_case]
+    fn local_command_loop_redirects_bare_name_stdout_stderr_to_bounded_tmp_leaf_paths() {
+        let bytes = *b"stdout >/tmp/talos-output-alpha.txt\rwaitpid\rlaststatus\rcat /tmp/talos-output-alpha.txt\rstdout\rstderr 2>/tmp/talos-error-beta.log\rwaitpid\rlaststatus\rcat /tmp/talos-error-beta.log\rstderr\rstdout >/var/out.txt\rstdout >/tmp/nested/out.txt\rstdout >/tmp/\rstdout >/tmp/../bad.txt\rstdout >/tmp/stderr.txt\rstderr 2>/var/err.txt\rstderr 2>/tmp/n/e\rstderr 2>/tmp/\rstderr 2>/tmp/../bad.txt\rstderr 2>/tmp/stdout.txt\rstderr >/tmp/misbound.err\rmissing >/tmp/talos-output-gamma.txt\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (
+            stdout_redirected,
+            stdout_waited,
+            stdout_observed,
+            stdout_readback,
+            normal_stdout,
+            stderr_redirected,
+            stderr_waited,
+            stderr_observed,
+            stderr_readback,
+            normal_stderr,
+            bad_stdout_var,
+            bad_stdout_nested,
+            bad_stdout_empty,
+            bad_stdout_dotdot,
+            bad_stdout_reserved,
+            bad_stderr_var,
+            bad_stderr_nested,
+            bad_stderr_empty,
+            bad_stderr_dotdot,
+            bad_stderr_reserved,
+            bad_stderr_stdout_operator,
+            bad_command_name,
+        ) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            let stdout_redirected = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let stdout_waited = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let stdout_observed = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let stdout_readback = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let normal_stdout = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let stderr_redirected = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let stderr_waited = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let stderr_observed = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let stderr_readback = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let normal_stderr = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let accepted_records = io.process_table_records();
+            let bad_stdout_var = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_stdout_nested = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_stdout_empty = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_stdout_dotdot = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_stdout_reserved = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_stderr_var = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_stderr_nested = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_stderr_empty = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_stderr_dotdot = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_stderr_reserved = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_stderr_stdout_operator =
+                run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_command_name = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(io.process_table_records(), accepted_records);
+            (
+                stdout_redirected,
+                stdout_waited,
+                stdout_observed,
+                stdout_readback,
+                normal_stdout,
+                stderr_redirected,
+                stderr_waited,
+                stderr_observed,
+                stderr_readback,
+                normal_stderr,
+                bad_stdout_var,
+                bad_stdout_nested,
+                bad_stdout_empty,
+                bad_stdout_dotdot,
+                bad_stdout_reserved,
+                bad_stderr_var,
+                bad_stderr_nested,
+                bad_stderr_empty,
+                bad_stderr_dotdot,
+                bad_stderr_reserved,
+                bad_stderr_stdout_operator,
+                bad_command_name,
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(
+            stdout_redirected.line(),
+            b"stdout >/tmp/talos-output-alpha.txt"
+        );
+        assert_eq!(stdout_redirected.status(), LocalCommandStatus::Handled);
+        assert_eq!(stdout_redirected.response_lines(), 11);
+        assert_eq!(stdout_waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(stdout_observed.status(), LocalCommandStatus::Handled);
+        assert_eq!(stdout_readback.line(), b"cat /tmp/talos-output-alpha.txt");
+        assert_eq!(stdout_readback.status(), LocalCommandStatus::Handled);
+        assert_eq!(normal_stdout.line(), b"stdout");
+        assert_eq!(normal_stdout.status(), LocalCommandStatus::Handled);
+        assert_eq!(
+            stderr_redirected.line(),
+            b"stderr 2>/tmp/talos-error-beta.log"
+        );
+        assert_eq!(stderr_redirected.status(), LocalCommandStatus::Handled);
+        assert_eq!(stderr_redirected.response_lines(), 11);
+        assert_eq!(stderr_waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(stderr_observed.status(), LocalCommandStatus::Handled);
+        assert_eq!(stderr_readback.line(), b"cat /tmp/talos-error-beta.log");
+        assert_eq!(stderr_readback.status(), LocalCommandStatus::Handled);
+        assert_eq!(normal_stderr.line(), b"stderr");
+        assert_eq!(normal_stderr.status(), LocalCommandStatus::Handled);
+        for rejected in [
+            bad_stdout_var,
+            bad_stdout_nested,
+            bad_stdout_empty,
+            bad_stdout_dotdot,
+            bad_stdout_reserved,
+            bad_stderr_var,
+            bad_stderr_nested,
+            bad_stderr_empty,
+            bad_stderr_dotdot,
+            bad_stderr_reserved,
+            bad_stderr_stdout_operator,
+        ] {
+            assert_eq!(rejected.status(), LocalCommandStatus::UnexpectedArgument);
+            assert_eq!(rejected.response_lines(), 1);
+        }
+        assert_eq!(
+            bad_command_name.line(),
+            b"missing >/tmp/talos-output-gamma.txt"
+        );
+        assert_eq!(
+            bad_command_name.status(),
+            LocalCommandStatus::UnknownCommand
+        );
+        assert_eq!(bad_command_name.response_lines(), 1);
         assert!(output.contains(
             "talos: exec-redirection op=sink source-fd=0x0000000000000001 target-path=/tmp/talos-output-alpha.txt target-stream=regular-file target-route=volatile-vfs:/tmp/talos-output-alpha.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout\n"
         ));
