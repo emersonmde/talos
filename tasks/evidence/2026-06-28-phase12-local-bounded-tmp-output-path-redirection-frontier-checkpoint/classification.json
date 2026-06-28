@@ -1,0 +1,43 @@
+{
+  "classification": "phase12-local-bounded-tmp-output-path-redirection-frontier-checkpoint-accepted",
+  "task_id": "phase12-local-bounded-tmp-output-path-redirection-frontier-checkpoint-20260628",
+  "accepted": true,
+  "checkpoint_only": true,
+  "accepted_witness": [
+    "/bin/stdout >/tmp/talos-output-alpha.txt",
+    "/bin/stderr 2>/tmp/talos-error-beta.log",
+    "stdout >/tmp/talos-output-alpha.txt",
+    "stderr 2>/tmp/talos-error-beta.log"
+  ],
+  "path_policy": "absolute volatile /tmp leaf path, non-empty ASCII basename, no nested slash, no dot or dotdot basename, no writes outside /tmp, no cross-stream reserved basename alias",
+  "evidence_level": [
+    "static inspection",
+    "retained unit tests / QEMU-substitute",
+    "retained QEMU/substitute local POSIX/VFS regression controls",
+    "docs build"
+  ],
+  "hardware": {
+    "pi5_claim": false,
+    "lab_api_used": false,
+    "hardware_test_lock_used": false
+  },
+  "deferred": [
+    "append-path generalization",
+    "persistent writable filesystem behavior",
+    "nested or traversal paths",
+    "paths outside volatile /tmp",
+    "device aliasing beyond accepted /dev/null controls",
+    "environment-backed PATH",
+    "current-directory search",
+    "command lookup beyond bounded /bin",
+    "arbitrary shell grammar",
+    "pipeline path generalization",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "phase transition"
+  ],
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "No later queued same-lane local POSIX/VFS task is mechanically objective after this checkpoint; supervisor planning is required before further worker promotion."
+}

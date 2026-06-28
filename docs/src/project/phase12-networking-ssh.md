@@ -818,6 +818,23 @@ generalization, live networking/SSH, Pi 5 hardware proof, generated-root retry,
 boot publication, and phase transition remain deferred.
 
 The
+phase12-local-bounded-tmp-output-path-redirection-frontier-checkpoint-20260628
+task reconciles the accepted direct path-form and fixed-/bin bare-name bounded
+volatile /tmp output-path frontier without adding runtime behavior. The
+accepted witnesses remain exactly '/bin/stdout
+>/tmp/talos-output-alpha.txt', '/bin/stderr
+2>/tmp/talos-error-beta.log', 'stdout >/tmp/talos-output-alpha.txt', and
+'stderr 2>/tmp/talos-error-beta.log'. Both forms keep child-only fd1/fd2
+redirection to safe volatile-vfs /tmp leaf files, descriptor-backed cat
+readback of the expected userspace fixture bytes, lifecycle/status records,
+later descriptor restoration controls, and negative path-policy controls.
+Append-path generalization, persistence, pipeline path generalization, live
+networking/SSH, Pi 5 hardware proof, generated-root retry, boot publication,
+and phase transition remain deferred. selected_next_task=null and
+planningNeeded=true because no later queued same-lane local POSIX/VFS task is
+mechanically objective.
+
+The
 phase12-local-direct-combined-pipeline-stderr-append-redirection-core-20260628
 task accepts the exact direct path-form truncate-then-append sequence
 '/bin/stdin </etc/banner.txt | /bin/stderr 2>/tmp/pipeline-combined-stderr-append.txt'

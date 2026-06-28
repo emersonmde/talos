@@ -1,0 +1,57 @@
+{
+  "task_id": "phase12-local-bounded-tmp-output-path-redirection-frontier-checkpoint-20260628",
+  "classification": "phase12-local-bounded-tmp-output-path-redirection-frontier-checkpoint-accepted",
+  "source_changes": [],
+  "docs": [
+    "tasks/2026-06-28-phase12-local-bounded-tmp-output-path-redirection-frontier-checkpoint.md",
+    "docs/src/roadmap.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/project/early-posix-shape.md"
+  ],
+  "reconciled_tasks": [
+    {
+      "task_id": "phase12-local-direct-bounded-tmp-output-path-redirection-core-20260628",
+      "path": "tasks/2026-06-28-phase12-local-direct-bounded-tmp-output-path-redirection-core.md",
+      "classification_path": "tasks/evidence/2026-06-28-phase12-local-direct-bounded-tmp-output-path-redirection-core/classification.json",
+      "result": "direct path-form stdout/stderr truncate/create redirection accepted with descriptor-backed VFS/userspace execution and selected_next_task naming the fixed-/bin bare-name core"
+    },
+    {
+      "task_id": "phase12-local-bare-name-bounded-tmp-output-path-redirection-core-20260628",
+      "path": "tasks/2026-06-28-phase12-local-bare-name-bounded-tmp-output-path-redirection-core.md",
+      "classification_path": "tasks/evidence/2026-06-28-phase12-local-bare-name-bounded-tmp-output-path-redirection-core/classification.json",
+      "result": "fixed-/bin bare-name stdout/stderr truncate/create redirection accepted with bounded /bin lookup to /bin/stdout and /bin/stderr and selected_next_task naming this checkpoint"
+    }
+  ],
+  "retained_evidence": [
+    {
+      "level": "unit tests / QEMU-substitute",
+      "path": "tasks/evidence/2026-06-28-phase12-local-direct-bounded-tmp-output-path-redirection-core/focused-local-command-loop.log",
+      "result": "direct focused local_command_loop bounded /tmp output-path redirection test passed"
+    },
+    {
+      "level": "QEMU/substitute local_command_loop regression",
+      "path": "tasks/evidence/2026-06-28-phase12-local-direct-bounded-tmp-output-path-redirection-core/local-command-loop-regression.log",
+      "result": "direct local_command_loop regression reported 875 passed"
+    },
+    {
+      "level": "unit tests / QEMU-substitute",
+      "path": "tasks/evidence/2026-06-28-phase12-local-bare-name-bounded-tmp-output-path-redirection-core/focused-local-command-loop.log",
+      "result": "bare-name focused local_command_loop bounded /tmp output-path redirection test passed"
+    },
+    {
+      "level": "QEMU/substitute local_command_loop regression",
+      "path": "tasks/evidence/2026-06-28-phase12-local-bare-name-bounded-tmp-output-path-redirection-core/local-command-loop-regression.log",
+      "result": "bare-name local_command_loop regression reported 876 passed"
+    }
+  ],
+  "validation": [
+    "static inspection of task records, retained evidence paths, docs, and git diff",
+    "jq empty on classification.json and evidence-map.json",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "git diff --cached --check"
+  ],
+  "hardware_claim": "none; live networking/SSH remains paused and no Pi 5 hardware claim is made",
+  "selected_next_task": null,
+  "planningNeeded": true
+}
