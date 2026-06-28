@@ -1785,6 +1785,28 @@ hardware proof, boot publication, and phase transition remain deferred.
 selected_next_task=null and planningNeeded=true because no later queued
 same-lane local POSIX/VFS task is mechanically objective.
 
+The direct separated redirection-token core extends only direct absolute-path
+command parsing so an accepted redirection operator may be followed by its path
+operand as the next token. The accepted local witnesses are
+'/bin/stdin < /etc/banner.txt',
+'/bin/stdout > /tmp/talos-output-alpha.txt' followed by
+'/bin/stdout >> /tmp/talos-output-alpha.txt', and
+'/bin/stderr 2> /tmp/talos-error-beta.log' followed by
+'/bin/stderr 2>> /tmp/talos-error-beta.log'. Successful behavior still uses
+descriptor-backed VFS/userspace execution: executable open/read, child-only fd0
+source rebinding for initramfs:/etc/banner.txt, child-only fd1/fd2 rebinding to
+safe volatile-vfs /tmp leaf files, append-at-EOF semantics, descriptor-backed
+cat readback, waitpid/laststatus observations, and later descriptor
+restoration controls. The separated stdin form is intentionally standalone in
+this slice; the previously accepted fused combined stdin/stdout form remains
+unchanged. Fixed-/bin bare-name separated tokens, pipeline separated tokens,
+separated explicit fd syntax such as '1 > path' or '2 > path',
+PATH/current-directory lookup, command lookup beyond bounded /bin, arbitrary
+shell grammar, persistent writable filesystem behavior, generated-root retry,
+Pi 5 hardware proof, boot publication, live networking/SSH, and phase
+transition remain deferred. The selected next local task is fixed-/bin
+bare-name separated redirection-token support.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

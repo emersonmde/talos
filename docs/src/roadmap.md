@@ -20259,6 +20259,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   generated-root retry, boot publication, and phase transition remain
   deferred. selected_next_task=null and planningNeeded=true because no later
   queued same-lane local POSIX/VFS task is mechanically objective.
+- Direct absolute-path commands now accept separated redirection operator and
+  path tokens for the next local POSIX/VFS feature slice. The accepted
+  witnesses are '/bin/stdin < /etc/banner.txt',
+  '/bin/stdout > /tmp/talos-output-alpha.txt' followed by
+  '/bin/stdout >> /tmp/talos-output-alpha.txt', and
+  '/bin/stderr 2> /tmp/talos-error-beta.log' followed by
+  '/bin/stderr 2>> /tmp/talos-error-beta.log'. The implementation remains
+  descriptor-backed through VFS open/read, userspace launch/status, child-only
+  descriptor rebinding, volatile-vfs /tmp leaf readback, and descriptor
+  restoration controls. Fixed-/bin bare-name separated tokens, pipeline
+  separated tokens, separated explicit fd syntax, arbitrary shell grammar,
+  persistence, live networking/SSH, Pi 5 hardware proof, generated-root retry,
+  boot publication, and phase transition remain deferred. The selected next
+  local task is the fixed-/bin bare-name separated-token counterpart.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
