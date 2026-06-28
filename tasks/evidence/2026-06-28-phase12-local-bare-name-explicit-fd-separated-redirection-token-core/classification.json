@@ -1,0 +1,42 @@
+{
+  "task": "phase12-local-bare-name-explicit-fd-separated-redirection-token-core-20260628",
+  "classification": "local-bare-name-explicit-fd-separated-redirection-token-core-accepted",
+  "accepted_boundary": {
+    "scope": "local-only fixed-/bin bare-name command explicit-fd separated output redirection tokens",
+    "forms": [
+      "stdout 1 > /tmp/talos-output-alpha.txt",
+      "stdout 1 >> /tmp/talos-output-alpha.txt",
+      "stderr 2 > /tmp/talos-error-beta.log",
+      "stderr 2 >> /tmp/talos-error-beta.log"
+    ],
+    "backing": [
+      "bounded /bin VFS lookup",
+      "descriptor-backed executable open/read",
+      "userspace launch/status",
+      "child-only fd1/fd2 descriptor rebinding",
+      "volatile-vfs /tmp leaf regular-file write/readback",
+      "append-at-EOF semantics",
+      "process/status observations",
+      "descriptor restoration controls"
+    ]
+  },
+  "deferred": [
+    "direct pipeline explicit-fd separated redirection tokens",
+    "bare-name pipeline explicit-fd separated redirection tokens",
+    "explicit fd input redirection",
+    "fd duplication/close syntax",
+    "nested or traversal paths",
+    "paths outside volatile /tmp",
+    "PATH or current-directory lookup",
+    "command lookup beyond bounded /bin",
+    "arbitrary shell grammar",
+    "persistent writable filesystem behavior",
+    "live networking/SSH",
+    "Pi 5 hardware/lab proof",
+    "generated-root retry",
+    "boot publication",
+    "phase transition"
+  ],
+  "hardware_scope": "No Pi 5 hardware/lab action, boot publication, generated-root retry, live networking/SSH, persistence, arbitrary paths, PATH/current-directory lookup, or phase transition was performed or claimed.",
+  "selected_next_task": "phase12-local-direct-pipeline-explicit-fd-separated-redirection-token-core-20260628"
+}

@@ -1899,13 +1899,33 @@ descriptor-backed through VFS executable open/read, userspace launch/status,
 child-only fd1/fd2 rebinding to safe volatile-vfs /tmp leaf files,
 append-at-EOF semantics, descriptor-backed cat readback, waitpid/laststatus
 observations, and later descriptor restoration controls. Unsupported fd tokens,
-wrong fd/command pairings, missing operator/path tokens, bare-name explicit-fd
-separated tokens, pipeline explicit-fd separated tokens, nested/traversal paths,
-paths outside volatile /tmp, mixed direct/bare broadening, PATH/current-directory
-lookup, command lookup beyond bounded /bin, arbitrary shell grammar,
-generated-root retry, Pi 5 hardware proof, boot publication, live networking/SSH,
-persistence, and phase transition remain deferred. The selected next local task
-is fixed-/bin bare-name explicit-fd separated redirection-token support.
+wrong fd/command pairings, missing operator/path tokens, pipeline explicit-fd
+separated tokens, nested/traversal paths, paths outside volatile /tmp,
+mixed direct/bare broadening, PATH/current-directory lookup, command lookup
+beyond bounded /bin, arbitrary shell grammar, generated-root retry, Pi 5
+hardware proof, boot publication, live networking/SSH, persistence, and phase
+transition remain deferred. The fixed-/bin bare-name counterpart is described
+below.
+
+The fixed-/bin bare-name explicit-fd separated redirection-token core extends
+the same fd token, operator token, and path token grammar only after bounded
+/bin lookup resolves the accepted command names. The accepted local witnesses
+are 'stdout 1 > /tmp/talos-output-alpha.txt' followed by
+'stdout 1 >> /tmp/talos-output-alpha.txt', and
+'stderr 2 > /tmp/talos-error-beta.log' followed by
+'stderr 2 >> /tmp/talos-error-beta.log'. Successful behavior still converges
+on /bin/stdout or /bin/stderr before descriptor-backed VFS executable open/read,
+userspace launch/status, child-only fd1/fd2 rebinding to safe volatile-vfs /tmp
+leaf files, append-at-EOF semantics, descriptor-backed cat readback,
+waitpid/laststatus observations, process-table accounting, and descriptor
+restoration controls. Unsupported bare command names, unsupported fd tokens,
+wrong fd/command pairings, missing operator/path tokens, pipeline explicit-fd
+separated tokens, nested/traversal paths, paths outside volatile /tmp,
+mixed direct/bare broadening, PATH/current-directory lookup, command lookup
+beyond bounded /bin, arbitrary shell grammar, generated-root retry, Pi 5
+hardware proof, boot publication, live networking/SSH, persistence, and phase
+transition remain deferred. The selected next local task is direct path-form
+pipeline explicit-fd separated redirection-token support.
 
 ## Scheduler Implications
 

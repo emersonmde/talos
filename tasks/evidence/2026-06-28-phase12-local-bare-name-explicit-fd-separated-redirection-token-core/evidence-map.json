@@ -1,0 +1,37 @@
+{
+  "task": "phase12-local-bare-name-explicit-fd-separated-redirection-token-core-20260628",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "paths": [
+        "src/local_command_loop.rs",
+        "docs/src/project/early-posix-shape.md",
+        "docs/src/roadmap.md",
+        "tasks/2026-06-28-phase12-local-bare-name-explicit-fd-separated-redirection-token-core.md"
+      ],
+      "result": "Bare-name command parsing accepts only the exact fd-token/operator/path stdout and stderr witnesses while keeping successful behavior on bounded /bin descriptor-backed VFS/userspace execution."
+    },
+    {
+      "level": "QEMU/substitute unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "paths": [
+        "tasks/evidence/2026-06-28-phase12-local-bare-name-explicit-fd-separated-redirection-token-core/qemu-substitute-local-command-loop.log"
+      ],
+      "result": "passed; 885 Talos no_std tests"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed; search index size warning retained"
+    }
+  ],
+  "retained_controls": [
+    "direct explicit-fd separated-token command witnesses",
+    "no-space stdout/stderr redirection controls",
+    "separated operator/path command controls",
+    "unsupported fd token fail-closed controls",
+    "unsupported path fail-closed controls",
+    "pipeline explicit-fd separated-token fail-closed controls"
+  ],
+  "selected_next_task": "phase12-local-direct-pipeline-explicit-fd-separated-redirection-token-core-20260628"
+}

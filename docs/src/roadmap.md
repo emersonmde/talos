@@ -20349,12 +20349,27 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   descriptor-backed through VFS open/read, userspace launch/status, child-only
   fd1/fd2 descriptor rebinding, volatile-vfs /tmp leaf readback,
   append-at-EOF semantics, and descriptor restoration controls. Unsupported fd
-  tokens, wrong fd/command pairings, missing operator/path tokens, fixed-/bin
-  bare-name explicit-fd separated tokens, pipeline explicit-fd separated tokens,
-  mixed direct/bare broadening, arbitrary paths, persistence, live
-  networking/SSH, Pi 5 hardware proof, generated-root retry, boot publication,
-  and phase transition remain deferred. The selected next local task is the
-  fixed-/bin bare-name explicit-fd separated-token counterpart.
+  tokens, wrong fd/command pairings, missing operator/path tokens, pipeline
+  explicit-fd separated tokens, mixed direct/bare broadening, arbitrary paths,
+  persistence, live networking/SSH, Pi 5 hardware proof, generated-root retry,
+  boot publication, and phase transition remain deferred. The selected next
+  local task is the fixed-/bin bare-name explicit-fd separated-token
+  counterpart.
+- Fixed-/bin bare-name commands now accept the explicit fd, operator, and path
+  as separate tokens after bounded /bin lookup. The accepted witnesses are
+  'stdout 1 > /tmp/talos-output-alpha.txt' followed by
+  'stdout 1 >> /tmp/talos-output-alpha.txt', and
+  'stderr 2 > /tmp/talos-error-beta.log' followed by
+  'stderr 2 >> /tmp/talos-error-beta.log'. The implementation remains
+  descriptor-backed through bounded /bin VFS lookup, executable open/read,
+  userspace launch/status, child-only fd1/fd2 descriptor rebinding,
+  volatile-vfs /tmp leaf readback, append-at-EOF semantics, process/status
+  observations, and descriptor restoration controls. Unsupported bare command
+  names, unsupported fd tokens, wrong fd/command pairings, missing operator/path
+  tokens, pipeline explicit-fd separated tokens, arbitrary paths, persistence,
+  live networking/SSH, Pi 5 hardware proof, generated-root retry, boot
+  publication, and phase transition remain deferred. The selected next local
+  task is the direct path-form pipeline explicit-fd separated-token counterpart.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
