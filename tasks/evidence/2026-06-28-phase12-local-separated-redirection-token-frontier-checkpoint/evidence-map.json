@@ -1,0 +1,77 @@
+{
+  "task_id": "phase12-local-separated-redirection-token-frontier-checkpoint-20260628",
+  "classification": "local-separated-redirection-token-frontier-checkpoint-accepted",
+  "files": {
+    "task_record": "tasks/2026-06-28-phase12-local-separated-redirection-token-frontier-checkpoint.md",
+    "predecessor_task_records": [
+      "tasks/2026-06-28-phase12-local-direct-separated-redirection-token-core.md",
+      "tasks/2026-06-28-phase12-local-bare-name-separated-redirection-token-core.md",
+      "tasks/2026-06-28-phase12-local-direct-pipeline-separated-redirection-token-core.md",
+      "tasks/2026-06-28-phase12-local-bare-name-pipeline-separated-redirection-token-core.md"
+    ],
+    "predecessor_evidence": [
+      "tasks/evidence/2026-06-28-phase12-local-direct-separated-redirection-token-core/classification.json",
+      "tasks/evidence/2026-06-28-phase12-local-direct-separated-redirection-token-core/evidence-map.json",
+      "tasks/evidence/2026-06-28-phase12-local-direct-separated-redirection-token-core/qemu-substitute-local-command-loop.log",
+      "tasks/evidence/2026-06-28-phase12-local-bare-name-separated-redirection-token-core/classification.json",
+      "tasks/evidence/2026-06-28-phase12-local-bare-name-separated-redirection-token-core/evidence-map.json",
+      "tasks/evidence/2026-06-28-phase12-local-bare-name-separated-redirection-token-core/qemu-substitute-local-command-loop.log",
+      "tasks/evidence/2026-06-28-phase12-local-direct-pipeline-separated-redirection-token-core/classification.json",
+      "tasks/evidence/2026-06-28-phase12-local-direct-pipeline-separated-redirection-token-core/evidence-map.json",
+      "tasks/evidence/2026-06-28-phase12-local-direct-pipeline-separated-redirection-token-core/qemu-substitute-local-command-loop.log",
+      "tasks/evidence/2026-06-28-phase12-local-bare-name-pipeline-separated-redirection-token-core/classification.json",
+      "tasks/evidence/2026-06-28-phase12-local-bare-name-pipeline-separated-redirection-token-core/evidence-map.json",
+      "tasks/evidence/2026-06-28-phase12-local-bare-name-pipeline-separated-redirection-token-core/qemu-substitute-local-command-loop.log"
+    ],
+    "docs": [
+      "docs/src/roadmap.md",
+      "docs/src/project/early-posix-shape.md"
+    ],
+    "checkpoint_json": [
+      "tasks/evidence/2026-06-28-phase12-local-separated-redirection-token-frontier-checkpoint/classification.json",
+      "tasks/evidence/2026-06-28-phase12-local-separated-redirection-token-frontier-checkpoint/evidence-map.json"
+    ],
+    "checkpoint_transcripts": [
+      "tasks/evidence/2026-06-28-phase12-local-separated-redirection-token-frontier-checkpoint/qemu-substitute-local-command-loop.log"
+    ]
+  },
+  "validation": [
+    {
+      "level": "static inspection",
+      "command": "manual inspection of accepted predecessor task records, retained evidence paths, docs, and git diff",
+      "result": "passed"
+    },
+    {
+      "level": "fmt/lint",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "level": "QEMU/substitute unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "result": "passed; 883 Talos no_std tests"
+    },
+    {
+      "level": "jq",
+      "command": "jq empty tasks/evidence/2026-06-28-phase12-local-separated-redirection-token-frontier-checkpoint/classification.json tasks/evidence/2026-06-28-phase12-local-separated-redirection-token-frontier-checkpoint/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "diff",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed; search index size warning retained"
+    },
+    {
+      "level": "staged diff",
+      "command": "git diff --cached --check",
+      "result": "passed before commit"
+    }
+  ],
+  "next_task": null,
+  "planningNeeded": true
+}
