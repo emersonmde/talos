@@ -1,0 +1,57 @@
+{
+  "task_id": "phase12-local-combined-pipeline-bounded-tmp-output-path-append-redirection-frontier-checkpoint-20260628",
+  "classification": "local-combined-pipeline-bounded-tmp-output-path-append-redirection-frontier-checkpoint-accepted",
+  "files": {
+    "task_record": "tasks/2026-06-28-phase12-local-combined-pipeline-bounded-tmp-output-path-append-redirection-frontier-checkpoint.md",
+    "predecessor_task_records": [
+      "tasks/2026-06-28-phase12-local-direct-combined-pipeline-bounded-tmp-output-path-append-redirection-core.md",
+      "tasks/2026-06-28-phase12-local-bare-name-combined-pipeline-bounded-tmp-output-path-append-redirection-core.md"
+    ],
+    "predecessor_evidence": [
+      "tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-bounded-tmp-output-path-append-redirection-core/classification.json",
+      "tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-bounded-tmp-output-path-append-redirection-core/evidence-map.json",
+      "tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-bounded-tmp-output-path-append-redirection-core/qemu-substitute-local-command-loop.log",
+      "tasks/evidence/2026-06-28-phase12-local-bare-name-combined-pipeline-bounded-tmp-output-path-append-redirection-core/classification.json",
+      "tasks/evidence/2026-06-28-phase12-local-bare-name-combined-pipeline-bounded-tmp-output-path-append-redirection-core/evidence-map.json",
+      "tasks/evidence/2026-06-28-phase12-local-bare-name-combined-pipeline-bounded-tmp-output-path-append-redirection-core/qemu-substitute-local-command-loop.log"
+    ],
+    "docs": [
+      "docs/src/roadmap.md",
+      "docs/src/project/phase12-networking-ssh.md",
+      "docs/src/project/early-posix-shape.md"
+    ],
+    "checkpoint_json": [
+      "tasks/evidence/2026-06-28-phase12-local-combined-pipeline-bounded-tmp-output-path-append-redirection-frontier-checkpoint/classification.json",
+      "tasks/evidence/2026-06-28-phase12-local-combined-pipeline-bounded-tmp-output-path-append-redirection-frontier-checkpoint/evidence-map.json"
+    ]
+  },
+  "validation": [
+    {
+      "level": "static inspection",
+      "command": "manual inspection of accepted predecessor task records, retained evidence paths, docs, and git diff",
+      "result": "passed"
+    },
+    {
+      "level": "jq",
+      "command": "jq empty tasks/evidence/2026-06-28-phase12-local-combined-pipeline-bounded-tmp-output-path-append-redirection-frontier-checkpoint/classification.json tasks/evidence/2026-06-28-phase12-local-combined-pipeline-bounded-tmp-output-path-append-redirection-frontier-checkpoint/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "diff",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "level": "staged diff",
+      "command": "git diff --cached --check",
+      "result": "passed before commit"
+    }
+  ],
+  "next_task": null,
+  "planningNeeded": true
+}

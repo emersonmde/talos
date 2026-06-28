@@ -1754,6 +1754,37 @@ hardware proof, boot publication, and phase transition remain deferred. The
 selected next local task is the combined pipeline bounded /tmp output-path
 append frontier checkpoint.
 
+The combined-pipeline bounded volatile /tmp output-path append frontier
+checkpoint freezes that local-only static/unit/QEMU-substitute boundary after
+the direct path-form and fixed-/bin bare-name cores. The accepted direct
+sequences remain exactly
+'/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/talos-pipeline-output-alpha.txt'
+followed by
+'/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/talos-pipeline-output-alpha.txt',
+and
+'/bin/stdin </etc/banner.txt | /bin/stderr 2>/tmp/talos-pipeline-error-beta.log'
+followed by
+'/bin/stdin </etc/banner.txt | /bin/stderr 2>>/tmp/talos-pipeline-error-beta.log'.
+The accepted bare-name sequences remain exactly
+'stdin </etc/banner.txt | stdin >/tmp/talos-pipeline-output-alpha.txt' followed
+by 'stdin </etc/banner.txt | stdin >>/tmp/talos-pipeline-output-alpha.txt',
+and 'stdin </etc/banner.txt | stderr 2>/tmp/talos-pipeline-error-beta.log'
+followed by
+'stdin </etc/banner.txt | stderr 2>>/tmp/talos-pipeline-error-beta.log'. Both
+forms preserve descriptor-backed VFS/userspace execution, producer fd0 from
+initramfs:/etc/banner.txt, producer fd1 pipe handoff, final-stage fd0 from the
+pipe, child-only final-stage fd1/fd2 volatile-vfs /tmp leaf rebinding,
+append-at-EOF semantics, descriptor-backed cat readback, lifecycle/status
+observations, closed loader temporaries where applicable, and later descriptor
+restoration controls. Persistent writable filesystem behavior,
+nested/traversal paths, paths outside volatile /tmp, separated
+redirection-token grammar, explicit alternate fd syntax, mixed direct/bare
+broadening, PATH/current-directory lookup, command lookup beyond bounded /bin,
+arbitrary shell grammar, live networking/SSH, generated-root retry, Pi 5
+hardware proof, boot publication, and phase transition remain deferred.
+selected_next_task=null and planningNeeded=true because no later queued
+same-lane local POSIX/VFS task is mechanically objective.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

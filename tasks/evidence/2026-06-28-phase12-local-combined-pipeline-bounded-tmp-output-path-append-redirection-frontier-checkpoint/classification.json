@@ -1,0 +1,48 @@
+{
+  "task_id": "phase12-local-combined-pipeline-bounded-tmp-output-path-append-redirection-frontier-checkpoint-20260628",
+  "classification": "local-combined-pipeline-bounded-tmp-output-path-append-redirection-frontier-checkpoint-accepted",
+  "accepted_frontier": {
+    "direct_path_form": [
+      "/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/talos-pipeline-output-alpha.txt",
+      "/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/talos-pipeline-output-alpha.txt",
+      "/bin/stdin </etc/banner.txt | /bin/stderr 2>/tmp/talos-pipeline-error-beta.log",
+      "/bin/stdin </etc/banner.txt | /bin/stderr 2>>/tmp/talos-pipeline-error-beta.log"
+    ],
+    "bounded_bin_bare_name": [
+      "stdin </etc/banner.txt | stdin >/tmp/talos-pipeline-output-alpha.txt",
+      "stdin </etc/banner.txt | stdin >>/tmp/talos-pipeline-output-alpha.txt",
+      "stdin </etc/banner.txt | stderr 2>/tmp/talos-pipeline-error-beta.log",
+      "stdin </etc/banner.txt | stderr 2>>/tmp/talos-pipeline-error-beta.log"
+    ]
+  },
+  "evidence": {
+    "execution": "descriptor-backed VFS/userspace two-stage combined pipeline execution",
+    "lookup": "direct path-form loading or fixed bounded /bin bare-name lookup only",
+    "pipe": "producer fd1 serialized pipe handoff to final-stage fd0",
+    "stdout_target": "volatile-vfs:/tmp/talos-pipeline-output-alpha.txt truncate then append",
+    "stderr_target": "volatile-vfs:/tmp/talos-pipeline-error-beta.log truncate then append",
+    "readback": "descriptor-backed cat readback observes 0xc4 bytes for nested stdin output and 0x3e bytes for stderr output",
+    "process_status": "waitpid, laststatus, pipestatus, /proc/talos/processes, and ps observations retained from predecessor gates",
+    "restoration_controls": "later direct and bare-name controls prove descriptor restoration"
+  },
+  "deferred": [
+    "persistent writable filesystem behavior",
+    "nested or traversal paths",
+    "paths outside volatile /tmp",
+    "separated redirection-token grammar",
+    "explicit alternate fd syntax",
+    "mixed direct/bare broadening",
+    "PATH/current-directory lookup",
+    "command lookup beyond bounded /bin",
+    "arbitrary shell grammar",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "boot publication",
+    "phase transition"
+  ],
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "No later queued same-lane local POSIX/VFS task is mechanically objective after the bounded volatile /tmp combined pipeline output-path append redirection checkpoint.",
+  "hardware_claim": "none"
+}

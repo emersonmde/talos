@@ -20228,6 +20228,37 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   Persistence, broad path support, command lookup beyond bounded /bin, live
   networking/SSH, Pi 5 hardware proof, generated-root retry, boot publication,
   and phase transition remain deferred.
+- phase12-local-combined-pipeline-bounded-tmp-output-path-append-redirection-frontier-checkpoint-20260628
+  freezes the accepted local-only direct path-form and fixed-/bin bare-name
+  combined pipeline bounded volatile /tmp output-path append frontier without
+  adding runtime behavior. The accepted direct witnesses remain exactly
+  '/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/talos-pipeline-output-alpha.txt'
+  followed by
+  '/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/talos-pipeline-output-alpha.txt',
+  and
+  '/bin/stdin </etc/banner.txt | /bin/stderr 2>/tmp/talos-pipeline-error-beta.log'
+  followed by
+  '/bin/stdin </etc/banner.txt | /bin/stderr 2>>/tmp/talos-pipeline-error-beta.log'.
+  The accepted bare-name witnesses remain exactly
+  'stdin </etc/banner.txt | stdin >/tmp/talos-pipeline-output-alpha.txt'
+  followed by
+  'stdin </etc/banner.txt | stdin >>/tmp/talos-pipeline-output-alpha.txt',
+  and
+  'stdin </etc/banner.txt | stderr 2>/tmp/talos-pipeline-error-beta.log'
+  followed by
+  'stdin </etc/banner.txt | stderr 2>>/tmp/talos-pipeline-error-beta.log'.
+  Both forms preserve descriptor-backed VFS/userspace execution, serialized
+  pipe handoff, safe volatile-vfs /tmp leaf fd1/fd2 rebinding for the final
+  stage, append-at-EOF semantics, descriptor-backed readback, lifecycle/status
+  observations, descriptor restoration controls, and deterministic fail-closed
+  path/grammar/lookup controls. Persistent writable filesystem behavior,
+  nested/traversal paths, paths outside volatile /tmp, separated
+  redirection-token grammar, explicit alternate fd syntax, mixed direct/bare
+  broadening, PATH/current-directory lookup, command lookup beyond bounded
+  /bin, arbitrary shell grammar, live networking/SSH, Pi 5 hardware proof,
+  generated-root retry, boot publication, and phase transition remain
+  deferred. selected_next_task=null and planningNeeded=true because no later
+  queued same-lane local POSIX/VFS task is mechanically objective.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

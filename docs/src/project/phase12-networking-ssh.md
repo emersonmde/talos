@@ -1018,6 +1018,68 @@ transition remain deferred. selected_next_task=null and planningNeeded=true
 because no later queued same-lane local POSIX/VFS task is mechanically
 objective.
 
+The
+phase12-local-direct-combined-pipeline-bounded-tmp-output-path-append-redirection-core-20260628
+task keeps live networking/SSH paused while accepting the direct path-form
+combined pipeline extension to safe caller-chosen volatile /tmp leaf output
+paths. The accepted stdout sequence is
+'/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/talos-pipeline-output-alpha.txt'
+followed by
+'/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/talos-pipeline-output-alpha.txt';
+the accepted stderr sequence is
+'/bin/stdin </etc/banner.txt | /bin/stderr 2>/tmp/talos-pipeline-error-beta.log'
+followed by
+'/bin/stdin </etc/banner.txt | /bin/stderr 2>>/tmp/talos-pipeline-error-beta.log'.
+Both preserve descriptor-backed VFS/userspace execution, serialized pipe
+handoff, final-stage fd0 from the pipe, child-only fd1/fd2 volatile-vfs /tmp
+leaf rebinding, append-at-EOF semantics, descriptor-backed readback,
+lifecycle/status/process observations, and later descriptor restoration
+controls. Fixed-/bin bare-name coverage is accepted by the following bounded
+/bin lookup slice; persistence, broad path support, live networking/SSH, Pi 5
+hardware proof, generated-root retry, boot publication, and phase transition
+remain deferred.
+
+The
+phase12-local-bare-name-combined-pipeline-bounded-tmp-output-path-append-redirection-core-20260628
+task accepts the corresponding fixed-/bin bare-name combined pipeline extension
+while keeping live networking/SSH paused. The accepted stdout sequence is
+'stdin </etc/banner.txt | stdin >/tmp/talos-pipeline-output-alpha.txt'
+followed by
+'stdin </etc/banner.txt | stdin >>/tmp/talos-pipeline-output-alpha.txt'; the
+accepted stderr sequence is
+'stdin </etc/banner.txt | stderr 2>/tmp/talos-pipeline-error-beta.log'
+followed by
+'stdin </etc/banner.txt | stderr 2>>/tmp/talos-pipeline-error-beta.log'. Both
+stages resolve only through bounded /bin lookup before using the accepted
+descriptor-backed VFS/userspace, pipe, volatile-file, process-status, and
+restoration paths. Direct path-form bounded /tmp combined-pipeline output-path
+append remains a retained control. Mixed direct/bare broadening, command lookup
+beyond bounded /bin, paths outside volatile /tmp, nested/traversal paths,
+persistence, broad shell grammar, live networking/SSH, Pi 5 hardware proof,
+generated-root retry, boot publication, and phase transition remain deferred.
+
+The
+phase12-local-combined-pipeline-bounded-tmp-output-path-append-redirection-frontier-checkpoint-20260628
+checkpoint freezes the accepted local-only direct path-form and fixed-/bin
+bare-name combined pipeline bounded volatile /tmp output-path append frontier
+without adding runtime behavior. The accepted direct and bare-name witnesses
+remain the exact stdout/stderr truncate-then-append sequences targeting
+volatile-vfs:/tmp/talos-pipeline-output-alpha.txt and
+volatile-vfs:/tmp/talos-pipeline-error-beta.log. Both forms keep the accepted
+descriptor-backed VFS/userspace execution path, producer fd0 from
+initramfs:/etc/banner.txt, producer fd1 as the pipe endpoint, final-stage fd0
+from that pipe endpoint, child-only final-stage fd1/fd2 volatile-vfs /tmp leaf
+rebinding, append-at-EOF semantics, descriptor-backed readback of two fixture
+writes, lifecycle/status/process observations, and descriptor restoration
+controls. Persistent writable filesystem behavior, nested/traversal paths,
+paths outside volatile /tmp, separated redirection-token grammar, explicit
+alternate fd syntax, mixed direct/bare broadening, PATH/current-directory
+lookup, command lookup beyond bounded /bin, arbitrary shell grammar, live
+networking/SSH, Pi 5 hardware proof, generated-root retry, boot publication,
+and phase transition remain deferred. selected_next_task=null and
+planningNeeded=true because no later queued same-lane local POSIX/VFS task is
+mechanically objective.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1
@@ -11248,3 +11310,24 @@ lookup beyond bounded /bin, persistence, broad path support, live networking/SSH
 Pi 5 hardware proof, generated-root retry, boot publication, and phase
 transition remain deferred. The selected next local task is the combined
 pipeline bounded /tmp output-path append frontier checkpoint.
+
+The accepted
+phase12-local-combined-pipeline-bounded-tmp-output-path-append-redirection-frontier-checkpoint-20260628
+task freezes that local-only bounded volatile /tmp combined-pipeline
+output-path append frontier without adding runtime behavior. The accepted
+direct path-form and fixed-/bin bare-name witnesses remain the exact
+stdout/stderr truncate-then-append sequences targeting
+volatile-vfs:/tmp/talos-pipeline-output-alpha.txt and
+volatile-vfs:/tmp/talos-pipeline-error-beta.log. Both forms preserve
+descriptor-backed VFS/userspace execution, serialized pipe handoff,
+final-stage fd0 from the pipe endpoint, child-only final-stage fd1/fd2
+volatile-vfs /tmp leaf rebinding, append-at-EOF semantics,
+descriptor-backed readback of two fixture writes, lifecycle/status/process
+observations, and later descriptor restoration controls. Persistent writable
+filesystem behavior, nested/traversal paths, paths outside volatile /tmp,
+separated redirection-token grammar, explicit alternate fd syntax, mixed
+direct/bare broadening, PATH/current-directory lookup, command lookup beyond
+bounded /bin, arbitrary shell grammar, live networking/SSH, Pi 5 hardware
+proof, generated-root retry, boot publication, and phase transition remain
+deferred. selected_next_task=null and planningNeeded=true because no later
+queued same-lane local POSIX/VFS task is mechanically objective.

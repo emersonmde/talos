@@ -3,7 +3,7 @@
 Task:
 phase12-local-bare-name-combined-pipeline-bounded-tmp-output-path-append-redirection-core-20260628
 
-Status: accepted pending commit; durable supervisor state records the final commit SHA after commit.
+Status: accepted and committed; durable supervisor state records the final commit SHA.
 
 ## Summary
 
