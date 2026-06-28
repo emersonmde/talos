@@ -57,6 +57,7 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+direct-absolute-path-vfs-command-readonly-stdin-redirection",
     "+direct-absolute-path-vfs-command-separated-redirection-tokens",
     "+bounded-bare-name-bin-vfs-command-separated-redirection-tokens",
+    "+direct-absolute-path-vfs-pipeline-separated-redirection-tokens",
     "+bounded-bare-name-bin-vfs-command-readonly-stdin-redirection",
     "+direct-absolute-path-vfs-pipeline-producer-readonly-stdin-redirection",
     "+bounded-bare-name-bin-vfs-pipeline-producer-readonly-stdin-redirection",
@@ -7578,16 +7579,30 @@ fn parse_absolute_path_pipeline_request(
         return Err(LocalCommandExecError::InvalidPath);
     }
     let (consumer_path, consumer_arguments) = split_pipeline_stage_path_and_arguments(consumer)?;
-    reject_unbounded_pipeline_producer_arguments(producer_arguments)?;
-    reject_unbounded_pipeline_consumer_arguments(consumer_arguments.unwrap_or(""))?;
-    Ok(LocalCommandPipelineRequest {
+    let producer_has_separated_redirection =
+        has_separated_pipeline_stdin_redirection(producer_arguments);
+    let consumer_has_separated_redirection =
+        has_separated_pipeline_output_redirection(consumer_arguments.unwrap_or(""));
+    reject_unbounded_absolute_pipeline_producer_arguments(producer_arguments)?;
+    reject_unbounded_absolute_pipeline_consumer_arguments(consumer_arguments.unwrap_or(""))?;
+    let request = LocalCommandPipelineRequest {
         producer: parse_absolute_path_exec_request_with_arguments(
             command.name,
             optional_trimmed_arguments(producer_arguments),
         )?,
         middle: None,
         consumer: parse_absolute_path_pipeline_consumer_request(consumer_path, consumer_arguments)?,
-    })
+    };
+    if producer_has_separated_redirection || consumer_has_separated_redirection {
+        if !(producer_has_separated_redirection
+            && consumer_has_separated_redirection
+            && (is_direct_pipeline_combined_stdin_stdout_redirection(&request)
+                || is_direct_pipeline_combined_stdin_stderr_redirection(&request)))
+        {
+            return Err(LocalCommandExecError::InvalidPath);
+        }
+    }
+    Ok(request)
 }
 
 fn parse_absolute_path_pipeline_consumer_request(
@@ -7599,6 +7614,16 @@ fn parse_absolute_path_pipeline_consumer_request(
     };
     let arguments = trim_ascii_space(arguments);
     if path_text.as_bytes() == initramfs::PHASE10_STDIN_PATH {
+        if let Some(redirection) = parse_separated_pipeline_stdout_redirection(arguments)? {
+            let exec_path = LocalCommandExecPath::from_absolute(path_text.as_bytes())?;
+            let argv = LocalCommandLiteralArgv::from_tokens(&[path_text.as_bytes()])?;
+            return Ok(LocalCommandExecRequest {
+                path: exec_path,
+                argv,
+                redirection: Some(redirection),
+                stdin_redirection: None,
+            });
+        }
         if let Some(target) = arguments.strip_prefix(">>")
             && let Some(path) =
                 LocalCommandVolatilePath::from_supported_stdout_path(target.as_bytes())
@@ -7627,6 +7652,16 @@ fn parse_absolute_path_pipeline_consumer_request(
         }
     }
     if path_text.as_bytes() == initramfs::PHASE10_STDERR_PATH {
+        if let Some(redirection) = parse_separated_pipeline_stderr_redirection(arguments)? {
+            let exec_path = LocalCommandExecPath::from_absolute(path_text.as_bytes())?;
+            let argv = LocalCommandLiteralArgv::from_tokens(&[path_text.as_bytes()])?;
+            return Ok(LocalCommandExecRequest {
+                path: exec_path,
+                argv,
+                redirection: Some(redirection),
+                stdin_redirection: None,
+            });
+        }
         if let Some(target) = arguments.strip_prefix("2>>")
             && let Some(path) =
                 LocalCommandVolatilePath::from_supported_stderr_path(target.as_bytes())
@@ -7655,6 +7690,56 @@ fn parse_absolute_path_pipeline_consumer_request(
         }
     }
     parse_absolute_path_exec_request_with_arguments(path_text, Some(arguments))
+}
+
+fn parse_separated_pipeline_stdout_redirection(
+    arguments: &str,
+) -> Result<Option<LocalCommandExecRedirection>, LocalCommandExecError> {
+    let mut tokens = arguments.as_bytes().split(|byte| is_space(*byte));
+    let Some(operator) = next_non_empty_argument_token(&mut tokens) else {
+        return Ok(None);
+    };
+    if operator != b">" && operator != b">>" {
+        return Ok(None);
+    }
+    let Some(target) = next_non_empty_argument_token(&mut tokens) else {
+        return Err(LocalCommandExecError::InvalidPath);
+    };
+    if next_non_empty_argument_token(&mut tokens).is_some() {
+        return Err(LocalCommandExecError::InvalidPath);
+    }
+    let path = LocalCommandVolatilePath::from_supported_stdout_path(target)
+        .ok_or(LocalCommandExecError::InvalidPath)?;
+    Ok(Some(if operator == b">" {
+        LocalCommandExecRedirection::StdoutToTmpStdout(path)
+    } else {
+        LocalCommandExecRedirection::StdoutAppendTmpStdout(path)
+    }))
+}
+
+fn parse_separated_pipeline_stderr_redirection(
+    arguments: &str,
+) -> Result<Option<LocalCommandExecRedirection>, LocalCommandExecError> {
+    let mut tokens = arguments.as_bytes().split(|byte| is_space(*byte));
+    let Some(operator) = next_non_empty_argument_token(&mut tokens) else {
+        return Ok(None);
+    };
+    if operator != b"2>" && operator != b"2>>" {
+        return Ok(None);
+    }
+    let Some(target) = next_non_empty_argument_token(&mut tokens) else {
+        return Err(LocalCommandExecError::InvalidPath);
+    };
+    if next_non_empty_argument_token(&mut tokens).is_some() {
+        return Err(LocalCommandExecError::InvalidPath);
+    }
+    let path = LocalCommandVolatilePath::from_supported_stderr_path(target)
+        .ok_or(LocalCommandExecError::InvalidPath)?;
+    Ok(Some(if operator == b"2>" {
+        LocalCommandExecRedirection::StderrToTmpStderr(path)
+    } else {
+        LocalCommandExecRedirection::StderrAppendTmpStderr(path)
+    }))
 }
 
 fn parse_absolute_path_exec_request_with_arguments(
@@ -7886,6 +7971,20 @@ fn split_pipeline_stage_path_and_arguments(
     Ok((path, arguments))
 }
 
+fn has_separated_pipeline_stdin_redirection(arguments: &str) -> bool {
+    arguments
+        .as_bytes()
+        .split(|byte| is_space(*byte))
+        .any(|token| token == b"<")
+}
+
+fn has_separated_pipeline_output_redirection(arguments: &str) -> bool {
+    arguments
+        .as_bytes()
+        .split(|byte| is_space(*byte))
+        .any(|token| token == b">" || token == b">>" || token == b"2>" || token == b"2>>")
+}
+
 fn reject_unbounded_pipeline_consumer_arguments(
     arguments: &str,
 ) -> Result<(), LocalCommandExecError> {
@@ -7923,6 +8022,127 @@ fn reject_unbounded_pipeline_consumer_arguments(
             }
             count += 1;
             continue;
+        }
+        if saw_stdin_redirection || !is_supported_literal_exec_token(token) {
+            return Err(LocalCommandExecError::InvalidPath);
+        }
+        count += 1;
+        if count > 1 {
+            return Err(LocalCommandExecError::InvalidPath);
+        }
+    }
+    Ok(())
+}
+
+fn reject_unbounded_absolute_pipeline_consumer_arguments(
+    arguments: &str,
+) -> Result<(), LocalCommandExecError> {
+    let mut tokens = arguments.as_bytes().split(|byte| is_space(*byte));
+    let mut count = 0usize;
+    let mut saw_stdin_redirection = false;
+    while let Some(token) = tokens.next() {
+        if token.is_empty() {
+            continue;
+        }
+        if token == b"</etc/banner.txt" {
+            if count != 0 || saw_stdin_redirection {
+                return Err(LocalCommandExecError::InvalidPath);
+            }
+            saw_stdin_redirection = true;
+            count += 1;
+            continue;
+        }
+        if token == b">" || token == b">>" {
+            let Some(target) = next_non_empty_argument_token(&mut tokens) else {
+                return Err(LocalCommandExecError::InvalidPath);
+            };
+            if count != 0
+                || saw_stdin_redirection
+                || LocalCommandVolatilePath::from_supported_stdout_path(target).is_none()
+            {
+                return Err(LocalCommandExecError::InvalidPath);
+            }
+            if next_non_empty_argument_token(&mut tokens).is_some() {
+                return Err(LocalCommandExecError::InvalidPath);
+            }
+            return Ok(());
+        }
+        if token == b"2>" || token == b"2>>" {
+            let Some(target) = next_non_empty_argument_token(&mut tokens) else {
+                return Err(LocalCommandExecError::InvalidPath);
+            };
+            if count != 0
+                || saw_stdin_redirection
+                || LocalCommandVolatilePath::from_supported_stderr_path(target).is_none()
+            {
+                return Err(LocalCommandExecError::InvalidPath);
+            }
+            if next_non_empty_argument_token(&mut tokens).is_some() {
+                return Err(LocalCommandExecError::InvalidPath);
+            }
+            return Ok(());
+        }
+        if token == b">/tmp/pipeline-report.txt"
+            || token == b">>/tmp/pipeline-report.txt"
+            || token == b">/tmp/pipeline-combined.txt"
+            || token == b">/tmp/pipeline-combined-append.txt"
+            || token == b">>/tmp/pipeline-combined-append.txt"
+            || token == b"2>/tmp/pipeline-combined-stderr.txt"
+            || token == b"2>/tmp/pipeline-combined-stderr-append.txt"
+            || token == b"2>>/tmp/pipeline-combined-stderr-append.txt"
+            || token == b"2>/tmp/pipeline-stderr.txt"
+            || token == b"2>>/tmp/pipeline-stderr.txt"
+            || token == b">/tmp/talos-pipeline-output-alpha.txt"
+            || token == b">>/tmp/talos-pipeline-output-alpha.txt"
+            || token == b"2>/tmp/talos-pipeline-error-beta.log"
+            || token == b"2>>/tmp/talos-pipeline-error-beta.log"
+        {
+            if count != 0 || saw_stdin_redirection {
+                return Err(LocalCommandExecError::InvalidPath);
+            }
+            count += 1;
+            continue;
+        }
+        if saw_stdin_redirection || !is_supported_literal_exec_token(token) {
+            return Err(LocalCommandExecError::InvalidPath);
+        }
+        count += 1;
+        if count > 1 {
+            return Err(LocalCommandExecError::InvalidPath);
+        }
+    }
+    Ok(())
+}
+
+fn reject_unbounded_absolute_pipeline_producer_arguments(
+    arguments: &str,
+) -> Result<(), LocalCommandExecError> {
+    let mut tokens = arguments.as_bytes().split(|byte| is_space(*byte));
+    let mut count = 0usize;
+    let mut saw_stdin_redirection = false;
+    while let Some(token) = tokens.next() {
+        if token.is_empty() {
+            continue;
+        }
+        if token == b"</etc/banner.txt" {
+            if count != 0 || saw_stdin_redirection {
+                return Err(LocalCommandExecError::InvalidPath);
+            }
+            saw_stdin_redirection = true;
+            count += 1;
+            continue;
+        }
+        if token == b"<" {
+            let Some(source) = next_non_empty_argument_token(&mut tokens) else {
+                return Err(LocalCommandExecError::InvalidPath);
+            };
+            if count != 0 || saw_stdin_redirection || source != b"/etc/banner.txt" {
+                return Err(LocalCommandExecError::InvalidPath);
+            }
+            if next_non_empty_argument_token(&mut tokens).is_some() {
+                return Err(LocalCommandExecError::InvalidPath);
+            }
+            return Ok(());
         }
         if saw_stdin_redirection || !is_supported_literal_exec_token(token) {
             return Err(LocalCommandExecError::InvalidPath);
@@ -15818,7 +16038,7 @@ talos> talos: exec-not-executable\n"
     #[test_case]
     fn local_command_loop_appends_direct_combined_pipeline_to_bounded_tmp_leaf_paths() {
         let stdout_command = parse_local_command(
-            b"/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/talos-pipeline-output-alpha.txt",
+            b"/bin/stdin < /etc/banner.txt | /bin/stdin >> /tmp/talos-pipeline-output-alpha.txt",
         )
         .unwrap();
         let stdout_request = parse_absolute_path_pipeline_request(stdout_command).unwrap();
@@ -15844,7 +16064,7 @@ talos> talos: exec-not-executable\n"
         ));
 
         let stderr_command = parse_local_command(
-            b"/bin/stdin </etc/banner.txt | /bin/stderr 2>>/tmp/talos-pipeline-error-beta.log",
+            b"/bin/stdin < /etc/banner.txt | /bin/stderr 2>> /tmp/talos-pipeline-error-beta.log",
         )
         .unwrap();
         let stderr_request = parse_absolute_path_pipeline_request(stderr_command).unwrap();
@@ -15869,7 +16089,7 @@ talos> talos: exec-not-executable\n"
             &stderr_request
         ));
 
-        let bytes = *b"/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/talos-pipeline-output-alpha.txt\r/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/talos-pipeline-output-alpha.txt\rwaitpid 0x100001\rwaitpid 0x100002\rlaststatus\rpipestatus\rcat /proc/talos/processes\rps\rcat /tmp/talos-pipeline-output-alpha.txt\r/bin/stdin </etc/banner.txt | /bin/stderr 2>/tmp/talos-pipeline-error-beta.log\r/bin/stdin </etc/banner.txt | /bin/stderr 2>>/tmp/talos-pipeline-error-beta.log\rwaitpid 0x100001\rwaitpid 0x100002\rlaststatus\rpipestatus\rcat /proc/talos/processes\rps\rcat /tmp/talos-pipeline-error-beta.log\r/bin/stdin </etc/banner.txt\r/bin/stderr\rstdin </etc/banner.txt | /bin/stdin >>/tmp/talos-pipeline-output-alpha.txt\r/bin/stdin </etc/banner.txt | stdin >>/tmp/talos-pipeline-output-alpha.txt\r/bin/stdin </etc/banner.txt | /bin/stdin >>/var/out.txt\r/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/nested/out.txt\r/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/.\r/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/../bad.txt\r/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/stderr.txt\r/bin/stdin </etc/banner.txt | /bin/stdin >> /tmp/talos-pipeline-output-alpha.txt\r/bin/stdin </etc/banner.txt | /bin/stderr 2>>/var/err.txt\r/bin/stdin </etc/banner.txt | /bin/stderr 2>>/tmp/nested/err.log\r/bin/stdin </etc/banner.txt | /bin/stderr 2>>/tmp/\r/bin/stdin </etc/banner.txt | /bin/stderr 2>>/tmp/stdout.txt\r/bin/stdin </etc/banner.txt | /bin/stderr 2>> /tmp/talos-pipeline-error-beta.log\rmissing </etc/banner.txt | /bin/stdin >>/tmp/talos-pipeline-output-alpha.txt\r/bin/stdin </etc/banner.txt | missing >>/tmp/talos-pipeline-output-alpha.txt\r";
+        let bytes = *b"/bin/stdin < /etc/banner.txt | /bin/stdin > /tmp/talos-pipeline-output-alpha.txt\r/bin/stdin < /etc/banner.txt | /bin/stdin >> /tmp/talos-pipeline-output-alpha.txt\rwaitpid 0x100001\rwaitpid 0x100002\rlaststatus\rpipestatus\rcat /proc/talos/processes\rps\rcat /tmp/talos-pipeline-output-alpha.txt\r/bin/stdin < /etc/banner.txt | /bin/stderr 2> /tmp/talos-pipeline-error-beta.log\r/bin/stdin < /etc/banner.txt | /bin/stderr 2>> /tmp/talos-pipeline-error-beta.log\rwaitpid 0x100001\rwaitpid 0x100002\rlaststatus\rpipestatus\rcat /proc/talos/processes\rps\rcat /tmp/talos-pipeline-error-beta.log\r/bin/stdin </etc/banner.txt\r/bin/stderr\rstdin </etc/banner.txt | /bin/stdin >>/tmp/talos-pipeline-output-alpha.txt\r/bin/stdin </etc/banner.txt | stdin >>/tmp/talos-pipeline-output-alpha.txt\r/bin/stdin </etc/banner.txt | /bin/stdin >>/var/out.txt\r/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/nested/out.txt\r/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/.\r/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/../bad.txt\r/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/stderr.txt\r/bin/stdin </etc/banner.txt | /bin/stdin 1>> /tmp/talos-pipeline-output-alpha.txt\r/bin/stdin </etc/banner.txt | /bin/stderr 2>>/var/err.txt\r/bin/stdin </etc/banner.txt | /bin/stderr 2>>/tmp/nested/err.log\r/bin/stdin </etc/banner.txt | /bin/stderr 2>>/tmp/\r/bin/stdin </etc/banner.txt | /bin/stderr 2>>/tmp/stdout.txt\r/bin/stdin </etc/banner.txt | /bin/stderr 2 >> /tmp/talos-pipeline-error-beta.log\rmissing </etc/banner.txt | /bin/stdin >>/tmp/talos-pipeline-output-alpha.txt\r/bin/stdin </etc/banner.txt | missing >>/tmp/talos-pipeline-output-alpha.txt\r";
         let input = ScriptedInput::new(bytes, bytes.len());
         let mut backend = CaptureSink::new();
         let statuses = {

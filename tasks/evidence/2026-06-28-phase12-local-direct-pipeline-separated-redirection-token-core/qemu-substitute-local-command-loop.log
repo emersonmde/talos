@@ -1,0 +1,12 @@
+Command:
+cargo -Zjson-target-spec test --quiet local_command_loop
+
+Environment:
+TMPDIR=/opt/strider/openclaw/current/workspace/tmp
+PATH includes /opt/strider/openclaw/current/workspace/tools/qemu-9.2.0-install/bin
+
+Result:
+passed
+
+Evidence level:
+QEMU/substitute unit tests for local_command_loop.

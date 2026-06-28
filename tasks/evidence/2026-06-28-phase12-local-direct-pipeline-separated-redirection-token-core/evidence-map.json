@@ -1,0 +1,24 @@
+{
+  "task_id": "phase12-local-direct-pipeline-separated-redirection-token-core-20260628",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "paths": [
+        "src/local_command_loop.rs",
+        "docs/src/project/early-posix-shape.md",
+        "docs/src/roadmap.md",
+        "tasks/2026-06-28-phase12-local-direct-pipeline-separated-redirection-token-core.md"
+      ],
+      "result": "Parser support is bounded to direct absolute-path combined pipeline separated redirection tokens and rejects consumer-only separated forms before successful process records."
+    },
+    {
+      "level": "QEMU/substitute unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "result": "passed"
+    },
+    {
+      "level": "scope",
+      "result": "No Pi 5 hardware/lab action, boot publication, generated-root retry, live networking/SSH, persistence, arbitrary paths, bare-name pipeline separated-token support, separated explicit fd syntax, or phase transition was performed or claimed."
+    }
+  ]
+}

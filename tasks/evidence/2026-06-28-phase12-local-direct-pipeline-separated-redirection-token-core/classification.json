@@ -1,0 +1,30 @@
+{
+  "task_id": "phase12-local-direct-pipeline-separated-redirection-token-core-20260628",
+  "classification": "local-direct-pipeline-separated-redirection-token-core-accepted",
+  "accepted_witnesses": [
+    "/bin/stdin < /etc/banner.txt | /bin/stdin > /tmp/talos-pipeline-output-alpha.txt",
+    "/bin/stdin < /etc/banner.txt | /bin/stdin >> /tmp/talos-pipeline-output-alpha.txt",
+    "/bin/stdin < /etc/banner.txt | /bin/stderr 2> /tmp/talos-pipeline-error-beta.log",
+    "/bin/stdin < /etc/banner.txt | /bin/stderr 2>> /tmp/talos-pipeline-error-beta.log"
+  ],
+  "accepted_boundary": "Direct absolute-path two-stage combined pipeline separated redirection tokens only, backed by descriptor VFS/userspace execution.",
+  "deferred": [
+    "fixed-/bin bare-name pipeline separated tokens",
+    "consumer-only separated pipeline redirection",
+    "mixed direct/bare pipeline stages",
+    "separated explicit fd syntax",
+    "persistent writable filesystem behavior",
+    "nested/traversal paths",
+    "paths outside volatile /tmp",
+    "PATH/current-directory lookup",
+    "command lookup beyond bounded /bin",
+    "arbitrary shell grammar",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "boot publication",
+    "phase transition"
+  ],
+  "selected_next_task": "phase12-local-bare-name-pipeline-separated-redirection-token-core-20260628",
+  "hardware_action": "none"
+}

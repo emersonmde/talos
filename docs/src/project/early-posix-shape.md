@@ -1827,6 +1827,29 @@ Pi 5 hardware proof, boot publication, live networking/SSH, and phase
 transition remain deferred. The selected next local task is direct path-form
 pipeline separated redirection-token support.
 
+The direct path-form pipeline separated redirection-token core extends that
+grammar only to the accepted two-stage combined pipeline shape. The accepted
+stdout sequence is
+'/bin/stdin < /etc/banner.txt | /bin/stdin > /tmp/talos-pipeline-output-alpha.txt'
+followed by
+'/bin/stdin < /etc/banner.txt | /bin/stdin >> /tmp/talos-pipeline-output-alpha.txt'.
+The accepted stderr sequence is
+'/bin/stdin < /etc/banner.txt | /bin/stderr 2> /tmp/talos-pipeline-error-beta.log'
+followed by
+'/bin/stdin < /etc/banner.txt | /bin/stderr 2>> /tmp/talos-pipeline-error-beta.log'.
+Both stages still use descriptor-backed VFS/userspace execution, producer fd0
+from initramfs:/etc/banner.txt, producer fd1 pipe handoff, final-stage fd0 from
+the pipe, child-only fd1/fd2 volatile-vfs /tmp leaf rebinding, append-at-EOF
+semantics, descriptor-backed cat readback, lifecycle/status/process
+observations, and later descriptor restoration controls. Consumer-only
+separated redirection, bare-name pipeline separated tokens, mixed direct/bare
+stages, separated explicit fd syntax, multistage pipelines, arbitrary paths,
+PATH/current-directory lookup, command lookup beyond bounded /bin, arbitrary
+shell grammar, persistence, generated-root retry, Pi 5 hardware proof, boot
+publication, live networking/SSH, and phase transition remain deferred. The
+selected next local task is fixed-/bin bare-name pipeline separated
+redirection-token support.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
