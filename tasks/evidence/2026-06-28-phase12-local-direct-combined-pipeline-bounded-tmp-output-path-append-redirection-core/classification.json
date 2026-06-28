@@ -1,0 +1,32 @@
+{
+  "task_id": "phase12-local-direct-combined-pipeline-bounded-tmp-output-path-append-redirection-core-20260628",
+  "classification": "local-direct-combined-pipeline-bounded-tmp-output-path-append-redirection-core-accepted",
+  "accepted_witnesses": [
+    "/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/talos-pipeline-output-alpha.txt",
+    "/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/talos-pipeline-output-alpha.txt",
+    "/bin/stdin </etc/banner.txt | /bin/stderr 2>/tmp/talos-pipeline-error-beta.log",
+    "/bin/stdin </etc/banner.txt | /bin/stderr 2>>/tmp/talos-pipeline-error-beta.log"
+  ],
+  "evidence": {
+    "execution": "descriptor-backed VFS/userspace direct path-form producer and consumer execution",
+    "pipe": "producer fd1 serialized pipe handoff to final-stage fd0",
+    "stdout_target": "volatile-vfs:/tmp/talos-pipeline-output-alpha.txt truncate then append",
+    "stderr_target": "volatile-vfs:/tmp/talos-pipeline-error-beta.log truncate then append",
+    "readback": "descriptor-backed cat readback observes 0xc4 bytes for nested stdin output and 0x3e bytes for stderr output",
+    "process_status": "waitpid, laststatus, pipestatus, /proc/talos/processes, and ps observations retained",
+    "restoration_controls": "later /bin/stdin and /bin/stderr controls prove descriptor restoration"
+  },
+  "deferred": [
+    "fixed-/bin bare-name combined pipeline bounded /tmp output-path append redirection",
+    "paths outside volatile /tmp",
+    "nested or traversal paths",
+    "persistent writable filesystem behavior",
+    "broad shell grammar",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "boot publication",
+    "phase transition"
+  ],
+  "hardware_claim": "none"
+}

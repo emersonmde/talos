@@ -20187,6 +20187,26 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   and phase transition remain deferred. selected_next_task=null and
   planningNeeded=true because no later queued same-lane local POSIX/VFS task is
   mechanically objective.
+- phase12-local-direct-combined-pipeline-bounded-tmp-output-path-append-redirection-core-20260628
+  extends the direct path-form combined pipeline append frontier to bounded
+  volatile /tmp leaf final-stage output targets. The accepted stdout sequence
+  is exactly
+  '/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/talos-pipeline-output-alpha.txt'
+  followed by
+  '/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/talos-pipeline-output-alpha.txt'.
+  The accepted stderr sequence is exactly
+  '/bin/stdin </etc/banner.txt | /bin/stderr 2>/tmp/talos-pipeline-error-beta.log'
+  followed by
+  '/bin/stdin </etc/banner.txt | /bin/stderr 2>>/tmp/talos-pipeline-error-beta.log'.
+  Both preserve descriptor-backed VFS/userspace execution, producer fd0 from
+  initramfs:/etc/banner.txt, producer fd1 pipe handoff, final-stage fd0 from
+  the pipe, child-only fd1/fd2 volatile-vfs file rebinding, append-at-EOF
+  semantics, descriptor-backed cat readback, lifecycle/status/process
+  observations, and descriptor restoration controls. Fixed-/bin bare-name
+  combined pipeline output-path append is the selected next local POSIX/VFS
+  task. Persistence, broad path support, live networking/SSH, Pi 5 hardware
+  proof, generated-root retry, boot publication, and phase transition remain
+  deferred.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

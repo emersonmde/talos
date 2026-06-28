@@ -11210,3 +11210,24 @@ path forms, broad shell grammar, live networking/SSH, Pi 5 hardware proof,
 generated-root retry, and phase transition remain deferred. selected_next_task
 is null and planningNeeded=true because no later queued same-lane local
 POSIX/VFS task is mechanically objective.
+
+The accepted
+phase12-local-direct-combined-pipeline-bounded-tmp-output-path-append-redirection-core-20260628
+task extends the local-only direct path-form pipeline output-path append
+frontier to safe volatile /tmp leaf targets. The accepted witnesses are exactly
+'/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/talos-pipeline-output-alpha.txt'
+followed by
+'/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/talos-pipeline-output-alpha.txt',
+and
+'/bin/stdin </etc/banner.txt | /bin/stderr 2>/tmp/talos-pipeline-error-beta.log'
+followed by
+'/bin/stdin </etc/banner.txt | /bin/stderr 2>>/tmp/talos-pipeline-error-beta.log'.
+The producer reads initramfs:/etc/banner.txt through descriptor-backed VFS,
+hands fd1 to the serialized pipe endpoint, and the final stage consumes that
+pipe on fd0 while rebinding only child fd1 or fd2 to the selected volatile-vfs
+file. Descriptor-backed cat readback proves the truncate-then-append ordering;
+waitpid, laststatus, pipestatus, /proc/talos/processes, and ps retain the
+process/status observations. Fixed-/bin bare-name combined pipeline output-path
+append remains the selected next local task. Live networking/SSH, Pi 5 hardware
+proof, generated-root retry, boot publication, persistence, broad path support,
+and phase transition remain deferred.

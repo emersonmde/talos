@@ -1,0 +1,39 @@
+{
+  "task_id": "phase12-local-direct-combined-pipeline-bounded-tmp-output-path-append-redirection-core-20260628",
+  "classification": "local-direct-combined-pipeline-bounded-tmp-output-path-append-redirection-core-accepted",
+  "files": {
+    "code": [
+      "src/local_command_loop.rs"
+    ],
+    "task_record": "tasks/2026-06-28-phase12-local-direct-combined-pipeline-bounded-tmp-output-path-append-redirection-core.md",
+    "docs": [
+      "docs/src/roadmap.md",
+      "docs/src/project/phase12-networking-ssh.md",
+      "docs/src/project/early-posix-shape.md"
+    ],
+    "transcript": "tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-bounded-tmp-output-path-append-redirection-core/qemu-substitute-local-command-loop.log"
+  },
+  "validation": [
+    {
+      "level": "fmt",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "level": "QEMU/substitute unit regression",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "result": "passed; 879 talos no_std tests"
+    },
+    {
+      "level": "jq",
+      "command": "jq empty tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-bounded-tmp-output-path-append-redirection-core/classification.json tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-bounded-tmp-output-path-append-redirection-core/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "docs",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    }
+  ],
+  "next_task": "phase12-local-bare-name-combined-pipeline-bounded-tmp-output-path-append-redirection-core-20260628"
+}

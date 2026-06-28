@@ -1714,6 +1714,25 @@ transition remain deferred. selected_next_task=null and planningNeeded=true
 because no later queued same-lane local POSIX/VFS task is mechanically
 objective.
 
+The direct combined-pipeline bounded volatile /tmp output-path append core
+extends the same local direct path-form policy to final-stage pipeline output
+targets. The accepted stdout sequence is
+'/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/talos-pipeline-output-alpha.txt'
+followed by
+'/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/talos-pipeline-output-alpha.txt'.
+The accepted stderr sequence is
+'/bin/stdin </etc/banner.txt | /bin/stderr 2>/tmp/talos-pipeline-error-beta.log'
+followed by
+'/bin/stdin </etc/banner.txt | /bin/stderr 2>>/tmp/talos-pipeline-error-beta.log'.
+Both preserve descriptor-backed VFS/userspace execution, producer fd0 from
+initramfs:/etc/banner.txt, producer fd1 pipe handoff, final-stage fd0 from the
+pipe, child-only fd1/fd2 volatile-vfs rebinding, append-at-EOF semantics,
+descriptor-backed cat readback, lifecycle/status/process observations, and
+later descriptor restoration controls. Fixed-/bin bare-name combined pipeline
+output-path append, persistence, path broadening beyond safe volatile /tmp leaf
+targets, live networking/SSH, generated-root retry, Pi 5 hardware proof, boot
+publication, and phase transition remain deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
