@@ -1888,6 +1888,25 @@ proof, boot publication, live networking/SSH, and phase transition remain
 deferred. selected_next_task=null and planningNeeded=true because no later
 queued same-lane local POSIX/VFS task is mechanically objective.
 
+The direct explicit-fd separated redirection-token core extends only direct
+absolute-path command parsing so fd token, operator token, and path token may be
+accepted as the next local grammar slice. The accepted local witnesses are
+'/bin/stdout 1 > /tmp/talos-output-alpha.txt' followed by
+'/bin/stdout 1 >> /tmp/talos-output-alpha.txt', and
+'/bin/stderr 2 > /tmp/talos-error-beta.log' followed by
+'/bin/stderr 2 >> /tmp/talos-error-beta.log'. Successful behavior remains
+descriptor-backed through VFS executable open/read, userspace launch/status,
+child-only fd1/fd2 rebinding to safe volatile-vfs /tmp leaf files,
+append-at-EOF semantics, descriptor-backed cat readback, waitpid/laststatus
+observations, and later descriptor restoration controls. Unsupported fd tokens,
+wrong fd/command pairings, missing operator/path tokens, bare-name explicit-fd
+separated tokens, pipeline explicit-fd separated tokens, nested/traversal paths,
+paths outside volatile /tmp, mixed direct/bare broadening, PATH/current-directory
+lookup, command lookup beyond bounded /bin, arbitrary shell grammar,
+generated-root retry, Pi 5 hardware proof, boot publication, live networking/SSH,
+persistence, and phase transition remain deferred. The selected next local task
+is fixed-/bin bare-name explicit-fd separated redirection-token support.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
