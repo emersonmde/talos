@@ -1,0 +1,20 @@
+Retained local POSIX/VFS QEMU/substitute smoke gates run on 2026-06-28:
+
+PASS scripts/qemu-local-shell-direct-combined-pipeline-stdin-stdout-redirection-smoke.sh
+PASS scripts/qemu-local-shell-direct-pipeline-output-append-regular-file-redirection-smoke.sh
+PASS scripts/qemu-local-shell-direct-pipeline-stderr-regular-file-redirection-smoke.sh
+PASS scripts/qemu-local-shell-process-status-vfs-smoke.sh
+PASS scripts/qemu-local-shell-ps-command-vfs-smoke.sh
+PASS scripts/qemu-local-shell-pipeline-status-smoke.sh
+PASS scripts/qemu-local-shell-waitpid-lifecycle-smoke.sh
+PASS scripts/qemu-local-shell-last-process-status-smoke.sh
+
+Coverage labels:
+- accepted combined pipeline stdin/stdout truncate control.
+- accepted pipeline stdout append control.
+- accepted pipeline stderr redirection/append boundary control.
+- descriptor-backed process-status VFS and ps controls.
+- pipestatus, waitpid, and laststatus observations.
+
+No live networking/SSH, generated-root retry, lab API, Pi 5 hardware, boot
+archive publication, or phase transition was performed.

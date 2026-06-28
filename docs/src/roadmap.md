@@ -19903,6 +19903,26 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   same-lane local POSIX/VFS task has complete objective dependencies,
   acceptance criteria, validation gates, docs requirements, and evidence
   requirements.
+- phase12-local-direct-combined-pipeline-stdout-append-redirection-core-20260628
+  accepts the direct path-form sequence
+  '/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-combined-append.txt'
+  followed by
+  '/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/pipeline-combined-append.txt'.
+  Both producer stages keep child-only fd0 sourced from
+  initramfs:/etc/banner.txt, fd1 bound to the serialized pipe endpoint,
+  inherited fd2, closed loader temporaries, and accepted userspace
+  launch/status records. The final-stage consumers keep fd0 from the pipe
+  endpoint, inherited fd2, and child-only fd1 rebound to
+  volatile-vfs:/tmp/pipeline-combined-append.txt. The first consumer uses
+  truncate/sink semantics and the second records append-at-EOF semantics.
+  Descriptor-backed 'cat /tmp/pipeline-combined-append.txt' reads two nested
+  userspace stdin reports in order, and a later normal
+  '/bin/stdin </etc/banner.txt' proves shell fd0/fd1 restoration. Bare-name
+  combined append, combined stderr append, arbitrary paths, persistent storage,
+  separated redirection-token grammar, explicit fd1 syntax, live networking/SSH,
+  Pi 5 hardware proof, generated-root retry, and phase transition remain
+  deferred. The selected next task is
+  phase12-local-bare-name-combined-pipeline-stdout-append-redirection-core-20260628.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

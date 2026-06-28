@@ -28,6 +28,7 @@ SHELL_DIRECT_PIPELINE_STAGE_ARGV_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_DI
 SHELL_DIRECT_PIPELINE_STDIN_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_DIRECT_PIPELINE_STDIN_REDIRECTION_SMOKE:-0}"
 SHELL_DIRECT_PIPELINE_CONSUMER_STDIN_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_DIRECT_PIPELINE_CONSUMER_STDIN_REDIRECTION_SMOKE:-0}"
 SHELL_DIRECT_COMBINED_PIPELINE_STDIN_STDOUT_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_DIRECT_COMBINED_PIPELINE_STDIN_STDOUT_REDIRECTION_SMOKE:-0}"
+SHELL_DIRECT_COMBINED_PIPELINE_STDOUT_APPEND_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_DIRECT_COMBINED_PIPELINE_STDOUT_APPEND_REDIRECTION_SMOKE:-0}"
 SHELL_BARE_NAME_COMBINED_PIPELINE_STDIN_STDOUT_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_BARE_NAME_COMBINED_PIPELINE_STDIN_STDOUT_REDIRECTION_SMOKE:-0}"
 SHELL_BARE_NAME_PIPELINE_STDIN_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_BARE_NAME_PIPELINE_STDIN_REDIRECTION_SMOKE:-0}"
 SHELL_BARE_NAME_PIPELINE_CONSUMER_STDIN_REDIRECTION_SMOKE="${TALOS_QEMU_LOCAL_COMMAND_LOOP_SHELL_BARE_NAME_PIPELINE_CONSUMER_STDIN_REDIRECTION_SMOKE:-0}"
@@ -808,6 +809,39 @@ while kill -0 "$qemu_pid" 2>/dev/null; do
             command_index="${BASH_REMATCH[1]}"
             if [ "$sent" -eq "$command_index" ] && [ "$command_index" -lt "${#direct_combined_pipeline_stdin_stdout_redirection_commands[@]}" ]; then
                 printf '%s\r' "${direct_combined_pipeline_stdin_stdout_redirection_commands[$command_index]}" >&3
+                sent=$((command_index + 1))
+            fi
+            continue
+        fi
+        if [ "$SHELL_DIRECT_COMBINED_PIPELINE_STDOUT_APPEND_REDIRECTION_SMOKE" -eq 1 ] && [[ "$line" =~ ready\ command=([0-9]+) ]]; then
+            direct_combined_pipeline_stdout_append_redirection_commands=(
+                "help"
+                "status"
+                "stdio"
+                "/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-combined-append.txt"
+                "/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/pipeline-combined-append.txt"
+                "waitpid 0x100001"
+                "waitpid 0x100002"
+                "laststatus"
+                "pipestatus"
+                "cat /proc/talos/processes"
+                "ps"
+                "cat /tmp/pipeline-combined-append.txt"
+                "/bin/stdin </etc/banner.txt"
+                "stdin </etc/banner.txt | stdin >>/tmp/pipeline-combined-append.txt"
+                "/bin/stdin </etc/banner.txt | /bin/stdin 2>>/tmp/pipeline-combined-append.txt"
+                "/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-report.txt"
+                "/bin/stdout | /bin/stdin >>/tmp/pipeline-combined-append.txt"
+                "/bin/stdin </etc/banner.txt | /bin/stdin 1>/tmp/pipeline-combined-append.txt"
+                "/bin/stdin </etc/banner.txt | /bin/stdin > /tmp/pipeline-combined-append.txt"
+                "/bin/stdin </etc/banner.txt | /bin/stdin >>/var/x"
+                "/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/pipeline-combined-append.txt | /bin/stdin"
+                "missing </etc/banner.txt | /bin/stdin >>/tmp/pipeline-combined-append.txt"
+                "/bin/stdin </etc/banner.txt | missing >>/tmp/pipeline-combined-append.txt"
+            )
+            command_index="${BASH_REMATCH[1]}"
+            if [ "$sent" -eq "$command_index" ] && [ "$command_index" -lt "${#direct_combined_pipeline_stdout_append_redirection_commands[@]}" ]; then
+                printf '%s\r' "${direct_combined_pipeline_stdout_append_redirection_commands[$command_index]}" >&3
                 sent=$((command_index + 1))
             fi
             continue
@@ -2845,6 +2879,45 @@ elif [ "$SHELL_DIRECT_COMBINED_PIPELINE_STDIN_STDOUT_REDIRECTION_SMOKE" -eq 1 ];
     grep -q "$LABEL: dispatch command=16 status=unexpected-argument responses=1" "$LOG_FILE"
     grep -c "talos: exec-invalid-path" "$LOG_FILE" | grep -q "^6$"
     grep -q "$LABEL: final participants=17 expected=17 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
+elif [ "$SHELL_DIRECT_COMBINED_PIPELINE_STDOUT_APPEND_REDIRECTION_SMOKE" -eq 1 ]; then
+    grep -q "talos> /bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-combined-append.txt" "$LOG_FILE"
+    grep -q "talos> /bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/pipeline-combined-append.txt" "$LOG_FILE"
+    grep -q "talos: exec path=/bin/stdin source=vfs-open-read" "$LOG_FILE"
+    grep -q "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=regular-file fd1=pipe-endpoint fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table" "$LOG_FILE"
+    grep -q "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=pipe-endpoint fd1=regular-file fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table" "$LOG_FILE"
+    grep -q "talos: exec-redirection op=source source-fd=0x0000000000000000 source-path=/etc/banner.txt source-stream=regular-file source-route=initramfs:/etc/banner.txt child-only=true shell-restored=true source=shell-redirection-stdin-etc-banner" "$LOG_FILE"
+    grep -q "talos: exec-redirection op=sink source-fd=0x0000000000000001 target-path=/tmp/pipeline-combined-append.txt target-stream=regular-file target-route=volatile-vfs:/tmp/pipeline-combined-append.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout" "$LOG_FILE"
+    grep -q "talos: exec-redirection op=append source-fd=0x0000000000000001 target-path=/tmp/pipeline-combined-append.txt target-stream=regular-file target-route=volatile-vfs:/tmp/pipeline-combined-append.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout-append" "$LOG_FILE"
+    grep -q "source=shell-pipe-producer-stdin-consumer-stdout-redirection" "$LOG_FILE"
+    grep -q "source=shell-pipe-producer-stdin-consumer-stdout-append-redirection" "$LOG_FILE"
+    grep -q "talos: cat path=/tmp/pipeline-combined-append.txt bytes=0x00000000000000c4 source=volatile-vfs-descriptor-read" "$LOG_FILE"
+    grep -c "Talos userspace stdin fixture read: Talos userspace stdin fixture read: Talos initramfs fixture" "$LOG_FILE" | grep -q "^2$"
+    grep -q "talos> /bin/stdin </etc/banner.txt" "$LOG_FILE"
+    grep -q "talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=explicit-pid-lifecycle-record" "$LOG_FILE"
+    grep -q "talos: waitpid pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=explicit-pid-lifecycle-record" "$LOG_FILE"
+    grep -q "talos: pipestatus participants=0x0000000000000002 default-status=0x0000000000000000 pipefail-status=0x0000000000000000 semantics=bounded-observation-not-posix-shell source=bounded-process-table-pipeline-status" "$LOG_FILE"
+    grep -q "talos> stdin </etc/banner.txt | stdin >>/tmp/pipeline-combined-append.txt" "$LOG_FILE"
+    grep -q "talos> /bin/stdin </etc/banner.txt | /bin/stdin 2>>/tmp/pipeline-combined-append.txt" "$LOG_FILE"
+    grep -q "talos> /bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-report.txt" "$LOG_FILE"
+    grep -q "talos> /bin/stdout | /bin/stdin >>/tmp/pipeline-combined-append.txt" "$LOG_FILE"
+    grep -q "talos> /bin/stdin </etc/banner.txt | /bin/stdin 1>/tmp/pipeline-combined-append.txt" "$LOG_FILE"
+    grep -q "talos> /bin/stdin </etc/banner.txt | /bin/stdin > /tmp/pipeline-combined-append.txt" "$LOG_FILE"
+    grep -q "talos> /bin/stdin </etc/banner.txt | /bin/stdin >>/var/x" "$LOG_FILE"
+    grep -q "talos> /bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/pipeline-combined-append.txt | /bin/stdin" "$LOG_FILE"
+    grep -q "talos> missing </etc/banner.txt | /bin/stdin >>/tmp/pipeline-combined-append.txt" "$LOG_FILE"
+    grep -q "talos> /bin/stdin </etc/banner.txt | missing >>/tmp/pipeline-combined-append.txt" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=13 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=14 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=15 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=16 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=17 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=18 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=19 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=20 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=21 status=unknown-command responses=1" "$LOG_FILE"
+    grep -q "$LABEL: dispatch command=22 status=unexpected-argument responses=1" "$LOG_FILE"
+    grep -c "talos: exec-invalid-path" "$LOG_FILE" | grep -q "^9$"
+    grep -q "$LABEL: final participants=23 expected=23 errors=0 classification=$CLASSIFICATION" "$LOG_FILE"
 elif [ "$SHELL_BARE_NAME_COMBINED_PIPELINE_STDIN_STDOUT_REDIRECTION_SMOKE" -eq 1 ]; then
     grep -q "talos> stdin </etc/banner.txt | stdin >/tmp/pipeline-combined.txt" "$LOG_FILE"
     grep -q "talos: exec path=/bin/stdin source=vfs-open-read" "$LOG_FILE"

@@ -785,6 +785,28 @@ generated-root retry, and phase transition remain deferred. selected_next_task
 is null and planningNeeded=true because no later queued same-lane local
 POSIX/VFS task is mechanically objective.
 
+The direct combined pipeline stdout append redirection core accepts the exact
+direct path-form sequence
+'/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-combined-append.txt'
+followed by
+'/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/pipeline-combined-append.txt'.
+Both producer stages keep child-only fd0 sourced from
+initramfs:/etc/banner.txt, fd1 bound to the pipe endpoint, inherited fd2,
+closed loader temporaries, and accepted userspace launch/status records. The
+final-stage consumers keep fd0 from the pipe endpoint, inherited fd2, and
+child-only fd1 rebound to
+volatile-vfs:/tmp/pipeline-combined-append.txt. The first consumer uses
+truncate/sink semantics; the second records append-at-EOF semantics.
+Descriptor-backed 'cat /tmp/pipeline-combined-append.txt' reads two nested
+userspace stdin reports in order, and later normal
+'/bin/stdin </etc/banner.txt' proves shell fd0/fd1 restoration. Bare-name
+combined append, combined stderr append, arbitrary paths, persistent writable
+filesystem behavior, separated redirection-token grammar, explicit fd1 syntax,
+PATH/current-directory lookup, live networking/SSH, Pi 5 hardware proof,
+generated-root retry, and phase transition remain deferred. The next local
+POSIX/VFS task is the queued fixed-/bin bare-name combined pipeline stdout
+append core.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1
