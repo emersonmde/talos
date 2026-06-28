@@ -1,0 +1,42 @@
+{
+  "task_id": "phase12-local-bare-name-combined-pipeline-stderr-append-redirection-core-20260628",
+  "classification": "phase12-local-bare-name-combined-pipeline-stderr-append-redirection-core-accepted",
+  "feature": "fixed-/bin bare-name combined pipeline stderr truncate-then-append redirection",
+  "accepted_witnesses": [
+    "stdin </etc/banner.txt | stderr 2>/tmp/pipeline-combined-stderr-append.txt",
+    "stdin </etc/banner.txt | stderr 2>>/tmp/pipeline-combined-stderr-append.txt"
+  ],
+  "accepted_boundary": {
+    "producer_resolution": "stdin resolves through bounded /bin lookup to /bin/stdin",
+    "consumer_resolution": "stderr resolves through bounded /bin lookup to /bin/stderr",
+    "producer_fd0": "initramfs:/etc/banner.txt",
+    "producer_fd1": "pipe-endpoint",
+    "consumer_fd0": "pipe-endpoint",
+    "consumer_fd2_first": "volatile-vfs:/tmp/pipeline-combined-stderr-append.txt truncate/sink",
+    "consumer_fd2_second": "volatile-vfs:/tmp/pipeline-combined-stderr-append.txt append-at-EOF",
+    "readback": "cat /tmp/pipeline-combined-stderr-append.txt reads 0x3e bytes from volatile-vfs descriptor before the retained direct path-form control"
+  },
+  "negative_controls": [
+    "mixed bare producer with absolute consumer remains rejected",
+    "absolute producer with bare consumer remains rejected",
+    "wrong combined stderr output path remains rejected",
+    "pipeline-stderr truncate path remains rejected for combined stdin producer",
+    "stdout producer with combined stderr append target remains rejected",
+    "separated append token remains fail-closed",
+    "explicit fd1 syntax remains rejected",
+    "persistent /var target remains rejected",
+    "multistage combined redirection remains rejected",
+    "unsupported producer name remains unknown-command",
+    "unsupported consumer name remains rejected"
+  ],
+  "validation": {
+    "qemu_substitute_focused": "cargo -Zjson-target-spec test --quiet local_command_loop_appends_bare_name_pipeline_combined_stdin_stderr_redirection: test result ok, 874 passed",
+    "qemu_substitute_regression": "cargo -Zjson-target-spec test --quiet local_command_loop: test result ok, 874 passed",
+    "qemu_substitute_smoke": "scripts/qemu-local-shell-bare-name-combined-pipeline-stderr-append-redirection-smoke.sh: final participants=26 expected=26 errors=0"
+  },
+  "hardware": {
+    "live_networking_ssh": "paused",
+    "pi5_hardware_claim": false
+  },
+  "selected_next_task": "phase12-local-combined-pipeline-stderr-append-redirection-frontier-checkpoint-20260628"
+}

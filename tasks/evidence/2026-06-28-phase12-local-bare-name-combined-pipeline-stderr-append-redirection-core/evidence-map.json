@@ -1,0 +1,36 @@
+{
+  "task_id": "phase12-local-bare-name-combined-pipeline-stderr-append-redirection-core-20260628",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "paths": [
+        "src/local_command_loop.rs",
+        "src/target/qemu_virt.rs",
+        "src/main.rs",
+        "build.rs",
+        "scripts/qemu-local-serial-command-loop-smoke.sh",
+        "scripts/qemu-local-shell-bare-name-combined-pipeline-stderr-append-redirection-smoke.sh"
+      ],
+      "result": "Exact fixed-/bin bare-name combined stderr append path admitted while mixed direct/bare stage names, arbitrary paths, persistent targets, separated forms, command lookup beyond bounded /bin, and multistage broadening remain outside the accepted boundary."
+    },
+    {
+      "level": "QEMU/substitute unit tests",
+      "path": "tasks/evidence/2026-06-28-phase12-local-bare-name-combined-pipeline-stderr-append-redirection-core/qemu-substitute-focused-test.log",
+      "result": "Focused command completed with test result ok, 874 passed."
+    },
+    {
+      "level": "QEMU/substitute regression tests",
+      "path": "tasks/evidence/2026-06-28-phase12-local-bare-name-combined-pipeline-stderr-append-redirection-core/local-command-loop-regression-test.log",
+      "result": "local_command_loop command completed with test result ok, 874 passed."
+    },
+    {
+      "level": "QEMU/substitute local shell smoke",
+      "path": "tasks/evidence/2026-06-28-phase12-local-bare-name-combined-pipeline-stderr-append-redirection-core/qemu-local-shell-bare-name-combined-pipeline-stderr-append-redirection-smoke.log",
+      "result": "Transcript reached final participants=26 expected=26 errors=0 classification=qemu-local-shell-bare-name-combined-pipeline-stderr-append-redirection-complete."
+    }
+  ],
+  "notes": [
+    "The first QEMU smoke attempt failed because default port 54442 was already in use; the accepted transcript was rerun on port 54453.",
+    "Live network/SSH remains paused and no Pi 5 hardware claim is made."
+  ]
+}

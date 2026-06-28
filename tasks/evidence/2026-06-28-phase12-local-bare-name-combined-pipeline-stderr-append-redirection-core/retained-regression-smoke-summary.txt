@@ -1,0 +1,14 @@
+Retained regression summary for phase12-local-bare-name-combined-pipeline-stderr-append-redirection-core-20260628.
+
+- Direct path-form combined pipeline stderr append remains covered by
+  local_command_loop_appends_direct_path_pipeline_combined_stdin_stderr_redirection
+  and by the task-owned smoke's accepted direct path-form control after the
+  bare-name readback.
+- Prior combined pipeline stderr regular-file and combined pipeline stdout
+  append controls remain covered by the local_command_loop regression gate.
+- Process-status VFS, ps, waitpid, laststatus, pipestatus, descriptor-backed
+  cat readback, bounded /bin lookup, and fail-closed unsupported pipeline forms
+  remain covered by the local_command_loop regression gate.
+- Live networking/SSH remained paused; no Pi 5 hardware proof, generated-root
+  retry, boot archive publication, hardware power-cycle, fake command
+  expansion, or phase transition was performed.

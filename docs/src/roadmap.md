@@ -20039,6 +20039,25 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   generated-root retry, and phase transition remain deferred. The selected
   next local POSIX/VFS task is
   phase12-local-bare-name-combined-pipeline-stderr-append-redirection-core-20260628.
+- phase12-local-bare-name-combined-pipeline-stderr-append-redirection-core-20260628
+  accepts the exact fixed-/bin bare-name combined pipeline stderr
+  truncate-then-append sequence:
+  'stdin </etc/banner.txt | stderr 2>/tmp/pipeline-combined-stderr-append.txt'
+  followed by
+  'stdin </etc/banner.txt | stderr 2>>/tmp/pipeline-combined-stderr-append.txt'.
+  Both stages resolve only through bounded /bin lookup to /bin/stdin and
+  /bin/stderr, then run through descriptor-backed VFS/userspace execution. The
+  producer keeps fd0 from initramfs:/etc/banner.txt and fd1 to the pipe
+  endpoint; the final-stage consumer keeps fd0 from that pipe endpoint,
+  inherited fd1, and child-only fd2 to
+  volatile-vfs:/tmp/pipeline-combined-stderr-append.txt. The first consumer
+  truncates/sinks and the second appends at EOF. Descriptor-backed
+  'cat /tmp/pipeline-combined-stderr-append.txt' reads two userspace stderr
+  fixture writes in order. Mixed direct/bare stage names, command lookup beyond
+  bounded /bin, arbitrary input/output paths, persistent storage, broad shell
+  grammar, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
+  phase transition remain deferred. The selected next local POSIX/VFS task is
+  phase12-local-combined-pipeline-stderr-append-redirection-frontier-checkpoint-20260628.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
