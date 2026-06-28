@@ -10471,6 +10471,21 @@ I/O, ping reachability, OpenSSH retry, remote receipt, compatibility, phase
 transition, ssh-ready=true, generated-root command-input retry, and fake
 command expansion remain unaccepted.
 
+While live networking/SSH remains paused, the local POSIX/VFS continuation
+accepted the direct pipeline stderr regular-file redirection core
+phase12-local-direct-pipeline-stderr-regular-file-redirection-core-20260627.
+The accepted witness is exactly
+'/bin/stdout | /bin/stderr 2>/tmp/pipeline-stderr.txt': both stages load
+through descriptor-backed VFS, the producer fd1 is the pipe endpoint, the
+consumer fd0 is the pipe endpoint, and consumer fd2 is a child-only regular-file
+descriptor targeting volatile-vfs:/tmp/pipeline-stderr.txt. Descriptor-backed
+'cat /tmp/pipeline-stderr.txt' reads the userspace stderr fixture, and a later
+normal '/bin/stderr' proves fd2 restored to runtime-console0/stderr. Stderr
+append, stdout final-stage redirection for this pipeline shape, input/combined
+pipeline redirections, fixed-/bin bare-name pipeline stderr redirection, live
+networking/SSH, Pi 5 hardware, generated-root retry, and phase transition
+remain unaccepted.
+
 phase12-ssh-tftp-capture-invariant-reconciliation-v9-20260624 accepts the
 no-hardware reconciliation as capture-helper-timing-root-cause-ready. Read-only
 replay of retained TFTP cursors showed v8 cursor 4667803 later advancing to

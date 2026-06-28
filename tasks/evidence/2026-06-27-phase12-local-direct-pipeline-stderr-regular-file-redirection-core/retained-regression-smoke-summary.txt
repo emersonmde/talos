@@ -1,0 +1,14 @@
+Retained regression controls for phase12-local-direct-pipeline-stderr-regular-file-redirection-core-20260627.
+
+Current task-owned gates:
+- cargo -Zjson-target-spec test --quiet local_command_loop_redirects_direct_path_pipeline_consumer_stderr_to_volatile_regular_file passed; retained transcript reports 865 tests passed.
+- cargo -Zjson-target-spec test --quiet local_command_loop passed; retained transcript reports 865 tests passed.
+- cargo -Zjson-target-spec test --quiet passed; retained transcript reports 865 tests passed.
+- scripts/qemu-local-shell-direct-pipeline-stderr-regular-file-redirection-smoke.sh passed with final participants=19 expected=19 errors=0.
+
+Regression surfaces preserved by the passing local-command-loop suite and accepted retained smoke artifacts:
+- Pipeline-output append regular-file redirection remains covered by tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-core and tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-output-append-regular-file-redirection-core.
+- Direct stdout append and direct stderr append redirection remain covered by their accepted QEMU/substitute smoke artifacts and local command-loop regressions.
+- Process-status VFS, zero-argument ps, pipestatus, and descriptor-backed cat readback remain covered by accepted local POSIX/VFS smoke artifacts and by the current task-owned witness transcript.
+
+No live network, SSH, lab-controller, or serial hardware gate was run for this local POSIX/VFS task.

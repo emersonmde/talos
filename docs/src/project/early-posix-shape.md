@@ -1157,6 +1157,23 @@ and phase transition remain deferred. No later queued same-lane local POSIX/VFS
 task is mechanically objective; supervisor planning is required before another
 worker promotion.
 
+The direct pipeline stderr regular-file redirection core accepts exactly
+'/bin/stdout | /bin/stderr 2>/tmp/pipeline-stderr.txt'. Both stages load
+through descriptor-backed VFS open/read and the accepted userspace launch/status
+path. The producer routes fd1 to the pipe endpoint; the final-stage consumer
+records fd0 as that pipe endpoint and fd2 child-only as regular-file route
+'volatile-vfs:/tmp/pipeline-stderr.txt'. The stderr fixture writes 0x1f bytes to
+that volatile file and does not read stdin, so the accepted pipeline record
+preserves bytes-read=0 and reader-eof=false. Descriptor-backed
+'cat /tmp/pipeline-stderr.txt' reads the fixture, a later normal '/bin/stderr'
+proves shell fd2 restoration, and waitpid, laststatus, /proc/talos/processes,
+zero-argument ps, and pipestatus remain coherent. Stderr append,
+stdout-final-stage redirection for this pipeline shape, input/combined pipeline
+redirections, fixed-/bin bare-name pipeline stderr redirection, arbitrary paths,
+persistent storage, live networking/SSH, Pi 5 hardware proof, generated-root
+retry, and phase transition remain deferred. The next local POSIX/VFS task is
+the direct pipeline stderr redirection closeout.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

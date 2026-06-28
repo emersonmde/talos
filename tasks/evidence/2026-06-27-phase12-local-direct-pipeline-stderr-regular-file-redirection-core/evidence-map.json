@@ -1,0 +1,78 @@
+{
+  "task_id": "phase12-local-direct-pipeline-stderr-regular-file-redirection-core-20260627",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "paths": [
+        "src/local_command_loop.rs",
+        "src/target/qemu_virt.rs",
+        "build.rs",
+        "src/main.rs",
+        "scripts/qemu-local-serial-command-loop-smoke.sh",
+        "scripts/qemu-local-shell-direct-pipeline-stderr-regular-file-redirection-smoke.sh",
+        "docs/src/project/early-posix-shape.md",
+        "docs/src/project/phase12-networking-ssh.md",
+        "docs/src/roadmap.md",
+        "tasks/2026-06-27-phase12-local-direct-pipeline-stderr-regular-file-redirection-core.md"
+      ],
+      "result": "direct path-form pipeline final-stage stderr redirection parser and volatile stderr file path are scoped to /bin/stdout | /bin/stderr 2>/tmp/pipeline-stderr.txt"
+    },
+    {
+      "level": "QEMU/substitute transcript",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop_redirects_direct_path_pipeline_consumer_stderr_to_volatile_regular_file",
+      "artifact": "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-stderr-regular-file-redirection-core/qemu-substitute-focused-test.log",
+      "result": "passed; transcript asserts VFS open/read for both stages, consumer fd0 pipe endpoint, consumer fd2 regular-file, exec-redirection op=sink, exec-stderr volatile-vfs write, descriptor-backed cat readback bytes=0x1f, shell fd2 restoration, lifecycle/status records, and seven fail-closed negatives"
+    },
+    {
+      "level": "fmt/lint/typecheck",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "level": "unit tests / QEMU-substitute",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "artifact": "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-stderr-regular-file-redirection-core/local-command-loop-test.log",
+      "result": "passed; 865 tests passed"
+    },
+    {
+      "level": "unit tests / QEMU-substitute",
+      "command": "cargo -Zjson-target-spec test --quiet",
+      "artifact": "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-stderr-regular-file-redirection-core/full-test.log",
+      "result": "passed; 865 tests passed"
+    },
+    {
+      "level": "QEMU/substitute local shell smoke",
+      "command": "scripts/qemu-local-shell-direct-pipeline-stderr-regular-file-redirection-smoke.sh",
+      "artifact": "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-stderr-regular-file-redirection-core/qemu-local-shell-direct-pipeline-stderr-regular-file-redirection-smoke.log",
+      "result": "passed; final participants=19 expected=19 errors=0 classification=qemu-local-shell-direct-pipeline-stderr-regular-file-redirection-complete"
+    },
+    {
+      "level": "QEMU/substitute retained regression controls",
+      "artifact": "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-stderr-regular-file-redirection-core/retained-regression-smoke-summary.txt",
+      "result": "retained local POSIX/VFS controls cover pipeline-output append, direct stdout/stderr append redirection, process-status VFS, ps, pipestatus, and cat readback; current cargo local-command-loop suite passed"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty tasks/evidence/2026-06-27-phase12-local-direct-pipeline-stderr-regular-file-redirection-core/classification.json tasks/evidence/2026-06-27-phase12-local-direct-pipeline-stderr-regular-file-redirection-core/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed; HTML backend wrote book"
+    },
+    {
+      "level": "lab-controller API",
+      "result": "not run; no Pi 5 hardware gate"
+    },
+    {
+      "level": "serial hardware boot/output",
+      "result": "not run; no Pi 5 hardware gate"
+    }
+  ]
+}
