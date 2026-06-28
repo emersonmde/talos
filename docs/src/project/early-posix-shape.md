@@ -1204,6 +1204,23 @@ lookup beyond bounded /bin, generated-root retry, live networking/SSH, Pi 5
 hardware proof, and phase transition remain deferred. The next local POSIX/VFS
 task is the bare-name pipeline stderr redirection closeout.
 
+The bare-name pipeline stderr regular-file redirection closeout reconciles the
+accepted direct and fixed-/bin bare-name boundary without runtime feature
+changes. The accepted witnesses remain exactly
+'/bin/stdout | /bin/stderr 2>/tmp/pipeline-stderr.txt' and
+"stdout | stderr 2>/tmp/pipeline-stderr.txt". The bare-name form still resolves
+only through bounded /bin lookup; both forms keep descriptor-backed VFS loading,
+accepted userspace launch/status, producer fd1 to the pipe endpoint, consumer
+fd0 from that endpoint, child-only consumer fd2 to
+volatile-vfs:/tmp/pipeline-stderr.txt, descriptor-backed readback of the
+0x1f-byte stderr fixture, shell fd2 restoration, and coherent process status
+observations. Stderr append pipeline redirection, stdout final-stage
+redirection for this pipeline shape, input/combined pipeline redirections,
+arbitrary paths, persistent storage, PATH/current-directory lookup, command
+lookup beyond bounded /bin, generated-root retry, live networking/SSH, Pi 5
+hardware proof, and phase transition remain deferred. The next local POSIX/VFS
+task is the pipeline stderr regular-file redirection frontier checkpoint.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

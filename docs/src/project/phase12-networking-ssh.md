@@ -574,6 +574,23 @@ PATH/current-directory lookup, command lookup beyond bounded /bin, generated-roo
 retry, live network/SSH, Pi 5 hardware proof, and phase transition remain
 deferred.
 
+The bare-name pipeline stderr regular-file redirection closeout reconciles the
+accepted direct and fixed-/bin bare-name boundary without runtime feature
+changes. The accepted witnesses remain exactly
+'/bin/stdout | /bin/stderr 2>/tmp/pipeline-stderr.txt' and
+"stdout | stderr 2>/tmp/pipeline-stderr.txt". The bare-name form remains
+limited to fixed bounded /bin lookup; both forms keep descriptor-backed VFS
+loading, accepted userspace launch/status, producer fd1 to the pipe endpoint,
+consumer fd0 from that endpoint, child-only consumer fd2 to
+volatile-vfs:/tmp/pipeline-stderr.txt, descriptor-backed readback of the
+0x1f-byte stderr fixture, shell fd2 restoration, and coherent process status
+observations. Stderr append pipeline redirection, stdout final-stage
+redirection, input/combined pipeline redirections, arbitrary paths, persistent
+storage, PATH/current-directory lookup, command lookup beyond bounded /bin,
+generated-root retry, live network/SSH, Pi 5 hardware proof, and phase
+transition remain deferred. The next local POSIX/VFS task is the queued pipeline
+stderr regular-file redirection frontier checkpoint.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1
@@ -10549,6 +10566,13 @@ fixture, and a later normal "stderr" proves fd2 restoration. Stderr append,
 input/combined pipeline redirections, arbitrary paths, PATH/current-directory
 lookup, command lookup beyond bounded /bin, live networking/SSH, Pi 5 hardware,
 generated-root retry, and phase transition remain unaccepted.
+
+The bare-name pipeline stderr closeout reconciled the direct and fixed-/bin
+bare-name boundary without runtime feature changes and selected
+phase12-local-pipeline-stderr-regular-file-redirection-frontier-checkpoint-20260627
+as the next local POSIX/VFS task. Append pipeline stderr redirection,
+input/combined pipeline redirections, arbitrary paths, live networking/SSH,
+Pi 5 hardware, generated-root retry, and phase transition remain unaccepted.
 
 phase12-ssh-tftp-capture-invariant-reconciliation-v9-20260624 accepts the
 no-hardware reconciliation as capture-helper-timing-root-cause-ready. Read-only
