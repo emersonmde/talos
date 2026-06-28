@@ -1,0 +1,12 @@
+Retained local POSIX/VFS regression controls for phase12-local-bare-name-combined-pipeline-stderr-regular-file-redirection-core-20260628:
+
+- cargo -Zjson-target-spec test --quiet local_command_loop_runs_bare_name_pipeline_combined_stdin_stderr_redirection: passed.
+- cargo -Zjson-target-spec test --quiet local_command_loop: passed.
+- scripts/qemu-local-shell-bare-name-combined-pipeline-stderr-regular-file-redirection-smoke.sh: passed with final participants=25 expected=25 errors=0.
+- direct combined pipeline stderr regular-file redirection control remained passing.
+- accepted combined pipeline stdin/stdout truncate and stdout append controls remained passing.
+- accepted pipeline stdout/stderr append redirection controls remained passing.
+- descriptor-backed cat readback from /tmp/pipeline-combined-stderr.txt passed.
+- process-status VFS, ps, pipestatus, waitpid, and laststatus controls remained coherent.
+- unsupported neighboring bare-name forms failed closed without successful process records or file writes.
+- live networking/SSH remains paused; no Pi 5 hardware claim is made.

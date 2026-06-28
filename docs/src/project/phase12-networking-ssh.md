@@ -11008,7 +11008,20 @@ consumer inherits that pipe as fd0 while rebinding child-only fd2 to
 volatile-vfs:/tmp/pipeline-combined-stderr.txt. Descriptor-backed cat reads
 the stderr fixture back from the volatile file, and later stdin/stdout/stderr
 controls prove shell descriptor restoration. Fixed-/bin bare-name combined
-stderr, append form, arbitrary paths, live networking/SSH, Pi 5 hardware
-proof, generated-root retry, and phase transition remain deferred. The selected
-next local POSIX/VFS task is
-phase12-local-bare-name-combined-pipeline-stderr-regular-file-redirection-core-20260628.
+stderr remained deferred to the next task; append form, arbitrary paths, live
+networking/SSH, Pi 5 hardware proof, generated-root retry, and phase transition
+stayed outside this direct slice.
+
+The accepted
+phase12-local-bare-name-combined-pipeline-stderr-regular-file-redirection-core-20260628
+task adds only the exact fixed-/bin bare-name witness
+'stdin </etc/banner.txt | stderr 2>/tmp/pipeline-combined-stderr.txt'. The
+producer and final-stage consumer resolve through bounded /bin lookup before
+descriptor-backed VFS/userspace execution, preserving fd0 from
+initramfs:/etc/banner.txt, pipe handoff, child-only fd2 rebinding to
+volatile-vfs:/tmp/pipeline-combined-stderr.txt, descriptor-backed cat readback,
+and normal bare-name/direct descriptor restoration controls. Combined pipeline
+stderr append, arbitrary paths, mixed path forms, live networking/SSH, Pi 5
+hardware proof, generated-root retry, and phase transition remain deferred. The
+selected next local POSIX/VFS task is
+phase12-local-combined-pipeline-stderr-regular-file-redirection-frontier-checkpoint-20260628.

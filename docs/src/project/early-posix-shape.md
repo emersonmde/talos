@@ -1505,11 +1505,28 @@ bytes-read=0 and reader-eof=false while still proving fd0 inheritance.
 Descriptor-backed 'cat /tmp/pipeline-combined-stderr.txt' reads back the
 stderr fixture, and later normal '/bin/stdin </etc/banner.txt',
 '/bin/stdout', and '/bin/stderr' controls prove shell descriptor restoration.
-Fixed-/bin bare-name combined stderr, append form, arbitrary paths, persistent
-storage, separated redirection-token grammar, broad shell grammar, live
-networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
-transition remain deferred. The next local POSIX/VFS task is the queued
-fixed-/bin bare-name combined pipeline stderr regular-file redirection core.
+Fixed-/bin bare-name combined stderr remained deferred to the next task;
+append form, arbitrary paths, persistent storage, separated redirection-token
+grammar, broad shell grammar, live networking/SSH, Pi 5 hardware proof,
+generated-root retry, and phase transition stayed outside this direct slice.
+
+The fixed-/bin bare-name combined pipeline stderr regular-file redirection
+core accepts exactly
+'stdin </etc/banner.txt | stderr 2>/tmp/pipeline-combined-stderr.txt'. Both
+stage names resolve only through the bounded /bin lookup to /bin/stdin and
+/bin/stderr before descriptor-backed VFS/userspace execution. The producer
+keeps fd0 on initramfs:/etc/banner.txt and fd1 on the serialized pipe endpoint;
+the final-stage stderr consumer inherits fd0 from that pipe, keeps fd1
+inherited, and rebinds child-only fd2 to
+volatile-vfs:/tmp/pipeline-combined-stderr.txt. Descriptor-backed
+'cat /tmp/pipeline-combined-stderr.txt' reads back the userspace stderr
+fixture, and later bare-name/direct controls prove shell descriptor
+restoration. Combined pipeline stderr append, arbitrary paths, persistent
+storage, separated redirection-token grammar, explicit alternate fd syntax,
+mixed direct/bare path forms, broad shell grammar, live networking/SSH, Pi 5
+hardware proof, generated-root retry, and phase transition remain deferred.
+The next local POSIX/VFS task is the queued combined pipeline stderr
+regular-file redirection frontier checkpoint.
 
 ## Scheduler Implications
 
