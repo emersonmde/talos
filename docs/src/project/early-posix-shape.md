@@ -1332,6 +1332,23 @@ Pi 5 hardware proof, generated-root retry, and phase transition remain
 deferred. No later queued same-lane local POSIX/VFS task is mechanically
 objective; supervisor planning is required before another worker promotion.
 
+The direct combined pipeline stdin/stdout redirection core accepts exactly
+'/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-combined.txt'. Both
+stages load through descriptor-backed VFS and the accepted userspace
+launch/status path. The producer gets child-only fd0 from
+initramfs:/etc/banner.txt, fd1 as the pipe endpoint, and inherited fd2; the
+consumer gets fd0 from that pipe endpoint, child-only fd1 to
+volatile-vfs:/tmp/pipeline-combined.txt, and inherited fd2. Descriptor-backed
+'cat /tmp/pipeline-combined.txt' reads back the nested userspace stdin report,
+and waitpid, laststatus, /proc/talos/processes, zero-argument ps, and
+pipestatus-compatible observations remain coherent. Fixed-/bin bare-name
+combined pipeline redirection, append, stderr forms, arbitrary paths,
+separated redirection tokens, explicit fd1 syntax, persistent storage,
+PATH/current-directory lookup, command lookup beyond bounded /bin, live
+networking/SSH, Pi 5 hardware proof, generated-root retry, and phase transition
+remain deferred. The accepted core selects the direct combined pipeline
+stdin/stdout closeout before any bare-name expansion.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

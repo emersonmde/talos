@@ -647,7 +647,7 @@ mod tests {
         assert_eq!(result.response_lines, 6);
         assert_eq!(
             sink.as_str(),
-            "diag: ok status\ndiag: version phase5.3-contract-v1\ndiag: runtime-console runtime-console0\ndiag: tty canonical-lite line-capacity 64\ndiag: command-count 6\ndiag: commands entropy help list sshkeydiag sshservicediag status\n"
+            "diag: ok status\ndiag: version phase5.3-contract-v1\ndiag: runtime-console runtime-console0\ndiag: tty canonical-lite line-capacity 96\ndiag: command-count 6\ndiag: commands entropy help list sshkeydiag sshservicediag status\n"
         );
     }
 

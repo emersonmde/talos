@@ -19816,6 +19816,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   proof, generated-root retry, and phase transition remain deferred. No later
   queued same-lane local POSIX/VFS task is mechanically objective; supervisor
   planning is required before another worker promotion.
+- phase12-local-direct-combined-pipeline-stdin-stdout-redirection-core-20260628
+  accepts the direct path-form combined pipeline stdin/stdout redirection
+  witness
+  '/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-combined.txt'.
+  Both stages load through descriptor-backed VFS and accepted userspace
+  launch/status. The producer gets child-only fd0 from
+  initramfs:/etc/banner.txt and fd1 as the pipe endpoint; the consumer gets
+  fd0 from the pipe endpoint and child-only fd1 to
+  volatile-vfs:/tmp/pipeline-combined.txt. Descriptor-backed
+  'cat /tmp/pipeline-combined.txt' reads back the nested userspace stdin
+  report, and waitpid, laststatus, /proc/talos/processes, zero-argument ps,
+  and pipestatus-compatible observations remain coherent. Fixed-/bin
+  bare-name combined pipeline redirection, append, stderr forms, arbitrary
+  paths, persistent storage, PATH/current-directory lookup, command lookup
+  beyond bounded /bin, live networking/SSH, Pi 5 hardware proof,
+  generated-root retry, and phase transition remain deferred. The selected
+  next task is
+  phase12-local-direct-combined-pipeline-stdin-stdout-redirection-closeout-20260628.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

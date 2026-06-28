@@ -703,6 +703,23 @@ Pi 5 hardware proof, generated-root retry, and phase transition remain
 deferred. No later queued same-lane local POSIX/VFS task is mechanically
 objective; supervisor planning is required before another worker promotion.
 
+The direct combined pipeline stdin/stdout redirection core accepts the next
+local-only POSIX/VFS surface:
+'/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-combined.txt'. Both
+stages load through descriptor-backed VFS and the accepted userspace
+launch/status path. The producer receives child-only fd0 from
+initramfs:/etc/banner.txt and writes fd1 to the pipe endpoint; the consumer
+reads fd0 from that pipe endpoint and writes child-only fd1 to
+volatile-vfs:/tmp/pipeline-combined.txt. Descriptor-backed
+'cat /tmp/pipeline-combined.txt' reads the nested userspace stdin report, and
+waitpid, laststatus, /proc/talos/processes, zero-argument ps, and
+pipestatus-compatible observations remain coherent. Fixed-/bin bare-name
+combined pipeline redirection, append, stderr forms, arbitrary paths,
+persistent storage, PATH/current-directory lookup, command lookup beyond
+bounded /bin, live networking/SSH, Pi 5 hardware proof, generated-root retry,
+and phase transition remain deferred. The next local POSIX/VFS task is the
+queued direct combined pipeline stdin/stdout closeout.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1

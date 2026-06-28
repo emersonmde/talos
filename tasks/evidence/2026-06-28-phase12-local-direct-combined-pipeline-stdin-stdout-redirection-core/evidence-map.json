@@ -1,0 +1,97 @@
+{
+  "taskId": "phase12-local-direct-combined-pipeline-stdin-stdout-redirection-core-20260628",
+  "classification": "local-direct-combined-pipeline-stdin-stdout-redirection-core-accepted",
+  "acceptedWitness": "/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-combined.txt",
+  "taskRecord": "tasks/2026-06-28-phase12-local-direct-combined-pipeline-stdin-stdout-redirection-core.md",
+  "focusedEvidence": [
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-stdin-stdout-redirection-core/qemu-local-shell-direct-combined-pipeline-stdin-stdout-redirection-smoke.log",
+      "result": "participants=18 expected=18 errors=0 classification=qemu-local-shell-direct-combined-pipeline-stdin-stdout-redirection-complete PASS"
+    }
+  ],
+  "validation": [
+    {
+      "level": "fmt/lint/typecheck",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "level": "unit tests / QEMU-substitute",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "result": "passed with QEMU test runner; 867 tests passed"
+    },
+    {
+      "level": "focused unit tests / QEMU-substitute",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop_runs_direct_path_pipeline_combined_stdin_stdout_redirection",
+      "result": "passed with QEMU test runner; 867 tests passed"
+    },
+    {
+      "level": "QEMU/substitute",
+      "command": "scripts/qemu-local-shell-direct-combined-pipeline-stdin-stdout-redirection-smoke.sh",
+      "result": "passed"
+    },
+    {
+      "level": "shell syntax",
+      "command": "bash -n scripts/qemu-local-serial-command-loop-smoke.sh scripts/qemu-local-shell-direct-combined-pipeline-stdin-stdout-redirection-smoke.sh",
+      "result": "passed"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-stdin-stdout-redirection-core/classification.json tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-stdin-stdout-redirection-core/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed; existing large search-index warning retained"
+    }
+  ],
+  "retainedControls": [
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-02-qemu-local-cat-banner-core/qemu-local-cat-banner-smoke.log",
+      "result": "qemu-local-cat-banner-complete PASS"
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-27-phase12-local-direct-combined-stdin-stdout-regular-file-redirection-core/qemu-local-shell-direct-combined-stdin-stdout-redirection-smoke.log",
+      "result": "qemu-local-shell-direct-combined-stdin-stdout-redirection-complete PASS"
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-stdin-redirection-core/qemu-local-shell-direct-pipeline-stdin-redirection-smoke.log",
+      "result": "qemu-local-shell-direct-pipeline-stdin-redirection-complete PASS"
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-05-phase10-pipeline-consumer-output-redirection-core/qemu-local-shell-pipeline-consumer-output-redirection-smoke.log",
+      "result": "qemu-local-shell-pipeline-consumer-output-redirection-complete PASS"
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-stderr-regular-file-redirection-core/qemu-local-shell-direct-pipeline-stderr-regular-file-redirection-smoke.log",
+      "result": "qemu-local-shell-direct-pipeline-stderr-regular-file-redirection-complete PASS"
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-26-phase12-local-process-status-vfs-core/qemu-local-shell-process-status-vfs-smoke.log",
+      "result": "qemu-local-shell-process-status-vfs-complete PASS"
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "target/qemu-local-shell-ps-command-vfs-smoke.log",
+      "result": "qemu-local-shell-ps-command-vfs-complete PASS"
+    }
+  ],
+  "hardware": {
+    "labControllerApi": "not run; local POSIX/VFS task had no Pi 5 hardware gate",
+    "serialHardwareBootOutput": "not run; local POSIX/VFS task had no Pi 5 hardware gate"
+  },
+  "selectedNextTask": "phase12-local-direct-combined-pipeline-stdin-stdout-redirection-closeout-20260628"
+}
