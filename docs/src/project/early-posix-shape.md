@@ -1403,6 +1403,27 @@ groups/sessions, live networking/SSH, Pi 5 hardware proof, generated-root
 retry, and phase transition remain deferred. The accepted closeout selects the
 combined pipeline stdin/stdout frontier checkpoint.
 
+The combined pipeline stdin/stdout frontier checkpoint freezes the accepted
+direct path-form and fixed-/bin bare-name witnesses without adding runtime
+behavior. The accepted witnesses remain exactly
+'/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-combined.txt' and
+'stdin </etc/banner.txt | stdin >/tmp/pipeline-combined.txt'. Direct path
+loading and fixed bounded /bin lookup both converge on the same
+descriptor-backed contract: producer fd0 comes from
+initramfs:/etc/banner.txt, producer fd1 is the pipe endpoint, consumer fd0 is
+that pipe endpoint, consumer fd1 targets
+volatile-vfs:/tmp/pipeline-combined.txt, inherited fd2 is preserved for both
+stages, loader temporaries are closed, and descriptor-backed
+'cat /tmp/pipeline-combined.txt' reads the nested userspace stdin report back.
+Append/combined stderr pipeline redirections, arbitrary paths, persistent
+writable filesystem behavior, environment-backed PATH, current-directory
+search, command lookup beyond bounded /bin, arbitrary shell grammar,
+unbounded/concurrent pipelines, scheduler concurrency, fork/signals, process
+groups/sessions, live networking/SSH, Pi 5 hardware proof, generated-root
+retry, and phase transition remain deferred. selected_next_task is null and
+planningNeeded=true because no later queued same-lane local POSIX/VFS task is
+mechanically objective.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

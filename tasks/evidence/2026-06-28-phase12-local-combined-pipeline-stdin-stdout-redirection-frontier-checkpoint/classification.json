@@ -1,0 +1,91 @@
+{
+  "task_id": "phase12-local-combined-pipeline-stdin-stdout-redirection-frontier-checkpoint-20260628",
+  "classification": "combined-pipeline-stdin-stdout-redirection-frontier-checkpoint-accepted",
+  "accepted_witnesses": [
+    "/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-combined.txt",
+    "stdin </etc/banner.txt | stdin >/tmp/pipeline-combined.txt"
+  ],
+  "accepted_surface": {
+    "direct_paths": true,
+    "bare_name_lookup": "fixed bounded /bin lookup to /bin/stdin only",
+    "producer": {
+      "resolved_program": "/bin/stdin",
+      "fd0": {
+        "kind": "regular-file",
+        "route": "initramfs:/etc/banner.txt",
+        "child_only": true
+      },
+      "fd1": {
+        "kind": "pipe-endpoint",
+        "route": "pipe:stdin-to-stdin"
+      },
+      "fd2": "inherited",
+      "loader_temporary_descriptor_open": false
+    },
+    "consumer": {
+      "resolved_program": "/bin/stdin",
+      "fd0": {
+        "kind": "pipe-endpoint",
+        "route": "pipe:stdin-to-stdin"
+      },
+      "fd1": {
+        "kind": "regular-file",
+        "route": "volatile-vfs:/tmp/pipeline-combined.txt",
+        "operation": "sink",
+        "child_only": true
+      },
+      "fd2": "inherited",
+      "loader_temporary_descriptor_open": false
+    },
+    "readback": {
+      "path": "/tmp/pipeline-combined.txt",
+      "source": "volatile-vfs-descriptor-read",
+      "content": "nested userspace stdin report from piped banner input"
+    },
+    "shell_restored": [
+      "fd0",
+      "fd1"
+    ],
+    "process_status_observations": [
+      "waitpid",
+      "laststatus",
+      "/proc/talos/processes",
+      "ps",
+      "pipestatus-compatible accounting"
+    ]
+  },
+  "unsupported_forms_remain_deferred": [
+    "append combined pipeline forms",
+    "stderr combined pipeline forms",
+    "wrong output path",
+    "stdout producer with the combined sink",
+    "explicit fd1 syntax",
+    "separated redirection tokens",
+    "persistent /var target",
+    "path-containing bare-name stage names",
+    "unsupported stage names",
+    "multistage combined redirection",
+    "arbitrary input/output paths",
+    "persistent writable filesystem behavior",
+    "environment-backed PATH",
+    "current-directory search",
+    "command lookup beyond bounded /bin",
+    "arbitrary shell grammar",
+    "unbounded or concurrent pipelines",
+    "scheduler concurrency",
+    "fork/signals",
+    "process groups/sessions",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "phase transition"
+  ],
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "No later queued same-lane local POSIX/VFS task has complete objective dependencies, acceptance criteria, validation gates, docs requirements, and evidence requirements after the combined pipeline stdin/stdout redirection frontier checkpoint.",
+  "hardware": {
+    "lab_controller_api": "not-run",
+    "serial_hardware_boot_output": "not-run",
+    "reason": "local POSIX/VFS checkpoint has no Pi 5 hardware gate"
+  }
+}

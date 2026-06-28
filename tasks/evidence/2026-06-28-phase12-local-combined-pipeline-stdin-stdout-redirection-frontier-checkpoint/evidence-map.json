@@ -1,0 +1,62 @@
+{
+  "task_id": "phase12-local-combined-pipeline-stdin-stdout-redirection-frontier-checkpoint-20260628",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "paths": [
+        "tasks/2026-06-28-phase12-local-direct-combined-pipeline-stdin-stdout-redirection-core.md",
+        "tasks/2026-06-28-phase12-local-direct-combined-pipeline-stdin-stdout-redirection-closeout.md",
+        "tasks/2026-06-28-phase12-local-bare-name-combined-pipeline-stdin-stdout-redirection-core.md",
+        "tasks/2026-06-28-phase12-local-bare-name-combined-pipeline-stdin-stdout-redirection-closeout.md",
+        "tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-stdin-stdout-redirection-core/classification.json",
+        "tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-stdin-stdout-redirection-core/evidence-map.json",
+        "tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-stdin-stdout-redirection-closeout/classification.json",
+        "tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-stdin-stdout-redirection-closeout/evidence-map.json",
+        "tasks/evidence/2026-06-28-phase12-local-bare-name-combined-pipeline-stdin-stdout-redirection-core/classification.json",
+        "tasks/evidence/2026-06-28-phase12-local-bare-name-combined-pipeline-stdin-stdout-redirection-core/evidence-map.json",
+        "tasks/evidence/2026-06-28-phase12-local-bare-name-combined-pipeline-stdin-stdout-redirection-closeout/classification.json",
+        "tasks/evidence/2026-06-28-phase12-local-bare-name-combined-pipeline-stdin-stdout-redirection-closeout/evidence-map.json",
+        "docs/src/project/early-posix-shape.md",
+        "docs/src/project/phase12-networking-ssh.md",
+        "docs/src/roadmap.md",
+        "tasks/2026-06-28-phase12-local-combined-pipeline-stdin-stdout-redirection-frontier-checkpoint.md"
+      ],
+      "result": "accepted direct path-form and fixed-/bin bare-name combined pipeline stdin/stdout redirection boundary reconciled; no runtime code change required"
+    },
+    {
+      "level": "retained QEMU/substitute transcript",
+      "source_task": "phase12-local-direct-combined-pipeline-stdin-stdout-redirection-core-20260628",
+      "command": "scripts/qemu-local-shell-direct-combined-pipeline-stdin-stdout-redirection-smoke.sh",
+      "result": "retained core evidence passed; direct path-form witness records producer fd0 from initramfs, producer fd1 pipe handoff, consumer fd0 pipe handoff, consumer fd1 volatile VFS regular-file redirection, descriptor-backed cat readback, shell fd0/fd1 restoration, process-status coherence, and fail-closed negatives"
+    },
+    {
+      "level": "retained QEMU/substitute transcript",
+      "source_task": "phase12-local-bare-name-combined-pipeline-stdin-stdout-redirection-core-20260628",
+      "command": "scripts/qemu-local-shell-bare-name-combined-pipeline-stdin-stdout-redirection-smoke.sh",
+      "result": "retained core evidence passed; fixed-/bin bare-name witness records bounded /bin resolution to /bin/stdin for both stages, producer fd0 from initramfs, producer fd1 pipe handoff, consumer fd0 pipe handoff, consumer fd1 volatile VFS regular-file redirection, descriptor-backed cat readback, shell fd0/fd1 restoration, process-status coherence, and fail-closed negatives"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty over task-owned direct combined pipeline, bare-name combined pipeline, closeout, and checkpoint JSON evidence",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed; HTML backend wrote book"
+    },
+    {
+      "level": "lab-controller API",
+      "result": "not run; no Pi 5 hardware gate"
+    },
+    {
+      "level": "serial hardware boot/output",
+      "result": "not run; no Pi 5 hardware gate"
+    }
+  ]
+}

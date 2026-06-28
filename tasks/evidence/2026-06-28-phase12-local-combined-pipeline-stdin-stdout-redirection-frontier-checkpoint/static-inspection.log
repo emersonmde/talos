@@ -1,0 +1,28 @@
+Static inspection passed for the combined pipeline stdin/stdout frontier checkpoint.
+
+Inspected retained task records:
+- tasks/2026-06-28-phase12-local-direct-combined-pipeline-stdin-stdout-redirection-core.md
+- tasks/2026-06-28-phase12-local-direct-combined-pipeline-stdin-stdout-redirection-closeout.md
+- tasks/2026-06-28-phase12-local-bare-name-combined-pipeline-stdin-stdout-redirection-core.md
+- tasks/2026-06-28-phase12-local-bare-name-combined-pipeline-stdin-stdout-redirection-closeout.md
+
+Inspected retained evidence:
+- tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-stdin-stdout-redirection-core/classification.json
+- tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-stdin-stdout-redirection-core/evidence-map.json
+- tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-stdin-stdout-redirection-core/qemu-local-shell-direct-combined-pipeline-stdin-stdout-redirection-smoke.log
+- tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-stdin-stdout-redirection-closeout/classification.json
+- tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-stdin-stdout-redirection-closeout/evidence-map.json
+- tasks/evidence/2026-06-28-phase12-local-bare-name-combined-pipeline-stdin-stdout-redirection-core/classification.json
+- tasks/evidence/2026-06-28-phase12-local-bare-name-combined-pipeline-stdin-stdout-redirection-core/evidence-map.json
+- tasks/evidence/2026-06-28-phase12-local-bare-name-combined-pipeline-stdin-stdout-redirection-core/qemu-local-shell-bare-name-combined-pipeline-stdin-stdout-redirection-smoke.log
+- tasks/evidence/2026-06-28-phase12-local-bare-name-combined-pipeline-stdin-stdout-redirection-closeout/classification.json
+- tasks/evidence/2026-06-28-phase12-local-bare-name-combined-pipeline-stdin-stdout-redirection-closeout/evidence-map.json
+
+Inspected docs:
+- docs/src/roadmap.md
+- docs/src/project/phase12-networking-ssh.md
+- docs/src/project/early-posix-shape.md
+
+Result: accepted direct and fixed-/bin bare-name combined pipeline stdin/stdout
+redirection witnesses are reconciled; no runtime feature change, hardware run,
+live networking/SSH, generated-root retry, or phase transition is included.
