@@ -1,0 +1,42 @@
+RUN scripts/qemu-local-shell-direct-pipeline-stderr-regular-file-redirection-smoke.sh
+qemu-local-shell-direct-pipeline-stderr-regular-file-redirection: dispatch command=18 status=unexpected-argument responses=1 raw-bytes=35 backspaces=0 deletes=0 truncated=false controls=0
+talos>
+qemu-local-shell-direct-pipeline-stderr-regular-file-redirection: ready-for-next prompt=true
+qemu-local-shell-direct-pipeline-stderr-regular-file-redirection: final participants=19 expected=19 errors=0 classification=qemu-local-shell-direct-pipeline-stderr-regular-file-redirection-complete
+qemu-local-shell-direct-pipeline-stderr-regular-file-redirection: PASS
+PASS scripts/qemu-local-shell-direct-pipeline-stderr-regular-file-redirection-smoke.sh
+RUN scripts/qemu-local-shell-direct-pipeline-output-append-regular-file-redirection-smoke.sh
+qemu-local-shell-direct-pipeline-output-append-regular-file-redirection: dispatch command=19 status=unexpected-argument responses=1 raw-bytes=34 backspaces=0 deletes=0 truncated=false controls=0
+talos>
+qemu-local-shell-direct-pipeline-output-append-regular-file-redirection: ready-for-next prompt=true
+qemu-local-shell-direct-pipeline-output-append-regular-file-redirection: final participants=20 expected=20 errors=0 classification=qemu-local-shell-direct-pipeline-output-append-regular-file-redirection-complete
+qemu-local-shell-direct-pipeline-output-append-regular-file-redirection: PASS
+PASS scripts/qemu-local-shell-direct-pipeline-output-append-regular-file-redirection-smoke.sh
+RUN scripts/qemu-local-shell-process-status-vfs-smoke.sh
+qemu-local-shell-process-status-vfs: dispatch command=18 status=handled responses=1 raw-bytes=5 backspaces=0 deletes=0 truncated=false controls=0
+talos>
+qemu-local-shell-process-status-vfs: ready-for-next prompt=true
+qemu-local-shell-process-status-vfs: final participants=19 expected=19 errors=0 classification=qemu-local-shell-process-status-vfs-complete
+qemu-local-shell-process-status-vfs: PASS
+PASS scripts/qemu-local-shell-process-status-vfs-smoke.sh
+RUN scripts/qemu-local-shell-ps-command-vfs-smoke.sh
+qemu-local-shell-ps-command-vfs: dispatch command=22 status=handled responses=1 raw-bytes=5 backspaces=0 deletes=0 truncated=false controls=0
+talos>
+qemu-local-shell-ps-command-vfs: ready-for-next prompt=true
+qemu-local-shell-ps-command-vfs: final participants=23 expected=23 errors=0 classification=qemu-local-shell-ps-command-vfs-complete
+qemu-local-shell-ps-command-vfs: PASS
+PASS scripts/qemu-local-shell-ps-command-vfs-smoke.sh
+RUN scripts/qemu-local-shell-pipeline-status-smoke.sh
+qemu-local-shell-pipeline-status: dispatch command=11 status=handled responses=4 raw-bytes=11 backspaces=0 deletes=0 truncated=false controls=0
+talos>
+qemu-local-shell-pipeline-status: ready-for-next prompt=true
+qemu-local-shell-pipeline-status: final participants=12 expected=12 errors=0 classification=qemu-local-shell-pipeline-status-complete
+qemu-local-shell-pipeline-status: PASS
+PASS scripts/qemu-local-shell-pipeline-status-smoke.sh
+RUN scripts/qemu-local-cat-banner-smoke.sh
+qemu-local-cat-banner: dispatch command=6 status=unknown-command responses=1 raw-bytes=6 backspaces=0 deletes=0 truncated=false controls=0
+talos>
+qemu-local-cat-banner: ready-for-next prompt=true
+qemu-local-cat-banner: final participants=7 expected=7 errors=0 classification=qemu-local-cat-banner-complete
+qemu-local-cat-banner: PASS
+PASS scripts/qemu-local-cat-banner-smoke.sh

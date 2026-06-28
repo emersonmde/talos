@@ -1,0 +1,30 @@
+{
+  "task_id": "phase12-local-bare-name-pipeline-stderr-append-regular-file-redirection-core-20260628",
+  "classification": "bare-name-pipeline-stderr-append-regular-file-redirection-core-accepted",
+  "task_record": "tasks/2026-06-28-phase12-local-bare-name-pipeline-stderr-append-regular-file-redirection-core.md",
+  "code": [
+    "src/local_command_loop.rs",
+    "src/target/qemu_virt.rs",
+    "scripts/qemu-local-serial-command-loop-smoke.sh",
+    "scripts/qemu-local-shell-bare-name-pipeline-stderr-regular-file-redirection-smoke.sh"
+  ],
+  "docs": [
+    "docs/src/roadmap.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/project/early-posix-shape.md"
+  ],
+  "validation": {
+    "fmt": "tasks/evidence/2026-06-28-phase12-local-bare-name-pipeline-stderr-append-regular-file-redirection-core/fmt-check.log",
+    "full_test": "tasks/evidence/2026-06-28-phase12-local-bare-name-pipeline-stderr-append-regular-file-redirection-core/full-test.log",
+    "focused_qemu_substitute": "tasks/evidence/2026-06-28-phase12-local-bare-name-pipeline-stderr-append-regular-file-redirection-core/qemu-local-shell-bare-name-pipeline-stderr-regular-file-redirection-smoke.log",
+    "retained_regression_controls": "tasks/evidence/2026-06-28-phase12-local-bare-name-pipeline-stderr-append-regular-file-redirection-core/retained-regression-smoke-summary.txt",
+    "jq_empty": "tasks/evidence/2026-06-28-phase12-local-bare-name-pipeline-stderr-append-regular-file-redirection-core/jq-empty.log",
+    "git_diff_check": "tasks/evidence/2026-06-28-phase12-local-bare-name-pipeline-stderr-append-regular-file-redirection-core/git-diff-check.log",
+    "mdbook_build": "tasks/evidence/2026-06-28-phase12-local-bare-name-pipeline-stderr-append-regular-file-redirection-core/mdbook-build.log",
+    "git_diff_cached_check": "tasks/evidence/2026-06-28-phase12-local-bare-name-pipeline-stderr-append-regular-file-redirection-core/git-diff-cached-check.log"
+  },
+  "hardware": {
+    "lab_controller_api": "not run",
+    "serial_hardware_boot_output": "not run"
+  }
+}

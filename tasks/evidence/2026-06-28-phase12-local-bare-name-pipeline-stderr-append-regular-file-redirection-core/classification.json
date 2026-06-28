@@ -1,0 +1,35 @@
+{
+  "task_id": "phase12-local-bare-name-pipeline-stderr-append-regular-file-redirection-core-20260628",
+  "classification": "bare-name-pipeline-stderr-append-regular-file-redirection-core-accepted",
+  "accepted": true,
+  "selected_next_task": "phase12-local-bare-name-pipeline-stderr-append-regular-file-redirection-closeout-20260628",
+  "hardware": {
+    "lab_controller_api": "not run; local POSIX/VFS task had no Pi 5 hardware gate",
+    "serial_hardware_boot_output": "not run; local POSIX/VFS task had no Pi 5 hardware gate"
+  },
+  "accepted_boundary": {
+    "witness": [
+      "stdout | stderr 2>/tmp/pipeline-stderr.txt",
+      "stdout | stderr 2>>/tmp/pipeline-stderr.txt"
+    ],
+    "lookup": "fixed bounded /bin lookup only",
+    "producer_path": "/bin/stdout",
+    "consumer_path": "/bin/stderr",
+    "target": "volatile-vfs:/tmp/pipeline-stderr.txt",
+    "readback_bytes": "0x3e"
+  },
+  "deferred": [
+    "environment-backed PATH",
+    "current-directory search",
+    "command lookup beyond bounded /bin",
+    "path-containing bare-name stages",
+    "input/combined pipeline redirections",
+    "stdout final-stage redirection for this pipeline shape",
+    "arbitrary output paths",
+    "persistent writable filesystem behavior",
+    "generated-root retry",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "phase transition"
+  ]
+}
