@@ -1,0 +1,37 @@
+{
+  "task": "phase12-local-bounded-tmp-output-path-append-redirection-frontier-checkpoint-20260628",
+  "classification": "local-bounded-tmp-output-path-append-redirection-frontier-checkpoint-accepted",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "path": "tasks/2026-06-28-phase12-local-direct-bounded-tmp-output-path-append-redirection-core.md",
+      "result": "accepted direct path-form safe volatile /tmp append frontier retained"
+    },
+    {
+      "level": "static inspection",
+      "path": "tasks/2026-06-28-phase12-local-bare-name-bounded-tmp-output-path-append-redirection-core.md",
+      "result": "accepted fixed-/bin bare-name safe volatile /tmp append frontier retained"
+    },
+    {
+      "level": "docs",
+      "paths": [
+        "docs/src/roadmap.md",
+        "docs/src/project/phase12-networking-ssh.md",
+        "docs/src/project/early-posix-shape.md"
+      ],
+      "result": "checkpoint boundary recorded"
+    },
+    {
+      "level": "retained QEMU/substitute",
+      "paths": [
+        "tasks/evidence/2026-06-28-phase12-local-direct-bounded-tmp-output-path-append-redirection-core/focused-local-command-loop.log",
+        "tasks/evidence/2026-06-28-phase12-local-bare-name-bounded-tmp-output-path-append-redirection-core/focused-local-command-loop.log"
+      ],
+      "result": "direct and bare-name append witness tests passed in accepted source tasks"
+    }
+  ],
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "hardware_claim": "none",
+  "live_network_ssh": "paused"
+}

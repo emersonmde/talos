@@ -1691,6 +1691,29 @@ persistence, pipeline path generalization, live networking/SSH,
 generated-root retry, Pi 5 hardware proof, boot publication, and phase
 transition remain deferred.
 
+The bounded volatile /tmp output-path append redirection frontier checkpoint
+freezes that local-only static/unit/QEMU-substitute boundary after the direct
+path-form and fixed-/bin bare-name append cores. The accepted direct sequence
+remains exactly '/bin/stdout >/tmp/talos-output-alpha.txt' followed by
+'/bin/stdout >>/tmp/talos-output-alpha.txt', and
+'/bin/stderr 2>/tmp/talos-error-beta.log' followed by
+'/bin/stderr 2>>/tmp/talos-error-beta.log'. The accepted bare-name sequence
+remains exactly 'stdout >/tmp/talos-output-alpha.txt' followed by
+'stdout >>/tmp/talos-output-alpha.txt', and
+'stderr 2>/tmp/talos-error-beta.log' followed by
+'stderr 2>>/tmp/talos-error-beta.log'. Both forms keep child-only fd1/fd2
+rebinding to safe volatile-vfs /tmp leaf files, append-at-EOF semantics for the
+second write, descriptor-backed cat readback of two fixture writes,
+lifecycle/status records, later descriptor restoration controls, and negative
+path-policy controls that fail before file creation/write or new successful
+process records. Persistence, nested/traversal paths, paths outside volatile
+/tmp, PATH/current-directory lookup, command lookup beyond bounded /bin,
+arbitrary shell grammar, pipeline path generalization, live networking/SSH,
+generated-root retry, Pi 5 hardware proof, boot publication, and phase
+transition remain deferred. selected_next_task=null and planningNeeded=true
+because no later queued same-lane local POSIX/VFS task is mechanically
+objective.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

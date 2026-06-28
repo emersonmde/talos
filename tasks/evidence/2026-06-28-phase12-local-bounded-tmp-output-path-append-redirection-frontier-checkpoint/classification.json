@@ -1,0 +1,44 @@
+{
+  "task": "phase12-local-bounded-tmp-output-path-append-redirection-frontier-checkpoint-20260628",
+  "classification": "local-bounded-tmp-output-path-append-redirection-frontier-checkpoint-accepted",
+  "status": "accepted",
+  "accepted_frontier": {
+    "path_policy": "safe volatile /tmp leaf only",
+    "direct_path_form": [
+      "/bin/stdout >/tmp/talos-output-alpha.txt",
+      "/bin/stdout >>/tmp/talos-output-alpha.txt",
+      "/bin/stderr 2>/tmp/talos-error-beta.log",
+      "/bin/stderr 2>>/tmp/talos-error-beta.log"
+    ],
+    "bare_name_form": [
+      "stdout >/tmp/talos-output-alpha.txt",
+      "stdout >>/tmp/talos-output-alpha.txt",
+      "stderr 2>/tmp/talos-error-beta.log",
+      "stderr 2>>/tmp/talos-error-beta.log"
+    ],
+    "execution": "descriptor-backed VFS/userspace programs with child-only fd1/fd2 rebinding",
+    "readback": "descriptor-backed cat readback proves truncate-then-append ordering",
+    "restoration": "later normal stdout/stderr controls prove shell descriptor restoration"
+  },
+  "deferred_frontier": [
+    "persistent writable filesystem behavior",
+    "nested or traversal paths",
+    "paths outside volatile /tmp",
+    "device aliasing beyond accepted /dev/null controls",
+    "environment-backed PATH",
+    "current-directory search",
+    "command lookup beyond bounded /bin",
+    "arbitrary shell grammar",
+    "pipeline/combined-pipeline path generalization",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "boot publication",
+    "phase transition"
+  ],
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "No later queued same-lane local POSIX/VFS task exists after this checkpoint; supervisor planning is required before broader work.",
+  "hardware_claim": "none",
+  "live_network_ssh": "paused"
+}
