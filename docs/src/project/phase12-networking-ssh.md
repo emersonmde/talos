@@ -610,6 +610,22 @@ transition remain deferred. No later queued same-lane local POSIX/VFS task is
 mechanically objective, so supervisor planning is required before another
 worker promotion.
 
+The direct pipeline stderr append regular-file redirection core accepts exactly
+'/bin/stdout | /bin/stderr 2>/tmp/pipeline-stderr.txt' followed by
+'/bin/stdout | /bin/stderr 2>>/tmp/pipeline-stderr.txt'. Both stages load
+through descriptor-backed VFS open/read and the accepted userspace
+launch/status path. The producer records fd1 as the pipe endpoint; the
+final-stage consumer records fd0 as that pipe endpoint and fd2 child-only as
+'volatile-vfs:/tmp/pipeline-stderr.txt'. The first pipeline uses
+truncate/sink semantics and the second records op=append at regular-file EOF.
+Descriptor-backed 'cat /tmp/pipeline-stderr.txt' reads both stderr fixture
+writes in order with bytes=0x3e, and a later normal '/bin/stderr' proves shell
+fd2 restoration. Fixed-/bin bare-name pipeline stderr append, input/combined
+pipeline redirections, stdout final-stage redirection for this pipeline shape,
+arbitrary paths, persistent storage, generated-root retry, live networking/SSH,
+Pi 5 hardware proof, and phase transition remain deferred. The next local
+POSIX/VFS task is the queued direct pipeline stderr append closeout.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1

@@ -1,0 +1,13 @@
+Retained local POSIX/VFS smoke controls passed after accepting direct pipeline
+stderr append regular-file redirection:
+
+- scripts/qemu-local-shell-direct-pipeline-output-append-regular-file-redirection-smoke.sh
+- scripts/qemu-local-shell-direct-stdout-regular-file-append-redirection-smoke.sh
+- scripts/qemu-local-shell-direct-stderr-regular-file-append-redirection-smoke.sh
+- scripts/qemu-local-shell-process-status-vfs-smoke.sh
+- scripts/qemu-local-shell-ps-command-vfs-smoke.sh
+- scripts/qemu-local-shell-pipeline-status-smoke.sh
+- scripts/qemu-local-cat-banner-smoke.sh
+
+Evidence level: QEMU/substitute. No lab-controller API or Pi 5 hardware run
+was performed for this local POSIX/VFS task.

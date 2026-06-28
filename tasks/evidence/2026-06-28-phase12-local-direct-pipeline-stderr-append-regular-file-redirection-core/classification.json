@@ -1,0 +1,18 @@
+{
+  "classification": "direct-pipeline-stderr-append-regular-file-redirection-core-accepted",
+  "task_id": "phase12-local-direct-pipeline-stderr-append-regular-file-redirection-core-20260628",
+  "accepted": true,
+  "selected_next_task": "phase12-local-direct-pipeline-stderr-append-regular-file-redirection-closeout-20260628",
+  "hardware_claim": "none",
+  "live_networking_ssh": "paused",
+  "pi5_hardware": "not-run",
+  "evidence_level": [
+    "static inspection",
+    "fmt/lint/typecheck",
+    "unit tests",
+    "QEMU/substitute",
+    "image/archive/disassembly inspection not applicable",
+    "lab-controller API not run",
+    "serial hardware boot/output not run"
+  ]
+}
