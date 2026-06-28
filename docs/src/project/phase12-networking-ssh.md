@@ -662,6 +662,27 @@ bounded /bin, generated-root retry, live networking/SSH, Pi 5 hardware proof,
 and phase transition remain deferred. The next local POSIX/VFS task is the
 queued fixed-/bin bare-name pipeline stderr append closeout.
 
+The fixed-/bin bare-name pipeline stderr append regular-file redirection
+closeout reconciles the accepted direct path-form and fixed-/bin bare-name
+frontier without runtime feature changes. The accepted direct sequence remains
+exactly '/bin/stdout | /bin/stderr 2>/tmp/pipeline-stderr.txt' followed by
+'/bin/stdout | /bin/stderr 2>>/tmp/pipeline-stderr.txt'; the accepted
+bare-name sequence remains exactly 'stdout | stderr 2>/tmp/pipeline-stderr.txt'
+followed by 'stdout | stderr 2>>/tmp/pipeline-stderr.txt'. Direct forms keep
+explicit program paths; bare-name forms resolve only through bounded /bin
+lookup. All forms keep descriptor-backed VFS loading, accepted userspace
+launch/status, producer fd1 to the pipe endpoint, final-stage consumer fd0 from
+that pipe endpoint, child-only consumer fd2 to
+volatile-vfs:/tmp/pipeline-stderr.txt, first-command truncate/sink semantics,
+second-command append-at-EOF semantics, descriptor-backed readback of two
+stderr fixture writes, shell fd2 restoration, and coherent process-status
+observations. Input/combined pipeline redirections, stdout final-stage
+redirection for this pipeline shape, arbitrary paths, persistent storage,
+PATH/current-directory lookup, command lookup beyond bounded /bin, live
+networking/SSH, Pi 5 hardware proof, generated-root retry, and phase transition
+remain deferred. The next local POSIX/VFS task is the queued pipeline stderr
+append frontier checkpoint.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1

@@ -19776,6 +19776,26 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   bounded /bin, live networking/SSH, Pi 5 hardware proof, generated-root
   retry, and phase transition remain deferred. The selected next task is
   phase12-local-bare-name-pipeline-stderr-append-regular-file-redirection-closeout-20260628.
+- phase12-local-bare-name-pipeline-stderr-append-regular-file-redirection-closeout-20260628
+  reconciles the accepted direct path-form and fixed-/bin bare-name pipeline
+  stderr append regular-file redirection frontier against retained task
+  records, classification JSON, evidence maps, QEMU/substitute transcripts,
+  retained regression controls, and docs. The accepted direct sequence remains
+  exactly '/bin/stdout | /bin/stderr 2>/tmp/pipeline-stderr.txt' followed by
+  '/bin/stdout | /bin/stderr 2>>/tmp/pipeline-stderr.txt'; the accepted
+  bare-name sequence remains exactly
+  'stdout | stderr 2>/tmp/pipeline-stderr.txt' followed by
+  'stdout | stderr 2>>/tmp/pipeline-stderr.txt'. Direct forms keep explicit
+  program paths, and bare-name forms resolve only through bounded /bin lookup.
+  Retained evidence records producer fd1 pipe endpoints, final-stage consumer
+  fd0 pipe endpoints, child-only fd2 targeting
+  volatile-vfs:/tmp/pipeline-stderr.txt with sink then append semantics,
+  descriptor-backed readback bytes=0x3e, shell fd2 restoration, and coherent
+  process-status observations. Input/combined pipeline redirections, stdout
+  final-stage redirection for this pipeline shape, arbitrary paths, persistent
+  storage, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
+  phase transition remain deferred. The selected next task is
+  phase12-local-pipeline-stderr-append-regular-file-redirection-frontier-checkpoint-20260628.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

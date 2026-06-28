@@ -1,0 +1,70 @@
+{
+  "task_id": "phase12-local-bare-name-pipeline-stderr-append-regular-file-redirection-closeout-20260628",
+  "classification": "bare-name-pipeline-stderr-append-regular-file-redirection-closeout-accepted",
+  "accepted_witnesses": [
+    "/bin/stdout | /bin/stderr 2>/tmp/pipeline-stderr.txt",
+    "/bin/stdout | /bin/stderr 2>>/tmp/pipeline-stderr.txt",
+    "stdout | stderr 2>/tmp/pipeline-stderr.txt",
+    "stdout | stderr 2>>/tmp/pipeline-stderr.txt"
+  ],
+  "accepted_surface": {
+    "direct_paths": true,
+    "bare_name_lookup": "fixed bounded /bin lookup only",
+    "producer": {
+      "path": "/bin/stdout",
+      "fd1": {
+        "kind": "pipe-endpoint",
+        "route": "pipe:stdout-to-stderr"
+      },
+      "bytes_written": "0x1f"
+    },
+    "consumer": {
+      "path": "/bin/stderr",
+      "fd0": {
+        "kind": "pipe-endpoint",
+        "route": "pipe:stdout-to-stderr"
+      },
+      "fd2": {
+        "kind": "regular-file",
+        "route": "volatile-vfs:/tmp/pipeline-stderr.txt",
+        "operations": [
+          "sink",
+          "append"
+        ],
+        "child_only": true
+      },
+      "stderr_bytes_written_per_run": "0x1f",
+      "pipe_bytes_read_per_run": "0x0",
+      "reader_eof": false
+    },
+    "readback": {
+      "path": "/tmp/pipeline-stderr.txt",
+      "bytes": "0x3e",
+      "source": "volatile-vfs-descriptor-read"
+    },
+    "shell_restored": true,
+    "loader_temporary_descriptor_open": false
+  },
+  "unsupported_forms_remain_deferred": [
+    "unsupported command names",
+    "path-containing bare-name stage names",
+    "input redirection on pipelines",
+    "combined pipeline redirections",
+    "stdout final-stage redirection for this pipeline shape",
+    "arbitrary output paths",
+    "persistent writable filesystem behavior",
+    "environment-backed PATH",
+    "current-directory search",
+    "command lookup beyond bounded /bin",
+    "live networking/SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "phase transition"
+  ],
+  "hardware": {
+    "lab_controller_api": "not-run",
+    "serial_hardware_boot_output": "not-run",
+    "reason": "static closeout for local POSIX/VFS task has no Pi 5 hardware gate"
+  },
+  "selected_next_task": "phase12-local-pipeline-stderr-append-regular-file-redirection-frontier-checkpoint-20260628"
+}
