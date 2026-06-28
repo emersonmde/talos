@@ -828,6 +828,30 @@ networking/SSH, Pi 5 hardware proof, generated-root retry, and phase transition
 remain deferred. The next local POSIX/VFS task is the queued combined pipeline
 stdout append frontier checkpoint.
 
+The combined pipeline stdout append redirection frontier checkpoint freezes the
+accepted local-only direct path-form and fixed-/bin bare-name witnesses without
+adding runtime behavior. The accepted witnesses remain exactly
+'/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-combined-append.txt',
+'/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/pipeline-combined-append.txt',
+'stdin </etc/banner.txt | stdin >/tmp/pipeline-combined-append.txt', and
+'stdin </etc/banner.txt | stdin >>/tmp/pipeline-combined-append.txt'. Direct
+path loading and fixed bounded /bin lookup both converge on the same
+descriptor-backed contract: producer fd0 comes from
+initramfs:/etc/banner.txt, producer fd1 is the pipe endpoint, consumer fd0 is
+that pipe endpoint, consumer fd1 targets
+volatile-vfs:/tmp/pipeline-combined-append.txt, inherited fd2 is preserved,
+loader temporaries are closed, the first consumer truncates/sinks, the second
+consumer appends at EOF, and descriptor-backed
+'cat /tmp/pipeline-combined-append.txt' reads the two nested userspace stdin
+reports back in order. Combined stderr pipeline redirections, arbitrary paths,
+persistent storage, environment-backed PATH, current-directory search, command
+lookup beyond bounded /bin, arbitrary shell grammar, unbounded/concurrent
+pipelines, scheduler concurrency, fork/signals, process groups/sessions, live
+networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
+transition remain deferred. selected_next_task=null and planningNeeded=true
+because no later queued same-lane local POSIX/VFS task is mechanically
+objective.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1

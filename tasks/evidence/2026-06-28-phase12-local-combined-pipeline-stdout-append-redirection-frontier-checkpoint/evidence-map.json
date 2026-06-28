@@ -1,0 +1,62 @@
+{
+  "task_id": "phase12-local-combined-pipeline-stdout-append-redirection-frontier-checkpoint-20260628",
+  "classification": "phase12-local-combined-pipeline-stdout-append-redirection-frontier-checkpoint-accepted",
+  "source_changes": [],
+  "docs": [
+    "tasks/2026-06-28-phase12-local-combined-pipeline-stdout-append-redirection-frontier-checkpoint.md",
+    "docs/src/roadmap.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/project/early-posix-shape.md"
+  ],
+  "reconciled_tasks": [
+    {
+      "task_id": "phase12-local-direct-combined-pipeline-stdout-append-redirection-core-20260628",
+      "path": "tasks/2026-06-28-phase12-local-direct-combined-pipeline-stdout-append-redirection-core.md",
+      "classification_path": "tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-stdout-append-redirection-core/classification.json",
+      "result": "direct path-form combined pipeline stdout append accepted with descriptor-backed VFS/userspace execution and selected_next_task naming the fixed-/bin bare-name core"
+    },
+    {
+      "task_id": "phase12-local-bare-name-combined-pipeline-stdout-append-redirection-core-20260628",
+      "path": "tasks/2026-06-28-phase12-local-bare-name-combined-pipeline-stdout-append-redirection-core.md",
+      "classification_path": "tasks/evidence/2026-06-28-phase12-local-bare-name-combined-pipeline-stdout-append-redirection-core/classification.json",
+      "result": "fixed-/bin bare-name combined pipeline stdout append accepted with bounded /bin lookup to /bin/stdin and selected_next_task naming this checkpoint"
+    }
+  ],
+  "retained_evidence": [
+    {
+      "level": "unit tests / QEMU-substitute",
+      "path": "tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-stdout-append-redirection-core/qemu-substitute-focused-test.log",
+      "result": "direct focused local_command_loop combined pipeline stdout append test passed"
+    },
+    {
+      "level": "QEMU/substitute local shell smoke",
+      "path": "tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-stdout-append-redirection-core/qemu-local-shell-direct-combined-pipeline-stdout-append-redirection-smoke.log",
+      "result": "direct smoke reported final participants=23 expected=23 errors=0"
+    },
+    {
+      "level": "unit tests / QEMU-substitute",
+      "path": "tasks/evidence/2026-06-28-phase12-local-bare-name-combined-pipeline-stdout-append-redirection-core/qemu-substitute-focused-test.log",
+      "result": "bare-name focused local_command_loop combined pipeline stdout append test passed"
+    },
+    {
+      "level": "QEMU/substitute local shell smoke",
+      "path": "tasks/evidence/2026-06-28-phase12-local-bare-name-combined-pipeline-stdout-append-redirection-core/qemu-local-shell-bare-name-combined-pipeline-stdout-append-redirection-smoke.log",
+      "result": "bare-name smoke reported final participants=24 expected=24 errors=0"
+    },
+    {
+      "level": "QEMU/substitute retained smoke summaries",
+      "path": "tasks/evidence/2026-06-28-phase12-local-bare-name-combined-pipeline-stdout-append-redirection-core/retained-regression-smoke-summary.txt",
+      "result": "direct and bare-name combined pipeline stdin/stdout, direct combined pipeline stdout append, pipeline stdout append, pipeline stderr redirection, process-status VFS, ps, waitpid, laststatus, and pipestatus controls passed"
+    }
+  ],
+  "validation": [
+    "static inspection of task records, retained evidence paths, docs, and git diff",
+    "jq empty on classification.json and evidence-map.json",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "git diff --cached --check"
+  ],
+  "hardware_claim": "none; live networking/SSH remains paused and no Pi 5 hardware claim is made",
+  "selected_next_task": null,
+  "planningNeeded": true
+}
