@@ -1363,6 +1363,26 @@ combined pipeline stdin/stdout core; live networking/SSH, Pi 5 hardware proof,
 generated-root retry, arbitrary paths, append/stderr variants, and phase
 transition remain paused/deferred.
 
+The bare-name combined pipeline stdin/stdout redirection core accepts the
+corresponding fixed-/bin form only:
+'stdin </etc/banner.txt | stdin >/tmp/pipeline-combined.txt'. Both stage names
+resolve through the bounded /bin lookup to /bin/stdin before descriptor-backed
+VFS open/read and the accepted userspace launch/status path. The producer gets
+child-only fd0 from initramfs:/etc/banner.txt, fd1 as the pipe endpoint, and
+inherited fd2; the consumer gets fd0 from that pipe endpoint, child-only fd1
+to volatile-vfs:/tmp/pipeline-combined.txt, and inherited fd2. Descriptor-backed
+'cat /tmp/pipeline-combined.txt' reads the nested userspace stdin report back,
+and later normal bare-name stdin plus the accepted direct path-form combined
+pipeline control prove shell fd0/fd1 restoration. Unsupported neighboring
+forms fail closed for append, wrong output path, stdout producer with the
+combined sink, explicit fd1 syntax, separated redirection tokens, arbitrary
+paths, path-containing stage names, and multistage combined redirection.
+Persistent writable filesystem behavior, PATH/current-directory lookup,
+command lookup beyond bounded /bin, arbitrary shell grammar, live
+networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
+transition remain deferred. The accepted core selects the bare-name combined
+pipeline stdin/stdout closeout.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

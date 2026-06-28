@@ -14366,6 +14366,7 @@ pub fn run_diagnostic_command_channel_smoke() -> bool {
     talos_boot_scenario = "qemu_local_shell_direct_pipeline_stdin_redirection",
     talos_boot_scenario = "qemu_local_shell_direct_pipeline_consumer_stdin_redirection",
     talos_boot_scenario = "qemu_local_shell_direct_combined_pipeline_stdin_stdout_redirection",
+    talos_boot_scenario = "qemu_local_shell_bare_name_combined_pipeline_stdin_stdout_redirection",
     talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_stdin_redirection",
     talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_consumer_stdin_redirection",
     talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_stage_argv",
@@ -14805,6 +14806,13 @@ const fn local_command_loop_smoke_label() -> &'static str {
 }
 
 #[cfg(
+    talos_boot_scenario = "qemu_local_shell_bare_name_combined_pipeline_stdin_stdout_redirection"
+)]
+const fn local_command_loop_smoke_label() -> &'static str {
+    "qemu-local-shell-bare-name-combined-pipeline-stdin-stdout-redirection"
+}
+
+#[cfg(
     talos_boot_scenario = "qemu_local_shell_direct_pipeline_output_append_regular_file_redirection"
 )]
 const fn local_command_loop_smoke_label() -> &'static str {
@@ -14993,6 +15001,9 @@ const fn local_command_loop_smoke_label() -> &'static str {
     not(talos_boot_scenario = "qemu_local_shell_direct_pipeline_consumer_stdin_redirection"),
     not(
         talos_boot_scenario = "qemu_local_shell_direct_combined_pipeline_stdin_stdout_redirection"
+    ),
+    not(
+        talos_boot_scenario = "qemu_local_shell_bare_name_combined_pipeline_stdin_stdout_redirection"
     ),
     not(talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_stdin_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_consumer_stdin_redirection"),
@@ -15304,6 +15315,13 @@ const fn local_command_loop_smoke_classification() -> &'static str {
 }
 
 #[cfg(
+    talos_boot_scenario = "qemu_local_shell_bare_name_combined_pipeline_stdin_stdout_redirection"
+)]
+const fn local_command_loop_smoke_classification() -> &'static str {
+    "qemu-local-shell-bare-name-combined-pipeline-stdin-stdout-redirection-complete"
+}
+
+#[cfg(
     talos_boot_scenario = "qemu_local_shell_direct_pipeline_output_append_regular_file_redirection"
 )]
 const fn local_command_loop_smoke_classification() -> &'static str {
@@ -15493,6 +15511,9 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     not(
         talos_boot_scenario = "qemu_local_shell_direct_combined_pipeline_stdin_stdout_redirection"
     ),
+    not(
+        talos_boot_scenario = "qemu_local_shell_bare_name_combined_pipeline_stdin_stdout_redirection"
+    ),
     not(talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_stdin_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_consumer_stdin_redirection"),
     not(talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_stage_argv"),
@@ -15586,6 +15607,7 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     talos_boot_scenario = "qemu_local_shell_direct_pipeline_stdin_redirection",
     talos_boot_scenario = "qemu_local_shell_direct_pipeline_consumer_stdin_redirection",
     talos_boot_scenario = "qemu_local_shell_direct_combined_pipeline_stdin_stdout_redirection",
+    talos_boot_scenario = "qemu_local_shell_bare_name_combined_pipeline_stdin_stdout_redirection",
     talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_stdin_redirection",
     talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_consumer_stdin_redirection",
     talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_stage_argv",
@@ -15732,7 +15754,12 @@ const fn local_command_loop_smoke_command_count() -> usize {
     } else if cfg!(
         talos_boot_scenario = "qemu_local_shell_direct_combined_pipeline_stdin_stdout_redirection"
     ) {
-        18
+        17
+    } else if cfg!(
+        talos_boot_scenario =
+            "qemu_local_shell_bare_name_combined_pipeline_stdin_stdout_redirection"
+    ) {
+        22
     } else if cfg!(
         talos_boot_scenario =
             "qemu_local_shell_direct_pipeline_output_append_regular_file_redirection"
@@ -15875,6 +15902,7 @@ const fn local_command_loop_smoke_command_count() -> usize {
     talos_boot_scenario = "qemu_local_shell_direct_pipeline_stdin_redirection",
     talos_boot_scenario = "qemu_local_shell_direct_pipeline_consumer_stdin_redirection",
     talos_boot_scenario = "qemu_local_shell_direct_combined_pipeline_stdin_stdout_redirection",
+    talos_boot_scenario = "qemu_local_shell_bare_name_combined_pipeline_stdin_stdout_redirection",
     talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_stdin_redirection",
     talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_consumer_stdin_redirection",
     talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_stage_argv",
@@ -16528,8 +16556,84 @@ fn expected_local_command_loop_dispatch(
                         && status == UnexpectedArgument
                         && response_lines == 1
                 }
-                17 => {
+                _ => false,
+            }
+        }
+        index
+            if cfg!(
+                talos_boot_scenario =
+                    "qemu_local_shell_bare_name_combined_pipeline_stdin_stdout_redirection"
+            ) =>
+        {
+            match index {
+                3 => {
                     line == b"stdin </etc/banner.txt | stdin >/tmp/pipeline-combined.txt"
+                        && status == Handled
+                        && response_lines == 24
+                }
+                4 => line == b"waitpid 0x100001" && status == Handled && response_lines == 1,
+                5 => line == b"waitpid 0x100002" && status == Handled && response_lines == 1,
+                6 => line == b"laststatus" && status == Handled && response_lines == 1,
+                7 => line == b"pipestatus" && status == Handled && response_lines == 3,
+                8 => {
+                    line == b"cat /proc/talos/processes" && status == Handled && response_lines == 1
+                }
+                9 => line == b"ps" && status == Handled && response_lines == 1,
+                10 => {
+                    line == b"cat /tmp/pipeline-combined.txt"
+                        && status == Handled
+                        && response_lines == 2
+                }
+                11 => {
+                    line == b"stdin </etc/banner.txt" && status == Handled && response_lines == 11
+                }
+                12 => {
+                    line == b"/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-combined.txt"
+                        && status == Handled
+                        && response_lines == 24
+                }
+                13 => {
+                    line == b"stdin </etc/banner.txt | stdin >>/tmp/pipeline-combined.txt"
+                        && status == UnexpectedArgument
+                        && response_lines == 1
+                }
+                14 => {
+                    line == b"stdin </etc/banner.txt | stdin >/tmp/pipeline-report.txt"
+                        && status == UnexpectedArgument
+                        && response_lines == 1
+                }
+                15 => {
+                    line == b"stdout | stdin >/tmp/pipeline-combined.txt"
+                        && status == UnexpectedArgument
+                        && response_lines == 1
+                }
+                16 => {
+                    line == b"stdin </etc/banner.txt | stdin 1>/tmp/pipeline-combined.txt"
+                        && status == UnexpectedArgument
+                        && response_lines == 1
+                }
+                17 => {
+                    line == b"stdin </etc/banner.txt | stdin > /tmp/pipeline-combined.txt"
+                        && status == UnexpectedArgument
+                        && response_lines == 1
+                }
+                18 => {
+                    line == b"stdin </etc/banner.txt | stdin >/var/x"
+                        && status == UnexpectedArgument
+                        && response_lines == 1
+                }
+                19 => {
+                    line == b"stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-combined.txt"
+                        && status == UnexpectedArgument
+                        && response_lines == 1
+                }
+                20 => {
+                    line == b"/bin/stdin </etc/banner.txt | stdin >/tmp/pipeline-combined.txt"
+                        && status == UnexpectedArgument
+                        && response_lines == 1
+                }
+                21 => {
+                    line == b"stdin </etc/banner.txt | stdin >/tmp/pipeline-combined.txt | stdin"
                         && status == UnexpectedArgument
                         && response_lines == 1
                 }

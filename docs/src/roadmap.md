@@ -19846,6 +19846,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   nested userspace stdin report back. Unsupported direct forms remain
   fail-closed. The selected next task is
   phase12-local-bare-name-combined-pipeline-stdin-stdout-redirection-core-20260628.
+- phase12-local-bare-name-combined-pipeline-stdin-stdout-redirection-core-20260628
+  accepts the fixed-/bin bare-name combined pipeline stdin/stdout witness
+  'stdin </etc/banner.txt | stdin >/tmp/pipeline-combined.txt'. Both stages
+  resolve through bounded /bin lookup to /bin/stdin before descriptor-backed
+  VFS open/read, accepted loader/userspace launch/status, pipe handoff,
+  final-stage stdout redirection to
+  volatile-vfs:/tmp/pipeline-combined.txt, descriptor-backed readback, and
+  coherent waitpid, laststatus, /proc/talos/processes, zero-argument ps, and
+  pipestatus observations. Normal bare-name stdin and the accepted direct
+  path-form combined pipeline remain retained controls. Append, wrong output
+  path, stdout producer with the combined sink, explicit fd1 syntax,
+  separated redirection tokens, arbitrary paths, path-containing stage names,
+  and multistage combined redirection fail closed. Live networking/SSH,
+  Pi 5 hardware proof, generated-root retry, persistent storage,
+  PATH/current-directory lookup, command lookup beyond bounded /bin,
+  arbitrary shell grammar, and phase transition remain deferred. The selected
+  next task is
+  phase12-local-bare-name-combined-pipeline-stdin-stdout-redirection-closeout-20260628.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

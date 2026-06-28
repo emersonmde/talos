@@ -1,0 +1,22 @@
+{
+  "taskId": "phase12-local-bare-name-combined-pipeline-stdin-stdout-redirection-core-20260628",
+  "classification": "local-bare-name-combined-pipeline-stdin-stdout-redirection-core-accepted",
+  "focusedQemuClassification": "qemu-local-shell-bare-name-combined-pipeline-stdin-stdout-redirection-complete",
+  "acceptedWitness": "stdin </etc/banner.txt | stdin >/tmp/pipeline-combined.txt",
+  "evidenceLevel": [
+    "static inspection",
+    "fmt/lint/typecheck",
+    "unit tests / QEMU-substitute",
+    "focused QEMU/substitute",
+    "retained local POSIX/VFS QEMU/substitute controls",
+    "JSON validation",
+    "diff validation",
+    "docs validation"
+  ],
+  "accepted": true,
+  "hardware": {
+    "labControllerApi": "not run; local POSIX/VFS task had no Pi 5 hardware gate",
+    "serialHardwareBootOutput": "not run; local POSIX/VFS task had no Pi 5 hardware gate"
+  },
+  "selectedNextTask": "phase12-local-bare-name-combined-pipeline-stdin-stdout-redirection-closeout-20260628"
+}

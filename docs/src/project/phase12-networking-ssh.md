@@ -731,6 +731,22 @@ nested userspace stdin report back. Unsupported direct combined forms remain
 fail-closed. The next mechanically objective local POSIX/VFS task is the
 queued fixed-/bin bare-name combined pipeline stdin/stdout core.
 
+The fixed-/bin bare-name combined pipeline stdin/stdout core accepts exactly
+'stdin </etc/banner.txt | stdin >/tmp/pipeline-combined.txt'. Both stages
+resolve through the bounded /bin lookup to /bin/stdin, then use the same
+descriptor-backed VFS open/read, program loader, userspace launch/status,
+pipe handoff, final-stage stdout redirection, volatile VFS readback, and
+process-status observations as the accepted direct path-form witness. Normal
+bare-name stdin and the direct path-form combined pipeline remain retained
+controls. Append, wrong output path, stdout producer with the combined sink,
+explicit fd1 syntax, separated redirection tokens, arbitrary paths,
+path-containing stage names, and multistage combined redirection fail closed.
+Live networking/SSH, Pi 5 hardware proof, generated-root retry, persistent
+writable filesystem behavior, PATH/current-directory lookup, command lookup
+beyond bounded /bin, arbitrary shell grammar, and phase transition remain
+paused/deferred. The next mechanically objective local POSIX/VFS task is the
+queued bare-name combined pipeline stdin/stdout closeout.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1
