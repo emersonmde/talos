@@ -1,7 +1,7 @@
 use std::env;
 use std::fs;
 use std::io::Write;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 
 struct BootScenario {
@@ -1523,7 +1523,7 @@ fn validate_capture_nonce(nonce: &str) {
     }
 }
 
-fn generate_initramfs_manifest(out_dir: &PathBuf) {
+fn generate_initramfs_manifest(out_dir: &Path) {
     let manifest = fs::read_to_string(GENERATED_ROOT_MANIFEST)
         .unwrap_or_else(|error| panic!("failed to read {GENERATED_ROOT_MANIFEST}: {error}"));
     let manifest = parse_generated_manifest(&manifest);
@@ -1813,22 +1813,26 @@ fn build_generated_root_exit_elf_bytes(exit_status: u64) -> Vec<u8> {
     write_load_phdr(
         &mut bytes,
         EHDR_LEN,
-        PF_R | PF_X,
-        GENERATED_ROOT_EXEC_TEXT_OFFSET as u64,
-        TEXT_VADDR,
-        8,
-        8,
-        PAGE_ALIGN,
+        LoadPhdr {
+            flags: PF_R | PF_X,
+            file_offset: GENERATED_ROOT_EXEC_TEXT_OFFSET as u64,
+            virtual_address: TEXT_VADDR,
+            file_size: 8,
+            memory_size: 8,
+            alignment: PAGE_ALIGN,
+        },
     );
     write_load_phdr(
         &mut bytes,
         EHDR_LEN + PHENT_LEN,
-        PF_R | PF_W,
-        DATA_OFFSET as u64,
-        DATA_VADDR,
-        4,
-        0x1004,
-        PAGE_ALIGN,
+        LoadPhdr {
+            flags: PF_R | PF_W,
+            file_offset: DATA_OFFSET as u64,
+            virtual_address: DATA_VADDR,
+            file_size: 4,
+            memory_size: 0x1004,
+            alignment: PAGE_ALIGN,
+        },
     );
 
     let exit_status = (exit_status & 0xffff) as u32;
@@ -1843,24 +1847,24 @@ fn build_generated_root_exit_elf_bytes(exit_status: u64) -> Vec<u8> {
     bytes
 }
 
-fn write_load_phdr(
-    bytes: &mut [u8],
-    offset: usize,
+struct LoadPhdr {
     flags: u32,
     file_offset: u64,
     virtual_address: u64,
     file_size: u64,
     memory_size: u64,
     alignment: u64,
-) {
+}
+
+fn write_load_phdr(bytes: &mut [u8], offset: usize, phdr: LoadPhdr) {
     write_le_u32(bytes, offset, 1);
-    write_le_u32(bytes, offset + 4, flags);
-    write_le_u64(bytes, offset + 8, file_offset);
-    write_le_u64(bytes, offset + 16, virtual_address);
-    write_le_u64(bytes, offset + 24, virtual_address);
-    write_le_u64(bytes, offset + 32, file_size);
-    write_le_u64(bytes, offset + 40, memory_size);
-    write_le_u64(bytes, offset + 48, alignment);
+    write_le_u32(bytes, offset + 4, phdr.flags);
+    write_le_u64(bytes, offset + 8, phdr.file_offset);
+    write_le_u64(bytes, offset + 16, phdr.virtual_address);
+    write_le_u64(bytes, offset + 24, phdr.virtual_address);
+    write_le_u64(bytes, offset + 32, phdr.file_size);
+    write_le_u64(bytes, offset + 40, phdr.memory_size);
+    write_le_u64(bytes, offset + 48, phdr.alignment);
 }
 
 fn write_le_u16(bytes: &mut [u8], offset: usize, value: u16) {

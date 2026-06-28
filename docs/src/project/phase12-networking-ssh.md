@@ -835,6 +835,22 @@ planningNeeded=true because no later queued same-lane local POSIX/VFS task is
 mechanically objective.
 
 The
+phase12-local-direct-bounded-tmp-output-path-append-redirection-core-20260628
+task keeps live networking/SSH paused and accepts only the direct path-form
+append extension for safe volatile /tmp leaves. The accepted stdout sequence is
+'/bin/stdout >/tmp/talos-output-alpha.txt' followed by
+'/bin/stdout >>/tmp/talos-output-alpha.txt'; the accepted stderr sequence is
+'/bin/stderr 2>/tmp/talos-error-beta.log' followed by
+'/bin/stderr 2>>/tmp/talos-error-beta.log'. Each append command launches the
+same descriptor-backed VFS/userspace program surface, rebinds only child fd1
+or fd2, and uses descriptor-backed cat readback to prove two fixture writes in
+truncate-then-append order. Unsupported append paths and malformed grammar
+remain negative controls. Fixed-/bin bare-name append generalization,
+persistence, pipeline path generalization, live networking/SSH, Pi 5 hardware
+proof, generated-root retry, boot publication, and phase transition remain
+deferred.
+
+The
 phase12-local-direct-combined-pipeline-stderr-append-redirection-core-20260628
 task accepts the exact direct path-form truncate-then-append sequence
 '/bin/stdin </etc/banner.txt | /bin/stderr 2>/tmp/pipeline-combined-stderr-append.txt'

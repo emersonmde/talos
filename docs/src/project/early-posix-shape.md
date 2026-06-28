@@ -1659,6 +1659,22 @@ proof, and phase transition remain deferred. selected_next_task=null and
 planningNeeded=true because no later queued same-lane local POSIX/VFS task is
 mechanically objective.
 
+The direct bounded volatile /tmp output-path append redirection core extends
+the same path policy to direct path-form append after an initial truncate/create
+write. The accepted sequences are '/bin/stdout >/tmp/talos-output-alpha.txt'
+followed by '/bin/stdout >>/tmp/talos-output-alpha.txt', and
+'/bin/stderr 2>/tmp/talos-error-beta.log' followed by
+'/bin/stderr 2>>/tmp/talos-error-beta.log'. Both continue through
+descriptor-backed VFS/userspace execution, child-only fd1/fd2 rebinding,
+volatile-vfs append-at-EOF semantics, descriptor-backed cat readback,
+lifecycle/status records, and later direct stdout/stderr descriptor
+restoration controls. Unsupported append paths and malformed append grammar
+fail before file creation/write or new successful process records. Fixed-/bin
+bare-name append-path generalization is the selected next local POSIX/VFS
+task. Persistence, pipeline path generalization, live networking/SSH,
+generated-root retry, Pi 5 hardware proof, boot publication, and phase
+transition remain deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

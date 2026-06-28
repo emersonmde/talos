@@ -1,0 +1,39 @@
+{
+  "task": "phase12-local-direct-bounded-tmp-output-path-append-redirection-core-20260628",
+  "classification": "phase12-local-direct-bounded-tmp-output-path-append-redirection-core-accepted",
+  "accepted": true,
+  "accepted_boundary": {
+    "command_forms": [
+      "/bin/stdout >/tmp/talos-output-alpha.txt",
+      "/bin/stdout >>/tmp/talos-output-alpha.txt",
+      "/bin/stderr 2>/tmp/talos-error-beta.log",
+      "/bin/stderr 2>>/tmp/talos-error-beta.log"
+    ],
+    "path_policy": "absolute volatile /tmp leaf path, non-empty ASCII basename, no nested slash, no dot or dotdot basename, no writes outside /tmp, no cross-stream reserved basename alias",
+    "execution": "descriptor-backed VFS/userspace launch with child-only fd1/fd2 truncate/create followed by append redirection and descriptor-backed cat readback",
+    "readback_bytes_per_stream": "0x3e"
+  },
+  "deferred": [
+    "bare-name bounded /tmp output path append redirection",
+    "persistent writable filesystem behavior",
+    "nested or traversal paths",
+    "paths outside volatile /tmp",
+    "device aliasing beyond accepted /dev/null controls",
+    "environment-backed PATH",
+    "current-directory search",
+    "command lookup beyond bounded /bin",
+    "arbitrary descriptor syntax",
+    "descriptor moves",
+    "separated redirection tokens",
+    "arbitrary shell grammar",
+    "pipeline path generalization",
+    "live networking/SSH",
+    "generated-root retry",
+    "Pi 5 hardware proof",
+    "boot publication",
+    "phase transition"
+  ],
+  "hardware_claim": false,
+  "live_networking_ssh_paused": true,
+  "selected_next_task": "phase12-local-bare-name-bounded-tmp-output-path-append-redirection-core-20260628"
+}
