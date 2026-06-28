@@ -20001,6 +20001,25 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   hardware proof, generated-root retry, and phase transition remain deferred.
   The selected next local POSIX/VFS task is
   phase12-local-combined-pipeline-stderr-regular-file-redirection-frontier-checkpoint-20260628.
+- phase12-local-combined-pipeline-stderr-regular-file-redirection-frontier-checkpoint-20260628
+  freezes the accepted local-only direct path-form and fixed-/bin bare-name
+  combined pipeline stderr regular-file frontier without adding runtime
+  behavior. The accepted witnesses remain exactly
+  '/bin/stdin </etc/banner.txt | /bin/stderr 2>/tmp/pipeline-combined-stderr.txt'
+  and 'stdin </etc/banner.txt | stderr 2>/tmp/pipeline-combined-stderr.txt'.
+  Direct path loading and fixed bounded /bin lookup both converge on the same
+  descriptor-backed contract: producer fd0 comes from
+  initramfs:/etc/banner.txt, producer fd1 is the pipe endpoint, consumer fd0 is
+  that pipe endpoint, consumer fd2 targets
+  volatile-vfs:/tmp/pipeline-combined-stderr.txt, inherited fd1 is preserved,
+  loader temporaries are closed, and descriptor-backed
+  'cat /tmp/pipeline-combined-stderr.txt' reads the userspace stderr fixture
+  back. Combined pipeline stderr append, arbitrary paths, persistent storage,
+  mixed direct/bare path forms, PATH/current-directory lookup, command lookup
+  beyond bounded /bin, arbitrary shell grammar, live networking/SSH, Pi 5
+  hardware proof, generated-root retry, and phase transition remain deferred.
+  selected_next_task=null and planningNeeded=true because no later queued
+  same-lane local POSIX/VFS task is mechanically objective.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

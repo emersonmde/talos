@@ -11025,3 +11025,22 @@ stderr append, arbitrary paths, mixed path forms, live networking/SSH, Pi 5
 hardware proof, generated-root retry, and phase transition remain deferred. The
 selected next local POSIX/VFS task is
 phase12-local-combined-pipeline-stderr-regular-file-redirection-frontier-checkpoint-20260628.
+
+The
+phase12-local-combined-pipeline-stderr-regular-file-redirection-frontier-checkpoint-20260628
+checkpoint freezes the accepted local-only direct path-form and fixed-/bin
+bare-name combined pipeline stderr regular-file frontier without adding
+runtime behavior. The accepted witnesses remain exactly
+'/bin/stdin </etc/banner.txt | /bin/stderr 2>/tmp/pipeline-combined-stderr.txt'
+and 'stdin </etc/banner.txt | stderr 2>/tmp/pipeline-combined-stderr.txt'.
+Direct path loading and fixed bounded /bin lookup both preserve the same
+descriptor-backed contract: producer fd0 from initramfs:/etc/banner.txt,
+producer fd1 as the pipe endpoint, consumer fd0 from that pipe endpoint,
+child-only fd2 to volatile-vfs:/tmp/pipeline-combined-stderr.txt, inherited
+fd1, closed loader temporaries, descriptor-backed cat readback of the
+userspace stderr fixture, and later descriptor restoration controls. Combined
+pipeline stderr append, arbitrary paths, persistent storage, mixed direct/bare
+path forms, broad shell grammar, live networking/SSH, Pi 5 hardware proof,
+generated-root retry, and phase transition remain deferred. selected_next_task
+is null and planningNeeded=true because no later queued same-lane local
+POSIX/VFS task is mechanically objective.
