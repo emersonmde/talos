@@ -19864,6 +19864,25 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   arbitrary shell grammar, and phase transition remain deferred. The selected
   next task is
   phase12-local-bare-name-combined-pipeline-stdin-stdout-redirection-closeout-20260628.
+- phase12-local-bare-name-combined-pipeline-stdin-stdout-redirection-closeout-20260628
+  freezes the accepted direct path-form and fixed-/bin bare-name combined
+  pipeline stdin/stdout frontier without adding runtime behavior. The accepted
+  witnesses remain exactly
+  '/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-combined.txt' and
+  'stdin </etc/banner.txt | stdin >/tmp/pipeline-combined.txt'. After direct
+  path loading or bounded /bin bare-name resolution, both forms share the same
+  descriptor-backed contract: producer fd0 comes from
+  initramfs:/etc/banner.txt, producer fd1 is the pipe endpoint, consumer fd0
+  is that pipe endpoint, consumer fd1 targets
+  volatile-vfs:/tmp/pipeline-combined.txt, inherited fd2 is preserved for both
+  stages, loader temporaries are closed, and descriptor-backed
+  'cat /tmp/pipeline-combined.txt' reads the nested userspace stdin report
+  back. Append/combined stderr pipeline redirections, arbitrary paths,
+  persistent storage, PATH/current-directory lookup, command lookup beyond
+  bounded /bin, arbitrary shell grammar, live networking/SSH, Pi 5 hardware
+  proof, generated-root retry, and phase transition remain deferred. The
+  selected next task is
+  phase12-local-combined-pipeline-stdin-stdout-redirection-frontier-checkpoint-20260628.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

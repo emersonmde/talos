@@ -1383,6 +1383,26 @@ networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
 transition remain deferred. The accepted core selects the bare-name combined
 pipeline stdin/stdout closeout.
 
+The bare-name combined pipeline stdin/stdout closeout freezes the accepted
+direct path-form and fixed-/bin bare-name frontier without adding runtime
+behavior. The accepted witnesses remain exactly
+'/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-combined.txt' and
+'stdin </etc/banner.txt | stdin >/tmp/pipeline-combined.txt'. After direct
+path loading or bounded /bin bare-name resolution, both forms share the same
+descriptor-backed contract: producer fd0 comes from
+initramfs:/etc/banner.txt, producer fd1 is the pipe endpoint, consumer fd0 is
+that pipe endpoint, consumer fd1 targets
+volatile-vfs:/tmp/pipeline-combined.txt, inherited fd2 is preserved for both
+stages, loader temporaries are closed, and descriptor-backed
+'cat /tmp/pipeline-combined.txt' reads the nested userspace stdin report back.
+Append/combined stderr pipeline redirections, arbitrary paths, persistent
+writable filesystem behavior, environment-backed PATH, current-directory
+search, command lookup beyond bounded /bin, arbitrary shell grammar,
+unbounded/concurrent pipelines, scheduler concurrency, fork/signals, process
+groups/sessions, live networking/SSH, Pi 5 hardware proof, generated-root
+retry, and phase transition remain deferred. The accepted closeout selects the
+combined pipeline stdin/stdout frontier checkpoint.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
