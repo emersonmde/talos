@@ -19963,6 +19963,26 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   proof, generated-root retry, and phase transition remain deferred.
   selected_next_task=null and planningNeeded=true because no later queued
   same-lane local POSIX/VFS task is mechanically objective.
+- phase12-local-direct-combined-pipeline-stderr-regular-file-redirection-core-20260628
+  accepts the exact direct path-form combined pipeline stderr regular-file
+  witness
+  '/bin/stdin </etc/banner.txt | /bin/stderr 2>/tmp/pipeline-combined-stderr.txt'.
+  The producer loads /bin/stdin through descriptor-backed VFS, reads fd0 from
+  initramfs:/etc/banner.txt, and writes the 0x3d-byte stdin report to the
+  serialized pipe endpoint. The final-stage /bin/stderr consumer loads through
+  descriptor-backed VFS with fd0 set to that pipe endpoint, inherited fd1, and
+  child-only fd2 rebound to
+  volatile-vfs:/tmp/pipeline-combined-stderr.txt. /bin/stderr writes its
+  0x1f-byte stderr fixture and does not read fd0, so the pipe record keeps
+  bytes-read=0 and reader-eof=false while still proving fd0 inheritance.
+  Descriptor-backed 'cat /tmp/pipeline-combined-stderr.txt' reads back the
+  stderr fixture, and later normal '/bin/stdin </etc/banner.txt',
+  '/bin/stdout', and '/bin/stderr' controls prove shell descriptor
+  restoration. Fixed-/bin bare-name combined stderr, append form, arbitrary
+  paths, persistent storage, separated redirection-token grammar, broad shell
+  grammar, live networking/SSH, Pi 5 hardware proof, generated-root retry, and
+  phase transition remain deferred. The selected next local POSIX/VFS task is
+  phase12-local-bare-name-combined-pipeline-stderr-regular-file-redirection-core-20260628.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

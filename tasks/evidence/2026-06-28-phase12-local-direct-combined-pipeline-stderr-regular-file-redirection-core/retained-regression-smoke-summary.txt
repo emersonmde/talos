@@ -1,0 +1,19 @@
+Retained local POSIX/VFS regression gates for direct combined pipeline stderr
+regular-file redirection.
+
+Fresh gates in this task:
+- cargo -Zjson-target-spec test --quiet local_command_loop_runs_direct_path_pipeline_combined_stdin_stderr_redirection: passed.
+- cargo -Zjson-target-spec test --quiet local_command_loop: passed.
+- scripts/qemu-local-shell-direct-combined-pipeline-stderr-regular-file-redirection-smoke.sh --quiet: passed with final participants=23 expected=23 errors=0.
+
+Retained behavior covered by the broad local_command_loop regression gate and
+the focused smoke:
+- descriptor-backed cat readback from /tmp/pipeline-combined-stderr.txt;
+- accepted combined pipeline stdin/stdout redirection and stdout append
+  controls;
+- accepted pipeline stdout/stderr regular-file and append redirection controls;
+- process-status VFS, ps, waitpid, laststatus, and pipestatus observations;
+- later normal /bin/stdin </etc/banner.txt, /bin/stdout, and /bin/stderr
+  controls proving shell descriptor restoration.
+
+No Pi 5 hardware run was performed. Live networking/SSH remains paused.

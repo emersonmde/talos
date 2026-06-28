@@ -10997,3 +10997,18 @@ live_openssh_client_discriminator_observed=false, selected_next_task=null, and
 planningNeeded=true. No live reachability, remote receipt, compatibility,
 PTY/SCP/SFTP, broad command expansion, phase transition, or ssh-ready=true is
 accepted.
+
+Local POSIX/VFS work remains ahead of resumed live SSH expansion. The accepted
+phase12-local-direct-combined-pipeline-stderr-regular-file-redirection-core-20260628
+task adds only the exact direct path-form witness
+'/bin/stdin </etc/banner.txt | /bin/stderr 2>/tmp/pipeline-combined-stderr.txt':
+the producer reads initramfs:/etc/banner.txt through descriptor-backed VFS,
+hands fd1 to the serialized pipe endpoint, and the final-stage /bin/stderr
+consumer inherits that pipe as fd0 while rebinding child-only fd2 to
+volatile-vfs:/tmp/pipeline-combined-stderr.txt. Descriptor-backed cat reads
+the stderr fixture back from the volatile file, and later stdin/stdout/stderr
+controls prove shell descriptor restoration. Fixed-/bin bare-name combined
+stderr, append form, arbitrary paths, live networking/SSH, Pi 5 hardware
+proof, generated-root retry, and phase transition remain deferred. The selected
+next local POSIX/VFS task is
+phase12-local-bare-name-combined-pipeline-stderr-regular-file-redirection-core-20260628.

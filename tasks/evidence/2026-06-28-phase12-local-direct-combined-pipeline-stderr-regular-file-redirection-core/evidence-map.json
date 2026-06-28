@@ -1,0 +1,43 @@
+{
+  "task_id": "phase12-local-direct-combined-pipeline-stderr-regular-file-redirection-core-20260628",
+  "classification": "phase12-local-direct-combined-pipeline-stderr-regular-file-redirection-accepted",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "path": "src/local_command_loop.rs",
+      "result": "Added the exact direct combined stdin plus stderr pipeline predicate, exact volatile path /tmp/pipeline-combined-stderr.txt, parser admission for only the direct path-form witness, fail-closed neighbor coverage, and descriptor/process assertions."
+    },
+    {
+      "level": "static inspection",
+      "path": "src/target/qemu_virt.rs",
+      "result": "Added QEMU local command loop scenario label/classification, command count, and per-command expectations for the direct combined pipeline stderr regular-file redirection smoke."
+    },
+    {
+      "level": "static inspection",
+      "path": "build.rs",
+      "result": "Registered qemu_local_shell_direct_combined_pipeline_stderr_regular_file_redirection as a supported TALOS_BOOT_SCENARIO."
+    },
+    {
+      "level": "QEMU/substitute focused test",
+      "path": "tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-stderr-regular-file-redirection-core/qemu-substitute-focused-test.log",
+      "result": "cargo -Zjson-target-spec test --quiet local_command_loop_runs_direct_path_pipeline_combined_stdin_stderr_redirection passed."
+    },
+    {
+      "level": "QEMU/substitute local_command_loop regression",
+      "path": "tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-stderr-regular-file-redirection-core/local-command-loop-regression-test.log",
+      "result": "cargo -Zjson-target-spec test --quiet local_command_loop passed."
+    },
+    {
+      "level": "QEMU/substitute local shell smoke",
+      "path": "tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-stderr-regular-file-redirection-core/qemu-local-shell-direct-combined-pipeline-stderr-regular-file-redirection-smoke.log",
+      "result": "Focused smoke passed with final participants=23 expected=23 errors=0."
+    },
+    {
+      "level": "retained controls",
+      "path": "tasks/evidence/2026-06-28-phase12-local-direct-combined-pipeline-stderr-regular-file-redirection-core/retained-regression-smoke-summary.txt",
+      "result": "Retained local POSIX/VFS controls cover direct combined stdin/stdout, stdout append, pipeline stderr regular-file/append, process-status VFS, ps, pipestatus, waitpid, laststatus, and normal stdin/stdout/stderr descriptor restoration."
+    }
+  ],
+  "no_hardware": true,
+  "no_live_networking_or_ssh": true
+}
