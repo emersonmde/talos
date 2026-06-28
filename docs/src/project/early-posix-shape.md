@@ -1927,6 +1927,31 @@ hardware proof, boot publication, live networking/SSH, persistence, and phase
 transition remain deferred. The selected next local task is direct path-form
 pipeline explicit-fd separated redirection-token support.
 
+The direct path-form pipeline explicit-fd separated redirection-token core
+extends the same fd token, operator token, and path token grammar only to the
+accepted direct absolute-path two-stage combined pipeline shape. The accepted
+local witnesses are
+'/bin/stdin < /etc/banner.txt | /bin/stdin 1 > /tmp/talos-pipeline-output-alpha.txt'
+followed by
+'/bin/stdin < /etc/banner.txt | /bin/stdin 1 >> /tmp/talos-pipeline-output-alpha.txt',
+and
+'/bin/stdin < /etc/banner.txt | /bin/stderr 2 > /tmp/talos-pipeline-error-beta.log'
+followed by
+'/bin/stdin < /etc/banner.txt | /bin/stderr 2 >> /tmp/talos-pipeline-error-beta.log'.
+Successful behavior remains descriptor-backed through VFS executable open/read
+for both stages, producer fd0 from initramfs:/etc/banner.txt, producer fd1 pipe
+handoff, final-stage fd0 from the pipe, child-only final-stage fd1/fd2
+rebinding to safe volatile-vfs /tmp leaf files, append-at-EOF semantics,
+descriptor-backed cat readback, waitpid/laststatus/pipestatus observations, and
+descriptor restoration controls. Bare-name pipeline explicit-fd separated
+tokens, mixed direct/bare stages, unsupported fd tokens, producer/output misuse,
+missing operator/path tokens, nested/traversal paths, paths outside volatile
+/tmp, PATH/current-directory lookup, command lookup beyond bounded /bin,
+arbitrary shell grammar, generated-root retry, Pi 5 hardware proof, boot
+publication, live networking/SSH, persistence, and phase transition remain
+deferred. The selected next local task is the fixed-/bin bare-name pipeline
+explicit-fd separated-token counterpart.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

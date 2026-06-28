@@ -60,6 +60,7 @@ pub const LOCAL_COMMAND_BUILTIN_BOUNDARY: &str = concat!(
     "+bounded-bare-name-bin-vfs-command-separated-redirection-tokens",
     "+bounded-bare-name-bin-vfs-command-explicit-fd-separated-redirection-tokens",
     "+direct-absolute-path-vfs-pipeline-separated-redirection-tokens",
+    "+direct-absolute-path-vfs-pipeline-explicit-fd-separated-redirection-tokens",
     "+bounded-bare-name-bin-vfs-pipeline-separated-redirection-tokens",
     "+bounded-bare-name-bin-vfs-command-readonly-stdin-redirection",
     "+direct-absolute-path-vfs-pipeline-producer-readonly-stdin-redirection",
@@ -7692,6 +7693,18 @@ fn parse_absolute_path_pipeline_consumer_request(
     };
     let arguments = trim_ascii_space(arguments);
     if path_text.as_bytes() == initramfs::PHASE10_STDIN_PATH {
+        if let Some(redirection) =
+            parse_explicit_fd_separated_pipeline_stdout_redirection(arguments)?
+        {
+            let exec_path = LocalCommandExecPath::from_absolute(path_text.as_bytes())?;
+            let argv = LocalCommandLiteralArgv::from_tokens(&[path_text.as_bytes()])?;
+            return Ok(LocalCommandExecRequest {
+                path: exec_path,
+                argv,
+                redirection: Some(redirection),
+                stdin_redirection: None,
+            });
+        }
         if let Some(redirection) = parse_separated_pipeline_stdout_redirection(arguments)? {
             let exec_path = LocalCommandExecPath::from_absolute(path_text.as_bytes())?;
             let argv = LocalCommandLiteralArgv::from_tokens(&[path_text.as_bytes()])?;
@@ -7730,6 +7743,18 @@ fn parse_absolute_path_pipeline_consumer_request(
         }
     }
     if path_text.as_bytes() == initramfs::PHASE10_STDERR_PATH {
+        if let Some(redirection) =
+            parse_explicit_fd_separated_pipeline_stderr_redirection(arguments)?
+        {
+            let exec_path = LocalCommandExecPath::from_absolute(path_text.as_bytes())?;
+            let argv = LocalCommandLiteralArgv::from_tokens(&[path_text.as_bytes()])?;
+            return Ok(LocalCommandExecRequest {
+                path: exec_path,
+                argv,
+                redirection: Some(redirection),
+                stdin_redirection: None,
+            });
+        }
         if let Some(redirection) = parse_separated_pipeline_stderr_redirection(arguments)? {
             let exec_path = LocalCommandExecPath::from_absolute(path_text.as_bytes())?;
             let argv = LocalCommandLiteralArgv::from_tokens(&[path_text.as_bytes()])?;
@@ -7768,6 +7793,68 @@ fn parse_absolute_path_pipeline_consumer_request(
         }
     }
     parse_absolute_path_exec_request_with_arguments(path_text, Some(arguments))
+}
+
+fn parse_explicit_fd_separated_pipeline_stdout_redirection(
+    arguments: &str,
+) -> Result<Option<LocalCommandExecRedirection>, LocalCommandExecError> {
+    let mut tokens = arguments.as_bytes().split(|byte| is_space(*byte));
+    let Some(fd) = next_non_empty_argument_token(&mut tokens) else {
+        return Ok(None);
+    };
+    if fd != b"1" {
+        return Ok(None);
+    }
+    let Some(operator) = next_non_empty_argument_token(&mut tokens) else {
+        return Err(LocalCommandExecError::InvalidPath);
+    };
+    if operator != b">" && operator != b">>" {
+        return Err(LocalCommandExecError::InvalidPath);
+    }
+    let Some(target) = next_non_empty_argument_token(&mut tokens) else {
+        return Err(LocalCommandExecError::InvalidPath);
+    };
+    if next_non_empty_argument_token(&mut tokens).is_some() {
+        return Err(LocalCommandExecError::InvalidPath);
+    }
+    let path = LocalCommandVolatilePath::from_supported_stdout_path(target)
+        .ok_or(LocalCommandExecError::InvalidPath)?;
+    Ok(Some(if operator == b">" {
+        LocalCommandExecRedirection::StdoutToTmpStdout(path)
+    } else {
+        LocalCommandExecRedirection::StdoutAppendTmpStdout(path)
+    }))
+}
+
+fn parse_explicit_fd_separated_pipeline_stderr_redirection(
+    arguments: &str,
+) -> Result<Option<LocalCommandExecRedirection>, LocalCommandExecError> {
+    let mut tokens = arguments.as_bytes().split(|byte| is_space(*byte));
+    let Some(fd) = next_non_empty_argument_token(&mut tokens) else {
+        return Ok(None);
+    };
+    if fd != b"2" {
+        return Ok(None);
+    }
+    let Some(operator) = next_non_empty_argument_token(&mut tokens) else {
+        return Err(LocalCommandExecError::InvalidPath);
+    };
+    if operator != b">" && operator != b">>" {
+        return Err(LocalCommandExecError::InvalidPath);
+    }
+    let Some(target) = next_non_empty_argument_token(&mut tokens) else {
+        return Err(LocalCommandExecError::InvalidPath);
+    };
+    if next_non_empty_argument_token(&mut tokens).is_some() {
+        return Err(LocalCommandExecError::InvalidPath);
+    }
+    let path = LocalCommandVolatilePath::from_supported_stderr_path(target)
+        .ok_or(LocalCommandExecError::InvalidPath)?;
+    Ok(Some(if operator == b">" {
+        LocalCommandExecRedirection::StderrToTmpStderr(path)
+    } else {
+        LocalCommandExecRedirection::StderrAppendTmpStderr(path)
+    }))
 }
 
 fn parse_separated_pipeline_stdout_redirection(
@@ -8205,6 +8292,28 @@ fn reject_unbounded_absolute_pipeline_consumer_arguments(
             saw_stdin_redirection = true;
             count += 1;
             continue;
+        }
+        if token == b"1" || token == b"2" {
+            let Some(operator) = next_non_empty_argument_token(&mut tokens) else {
+                return Err(LocalCommandExecError::InvalidPath);
+            };
+            if operator != b">" && operator != b">>" {
+                return Err(LocalCommandExecError::InvalidPath);
+            }
+            let Some(target) = next_non_empty_argument_token(&mut tokens) else {
+                return Err(LocalCommandExecError::InvalidPath);
+            };
+            if count != 0
+                || saw_stdin_redirection
+                || (token == b"1"
+                    && LocalCommandVolatilePath::from_supported_stdout_path(target).is_none())
+                || (token == b"2"
+                    && LocalCommandVolatilePath::from_supported_stderr_path(target).is_none())
+                || next_non_empty_argument_token(&mut tokens).is_some()
+            {
+                return Err(LocalCommandExecError::InvalidPath);
+            }
+            return Ok(());
         }
         if token == b">" || token == b">>" {
             let Some(target) = next_non_empty_argument_token(&mut tokens) else {
@@ -16682,6 +16791,132 @@ talos> talos: exec-not-executable\n"
         assert_eq!(output.matches("talos-processes-v1\n").count(), 4);
         assert_eq!(output.matches("talos: exec-invalid-path\n").count(), 14);
         assert_eq!(output.matches("talos: unknown-command").count(), 1);
+    }
+
+    #[test_case]
+    fn local_command_loop_accepts_direct_pipeline_explicit_fd_separated_redirection_tokens() {
+        let stdout_command = parse_local_command(
+            b"/bin/stdin < /etc/banner.txt | /bin/stdin 1 >> /tmp/talos-pipeline-output-alpha.txt",
+        )
+        .unwrap();
+        let stdout_request = parse_absolute_path_pipeline_request(stdout_command).unwrap();
+        assert_eq!(
+            stdout_request.producer.path(),
+            initramfs::PHASE10_STDIN_PATH
+        );
+        assert_eq!(
+            stdout_request.producer.stdin_redirection,
+            Some(LocalCommandExecRedirection::StdinFromEtcBanner)
+        );
+        assert_eq!(
+            stdout_request.consumer.path(),
+            initramfs::PHASE10_STDIN_PATH
+        );
+        assert!(matches!(
+            stdout_request.consumer.redirection,
+            Some(LocalCommandExecRedirection::StdoutAppendTmpStdout(path))
+                if path.as_bytes() == b"/tmp/talos-pipeline-output-alpha.txt"
+        ));
+        assert!(is_direct_pipeline_combined_stdin_stdout_redirection(
+            &stdout_request
+        ));
+
+        let stderr_command = parse_local_command(
+            b"/bin/stdin < /etc/banner.txt | /bin/stderr 2 >> /tmp/talos-pipeline-error-beta.log",
+        )
+        .unwrap();
+        let stderr_request = parse_absolute_path_pipeline_request(stderr_command).unwrap();
+        assert_eq!(
+            stderr_request.producer.path(),
+            initramfs::PHASE10_STDIN_PATH
+        );
+        assert_eq!(
+            stderr_request.producer.stdin_redirection,
+            Some(LocalCommandExecRedirection::StdinFromEtcBanner)
+        );
+        assert_eq!(
+            stderr_request.consumer.path(),
+            initramfs::PHASE10_STDERR_PATH
+        );
+        assert!(matches!(
+            stderr_request.consumer.redirection,
+            Some(LocalCommandExecRedirection::StderrAppendTmpStderr(path))
+                if path.as_bytes() == b"/tmp/talos-pipeline-error-beta.log"
+        ));
+        assert!(is_direct_pipeline_combined_stdin_stderr_redirection(
+            &stderr_request
+        ));
+
+        let bytes = *b"/bin/stdin < /etc/banner.txt | /bin/stdin 1 > /tmp/talos-pipeline-output-alpha.txt\r/bin/stdin < /etc/banner.txt | /bin/stdin 1 >> /tmp/talos-pipeline-output-alpha.txt\rwaitpid 0x100001\rwaitpid 0x100002\rlaststatus\rpipestatus\rcat /tmp/talos-pipeline-output-alpha.txt\r/bin/stdin < /etc/banner.txt | /bin/stderr 2 > /tmp/talos-pipeline-error-beta.log\r/bin/stdin < /etc/banner.txt | /bin/stderr 2 >> /tmp/talos-pipeline-error-beta.log\rwaitpid 0x100001\rwaitpid 0x100002\rlaststatus\rpipestatus\rcat /tmp/talos-pipeline-error-beta.log\r/bin/stdin < /etc/banner.txt | /bin/stdin > /tmp/talos-pipeline-output-alpha.txt\r/bin/stdin < /etc/banner.txt | /bin/stderr 2> /tmp/talos-pipeline-error-beta.log\r/bin/stdin < /etc/banner.txt | /bin/stdin 2 > /tmp/talos-pipeline-output-alpha.txt\r/bin/stdin < /etc/banner.txt | /bin/stderr 1 > /tmp/talos-pipeline-error-beta.log\r/bin/stdin < /etc/banner.txt | /bin/stdin 1 > /var/out.txt\r/bin/stdin < /etc/banner.txt | /bin/stdin 1 > /tmp/nested/out.txt\r/bin/stdin < /etc/banner.txt | /bin/stdin 1 >\r/bin/stdin < /etc/banner.txt | /bin/stdin 1 <> /tmp/talos-pipeline-output-alpha.txt\r/bin/stdin < /etc/banner.txt | /bin/stdin 1 > /tmp/talos-pipeline-output-alpha.txt extra\r/bin/stdin < /etc/banner.txt | /bin/stdin 1 2> /tmp/talos-pipeline-output-alpha.txt\rstdin < /etc/banner.txt | stdin 1 > /tmp/talos-pipeline-output-alpha.txt\r/bin/stdin < /etc/banner.txt | stdin 1 > /tmp/talos-pipeline-output-alpha.txt\r/bin/stdout | /bin/stdin 1 > /tmp/talos-pipeline-output-alpha.txt\r/bin/stdin < /etc/banner.txt | /bin/stderr 2 > /tmp/stdout.txt\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let statuses = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            let mut statuses = [LocalCommandStatus::Handled; 28];
+            let mut accepted_records = None;
+            let mut index = 0usize;
+            while index < statuses.len() {
+                let record = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+                statuses[index] = record.status();
+                if index == 15 {
+                    accepted_records = Some(io.process_table_records());
+                }
+                if index >= 16 {
+                    assert_eq!(Some(io.process_table_records()), accepted_records);
+                }
+                index += 1;
+            }
+            statuses
+        };
+        let output = backend.as_str();
+
+        for (index, status) in statuses[..16].iter().enumerate() {
+            assert_eq!(
+                *status,
+                LocalCommandStatus::Handled,
+                "accepted command index {index}"
+            );
+        }
+        for (index, status) in statuses[16..].iter().enumerate() {
+            assert_eq!(
+                *status,
+                LocalCommandStatus::UnexpectedArgument,
+                "rejected command index {}",
+                index + 16
+            );
+        }
+        assert!(output.contains(
+            "talos: exec-redirection op=source source-fd=0x0000000000000000 source-path=/etc/banner.txt source-stream=regular-file source-route=initramfs:/etc/banner.txt child-only=true shell-restored=true source=shell-redirection-stdin-etc-banner\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-redirection op=sink source-fd=0x0000000000000001 target-path=/tmp/talos-pipeline-output-alpha.txt target-stream=regular-file target-route=volatile-vfs:/tmp/talos-pipeline-output-alpha.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-redirection op=append source-fd=0x0000000000000001 target-path=/tmp/talos-pipeline-output-alpha.txt target-stream=regular-file target-route=volatile-vfs:/tmp/talos-pipeline-output-alpha.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout-append\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-redirection op=sink source-fd=0x0000000000000002 target-path=/tmp/talos-pipeline-error-beta.log target-stream=regular-file target-route=volatile-vfs:/tmp/talos-pipeline-error-beta.log child-only=true shell-restored=true source=shell-redirection-stderr-tmp-stderr\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-redirection op=append source-fd=0x0000000000000002 target-path=/tmp/talos-pipeline-error-beta.log target-stream=regular-file target-route=volatile-vfs:/tmp/talos-pipeline-error-beta.log child-only=true shell-restored=true source=shell-redirection-stderr-tmp-stderr-append\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=pipe-endpoint fd1=regular-file fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=pipe-endpoint fd1=stdio-output fd2=regular-file loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
+        ));
+        assert!(output.contains(
+            "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdin consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000003d bytes-read=0x000000000000003d writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-producer-stdin-consumer-stdout-redirection\n"
+        ));
+        assert!(output.contains(
+            "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdin consumer-fd=0x0000000000000000 consumer-path=/bin/stderr bytes-written=0x000000000000003d bytes-read=0x0000000000000000 writer-closed=true reader-eof=false shell-restored=true source=shell-pipe-producer-stdin-consumer-stderr-redirection\n"
+        ));
+        assert!(output.contains("talos: cat path=/tmp/talos-pipeline-output-alpha.txt bytes="));
+        assert!(output.contains("talos: cat path=/tmp/talos-pipeline-error-beta.log bytes="));
+        assert_eq!(output.matches("talos-processes-v1\n").count(), 0);
+        assert_eq!(output.matches("talos: exec-invalid-path\n").count(), 12);
     }
 
     #[test_case]

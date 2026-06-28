@@ -1,0 +1,5 @@
+qemu-system-aarch64 not found; install QEMU or set QEMU_SYSTEM_AARCH64
+error: test failed, to rerun pass `--bin talos`
+
+Caused by:
+  process didn't exit successfully: `/opt/strider/openclaw/current/workspace/projects/talos/./scripts/qemu-runner.sh /opt/strider/openclaw/current/workspace/projects/talos/target/aarch64-talos-virt/debug/deps/talos-c9f24fef93fc0c08 local_command_loop --quiet` (exit status: 1)

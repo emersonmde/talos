@@ -20370,6 +20370,26 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   live networking/SSH, Pi 5 hardware proof, generated-root retry, boot
   publication, and phase transition remain deferred. The selected next local
   task is the direct path-form pipeline explicit-fd separated-token counterpart.
+- Direct absolute-path two-stage combined pipelines now accept explicit fd,
+  operator, and path as separate tokens on the final-stage output redirection.
+  The accepted witnesses are
+  '/bin/stdin < /etc/banner.txt | /bin/stdin 1 > /tmp/talos-pipeline-output-alpha.txt'
+  followed by
+  '/bin/stdin < /etc/banner.txt | /bin/stdin 1 >> /tmp/talos-pipeline-output-alpha.txt',
+  and
+  '/bin/stdin < /etc/banner.txt | /bin/stderr 2 > /tmp/talos-pipeline-error-beta.log'
+  followed by
+  '/bin/stdin < /etc/banner.txt | /bin/stderr 2 >> /tmp/talos-pipeline-error-beta.log'.
+  The implementation remains descriptor-backed through VFS open/read for both
+  stages, producer initramfs stdin, pipe handoff, child-only final-stage fd1/fd2
+  descriptor rebinding, volatile-vfs /tmp leaf readback, append-at-EOF
+  semantics, waitpid/laststatus/pipestatus observations, and descriptor
+  restoration controls. Bare-name pipeline explicit-fd separated tokens, mixed
+  stages, unsupported fd tokens, producer/output misuse, arbitrary paths,
+  persistence, live networking/SSH, Pi 5 hardware proof, generated-root retry,
+  boot publication, and phase transition remain deferred. The selected next
+  local task is the fixed-/bin bare-name pipeline explicit-fd separated-token
+  counterpart.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
