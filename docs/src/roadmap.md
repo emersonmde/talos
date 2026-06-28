@@ -20146,6 +20146,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   networking/SSH, Pi 5 hardware proof, generated-root retry, boot publication,
   and phase transition remain deferred. selected_next_task is
   phase12-local-bare-name-bounded-tmp-output-path-append-redirection-core-20260628.
+- phase12-local-bare-name-bounded-tmp-output-path-append-redirection-core-20260628
+  extends the same safe volatile /tmp leaf append policy to fixed-/bin
+  bare-name stdout/stderr commands. The accepted witnesses are exactly
+  'stdout >/tmp/talos-output-alpha.txt' followed by
+  'stdout >>/tmp/talos-output-alpha.txt', and
+  'stderr 2>/tmp/talos-error-beta.log' followed by
+  'stderr 2>>/tmp/talos-error-beta.log'. Both append witnesses resolve only
+  through bounded /bin lookup, launch descriptor-backed VFS/userspace programs,
+  rebind only child fd1/fd2 to the selected volatile-vfs target, and use
+  descriptor-backed cat readback to prove truncate-then-append ordering with
+  0x3e bytes per file. Later normal bare-name stdout/stderr controls prove
+  shell descriptor restoration. Direct path-form append remains retained as a
+  regression/control surface. PATH/current-directory lookup, command lookup
+  beyond bounded /bin, persistence, pipeline path generalization, live
+  networking/SSH, Pi 5 hardware proof, generated-root retry, boot publication,
+  and phase transition remain deferred. selected_next_task is
+  phase12-local-bounded-tmp-output-path-append-redirection-frontier-checkpoint-20260628.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

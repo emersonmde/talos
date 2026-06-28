@@ -1,0 +1,93 @@
+{
+  "task_id": "phase12-local-bare-name-bounded-tmp-output-path-append-redirection-core-20260628",
+  "classification": "local-bare-name-bounded-tmp-output-path-append-redirection-core-accepted",
+  "accepted": true,
+  "status": "accepted",
+  "accepted_witnesses": [
+    "stdout >/tmp/talos-output-alpha.txt",
+    "stdout >>/tmp/talos-output-alpha.txt",
+    "stderr 2>/tmp/talos-error-beta.log",
+    "stderr 2>>/tmp/talos-error-beta.log"
+  ],
+  "direct_append_regression": [
+    "/bin/stdout >>/tmp/talos-output-alpha.txt",
+    "/bin/stderr 2>>/tmp/talos-error-beta.log"
+  ],
+  "path_policy": {
+    "root": "/tmp/",
+    "basename": "non-empty ASCII leaf",
+    "rejects": [
+      "nested paths",
+      "dot basename",
+      "dotdot basename",
+      "paths outside volatile /tmp",
+      "stdout writes to reserved stderr basename",
+      "stderr writes to reserved stdout basename"
+    ]
+  },
+  "deferred": [
+    "persistent writable filesystem behavior",
+    "environment-backed PATH",
+    "current-directory search",
+    "command lookup beyond bounded /bin",
+    "arbitrary descriptor syntax",
+    "descriptor moves",
+    "pipeline/combined-pipeline path generalization",
+    "live networking/SSH",
+    "generated-root retry",
+    "Pi 5 hardware proof",
+    "boot publication",
+    "phase transition",
+    "repo-wide all-targets clippy baseline outside task-owned files"
+  ],
+  "clippy_baseline": {
+    "gate": "cargo clippy -Zjson-target-spec --all-targets -- -D warnings",
+    "classification": "repo-wide-clippy-baseline-out-of-scope",
+    "disposition": "deferred",
+    "log": "tasks/evidence/2026-06-28-phase12-local-bare-name-bounded-tmp-output-path-append-redirection-core/clippy-all-targets-failure.log",
+    "task_owned_refs": "absent",
+    "out_of_scope_files": [
+      "src/arch/aarch64/mod.rs",
+      "src/memory_map/page_frames.rs",
+      "src/allocator.rs",
+      "src/device_tree/memory.rs",
+      "src/dma_cache.rs",
+      "src/initial_user_stack.rs",
+      "src/initramfs.rs",
+      "src/kernel_half_reachability.rs",
+      "src/live_address_space_activation.rs",
+      "src/network.rs",
+      "src/posix.rs",
+      "src/process_address_space.rs",
+      "src/process_install.rs",
+      "src/process_page_table_materialization.rs",
+      "src/rp1_ethernet.rs",
+      "src/ssh_runtime_crypto.rs",
+      "src/ssh_service_readiness.rs",
+      "src/scheduler.rs",
+      "src/syscall.rs",
+      "src/target/qemu_virt.rs",
+      "src/main.rs"
+    ],
+    "failure_classes": [
+      "unusual-byte-groupings",
+      "unwrap-or-default",
+      "manual-is-multiple-of",
+      "too-many-arguments",
+      "enum-variant-names",
+      "absurd-extreme-comparisons",
+      "get-first",
+      "collapsible-if",
+      "large-enum-variant",
+      "slow-vector-initialization",
+      "eq-op",
+      "items-after-test-module"
+    ],
+    "note": "The feature implementation and focused tests pass. The refreshed all-targets clippy baseline fails only on unrelated repo-wide diagnostics under the current toolchain and has no diagnostics referencing task-owned src/local_command_loop.rs."
+  },
+  "selected_next_task": "phase12-local-bounded-tmp-output-path-append-redirection-frontier-checkpoint-20260628",
+  "hardware": {
+    "pi5_hardware_claim": false,
+    "live_network_ssh_paused": true
+  }
+}

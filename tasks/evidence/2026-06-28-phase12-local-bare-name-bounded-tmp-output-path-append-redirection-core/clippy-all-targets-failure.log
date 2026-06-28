@@ -1,0 +1,1640 @@
+    Checking talos v0.1.0 (/opt/strider/openclaw/current/workspace/projects/talos)
+error: digits of hex, binary or octal literal not in groups of equal size
+  --> src/arch/aarch64/mod.rs:65:38
+   |
+65 |     (mpidr & 0x00ff_ffff) | (mpidr & 0xff00_0000_00)
+   |                                      ^^^^^^^^^^^^^^ help: consider: `0x00ff_0000_0000`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#unusual_byte_groupings
+   = note: `-D clippy::unusual-byte-groupings` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(clippy::unusual_byte_groupings)]`
+
+error: digits of hex, binary or octal literal not in groups of equal size
+   --> src/arch/aarch64/mod.rs:517:43
+    |
+517 |         assert_eq!(mpidr_affinity(mpidr), 0x8000_0103_04);
+    |                                           ^^^^^^^^^^^^^^ help: consider: `0x0080_0001_0304`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#unusual_byte_groupings
+
+error: digits of hex, binary or octal literal not in groups of equal size
+   --> src/memory_map/page_frames.rs:440:19
+    |
+440 |             size: 0x3fd_b9,
+    |                   ^^^^^^^^ help: consider: `0x0003_fdb9`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#unusual_byte_groupings
+
+error: use of `unwrap_or` to construct default value
+   --> src/allocator.rs:137:42
+    |
+137 |         self.try_allocate_layout(layout).unwrap_or(ptr::null_mut())
+    |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `unwrap_or_default()`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#unwrap_or_default
+    = note: `-D clippy::unwrap-or-default` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::unwrap_or_default)]`
+
+error: manual implementation of `.is_multiple_of()`
+   --> src/device_tree/memory.rs:407:31
+    |
+407 |     if bytes_per_bank == 0 || value.len() % bytes_per_bank != 0 {
+    |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: replace with: `!value.len().is_multiple_of(bytes_per_bank)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#manual_is_multiple_of
+    = note: `-D clippy::manual-is-multiple-of` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::manual_is_multiple_of)]`
+
+error: this function has too many arguments (8/7)
+   --> src/device_tree/memory.rs:434:1
+    |
+434 | / fn parse_reserved_memory_reg_property(
+435 | |     value: &[u8],
+436 | |     address_cells: u8,
+437 | |     size_cells: u8,
+...   |
+442 | |     truncated: &mut bool,
+443 | | ) -> Option<()> {
+    | |_______________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+    = note: `-D clippy::too-many-arguments` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::too_many_arguments)]`
+
+error: manual implementation of `.is_multiple_of()`
+   --> src/device_tree/memory.rs:448:32
+    |
+448 |     if bytes_per_range == 0 || value.len() % bytes_per_range != 0 {
+    |                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: replace with: `!value.len().is_multiple_of(bytes_per_range)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#manual_is_multiple_of
+
+error: all variants have the same postfix: `PointOfCoherency`
+   --> src/dma_cache.rs:337:1
+    |
+337 | / pub enum DmaCacheSyncOperation {
+338 | |     CleanToPointOfCoherency,
+339 | |     InvalidateFromPointOfCoherency,
+340 | |     CleanInvalidateToPointOfCoherency,
+341 | | }
+    | |_^
+    |
+    = help: remove the postfixes and use full paths to the variants instead of glob imports
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#enum_variant_names
+    = note: `-D clippy::enum-variant-names` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::enum_variant_names)]`
+
+error: this function has too many arguments (9/7)
+   --> src/initial_user_stack.rs:619:1
+    |
+619 | / pub(crate) fn plan_initial_user_stack_with_startup_payload(
+620 | |     image: ProgramImagePlan,
+621 | |     install_plan: ProcessImageInstallPlan,
+622 | |     address_space: ProcessAddressSpace,
+...   |
+628 | |     copied_startup_bytes: u64,
+629 | | ) -> Result<InitialUserStackPlan, PosixError> {
+    | |_____________________________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: manual implementation of `.is_multiple_of()`
+   --> src/initial_user_stack.rs:917:12
+    |
+917 |         || layout.usable_start % LOADER_PAGE_SIZE != 0
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: replace with: `!layout.usable_start.is_multiple_of(LOADER_PAGE_SIZE)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#manual_is_multiple_of
+
+error: manual implementation of `.is_multiple_of()`
+   --> src/initial_user_stack.rs:918:12
+    |
+918 |         || layout.usable_end % LOADER_PAGE_SIZE != 0
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: replace with: `!layout.usable_end.is_multiple_of(LOADER_PAGE_SIZE)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#manual_is_multiple_of
+
+error: manual implementation of `.is_multiple_of()`
+   --> src/initial_user_stack.rs:919:12
+    |
+919 |         || layout.guard_start % LOADER_PAGE_SIZE != 0
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: replace with: `!layout.guard_start.is_multiple_of(LOADER_PAGE_SIZE)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#manual_is_multiple_of
+
+error: manual implementation of `.is_multiple_of()`
+   --> src/initial_user_stack.rs:920:12
+    |
+920 |         || layout.guard_end % LOADER_PAGE_SIZE != 0
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: replace with: `!layout.guard_end.is_multiple_of(LOADER_PAGE_SIZE)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#manual_is_multiple_of
+
+error: this function has too many arguments (10/7)
+   --> src/initramfs.rs:461:5
+    |
+461 | /     pub(crate) fn read_descriptor<const DESCRIPTOR_CAPACITY: usize, const FILE_CAPACITY: usize>(
+462 | |         self,
+463 | |         descriptor_table: &DescriptorTable<DESCRIPTOR_CAPACITY>,
+464 | |         file_descriptions: &mut ReadOnlyFileDescriptions<FILE_CAPACITY>,
+...   |
+471 | |         kernel_scratch: &mut [u8],
+472 | |     ) -> Result<usize, PosixError> {
+    | |__________________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (8/7)
+   --> src/initramfs.rs:494:5
+    |
+494 | /     pub(crate) fn read_regular_file(
+495 | |         self,
+496 | |         description: &mut ReadOnlyFileDescription,
+497 | |         mappings: &[UserMapping],
+...   |
+502 | |         kernel_scratch: &mut [u8],
+503 | |     ) -> Result<usize, PosixError> {
+    | |__________________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (8/7)
+    --> src/initramfs.rs:1022:1
+     |
+1022 | / const fn write_load_phdr(
+1023 | |     bytes: &mut [u8; PHASE8_INIT_ELF_LEN],
+1024 | |     offset: usize,
+1025 | |     flags: u32,
+...    |
+1030 | |     alignment: u64,
+1031 | | ) {
+     | |_^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (9/7)
+   --> src/kernel_half_reachability.rs:619:1
+    |
+619 | / pub(crate) fn preflight_kernel_half_reachability(
+620 | |     image: ProgramImagePlan,
+621 | |     install_plan: ProcessImageInstallPlan,
+622 | |     address_space: ProcessAddressSpace,
+...   |
+628 | |     lease_source: &mut KernelHalfReachabilityLeaseSource,
+629 | | ) -> Result<KernelHalfReachabilityPlan, PosixError> {
+    | |___________________________________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (8/7)
+   --> src/live_address_space_activation.rs:603:1
+    |
+603 | / pub(crate) fn preflight_live_address_space_activation(
+604 | |     image: ProgramImagePlan,
+605 | |     install_plan: ProcessImageInstallPlan,
+606 | |     address_space: ProcessAddressSpace,
+...   |
+611 | |     lease_source: &mut LiveAddressSpaceActivationLeaseSource,
+612 | | ) -> Result<LiveAddressSpaceActivationPlan, PosixError> {
+    | |_______________________________________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this comparison involving the minimum or maximum element for this type contains a case that is always true or always false
+   --> src/memory_map/page_frames.rs:327:12
+    |
+327 |         || remaining.start < EARLY_TRANSLATION_LOW_MAP_START
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: because `EARLY_TRANSLATION_LOW_MAP_START` is the minimum value for this type, this comparison is always false
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#absurd_extreme_comparisons
+    = note: `#[deny(clippy::absurd_extreme_comparisons)]` on by default
+
+error: accessing first element with `self.frames.get(0)`
+   --> src/network.rs:437:9
+    |
+437 |         self.frames.get(0).and_then(Option::as_ref)
+    |         ^^^^^^^^^^^^^^^^^^ help: try: `self.frames.first()`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#get_first
+    = note: `-D clippy::get-first` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::get_first)]`
+
+error: this function has too many arguments (8/7)
+    --> src/network.rs:1303:1
+     |
+1303 | / pub(crate) fn build_outbound_routed_ipv4_icmp_echo_request(
+1304 | |     next_hop_resolution: OutboundNeighborResolution,
+1305 | |     destination_ipv4: [u8; 4],
+1306 | |     endpoint: LocalNetworkEndpoint,
+...    |
+1311 | |     output: &mut [u8],
+1312 | | ) -> Result<usize, OutboundFrameError> {
+     | |______________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (8/7)
+    --> src/network.rs:1360:1
+     |
+1360 | / pub(crate) fn select_outbound_ipv4_icmp_echo_request<const ARP_CAPACITY: usize>(
+1361 | |     arp_cache: &ArpCache<ARP_CAPACITY>,
+1362 | |     endpoint: LocalNetworkEndpoint,
+1363 | |     destination_ipv4: [u8; 4],
+...    |
+1368 | |     output: &mut [u8],
+1369 | | ) -> Result<OutboundRequestSelection, OutboundFrameError> {
+     | |_________________________________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (9/7)
+    --> src/network.rs:1396:1
+     |
+1396 | / pub(crate) fn select_routed_outbound_ipv4_icmp_echo_request<const ARP_CAPACITY: usize>(
+1397 | |     arp_cache: &ArpCache<ARP_CAPACITY>,
+1398 | |     endpoint: LocalNetworkEndpoint,
+1399 | |     route_policy: Ipv4EgressRoutePolicy,
+...    |
+1405 | |     output: &mut [u8],
+1406 | | ) -> Result<OutboundRequestSelection, OutboundRouteError> {
+     | |_________________________________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (9/7)
+    --> src/network.rs:1437:1
+     |
+1437 | / pub(crate) fn transmit_one_outbound_ipv4_icmp_echo_request<
+1438 | |     D: NetworkDevice,
+1439 | |     const ARP_CAPACITY: usize,
+1440 | | >(
+...    |
+1449 | |     output: &mut [u8],
+1450 | | ) -> OutboundTransmitResult {
+     | |___________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (8/7)
+    --> src/network.rs:1537:5
+     |
+1537 | /     pub(crate) fn new_with_next_hop_and_arp_retry_budget(
+1538 | |         endpoint: LocalNetworkEndpoint,
+1539 | |         destination_ipv4: [u8; 4],
+1540 | |         next_hop_ipv4: [u8; 4],
+...    |
+1545 | |         arp_retries_remaining: usize,
+1546 | |     ) -> Result<Self, PendingIcmpEchoResult> {
+     | |____________________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (11/7)
+    --> src/network.rs:1840:5
+     |
+1840 | /     pub(crate) fn start_ping<D: NetworkDevice>(
+1841 | |         &mut self,
+1842 | |         device: &mut D,
+1843 | |         endpoint: LocalNetworkEndpoint,
+...    |
+1851 | |         arp_retry_budget: usize,
+1852 | |     ) -> SinglePingTransactionStartResult {
+     | |_________________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (11/7)
+    --> src/network.rs:1992:5
+     |
+1992 | /     pub(crate) fn start<D: NetworkDevice>(
+1993 | |         &mut self,
+1994 | |         device: &mut D,
+1995 | |         endpoint: LocalNetworkEndpoint,
+...    |
+2003 | |         arp_retry_budget: usize,
+2004 | |     ) -> Result<UserspacePingOperationStep, crate::posix::PosixError> {
+     | |_____________________________________________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this `if` statement can be collapsed
+    --> src/network.rs:2582:13
+     |
+2582 | /             if let Some(socket) = self.entries[raw] {
+2583 | |                 if socket.owner == owner {
+2584 | |                     self.remove_smoltcp_bridge_for_descriptor(
+2585 | |                         owner,
+...    |
+2591 | |             }
+     | |_____________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#collapsible_if
+     = note: `-D clippy::collapsible-if` implied by `-D warnings`
+     = help: to override `-D warnings` add `#[allow(clippy::collapsible_if)]`
+help: collapse nested if block
+     |
+2582 ~             if let Some(socket) = self.entries[raw]
+2583 ~                 && socket.owner == owner {
+2584 |                     self.remove_smoltcp_bridge_for_descriptor(
+ ...
+2589 |                     closed += 1;
+2590 ~                 }
+     |
+
+error: this `if` statement can be collapsed
+    --> src/network.rs:2694:13
+     |
+2694 | /             if let Some(socket) = self.entries[raw] {
+2695 | |                 if let NetworkSocketState::Listening { local_endpoint, .. } = socket.state {
+2696 | |                     if local_endpoint == remote_endpoint {
+2697 | |                         listener_descriptor = Some(NetworkSocketDescriptor::from_raw(raw));
+...    |
+2701 | |             }
+     | |_____________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#collapsible_if
+help: collapse nested if block
+     |
+2694 ~             if let Some(socket) = self.entries[raw]
+2695 ~                 && let NetworkSocketState::Listening { local_endpoint, .. } = socket.state {
+2696 |                     if local_endpoint == remote_endpoint {
+ ...
+2699 |                     }
+2700 ~                 }
+     |
+
+error: this `if` statement can be collapsed
+    --> src/network.rs:2695:17
+     |
+2695 | /                 if let NetworkSocketState::Listening { local_endpoint, .. } = socket.state {
+2696 | |                     if local_endpoint == remote_endpoint {
+2697 | |                         listener_descriptor = Some(NetworkSocketDescriptor::from_raw(raw));
+2698 | |                         match_count += 1;
+2699 | |                     }
+2700 | |                 }
+     | |_________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#collapsible_if
+help: collapse nested if block
+     |
+2695 ~                 if let NetworkSocketState::Listening { local_endpoint, .. } = socket.state
+2696 ~                     && local_endpoint == remote_endpoint {
+2697 |                         listener_descriptor = Some(NetworkSocketDescriptor::from_raw(raw));
+2698 |                         match_count += 1;
+2699 ~                     }
+     |
+
+error: this `if` statement can be collapsed
+    --> src/network.rs:2938:17
+     |
+2938 | /                 if recv_queue.len() != 0 || peer_descriptor.is_err() {
+2939 | |                     if requested.contains(NetworkSocketReadiness::READ) {
+2940 | |                         readiness.insert(NetworkSocketReadiness::READ);
+2941 | |                     }
+2942 | |                 }
+     | |_________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#collapsible_if
+help: collapse nested if block
+     |
+2938 ~                 if (recv_queue.len() != 0 || peer_descriptor.is_err()) {
+2939 ~                     && requested.contains(NetworkSocketReadiness::READ) {
+2940 |                         readiness.insert(NetworkSocketReadiness::READ);
+2941 ~                     }
+     |
+
+error: this `if` statement can be collapsed
+    --> src/network.rs:3007:13
+     |
+3007 | /             if let Some(socket) = self.entries[raw] {
+3008 | |                 if let Ok((peer_local, peer_remote, peer_connection_id)) =
+3009 | |                     connected_endpoints(socket.state)
+...    |
+3019 | |             }
+     | |_____________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#collapsible_if
+help: collapse nested if block
+     |
+3007 ~             if let Some(socket) = self.entries[raw]
+3008 ~                 && let Ok((peer_local, peer_remote, peer_connection_id)) =
+3009 |                     connected_endpoints(socket.state)
+ ...
+3017 |                     }
+3018 ~                 }
+     |
+
+error: this `if` statement can be collapsed
+    --> src/network.rs:3008:17
+     |
+3008 | /                 if let Ok((peer_local, peer_remote, peer_connection_id)) =
+3009 | |                     connected_endpoints(socket.state)
+3010 | |                 {
+3011 | |                     if peer_connection_id == connection_id
+...    |
+3018 | |                 }
+     | |_________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#collapsible_if
+help: collapse nested if block
+     |
+3009 ~                     connected_endpoints(socket.state)
+3010 ~                     && peer_connection_id == connection_id
+3011 |                         && peer_local == remote_endpoint
+ ...
+3015 |                         match_count += 1;
+3016 ~                     }
+     |
+
+error: this `if` statement can be collapsed
+    --> src/network.rs:3046:13
+     |
+3046 | /             if raw != descriptor.raw() {
+3047 | |                 if let Some(socket) = self.entries[raw] {
+3048 | |                     if let NetworkSocketState::Listening { local_endpoint, .. } = socket.state {
+3049 | |                         if local_endpoint == endpoint {
+...    |
+3054 | |             }
+     | |_____________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#collapsible_if
+help: collapse nested if block
+     |
+3046 ~             if raw != descriptor.raw()
+3047 ~                 && let Some(socket) = self.entries[raw] {
+3048 |                     if let NetworkSocketState::Listening { local_endpoint, .. } = socket.state {
+ ...
+3052 |                     }
+3053 ~                 }
+     |
+
+error: this `if` statement can be collapsed
+    --> src/network.rs:3047:17
+     |
+3047 | /                 if let Some(socket) = self.entries[raw] {
+3048 | |                     if let NetworkSocketState::Listening { local_endpoint, .. } = socket.state {
+3049 | |                         if local_endpoint == endpoint {
+3050 | |                             return true;
+...    |
+3053 | |                 }
+     | |_________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#collapsible_if
+help: collapse nested if block
+     |
+3047 ~                 if let Some(socket) = self.entries[raw]
+3048 ~                     && let NetworkSocketState::Listening { local_endpoint, .. } = socket.state {
+3049 |                         if local_endpoint == endpoint {
+3050 |                             return true;
+3051 |                         }
+3052 ~                     }
+     |
+
+error: this `if` statement can be collapsed
+    --> src/network.rs:3048:21
+     |
+3048 | /                     if let NetworkSocketState::Listening { local_endpoint, .. } = socket.state {
+3049 | |                         if local_endpoint == endpoint {
+3050 | |                             return true;
+3051 | |                         }
+3052 | |                     }
+     | |_____________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#collapsible_if
+help: collapse nested if block
+     |
+3048 ~                     if let NetworkSocketState::Listening { local_endpoint, .. } = socket.state
+3049 ~                         && local_endpoint == endpoint {
+3050 |                             return true;
+3051 ~                         }
+     |
+
+error: this `if` statement can be collapsed
+    --> src/network.rs:3076:13
+     |
+3076 | /             if let Some(peer) = pending.peers[index] {
+3077 | |                 if self.pending_peer_is_connected(peer) {
+3078 | |                     return true;
+3079 | |                 }
+3080 | |             }
+     | |_____________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#collapsible_if
+help: collapse nested if block
+     |
+3076 ~             if let Some(peer) = pending.peers[index]
+3077 ~                 && self.pending_peer_is_connected(peer) {
+3078 |                     return true;
+3079 ~                 }
+     |
+
+error: this function has too many arguments (9/7)
+    --> src/network.rs:3310:1
+     |
+3310 | / fn smoltcp_bridge_drive<
+3311 | |     const CLIENT_RX_CAPACITY: usize,
+3312 | |     const CLIENT_TX_CAPACITY: usize,
+3313 | |     const SERVER_RX_CAPACITY: usize,
+...    |
+3333 | |     payload: &[u8],
+3334 | | ) -> Result<SmoltcpSocketBridgeObservation, crate::posix::PosixError> {
+     | |_____________________________________________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (12/7)
+    --> src/network.rs:3517:5
+     |
+3517 | /     pub(crate) fn start<D: NetworkDevice>(
+3518 | |         &mut self,
+3519 | |         descriptor: NetworkPingOperationDescriptor,
+3520 | |         device: &mut D,
+...    |
+3529 | |         arp_retry_budget: usize,
+3530 | |     ) -> Result<UserspacePingOperationStep, crate::posix::PosixError> {
+     | |_____________________________________________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (10/7)
+    --> src/network.rs:3811:1
+     |
+3811 | / pub(crate) fn transmit_or_queue_single_pending_ipv4_icmp_echo_request<
+3812 | |     D: NetworkDevice,
+3813 | |     const ARP_CAPACITY: usize,
+3814 | |     const PAYLOAD_CAPACITY: usize,
+...    |
+3825 | |     output: &mut [u8],
+3826 | | ) -> PendingIcmpEchoResult {
+     | |__________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (11/7)
+    --> src/network.rs:3878:1
+     |
+3878 | / pub(crate) fn transmit_or_queue_routed_single_pending_ipv4_icmp_echo_request<
+3879 | |     D: NetworkDevice,
+3880 | |     const ARP_CAPACITY: usize,
+3881 | |     const PAYLOAD_CAPACITY: usize,
+...    |
+3893 | |     output: &mut [u8],
+3894 | | ) -> PendingIcmpEchoResult {
+     | |__________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (12/7)
+    --> src/network.rs:3911:1
+     |
+3911 | / pub(crate) fn transmit_or_queue_routed_single_pending_ipv4_icmp_echo_request_with_arp_retry_budget<
+3912 | |     D: NetworkDevice,
+3913 | |     const ARP_CAPACITY: usize,
+3914 | |     const PAYLOAD_CAPACITY: usize,
+...    |
+3927 | |     arp_retry_budget: usize,
+3928 | | ) -> PendingIcmpEchoResult {
+     | |__________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (11/7)
+    --> src/network.rs:4383:5
+     |
+4383 | /     pub(crate) fn start_ping<D: NetworkDevice>(
+4384 | |         &mut self,
+4385 | |         descriptor: NetworkPingOperationDescriptor,
+4386 | |         device: &mut D,
+...    |
+4394 | |         arp_retry_budget: usize,
+4395 | |     ) -> Result<UserspacePingOperationStep, crate::posix::PosixError> {
+     | |_____________________________________________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (11/7)
+    --> src/network.rs:4638:1
+     |
+4638 | / pub(crate) fn start_routed_single_ping_transaction<
+4639 | |     D: NetworkDevice,
+4640 | |     const ARP_CAPACITY: usize,
+4641 | |     const PAYLOAD_CAPACITY: usize,
+...    |
+4653 | |     output: &mut [u8],
+4654 | | ) -> SinglePingTransactionStartResult {
+     | |_____________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (12/7)
+    --> src/network.rs:4671:1
+     |
+4671 | / pub(crate) fn start_routed_single_ping_transaction_with_arp_retry_budget<
+4672 | |     D: NetworkDevice,
+4673 | |     const ARP_CAPACITY: usize,
+4674 | |     const PAYLOAD_CAPACITY: usize,
+...    |
+4687 | |     arp_retry_budget: usize,
+4688 | | ) -> SinglePingTransactionStartResult {
+     | |_____________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this `if` statement can be collapsed
+    --> src/network.rs:4765:5
+     |
+4765 | /     if let Some(request) = transaction.pending() {
+4766 | |         if transaction.inflight().is_some() {
+4767 | |             return SinglePingTransactionPollResult::InflightResult(
+4768 | |                 InflightIcmpEchoPollResult::ObservationResult(
+...    |
+4775 | |     }
+     | |_____^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#collapsible_if
+help: collapse nested if block
+     |
+4765 ~     if let Some(request) = transaction.pending()
+4766 ~         && transaction.inflight().is_some() {
+4767 |             return SinglePingTransactionPollResult::InflightResult(
+ ...
+4773 |             );
+4774 ~         }
+     |
+
+error: this function has too many arguments (9/7)
+    --> src/network.rs:5223:1
+     |
+5223 | / fn transmit_resolved_ipv4_icmp_echo_request<D: NetworkDevice, const ARP_CAPACITY: usize>(
+5224 | |     device: &mut D,
+5225 | |     arp_cache: &ArpCache<ARP_CAPACITY>,
+5226 | |     endpoint: LocalNetworkEndpoint,
+...    |
+5232 | |     output: &mut [u8],
+5233 | | ) -> PendingIcmpEchoResult {
+     | |__________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (10/7)
+    --> src/network.rs:5264:1
+     |
+5264 | / fn transmit_resolved_routed_ipv4_icmp_echo_request<D: NetworkDevice, const ARP_CAPACITY: usize>(
+5265 | |     device: &mut D,
+5266 | |     arp_cache: &ArpCache<ARP_CAPACITY>,
+5267 | |     endpoint: LocalNetworkEndpoint,
+...    |
+5274 | |     output: &mut [u8],
+5275 | | ) -> PendingIcmpEchoResult {
+     | |__________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (10/7)
+    --> src/network.rs:5304:1
+     |
+5304 | / fn start_resolved_routed_single_ping_transaction<
+5305 | |     D: NetworkDevice,
+5306 | |     const ARP_CAPACITY: usize,
+5307 | |     const PAYLOAD_CAPACITY: usize,
+...    |
+5318 | |     output: &mut [u8],
+5319 | | ) -> SinglePingTransactionStartResult {
+     | |_____________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this `if` statement can be collapsed
+   --> src/posix.rs:772:13
+    |
+772 | /             if let Some(record) = self.owners[index] {
+773 | |                 if record.owner() == owner {
+774 | |                     return Some(index);
+775 | |                 }
+776 | |             }
+    | |_____________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#collapsible_if
+help: collapse nested if block
+    |
+772 ~             if let Some(record) = self.owners[index]
+773 ~                 && record.owner() == owner {
+774 |                     return Some(index);
+775 ~                 }
+    |
+
+error: this function has too many arguments (9/7)
+   --> src/posix.rs:783:1
+    |
+783 | / pub(crate) fn write_descriptor_to_runtime_console<const CAPACITY: usize, B>(
+784 | |     table: &DescriptorTable<CAPACITY>,
+785 | |     descriptor: usize,
+786 | |     mappings: &[UserMapping],
+...   |
+794 | | where
+795 | |     B: ConsoleBackend,
+    | |______________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (9/7)
+   --> src/posix.rs:877:1
+    |
+877 | / pub(crate) fn read_descriptor_from_fixed_stdin<const CAPACITY: usize>(
+878 | |     table: &DescriptorTable<CAPACITY>,
+879 | |     descriptor: usize,
+880 | |     mappings: &[UserMapping],
+...   |
+886 | |     fixed_stdin: Option<&mut FixedStdin<'_>>,
+887 | | ) -> Result<usize, PosixError> {
+    | |______________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (9/7)
+   --> src/posix.rs:926:1
+    |
+926 | / pub(crate) fn read_descriptor_from_console_input<const CAPACITY: usize, I>(
+927 | |     table: &DescriptorTable<CAPACITY>,
+928 | |     descriptor: usize,
+929 | |     mappings: &[UserMapping],
+...   |
+937 | | where
+938 | |     I: ConsoleInputBackend,
+    | |___________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: manual implementation of `.is_multiple_of()`
+   --> src/process_address_space.rs:922:12
+    |
+922 |         || page.virtual_start() % LOADER_PAGE_SIZE != 0
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: replace with: `!page.virtual_start().is_multiple_of(LOADER_PAGE_SIZE)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#manual_is_multiple_of
+
+error: manual implementation of `.is_multiple_of()`
+   --> src/process_install.rs:412:12
+    |
+412 |         || segment.rounded_start() % LOADER_PAGE_SIZE != 0
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: replace with: `!segment.rounded_start().is_multiple_of(LOADER_PAGE_SIZE)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#manual_is_multiple_of
+
+error: manual implementation of `.is_multiple_of()`
+   --> src/process_install.rs:413:12
+    |
+413 |         || segment.rounded_end() % LOADER_PAGE_SIZE != 0
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: replace with: `!segment.rounded_end().is_multiple_of(LOADER_PAGE_SIZE)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#manual_is_multiple_of
+
+error: manual implementation of `.is_multiple_of()`
+   --> src/process_page_table_materialization.rs:944:12
+    |
+944 |         || mapping.virtual_start() % LOADER_PAGE_SIZE != 0
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: replace with: `!mapping.virtual_start().is_multiple_of(LOADER_PAGE_SIZE)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#manual_is_multiple_of
+
+error: manual implementation of `.is_multiple_of()`
+    --> src/process_page_table_materialization.rs:1038:8
+     |
+1038 |     if physical_frame % EARLY_PAGE_SIZE != 0 {
+     |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: replace with: `!physical_frame.is_multiple_of(EARLY_PAGE_SIZE)`
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#manual_is_multiple_of
+
+error: using `contains()` instead of `iter().any()` is more efficient
+    --> src/rp1_ethernet.rs:3673:8
+     |
+3673 |       if RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_BLOCKED_CLASSIFICATIONS
+     |  ________^
+3674 | |         .iter()
+3675 | |         .any(|allowed| *allowed == classification)
+     | |__________________________________________________^ help: try: `RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_BLOCKED_CLASSIFICATIONS.contains(&classification)`
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#manual_contains
+     = note: `-D clippy::manual-contains` implied by `-D warnings`
+     = help: to override `-D warnings` add `#[allow(clippy::manual_contains)]`
+
+error: this function has too many arguments (10/7)
+    --> src/rp1_ethernet.rs:5340:1
+     |
+5340 | / fn rp1_ethernet_gpio32_event_state_candidate_evidence(
+5341 | |     report_kind: &'static str,
+5342 | |     source_contract: Rp1EthernetGpio32EventStateSourceContractEvidence,
+5343 | |     status_raw: Option<u32>,
+...    |
+5350 | |     event_state_classification: &'static str,
+5351 | | ) -> Rp1EthernetGpio32EventStateDiscriminatorReportEvidence {
+     | |___________________________________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: large size difference between variants
+   --> src/ssh_runtime_crypto.rs:128:1
+    |
+128 | / pub(crate) enum SshRuntimeKexResult {
+129 | |     Ready(SshRuntimeKexReady),
+    | |     ------------------------- the largest variant contains at least 216 bytes
+130 | |     Failed(SshRuntimeKexFailure),
+    | |     ---------------------------- the second-largest variant contains at least 1 bytes
+131 | | }
+    | |_^ the entire enum is at least 216 bytes
+    |
+help: consider boxing the large fields or introducing indirection in some other way to reduce the total size of the enum
+   --> src/ssh_runtime_crypto.rs:129:5
+    |
+129 |     Ready(SshRuntimeKexReady),
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#large_enum_variant
+    = note: `-D clippy::large-enum-variant` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::large_enum_variant)]`
+
+error: this function has too many arguments (8/7)
+   --> src/ssh_runtime_crypto.rs:616:1
+    |
+616 | / fn compute_exchange_hash(
+617 | |     client_identification: &[u8],
+618 | |     server_identification: &[u8],
+619 | |     client_kexinit_payload: &[u8],
+...   |
+624 | |     shared_secret: &[u8; X25519_PUBLIC_KEY_BYTES],
+625 | | ) -> Option<[u8; SHA256_BYTES]> {
+    | |_______________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: all variants have the same prefix: `Userauth`
+    --> src/ssh_service_readiness.rs:1968:1
+     |
+1968 | / pub(crate) enum SshPublickeyAuthResponseResult {
+1969 | |     UserauthPkOkPrerequisiteOnly,
+1970 | |     UserauthFailureSignatureValidSuccessDeferred,
+1971 | |     UserauthFailureSignatureRejected,
+...    |
+1979 | |     UserauthFailureRedactionSensitive,
+1980 | | }
+     | |_^
+     |
+     = help: remove the prefixes and use full paths to the variants instead of glob imports
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#enum_variant_names
+
+error: all variants have the same prefix: `Userauth`
+    --> src/ssh_service_readiness.rs:2329:1
+     |
+2329 | / pub(crate) enum SshPublickeyAuthSuccessAccountResult {
+2330 | |     UserauthSuccessPrerequisiteOnly,
+2331 | |     UserauthFailureAccountMismatch,
+2332 | |     UserauthFailureAccountPolicyDisabled,
+...    |
+2338 | |     UserauthFailureRedactionSensitive,
+2339 | | }
+     | |_^
+     |
+     = help: remove the prefixes and use full paths to the variants instead of glob imports
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#enum_variant_names
+
+error: all variants have the same prefix: `ChannelOpen`
+    --> src/ssh_service_readiness.rs:2679:1
+     |
+2679 | / pub(crate) enum SshSessionChannelOpenResult {
+2680 | |     ChannelOpenConfirmationPrerequisiteOnly,
+2681 | |     ChannelOpenFailurePrerequisiteMissing,
+2682 | |     ChannelOpenFailurePolicyDisabled,
+...    |
+2687 | |     ChannelOpenFailureRedactionSensitive,
+2688 | | }
+     | |_^
+     |
+     = help: remove the prefixes and use full paths to the variants instead of glob imports
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#enum_variant_names
+
+error: this function has too many arguments (8/7)
+    --> src/ssh_service_readiness.rs:3056:5
+     |
+3056 | /     fn failure(
+3057 | |         result: SshSessionShellRequestResult,
+3058 | |         label: SshServiceReadinessLabel,
+3059 | |         request_message_number: Option<u8>,
+...    |
+3064 | |         open_session_channel: bool,
+3065 | |     ) -> Self {
+     | |_____________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (8/7)
+    --> src/ssh_service_readiness.rs:3299:1
+     |
+3299 | / fn session_shell_request_failure(
+3300 | |     result: SshSessionShellRequestResult,
+3301 | |     label: SshServiceReadinessLabel,
+3302 | |     request_message_number: Option<u8>,
+...    |
+3307 | |     open_session_channel: bool,
+3308 | | ) -> SshSessionShellRequestReport {
+     | |_________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (12/7)
+    --> src/ssh_service_readiness.rs:3829:5
+     |
+3829 | /     fn failure(
+3830 | |         result: SshChannelDataStdioResult,
+3831 | |         label: SshServiceReadinessLabel,
+3832 | |         request_message_number: Option<u8>,
+...    |
+3841 | |         channel_lifecycle_open: bool,
+3842 | |     ) -> Self {
+     | |_____________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (10/7)
+    --> src/ssh_service_readiness.rs:4215:1
+     |
+4215 | / fn channel_data_stdio_failure(
+4216 | |     result: SshChannelDataStdioResult,
+4217 | |     label: SshServiceReadinessLabel,
+4218 | |     request_message_number: Option<u8>,
+...    |
+4225 | |     channel_lifecycle_open: bool,
+4226 | | ) -> SshChannelDataStdioReport {
+     | |______________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (9/7)
+    --> src/ssh_service_readiness.rs:4243:1
+     |
+4243 | / fn channel_data_stdio_output_failure(
+4244 | |     result: SshChannelDataStdioResult,
+4245 | |     label: SshServiceReadinessLabel,
+4246 | |     output_message_number: Option<u8>,
+...    |
+4252 | |     channel_lifecycle_open: bool,
+4253 | | ) -> SshChannelDataStdioReport {
+     | |______________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (8/7)
+    --> src/ssh_service_readiness.rs:4362:5
+     |
+4362 | /     fn new(
+4363 | |         result: SshChannelWindowAccountingResult,
+4364 | |         state: SshChannelWindowAccountingState,
+4365 | |         request_message_number: Option<u8>,
+...    |
+4370 | |         channel_window_management: bool,
+4371 | |     ) -> Self {
+     | |_____________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (9/7)
+    --> src/ssh_service_readiness.rs:4863:5
+     |
+4863 | /     fn new(
+4864 | |         result: SshChannelLifecycleResult,
+4865 | |         state: SshChannelLifecycleState,
+4866 | |         request_message_number: Option<u8>,
+...    |
+4872 | |         channel_lifecycle_local: bool,
+4873 | |     ) -> Self {
+     | |_____________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (9/7)
+    --> src/ssh_service_readiness.rs:5413:1
+     |
+5413 | / fn channel_lifecycle_failure(
+5414 | |     state: SshChannelLifecycleState,
+5415 | |     result: SshChannelLifecycleResult,
+5416 | |     label: SshServiceReadinessLabel,
+...    |
+5422 | |     exit_status: Option<u32>,
+5423 | | ) -> SshChannelLifecycleReport {
+     | |______________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (9/7)
+    --> src/ssh_service_readiness.rs:5536:5
+     |
+5536 | /     fn new(
+5537 | |         result: SshPosixEofWaitResult,
+5538 | |         request_message_number: Option<u8>,
+5539 | |         output_message_number: Option<u8>,
+...    |
+5545 | |         posix_eof_wait_local: bool,
+5546 | |     ) -> Self {
+     | |_____________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (9/7)
+    --> src/ssh_service_readiness.rs:5597:5
+     |
+5597 | /     fn failure(
+5598 | |         result: SshPosixEofWaitResult,
+5599 | |         label: SshServiceReadinessLabel,
+5600 | |         request_message_number: Option<u8>,
+...    |
+5606 | |         wait_record_consumed: bool,
+5607 | |     ) -> Self {
+     | |_____________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (9/7)
+    --> src/ssh_service_readiness.rs:5949:1
+     |
+5949 | / fn posix_eof_wait_failure(
+5950 | |     state: SshChannelLifecycleState,
+5951 | |     result: SshPosixEofWaitResult,
+5952 | |     label: SshServiceReadinessLabel,
+...    |
+5958 | |     wait_record_consumed: bool,
+5959 | | ) -> SshPosixEofWaitReport {
+     | |__________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (10/7)
+    --> src/ssh_service_readiness.rs:6796:5
+     |
+6796 | /     fn failure(
+6797 | |         result: SshSocketDeliveryResult,
+6798 | |         label: SshServiceReadinessLabel,
+6799 | |         authentication_success: bool,
+...    |
+6806 | |         received_len: Option<usize>,
+6807 | |     ) -> Self {
+     | |_____________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (8/7)
+    --> src/ssh_service_readiness.rs:8004:1
+     |
+8004 | / fn send_and_observe_peer_output<const CAPACITY: usize>(
+8005 | |     sockets: &mut crate::network::NetworkSocketDescriptorTable<CAPACITY>,
+8006 | |     server_owner: crate::scheduler::ProcessOwnerId,
+8007 | |     accepted: crate::network::NetworkSocketDescriptor,
+...    |
+8012 | |     expected: SshPeerOutputReceiptExpected,
+8013 | | ) -> Result<u32, (SshPeerOutputReceiptResult, SshServiceReadinessLabel, u32)> {
+     | |_____________________________________________________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (10/7)
+    --> src/ssh_service_readiness.rs:8270:5
+     |
+8270 | /     fn failure(
+8271 | |         result: SshOpenSshCompatDiscriminatorResult,
+8272 | |         label: SshServiceReadinessLabel,
+8273 | |         transcript_event_count: usize,
+...    |
+8280 | |         peer_output_receipt_local: bool,
+8281 | |     ) -> Self {
+     | |_____________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (8/7)
+    --> src/scheduler.rs:2235:5
+     |
+2235 | /     pub fn run_preemption_cycle<
+2236 | |         const RUNNABLE_CAPACITY: usize,
+2237 | |         const REMOTE_WAKE_CAPACITY: usize,
+2238 | |         const TASK_CAPACITY: usize,
+...    |
+2248 | |         dispatch_local_task: bool,
+2249 | |     ) -> Result<CpuLocalSchedulerServiceReport, CpuLocalSchedulerServiceError> {
+     | |______________________________________________________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (8/7)
+    --> src/scheduler.rs:2291:5
+     |
+2291 | /     pub fn run_cycle<
+2292 | |         const RUNNABLE_CAPACITY: usize,
+2293 | |         const REMOTE_WAKE_CAPACITY: usize,
+2294 | |         const TASK_CAPACITY: usize,
+...    |
+2304 | |         dispatch_local_task: bool,
+2305 | |     ) -> Result<CpuLocalSchedulerServiceReport, CpuLocalSchedulerServiceError> {
+     | |______________________________________________________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (8/7)
+    --> src/scheduler.rs:2371:5
+     |
+2371 | /     pub fn run_once<
+2372 | |         const RUNNABLE_CAPACITY: usize,
+2373 | |         const REMOTE_WAKE_CAPACITY: usize,
+2374 | |         const TASK_CAPACITY: usize,
+...    |
+2384 | |         dispatch_local_task: bool,
+2385 | |     ) -> Result<SecondarySchedulerServiceLoopReport, SecondarySchedulerServiceLoopError> {
+     | |________________________________________________________________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (8/7)
+   --> src/syscall.rs:278:1
+    |
+278 | / pub(crate) fn dispatch_descriptor_write<const CAPACITY: usize, B>(
+279 | |     raw_number: u64,
+280 | |     arguments: SyscallArguments,
+281 | |     descriptor_table: &crate::posix::DescriptorTable<CAPACITY>,
+...   |
+288 | | where
+289 | |     B: crate::runtime_console::ConsoleBackend,
+    | |______________________________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (9/7)
+   --> src/syscall.rs:326:1
+    |
+326 | / pub(crate) fn dispatch_process_descriptor<
+327 | |     const OWNER_CAPACITY: usize,
+328 | |     const DESCRIPTOR_CAPACITY: usize,
+329 | |     B,
+...   |
+344 | | where
+345 | |     B: crate::runtime_console::ConsoleBackend,
+    | |______________________________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (10/7)
+   --> src/syscall.rs:388:1
+    |
+388 | / pub(crate) fn dispatch_process_descriptor_with_fixed_stdin<
+389 | |     const OWNER_CAPACITY: usize,
+390 | |     const DESCRIPTOR_CAPACITY: usize,
+391 | |     B,
+...   |
+407 | | where
+408 | |     B: crate::runtime_console::ConsoleBackend,
+    | |______________________________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (12/7)
+   --> src/syscall.rs:463:1
+    |
+463 | / pub(crate) fn dispatch_process_descriptor_with_initramfs<
+464 | |     const OWNER_CAPACITY: usize,
+465 | |     const DESCRIPTOR_CAPACITY: usize,
+466 | |     const FILE_CAPACITY: usize,
+...   |
+485 | | where
+486 | |     B: crate::runtime_console::ConsoleBackend,
+    | |______________________________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (10/7)
+   --> src/syscall.rs:551:1
+    |
+551 | / pub(crate) fn dispatch_process_descriptor_with_socket_table<
+552 | |     const OWNER_CAPACITY: usize,
+553 | |     const DESCRIPTOR_CAPACITY: usize,
+554 | |     const SOCKET_CAPACITY: usize,
+...   |
+571 | | where
+572 | |     B: crate::runtime_console::ConsoleBackend,
+    | |______________________________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (9/7)
+   --> src/syscall.rs:747:5
+    |
+747 | /     pub(crate) fn resume_ready_or_expired<
+748 | |         const SOCKET_CAPACITY: usize,
+749 | |         const RUNNABLE_CAPACITY: usize,
+750 | |     >(
+...   |
+759 | |         kernel_scratch: &mut [u8],
+760 | |     ) -> Result<Option<SocketPollWaitResume>, PosixError> {
+    | |_________________________________________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (13/7)
+   --> src/syscall.rs:810:1
+    |
+810 | / pub(crate) fn dispatch_process_descriptor_with_socket_table_and_poll_wait<
+811 | |     const OWNER_CAPACITY: usize,
+812 | |     const DESCRIPTOR_CAPACITY: usize,
+813 | |     const SOCKET_CAPACITY: usize,
+...   |
+834 | | where
+835 | |     B: crate::runtime_console::ConsoleBackend,
+    | |______________________________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (13/7)
+   --> src/syscall.rs:884:1
+    |
+884 | / pub(crate) fn dispatch_process_descriptor_with_initramfs_and_console_stdin<
+885 | |     const OWNER_CAPACITY: usize,
+886 | |     const DESCRIPTOR_CAPACITY: usize,
+887 | |     const FILE_CAPACITY: usize,
+...   |
+909 | |     B: crate::runtime_console::ConsoleBackend,
+910 | |     I: crate::runtime_console::ConsoleInputBackend,
+    | |___________________________________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (11/7)
+    --> src/syscall.rs:1207:5
+     |
+1207 | /     pub(crate) fn start<D>(
+1208 | |         &mut self,
+1209 | |         descriptor: usize,
+1210 | |         device: &mut D,
+...    |
+1220 | |     where
+1221 | |         D: crate::network::NetworkDevice,
+     | |_________________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (10/7)
+    --> src/syscall.rs:1451:5
+     |
+1451 | /     pub(crate) fn start<D>(
+1452 | |         &mut self,
+1453 | |         descriptor: usize,
+1454 | |         device: &mut D,
+...    |
+1463 | |     where
+1464 | |         D: crate::network::NetworkDevice,
+     | |_________________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (10/7)
+    --> src/syscall.rs:1629:5
+     |
+1629 | /     pub(crate) fn start<D>(
+1630 | |         &mut self,
+1631 | |         descriptor: usize,
+1632 | |         device: &mut D,
+...    |
+1641 | |     where
+1642 | |         D: crate::network::NetworkDevice,
+     | |_________________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (10/7)
+    --> src/syscall.rs:1798:5
+     |
+1798 | /     pub(crate) fn start<D>(
+1799 | |         &mut self,
+1800 | |         process_descriptor: usize,
+1801 | |         device: &mut D,
+...    |
+1810 | |     where
+1811 | |         D: crate::network::NetworkDevice,
+     | |_________________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (8/7)
+    --> src/syscall.rs:1933:1
+     |
+1933 | / pub(crate) fn dispatch_process_local_ping_descriptor_operation<
+1934 | |     const OWNER_CAPACITY: usize,
+1935 | |     const PROCESS_DESCRIPTOR_CAPACITY: usize,
+1936 | |     const LOCAL_ARP_CAPACITY: usize,
+...    |
+1959 | | where
+1960 | |     D: crate::network::NetworkDevice,
+     | |_____________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (12/7)
+    --> src/syscall.rs:2036:1
+     |
+2036 | / pub(crate) fn dispatch_process_local_ping_descriptor_user_arguments<
+2037 | |     const OWNER_CAPACITY: usize,
+2038 | |     const PROCESS_DESCRIPTOR_CAPACITY: usize,
+2039 | |     const LOCAL_ARP_CAPACITY: usize,
+...    |
+2066 | | where
+2067 | |     D: crate::network::NetworkDevice,
+     | |_____________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (9/7)
+    --> src/syscall.rs:2414:5
+     |
+2414 | /     pub(crate) fn new(
+2415 | |         initramfs: crate::initramfs::ReadOnlyInitramfs,
+2416 | |         executable_path: &'static [u8],
+2417 | |         mappings: &'a [crate::posix::UserMapping],
+...    |
+2423 | |         status_user_start: u64,
+2424 | |     ) -> Result<Self, PosixError> {
+     | |_________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (9/7)
+    --> src/syscall.rs:2484:5
+     |
+2484 | /     pub(crate) fn start_arguments(
+2485 | |         &self,
+2486 | |         process_descriptor: usize,
+2487 | |         payload_len: usize,
+...    |
+2493 | |         arp_retry_budget: u32,
+2494 | |     ) -> SyscallArguments {
+     | |_________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (9/7)
+    --> src/syscall.rs:2553:5
+     |
+2553 | /     pub(crate) fn dispatch<
+2554 | |         const OWNER_CAPACITY: usize,
+2555 | |         const PROCESS_DESCRIPTOR_CAPACITY: usize,
+2556 | |         const LOCAL_ARP_CAPACITY: usize,
+...    |
+2580 | |     where
+2581 | |         D: crate::network::NetworkDevice,
+     | |_________________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (11/7)
+    --> src/syscall.rs:2672:1
+     |
+2672 | / fn dispatch_talos_read<
+2673 | |     const OWNER_CAPACITY: usize,
+2674 | |     const DESCRIPTOR_CAPACITY: usize,
+2675 | |     const FILE_CAPACITY: usize,
+...    |
+2693 | | where
+2694 | |     I: crate::runtime_console::ConsoleInputBackend,
+     | |___________________________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (9/7)
+    --> src/syscall.rs:2773:1
+     |
+2773 | / fn dispatch_talos_open_initramfs<
+2774 | |     const OWNER_CAPACITY: usize,
+2775 | |     const DESCRIPTOR_CAPACITY: usize,
+2776 | |     const FILE_CAPACITY: usize,
+...    |
+2789 | |     file_descriptions: &mut crate::initramfs::ReadOnlyFileDescriptions<FILE_CAPACITY>,
+2790 | | ) -> SyscallReturn {
+     | |__________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (8/7)
+    --> src/syscall.rs:3118:1
+     |
+3118 | / fn dispatch_talos_send<
+3119 | |     const OWNER_CAPACITY: usize,
+3120 | |     const DESCRIPTOR_CAPACITY: usize,
+3121 | |     const SOCKET_CAPACITY: usize,
+...    |
+3133 | |     kernel_scratch: &mut [u8],
+3134 | | ) -> SyscallReturn {
+     | |__________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (8/7)
+    --> src/syscall.rs:3183:1
+     |
+3183 | / fn dispatch_talos_recv<
+3184 | |     const OWNER_CAPACITY: usize,
+3185 | |     const DESCRIPTOR_CAPACITY: usize,
+3186 | |     const SOCKET_CAPACITY: usize,
+...    |
+3198 | |     kernel_scratch: &mut [u8],
+3199 | | ) -> SyscallReturn {
+     | |__________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (8/7)
+    --> src/syscall.rs:3244:1
+     |
+3244 | / fn dispatch_talos_poll<
+3245 | |     const OWNER_CAPACITY: usize,
+3246 | |     const DESCRIPTOR_CAPACITY: usize,
+3247 | |     const SOCKET_CAPACITY: usize,
+...    |
+3256 | |     kernel_scratch: &mut [u8],
+3257 | | ) -> SyscallReturn {
+     | |__________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (11/7)
+    --> src/syscall.rs:3346:1
+     |
+3346 | / fn dispatch_talos_poll_wait<
+3347 | |     const OWNER_CAPACITY: usize,
+3348 | |     const DESCRIPTOR_CAPACITY: usize,
+3349 | |     const SOCKET_CAPACITY: usize,
+...    |
+3362 | |     kernel_scratch: &mut [u8],
+3363 | | ) -> SocketPollWaitOutcome {
+     | |__________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: could not compile `talos` (bin "talos") due to 103 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: items after a test module
+   --> src/arch/aarch64/mod.rs:476:1
+    |
+476 | mod tests {
+    | ^^^^^^^^^
+...
+522 | pub unsafe fn route_physical_irqs_to_el2() -> u64 {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#items_after_test_module
+    = note: `-D clippy::items-after-test-module` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::items_after_test_module)]`
+    = help: move the items to before the test module was defined
+
+error: this function has too many arguments (10/7)
+   --> src/initial_user_stack.rs:239:5
+    |
+239 | /     pub(crate) const fn for_test_unchecked(
+240 | |         stack_top: u64,
+241 | |         initial_sp: u64,
+242 | |         usable_start: u64,
+...   |
+249 | |         permissions: UserMappingPermissions,
+250 | |     ) -> Self {
+    | |_____________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (13/7)
+   --> src/process_install.rs:153:5
+    |
+153 | /     pub(crate) const fn for_test_unchecked(
+154 | |         index: usize,
+155 | |         segment_index: usize,
+156 | |         virtual_start: u64,
+...   |
+166 | |         action: ProcessInstallAction,
+167 | |     ) -> Self {
+    | |_____________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (10/7)
+   --> src/process_install.rs:252:5
+    |
+252 | /     pub(crate) const fn for_test_unchecked(
+253 | |         fixture_identity: &'static str,
+254 | |         install_boundary_identity: &'static str,
+255 | |         source_path: &'static [u8],
+...   |
+262 | |         lower_el_launch_blocked: bool,
+263 | |     ) -> Self {
+    | |_____________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (10/7)
+   --> src/program_loader.rs:166:5
+    |
+166 | /     pub(crate) const fn for_test_unchecked(
+167 | |         kind: UserSegmentKind,
+168 | |         permissions: UserMappingPermissions,
+169 | |         virtual_start: u64,
+...   |
+176 | |         zero_fill_end: u64,
+177 | |     ) -> Self {
+    | |_____________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (10/7)
+   --> src/program_loader.rs:260:5
+    |
+260 | /     pub(crate) const fn for_test_unchecked(
+261 | |         source_path: &'static [u8],
+262 | |         fixture_identity: &'static str,
+263 | |         source_len: usize,
+...   |
+270 | |         memory_footprint: u64,
+271 | |     ) -> Self {
+    | |_____________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: slow zero-filling initialization
+     --> src/ssh_service_readiness.rs:12426:38
+      |
+12426 |           let mut over_limit_payload = Vec::new();
+      |  ______________________________________^
+12427 | |         over_limit_payload.resize(SSH_CHANNEL_REQUEST_PAYLOAD_MAX_BYTES + 1, 0);
+      | |_______________________________________________________________________________^ help: consider replacing this with: `vec![0; SSH_CHANNEL_REQUEST_PAYLOAD_MAX_BYTES + 1]`
+      |
+      = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#slow_vector_initialization
+      = note: `-D clippy::slow-vector-initialization` implied by `-D warnings`
+      = help: to override `-D warnings` add `#[allow(clippy::slow_vector_initialization)]`
+
+error: identical args used in this `assert_eq!` macro call
+    --> src/scheduler.rs:3516:13
+     |
+3516 | /             super::MigrationState::OwnerLocal,
+3517 | |             super::MigrationState::OwnerLocal
+     | |_____________________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#eq_op
+     = note: `#[deny(clippy::eq_op)]` on by default
+
+error: identical args used in this `assert_eq!` macro call
+    --> src/scheduler.rs:3520:13
+     |
+3520 | /             super::MigrationState::MigrationRejected,
+3521 | |             super::MigrationState::MigrationRejected
+     | |____________________________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#eq_op
+
+error: this function has too many arguments (8/7)
+    --> src/syscall.rs:4137:5
+     |
+4137 | /     fn dispatch_read_case(
+4138 | |         descriptor: u64,
+4139 | |         user_start: u64,
+4140 | |         len: u64,
+...    |
+4145 | |         fixed_stdin: Option<&mut crate::posix::FixedStdin<'_>>,
+4146 | |     ) -> SyscallDispatchResult {
+     | |______________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: this function has too many arguments (8/7)
+    --> src/syscall.rs:4242:5
+     |
+4242 | /     fn dispatch_socket_wait_case<
+4243 | |         const OWNER_CAPACITY: usize,
+4244 | |         const DESCRIPTOR_CAPACITY: usize,
+4245 | |         const SOCKET_CAPACITY: usize,
+...    |
+4255 | |         user_memory: &mut [u8; 128],
+4256 | |     ) -> SocketPollWaitDispatchResult {
+     | |_____________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_arguments
+
+error: items after a test module
+     --> src/target/qemu_virt.rs:20918:1
+      |
+20918 | mod tests {
+      | ^^^^^^^^^
+...
+20931 | pub fn run_el2_timer_irq_smoke() -> bool {
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      |
+      = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#items_after_test_module
+      = help: move the items to before the test module was defined
+
+error: identical args used in this `assert_eq!` macro call
+    --> src/main.rs:2021:16
+     |
+2021 |     assert_eq!(2 + 2, 4);
+     |                ^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#eq_op
+
+error: could not compile `talos` (bin "talos" test) due to 118 previous errors

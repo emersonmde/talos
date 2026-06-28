@@ -410,13 +410,6 @@ impl LocalCommandVolatilePath {
         Self::from_supported_stderr_path(path)
     }
 
-    fn from_exact_stderr_path(path: &[u8]) -> Option<Self> {
-        if path != b"/tmp/stderr.txt" {
-            return None;
-        }
-        Self::from_supported_stderr_path(path)
-    }
-
     fn from_supported_stdout_path(path: &[u8]) -> Option<Self> {
         Self::from_supported_output_path(path, b"stderr.txt")
     }
@@ -605,7 +598,7 @@ impl LocalCommandExecPath {
     }
 
     fn from_fixed_bin_name(name: &[u8]) -> Result<Self, LocalCommandExecError> {
-        if name.is_empty() || name.iter().any(|byte| *byte == b'/') {
+        if name.is_empty() || name.contains(&b'/') {
             return Err(LocalCommandExecError::InvalidPath);
         }
         let len = Self::BIN_PREFIX
@@ -3439,8 +3432,6 @@ where
         {
             return Err(LocalCommandExecError::SyscallFailed);
         }
-        drop(socket_dispatch);
-
         let cross_process_server_owner = owner;
         let cross_process_client_owner =
             ProcessOwnerId::new(2).ok_or(LocalCommandExecError::LaunchPipelineFailed)?;
@@ -4261,19 +4252,19 @@ where
             return LocalCommandExplicitWaitResult::UnsupportedPid;
         }
         for record in &mut self.explicit_wait_records {
-            if let Some(lifecycle) = record {
-                if lifecycle.process_id == process_id {
-                    let lifecycle = *lifecycle;
-                    *record = None;
-                    if self
-                        .waitable_process
-                        .map(|waitable| waitable.process_id == process_id)
-                        .unwrap_or(false)
-                    {
-                        self.waitable_process = None;
-                    }
-                    return LocalCommandExplicitWaitResult::Record(lifecycle);
+            if let Some(lifecycle) = record
+                && lifecycle.process_id == process_id
+            {
+                let lifecycle = *lifecycle;
+                *record = None;
+                if self
+                    .waitable_process
+                    .map(|waitable| waitable.process_id == process_id)
+                    .unwrap_or(false)
+                {
+                    self.waitable_process = None;
                 }
+                return LocalCommandExplicitWaitResult::Record(lifecycle);
             }
         }
         for slot in &mut self.background_jobs {
@@ -4302,31 +4293,28 @@ where
             return self.exec_three_stage_vfs_pipeline(request);
         }
 
-        let producer_redirection_supported = match (
-            request.producer.path(),
-            request.producer.stdin_redirection,
-            request.producer.redirection,
-        ) {
+        let producer_redirection_supported = matches!(
+            (
+                request.producer.path(),
+                request.producer.stdin_redirection,
+                request.producer.redirection,
+            ),
             (
                 initramfs::PHASE10_STDOUT_PATH,
                 None,
-                None
-                | Some(LocalCommandExecRedirection::StdoutToStderr)
-                | Some(LocalCommandExecRedirection::StdoutToTmpStdout(_)),
-            ) => true,
-            (
+                None | Some(LocalCommandExecRedirection::StdoutToStderr)
+                    | Some(LocalCommandExecRedirection::StdoutToTmpStdout(_)),
+            ) | (
                 initramfs::PHASE10_STDERR_PATH,
                 None,
                 None | Some(LocalCommandExecRedirection::StderrToStdout),
-            ) => true,
-            (initramfs::PHASE10_STATUS42_PATH, None, None) => true,
-            (
-                initramfs::PHASE10_STDIN_PATH,
-                Some(LocalCommandExecRedirection::StdinFromEtcBanner),
-                None,
-            ) => true,
-            _ => false,
-        };
+            ) | (initramfs::PHASE10_STATUS42_PATH, None, None)
+                | (
+                    initramfs::PHASE10_STDIN_PATH,
+                    Some(LocalCommandExecRedirection::StdinFromEtcBanner),
+                    None,
+                )
+        );
         let consumer_stdin_redirection_supported = request.producer.path()
             == initramfs::PHASE10_STDIN_PATH
             && request.producer.argv.argc() == 1
@@ -6637,7 +6625,7 @@ fn dispatch_completed_line(
     let response_lines;
 
     if input_result.outcome() == PollingTtyRxOutcome::LineCanceled
-        && input_result.controls() == &[Some(tty::TtyControlEvent::Interrupt)]
+        && input_result.controls() == [Some(tty::TtyControlEvent::Interrupt)]
     {
         status = LocalCommandStatus::LineCanceled;
         let mut responses = 0usize;
@@ -6680,9 +6668,7 @@ fn dispatch_completed_line(
 }
 
 fn has_line_kill(controls: &[Option<tty::TtyControlEvent>]) -> bool {
-    controls
-        .iter()
-        .any(|event| *event == Some(tty::TtyControlEvent::ClearLine))
+    controls.contains(&Some(tty::TtyControlEvent::ClearLine))
 }
 
 fn has_unsupported_controls(controls: &[Option<tty::TtyControlEvent>]) -> bool {
@@ -7386,28 +7372,27 @@ fn parse_bare_bin_pipeline_consumer_request(
     };
     let arguments = trim_ascii_space(arguments);
     if name.as_bytes() == b"stdin" {
-        if let Some(target) = arguments.strip_prefix(">>") {
-            if let Some(path) =
+        if let Some(target) = arguments.strip_prefix(">>")
+            && let Some(path) =
                 LocalCommandVolatilePath::from_exact_pipeline_report_path(target.as_bytes())
                     .or_else(|| {
                         LocalCommandVolatilePath::from_exact_pipeline_combined_append_path(
                             target.as_bytes(),
                         )
                     })
-            {
-                let exec_path = LocalCommandExecPath::from_fixed_bin_name(name.as_bytes())?;
-                let argv = LocalCommandLiteralArgv::from_tokens(&[name.as_bytes()])?
-                    .with_resolved_argv0(exec_path.as_bytes())?;
-                return Ok(LocalCommandExecRequest {
-                    path: exec_path,
-                    argv,
-                    redirection: Some(LocalCommandExecRedirection::StdoutAppendTmpStdout(path)),
-                    stdin_redirection: None,
-                });
-            }
+        {
+            let exec_path = LocalCommandExecPath::from_fixed_bin_name(name.as_bytes())?;
+            let argv = LocalCommandLiteralArgv::from_tokens(&[name.as_bytes()])?
+                .with_resolved_argv0(exec_path.as_bytes())?;
+            return Ok(LocalCommandExecRequest {
+                path: exec_path,
+                argv,
+                redirection: Some(LocalCommandExecRedirection::StdoutAppendTmpStdout(path)),
+                stdin_redirection: None,
+            });
         }
-        if let Some(target) = arguments.strip_prefix('>') {
-            if let Some(path) =
+        if let Some(target) = arguments.strip_prefix('>')
+            && let Some(path) =
                 LocalCommandVolatilePath::from_exact_pipeline_report_path(target.as_bytes())
                     .or_else(|| {
                         LocalCommandVolatilePath::from_exact_pipeline_combined_path(
@@ -7419,42 +7404,40 @@ fn parse_bare_bin_pipeline_consumer_request(
                             target.as_bytes(),
                         )
                     })
-            {
-                let exec_path = LocalCommandExecPath::from_fixed_bin_name(name.as_bytes())?;
-                let argv = LocalCommandLiteralArgv::from_tokens(&[name.as_bytes()])?
-                    .with_resolved_argv0(exec_path.as_bytes())?;
-                return Ok(LocalCommandExecRequest {
-                    path: exec_path,
-                    argv,
-                    redirection: Some(LocalCommandExecRedirection::StdoutToTmpStdout(path)),
-                    stdin_redirection: None,
-                });
-            }
+        {
+            let exec_path = LocalCommandExecPath::from_fixed_bin_name(name.as_bytes())?;
+            let argv = LocalCommandLiteralArgv::from_tokens(&[name.as_bytes()])?
+                .with_resolved_argv0(exec_path.as_bytes())?;
+            return Ok(LocalCommandExecRequest {
+                path: exec_path,
+                argv,
+                redirection: Some(LocalCommandExecRedirection::StdoutToTmpStdout(path)),
+                stdin_redirection: None,
+            });
         }
     }
     if name.as_bytes() == b"stderr" {
-        if let Some(target) = arguments.strip_prefix("2>>") {
-            if let Some(path) =
+        if let Some(target) = arguments.strip_prefix("2>>")
+            && let Some(path) =
                 LocalCommandVolatilePath::from_exact_pipeline_stderr_path(target.as_bytes())
                     .or_else(|| {
                         LocalCommandVolatilePath::from_exact_pipeline_combined_stderr_append_path(
                             target.as_bytes(),
                         )
                     })
-            {
-                let exec_path = LocalCommandExecPath::from_fixed_bin_name(name.as_bytes())?;
-                let argv = LocalCommandLiteralArgv::from_tokens(&[name.as_bytes()])?
-                    .with_resolved_argv0(exec_path.as_bytes())?;
-                return Ok(LocalCommandExecRequest {
-                    path: exec_path,
-                    argv,
-                    redirection: Some(LocalCommandExecRedirection::StderrAppendTmpStderr(path)),
-                    stdin_redirection: None,
-                });
-            }
+        {
+            let exec_path = LocalCommandExecPath::from_fixed_bin_name(name.as_bytes())?;
+            let argv = LocalCommandLiteralArgv::from_tokens(&[name.as_bytes()])?
+                .with_resolved_argv0(exec_path.as_bytes())?;
+            return Ok(LocalCommandExecRequest {
+                path: exec_path,
+                argv,
+                redirection: Some(LocalCommandExecRedirection::StderrAppendTmpStderr(path)),
+                stdin_redirection: None,
+            });
         }
-        if let Some(target) = arguments.strip_prefix("2>") {
-            if let Some(path) =
+        if let Some(target) = arguments.strip_prefix("2>")
+            && let Some(path) =
                 LocalCommandVolatilePath::from_exact_pipeline_stderr_path(target.as_bytes())
                     .or_else(|| {
                         LocalCommandVolatilePath::from_exact_pipeline_combined_stderr_path(
@@ -7466,17 +7449,16 @@ fn parse_bare_bin_pipeline_consumer_request(
                             target.as_bytes(),
                         )
                     })
-            {
-                let exec_path = LocalCommandExecPath::from_fixed_bin_name(name.as_bytes())?;
-                let argv = LocalCommandLiteralArgv::from_tokens(&[name.as_bytes()])?
-                    .with_resolved_argv0(exec_path.as_bytes())?;
-                return Ok(LocalCommandExecRequest {
-                    path: exec_path,
-                    argv,
-                    redirection: Some(LocalCommandExecRedirection::StderrToTmpStderr(path)),
-                    stdin_redirection: None,
-                });
-            }
+        {
+            let exec_path = LocalCommandExecPath::from_fixed_bin_name(name.as_bytes())?;
+            let argv = LocalCommandLiteralArgv::from_tokens(&[name.as_bytes()])?
+                .with_resolved_argv0(exec_path.as_bytes())?;
+            return Ok(LocalCommandExecRequest {
+                path: exec_path,
+                argv,
+                redirection: Some(LocalCommandExecRedirection::StderrToTmpStderr(path)),
+                stdin_redirection: None,
+            });
         }
     }
     parse_bare_bin_exec_request_with_arguments(name, Some(arguments))
@@ -7536,7 +7518,7 @@ fn parse_bare_bin_exec_request_with_arguments(
             }
             if let Some(path) = token
                 .strip_prefix(b">>")
-                .and_then(LocalCommandVolatilePath::from_exact_stdout_path)
+                .and_then(LocalCommandVolatilePath::from_supported_stdout_path)
             {
                 if name.as_bytes() != b"stdout" || redirection_started || count != 1 {
                     return Err(LocalCommandExecError::InvalidPath);
@@ -7558,7 +7540,7 @@ fn parse_bare_bin_exec_request_with_arguments(
             }
             if let Some(path) = token
                 .strip_prefix(b"2>>")
-                .and_then(LocalCommandVolatilePath::from_exact_stderr_path)
+                .and_then(LocalCommandVolatilePath::from_supported_stderr_path)
             {
                 if name.as_bytes() != b"stderr" || redirection_started || count != 1 {
                     return Err(LocalCommandExecError::InvalidPath);
@@ -7626,27 +7608,26 @@ fn parse_absolute_path_pipeline_consumer_request(
     };
     let arguments = trim_ascii_space(arguments);
     if path_text.as_bytes() == initramfs::PHASE10_STDIN_PATH {
-        if let Some(target) = arguments.strip_prefix(">>") {
-            if let Some(path) =
+        if let Some(target) = arguments.strip_prefix(">>")
+            && let Some(path) =
                 LocalCommandVolatilePath::from_exact_pipeline_report_path(target.as_bytes())
                     .or_else(|| {
                         LocalCommandVolatilePath::from_exact_pipeline_combined_append_path(
                             target.as_bytes(),
                         )
                     })
-            {
-                let exec_path = LocalCommandExecPath::from_absolute(path_text.as_bytes())?;
-                let argv = LocalCommandLiteralArgv::from_tokens(&[path_text.as_bytes()])?;
-                return Ok(LocalCommandExecRequest {
-                    path: exec_path,
-                    argv,
-                    redirection: Some(LocalCommandExecRedirection::StdoutAppendTmpStdout(path)),
-                    stdin_redirection: None,
-                });
-            }
+        {
+            let exec_path = LocalCommandExecPath::from_absolute(path_text.as_bytes())?;
+            let argv = LocalCommandLiteralArgv::from_tokens(&[path_text.as_bytes()])?;
+            return Ok(LocalCommandExecRequest {
+                path: exec_path,
+                argv,
+                redirection: Some(LocalCommandExecRedirection::StdoutAppendTmpStdout(path)),
+                stdin_redirection: None,
+            });
         }
-        if let Some(target) = arguments.strip_prefix('>') {
-            if let Some(path) =
+        if let Some(target) = arguments.strip_prefix('>')
+            && let Some(path) =
                 LocalCommandVolatilePath::from_exact_pipeline_report_path(target.as_bytes())
                     .or_else(|| {
                         LocalCommandVolatilePath::from_exact_pipeline_combined_path(
@@ -7658,40 +7639,38 @@ fn parse_absolute_path_pipeline_consumer_request(
                             target.as_bytes(),
                         )
                     })
-            {
-                let exec_path = LocalCommandExecPath::from_absolute(path_text.as_bytes())?;
-                let argv = LocalCommandLiteralArgv::from_tokens(&[path_text.as_bytes()])?;
-                return Ok(LocalCommandExecRequest {
-                    path: exec_path,
-                    argv,
-                    redirection: Some(LocalCommandExecRedirection::StdoutToTmpStdout(path)),
-                    stdin_redirection: None,
-                });
-            }
+        {
+            let exec_path = LocalCommandExecPath::from_absolute(path_text.as_bytes())?;
+            let argv = LocalCommandLiteralArgv::from_tokens(&[path_text.as_bytes()])?;
+            return Ok(LocalCommandExecRequest {
+                path: exec_path,
+                argv,
+                redirection: Some(LocalCommandExecRedirection::StdoutToTmpStdout(path)),
+                stdin_redirection: None,
+            });
         }
     }
     if path_text.as_bytes() == initramfs::PHASE10_STDERR_PATH {
-        if let Some(target) = arguments.strip_prefix("2>>") {
-            if let Some(path) =
+        if let Some(target) = arguments.strip_prefix("2>>")
+            && let Some(path) =
                 LocalCommandVolatilePath::from_exact_pipeline_stderr_path(target.as_bytes())
                     .or_else(|| {
                         LocalCommandVolatilePath::from_exact_pipeline_combined_stderr_append_path(
                             target.as_bytes(),
                         )
                     })
-            {
-                let exec_path = LocalCommandExecPath::from_absolute(path_text.as_bytes())?;
-                let argv = LocalCommandLiteralArgv::from_tokens(&[path_text.as_bytes()])?;
-                return Ok(LocalCommandExecRequest {
-                    path: exec_path,
-                    argv,
-                    redirection: Some(LocalCommandExecRedirection::StderrAppendTmpStderr(path)),
-                    stdin_redirection: None,
-                });
-            }
+        {
+            let exec_path = LocalCommandExecPath::from_absolute(path_text.as_bytes())?;
+            let argv = LocalCommandLiteralArgv::from_tokens(&[path_text.as_bytes()])?;
+            return Ok(LocalCommandExecRequest {
+                path: exec_path,
+                argv,
+                redirection: Some(LocalCommandExecRedirection::StderrAppendTmpStderr(path)),
+                stdin_redirection: None,
+            });
         }
-        if let Some(target) = arguments.strip_prefix("2>") {
-            if let Some(path) =
+        if let Some(target) = arguments.strip_prefix("2>")
+            && let Some(path) =
                 LocalCommandVolatilePath::from_exact_pipeline_stderr_path(target.as_bytes())
                     .or_else(|| {
                         LocalCommandVolatilePath::from_exact_pipeline_combined_stderr_path(
@@ -7703,16 +7682,15 @@ fn parse_absolute_path_pipeline_consumer_request(
                             target.as_bytes(),
                         )
                     })
-            {
-                let exec_path = LocalCommandExecPath::from_absolute(path_text.as_bytes())?;
-                let argv = LocalCommandLiteralArgv::from_tokens(&[path_text.as_bytes()])?;
-                return Ok(LocalCommandExecRequest {
-                    path: exec_path,
-                    argv,
-                    redirection: Some(LocalCommandExecRedirection::StderrToTmpStderr(path)),
-                    stdin_redirection: None,
-                });
-            }
+        {
+            let exec_path = LocalCommandExecPath::from_absolute(path_text.as_bytes())?;
+            let argv = LocalCommandLiteralArgv::from_tokens(&[path_text.as_bytes()])?;
+            return Ok(LocalCommandExecRequest {
+                path: exec_path,
+                argv,
+                redirection: Some(LocalCommandExecRedirection::StderrToTmpStderr(path)),
+                stdin_redirection: None,
+            });
         }
     }
     parse_absolute_path_exec_request_with_arguments(path_text, Some(arguments))
@@ -7971,7 +7949,7 @@ fn is_absolute_exec_path(path: &[u8]) -> bool {
 
 fn is_bounded_bare_bin_command_name(name: &str) -> bool {
     !name.is_empty()
-        && !name.as_bytes().iter().any(|byte| *byte == b'/')
+        && !name.as_bytes().contains(&b'/')
         && LOCAL_COMMAND_BIN_LISTING
             .iter()
             .any(|(_, entry_name)| entry_name.as_bytes() == name.as_bytes())
@@ -8029,13 +8007,11 @@ fn parse_exec_request(arguments: &str) -> Result<LocalCommandExecRequest, LocalC
             .and_then(LocalCommandVolatilePath::from_supported_stderr_path)
         {
             Some(LocalCommandExecRedirection::StderrToTmpStderr(path))
-        } else if let Some(path) = token
-            .strip_prefix(b"2>>")
-            .and_then(LocalCommandVolatilePath::from_supported_stderr_path)
-        {
-            Some(LocalCommandExecRedirection::StderrAppendTmpStderr(path))
         } else {
-            None
+            token
+                .strip_prefix(b"2>>")
+                .and_then(LocalCommandVolatilePath::from_supported_stderr_path)
+                .map(LocalCommandExecRedirection::StderrAppendTmpStderr)
         };
         if let Some(parsed_redirection) = parsed_redirection {
             redirection_started = true;
@@ -8081,7 +8057,7 @@ fn parse_exec_request(arguments: &str) -> Result<LocalCommandExecRequest, LocalC
     }
     let path = if is_absolute_exec_path(tokens[0]) {
         LocalCommandExecPath::from_absolute(tokens[0])?
-    } else if tokens[0].iter().any(|byte| *byte == b'/') {
+    } else if tokens[0].contains(&b'/') {
         return Err(LocalCommandExecError::InvalidPath);
     } else {
         LocalCommandExecPath::from_fixed_bin_name(tokens[0])?
@@ -8441,10 +8417,8 @@ fn write_exec_summary(
     write_exec_launch_line(sink, response_lines, summary)?;
     write_exec_descriptor_inheritance_line(sink, response_lines, summary)?;
     write_exec_startup_abi_line(sink, response_lines, summary)?;
-    for record in summary.redirections {
-        if let Some(record) = record {
-            write_exec_redirection_line(sink, response_lines, record)?;
-        }
+    for record in summary.redirections.into_iter().flatten() {
+        write_exec_redirection_line(sink, response_lines, record)?;
     }
     if let Some(record) = summary.userspace_stdout {
         write_exec_userspace_stdout_line(sink, response_lines, record)?;
@@ -8496,10 +8470,8 @@ fn write_background_exec_summary(
     write_exec_launch_line(sink, response_lines, summary.exec)?;
     write_exec_descriptor_inheritance_line(sink, response_lines, summary.exec)?;
     write_exec_startup_abi_line(sink, response_lines, summary.exec)?;
-    for record in summary.exec.redirections {
-        if let Some(record) = record {
-            write_exec_redirection_line(sink, response_lines, record)?;
-        }
+    for record in summary.exec.redirections.into_iter().flatten() {
+        write_exec_redirection_line(sink, response_lines, record)?;
     }
     if let Some(record) = summary.exec.userspace_stdout {
         write_exec_userspace_stdout_line(sink, response_lines, record)?;
@@ -11422,7 +11394,7 @@ talos> Talos initramfs fixture\n"
 
     #[test_case]
     fn local_command_loop_appends_direct_path_stdout_stderr_to_bounded_tmp_leaf_paths() {
-        let bytes = *b"/bin/stdout >/tmp/talos-output-alpha.txt\r/bin/stdout >>/tmp/talos-output-alpha.txt\rwaitpid\rlaststatus\rcat /tmp/talos-output-alpha.txt\r/bin/stdout\r/bin/stderr 2>/tmp/talos-error-beta.log\r/bin/stderr 2>>/tmp/talos-error-beta.log\rwaitpid\rlaststatus\rcat /tmp/talos-error-beta.log\r/bin/stderr\r/bin/stdout >>/var/out.txt\r/bin/stdout >>/tmp/nested/out.txt\r/bin/stdout >>/tmp/\r/bin/stdout >>/tmp/../bad.txt\r/bin/stdout >>/tmp/stderr.txt\r/bin/stderr 2>>/var/err.txt\r/bin/stderr 2>>/tmp/n/e\r/bin/stderr 2>>/tmp/\r/bin/stderr 2>>/tmp/../bad.txt\r/bin/stderr 2>>/tmp/stdout.txt\r/bin/stderr >>/tmp/misbound.err\rstdout >>/tmp/talos-output-alpha.txt\r";
+        let bytes = *b"/bin/stdout >/tmp/talos-output-alpha.txt\r/bin/stdout >>/tmp/talos-output-alpha.txt\rwaitpid\rlaststatus\rcat /tmp/talos-output-alpha.txt\r/bin/stdout\r/bin/stderr 2>/tmp/talos-error-beta.log\r/bin/stderr 2>>/tmp/talos-error-beta.log\rwaitpid\rlaststatus\rcat /tmp/talos-error-beta.log\r/bin/stderr\r/bin/stdout >>/var/out.txt\r/bin/stdout >>/tmp/nested/out.txt\r/bin/stdout >>/tmp/\r/bin/stdout >>/tmp/../bad.txt\r/bin/stdout >>/tmp/stderr.txt\r/bin/stderr 2>>/var/err.txt\r/bin/stderr 2>>/tmp/n/e\r/bin/stderr 2>>/tmp/\r/bin/stderr 2>>/tmp/../bad.txt\r/bin/stderr 2>>/tmp/stdout.txt\r/bin/stderr >>/tmp/misbound.err\rmissing >>/tmp/talos-output-alpha.txt\r";
         let input = ScriptedInput::new(bytes, bytes.len());
         let mut backend = CaptureSink::new();
         let (
@@ -11449,7 +11421,7 @@ talos> Talos initramfs fixture\n"
             bad_stderr_dotdot,
             bad_stderr_reserved,
             bad_stderr_stdout_operator,
-            bad_bare_name,
+            bad_command_name,
         ) = {
             let mut io =
                 DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
@@ -11478,7 +11450,7 @@ talos> Talos initramfs fixture\n"
             let bad_stderr_reserved = run_one_descriptor_backed_serial_command(&mut io).unwrap();
             let bad_stderr_stdout_operator =
                 run_one_descriptor_backed_serial_command(&mut io).unwrap();
-            let bad_bare_name = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_command_name = run_one_descriptor_backed_serial_command(&mut io).unwrap();
             assert_eq!(io.process_table_records(), accepted_records);
             (
                 stdout_created,
@@ -11504,7 +11476,7 @@ talos> Talos initramfs fixture\n"
                 bad_stderr_dotdot,
                 bad_stderr_reserved,
                 bad_stderr_stdout_operator,
-                bad_bare_name,
+                bad_command_name,
             )
         };
         let output = backend.as_str();
@@ -11555,11 +11527,15 @@ talos> Talos initramfs fixture\n"
             bad_stderr_dotdot,
             bad_stderr_reserved,
             bad_stderr_stdout_operator,
-            bad_bare_name,
         ] {
             assert_eq!(rejected.status(), LocalCommandStatus::UnexpectedArgument);
             assert_eq!(rejected.response_lines(), 1);
         }
+        assert_eq!(
+            bad_command_name.status(),
+            LocalCommandStatus::UnknownCommand
+        );
+        assert_eq!(bad_command_name.response_lines(), 1);
         assert!(output.contains(
             "talos: exec-redirection op=append source-fd=0x0000000000000001 target-path=/tmp/talos-output-alpha.txt target-stream=regular-file target-route=volatile-vfs:/tmp/talos-output-alpha.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout-append\n"
         ));
@@ -11578,7 +11554,221 @@ talos> Talos initramfs fixture\n"
         assert!(output.contains(
             "talos: exec-stderr fd=0x0000000000000002 bytes=0x000000000000001f return=0x000000000000001f stream=stderr route=runtime-console0/stderr source=userspace-talos-write\n"
         ));
-        assert_eq!(output.matches("talos: exec-invalid-path\n").count(), 12);
+        assert_eq!(output.matches("talos: exec-invalid-path\n").count(), 11);
+        assert_eq!(output.matches("talos: unknown-command\n").count(), 1);
+    }
+
+    #[test_case]
+    fn local_command_loop_appends_bare_name_stdout_stderr_to_bounded_tmp_leaf_paths() {
+        let bytes = *b"stdout >/tmp/talos-output-alpha.txt\rstdout >>/tmp/talos-output-alpha.txt\rwaitpid\rlaststatus\rcat /tmp/talos-output-alpha.txt\rstdout\rstderr 2>/tmp/talos-error-beta.log\rstderr 2>>/tmp/talos-error-beta.log\rwaitpid\rlaststatus\rcat /tmp/talos-error-beta.log\rstderr\r/bin/stdout >>/tmp/talos-output-alpha.txt\r/bin/stderr 2>>/tmp/talos-error-beta.log\rstdout >>/var/out.txt\rstdout >>/tmp/nested/out.txt\rstdout >>/tmp/\rstdout >>/tmp/../bad.txt\rstdout >>/tmp/stderr.txt\rstderr 2>>/var/err.txt\rstderr 2>>/tmp/n/e\rstderr 2>>/tmp/\rstderr 2>>/tmp/../bad.txt\rstderr 2>>/tmp/stdout.txt\rstderr >>/tmp/misbound.err\rstdout >> /tmp/talos-output-alpha.txt\rstderr 2>> /tmp/talos-error-beta.log\rstdout 1>>/tmp/talos-output-alpha.txt\rmissing >>/tmp/talos-output-alpha.txt\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (
+            stdout_created,
+            stdout_appended,
+            stdout_waited,
+            stdout_observed,
+            stdout_readback,
+            normal_stdout,
+            stderr_created,
+            stderr_appended,
+            stderr_waited,
+            stderr_observed,
+            stderr_readback,
+            normal_stderr,
+            direct_stdout_regression,
+            bad_stdout_var,
+            bad_stdout_nested,
+            bad_stdout_empty,
+            bad_stdout_dotdot,
+            bad_stdout_reserved,
+            bad_stderr_var,
+            bad_stderr_nested,
+            bad_stderr_empty,
+            bad_stderr_dotdot,
+            bad_stderr_reserved,
+            bad_stderr_stdout_operator,
+            bad_stdout_separated,
+            bad_stderr_separated,
+            bad_fd1_alias,
+            direct_stderr_regression,
+            bad_command_name,
+        ) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            let stdout_created = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let stdout_appended = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let stdout_waited = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let stdout_observed = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let stdout_readback = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let normal_stdout = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let stderr_created = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let stderr_appended = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let stderr_waited = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let stderr_observed = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let stderr_readback = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let normal_stderr = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let direct_stdout_regression =
+                run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let direct_stderr_regression =
+                run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let accepted_records = io.process_table_records();
+            let bad_stdout_var = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_stdout_nested = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_stdout_empty = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_stdout_dotdot = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_stdout_reserved = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_stderr_var = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_stderr_nested = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_stderr_empty = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_stderr_dotdot = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_stderr_reserved = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_stderr_stdout_operator =
+                run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_stdout_separated = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_stderr_separated = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_fd1_alias = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let bad_command_name = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(io.process_table_records(), accepted_records);
+            (
+                stdout_created,
+                stdout_appended,
+                stdout_waited,
+                stdout_observed,
+                stdout_readback,
+                normal_stdout,
+                stderr_created,
+                stderr_appended,
+                stderr_waited,
+                stderr_observed,
+                stderr_readback,
+                normal_stderr,
+                direct_stdout_regression,
+                bad_stdout_var,
+                bad_stdout_nested,
+                bad_stdout_empty,
+                bad_stdout_dotdot,
+                bad_stdout_reserved,
+                bad_stderr_var,
+                bad_stderr_nested,
+                bad_stderr_empty,
+                bad_stderr_dotdot,
+                bad_stderr_reserved,
+                bad_stderr_stdout_operator,
+                bad_stdout_separated,
+                bad_stderr_separated,
+                bad_fd1_alias,
+                direct_stderr_regression,
+                bad_command_name,
+            )
+        };
+        let output = backend.as_str();
+
+        assert_eq!(
+            stdout_created.line(),
+            b"stdout >/tmp/talos-output-alpha.txt"
+        );
+        assert_eq!(stdout_created.status(), LocalCommandStatus::Handled);
+        assert_eq!(
+            stdout_appended.line(),
+            b"stdout >>/tmp/talos-output-alpha.txt"
+        );
+        assert_eq!(stdout_appended.status(), LocalCommandStatus::Handled);
+        assert_eq!(stdout_appended.response_lines(), 11);
+        assert_eq!(stdout_waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(stdout_observed.status(), LocalCommandStatus::Handled);
+        assert_eq!(stdout_readback.line(), b"cat /tmp/talos-output-alpha.txt");
+        assert_eq!(stdout_readback.status(), LocalCommandStatus::Handled);
+        assert_eq!(normal_stdout.line(), b"stdout");
+        assert_eq!(normal_stdout.status(), LocalCommandStatus::Handled);
+        assert_eq!(stderr_created.line(), b"stderr 2>/tmp/talos-error-beta.log");
+        assert_eq!(stderr_created.status(), LocalCommandStatus::Handled);
+        assert_eq!(
+            stderr_appended.line(),
+            b"stderr 2>>/tmp/talos-error-beta.log"
+        );
+        assert_eq!(stderr_appended.status(), LocalCommandStatus::Handled);
+        assert_eq!(stderr_appended.response_lines(), 11);
+        assert_eq!(stderr_waited.status(), LocalCommandStatus::Handled);
+        assert_eq!(stderr_observed.status(), LocalCommandStatus::Handled);
+        assert_eq!(stderr_readback.line(), b"cat /tmp/talos-error-beta.log");
+        assert_eq!(stderr_readback.status(), LocalCommandStatus::Handled);
+        assert_eq!(normal_stderr.line(), b"stderr");
+        assert_eq!(normal_stderr.status(), LocalCommandStatus::Handled);
+        assert_eq!(
+            direct_stdout_regression.line(),
+            b"/bin/stdout >>/tmp/talos-output-alpha.txt"
+        );
+        assert_eq!(
+            direct_stdout_regression.status(),
+            LocalCommandStatus::Handled
+        );
+        assert_eq!(direct_stdout_regression.response_lines(), 11);
+        assert_eq!(
+            direct_stderr_regression.line(),
+            b"/bin/stderr 2>>/tmp/talos-error-beta.log"
+        );
+        assert_eq!(
+            direct_stderr_regression.status(),
+            LocalCommandStatus::Handled
+        );
+        assert_eq!(direct_stderr_regression.response_lines(), 11);
+        for rejected in [
+            bad_stdout_var,
+            bad_stdout_nested,
+            bad_stdout_empty,
+            bad_stdout_dotdot,
+            bad_stdout_reserved,
+            bad_stderr_var,
+            bad_stderr_nested,
+            bad_stderr_empty,
+            bad_stderr_dotdot,
+            bad_stderr_reserved,
+            bad_stderr_stdout_operator,
+            bad_stdout_separated,
+            bad_stderr_separated,
+            bad_fd1_alias,
+        ] {
+            assert_eq!(rejected.status(), LocalCommandStatus::UnexpectedArgument);
+            assert_eq!(rejected.response_lines(), 1);
+        }
+        assert_eq!(
+            bad_command_name.status(),
+            LocalCommandStatus::UnknownCommand
+        );
+        assert_eq!(bad_command_name.response_lines(), 1);
+        assert!(output.contains(
+            "talos: exec-redirection op=sink source-fd=0x0000000000000001 target-path=/tmp/talos-output-alpha.txt target-stream=regular-file target-route=volatile-vfs:/tmp/talos-output-alpha.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-redirection op=append source-fd=0x0000000000000001 target-path=/tmp/talos-output-alpha.txt target-stream=regular-file target-route=volatile-vfs:/tmp/talos-output-alpha.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout-append\n"
+        ));
+        assert!(output.contains(
+            "talos: cat path=/tmp/talos-output-alpha.txt bytes=0x000000000000003e source=volatile-vfs-descriptor-read\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-redirection op=sink source-fd=0x0000000000000002 target-path=/tmp/talos-error-beta.log target-stream=regular-file target-route=volatile-vfs:/tmp/talos-error-beta.log child-only=true shell-restored=true source=shell-redirection-stderr-tmp-stderr\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-redirection op=append source-fd=0x0000000000000002 target-path=/tmp/talos-error-beta.log target-stream=regular-file target-route=volatile-vfs:/tmp/talos-error-beta.log child-only=true shell-restored=true source=shell-redirection-stderr-tmp-stderr-append\n"
+        ));
+        assert!(output.contains(
+            "talos: cat path=/tmp/talos-error-beta.log bytes=0x000000000000003e source=volatile-vfs-descriptor-read\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=regular-file fd2=stdio-output loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-descriptors owner=0x0000000000000001 inherited-count=0x0000000000000003 fd0=stdio-input fd1=stdio-output fd2=regular-file loader-temp-fd=0x0000000000000003 loader-temp-open=false source=shell-process-descriptor-table\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stdout fd=0x0000000000000001 bytes=0x000000000000001f return=0x000000000000001f stream=stdout route=runtime-console0/stdout source=userspace-talos-write\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-stderr fd=0x0000000000000002 bytes=0x000000000000001f return=0x000000000000001f stream=stderr route=runtime-console0/stderr source=userspace-talos-write\n"
+        ));
+        assert_eq!(output.matches("talos: exec-invalid-path\n").count(), 14);
+        assert_eq!(output.matches("talos: unknown-command\n").count(), 1);
     }
 
     #[test_case]
@@ -11933,13 +12123,13 @@ talos> Talos initramfs fixture\n"
 
     #[test_case]
     fn local_command_loop_rejects_unaccepted_direct_stderr_output_redirection_forms() {
-        let bytes = *b"/bin/stderr 2> /tmp/stderr.txt\r/bin/stderr 2>>/tmp/stdout.txt\rstderr 2>>/tmp/other.txt\r/bin/stderr 2>/var/err.txt\r/bin/stderr | /bin/stdin 2>/tmp/stderr.txt\r/bin/stdin </etc/banner.txt 2>/tmp/stderr.txt\rcat /etc/banner.txt 2>/tmp/stderr.txt\rwaitpid\r";
+        let bytes = *b"/bin/stderr 2> /tmp/stderr.txt\r/bin/stderr 2>>/tmp/stdout.txt\rmissing 2>>/tmp/other.txt\r/bin/stderr 2>/var/err.txt\r/bin/stderr | /bin/stdin 2>/tmp/stderr.txt\r/bin/stdin </etc/banner.txt 2>/tmp/stderr.txt\rcat /etc/banner.txt 2>/tmp/stderr.txt\rwaitpid\r";
         let input = ScriptedInput::new(bytes, bytes.len());
         let mut backend = CaptureSink::new();
         let (
             separated,
             arbitrary_append,
-            bare_name_append,
+            unsupported_command,
             unsupported_path,
             pipeline_output,
             combined_io,
@@ -11964,7 +12154,6 @@ talos> Talos initramfs fixture\n"
         for rejected in [
             separated,
             arbitrary_append,
-            bare_name_append,
             unsupported_path,
             pipeline_output,
             combined_io,
@@ -11973,11 +12162,17 @@ talos> Talos initramfs fixture\n"
             assert_eq!(rejected.status(), LocalCommandStatus::UnexpectedArgument);
             assert_eq!(rejected.response_lines(), 1);
         }
+        assert_eq!(
+            unsupported_command.status(),
+            LocalCommandStatus::UnknownCommand
+        );
+        assert_eq!(unsupported_command.response_lines(), 1);
         assert_eq!(waited.line(), b"waitpid");
         assert_eq!(waited.status(), LocalCommandStatus::Handled);
         assert!(output.contains("talos: waitpid no-child source=lifecycle-record\n"));
-        assert_eq!(output.matches("talos: exec-invalid-path").count(), 6);
+        assert_eq!(output.matches("talos: exec-invalid-path").count(), 5);
         assert_eq!(output.matches("talos: unexpected-argument").count(), 1);
+        assert_eq!(output.matches("talos: unknown-command").count(), 1);
         assert_eq!(output.matches("path=/bin/stderr state=exited").count(), 0);
     }
 

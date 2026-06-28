@@ -1675,6 +1675,22 @@ task. Persistence, pipeline path generalization, live networking/SSH,
 generated-root retry, Pi 5 hardware proof, boot publication, and phase
 transition remain deferred.
 
+The bare-name bounded volatile /tmp output-path append redirection core extends
+that same safe leaf policy to fixed-/bin bare-name append after an initial
+truncate/create write. The accepted sequences are
+'stdout >/tmp/talos-output-alpha.txt' followed by
+'stdout >>/tmp/talos-output-alpha.txt', and
+'stderr 2>/tmp/talos-error-beta.log' followed by
+'stderr 2>>/tmp/talos-error-beta.log'. Both resolve only through bounded /bin
+lookup, continue through descriptor-backed VFS/userspace execution, rebind only
+child fd1/fd2, use volatile-vfs append-at-EOF semantics, and rely on
+descriptor-backed cat readback plus later bare-name stdout/stderr controls for
+restoration evidence. Direct path-form append remains a retained regression
+surface. PATH/current-directory lookup, command lookup beyond bounded /bin,
+persistence, pipeline path generalization, live networking/SSH,
+generated-root retry, Pi 5 hardware proof, boot publication, and phase
+transition remain deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

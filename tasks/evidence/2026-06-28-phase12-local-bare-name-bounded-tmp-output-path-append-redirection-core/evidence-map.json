@@ -1,0 +1,51 @@
+{
+  "task_id": "phase12-local-bare-name-bounded-tmp-output-path-append-redirection-core-20260628",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "paths": [
+        "src/local_command_loop.rs"
+      ],
+      "result": "Bare-name stdout/stderr append parsing reuses the accepted safe volatile /tmp leaf policy; direct append remains a retained regression surface."
+    },
+    {
+      "level": "QEMU/substitute local command scenario",
+      "command": "cargo -Zjson-target-spec test local_command_loop_appends_bare_name_stdout_stderr_to_bounded_tmp_leaf_paths",
+      "log": "tasks/evidence/2026-06-28-phase12-local-bare-name-bounded-tmp-output-path-append-redirection-core/focused-local-command-loop.log",
+      "result": "passed after task-owned clippy cleanup; retained local log reports test result: ok. 878 passed and the task-owned witness test passed"
+    },
+    {
+      "level": "touched-module tests",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "result": "passed under the workspace QEMU runner; 878 no_std tests passed"
+    },
+    {
+      "level": "fmt",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "level": "evidence validation",
+      "command": "jq empty tasks/evidence/2026-06-28-phase12-local-bare-name-bounded-tmp-output-path-append-redirection-core/classification.json tasks/evidence/2026-06-28-phase12-local-bare-name-bounded-tmp-output-path-append-redirection-core/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "diff/docs validation",
+      "command": "git diff --check && /home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "level": "lint/typecheck",
+      "command": "cargo clippy -Zjson-target-spec --all-targets -- -D warnings",
+      "log": "tasks/evidence/2026-06-28-phase12-local-bare-name-bounded-tmp-output-path-append-redirection-core/clippy-all-targets-failure.log",
+      "result": "failed on pre-existing/out-of-scope repo-wide lints under the current toolchain; deferred with task_owned_refs=absent for src/local_command_loop.rs"
+    },
+    {
+      "level": "lint/typecheck boundary",
+      "command": "rg -n \"src/local_command_loop\\\\.rs|local_command_loop\" tasks/evidence/2026-06-28-phase12-local-bare-name-bounded-tmp-output-path-append-redirection-core/clippy-all-targets-failure.log",
+      "result": "no matches; no clippy diagnostics reference task-owned src/local_command_loop.rs"
+    }
+  ],
+  "accepted": true,
+  "selected_next_task": "phase12-local-bounded-tmp-output-path-append-redirection-frontier-checkpoint-20260628"
+}
