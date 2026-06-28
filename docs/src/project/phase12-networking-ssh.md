@@ -591,6 +591,25 @@ generated-root retry, live network/SSH, Pi 5 hardware proof, and phase
 transition remain deferred. The next local POSIX/VFS task is the queued pipeline
 stderr regular-file redirection frontier checkpoint.
 
+The pipeline stderr regular-file redirection frontier checkpoint freezes the
+accepted local-only direct path-form and fixed-/bin bare-name final-stage stderr
+frontier without runtime feature changes. The accepted witnesses remain exactly
+'/bin/stdout | /bin/stderr 2>/tmp/pipeline-stderr.txt' and
+"stdout | stderr 2>/tmp/pipeline-stderr.txt". Direct forms keep explicit
+program paths; bare-name forms resolve only through bounded /bin lookup. Both
+forms keep descriptor-backed VFS loading, accepted userspace launch/status,
+producer fd1 to the pipe endpoint, final-stage consumer fd0 from that pipe
+endpoint, child-only consumer fd2 to
+volatile-vfs:/tmp/pipeline-stderr.txt, sink/truncate semantics,
+descriptor-backed readback of the 0x1f-byte stderr fixture, shell fd2
+restoration, and coherent process status observations. Append pipeline stderr
+redirection, input/combined pipeline redirections, arbitrary paths, persistent
+storage, PATH/current-directory lookup, command lookup beyond bounded /bin,
+generated-root retry, live network/SSH, Pi 5 hardware proof, and phase
+transition remain deferred. No later queued same-lane local POSIX/VFS task is
+mechanically objective, so supervisor planning is required before another
+worker promotion.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1
@@ -10573,6 +10592,23 @@ phase12-local-pipeline-stderr-regular-file-redirection-frontier-checkpoint-20260
 as the next local POSIX/VFS task. Append pipeline stderr redirection,
 input/combined pipeline redirections, arbitrary paths, live networking/SSH,
 Pi 5 hardware, generated-root retry, and phase transition remain unaccepted.
+
+The pipeline stderr regular-file redirection frontier checkpoint accepted no
+runtime changes and freezes the local-only direct path-form and fixed-/bin
+bare-name final-stage stderr frontier at exactly
+'/bin/stdout | /bin/stderr 2>/tmp/pipeline-stderr.txt' and
+"stdout | stderr 2>/tmp/pipeline-stderr.txt". Both forms keep
+descriptor-backed VFS loading, accepted userspace launch/status, producer fd1
+to the pipe endpoint, final-stage consumer fd0 from that pipe endpoint,
+child-only consumer fd2 to volatile-vfs:/tmp/pipeline-stderr.txt,
+descriptor-backed readback of the 0x1f-byte stderr fixture, shell fd2
+restoration, and coherent process status observations. Append pipeline stderr
+redirection, input/combined pipeline redirections, arbitrary paths,
+PATH/current-directory lookup, command lookup beyond bounded /bin, live
+networking/SSH, Pi 5 hardware, generated-root retry, and phase transition
+remain unaccepted. No later queued same-lane local POSIX/VFS task is
+mechanically objective, so planningNeeded=true until the supervisor plans the
+next explicit slice.
 
 phase12-ssh-tftp-capture-invariant-reconciliation-v9-20260624 accepts the
 no-hardware reconciliation as capture-helper-timing-root-cause-ready. Read-only
