@@ -1,0 +1,64 @@
+{
+  "task_id": "phase12-local-bare-name-pipeline-stderr-regular-file-redirection-core-20260627",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "paths": [
+        "src/local_command_loop.rs",
+        "src/target/qemu_virt.rs",
+        "build.rs",
+        "src/main.rs",
+        "scripts/qemu-local-serial-command-loop-smoke.sh",
+        "scripts/qemu-local-shell-bare-name-pipeline-stderr-regular-file-redirection-smoke.sh",
+        "docs/src/roadmap.md",
+        "docs/src/project/phase12-networking-ssh.md",
+        "docs/src/project/early-posix-shape.md"
+      ],
+      "result": "bounded bare-name pipeline stderr parser, scenario wiring, smoke assertions, docs, and tests inspected"
+    },
+    {
+      "level": "fmt/lint/typecheck",
+      "command": "cargo fmt --all -- --check",
+      "path": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-stderr-regular-file-redirection-core/fmt-check.log",
+      "result": "passed"
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop_redirects_bare_name_pipeline_consumer_stderr_to_volatile_regular_file",
+      "path": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-stderr-regular-file-redirection-core/qemu-substitute-focused-test.log",
+      "result": "passed; retained transcript reports test result: ok. 866 passed"
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop_redirects_direct_path_pipeline_consumer_stderr_to_volatile_regular_file",
+      "path": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-stderr-regular-file-redirection-core/direct-pipeline-stderr-regression-test.log",
+      "result": "passed; retained transcript reports test result: ok. 866 passed"
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet",
+      "path": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-stderr-regular-file-redirection-core/full-test.log",
+      "result": "passed; retained transcript reports test result: ok. 866 passed"
+    },
+    {
+      "level": "QEMU/substitute",
+      "command": "scripts/qemu-local-shell-bare-name-pipeline-stderr-regular-file-redirection-smoke.sh",
+      "path": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-stderr-regular-file-redirection-core/qemu-local-shell-bare-name-pipeline-stderr-regular-file-redirection-smoke.log",
+      "result": "passed; final participants=23 expected=23 errors=0"
+    },
+    {
+      "level": "QEMU/substitute",
+      "path": "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-stderr-regular-file-redirection-core/retained-regression-smoke-summary.txt",
+      "result": "retained controls cover direct pipeline stderr redirection, pipeline-output append, process-status VFS, ps, pipestatus, and cat readback"
+    },
+    {
+      "level": "lab-controller API",
+      "result": "not run; local POSIX/VFS QEMU/substitute task had no Pi 5 hardware gate"
+    },
+    {
+      "level": "serial hardware boot/output",
+      "result": "not run; local POSIX/VFS QEMU/substitute task had no Pi 5 hardware gate"
+    }
+  ],
+  "selected_next_task": "phase12-local-bare-name-pipeline-stderr-regular-file-redirection-closeout-20260627"
+}

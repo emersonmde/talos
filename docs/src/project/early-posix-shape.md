@@ -1188,6 +1188,22 @@ stdout-final-stage redirection for this pipeline shape, input/combined pipeline
 redirections, arbitrary paths, persistent storage, generated-root retry, live
 networking/SSH, Pi 5 hardware proof, and phase transition remain deferred.
 
+The bare-name pipeline stderr regular-file redirection core accepts exactly
+"stdout | stderr 2>/tmp/pipeline-stderr.txt". The producer and final-stage
+consumer resolve only through the fixed bounded /bin lookup to /bin/stdout and
+/bin/stderr, then load through descriptor-backed VFS open/read and the accepted
+userspace launch/status path. The producer records fd1 as the pipe endpoint; the
+consumer records fd0 as that pipe endpoint and fd2 child-only as regular-file
+route volatile-vfs:/tmp/pipeline-stderr.txt. Descriptor-backed
+"cat /tmp/pipeline-stderr.txt" reads the 0x1f-byte stderr fixture, and a later
+normal "stderr" proves shell fd2 restoration. The direct path-form witness
+remains accepted as a regression control. Stderr append, stdout final-stage
+redirection for this pipeline shape, input/combined pipeline redirections,
+arbitrary paths, persistent storage, PATH/current-directory lookup, command
+lookup beyond bounded /bin, generated-root retry, live networking/SSH, Pi 5
+hardware proof, and phase transition remain deferred. The next local POSIX/VFS
+task is the bare-name pipeline stderr redirection closeout.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

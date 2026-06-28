@@ -560,6 +560,20 @@ stdout-final-stage redirection for this pipeline shape, input/combined pipeline
 redirections, arbitrary paths, persistent storage, generated-root retry, live
 networking/SSH, Pi 5 hardware proof, and phase transition remain deferred.
 
+The bare-name pipeline stderr regular-file redirection core accepts exactly
+"stdout | stderr 2>/tmp/pipeline-stderr.txt". Both stages resolve only through
+the fixed bounded /bin lookup to /bin/stdout and /bin/stderr before
+descriptor-backed VFS loading. The final-stage consumer keeps fd0 as the pipe
+endpoint and receives only child-owned fd2 redirection to
+volatile-vfs:/tmp/pipeline-stderr.txt. Descriptor-backed readback and a later
+normal "stderr" prove volatile stderr-file bytes and shell fd2 restoration.
+Direct path-form pipeline stderr remains accepted as a regression control.
+Append stderr pipeline redirection, stdout final-stage redirection,
+input/combined pipeline redirections, arbitrary paths, persistent storage,
+PATH/current-directory lookup, command lookup beyond bounded /bin, generated-root
+retry, live network/SSH, Pi 5 hardware proof, and phase transition remain
+deferred.
+
 ## RP1 Ethernet Source Inventory
 
 phase12-rp1-ethernet-source-inventory-20260609 accepts the source-backed RP1
@@ -10521,6 +10535,20 @@ as the next local POSIX/VFS task. Fixed-/bin bare-name pipeline stderr
 redirection remains unimplemented until that task; stderr append,
 input/combined pipeline redirections, arbitrary paths, live networking/SSH,
 Pi 5 hardware, generated-root retry, and phase transition remain unaccepted.
+
+The local POSIX/VFS continuation accepted the fixed-/bin bare-name pipeline
+stderr regular-file redirection core
+phase12-local-bare-name-pipeline-stderr-regular-file-redirection-core-20260627.
+The accepted witness is exactly
+"stdout | stderr 2>/tmp/pipeline-stderr.txt": both stages resolve only through
+bounded /bin lookup to /bin/stdout and /bin/stderr, load through descriptor-backed
+VFS, and preserve the accepted pipe/status lifecycle. The final-stage consumer
+fd2 is child-only regular-file route volatile-vfs:/tmp/pipeline-stderr.txt;
+descriptor-backed "cat /tmp/pipeline-stderr.txt" reads the userspace stderr
+fixture, and a later normal "stderr" proves fd2 restoration. Stderr append,
+input/combined pipeline redirections, arbitrary paths, PATH/current-directory
+lookup, command lookup beyond bounded /bin, live networking/SSH, Pi 5 hardware,
+generated-root retry, and phase transition remain unaccepted.
 
 phase12-ssh-tftp-capture-invariant-reconciliation-v9-20260624 accepts the
 no-hardware reconciliation as capture-helper-timing-root-cause-ready. Read-only

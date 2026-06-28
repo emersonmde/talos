@@ -1,0 +1,8 @@
+Retained local POSIX/VFS regression controls for phase12-local-bare-name-pipeline-stderr-regular-file-redirection-core-20260627.
+
+- direct pipeline stderr redirection: covered by src/local_command_loop.rs regression local_command_loop_redirects_direct_path_pipeline_consumer_stderr_to_volatile_regular_file and retained transcript direct-pipeline-stderr-regression-test.log; the task-owned QEMU serial smoke also accepts /bin/stdout | /bin/stderr 2>/tmp/pipeline-stderr.txt as command 12.
+- bare-name pipeline stderr redirection: covered by src/local_command_loop.rs regression local_command_loop_redirects_bare_name_pipeline_consumer_stderr_to_volatile_regular_file and task-owned QEMU serial smoke command 3.
+- pipeline-output append: covered by full-test.log through local_command_loop_redirects_bare_name_pipeline_consumer_stdout_to_volatile_regular_file and retained accepted task evidence under tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-output-append-regular-file-redirection-core/.
+- process-status VFS, ps, pipestatus, and cat readback: covered by full-test.log plus task-owned QEMU serial smoke commands 4-10, including waitpid, laststatus, pipestatus, cat /proc/talos/processes, ps, and cat /tmp/pipeline-stderr.txt.
+- hardware/lab: not run; this is a local POSIX/VFS QEMU/substitute task with no Pi 5 hardware gate.
+

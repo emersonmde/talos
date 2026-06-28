@@ -19667,6 +19667,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   generated-root retry, and phase transition remain deferred. The selected next
   task is
   phase12-local-bare-name-pipeline-stderr-regular-file-redirection-core-20260627.
+- phase12-local-bare-name-pipeline-stderr-regular-file-redirection-core-20260627
+  accepts the exact fixed-/bin bare-name pipeline final-stage stderr redirection
+  witness "stdout | stderr 2>/tmp/pipeline-stderr.txt". Both stages resolve only
+  through the accepted bounded /bin lookup to /bin/stdout and /bin/stderr, then
+  load through descriptor-backed VFS open/read and the accepted userspace
+  launch/status path. The producer records fd1 as the pipe endpoint and writes
+  0x1f bytes; the consumer records fd0 as that pipe endpoint, fd2 child-only as
+  regular-file route volatile-vfs:/tmp/pipeline-stderr.txt, and writes the
+  0x1f-byte stderr fixture there. Descriptor-backed "cat
+  /tmp/pipeline-stderr.txt" reads the fixture, and a later normal "stderr"
+  proves shell fd2 restoration. Direct path-form pipeline stderr remains an
+  accepted regression control. Unsupported append 2>>, unsupported command
+  names, path-containing stage names, stdout final-stage redirection,
+  input/combined pipeline redirections, arbitrary paths, persistent storage,
+  PATH/current-dir lookup, command lookup beyond bounded /bin, live
+  networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
+  transition remain deferred. The selected next task is
+  phase12-local-bare-name-pipeline-stderr-regular-file-redirection-closeout-20260627.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

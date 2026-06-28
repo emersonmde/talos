@@ -14398,6 +14398,7 @@ pub fn run_diagnostic_command_channel_smoke() -> bool {
     talos_boot_scenario = "qemu_local_shell_direct_pipeline_output_append_regular_file_redirection",
     talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_output_append_regular_file_redirection",
     talos_boot_scenario = "qemu_local_shell_direct_pipeline_stderr_regular_file_redirection",
+    talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection",
     talos_boot_scenario = "qemu_local_shell_pipeline_producer_file_redirection_away",
     talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle",
     talos_boot_scenario = "qemu_local_shell_jobs_accounting_list",
@@ -14816,6 +14817,11 @@ const fn local_command_loop_smoke_label() -> &'static str {
     "qemu-local-shell-direct-pipeline-stderr-regular-file-redirection"
 }
 
+#[cfg(talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection")]
+const fn local_command_loop_smoke_label() -> &'static str {
+    "qemu-local-shell-bare-name-pipeline-stderr-regular-file-redirection"
+}
+
 #[cfg(talos_boot_scenario = "qemu_local_shell_pipeline_producer_file_redirection_away")]
 const fn local_command_loop_smoke_label() -> &'static str {
     "qemu-local-shell-pipeline-producer-file-redirection-away"
@@ -15016,6 +15022,9 @@ const fn local_command_loop_smoke_label() -> &'static str {
         talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_output_append_regular_file_redirection"
     ),
     not(talos_boot_scenario = "qemu_local_shell_direct_pipeline_stderr_regular_file_redirection"),
+    not(
+        talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection"
+    ),
     not(talos_boot_scenario = "qemu_local_shell_pipeline_producer_file_redirection_away"),
     not(talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle"),
     not(talos_boot_scenario = "qemu_local_shell_jobs_accounting_list"),
@@ -15299,6 +15308,11 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     "qemu-local-shell-direct-pipeline-stderr-regular-file-redirection-complete"
 }
 
+#[cfg(talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection")]
+const fn local_command_loop_smoke_classification() -> &'static str {
+    "qemu-local-shell-bare-name-pipeline-stderr-regular-file-redirection-complete"
+}
+
 #[cfg(talos_boot_scenario = "qemu_local_shell_pipeline_producer_file_redirection_away")]
 const fn local_command_loop_smoke_classification() -> &'static str {
     "qemu-local-shell-pipeline-producer-file-redirection-away-complete"
@@ -15499,6 +15513,9 @@ const fn local_command_loop_smoke_classification() -> &'static str {
         talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_output_append_regular_file_redirection"
     ),
     not(talos_boot_scenario = "qemu_local_shell_direct_pipeline_stderr_regular_file_redirection"),
+    not(
+        talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection"
+    ),
     not(talos_boot_scenario = "qemu_local_shell_pipeline_producer_file_redirection_away"),
     not(talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle"),
     not(talos_boot_scenario = "qemu_local_shell_jobs_accounting_list"),
@@ -15575,6 +15592,7 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     talos_boot_scenario = "qemu_local_shell_direct_pipeline_output_append_regular_file_redirection",
     talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_output_append_regular_file_redirection",
     talos_boot_scenario = "qemu_local_shell_direct_pipeline_stderr_regular_file_redirection",
+    talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection",
     talos_boot_scenario = "qemu_local_shell_direct_stderr_regular_file_append_redirection",
     talos_boot_scenario = "qemu_local_shell_bare_name_stderr_regular_file_append_redirection",
@@ -15587,6 +15605,7 @@ const fn local_command_loop_smoke_classification() -> &'static str {
     talos_boot_scenario = "qemu_local_shell_pipeline_consumer_output_redirection",
     talos_boot_scenario = "qemu_local_shell_direct_pipeline_output_append_regular_file_redirection",
     talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_output_append_regular_file_redirection",
+    talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection",
     talos_boot_scenario = "qemu_local_shell_pipeline_producer_file_redirection_away",
     talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle",
     talos_boot_scenario = "qemu_local_shell_jobs_accounting_list",
@@ -15706,6 +15725,10 @@ const fn local_command_loop_smoke_command_count() -> usize {
         talos_boot_scenario = "qemu_local_shell_direct_pipeline_stderr_regular_file_redirection"
     ) {
         19
+    } else if cfg!(
+        talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection"
+    ) {
+        23
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_pipeline_consumer_output_redirection") {
         11
     } else if cfg!(talos_boot_scenario = "qemu_local_shell_pipeline_producer_file_redirection_away")
@@ -15861,6 +15884,7 @@ const fn local_command_loop_smoke_command_count() -> usize {
     talos_boot_scenario = "qemu_local_shell_direct_pipeline_output_append_regular_file_redirection",
     talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_output_append_regular_file_redirection",
     talos_boot_scenario = "qemu_local_shell_direct_pipeline_stderr_regular_file_redirection",
+    talos_boot_scenario = "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection",
     talos_boot_scenario = "qemu_local_shell_background_vfs_exec_lifecycle",
     talos_boot_scenario = "qemu_local_shell_generated_userland_manifest",
     talos_boot_scenario = "qemu_local_shell_stderr_regular_file_redirection",
@@ -17189,6 +17213,170 @@ fn expected_local_command_loop_dispatch(
         ) =>
         {
             line == b"stdout | stderr 2>/tmp/pipeline-stderr.txt"
+                && status == Handled
+                && response_lines == 23
+        }
+        3 if cfg!(
+            talos_boot_scenario =
+                "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection"
+        ) =>
+        {
+            line == b"stdout | stderr 2>/tmp/pipeline-stderr.txt"
+                && status == Handled
+                && response_lines == 23
+        }
+        4 if cfg!(
+            talos_boot_scenario =
+                "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection"
+        ) =>
+        {
+            line == b"waitpid 0x100001" && status == Handled && response_lines == 1
+        }
+        5 if cfg!(
+            talos_boot_scenario =
+                "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection"
+        ) =>
+        {
+            line == b"waitpid 0x100002" && status == Handled && response_lines == 1
+        }
+        6 if cfg!(
+            talos_boot_scenario =
+                "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection"
+        ) =>
+        {
+            line == b"laststatus" && status == Handled && response_lines == 1
+        }
+        7 if cfg!(
+            talos_boot_scenario =
+                "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection"
+        ) =>
+        {
+            line == b"pipestatus" && status == Handled && response_lines == 3
+        }
+        8 if cfg!(
+            talos_boot_scenario =
+                "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection"
+        ) =>
+        {
+            line == b"cat /proc/talos/processes" && status == Handled && response_lines == 1
+        }
+        9 if cfg!(
+            talos_boot_scenario =
+                "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection"
+        ) =>
+        {
+            line == b"ps" && status == Handled && response_lines == 1
+        }
+        10 if cfg!(
+            talos_boot_scenario =
+                "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection"
+        ) =>
+        {
+            line == b"cat /tmp/pipeline-stderr.txt" && status == Handled && response_lines == 2
+        }
+        11 if cfg!(
+            talos_boot_scenario =
+                "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection"
+        ) =>
+        {
+            line == b"stderr" && status == Handled && response_lines == 10
+        }
+        12 if cfg!(
+            talos_boot_scenario =
+                "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection"
+        ) =>
+        {
+            line == b"/bin/stdout | /bin/stderr 2>/tmp/pipeline-stderr.txt"
+                && status == Handled
+                && response_lines == 23
+        }
+        13 if cfg!(
+            talos_boot_scenario =
+                "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection"
+        ) =>
+        {
+            line == b"stdout | stderr 2>>/tmp/pipeline-stderr.txt"
+                && status == UnexpectedArgument
+                && response_lines == 1
+        }
+        14 if cfg!(
+            talos_boot_scenario =
+                "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection"
+        ) =>
+        {
+            line == b"stdout | stderr >/tmp/pipeline-stderr.txt"
+                && status == UnexpectedArgument
+                && response_lines == 1
+        }
+        15 if cfg!(
+            talos_boot_scenario =
+                "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection"
+        ) =>
+        {
+            line == b"stdout | stderr </etc/banner.txt"
+                && status == UnexpectedArgument
+                && response_lines == 1
+        }
+        16 if cfg!(
+            talos_boot_scenario =
+                "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection"
+        ) =>
+        {
+            line == b"stdout | stderr 2>/tmp/stderr.txt"
+                && status == UnexpectedArgument
+                && response_lines == 1
+        }
+        17 if cfg!(
+            talos_boot_scenario =
+                "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection"
+        ) =>
+        {
+            line == b"stdout | stderr 2> /tmp/pipeline-stderr.txt"
+                && status == UnexpectedArgument
+                && response_lines == 1
+        }
+        18 if cfg!(
+            talos_boot_scenario =
+                "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection"
+        ) =>
+        {
+            line == b"stdout | stderr 2>/var/x"
+                && status == UnexpectedArgument
+                && response_lines == 1
+        }
+        19 if cfg!(
+            talos_boot_scenario =
+                "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection"
+        ) =>
+        {
+            line == b"stdout | bin/stderr 2>/tmp/pipeline-stderr.txt"
+                && status == UnexpectedArgument
+                && response_lines == 1
+        }
+        20 if cfg!(
+            talos_boot_scenario =
+                "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection"
+        ) =>
+        {
+            line == b"/bin/stdout | stderr 2>/tmp/pipeline-stderr.txt"
+                && status == UnexpectedArgument
+                && response_lines == 1
+        }
+        21 if cfg!(
+            talos_boot_scenario =
+                "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection"
+        ) =>
+        {
+            line == b"nosuch | stderr 2>/tmp/pipeline-stderr.txt"
+                && status == UnknownCommand
+                && response_lines == 1
+        }
+        22 if cfg!(
+            talos_boot_scenario =
+                "qemu_local_shell_bare_name_pipeline_stderr_regular_file_redirection"
+        ) =>
+        {
+            line == b"stdout | nosuch 2>/tmp/pipeline-stderr.txt"
                 && status == UnexpectedArgument
                 && response_lines == 1
         }

@@ -1,0 +1,43 @@
+{
+  "task_id": "phase12-local-bare-name-pipeline-stderr-regular-file-redirection-core-20260627",
+  "classification": "local-bare-name-pipeline-stderr-regular-file-redirection-complete",
+  "status": "accepted",
+  "accepted_boundary": {
+    "witness": "stdout | stderr 2>/tmp/pipeline-stderr.txt",
+    "producer_path": "/bin/stdout",
+    "consumer_path": "/bin/stderr",
+    "lookup_policy": "fixed bounded /bin lookup only",
+    "consumer_fd0": "pipe-endpoint",
+    "consumer_fd2": "volatile-vfs:/tmp/pipeline-stderr.txt",
+    "redirection": "child-only stderr sink/truncate",
+    "readback": "cat /tmp/pipeline-stderr.txt",
+    "restoration": "later normal stderr writes to runtime-console0/stderr"
+  },
+  "accepted_controls": [
+    "direct path-form pipeline stderr redirection",
+    "pipeline-output append local POSIX/VFS controls",
+    "process-status VFS",
+    "ps",
+    "pipestatus",
+    "cat readback"
+  ],
+  "rejected_claims": [
+    "stderr append pipeline redirection",
+    "stdout final-stage redirection for this pipeline shape",
+    "input or combined pipeline redirections",
+    "arbitrary output paths",
+    "persistent writable filesystem behavior",
+    "environment-backed PATH",
+    "current-directory search",
+    "command lookup beyond bounded /bin",
+    "live networking or SSH",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "phase transition"
+  ],
+  "selected_next_task": "phase12-local-bare-name-pipeline-stderr-regular-file-redirection-closeout-20260627",
+  "hardware": {
+    "lab_controller_api": "not run; local POSIX/VFS QEMU/substitute task had no Pi 5 hardware gate",
+    "serial_hardware_boot_output": "not run; local POSIX/VFS QEMU/substitute task had no Pi 5 hardware gate"
+  }
+}
