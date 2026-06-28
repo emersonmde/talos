@@ -7304,6 +7304,11 @@ fn parse_bare_bin_pipeline_consumer_request(
         if let Some(target) = arguments.strip_prefix(">>") {
             if let Some(path) =
                 LocalCommandVolatilePath::from_exact_pipeline_report_path(target.as_bytes())
+                    .or_else(|| {
+                        LocalCommandVolatilePath::from_exact_pipeline_combined_append_path(
+                            target.as_bytes(),
+                        )
+                    })
             {
                 let exec_path = LocalCommandExecPath::from_fixed_bin_name(name.as_bytes())?;
                 let argv = LocalCommandLiteralArgv::from_tokens(&[name.as_bytes()])?
@@ -7321,6 +7326,11 @@ fn parse_bare_bin_pipeline_consumer_request(
                 LocalCommandVolatilePath::from_exact_pipeline_report_path(target.as_bytes())
                     .or_else(|| {
                         LocalCommandVolatilePath::from_exact_pipeline_combined_path(
+                            target.as_bytes(),
+                        )
+                    })
+                    .or_else(|| {
+                        LocalCommandVolatilePath::from_exact_pipeline_combined_append_path(
                             target.as_bytes(),
                         )
                     })
@@ -14257,7 +14267,7 @@ talos> talos: exec-not-executable\n"
             &request
         ));
 
-        let bytes = *b"/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-combined-append.txt\r/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/pipeline-combined-append.txt\rwaitpid 0x100001\rwaitpid 0x100002\rlaststatus\rpipestatus\rcat /proc/talos/processes\rps\rcat /tmp/pipeline-combined-append.txt\r/bin/stdin </etc/banner.txt\rstdin </etc/banner.txt | stdin >>/tmp/pipeline-combined-append.txt\r/bin/stdin </etc/banner.txt | /bin/stdin 2>>/tmp/pipeline-combined-append.txt\r/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-report.txt\r/bin/stdout | /bin/stdin >>/tmp/pipeline-combined-append.txt\r/bin/stdin </etc/banner.txt | /bin/stdin 1>/tmp/pipeline-combined-append.txt\r/bin/stdin </etc/banner.txt | /bin/stdin > /tmp/pipeline-combined-append.txt\r/bin/stdin </etc/banner.txt | /bin/stdin >>/var/x\r/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/pipeline-combined-append.txt | /bin/stdin\rmissing </etc/banner.txt | /bin/stdin >>/tmp/pipeline-combined-append.txt\r/bin/stdin </etc/banner.txt | missing >>/tmp/pipeline-combined-append.txt\r";
+        let bytes = *b"/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-combined-append.txt\r/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/pipeline-combined-append.txt\rwaitpid 0x100001\rwaitpid 0x100002\rlaststatus\rpipestatus\rcat /proc/talos/processes\rps\rcat /tmp/pipeline-combined-append.txt\r/bin/stdin </etc/banner.txt\rstdin </etc/banner.txt | /bin/stdin >>/tmp/pipeline-combined-append.txt\r/bin/stdin </etc/banner.txt | /bin/stdin 2>>/tmp/pipeline-combined-append.txt\r/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-report.txt\r/bin/stdout | /bin/stdin >>/tmp/pipeline-combined-append.txt\r/bin/stdin </etc/banner.txt | /bin/stdin 1>/tmp/pipeline-combined-append.txt\r/bin/stdin </etc/banner.txt | /bin/stdin > /tmp/pipeline-combined-append.txt\r/bin/stdin </etc/banner.txt | /bin/stdin >>/var/x\r/bin/stdin </etc/banner.txt | /bin/stdin >>/tmp/pipeline-combined-append.txt | /bin/stdin\rmissing </etc/banner.txt | /bin/stdin >>/tmp/pipeline-combined-append.txt\r/bin/stdin </etc/banner.txt | missing >>/tmp/pipeline-combined-append.txt\r";
         let input = ScriptedInput::new(bytes, bytes.len());
         let mut backend = CaptureSink::new();
         let (
@@ -14271,7 +14281,7 @@ talos> talos: exec-not-executable\n"
             ps,
             readback,
             normal,
-            bare_name_append,
+            mixed_bare_absolute_append,
             stderr_append,
             wrong_output_path,
             stdout_producer,
@@ -14305,7 +14315,8 @@ talos> talos: exec-not-executable\n"
             let readback = run_one_descriptor_backed_serial_command(&mut io).unwrap();
             let normal = run_one_descriptor_backed_serial_command(&mut io).unwrap();
             let retained_records = io.process_table_records();
-            let bare_name_append = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let mixed_bare_absolute_append =
+                run_one_descriptor_backed_serial_command(&mut io).unwrap();
             assert_eq!(io.process_table_records(), retained_records);
             let stderr_append = run_one_descriptor_backed_serial_command(&mut io).unwrap();
             assert_eq!(io.process_table_records(), retained_records);
@@ -14336,7 +14347,7 @@ talos> talos: exec-not-executable\n"
                 ps,
                 readback,
                 normal,
-                bare_name_append,
+                mixed_bare_absolute_append,
                 stderr_append,
                 wrong_output_path,
                 stdout_producer,
@@ -14365,7 +14376,7 @@ talos> talos: exec-not-executable\n"
             assert_eq!(handled.status(), LocalCommandStatus::Handled);
         }
         for rejected in [
-            bare_name_append,
+            mixed_bare_absolute_append,
             stderr_append,
             wrong_output_path,
             stdout_producer,
@@ -14385,6 +14396,199 @@ talos> talos: exec-not-executable\n"
             missing_consumer.status(),
             LocalCommandStatus::UnexpectedArgument
         );
+        assert!(output.contains(
+            "talos: exec-redirection op=sink source-fd=0x0000000000000001 target-path=/tmp/pipeline-combined-append.txt target-stream=regular-file target-route=volatile-vfs:/tmp/pipeline-combined-append.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout\n"
+        ));
+        assert!(output.contains(
+            "talos: exec-redirection op=append source-fd=0x0000000000000001 target-path=/tmp/pipeline-combined-append.txt target-stream=regular-file target-route=volatile-vfs:/tmp/pipeline-combined-append.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout-append\n"
+        ));
+        assert!(output.contains(
+            "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdin consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000003d bytes-read=0x000000000000003d writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-producer-stdin-consumer-stdout-redirection\n"
+        ));
+        assert!(output.contains(
+            "talos: pipeline id=0x0000000000000001 producer-fd=0x0000000000000001 producer-path=/bin/stdin consumer-fd=0x0000000000000000 consumer-path=/bin/stdin bytes-written=0x000000000000003d bytes-read=0x000000000000003d writer-closed=true reader-eof=true shell-restored=true source=shell-pipe-producer-stdin-consumer-stdout-append-redirection\n"
+        ));
+        assert!(output.contains(
+            "talos: cat path=/tmp/pipeline-combined-append.txt bytes=0x00000000000000c4 source=volatile-vfs-descriptor-read\n"
+        ));
+        assert_eq!(
+            output
+                .matches(
+                    "Talos userspace stdin fixture read: Talos userspace stdin fixture read: Talos initramfs fixture\n"
+                )
+                .count(),
+            2
+        );
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100001 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=explicit-pid-lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: waitpid pid=0x0000000000100002 parent=shell owner=0x0000000000000001 path=/bin/stdin state=exited status=0x0000000000000000 observed-status=0x0000000000000000 reaped=true source=explicit-pid-lifecycle-record\n"
+        ));
+        assert!(output.contains(
+            "talos> talos: pipestatus participants=0x0000000000000002 default-status=0x0000000000000000 pipefail-status=0x0000000000000000 semantics=bounded-observation-not-posix-shell source=bounded-process-table-pipeline-status\n"
+        ));
+        assert_eq!(output.matches("talos-processes-v1\n").count(), 2);
+        assert_eq!(output.matches("talos: exec-invalid-path\n").count(), 9);
+    }
+
+    #[test_case]
+    fn local_command_loop_appends_bare_name_pipeline_combined_stdin_stdout_redirection() {
+        let command = parse_local_command(
+            b"stdin </etc/banner.txt | stdin >>/tmp/pipeline-combined-append.txt",
+        )
+        .unwrap();
+        let request = parse_bare_bin_pipeline_request(command).unwrap();
+        assert_eq!(request.producer.path(), initramfs::PHASE10_STDIN_PATH);
+        assert_eq!(request.producer.argv.argc(), 1);
+        assert_eq!(
+            request.producer.stdin_redirection,
+            Some(LocalCommandExecRedirection::StdinFromEtcBanner)
+        );
+        assert_eq!(request.consumer.path(), initramfs::PHASE10_STDIN_PATH);
+        assert_eq!(request.consumer.argv.argc(), 1);
+        assert!(matches!(
+            request.consumer.redirection,
+            Some(LocalCommandExecRedirection::StdoutAppendTmpStdout(path))
+                if path.is_exact_pipeline_combined_append_path()
+        ));
+        assert!(is_direct_pipeline_combined_stdin_stdout_redirection(
+            &request
+        ));
+
+        let bytes = *b"stdin </etc/banner.txt | stdin >/tmp/pipeline-combined-append.txt\rstdin </etc/banner.txt | stdin >>/tmp/pipeline-combined-append.txt\rwaitpid 0x100001\rwaitpid 0x100002\rlaststatus\rpipestatus\rcat /proc/talos/processes\rps\rcat /tmp/pipeline-combined-append.txt\rstdin </etc/banner.txt\r/bin/stdin </etc/banner.txt | /bin/stdin >/tmp/pipeline-combined-append.txt\rmissing </etc/banner.txt | stdin >>/tmp/pipeline-combined-append.txt\rstdin </etc/banner.txt | missing >>/tmp/pipeline-combined-append.txt\rstdin </etc/banner.txt | stdin 2>>/tmp/pipeline-combined-append.txt\rstdin </etc/banner.txt | stdin >/tmp/pipeline-report.txt\rstdin </etc/banner.txt | stdin 1>/tmp/pipeline-combined-append.txt\rstdin </etc/banner.txt | stdin > /tmp/pipeline-combined-append.txt\rstdin </etc/banner.txt | stdin >>/var/x\rstdin </etc/banner.txt | /bin/stdin >>/tmp/pipeline-combined-append.txt\r/bin/stdin </etc/banner.txt | stdin >>/tmp/pipeline-combined-append.txt\rstdin </etc/banner.txt | stdin >>/tmp/pipeline-combined-append.txt | stdin\r";
+        let input = ScriptedInput::new(bytes, bytes.len());
+        let mut backend = CaptureSink::new();
+        let (
+            pipeline,
+            append_pipeline,
+            producer_wait,
+            consumer_wait,
+            last,
+            status,
+            cat_processes,
+            ps,
+            readback,
+            normal,
+            direct_path_form,
+            missing_producer,
+            missing_consumer,
+            stderr_append,
+            wrong_output_path,
+            explicit_fd,
+            spaced_output,
+            persistent_path,
+            slash_consumer,
+            path_producer,
+            multistage,
+        ) = {
+            let mut io =
+                DescriptorBackedLocalCommandIo::new_inherited_stdio(input, &mut backend).unwrap();
+            let pipeline = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(
+                pipeline.line(),
+                b"stdin </etc/banner.txt | stdin >/tmp/pipeline-combined-append.txt"
+            );
+            assert_eq!(pipeline.status(), LocalCommandStatus::Handled);
+            let append_pipeline = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(
+                append_pipeline.line(),
+                b"stdin </etc/banner.txt | stdin >>/tmp/pipeline-combined-append.txt"
+            );
+            assert_eq!(append_pipeline.status(), LocalCommandStatus::Handled);
+            let producer_wait = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let consumer_wait = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let last = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let status = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let cat_processes = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let ps = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let readback = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let normal = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            let direct_path_form = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(direct_path_form.status(), LocalCommandStatus::Handled);
+            let retained_records = io.process_table_records();
+            let missing_producer = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(io.process_table_records(), retained_records);
+            let missing_consumer = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(io.process_table_records(), retained_records);
+            let stderr_append = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(io.process_table_records(), retained_records);
+            let wrong_output_path = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(io.process_table_records(), retained_records);
+            let explicit_fd = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(io.process_table_records(), retained_records);
+            let spaced_output = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(io.process_table_records(), retained_records);
+            let persistent_path = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(io.process_table_records(), retained_records);
+            let slash_consumer = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(io.process_table_records(), retained_records);
+            let path_producer = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(io.process_table_records(), retained_records);
+            let multistage = run_one_descriptor_backed_serial_command(&mut io).unwrap();
+            assert_eq!(io.process_table_records(), retained_records);
+            (
+                pipeline,
+                append_pipeline,
+                producer_wait,
+                consumer_wait,
+                last,
+                status,
+                cat_processes,
+                ps,
+                readback,
+                normal,
+                direct_path_form,
+                missing_producer,
+                missing_consumer,
+                stderr_append,
+                wrong_output_path,
+                explicit_fd,
+                spaced_output,
+                persistent_path,
+                slash_consumer,
+                path_producer,
+                multistage,
+            )
+        };
+        let output = backend.as_str();
+
+        for handled in [
+            pipeline,
+            append_pipeline,
+            producer_wait,
+            consumer_wait,
+            last,
+            status,
+            cat_processes,
+            ps,
+            readback,
+            normal,
+            direct_path_form,
+        ] {
+            assert_eq!(handled.status(), LocalCommandStatus::Handled);
+        }
+        assert_eq!(
+            missing_producer.status(),
+            LocalCommandStatus::UnknownCommand
+        );
+        for rejected in [
+            missing_consumer,
+            stderr_append,
+            wrong_output_path,
+            explicit_fd,
+            spaced_output,
+            persistent_path,
+            slash_consumer,
+            path_producer,
+            multistage,
+        ] {
+            assert_eq!(rejected.status(), LocalCommandStatus::UnexpectedArgument);
+            assert_eq!(rejected.response_lines(), 1);
+        }
+        assert!(output.contains(
+            "talos: exec-startup-abi state=minimal-argc1-argv0-absolute-empty-envp argc=0x0000000000000001 argv0=/bin/stdin"
+        ));
         assert!(output.contains(
             "talos: exec-redirection op=sink source-fd=0x0000000000000001 target-path=/tmp/pipeline-combined-append.txt target-stream=regular-file target-route=volatile-vfs:/tmp/pipeline-combined-append.txt child-only=true shell-restored=true source=shell-redirection-stdout-tmp-stdout\n"
         ));

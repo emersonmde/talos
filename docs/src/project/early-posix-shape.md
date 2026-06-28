@@ -1446,6 +1446,27 @@ generated-root retry, and phase transition remain deferred. The selected next
 local POSIX/VFS task is the fixed-/bin bare-name combined pipeline stdout
 append core.
 
+The fixed-/bin bare-name combined pipeline stdout append redirection core
+accepts exactly
+'stdin </etc/banner.txt | stdin >/tmp/pipeline-combined-append.txt' followed
+by 'stdin </etc/banner.txt | stdin >>/tmp/pipeline-combined-append.txt'.
+Both stages resolve only through the bounded /bin lookup to '/bin/stdin' and
+then use the same descriptor-backed VFS open/read, loader, userspace
+launch/status, serialized pipe handoff, and volatile VFS regular-file path as
+the accepted direct form. The first consumer truncates/sinks to
+volatile-vfs:/tmp/pipeline-combined-append.txt; the second appends at EOF.
+Descriptor-backed 'cat /tmp/pipeline-combined-append.txt' reads two nested
+userspace stdin reports in order, and later normal bare-name/direct controls
+prove shell fd0/fd1 restoration. Direct combined pipeline stdout append,
+combined pipeline stdin/stdout truncate, pipeline stdout/stderr redirection,
+process-status VFS, ps, waitpid, laststatus, and pipestatus remain retained
+controls. Unsupported command names, mixed direct/bare stage forms, combined
+stderr append, arbitrary paths, separated redirection-token grammar, explicit
+fd1 syntax, PATH/current-directory lookup, persistent storage, live
+networking/SSH, Pi 5 hardware proof, generated-root retry, and phase transition
+remain deferred. The next local POSIX/VFS task is the queued combined pipeline
+stdout append frontier checkpoint.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

@@ -1,0 +1,36 @@
+{
+  "classification": "phase12-local-bare-name-combined-pipeline-stdout-append-redirection-core-accepted",
+  "task_id": "phase12-local-bare-name-combined-pipeline-stdout-append-redirection-core-20260628",
+  "accepted_witness": [
+    "stdin </etc/banner.txt | stdin >/tmp/pipeline-combined-append.txt",
+    "stdin </etc/banner.txt | stdin >>/tmp/pipeline-combined-append.txt"
+  ],
+  "accepted": true,
+  "evidence_level": [
+    "static inspection",
+    "fmt/lint/typecheck",
+    "unit tests",
+    "QEMU/substitute local shell smoke",
+    "QEMU/substitute retained local POSIX/VFS regression controls",
+    "docs build"
+  ],
+  "hardware": {
+    "pi5_claim": false,
+    "lab_api_used": false,
+    "hardware_test_lock_used": false
+  },
+  "deferred": [
+    "combined stderr append behavior",
+    "arbitrary paths",
+    "persistent writable filesystem behavior",
+    "separated redirection-token grammar",
+    "explicit fd1 syntax",
+    "unbounded or concurrent pipelines",
+    "PATH/current-directory lookup",
+    "command lookup beyond bounded /bin",
+    "live networking/SSH",
+    "generated-root retry",
+    "phase transition"
+  ],
+  "selected_next_task": "phase12-local-combined-pipeline-stdout-append-redirection-frontier-checkpoint-20260628"
+}

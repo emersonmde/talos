@@ -19923,6 +19923,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   Pi 5 hardware proof, generated-root retry, and phase transition remain
   deferred. The selected next task is
   phase12-local-bare-name-combined-pipeline-stdout-append-redirection-core-20260628.
+- phase12-local-bare-name-combined-pipeline-stdout-append-redirection-core-20260628
+  accepts the fixed-/bin bare-name counterpart:
+  'stdin </etc/banner.txt | stdin >/tmp/pipeline-combined-append.txt'
+  followed by
+  'stdin </etc/banner.txt | stdin >>/tmp/pipeline-combined-append.txt'.
+  Both stages resolve only through the bounded /bin lookup to /bin/stdin before
+  using the accepted descriptor-backed VFS open/read, loader, userspace
+  launch/status, serialized pipe, and volatile VFS regular-file paths. The
+  first consumer truncates/sinks to
+  volatile-vfs:/tmp/pipeline-combined-append.txt; the second appends at EOF;
+  descriptor-backed 'cat /tmp/pipeline-combined-append.txt' reads two nested
+  userspace stdin reports in order. Direct combined pipeline stdout append
+  remains a retained control, and mixed direct/bare forms, unsupported command
+  names, combined stderr append, arbitrary paths, separated tokens, explicit
+  fd1 syntax, persistent storage, PATH/current-directory lookup, live
+  networking/SSH, Pi 5 hardware proof, generated-root retry, and phase
+  transition remain deferred. The selected next task is
+  phase12-local-combined-pipeline-stdout-append-redirection-frontier-checkpoint-20260628.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

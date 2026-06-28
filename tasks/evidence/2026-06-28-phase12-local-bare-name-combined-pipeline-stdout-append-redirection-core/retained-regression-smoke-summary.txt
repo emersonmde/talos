@@ -1,0 +1,12 @@
+direct-combined-pipeline-stdin-stdout: passed
+bare-name-combined-pipeline-stdin-stdout: passed
+direct-combined-pipeline-stdout-append: passed
+direct-pipeline-output-append: passed
+bare-name-pipeline-output-append: passed
+direct-pipeline-stderr-redirection: passed
+bare-name-pipeline-stderr-redirection: passed
+process-status-vfs: passed
+ps-command-vfs: passed
+pipeline-status: passed
+waitpid-lifecycle: passed
+last-process-status: passed

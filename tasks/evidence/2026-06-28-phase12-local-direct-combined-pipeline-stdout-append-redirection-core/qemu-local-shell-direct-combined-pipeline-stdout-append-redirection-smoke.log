@@ -168,11 +168,11 @@ talos: exec-signal lower-aarch64-svc-launch-boundary-equivalent
 qemu-local-shell-direct-combined-pipeline-stdout-append-redirection: line command=12 hex=2f 62 69 6e 2f 73 74 64 69 6e 20 3c 2f 65 74 63 2f 62 61 6e 6e 65 72 2e 74 78 74
 qemu-local-shell-direct-combined-pipeline-stdout-append-redirection: dispatch command=12 status=handled responses=11 raw-bytes=28 backspaces=0 deletes=0 truncated=false controls=0
 qemu-local-shell-direct-combined-pipeline-stdout-append-redirection: ready command=13
-talos> stdin </etc/banner.txt | stdin >>/tmp/pipeline-combined-append.txt
+talos> stdin </etc/banner.txt | /bin/stdin >>/tmp/pipeline-combined-append.txt
 talos: exec-invalid-path
 
-qemu-local-shell-direct-combined-pipeline-stdout-append-redirection: line command=13 hex=73 74 64 69 6e 20 3c 2f 65 74 63 2f 62 61 6e 6e 65 72 2e 74 78 74 20 7c 20 73 74 64 69 6e 20 3e 3e 2f 74 6d 70 2f 70 69 70 65 6c 69 6e 65 2d 63 6f 6d 62 69 6e 65 64 2d 61 70 70 65 6e 64 2e 74 78 74
-qemu-local-shell-direct-combined-pipeline-stdout-append-redirection: dispatch command=13 status=unexpected-argument responses=1 raw-bytes=67 backspaces=0 deletes=0 truncated=false controls=0
+qemu-local-shell-direct-combined-pipeline-stdout-append-redirection: line command=13 hex=73 74 64 69 6e 20 3c 2f 65 74 63 2f 62 61 6e 6e 65 72 2e 74 78 74 20 7c 20 2f 62 69 6e 2f 73 74 64 69 6e 20 3e 3e 2f 74 6d 70 2f 70 69 70 65 6c 69 6e 65 2d 63 6f 6d 62 69 6e 65 64 2d 61 70 70 65 6e 64 2e 74 78 74
+qemu-local-shell-direct-combined-pipeline-stdout-append-redirection: dispatch command=13 status=unexpected-argument responses=1 raw-bytes=72 backspaces=0 deletes=0 truncated=false controls=0
 qemu-local-shell-direct-combined-pipeline-stdout-append-redirection: ready command=14
 talos> /bin/stdin </etc/banner.txt | /bin/stdin 2>>/tmp/pipeline-combined-append.txt
 talos: exec-invalid-path

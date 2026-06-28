@@ -1,0 +1,54 @@
+{
+  "task_id": "phase12-local-bare-name-combined-pipeline-stdout-append-redirection-core-20260628",
+  "classification": "phase12-local-bare-name-combined-pipeline-stdout-append-redirection-core-accepted",
+  "source_changes": [
+    "build.rs",
+    "src/main.rs",
+    "src/local_command_loop.rs",
+    "src/target/qemu_virt.rs",
+    "scripts/qemu-local-serial-command-loop-smoke.sh",
+    "scripts/qemu-local-shell-bare-name-combined-pipeline-stdout-append-redirection-smoke.sh"
+  ],
+  "docs": [
+    "tasks/2026-06-28-phase12-local-bare-name-combined-pipeline-stdout-append-redirection-core.md",
+    "docs/src/roadmap.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/project/early-posix-shape.md"
+  ],
+  "focused_evidence": [
+    {
+      "level": "unit tests / QEMU-substitute",
+      "path": "tasks/evidence/2026-06-28-phase12-local-bare-name-combined-pipeline-stdout-append-redirection-core/qemu-substitute-focused-test.log",
+      "result": "cargo -Zjson-target-spec test --quiet local_command_loop_appends_bare_name_pipeline_combined_stdin_stdout_redirection passed"
+    },
+    {
+      "level": "unit tests / QEMU-substitute",
+      "path": "tasks/evidence/2026-06-28-phase12-local-bare-name-combined-pipeline-stdout-append-redirection-core/qemu-substitute-local-command-loop.log",
+      "result": "cargo -Zjson-target-spec test --quiet local_command_loop passed"
+    },
+    {
+      "level": "QEMU/substitute local shell smoke",
+      "path": "tasks/evidence/2026-06-28-phase12-local-bare-name-combined-pipeline-stdout-append-redirection-core/qemu-local-shell-bare-name-combined-pipeline-stdout-append-redirection-smoke.log",
+      "result": "final participants=24 expected=24 errors=0 classification=qemu-local-shell-bare-name-combined-pipeline-stdout-append-redirection-complete"
+    }
+  ],
+  "retained_regression_evidence": [
+    {
+      "level": "QEMU/substitute retained smoke summary",
+      "path": "tasks/evidence/2026-06-28-phase12-local-bare-name-combined-pipeline-stdout-append-redirection-core/retained-regression-smoke-summary.txt",
+      "result": "direct and bare-name combined pipeline stdin/stdout, direct combined pipeline stdout append, pipeline stdout append, pipeline stderr redirection, process-status VFS, ps, pipestatus, waitpid, and laststatus controls passed"
+    }
+  ],
+  "validation": [
+    "cargo fmt --all -- --check",
+    "cargo -Zjson-target-spec test --quiet local_command_loop_appends_bare_name_pipeline_combined_stdin_stdout_redirection",
+    "cargo -Zjson-target-spec test --quiet local_command_loop",
+    "scripts/qemu-local-shell-bare-name-combined-pipeline-stdout-append-redirection-smoke.sh --quiet",
+    "retained local POSIX/VFS QEMU/substitute smoke gates listed in retained-regression-smoke-summary.txt",
+    "jq empty on classification.json and evidence-map.json",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "git diff --cached --check"
+  ],
+  "hardware_claim": "none; live networking/SSH remains paused and no Pi 5 hardware claim is made"
+}
