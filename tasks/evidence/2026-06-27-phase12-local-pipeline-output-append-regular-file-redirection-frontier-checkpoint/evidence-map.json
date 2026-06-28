@@ -1,0 +1,62 @@
+{
+  "task_id": "phase12-local-pipeline-output-append-regular-file-redirection-frontier-checkpoint-20260627",
+  "classification": "local-pipeline-output-append-regular-file-redirection-frontier-checkpoint-accepted-planning-needed",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "No later queued same-lane local POSIX/VFS task has complete objective dependencies, acceptance criteria, validation gates, docs requirements, and evidence requirements after the accepted direct and fixed-/bin bare-name pipeline-output append regular-file redirection frontier checkpoint.",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "paths": [
+        "tasks/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-core.md",
+        "tasks/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-closeout.md",
+        "tasks/2026-06-27-phase12-local-bare-name-pipeline-output-append-regular-file-redirection-core.md",
+        "tasks/2026-06-27-phase12-local-bare-name-pipeline-output-append-regular-file-redirection-closeout.md",
+        "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-core/classification.json",
+        "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-core/evidence-map.json",
+        "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-core/qemu-local-shell-direct-pipeline-output-append-regular-file-redirection-smoke.log",
+        "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-core/retained-regression-smoke-summary.txt",
+        "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-closeout/classification.json",
+        "tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-closeout/evidence-map.json",
+        "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-output-append-regular-file-redirection-core/classification.json",
+        "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-output-append-regular-file-redirection-core/evidence-map.json",
+        "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-output-append-regular-file-redirection-core/qemu-local-shell-bare-name-pipeline-output-append-regular-file-redirection-smoke.log",
+        "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-output-append-regular-file-redirection-core/retained-regression-smoke-summary.txt",
+        "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-output-append-regular-file-redirection-closeout/classification.json",
+        "tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-output-append-regular-file-redirection-closeout/evidence-map.json",
+        "docs/src/roadmap.md",
+        "docs/src/project/phase12-networking-ssh.md",
+        "docs/src/project/early-posix-shape.md"
+      ],
+      "result": "accepted pipeline-output append regular-file frontier reconciled; accepted direct and bare-name truncate-then-append witnesses remain exact and unsupported forms remain fail-closed"
+    },
+    {
+      "level": "JSON validation",
+      "command": "jq empty tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-core/classification.json tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-core/evidence-map.json tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-closeout/classification.json tasks/evidence/2026-06-27-phase12-local-direct-pipeline-output-append-regular-file-redirection-closeout/evidence-map.json tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-output-append-regular-file-redirection-core/classification.json tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-output-append-regular-file-redirection-core/evidence-map.json tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-output-append-regular-file-redirection-closeout/classification.json tasks/evidence/2026-06-27-phase12-local-bare-name-pipeline-output-append-regular-file-redirection-closeout/evidence-map.json tasks/evidence/2026-06-27-phase12-local-pipeline-output-append-regular-file-redirection-frontier-checkpoint/classification.json tasks/evidence/2026-06-27-phase12-local-pipeline-output-append-regular-file-redirection-frontier-checkpoint/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed; HTML backend wrote book"
+    },
+    {
+      "level": "staged diff validation",
+      "command": "git diff --cached --check",
+      "result": "passed before commit"
+    },
+    {
+      "level": "lab-controller API",
+      "result": "not run; checkpoint-only local POSIX/VFS task had no Pi 5 hardware gate"
+    },
+    {
+      "level": "serial hardware boot/output",
+      "result": "not run; checkpoint-only local POSIX/VFS task had no Pi 5 hardware gate"
+    }
+  ]
+}
