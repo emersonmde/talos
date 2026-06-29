@@ -1,0 +1,92 @@
+{
+  "task_id": "phase12-ssh-live-tcp-device-interface-frontier-closeout-20260629",
+  "status": "accepted",
+  "classification": "ssh-live-tcp-device-interface-frontier-closeout-planning-needed",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "The local/static live TCP device/interface frontier is closed, but no later queued task has complete mechanically checkable dependencies for a live/hardware proof with candidate identity, fresh serial cursor, TFTP delta, known-good control, candidate rerun, hardware lock ownership, evidence redaction, and restore requirements.",
+  "accepted_local_static_ownership_metadata": true,
+  "accepted_local_static_descriptor_delivery": true,
+  "accepted_readiness_descriptor_prerequisite_labels": true,
+  "accepted_live_tcp_connection_establishment": false,
+  "accepted_live_packet_io": false,
+  "accepted_remote_receipt": false,
+  "accepted_openssh_compatibility": false,
+  "accepted_pi5_hardware_proof": false,
+  "accepted_service_success": false,
+  "ssh_ready": false,
+  "source_states": {
+    "ownership_model": "LiveTcpDeviceInterfaceOwnershipModel::NetworkOwnedSmoltcpInterfaceWithDriverPacketAdapterIngressAndDescriptorTableDelivery",
+    "descriptor_delivery": "LiveTcpAcceptedConnectionDeliveryState::AcceptedLocalDescriptorDelivery",
+    "readiness_prerequisite": "SshLiveTcpDescriptorPrerequisiteResult::LocalStaticDescriptorPrerequisiteAccepted",
+    "live_reachability_label": "sshservicediag-live-tcp-descriptor-prerequisite-live-reachability-unaccepted"
+  },
+  "required_future_live_proof_gates": [
+    "candidate identity",
+    "fresh serial cursor",
+    "TFTP delta",
+    "known-good control",
+    "candidate rerun",
+    "hardware lock ownership",
+    "evidence redaction",
+    "restore requirements"
+  ],
+  "rejected_claims": [
+    "Pi 5 hardware proof",
+    "hardwareTestLock acquisition",
+    "boot publication",
+    "generated-root retry",
+    "OpenSSH retry",
+    "packet I/O",
+    "live TCP connection attempt",
+    "remote receipt",
+    "OpenSSH compatibility",
+    "service success",
+    "ssh-ready=true",
+    "fake command expansion",
+    "runtime russh adoption",
+    "phase transition"
+  ],
+  "validation": [
+    {
+      "level": "pre-edit repository state",
+      "command": "git status --short --branch",
+      "result": "passed; main ahead of origin with no uncommitted Talos changes before task edits"
+    },
+    {
+      "level": "static inspection",
+      "command": "static review of accepted task records, docs, source-visible labels, and current supervisor state",
+      "result": "passed"
+    },
+    {
+      "level": "fmt",
+      "command": "cargo fmt --all -- --check",
+      "result": "not run; no Rust source touched"
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet with focused filters",
+      "result": "not run; no Rust source or expected diagnostics touched"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "level": "json validation",
+      "command": "jq empty tasks/evidence/2026-06-29-phase12-ssh-live-tcp-device-interface-frontier-closeout/classification.json tasks/evidence/2026-06-29-phase12-ssh-live-tcp-device-interface-frontier-closeout/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "staged diff validation",
+      "command": "git diff --cached --check",
+      "result": "passed before commit"
+    }
+  ]
+}

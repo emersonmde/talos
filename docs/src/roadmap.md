@@ -20581,6 +20581,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   command expansion, and phase transition remain rejected. The selected next
   local/static task is
   phase12-ssh-live-tcp-device-interface-frontier-closeout-20260629.
+- phase12-ssh-live-tcp-device-interface-frontier-closeout-20260629 accepts the
+  local/static live TCP device/interface frontier closeout without changing
+  runtime behavior. The accepted frontier now consists of the selected
+  network-owned smoltcp/device-interface ownership metadata, local/static
+  descriptor-facing accepted delivery, and sshservicediag labels that separate
+  the descriptor prerequisite from live reachability. Live packet I/O, remote
+  receipt, OpenSSH compatibility, Pi 5 hardware proof, service success,
+  ssh-ready=true, generated-root/OpenSSH retry, runtime russh adoption, fake
+  command expansion, and phase transition remain rejected. selected_next_task is
+  null and planningNeeded=true because no later queued task has complete
+  mechanically checkable dependencies for a live/hardware proof with candidate
+  identity, fresh serial cursor, TFTP delta, known-good control, candidate
+  rerun, hardware lock ownership, evidence redaction, and restore requirements.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

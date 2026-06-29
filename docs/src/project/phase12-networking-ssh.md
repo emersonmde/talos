@@ -185,6 +185,20 @@ TCP attempts, packet I/O, generated-root/OpenSSH retry, remote receipt,
 compatibility, hardware proof, ssh-ready=true, runtime russh adoption, fake
 command expansion, and phase transition remain rejected.
 
+The live TCP device/interface frontier closeout reconciles the accepted
+source/local chain before any hardware, generated-root, OpenSSH, or live TCP
+attempt. The accepted frontier is metadata-only: selected device/interface
+ownership is represented in src/network.rs, descriptor-facing accepted delivery
+is represented in LiveTcpListenerDescriptorAcceptReport, and sshservicediag can
+name the local/static descriptor prerequisite separately from live reachability.
+Live packet I/O, remote receipt, OpenSSH compatibility, Pi 5 hardware proof,
+service success, ssh-ready=true, runtime russh adoption, fake command expansion,
+and phase transition remain unaccepted. selected_next_task is null and
+planningNeeded=true because no later queued task has complete mechanically
+checkable dependencies for a live/hardware proof with candidate identity, fresh
+serial cursor, TFTP delta, known-good control, candidate rerun, hardware lock
+ownership, evidence redaction, and restore requirements.
+
 Live networking/SSH remains paused while the local POSIX/VFS/userspace
 continuation advances. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces

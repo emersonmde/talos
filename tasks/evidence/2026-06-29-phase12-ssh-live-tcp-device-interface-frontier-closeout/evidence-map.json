@@ -1,0 +1,68 @@
+{
+  "task_id": "phase12-ssh-live-tcp-device-interface-frontier-closeout-20260629",
+  "evidence_level": "static task/source/docs/state review, docs build, JSON validation, and diff checks",
+  "source_files_reviewed": [
+    "src/network.rs",
+    "src/ssh_service_readiness.rs",
+    "src/userspace_socket_abi.rs",
+    "src/rp1_ethernet.rs"
+  ],
+  "source_files_changed": [],
+  "docs_changed": [
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "task_records": [
+    "tasks/2026-06-29-phase12-ssh-live-tcp-device-interface-frontier-closeout.md",
+    "tasks/2026-06-29-phase12-ssh-live-tcp-device-interface-ownership-contract.md",
+    "tasks/2026-06-29-phase12-ssh-live-tcp-device-interface-local-core.md",
+    "tasks/2026-06-29-phase12-ssh-live-tcp-listener-descriptor-accept-local-core.md",
+    "tasks/2026-06-29-phase12-ssh-live-tcp-readiness-label-local-core.md"
+  ],
+  "accepted_local_static_frontier": {
+    "ownership_model": "network-owned-smoltcp-interface-with-driver-packet-adapter-ingress-and-descriptor-table-delivery",
+    "source_boundary": "AcceptedLocalSourceBoundary",
+    "descriptor_delivery": "AcceptedLocalDescriptorDelivery",
+    "readiness_prerequisite": "LocalStaticDescriptorPrerequisiteAccepted",
+    "live_reachability_label": "sshservicediag-live-tcp-descriptor-prerequisite-live-reachability-unaccepted",
+    "live_packet_io_accepted": false,
+    "live_reachability_accepted": false,
+    "remote_receipt_accepted": false,
+    "compatibility_accepted": false,
+    "hardware_proof_accepted": false,
+    "service_success_accepted": false,
+    "ssh_ready": false
+  },
+  "first_missing_fact": "No later queued task has complete mechanically checkable dependencies for a live/hardware proof with candidate identity, fresh serial cursor, TFTP delta, known-good control, candidate rerun, hardware lock ownership, evidence redaction, and restore requirements.",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "validation": [
+    "git status --short --branch before edits",
+    "static review of accepted task records, docs, source-visible labels, and current supervisor state",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "jq empty tasks/evidence/2026-06-29-phase12-ssh-live-tcp-device-interface-frontier-closeout/classification.json tasks/evidence/2026-06-29-phase12-ssh-live-tcp-device-interface-frontier-closeout/evidence-map.json",
+    "git diff --cached --check"
+  ],
+  "redaction_review": {
+    "retained": [
+      "task ids",
+      "source paths",
+      "public classifier names",
+      "validation commands and results",
+      "metadata-only enum labels",
+      "boolean readiness boundaries"
+    ],
+    "not_retained": [
+      "peer identifiers",
+      "addresses",
+      "packet payload contents",
+      "key material",
+      "session material",
+      "boot artifact bytes",
+      "hardware data",
+      "private user data",
+      "stable secret-derived identifiers"
+    ]
+  }
+}
