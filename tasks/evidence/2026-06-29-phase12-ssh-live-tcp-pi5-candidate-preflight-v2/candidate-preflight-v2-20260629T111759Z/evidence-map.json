@@ -1,0 +1,16 @@
+{
+  "run_root": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2/candidate-preflight-v2-20260629T111759Z",
+  "files": {
+    "classification": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2/candidate-preflight-v2-20260629T111759Z/classification.json",
+    "preflight_summary": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2/candidate-preflight-v2-20260629T111759Z/preflight-summary.json",
+    "archive_metadata": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2/candidate-preflight-v2-20260629T111759Z/candidate-identity/archive-metadata.json",
+    "archive_review": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2/candidate-preflight-v2-20260629T111759Z/validation/archive-review.txt",
+    "baseline_status": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2/candidate-preflight-v2-20260629T111759Z/baseline/status-before-candidate-action.json",
+    "known_good_primary": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2/candidate-preflight-v2-20260629T111759Z/known-good-control/known-good-control-runtime-readiness-primary.json",
+    "known_good_tftp_delta": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2/candidate-preflight-v2-20260629T111759Z/known-good-control/tftp-delta-stable-pre-restore.json",
+    "known_good_classification": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2/candidate-preflight-v2-20260629T111759Z/known-good-control/known-good-readiness-v3-classification.json",
+    "candidate_run_summary": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2/candidate-preflight-v2-20260629T111759Z/candidate-run/capture-invariant-summary.json",
+    "restore_status": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2/candidate-preflight-v2-20260629T111759Z/status-after-all-restore.json"
+  },
+  "redaction_review": "Metadata-only evidence retained with peer addresses and MACs redacted; no packet payloads, key/session material, boot artifact bytes, private user data, or stable secret-derived identifiers are intentionally retained."
+}

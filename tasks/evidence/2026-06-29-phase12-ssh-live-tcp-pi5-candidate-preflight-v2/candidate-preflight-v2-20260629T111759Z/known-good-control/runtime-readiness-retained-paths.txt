@@ -1,0 +1,3 @@
+tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2/candidate-preflight-v2-20260629T111759Z/known-good-control/known-good-control-runtime-readiness-primary.json
+tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2/candidate-preflight-v2-20260629T111759Z/known-good-control/known-good-control-runtime-readiness-primary-summary.json
+tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2/candidate-preflight-v2-20260629T111759Z/known-good-control/known-good-control-runtime-readiness-primary.status

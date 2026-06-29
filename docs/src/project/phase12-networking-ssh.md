@@ -268,6 +268,23 @@ remote receipt, compatibility, service success, ssh-ready=true, runtime russh
 adoption, fake command expansion, broad shell work, or phase transition is
 accepted by this source/local-materialization repair.
 
+The replacement live TCP Pi 5 candidate preflight v2 stopped at
+blocked-known-good-control after one reviewed candidate publication/capture.
+Source commit
+2d6f2938e2187d8eec0905eecc0ddc25d2c1cde7 can produce a reviewed candidate
+archive with da591740/kernel_2712.img, but the required known-good control did
+not establish the lab capture/readiness path: the retained primary serial
+readiness artifact used the saturated-cursor direct-read fallback and omitted
+the production success marker, while the v3 known-good classifier rejected
+missing-production-success-marker and missing-or-unstable-boot-identity-join.
+The retained first candidate capture also failed the identity join with TFTP
+byte and final-pre-restore identity mismatches. The lab was restored to the
+named snapshot, selected_next_task is null, and planningNeeded=true. No
+candidate-capture-ready, candidate rerun, packet-I/O discriminator,
+OpenSSH/generated-root retry, remote receipt, compatibility, service success,
+ssh-ready=true, runtime russh adoption, fake command expansion, broad shell
+work, or phase transition is accepted.
+
 Earlier live networking/SSH work was paused while the local POSIX/VFS/userspace
 continuation advanced. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces

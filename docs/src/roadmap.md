@@ -20660,6 +20660,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   retry, remote receipt, compatibility, service success, ssh-ready=true,
   runtime russh adoption, fake command expansion, broad shell work, or phase
   transition is accepted by this source/local-materialization repair.
+- phase12-ssh-live-tcp-pi5-candidate-preflight-v2-20260629 accepts a
+  blocked-known-good-control result after one reviewed candidate
+  publication/capture. Source commit
+  2d6f2938e2187d8eec0905eecc0ddc25d2c1cde7 can produce a reviewed candidate
+  archive with expected da591740/kernel_2712.img metadata, but the required
+  known-good control did not establish the lab capture/readiness path. The
+  retained primary serial readiness artifact used the saturated-cursor
+  direct-read fallback and omitted the production success marker, and the v3
+  known-good classifier rejected missing-production-success-marker plus
+  missing-or-unstable-boot-identity-join. The retained first candidate capture
+  also failed the identity join with TFTP byte and final-pre-restore identity
+  mismatches. The lab baseline was restored, selected_next_task is null, and
+  planningNeeded=true before any further live TCP candidate preflight,
+  packet-I/O discriminator, OpenSSH/generated-root retry, remote receipt,
+  compatibility, service success, ssh-ready=true, runtime russh adoption, fake
+  command expansion, broad shell work, or phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

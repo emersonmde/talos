@@ -1,0 +1,61 @@
+{
+  "classification": "blocked-known-good-control",
+  "planningNeeded": true,
+  "planningReason": "Known-good control did not establish the lab capture/readiness path, and the retained first candidate capture failed the identity join; supervisor planning is required before further live TCP candidate preflight or packet-I/O discriminator work.",
+  "selected_next_task": null,
+  "evidence_level": "lab-controller API, serial hardware boot/output, TFTP stable delta, archive inspection",
+  "summary": {
+    "run_root": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2/candidate-preflight-v2-20260629T111759Z",
+    "terminal_classification": "blocked-known-good-control",
+    "planningNeeded": true,
+    "planningReason": "Known-good control did not establish the lab capture/readiness path, and the retained first candidate capture failed the identity join; supervisor planning is required before further live TCP candidate preflight or packet-I/O discriminator work.",
+    "selected_next_task": null,
+    "source_commit": "2d6f2938e2187d8eec0905eecc0ddc25d2c1cde7",
+    "archive": {
+      "archive_path": "target/tmp/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2-20260629T111759Z.tar.gz",
+      "archive_sha256": "bad50bef561dc209702116d9dd9783e0a5a7da98ab8f1fcaf7e79cc2e1142051",
+      "archive_bytes": 175342,
+      "boot_tree": "target/tmp/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2-20260629T111759Z-boot-tree",
+      "boot_tree_manifest_hash": "21d1bcb507b7896a5912f125f4e5090851ce867fff2cb98ce1efbfb2e17208d1",
+      "expected_fetch": "da591740/kernel_2712.img",
+      "expected_fetch_bytes": 87432,
+      "kernel_2712_sha256": "516b0014eaead2a090779fba7bd8ea4da630f71e923e01182f0570aa9fc2de43"
+    },
+    "baseline": {
+      "tree_hash": "6ead8933b3287cddaf08ddcdbda7d4c770b365658ef1d0ad80a5dd0cf323f3ef",
+      "effective_kernel": "kernel_2712.img"
+    },
+    "known_good_control": {
+      "readiness_exit": 1,
+      "tftp_exit": 0,
+      "classification_exit": 1,
+      "classification": "known-good-readiness-v3-blocked",
+      "valid": false,
+      "rejection_reasons": [
+        "missing-production-success-marker",
+        "missing-or-unstable-boot-identity-join"
+      ]
+    },
+    "candidate_run": {
+      "helper_exit": 0,
+      "suggested_classification": "identity-join-mismatch",
+      "identity_join_rejection_reasons": [
+        "tftp-expected-fetch-byte-mismatch",
+        "final-pre-restore-tree-mismatch",
+        "final-pre-restore-selected-tree-mismatch",
+        "final-pre-restore-expected-fetch-byte-mismatch"
+      ],
+      "tftp_event_count": 13,
+      "expected_fetch_count": 2,
+      "serial_capture_mode": "read"
+    },
+    "candidate_rerun": {
+      "completed": false,
+      "reason": "not completed because known-good control and first candidate identity join failed before rerun could be trusted under the accepted proof contract"
+    },
+    "final_restore": {
+      "tree_hash": "6ead8933b3287cddaf08ddcdbda7d4c770b365658ef1d0ad80a5dd0cf323f3ef",
+      "effective_kernel": "kernel_2712.img"
+    }
+  }
+}

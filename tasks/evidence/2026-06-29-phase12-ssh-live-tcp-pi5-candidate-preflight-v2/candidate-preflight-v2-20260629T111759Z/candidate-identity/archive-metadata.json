@@ -1,0 +1,10 @@
+{
+  "archive_path": "target/tmp/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2-20260629T111759Z.tar.gz",
+  "archive_sha256": "bad50bef561dc209702116d9dd9783e0a5a7da98ab8f1fcaf7e79cc2e1142051",
+  "archive_bytes": 175342,
+  "boot_tree": "target/tmp/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2-20260629T111759Z-boot-tree",
+  "boot_tree_manifest_hash": "21d1bcb507b7896a5912f125f4e5090851ce867fff2cb98ce1efbfb2e17208d1",
+  "expected_fetch": "da591740/kernel_2712.img",
+  "expected_fetch_bytes": 87432,
+  "kernel_2712_sha256": "516b0014eaead2a090779fba7bd8ea4da630f71e923e01182f0570aa9fc2de43"
+}
