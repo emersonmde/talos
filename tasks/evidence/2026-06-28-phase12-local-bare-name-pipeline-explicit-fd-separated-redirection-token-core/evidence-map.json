@@ -1,0 +1,31 @@
+{
+  "task": "phase12-local-bare-name-pipeline-explicit-fd-separated-redirection-token-core-20260628",
+  "classification": "local-bare-name-pipeline-explicit-fd-separated-redirection-token-core-accepted",
+  "evidence": [
+    {
+      "level": "static inspection",
+      "paths": [
+        "src/local_command_loop.rs",
+        "docs/src/project/early-posix-shape.md",
+        "docs/src/roadmap.md",
+        "tasks/2026-06-28-phase12-local-bare-name-pipeline-explicit-fd-separated-redirection-token-core.md",
+        "tasks/evidence/2026-06-28-phase12-local-bare-name-pipeline-explicit-fd-separated-redirection-token-core/classification.json",
+        "tasks/evidence/2026-06-28-phase12-local-bare-name-pipeline-explicit-fd-separated-redirection-token-core/evidence-map.json"
+      ],
+      "result": "Bare-name pipeline consumer parsing and bounded argument guards accept only the exact explicit-fd separated-token stdout/stderr witnesses while preserving descriptor-backed VFS/userspace launch, pipe handoff, child-only final-stage descriptor rebinding, append readback, and restoration controls."
+    },
+    {
+      "level": "QEMU/substitute unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet local_command_loop",
+      "paths": [
+        "tasks/evidence/2026-06-28-phase12-local-bare-name-pipeline-explicit-fd-separated-redirection-token-core/qemu-substitute-local-command-loop.log"
+      ],
+      "result": "passed; 887 Talos no_std tests"
+    },
+    {
+      "level": "hardware scope",
+      "result": "No Pi 5 hardware/lab action, boot publication, generated-root retry, live networking/SSH, persistence, arbitrary paths, PATH/current-directory lookup, or phase transition was performed or claimed."
+    }
+  ],
+  "selected_next_task": "phase12-local-explicit-fd-separated-redirection-token-frontier-checkpoint-20260628"
+}

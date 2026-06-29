@@ -1952,6 +1952,32 @@ publication, live networking/SSH, persistence, and phase transition remain
 deferred. The selected next local task is the fixed-/bin bare-name pipeline
 explicit-fd separated-token counterpart.
 
+The fixed-/bin bare-name pipeline explicit-fd separated redirection-token core
+extends that same fd token, operator token, and path token grammar only after
+bounded /bin lookup resolves both accepted two-stage pipeline names. The
+accepted local witnesses are
+'stdin < /etc/banner.txt | stdin 1 > /tmp/talos-pipeline-output-alpha.txt'
+followed by
+'stdin < /etc/banner.txt | stdin 1 >> /tmp/talos-pipeline-output-alpha.txt',
+and
+'stdin < /etc/banner.txt | stderr 2 > /tmp/talos-pipeline-error-beta.log'
+followed by
+'stdin < /etc/banner.txt | stderr 2 >> /tmp/talos-pipeline-error-beta.log'.
+Successful behavior remains descriptor-backed through bounded /bin VFS lookup,
+VFS executable open/read for both stages, producer fd0 from
+initramfs:/etc/banner.txt, producer fd1 pipe handoff, final-stage fd0 from the
+pipe, child-only final-stage fd1/fd2 rebinding to safe volatile-vfs /tmp leaf
+files, append-at-EOF semantics, descriptor-backed cat readback,
+waitpid/laststatus/pipestatus observations, and descriptor restoration
+controls. Mixed direct/bare stages, unsupported bare stage names, unsupported fd
+tokens, producer/output misuse, missing operator/path tokens,
+nested/traversal paths, paths outside volatile /tmp, PATH/current-directory
+lookup, command lookup beyond bounded /bin, explicit fd input redirection, fd
+duplication/close syntax, arbitrary shell grammar, generated-root retry, Pi 5
+hardware proof, boot publication, live networking/SSH, persistence, and phase
+transition remain deferred. The selected next local task is the explicit-fd
+separated redirection-token frontier checkpoint.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

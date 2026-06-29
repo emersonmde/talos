@@ -20390,6 +20390,26 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   boot publication, and phase transition remain deferred. The selected next
   local task is the fixed-/bin bare-name pipeline explicit-fd separated-token
   counterpart.
+- Fixed-/bin bare-name two-stage combined pipelines now accept explicit fd,
+  operator, and path as separate tokens on the final-stage output redirection
+  after bounded /bin lookup. The accepted witnesses are
+  'stdin < /etc/banner.txt | stdin 1 > /tmp/talos-pipeline-output-alpha.txt'
+  followed by
+  'stdin < /etc/banner.txt | stdin 1 >> /tmp/talos-pipeline-output-alpha.txt',
+  and
+  'stdin < /etc/banner.txt | stderr 2 > /tmp/talos-pipeline-error-beta.log'
+  followed by
+  'stdin < /etc/banner.txt | stderr 2 >> /tmp/talos-pipeline-error-beta.log'.
+  The implementation remains descriptor-backed through bounded /bin VFS
+  lookup, executable open/read for both stages, producer initramfs stdin, pipe
+  handoff, child-only final-stage fd1/fd2 descriptor rebinding, volatile-vfs
+  /tmp leaf readback, append-at-EOF semantics,
+  waitpid/laststatus/pipestatus observations, and descriptor restoration
+  controls. Mixed direct/bare stages, unsupported bare stage names,
+  unsupported fd tokens, producer/output misuse, arbitrary paths, persistence,
+  live networking/SSH, Pi 5 hardware proof, generated-root retry, boot
+  publication, and phase transition remain deferred. The selected next local
+  task is the explicit-fd separated redirection-token frontier checkpoint.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

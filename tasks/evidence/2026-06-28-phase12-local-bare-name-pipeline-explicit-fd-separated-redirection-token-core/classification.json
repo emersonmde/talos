@@ -1,0 +1,45 @@
+{
+  "task": "phase12-local-bare-name-pipeline-explicit-fd-separated-redirection-token-core-20260628",
+  "classification": "local-bare-name-pipeline-explicit-fd-separated-redirection-token-core-accepted",
+  "accepted_boundary": {
+    "scope": "local-only fixed-/bin bare-name two-stage pipeline explicit-fd separated output redirection tokens",
+    "forms": [
+      "stdin < /etc/banner.txt | stdin 1 > /tmp/talos-pipeline-output-alpha.txt",
+      "stdin < /etc/banner.txt | stdin 1 >> /tmp/talos-pipeline-output-alpha.txt",
+      "stdin < /etc/banner.txt | stderr 2 > /tmp/talos-pipeline-error-beta.log",
+      "stdin < /etc/banner.txt | stderr 2 >> /tmp/talos-pipeline-error-beta.log"
+    ],
+    "backing": [
+      "bounded /bin VFS lookup",
+      "descriptor-backed VFS executable open/read for both stages",
+      "producer fd0 from initramfs:/etc/banner.txt",
+      "pipe handoff",
+      "child-only final-stage fd1/fd2 descriptor rebinding",
+      "volatile-vfs /tmp leaf regular-file write/readback",
+      "append-at-EOF semantics",
+      "waitpid/laststatus/pipestatus observations",
+      "descriptor restoration controls"
+    ]
+  },
+  "deferred": [
+    "mixed direct/bare stages",
+    "unsupported bare stage names",
+    "unsupported fd tokens",
+    "producer/output misuse",
+    "explicit fd input redirection",
+    "fd duplication/close syntax",
+    "nested or traversal paths",
+    "paths outside volatile /tmp",
+    "PATH or current-directory lookup",
+    "command lookup beyond bounded /bin",
+    "arbitrary shell grammar",
+    "persistent writable filesystem behavior",
+    "live networking/SSH",
+    "Pi 5 hardware/lab proof",
+    "generated-root retry",
+    "boot publication",
+    "phase transition"
+  ],
+  "hardware_scope": "No Pi 5 hardware/lab action, boot publication, generated-root retry, live networking/SSH, persistence, arbitrary paths, PATH/current-directory lookup, or phase transition was performed or claimed.",
+  "selected_next_task": "phase12-local-explicit-fd-separated-redirection-token-frontier-checkpoint-20260628"
+}
