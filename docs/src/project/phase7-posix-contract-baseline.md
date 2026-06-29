@@ -56,6 +56,7 @@ and later ABI mapping:
 | EBADF | invalid, closed, or inappropriate descriptor number |
 | ECHILD | no waitable child once wait exists |
 | EAGAIN | operation would block or resource is temporarily unavailable |
+| ETIMEDOUT | operation exceeded an explicit bounded timeout |
 | ENOMEM | allocation failed |
 | EACCES | access denied by permissions once credentials exist |
 | EFAULT | invalid userspace pointer once copy-in/copy-out exists |

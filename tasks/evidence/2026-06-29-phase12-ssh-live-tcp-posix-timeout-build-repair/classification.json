@@ -1,0 +1,42 @@
+{
+  "task_id": "phase12-ssh-live-tcp-posix-timeout-build-repair-20260629",
+  "classification": "candidate-build-ready",
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-candidate-preflight-v2-20260629",
+  "planning_needed": false,
+  "timeout_error_contract": {
+    "decision": "extend-posix-vocabulary",
+    "posix_variant": "PosixError::TimedOut",
+    "errno_name": "ETIMEDOUT",
+    "errno_number": 110,
+    "reason": "The touched network runtime path exhausts an explicit bounded step budget; EAGAIN remains would-block/resource-temporary and EIO remains unclassified backend I/O failure."
+  },
+  "local_materialization": {
+    "command": "scripts/rpi5-boot-tree.sh target/rpi5-production-timer-preemption-boot-tree target/tmp/posix-timeout-build-repair-20260629T110046Z-boot-tree",
+    "output_path": "target/tmp/posix-timeout-build-repair-20260629T110046Z-boot-tree",
+    "manifest_hash": "3c6c153d4f13e7891e2085c946c9f6125db0f0f41de17901efed5dfe5056a02f",
+    "kernel_2712_img": {
+      "bytes": 87432,
+      "sha256": "516b0014eaead2a090779fba7bd8ea4da630f71e923e01182f0570aa9fc2de43"
+    },
+    "kernel8_img": {
+      "bytes": 87432,
+      "sha256": "516b0014eaead2a090779fba7bd8ea4da630f71e923e01182f0570aa9fc2de43"
+    }
+  },
+  "negative_scope": [
+    "no hardwareTestLock acquisition",
+    "no lab or hardware action",
+    "no boot publication",
+    "no power-cycle",
+    "no serial or TFTP capture",
+    "no known-good control",
+    "no candidate run or rerun",
+    "no packet-I/O discriminator",
+    "no OpenSSH or generated-root retry",
+    "no remote receipt, compatibility, service success, or ssh-ready=true claim",
+    "no runtime russh adoption",
+    "no fake command expansion",
+    "no broad shell work",
+    "no phase transition"
+  ]
+}

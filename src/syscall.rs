@@ -208,6 +208,7 @@ pub(crate) const ENAMETOOLONG: u16 = 36;
 pub(crate) const ENOSYS: u16 = 38;
 pub(crate) const ENOTEMPTY: u16 = 39;
 pub(crate) const ENOTSUP: u16 = 95;
+pub(crate) const ETIMEDOUT: u16 = 110;
 
 pub(crate) const fn errno_number(error: PosixError) -> u16 {
     match error {
@@ -219,6 +220,7 @@ pub(crate) const fn errno_number(error: PosixError) -> u16 {
         PosixError::BadDescriptor => EBADF,
         PosixError::NoChild => ECHILD,
         PosixError::Again => EAGAIN,
+        PosixError::TimedOut => ETIMEDOUT,
         PosixError::NoMemory => ENOMEM,
         PosixError::AccessDenied => EACCES,
         PosixError::Fault => EFAULT,
@@ -3991,6 +3993,7 @@ mod tests {
             (PosixError::BadDescriptor, EBADF),
             (PosixError::NoChild, ECHILD),
             (PosixError::Again, EAGAIN),
+            (PosixError::TimedOut, ETIMEDOUT),
             (PosixError::NoMemory, ENOMEM),
             (PosixError::AccessDenied, EACCES),
             (PosixError::Fault, EFAULT),

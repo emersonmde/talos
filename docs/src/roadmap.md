@@ -20646,6 +20646,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   shell work, or phase transition is accepted. selected_next_task is null and
   planningNeeded=true until a bounded source repair or replacement candidate
   identity task is planned.
+- phase12-ssh-live-tcp-posix-timeout-build-repair-20260629 accepts
+  candidate-build-ready. The repair adds `PosixError::TimedOut` with POSIX
+  name `ETIMEDOUT`, maps it to errno 110 in syscall negative-x0 encoding, and
+  documents the explicit bounded-timeout contract. Local Pi 5 boot-tree
+  materialization now succeeds at
+  `target/tmp/posix-timeout-build-repair-20260629T110046Z-boot-tree`;
+  `kernel_2712.img` is 87432 bytes with SHA-256
+  `516b0014eaead2a090779fba7bd8ea4da630f71e923e01182f0570aa9fc2de43`.
+  selected_next_task is
+  phase12-ssh-live-tcp-pi5-candidate-preflight-v2-20260629. No lab
+  publication, hardware action, packet-I/O discriminator, OpenSSH/generated-root
+  retry, remote receipt, compatibility, service success, ssh-ready=true,
+  runtime russh adoption, fake command expansion, broad shell work, or phase
+  transition is accepted by this source/local-materialization repair.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

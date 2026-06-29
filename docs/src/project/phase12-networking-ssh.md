@@ -254,8 +254,22 @@ shell work, or phase transition is accepted. The lab was restored to the named
 snapshot, and planningNeeded=true selects no successor until a bounded source
 repair or replacement candidate identity task is planned.
 
-Live networking/SSH remains paused while the local POSIX/VFS/userspace
-continuation advances. The accepted dual-stage pipeline stdin redirection core
+The POSIX timeout build repair accepts candidate-build-ready. `src/posix.rs`
+now includes `PosixError::TimedOut`/`ETIMEDOUT`, and `src/syscall.rs`
+maps it to errno 110 with negative-x0 coverage. The local Pi 5 boot-tree
+materialization succeeded at
+`target/tmp/posix-timeout-build-repair-20260629T110046Z-boot-tree`
+with `kernel_2712.img` SHA-256
+`516b0014eaead2a090779fba7bd8ea4da630f71e923e01182f0570aa9fc2de43`.
+selected_next_task is
+phase12-ssh-live-tcp-pi5-candidate-preflight-v2-20260629. No lab publication,
+hardware action, packet-I/O discriminator, OpenSSH/generated-root retry,
+remote receipt, compatibility, service success, ssh-ready=true, runtime russh
+adoption, fake command expansion, broad shell work, or phase transition is
+accepted by this source/local-materialization repair.
+
+Earlier live networking/SSH work was paused while the local POSIX/VFS/userspace
+continuation advanced. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces
 '/bin/stdin </etc/banner.txt | /bin/stdin </etc/banner.txt' and
 'stdin </etc/banner.txt | stdin </etc/banner.txt' against retained task

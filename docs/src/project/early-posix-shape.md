@@ -62,7 +62,8 @@ The architecture-quality review for
 talos-review-posix-syscall-descriptors-20260603 tightened that rule: the
 syscall boundary now maps every current PosixError variant to an explicit
 errno number. Future PosixError additions should add syscall encoding tests
-with the new variant instead of relying on a fallback such as ENOSYS.
+with the new variant instead of relying on a fallback such as ENOSYS. The
+current vocabulary includes ETIMEDOUT for explicit bounded timeout failures.
 
 Phase 12.4 now has a private socket ABI contract for the accepted
 descriptor-backed AF_INET/SOCK_STREAM surface. It uses the stable Talos syscall
