@@ -213,6 +213,21 @@ success, ssh-ready=true, runtime russh adoption, fake command expansion, and
 phase transition remain unaccepted. The selected next task is
 phase12-ssh-live-tcp-network-device-smoltcp-runtime-closeout-20260629.
 
+The network-device smoltcp runtime closeout reconciles that accepted local
+deterministic runtime binding before any Pi 5 hardware/live proof. The accepted
+frontier is still source/local evidence: DriverPacketAdapter can act as a
+smoltcp device, the deterministic DriverPacketAdapter-backed smoltcp listener
+exchange can reach descriptor-facing delivery, and missing descriptor delivery,
+deterministic device-interface binding, or hardware frame provider fail closed.
+No Pi 5 packet I/O, external live TCP reachability, remote receipt, OpenSSH
+compatibility, hardware proof, service success, ssh-ready=true, generated-root
+retry, runtime russh adoption, fake command expansion, broad shell work, or
+phase transition is accepted. The selected next task is the contract-only
+phase12-ssh-live-tcp-pi5-proof-contract-20260629, which must define candidate
+identity, fresh serial cursor, TFTP delta, known-good control, candidate rerun,
+hardware lock ownership, evidence redaction, and restore requirements before any
+later hardware action.
+
 Live networking/SSH remains paused while the local POSIX/VFS/userspace
 continuation advances. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces

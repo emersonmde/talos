@@ -1,0 +1,38 @@
+{
+  "task_id": "phase12-ssh-live-tcp-network-device-smoltcp-runtime-closeout-20260629",
+  "classification": "ssh-live-tcp-network-device-smoltcp-runtime-closeout-accepted",
+  "status": "accepted",
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-proof-contract-20260629",
+  "accepted_runtime_closeout": {
+    "driver_packet_adapter_smoltcp_device_reviewed": true,
+    "deterministic_device_interface_delivery_reviewed": true,
+    "descriptor_facing_delivery_required": true,
+    "proof_contract_selected": true
+  },
+  "proof_contract_required_gates": {
+    "candidate_identity": true,
+    "fresh_serial_cursor": true,
+    "tftp_delta": true,
+    "known_good_control": true,
+    "candidate_rerun": true,
+    "hardware_lock_ownership": true,
+    "evidence_redaction": true,
+    "restore_requirements": true
+  },
+  "rejected_claims": {
+    "pi5_hardware_action": false,
+    "boot_publication": false,
+    "generated_root_retry": false,
+    "openssh_retry": false,
+    "external_live_tcp_attempt": false,
+    "packet_io": false,
+    "remote_receipt": false,
+    "openssh_compatibility": false,
+    "hardware_proof": false,
+    "ssh_ready_true": false,
+    "service_success": false,
+    "runtime_russh_adoption": false,
+    "fake_command_expansion": false,
+    "phase_transition": false
+  }
+}

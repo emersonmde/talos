@@ -20606,6 +20606,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   generated-root/OpenSSH retry, runtime russh adoption, fake command expansion,
   broad shell work, and phase transition remain rejected. The selected next
   task is phase12-ssh-live-tcp-network-device-smoltcp-runtime-closeout-20260629.
+- phase12-ssh-live-tcp-network-device-smoltcp-runtime-closeout-20260629 accepts
+  the static closeout for that local deterministic runtime binding. The accepted
+  frontier remains source/local evidence only: DriverPacketAdapter can act as a
+  smoltcp device, the deterministic DriverPacketAdapter-backed smoltcp listener
+  exchange can reach descriptor-facing delivery, and missing descriptor
+  delivery, deterministic device-interface binding, or hardware frame provider
+  fail closed. Pi 5 packet I/O, external live TCP reachability, remote receipt,
+  OpenSSH compatibility, hardware proof, service success, ssh-ready=true,
+  generated-root/OpenSSH retry, runtime russh adoption, fake command expansion,
+  broad shell work, and phase transition remain rejected. The selected next task
+  is the contract-only phase12-ssh-live-tcp-pi5-proof-contract-20260629, which
+  must define candidate identity, fresh serial cursor, TFTP delta, known-good
+  control, candidate rerun, hardware lock ownership, evidence redaction, and
+  restore requirements before any later hardware action.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
