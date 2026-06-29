@@ -76,6 +76,23 @@ objective local/static task is phase12-ssh-local-substrate-closeout-20260629;
 live SSH, generated-root/OpenSSH retry, hardware proof, session or shell
 success, and phase transition remain rejected.
 
+The local-to-live TCP gap inventory reconciles the accepted local SSH substrate
+against the accepted no-tcp-connect checkpoint and source owners. The accepted
+local socket-delivery path remains an in-memory descriptor-backed stream socket
+model with a synthetic local peer; it does not create a live listener, remote
+receipt, OpenSSH compatibility, Pi 5 hardware proof, or ssh-ready=true. The
+first missing source/evidence fact is the absent source contract that maps a
+smoltcp/device-side live TCP listener into Talos descriptor-facing accepted
+connections while preserving fail-closed readiness labels. src/network.rs owns
+the descriptor socket table, process-local connect/accept, packet-device
+adapters, and no-device smoltcp boundary; src/userspace_socket_abi.rs owns the
+experimental socket syscall dispatch; src/ssh_service_readiness.rs owns the
+local modeled SSH listener/readiness labels; src/rp1_ethernet.rs remains paused
+with selected_discriminator=null. The selected next local/static task is
+phase12-ssh-selected-live-tcp-local-core-20260629. Live TCP attempts,
+generated-root/OpenSSH retry, packet I/O, remote receipt, compatibility,
+hardware proof, ssh-ready=true, and phase transition remain rejected.
+
 Live networking/SSH remains paused while the local POSIX/VFS/userspace
 continuation advances. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces

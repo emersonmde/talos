@@ -20492,6 +20492,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   selected_discriminator=null, selected_next_task=null, and planningNeeded=true
   until supervisor planning or future source evidence selects a bounded
   successor.
+- phase12-ssh-local-to-live-tcp-gap-inventory-20260629 accepts the static
+  inventory between local modeled SSH socket delivery and live TCP connection
+  establishment. The first missing source/evidence fact is the absent contract
+  that binds a smoltcp/device-side live TCP listener to Talos
+  descriptor-facing accepted connections while preserving fail-closed readiness
+  labels. src/network.rs owns the descriptor socket table, process-local
+  connect/accept, packet-device adapters, and no-device smoltcp boundary;
+  src/userspace_socket_abi.rs owns the experimental socket syscall dispatch;
+  src/ssh_service_readiness.rs owns the local modeled SSH listener/readiness
+  labels; src/rp1_ethernet.rs remains paused with selected_discriminator=null.
+  Live TCP attempts, generated-root/OpenSSH retry, packet I/O, remote receipt,
+  compatibility, hardware proof, ssh-ready=true, fake command expansion, and
+  phase transition remain rejected. The selected next local/static task is
+  phase12-ssh-selected-live-tcp-local-core-20260629.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

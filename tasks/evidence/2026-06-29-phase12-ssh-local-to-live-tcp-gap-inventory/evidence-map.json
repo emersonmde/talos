@@ -1,0 +1,69 @@
+{
+  "task_id": "phase12-ssh-local-to-live-tcp-gap-inventory-20260629",
+  "reviewed_inputs": [
+    "memory/talos-supervisor-state.json",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md",
+    "src/network.rs",
+    "src/userspace_socket_abi.rs",
+    "src/ssh_service_readiness.rs",
+    "src/rp1_ethernet.rs",
+    "tasks/2026-06-29-phase12-ssh-local-substrate-closeout.md",
+    "tasks/2026-06-23-phase12-ssh-live-socket-delivery-closeout.md",
+    "tasks/2026-06-24-phase12-ssh-no-tcp-connect-live-network-substrate-checkpoint.md",
+    "tasks/2026-06-29-phase12-rp1-ethernet-link-not-ready-discriminator-reselection.md"
+  ],
+  "changed_files": [
+    "tasks/2026-06-29-phase12-ssh-local-to-live-tcp-gap-inventory.md",
+    "tasks/evidence/2026-06-29-phase12-ssh-local-to-live-tcp-gap-inventory/classification.json",
+    "tasks/evidence/2026-06-29-phase12-ssh-local-to-live-tcp-gap-inventory/evidence-map.json",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Accepted local modeled SSH socket delivery is bounded to descriptor-local synthetic stream socket behavior."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The first missing live-TCP fact is an owner-file source contract between smoltcp/device packet I/O and Talos descriptor-facing accepted connections."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Selected phase12-ssh-selected-live-tcp-local-core-20260629 as the next existing queued local/static task."
+    },
+    {
+      "disposition": "blocked",
+      "finding": "Live TCP attempt, OpenSSH retry, hardware proof, remote receipt, compatibility, and ssh-ready=true remain blocked."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Ethernet discriminator work remains dependency-blocked by selected_discriminator=null."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No Rust source change was required for this inventory."
+    }
+  ],
+  "redaction_review": {
+    "status": "pass",
+    "retained": [
+      "task ids",
+      "source paths",
+      "public classifier names",
+      "boolean acceptance boundaries",
+      "validation commands"
+    ],
+    "not_retained": [
+      "peer identifiers",
+      "addresses",
+      "packet payloads",
+      "key material",
+      "session material",
+      "boot artifact bytes",
+      "hardware data",
+      "private user data"
+    ]
+  }
+}

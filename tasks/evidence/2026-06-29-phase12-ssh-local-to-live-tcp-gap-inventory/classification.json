@@ -1,0 +1,27 @@
+{
+  "task_id": "phase12-ssh-local-to-live-tcp-gap-inventory-20260629",
+  "classification": "ssh-local-to-live-tcp-gap-inventory-selected-local-core",
+  "status": "accepted",
+  "evidence_level": [
+    "static source/docs/task review",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_local_modeled_socket_delivery": true,
+  "accepted_live_tcp_connection_establishment": false,
+  "accepted_remote_receipt": false,
+  "accepted_openssh_compatibility": false,
+  "accepted_pi5_hardware_proof": false,
+  "ssh_ready": false,
+  "first_missing_fact": "No accepted source contract maps a live TCP listener path through smoltcp/device packet I/O into Talos descriptor-facing accepted connections while preserving fail-closed SSH readiness boundaries.",
+  "owner_files": [
+    "src/network.rs",
+    "src/userspace_socket_abi.rs",
+    "src/ssh_service_readiness.rs",
+    "src/rp1_ethernet.rs"
+  ],
+  "selected_next_task": "phase12-ssh-selected-live-tcp-local-core-20260629",
+  "planningNeeded": false,
+  "hardware_scope": "No Pi 5 hardware/lab action, hardwareTestLock acquisition, boot publication, generated-root retry, OpenSSH retry, packet I/O, live TCP attempt, remote receipt, compatibility, ssh-ready=true, fake command expansion, or phase transition was performed or accepted."
+}
