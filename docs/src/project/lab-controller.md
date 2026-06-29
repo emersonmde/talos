@@ -357,10 +357,11 @@ scripts/rpi5-capture-invariant-proof-bundle.sh \
   --serial-marker <candidate-marker>
 ~~~
 
-The helper writes a deterministic proof bundle with pre-run status/files,
-snapshots, an explicit pre-power serial drain, fresh serial and TFTP cursors,
-bounded accumulated serial output, stable same-cursor TFTP evidence before
-restore, final pre-restore status/files, restore status/files, and
+The helper writes a deterministic proof bundle with pre-run `/status` and
+`/boot/files` samples, snapshots, an explicit pre-power serial drain, fresh
+serial and TFTP cursors, bounded accumulated serial output, stable same-cursor
+TFTP evidence before restore, final pre-restore `/status` and `/boot/files`
+samples, restore `/status` and `/boot/files` samples, and
 `capture-invariant-summary.json`. The pre-power drain uses `/serial/read`, not
 `/serial/peek`, because `peek` reports the retained log tail and does not
 consume retained bytes. Its summary suggests only the

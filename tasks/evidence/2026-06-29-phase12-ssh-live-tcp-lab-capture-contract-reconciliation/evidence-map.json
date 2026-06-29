@@ -1,0 +1,128 @@
+{
+  "task_id": "phase12-ssh-live-tcp-lab-capture-contract-reconciliation-20260629",
+  "task_record": "tasks/2026-06-29-phase12-ssh-live-tcp-lab-capture-contract-reconciliation.md",
+  "task_owned_json": [
+    "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-lab-capture-contract-reconciliation/classification.json",
+    "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-lab-capture-contract-reconciliation/evidence-map.json"
+  ],
+  "reviewed_task_records": [
+    "tasks/2026-06-29-phase12-ssh-live-tcp-pi5-proof-contract.md",
+    "tasks/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2.md"
+  ],
+  "reviewed_evidence": [
+    "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-proof-contract/classification.json",
+    "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-proof-contract/evidence-map.json",
+    "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2/candidate-preflight-v2-20260629T111759Z/preflight-summary.json",
+    "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2/candidate-preflight-v2-20260629T111759Z/classification.json",
+    "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2/candidate-preflight-v2-20260629T111759Z/evidence-map.json",
+    "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2/candidate-preflight-v2-20260629T111759Z/known-good-control/known-good-control-runtime-readiness-primary.json",
+    "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2/candidate-preflight-v2-20260629T111759Z/known-good-control/known-good-readiness-v3-classification.json",
+    "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2/candidate-preflight-v2-20260629T111759Z/known-good-control/tftp-delta-stable-pre-restore.json",
+    "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v2/candidate-preflight-v2-20260629T111759Z/candidate-run/capture-invariant-summary.json"
+  ],
+  "reviewed_docs": [
+    "docs/src/project/lab-controller.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "reviewed_source": [
+    "scripts/rpi5-known-good-readiness-v3-classify.sh",
+    "scripts/rpi5-retain-runtime-readiness-primary.sh",
+    "scripts/rpi5-observe-runtime-readiness.sh",
+    "scripts/rpi5-capture-invariant-proof-bundle.sh",
+    "scripts/rpi5-wait-tftp-delta.sh"
+  ],
+  "changed_files": [
+    "scripts/rpi5-capture-invariant-proof-bundle.sh",
+    "docs/src/project/lab-controller.md",
+    "tasks/2026-06-29-phase12-ssh-live-tcp-lab-capture-contract-reconciliation.md",
+    "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-lab-capture-contract-reconciliation/classification.json",
+    "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-lab-capture-contract-reconciliation/evidence-map.json"
+  ],
+  "retained_v2_contradictions": {
+    "known_good_primary": {
+      "capture_mode": "read",
+      "start_cursor_saturated": true,
+      "response_bytes": 0,
+      "has_kernel_main": false,
+      "has_required_success_marker": false,
+      "classification": "saturated-cursor-capture-blocked"
+    },
+    "known_good_identity": {
+      "pre_tree_hash_prefix": "6ead8933",
+      "final_tree_hash_prefix": "18e467bf",
+      "pre_kernel_bytes": 82045,
+      "final_or_tftp_kernel_bytes": 87432,
+      "classification": "known-good-readiness-v3-blocked"
+    },
+    "candidate_identity": {
+      "expected_fetch_bytes": 87432,
+      "observed_tftp_fetch_bytes": 82045,
+      "final_pre_restore_tree_hash_prefix": "6ead8933",
+      "rejection_reasons": [
+        "tftp-expected-fetch-byte-mismatch",
+        "final-pre-restore-tree-mismatch",
+        "final-pre-restore-selected-tree-mismatch",
+        "final-pre-restore-expected-fetch-byte-mismatch"
+      ]
+    }
+  },
+  "validation": [
+    {
+      "command": "git status --short --branch before edits",
+      "result": "pass; ## main...origin/main [ahead 168]"
+    },
+    {
+      "command": "scripts/rpi5-known-good-readiness-v3-classify.sh over retained v2 known-good artifacts",
+      "result": "pass; reproduced expected exit 1 and known-good-readiness-v3-blocked"
+    },
+    {
+      "command": "scripts/rpi5-capture-invariant-proof-bundle.sh --dry-run",
+      "result": "pass"
+    },
+    {
+      "command": "sh -n scripts/rpi5-capture-invariant-proof-bundle.sh",
+      "result": "pass"
+    },
+    {
+      "command": "jq empty on task-owned JSON evidence",
+      "result": "pass"
+    },
+    {
+      "command": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass"
+    },
+    {
+      "command": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "redaction_review": {
+    "retained": [
+      "task ids",
+      "source paths",
+      "public classifier names",
+      "tree-hash prefixes",
+      "kernel byte counts",
+      "validation command names and results",
+      "metadata-only labels"
+    ],
+    "not_retained": [
+      "peer identifiers",
+      "addresses",
+      "packet payload contents",
+      "key material",
+      "session material",
+      "boot artifact bytes",
+      "private user data",
+      "stable secret-derived identifiers",
+      "unnecessary hardware data"
+    ]
+  },
+  "selected_next_task": "phase12-ssh-live-tcp-known-good-capture-discriminator-20260629",
+  "final_commit_record": "recorded in talos-supervisor-state.json after final commit"
+}

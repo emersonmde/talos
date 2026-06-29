@@ -1,0 +1,66 @@
+{
+  "task_id": "phase12-ssh-live-tcp-lab-capture-contract-reconciliation-20260629",
+  "status": "accepted",
+  "classification": "lab-capture-contract-reconciled-known-good-discriminator-ready",
+  "selected_next_task": "phase12-ssh-live-tcp-known-good-capture-discriminator-20260629",
+  "planningNeeded": false,
+  "evidence_level": [
+    "static task record review",
+    "static retained evidence review",
+    "static helper/source review",
+    "focused helper dry-run",
+    "docs validation",
+    "diff validation"
+  ],
+  "reconciliations": {
+    "missing_production_success_marker": {
+      "disposition": "blocked-for-hardware-discriminator",
+      "first_missing_or_repaired_fact": "v2 retained saturated direct-read primary readiness artifact has response_bytes=0 and lacks TALOS: kernel_main plus the required production-timer success marker; needs a fresh known-good-only serial window."
+    },
+    "unstable_or_missing_boot_identity_join": {
+      "disposition": "blocked-for-hardware-discriminator",
+      "first_missing_or_repaired_fact": "v2 known-good pre tree 6ead8933... drifted to tree 18e467bf... with candidate-sized 87432-byte kernel serves; needs a known-good-only run proving one stable selected tree before candidate publication."
+    },
+    "candidate_expected_fetch_byte_mismatch": {
+      "disposition": "deferred-until-known-good-ready",
+      "first_missing_or_repaired_fact": "candidate TFTP delta served 82045-byte baseline kernels while candidate identity expected 87432 bytes; candidate preflight v3 must retry only after known-good capture is accepted."
+    },
+    "final_pre_restore_tree_mismatch": {
+      "disposition": "deferred-until-known-good-ready",
+      "first_missing_or_repaired_fact": "candidate final pre-restore identity returned to restored baseline tree 6ead8933..., so candidate capture remains blocked until the reconciled preflight v3."
+    },
+    "endpoint_identity_source": {
+      "disposition": "fixed",
+      "first_missing_or_repaired_fact": "scripts/rpi5-capture-invariant-proof-bundle.sh now writes status artifacts from GET /status while retaining /boot/files for file and byte identity."
+    }
+  },
+  "source_changes": [
+    {
+      "path": "scripts/rpi5-capture-invariant-proof-bundle.sh",
+      "change": "pre-status.json, final-pre-restore-status.json, and post-restore-status.json now come from GET /status instead of /boot/files"
+    }
+  ],
+  "docs_changes": [
+    {
+      "path": "docs/src/project/lab-controller.md",
+      "change": "capture-invariant helper documentation now distinguishes /status samples from /boot/files samples"
+    }
+  ],
+  "explicit_rejections": [
+    "Pi 5 hardware/lab action",
+    "hardwareTestLock acquisition",
+    "boot publication",
+    "power-cycle",
+    "candidate run or rerun",
+    "packet-I/O discriminator",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility",
+    "ssh-ready=true",
+    "runtime russh adoption",
+    "fake command expansion",
+    "broad shell work",
+    "phase transition"
+  ],
+  "final_commit_record": "recorded in talos-supervisor-state.json after final commit"
+}

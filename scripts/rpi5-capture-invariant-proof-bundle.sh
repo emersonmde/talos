@@ -306,7 +306,7 @@ capture_root_endpoint() {
 
 capture_root_endpoint "$EVIDENCE_DIR/pre-root-endpoint-body.txt" "$EVIDENCE_DIR/pre-root-endpoint.json"
 curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/pre-root.json"
-curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/pre-status.json"
+curl -fsS "${API_BASE}/status" > "$EVIDENCE_DIR/pre-status.json"
 curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/pre-boot-files.json"
 curl -fsS "${API_BASE}/boot/snapshots" > "$EVIDENCE_DIR/pre-snapshots.json"
 
@@ -438,14 +438,14 @@ tftp_exit="$?"
 set -e
 printf '%s\n' "$tftp_exit" > "$EVIDENCE_DIR/tftp-delta-stable-pre-restore.exit"
 
-curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/final-pre-restore-status.json"
+curl -fsS "${API_BASE}/status" > "$EVIDENCE_DIR/final-pre-restore-status.json"
 capture_root_endpoint "$EVIDENCE_DIR/final-pre-restore-root-endpoint-body.txt" "$EVIDENCE_DIR/final-pre-restore-root-endpoint.json"
 curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/final-pre-restore-root.json"
 curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/final-pre-restore-boot-files.json"
 curl -fsS -X POST "${API_BASE}/boot/restore?name=${RESTORE_SNAPSHOT}" > "$EVIDENCE_DIR/restore-snapshot.json"
 capture_root_endpoint "$EVIDENCE_DIR/post-restore-root-endpoint-body.txt" "$EVIDENCE_DIR/post-restore-root-endpoint.json"
 curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/post-restore-root.json"
-curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/post-restore-status.json"
+curl -fsS "${API_BASE}/status" > "$EVIDENCE_DIR/post-restore-status.json"
 curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/post-restore-boot-files.json"
 
 jq -n \
