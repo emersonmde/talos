@@ -24,6 +24,19 @@ phase12-ssh-entropy-diagnostic-local-core-20260629. This does not accept host
 keys, live SSH, TCP/IP, packet I/O, Pi 5 hardware proof, cryptographic
 sufficiency for deployed SSH, or a phase transition.
 
+The accepted SSH entropy diagnostic local core adds only metadata CSPRNG
+readiness labels and still reports ssh-ready false. The follow-on host-key
+provisioning contract revalidates the existing SSH host-key policy after that
+entropy change: Talos keeps operator-provisioned read-only VFS host-key
+material at /etc/talos/ssh/ssh_host_ed25519_key as the selected source/config
+strategy, with the accepted first runtime format remaining unencrypted
+OpenSSH ssh-ed25519 private material. Real host-key bytes, public-key blobs,
+signatures, fingerprints, digests, comments, operator identity, stable
+secret-derived identifiers, and session/transport identifiers remain rejected
+from diagnostics, task records, serial logs, and retained evidence. No new
+implementation task is queued by this contract; supervisor planning is
+required before any further host-key implementation or rework is promoted.
+
 Live networking/SSH remains paused while the local POSIX/VFS/userspace
 continuation advances. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces

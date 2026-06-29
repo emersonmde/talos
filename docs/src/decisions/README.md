@@ -430,6 +430,13 @@ ADR template:
   select a broader crypto backend, generation policy, host randomness source,
   runtime KEX, encryption/MAC, NEWKEYS, authentication/session behavior,
   hardware reachability, compatibility, broad expansion, or phase transition.
+- Revalidation update: phase12-ssh-host-key-provisioning-contract-20260629
+  revalidated this host-key private-material boundary after the accepted local
+  entropy diagnostic added CSPRNG readiness metadata. The revalidation keeps
+  operator-provisioned read-only VFS material and unencrypted OpenSSH
+  ssh-ed25519 private material selected, rejects using CSPRNG readiness to
+  generate or retain host keys, and requires supervisor planning before any
+  further host-key implementation or rework is promoted.
 - Alternatives considered: encrypted OpenSSH private keys, generated host
   keys, PKCS/PPK/SEC1/legacy formats, RSA/ECDSA/DSA/FIDO/certificate formats,
   broad ssh-key default/crypto features, and a Talos-owned parser/signing stack
@@ -556,6 +563,14 @@ ADR template:
   private-key bytes for cryptographic use, but diagnostics and task evidence
   must not retain, print, digest, fingerprint, derive from, compare, or expose
   private-key bytes or stable secret identifiers.
+- Revalidation update: phase12-ssh-host-key-provisioning-contract-20260629
+  keeps this source/config policy authoritative after the current entropy
+  diagnostic frontier. Operator-provisioned read-only VFS material at
+  /etc/talos/ssh/ssh_host_ed25519_key remains selected; generated ephemeral
+  keys, first-boot writable generation, hardcoded deployment keys, and retained
+  fingerprints/digests remain rejected or blocked. No mechanically objective
+  follow-up task was queued by the revalidation, so supervisor planning is
+  required before further worker promotion.
 - Alternatives considered: generate an ephemeral host key from the accepted
   CSPRNG, generate and persist a key to writable storage, hardcode a test key
   in source, or skip host-key policy until SSH service work. Ephemeral keys

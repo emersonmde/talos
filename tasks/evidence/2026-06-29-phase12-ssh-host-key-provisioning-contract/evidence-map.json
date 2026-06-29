@@ -1,0 +1,70 @@
+{
+  "task_id": "phase12-ssh-host-key-provisioning-contract-20260629",
+  "classification": "ssh-host-key-provisioning-contract-accepted",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "No mechanically objective queued follow-up task exists after this contract.",
+  "evidence": [
+    {
+      "level": "static task review",
+      "path": "tasks/2026-06-29-phase12-ssh-entropy-diagnostic-local-core.md",
+      "result": "Accepted entropy diagnostic local core reports CSPRNG readiness metadata and keeps ssh-ready false; it does not authorize host-key generation or live SSH readiness."
+    },
+    {
+      "level": "static task review",
+      "path": "tasks/2026-06-22-phase12-ssh-host-key-private-material-contract.md",
+      "result": "Accepted unencrypted OpenSSH ssh-ed25519 private-material contract remains the selected first runtime host-key format."
+    },
+    {
+      "level": "static task review",
+      "path": "tasks/2026-06-22-phase12-ssh-host-key-private-material-core.md",
+      "result": "Accepted implementation already models fail-closed parsing/signing readiness with public fixtures and no retained real secret material."
+    },
+    {
+      "level": "static source inspection",
+      "path": "src/ssh_key_readiness.rs",
+      "result": "Defines the host-key path, metadata caps, OpenSSH private-material loader, in-memory signing handle, authorized-key metadata, persistence/exposure classifiers, and fail-closed ssh-ready=false labels."
+    },
+    {
+      "level": "static source inspection",
+      "path": "src/diagnostic_command.rs",
+      "result": "Exposes sshkeydiag/sshservicediag as fixed-label diagnostics and uses public fixtures for source tests."
+    },
+    {
+      "level": "static source inspection",
+      "path": "src/csprng.rs",
+      "result": "Provides operator-seeded CSPRNG readiness without exposing seed bytes or generated random bytes through diagnostics."
+    },
+    {
+      "level": "docs",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "result": "Updated to record the revalidated host-key provisioning boundary after the entropy diagnostic core."
+    },
+    {
+      "level": "ADR",
+      "path": "docs/src/decisions/README.md",
+      "result": "Updated existing host-key ADRs with the 2026-06-29 revalidation and planning-needed frontier."
+    }
+  ],
+  "task_records": [
+    "tasks/2026-06-29-phase12-ssh-host-key-provisioning-contract.md"
+  ],
+  "task_owned_json": [
+    "tasks/evidence/2026-06-29-phase12-ssh-host-key-provisioning-contract/classification.json",
+    "tasks/evidence/2026-06-29-phase12-ssh-host-key-provisioning-contract/evidence-map.json"
+  ],
+  "validation_commands": [
+    "git status --short --branch before edits",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "jq empty on task-owned JSON",
+    "git diff --cached --check"
+  ],
+  "hardware_scope": {
+    "pi5_hardware_run": false,
+    "lab_controller": false,
+    "boot_publication": false,
+    "tftp_or_serial_evidence": false,
+    "openssh_retry": false
+  }
+}

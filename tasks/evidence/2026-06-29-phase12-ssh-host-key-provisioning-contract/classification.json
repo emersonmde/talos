@@ -1,0 +1,82 @@
+{
+  "task_id": "phase12-ssh-host-key-provisioning-contract-20260629",
+  "status": "accepted",
+  "classification": "ssh-host-key-provisioning-contract-accepted",
+  "evidence_level": [
+    "static source/docs/task/ADR review",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "selected_contract": {
+    "source_config_strategy": "operator-provisioned read-only VFS/generated-root host-key material",
+    "path": "/etc/talos/ssh/ssh_host_ed25519_key",
+    "runtime_format": "unencrypted OpenSSH ssh-ed25519 private-key material",
+    "diagnostic_evidence_boundary": [
+      "fixed labels",
+      "booleans",
+      "public path names",
+      "byte-length classifications",
+      "validation command names"
+    ],
+    "material_allowed_in_source_or_config": [
+      "public test fixture keys clearly labeled as fixtures",
+      "operator-provisioned deployment key material only through read-only VFS/generated-root configuration"
+    ],
+    "material_rejected_from_retained_evidence": [
+      "real private host-key bytes",
+      "authorized-key bytes",
+      "public-key blobs",
+      "signatures",
+      "fingerprints",
+      "digests",
+      "comments",
+      "operator identity",
+      "generated random bytes",
+      "session identifiers",
+      "transport identifiers",
+      "stable secret-derived identifiers"
+    ]
+  },
+  "candidate_dispositions": {
+    "operator_provisioned_read_only_vfs_host_key": "selected",
+    "unencrypted_openssh_ed25519_private_material": "selected",
+    "metadata_only_diagnostic_evidence": "selected",
+    "encrypted_or_passphrase_protected_host_keys": "deferred",
+    "non_ed25519_or_certificate_host_keys": "deferred",
+    "ephemeral_csprng_generated_host_key": "deferred",
+    "first_boot_writable_persistent_generation": "blocked",
+    "hardcoded_deployment_host_key_in_source": "rejected",
+    "fingerprint_or_digest_as_proof": "rejected"
+  },
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "No mechanically objective queued follow-up task exists after phase12-ssh-host-key-provisioning-contract-20260629; supervisor must add an explicit next task with owner files, validation gates, evidence requirements, and redaction rules before worker promotion.",
+  "rejected_claims": [
+    "host-key-generation",
+    "generated-key-persistence",
+    "authorized-keys-provisioning",
+    "runtime-kex-consumption",
+    "packet-session-crypto",
+    "newkeys",
+    "encryption-mac",
+    "authentication-success",
+    "shell-attachment",
+    "live-ssh",
+    "tcp-ip",
+    "network-reachability",
+    "pi5-proof",
+    "boot-publication",
+    "generated-root-retry",
+    "openssh-compatibility",
+    "phase-transition"
+  ],
+  "validation": {
+    "git_status_short_branch_before_edits": "pass",
+    "static_source_docs_task_adr_review": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass; search index size warning retained",
+    "jq_empty_task_owned_json": "pass",
+    "git_diff_cached_check": "pass before commit"
+  }
+}
