@@ -47,6 +47,19 @@ operator identity, or stable secret-derived identifiers in durable evidence.
 sshkeydiag and sshservicediag remain fail-closed, and the next mechanically
 objective local/static task is the service-readiness prerequisite revalidation.
 
+The accepted SSH service-readiness prerequisite revalidation confirms that the
+credential substrate still composes into sshkeydiag and sshservicediag as
+prerequisite metadata only. Missing, invalid, insufficient, and sufficient
+host-key and authorized-key metadata retain fixed labels and redaction;
+operator-seed/CSPRNG readiness, persistence metadata, and exposure opt-in do
+not expose secret material. sshservicediag remains fail-closed with
+transport-enabled=false, authentication-success=false, shell-attached=false,
+reachability-accepted=false, and ssh-ready=false. The next mechanically
+objective local/static task is
+phase12-ssh-publickey-auth-lineage-revalidation-core-20260629; live SSH,
+generated-root/OpenSSH retry, hardware proof, authentication success, and phase
+transition remain rejected.
+
 Live networking/SSH remains paused while the local POSIX/VFS/userspace
 continuation advances. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces

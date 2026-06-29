@@ -1,0 +1,69 @@
+{
+  "task_id": "phase12-ssh-service-readiness-prerequisite-revalidation-core-20260629",
+  "classification": "ssh-service-readiness-prerequisite-revalidation-core-accepted",
+  "status": "accepted-after-commit",
+  "selected_next_task": "phase12-ssh-publickey-auth-lineage-revalidation-core-20260629",
+  "planningNeeded": false,
+  "revalidated_substrate": {
+    "operator_seed_metadata": "prerequisite-only",
+    "csprng_readiness_metadata": "prerequisite-only",
+    "host_key_material": "operator-provisioned read-only VFS prerequisite-only",
+    "authorized_keys_metadata": "operator-provisioned read-only VFS prerequisite-only",
+    "persistence_metadata": "prerequisite-only",
+    "exposure_opt_in": "prerequisite-only"
+  },
+  "fail_closed": {
+    "sshkeydiag": true,
+    "sshservicediag": true,
+    "transport_enabled": false,
+    "authentication_success": false,
+    "shell_attached": false,
+    "reachability_accepted": false,
+    "ssh_ready": false
+  },
+  "retained_evidence_allowed": [
+    "fixed labels",
+    "booleans",
+    "public path names",
+    "public byte counts and lengths",
+    "public message numbers",
+    "validation commands",
+    "task ids",
+    "classifications"
+  ],
+  "retained_evidence_rejected": [
+    "real seed bytes",
+    "generated random bytes",
+    "host-key bytes",
+    "authorized_keys bytes",
+    "public-key blobs",
+    "signatures",
+    "signed-data bytes",
+    "fingerprints",
+    "digests",
+    "comments",
+    "operator identity",
+    "account identity",
+    "session-id bytes",
+    "exchange hashes",
+    "transport identifiers",
+    "packet payloads",
+    "stable secret-derived identifiers"
+  ],
+  "non_goals_preserved": [
+    "host-key generation",
+    "authorized_keys generation",
+    "writable credential persistence",
+    "live transport",
+    "authentication success",
+    "session or shell success",
+    "live networking or SSH readiness",
+    "Pi 5 hardware proof",
+    "boot publication",
+    "generated-root retry",
+    "OpenSSH retry",
+    "fake command expansion",
+    "phase transition"
+  ],
+  "commit": "recorded in durable supervisor state after commit"
+}
