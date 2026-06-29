@@ -154,6 +154,21 @@ attempts, packet I/O, generated-root/OpenSSH retry, remote receipt,
 compatibility, hardware proof, ssh-ready=true, runtime russh adoption, fake
 command expansion, and phase transition remain rejected.
 
+The live TCP listener descriptor-accept local core adds the descriptor-facing
+accepted-connection witness for that selected local/static boundary.
+src/network.rs now reports LiveTcpListenerDescriptorAcceptReport with
+AcceptedLocalDescriptorDelivery only when the smoltcp bridge is Established,
+the listener accepted a Talos descriptor, and that descriptor is in the
+Accepted socket state for the same connection id. The fail-closed real
+device/interface path reports BlockedMissingDeviceInterfaceBinding, keeps
+descriptor_facing_connection_delivered=false, and preserves false labels for
+live_packet_io, live_reachability, remote_receipt, OpenSSH compatibility,
+hardware proof, and ssh_ready. The selected next local/static task is
+phase12-ssh-live-tcp-readiness-label-local-core-20260629. Live TCP attempts,
+packet I/O, generated-root/OpenSSH retry, remote receipt, compatibility,
+hardware proof, ssh-ready=true, runtime russh adoption, fake command expansion,
+and phase transition remain rejected.
+
 Live networking/SSH remains paused while the local POSIX/VFS/userspace
 continuation advances. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces

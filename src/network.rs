@@ -2541,6 +2541,13 @@ pub(crate) enum LiveTcpDeviceInterfaceBindingState {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum LiveTcpAcceptedConnectionDeliveryState {
+    AcceptedLocalDescriptorDelivery,
+    BlockedMissingDeviceInterfaceBinding,
+    BlockedNoDescriptorBridge,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct LiveTcpListenerDescriptorBoundaryReport {
     boundary: LiveTcpListenerDescriptorBoundary,
     ownership_model: LiveTcpDeviceInterfaceOwnershipModel,
@@ -2593,6 +2600,62 @@ impl LiveTcpListenerDescriptorBoundaryReport {
 
     pub(crate) const fn device_interface_bound(self) -> bool {
         self.device_interface_bound
+    }
+
+    pub(crate) const fn live_packet_io_accepted(self) -> bool {
+        self.live_packet_io_accepted
+    }
+
+    pub(crate) const fn live_reachability_accepted(self) -> bool {
+        self.live_reachability_accepted
+    }
+
+    pub(crate) const fn remote_receipt_accepted(self) -> bool {
+        self.remote_receipt_accepted
+    }
+
+    pub(crate) const fn compatibility_accepted(self) -> bool {
+        self.compatibility_accepted
+    }
+
+    pub(crate) const fn ssh_ready(self) -> bool {
+        self.ssh_ready
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct LiveTcpListenerDescriptorAcceptReport {
+    boundary: LiveTcpListenerDescriptorBoundaryReport,
+    delivery_state: LiveTcpAcceptedConnectionDeliveryState,
+    accepted_descriptor: Option<NetworkSocketDescriptor>,
+    accepted_descriptor_state: Option<NetworkSocketState>,
+    descriptor_facing_connection_delivered: bool,
+    live_packet_io_accepted: bool,
+    live_reachability_accepted: bool,
+    remote_receipt_accepted: bool,
+    compatibility_accepted: bool,
+    ssh_ready: bool,
+}
+
+impl LiveTcpListenerDescriptorAcceptReport {
+    pub(crate) const fn boundary(self) -> LiveTcpListenerDescriptorBoundaryReport {
+        self.boundary
+    }
+
+    pub(crate) const fn delivery_state(self) -> LiveTcpAcceptedConnectionDeliveryState {
+        self.delivery_state
+    }
+
+    pub(crate) const fn accepted_descriptor(self) -> Option<NetworkSocketDescriptor> {
+        self.accepted_descriptor
+    }
+
+    pub(crate) const fn accepted_descriptor_state(self) -> Option<NetworkSocketState> {
+        self.accepted_descriptor_state
+    }
+
+    pub(crate) const fn descriptor_facing_connection_delivered(self) -> bool {
+        self.descriptor_facing_connection_delivered
     }
 
     pub(crate) const fn live_packet_io_accepted(self) -> bool {
@@ -3108,6 +3171,57 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
             last_payload_len: record.last_payload().payload_len(),
             device_interface_binding_state,
             device_interface_bound: false,
+            live_packet_io_accepted: false,
+            live_reachability_accepted: false,
+            remote_receipt_accepted: false,
+            compatibility_accepted: false,
+            ssh_ready: false,
+        })
+    }
+
+    pub(crate) fn live_tcp_listener_descriptor_accept_delivery(
+        &self,
+        connection_id: u64,
+        require_device_interface_binding: bool,
+    ) -> Result<LiveTcpListenerDescriptorAcceptReport, crate::posix::PosixError> {
+        let boundary = self.live_tcp_listener_descriptor_boundary(
+            connection_id,
+            require_device_interface_binding,
+        )?;
+        let record = self.smoltcp_bridge_record(connection_id)?;
+        let accepted_descriptor = record.accepted_descriptor();
+        let accepted_descriptor_state = accepted_descriptor
+            .and_then(|descriptor| self.socket(descriptor).ok().map(|socket| socket.state()));
+        let descriptor_facing_connection_delivered = matches!(
+            accepted_descriptor_state,
+            Some(NetworkSocketState::Accepted {
+                connection_id: accepted_connection_id,
+                ..
+            }) if accepted_connection_id == connection_id
+        );
+        let delivery_state = match boundary.boundary() {
+            LiveTcpListenerDescriptorBoundary::AcceptedLocalSourceBoundary
+                if descriptor_facing_connection_delivered =>
+            {
+                LiveTcpAcceptedConnectionDeliveryState::AcceptedLocalDescriptorDelivery
+            }
+            LiveTcpListenerDescriptorBoundary::BlockedNoDeviceInterfaceBinding => {
+                LiveTcpAcceptedConnectionDeliveryState::BlockedMissingDeviceInterfaceBinding
+            }
+            LiveTcpListenerDescriptorBoundary::AcceptedLocalSourceBoundary
+            | LiveTcpListenerDescriptorBoundary::BlockedNoDescriptorBridge => {
+                LiveTcpAcceptedConnectionDeliveryState::BlockedNoDescriptorBridge
+            }
+        };
+        let descriptor_facing_connection_delivered = delivery_state
+            == LiveTcpAcceptedConnectionDeliveryState::AcceptedLocalDescriptorDelivery;
+
+        Ok(LiveTcpListenerDescriptorAcceptReport {
+            boundary,
+            delivery_state,
+            accepted_descriptor,
+            accepted_descriptor_state,
+            descriptor_facing_connection_delivered,
             live_packet_io_accepted: false,
             live_reachability_accepted: false,
             remote_receipt_accepted: false,
@@ -6312,6 +6426,17 @@ mod tests {
         assert!(pre_accept.descriptor_bridge_established());
         assert!(!pre_accept.accepted_descriptor_attached());
         assert!(!pre_accept.ssh_ready());
+        let pre_accept_delivery = sockets
+            .live_tcp_listener_descriptor_accept_delivery(connection_id, false)
+            .expect("pre-accept descriptor delivery report");
+        assert_eq!(
+            pre_accept_delivery.delivery_state(),
+            LiveTcpAcceptedConnectionDeliveryState::BlockedNoDescriptorBridge
+        );
+        assert!(!pre_accept_delivery.descriptor_facing_connection_delivered());
+        assert_eq!(pre_accept_delivery.accepted_descriptor(), None);
+        assert_eq!(pre_accept_delivery.accepted_descriptor_state(), None);
+        assert!(!pre_accept_delivery.ssh_ready());
 
         let accepted = sockets
             .accept(owner, listener)
@@ -6355,6 +6480,32 @@ mod tests {
         assert!(!report.compatibility_accepted());
         assert!(!report.ssh_ready());
 
+        let accept_delivery = sockets
+            .live_tcp_listener_descriptor_accept_delivery(connection_id, false)
+            .expect("local descriptor delivery report");
+        assert_eq!(
+            accept_delivery.delivery_state(),
+            LiveTcpAcceptedConnectionDeliveryState::AcceptedLocalDescriptorDelivery
+        );
+        assert_eq!(
+            accept_delivery.boundary().boundary(),
+            LiveTcpListenerDescriptorBoundary::AcceptedLocalSourceBoundary
+        );
+        assert_eq!(accept_delivery.accepted_descriptor(), Some(accepted));
+        assert!(matches!(
+            accept_delivery.accepted_descriptor_state(),
+            Some(NetworkSocketState::Accepted {
+                connection_id: accepted_connection_id,
+                ..
+            }) if accepted_connection_id == connection_id
+        ));
+        assert!(accept_delivery.descriptor_facing_connection_delivered());
+        assert!(!accept_delivery.live_packet_io_accepted());
+        assert!(!accept_delivery.live_reachability_accepted());
+        assert!(!accept_delivery.remote_receipt_accepted());
+        assert!(!accept_delivery.compatibility_accepted());
+        assert!(!accept_delivery.ssh_ready());
+
         let live_required = sockets
             .live_tcp_listener_descriptor_boundary(connection_id, true)
             .expect("device-required boundary report");
@@ -6374,6 +6525,21 @@ mod tests {
         assert!(!live_required.live_packet_io_accepted());
         assert!(!live_required.live_reachability_accepted());
         assert!(!live_required.ssh_ready());
+
+        let live_required_delivery = sockets
+            .live_tcp_listener_descriptor_accept_delivery(connection_id, true)
+            .expect("device-required descriptor delivery report");
+        assert_eq!(
+            live_required_delivery.delivery_state(),
+            LiveTcpAcceptedConnectionDeliveryState::BlockedMissingDeviceInterfaceBinding
+        );
+        assert_eq!(live_required_delivery.accepted_descriptor(), Some(accepted));
+        assert!(!live_required_delivery.descriptor_facing_connection_delivered());
+        assert!(!live_required_delivery.live_packet_io_accepted());
+        assert!(!live_required_delivery.live_reachability_accepted());
+        assert!(!live_required_delivery.remote_receipt_accepted());
+        assert!(!live_required_delivery.compatibility_accepted());
+        assert!(!live_required_delivery.ssh_ready());
     }
 
     #[test_case]

@@ -1,0 +1,78 @@
+{
+  "task_id": "phase12-ssh-live-tcp-listener-descriptor-accept-local-core-20260629",
+  "status": "accepted",
+  "classification": "ssh-live-tcp-listener-descriptor-accept-local-core-accepted",
+  "selected_next_task": "phase12-ssh-live-tcp-readiness-label-local-core-20260629",
+  "planningNeeded": false,
+  "accepted_local_static_descriptor_delivery": true,
+  "accepted_real_device_interface_binding": false,
+  "accepted_live_tcp_connection_establishment": false,
+  "accepted_live_packet_io": false,
+  "accepted_remote_receipt": false,
+  "accepted_openssh_compatibility": false,
+  "accepted_pi5_hardware_proof": false,
+  "ssh_ready": false,
+  "source_states": {
+    "delivery_success": "LiveTcpAcceptedConnectionDeliveryState::AcceptedLocalDescriptorDelivery",
+    "delivery_fail_closed_missing_device": "LiveTcpAcceptedConnectionDeliveryState::BlockedMissingDeviceInterfaceBinding",
+    "descriptor_state_required": "NetworkSocketState::Accepted",
+    "boundary_report": "LiveTcpListenerDescriptorAcceptReport"
+  },
+  "rejected_claims": [
+    "Pi 5 hardware proof",
+    "hardwareTestLock acquisition",
+    "boot publication",
+    "generated-root retry",
+    "OpenSSH retry",
+    "packet I/O",
+    "live TCP connection attempt",
+    "remote receipt",
+    "OpenSSH compatibility",
+    "ssh-ready=true",
+    "fake command expansion",
+    "runtime russh adoption",
+    "phase transition"
+  ],
+  "validation": [
+    {
+      "level": "pre-edit repository state",
+      "command": "git status --short --branch",
+      "result": "passed; main ahead of origin with no uncommitted Talos changes before task edits"
+    },
+    {
+      "level": "fmt",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet live_tcp_listener_descriptor_boundary_accepts_local_source_bridge_only",
+      "result": "passed; repo no_std harness executed 888 tests"
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet userspace_socket_abi_wrappers_reach_smoltcp_tcp_socket_bridge",
+      "result": "passed; repo no_std harness executed 888 tests"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed; retained large search index warning"
+    },
+    {
+      "level": "json validation",
+      "command": "jq empty tasks/evidence/2026-06-29-phase12-ssh-live-tcp-listener-descriptor-accept-local-core/classification.json tasks/evidence/2026-06-29-phase12-ssh-live-tcp-listener-descriptor-accept-local-core/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "staged diff validation",
+      "command": "git diff --cached --check",
+      "result": "passed before commit"
+    }
+  ]
+}

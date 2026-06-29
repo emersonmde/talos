@@ -20556,6 +20556,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   OpenSSH retry, fake command expansion, runtime russh adoption, and phase
   transition rejected. The selected next local/static task is
   phase12-ssh-live-tcp-listener-descriptor-accept-local-core-20260629.
+- phase12-ssh-live-tcp-listener-descriptor-accept-local-core-20260629 adds the
+  local/static descriptor-facing accepted-connection witness. src/network.rs
+  now reports LiveTcpListenerDescriptorAcceptReport with
+  AcceptedLocalDescriptorDelivery only when the selected smoltcp bridge is
+  Established, an accepted Talos descriptor is attached, and that descriptor is
+  in the Accepted socket state for the same connection id. The real
+  device/interface-required path remains fail-closed as
+  BlockedMissingDeviceInterfaceBinding with
+  descriptor_facing_connection_delivered=false, live packet I/O, reachability,
+  remote receipt, compatibility, hardware proof, OpenSSH retry, ssh-ready=true,
+  runtime russh adoption, fake command expansion, and phase transition
+  rejected. The selected next local/static task is
+  phase12-ssh-live-tcp-readiness-label-local-core-20260629.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
