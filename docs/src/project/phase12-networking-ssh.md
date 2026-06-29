@@ -11917,3 +11917,19 @@ selected_next_task is null and planningNeeded=true; packet-I/O,
 OpenSSH/generated-root retry, remote receipt, compatibility, service success,
 ssh-ready=true, broad shell work, and phase transition remain blocked pending
 supervisor planning.
+
+phase12-ssh-live-tcp-candidate-kernel-entry-blocker-reconciliation-20260629
+accepts candidate-entry-discriminator-ready as a no-hardware reconciliation
+after v8. Static review found no route, linker, Image header, or helper defect
+explaining the missing serial marker: the runtime-marker-route scenario still
+embeds the route-start, nonce, runtime-ready, runtime-binding, ssh-ready=false,
+and claim-boundary tokens behind the selected da591740/kernel_2712.img path.
+The first missing fact is now whether the selected fetched kernel reaches the
+earliest Rust-side entry marker before runtime routing. The selected next task
+is phase12-ssh-live-tcp-pi5-entry-marker-discriminator-v9-20260629, which must
+classify selected-fetch/no-kernel_main as blocked-candidate-entry-not-starting,
+kernel_main without route-start/runtime-ready as
+candidate-entry-ready-runtime-blocked, and only unlock packet-I/O if selected
+fetch identity, clean helper-owned pre-restore candidate window,
+TALOS: kernel_main, route-start, and nonce-bearing runtime-ready markers all
+appear in order.

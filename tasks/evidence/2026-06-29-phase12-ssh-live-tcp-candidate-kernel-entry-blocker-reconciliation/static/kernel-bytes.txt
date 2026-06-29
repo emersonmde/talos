@@ -1,0 +1,2 @@
+target/tmp/candidate-entry-recon-static-20260629T225500Z-boot-tree/kernel_2712.img 152144
+target/tmp/candidate-entry-recon-static-20260629T225500Z-boot-tree/da591740/kernel_2712.img 152144

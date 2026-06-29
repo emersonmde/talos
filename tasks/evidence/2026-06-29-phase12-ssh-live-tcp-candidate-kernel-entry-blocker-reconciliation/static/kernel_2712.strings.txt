@@ -1,0 +1,606 @@
+ARMd
+2Ki(8
+kh8)	
+Th#@9
+Th'@9
+Th+@9
+Th/@9
+Th3@9
+Th7@9
+Th#@9
+Th'@9
+Th+@9
+A	*I
+T?i(
+T:_?
+T*i(8
+Iyhx
+@9(!
+I	@9
+@9PM@8k
+$@9)
+@9!<
+SJ	@9ka
+*kh8)	
+	hh8?
+	@yk
+@yIA	
+n,@y
+MAxJA
+	@y(
+*l,A8m
+2Ki(8
+ih8	
+I!	*
+T?i(
+Ey@"A
+*Ey`
+TKAU
+T*i(
+T*i(
+GE9?
+cD9h"
+2N@8 
+@9!<
+KD9i!	*J=
+D9Ja
+@yib
+@yh6
+@yi:
+/H)}"
+*{!	*
+	@9I!	
+/@9ja
+g@9I
+@9.>
+O@9pG
+K@9j
+@9+"
+@9N>
+k@92N@8 
+{@91
+'C9h
+T	I@
+Lii8k	
+TlAU
+@9*sU8+
+@9!?
+@9)=
+S.s_
+_xj!
+@9)a
+*)s@
+M@8I!	
+@9.>
+@9+"
+@9N>
+F92N@8 
+1@x	q@
+)	]@9
+Rhj)
+		@9
+/H)y
+T?i(
+9Czi
+RJ,@
+GX9	
+GX9u"
+SI!	*
+SI!	*
+L@8(!
+A8?	
+_8k!
+,E@8k
+@9_	
+#B)t
+T*		
++ih8J	
+XKB8
+$@9	 @9
+@9LM@8M	@9
+@y(!
+@9ja
+S5P@
+hbAy
+6h*@
+RwbA
++ih8J	
+Tiz@
++ih8J	
+6h*@
+RwbA
++ih8J	
+Tiz@
++ih8J	
+@y`b
+E9	}
+R`^A
+i*@9h
+h"@9
+ @9H
+h"@9
+?@@q4
+jF@9(
+F@9(
++ih8J	
++ih8J	
+@AJJ
+%@9(
++ih8J	
+@9J=
+R	`@
+5idA9?
+	=K8
+@9J=
+4	`Ay
+fA98%
+T+}}
+rkA)
++yhxJ	
+myhx
+yixJ	
++yhxJ	
+ii8J	
+BA9)
+@yH$
+@yJ1
+7dA9
+3@ytf
+;@yh
+7@yj
+T	1@
+!	*	T
+Z:AH*
+	gA9*
+Lii8k	
+)7@9*3@9
+I!	*:
+(7@9)3@9
+Z:AH*
+T	#H)z
+'F)}
+	M@8
+	=@9
+q`"H
+q@ A
++ih8J	
++ih8J	
+b@9@
+)Bzb
+,ij8k	
+q )B
+T?i(
+@9ke
+hM@8i	@9
+@9)=
+@9)a
+@A9?
+`A9	
+dA9	
+dA9	
+r 	@
+@9(!
+	-@8
+_8k=
+@9J=
+o@8	
++ih8J	
+@9(!
+_8k=
+_8ka
+@9)t
+SI!	*
+	* !
+		@9
+	* !
+ii8J	
+SI!	*
++ih8J	
+SI!	*
+RI!	*
+S !(
+s" +
+s" +
+@9s"
+T	$@x
+@9(!
+@9)=
+@9	*
+SI!	*
+@9(!
+	Fz!
+@9Ja
+SI!	*
+T		@9
+2@9(!
+Cy*	
+KA	*
+@9(!
+@yx2
+_8+	@9,
+@9k=
+*ia	*7
+SI!	*
+lM@8b
+@9.-@8
+,@82
+9P-@8N
+9/.@8!
+@9I!	*v
+@9)=
+SI!	*
+ij8ji)8)
+ik8Ki)8)
+lih8J
+	(@y
+	,@y
+SI!	*
+4@9	0@9
+@9ij78i
+@9hj68
+@9IG)
+@9(i38
+@9	')
+*	')
+@9(i68
+9H	L
+RIi48
+T	(@)
+0@9A
+@9)=
+@9H!
+3@9(
+_@@qU
+K?	@
+jj8_	
+jj8?
+jj8?
+h&@9
+J@9h
+	I@9)
+ThF@9
+jh8?)
+7`"@
+T*hh8_
+@@q"
+"1Jz)
+1IzHA
+9E:(
+A@qc
+T{*@y?
+7`"@
+7`"@
+*`"@
+v.@y
+h*@y
+*`"@
+!7k"
+&@8I!	
+&@8j!
+@y)}`
+C@qh
+C@qh
+@92N@8!
+@9!<
+TDB8
+serial console write failed/home/node/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/smoltcp-0.13.1/src/wire/arp.rs
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/iter/adapters/enumerate.rs
+/home/node/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/byteorder-1.5.0/src/lib.rs
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/slice/index.rs
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/str/iter.rs
+assertion `left 
+ right` failed: 
+  left: 
+ right: 
+IP address 
+ is not unicast
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/slice/memchr.rs
+src/network.rs
+talos exception: 
+src/boot/rpi5_reports.rs
+assertion `left 
+ right` failed
+  left: 
+ right: 
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/slice/iter.rs
+talos: services: uart=
+ timer=
+ irq=
+ mmio_regions=
+ dtb=none
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/mem/maybe_uninit.rs
+start byte index 
+& is not a char boundary; it is inside 
+ (bytes 
+ of string)
+end byte index 
+& is not a char boundary; it is inside 
+ (bytes 
+ of string)
+talos: boot core 
+/home/node/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/smoltcp-0.13.1/src/wire/tcp.rs
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/net/ip_addr.rs
+/home/node/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/heapless-0.9.3/src/vec/mod.rs
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/fmt/mod.rs
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/unicode/printable.rs
+src/target/rpi5.rs
+src/device_tree/memory.rs
+/home/node/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/smoltcp-0.13.1/src/wire/ip.rs
+&copy_from_slice: source slice length (
++) does not match destination slice length (
+byte range starts at 
+ but ends at 
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/str/count.rs
+/home/node/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/smoltcp-0.13.1/src/storage/assembler.rs
+/home/node/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/smoltcp-0.13.1/src/storage/ring_buffer.rs
+talos: boot target 
+/home/node/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/smoltcp-0.13.1/src/iface/neighbor.rs
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/iter/traits/accum.rs
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/escape.rs
+src/target/mod.rs
+src/early_format.rs
+slice index starts at 
+ but ends at 
+/home/node/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/smoltcp-0.13.1/src/time.rs
+/home/node/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/smoltcp-0.13.1/src/socket/tcp.rs
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/fmt/num.rs
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/net/display_buffer.rs
+ index out of bounds: the len is 
+ but the index is 
+talos panic: 
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/intrinsics/mod.rs
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/str/traits.rs
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/ptr/non_null.rs
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/iter/adapters/filter.rs
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/char/methods.rs
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/unicode/unicode_data.rs
+/home/node/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/smoltcp-0.13.1/src/iface/socket_set.rs
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/fmt/rt.rs
+/home/node/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/smoltcp-0.13.1/src/iface/packet.rs
+range end index 
+" out of range for slice of length 
+/home/node/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/smoltcp-0.13.1/src/wire/icmpv4.rs
+start byte index 
+' is out of bounds for string of length 
+range start index 
+" out of range for slice of length 
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/ptr/const_ptr.rs
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/iter/range.rs
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/fmt/builders.rs
+/home/node/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/smoltcp-0.13.1/src/iface/interface/ethernet.rs
+/home/node/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/smoltcp-0.13.1/src/phy/mod.rs
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/str/pattern.rs
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/slice/mod.rs
+/home/node/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/smoltcp-0.13.1/src/wire/ipv4.rs
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/str/validations.rs
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/str/mod.rs
+/home/node/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/smoltcp-0.13.1/src/iface/interface/mod.rs
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/hint.rs
+src/boot/rpi5.rs
+end byte index 
+' is out of bounds for string of length 
+src/device_tree/raw.rs
+/home/node/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/smoltcp-0.13.1/src/wire/ethernet.rs
+src/pl011.rs
+/home/node/.rustup/toolchains/nightly-2026-05-20-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/ptr/mod.rs
+/home/node/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/smoltcp-0.13.1/src/iface/route.rs
+RuntimeConsoleDeviceCidrZeroIpv4 ec=trueFullname    Error
+BackendWriteFaileddevicebytes_accepted0
+/?E#
+memory]: addr= no_map=bootargs ranges=linux,initrd-start0123456789ABCDEFexception-regs0:current-sp0-syncexception-regs5:current-spx-syncexception-regs4:runtime-console0exception-regs1:linux,initrd-endexception-regs6:0123456789abcdefexception-regs7:exception-regs3:exception-regs2:is_aligned_to: align is not a power-of-two
+unsafe precondition(s) violated: ptr::add requires that the address calculation does not overflow
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: ptr::read_volatile requires that the pointer argument is aligned
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: slice::from_raw_parts requires the pointer to be aligned and non-null, and the total size of the slice not to exceed `isize::MAX`
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.qemu-virt-gicv2-distributorqemu-virt-gicv2-cpu-interfaceqemu-virt-pl011-uart0#
+assertion failed: !ip_repr.dst_addr().is_unspecified()
+non-IP response packet
+single smoltcp IPv4 address slot remains available
+false
+static-recon-20260629TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce= source=network-device-smoltcp-runtime
+TALOS: ssh-service-smoltcp-runtime-blocked runtime-binding=accepted-deterministic-device-interface-deliveryblocked-missing-descriptor-deliveryblocked-missing-device-interface-bindingblocked-missing-hardware-frame-provider ssh-ready=false claims-service-success=false
+TALOS: ssh-service-smoltcp-runtime-ready runtime-binding=accepted-deterministic-device-interface-delivery descriptor-facing-connection-delivered= deterministic-device-interface-bound= hardware-frame-provider-bound= driver-packet-rx-frames= driver-packet-tx-frames= live-packet-io-accepted= live-reachability-accepted= remote-receipt-accepted= compatibility-accepted= ssh-ready= claims-service-success=false claims-phase-transition=false
+ runtime-binding=error ssh-ready=false claims-service-success=false
+bcm2712-local-peripheralsbcm2712-gic-400bcm2712-uart10-pl011rp1-uart0-pl011-pcie2rp1-gpio-padsrp1-gpio-ctrlrp1-uart0-pl011-firmware-preserved
+unsafe precondition(s) violated: ptr::add requires that the address calculation does not overflow
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.
+assertion failed: index < lengthassertion failed: i <= index + 3unknown-or-undefined-instruction4
+assertion failed: tx_buffer.as_ref().len() == tx_len
+single peer match records a descriptor
+runtime-device
+single listener match records a descriptor
+unsafe precondition(s) violated: ptr::add requires that the address calculation does not overflow
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.
+FrameTooLargerequired_lenmax_lenfront frame remains queued
+receive buffer bounds frame
+non-empty pending socket queue has a front peer
+runtime-devicetalos-aarch64-virttalos-rpi5-bcm2712arm-genericgic-v2pl011firmware-preserved
+addressprefix_len
+TALOS: panic handler entered
+TALOS: nested panic
+is_aligned_to: align is not a power-of-two
+assertion failed: !self.is_full()
+unsafe precondition(s) violated: slice::from_raw_parts_mut requires the pointer to be aligned and non-null, and the total size of the slice not to exceed `isize::MAX`
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: slice::get_unchecked_mut requires that the index is within the slice
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.
+current-sp0-irqcurrent-sp0-fiqcurrent-sp0-serrorcurrent-spx-irqcurrent-spx-fiqcurrent-spx-serrorlower-aarch64-synclower-aarch64-irqlower-aarch64-fiqlower-aarch64-serrorlower-aarch32-synclower-aarch32-irqlower-aarch32-fiqlower-aarch32-serrorinstruction-abort-lower-elinstruction-abort-same-eldata-abort-lower-eldata-abort-same-elserrorbrk-aarch64unclassifiedexception-class: 
+exception-status: spsr=exception-regs: unavailable
+exception-info: esr=
+ elr=
+ far=
+falsetalos: dtb chosen bootargs: 
+talos: dtb reserved[ size=talos: dtb reserved: count= shown= truncated=talos: reserved-memory[ reusable=talos: reserved-memory: addr_cells= size_cells= nodes=unsafe precondition(s) violated: ptr::add requires that the address calculation does not overflow
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: str::get_unchecked requires that the range is within the string slice
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.
+receiving buffer too large, cannot exceed 1 GiB
+unsafe precondition(s) violated: ptr::add requires that the address calculation does not overflow
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.adding a socket to a full SocketSet
+handle does not refer to a valid socket
+unsafe precondition(s) violated: ptr::add requires that the address calculation does not overflow
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.
+unsafe precondition(s) violated: ptr::add requires that the address calculation does not overflow
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.
+TALOS: dtb memory scan unavailable
+talos: boot start
+talos: board raspberry-pi-5-bcm2712
+talos: version 0.1.0
+talos: console early-uart fmt
+talos: boot dtb 
+talos: pointer delta 
+talos: boot info: dtb=
+ core=
+ el=
+ target=
+talos: services: uart=
+ timer=
+ irq=
+ mmio_regions=
+ dtb=
+talos: dtb header: magic=
+ size=
+	 version=
+ last_comp=
+ struct=
+	 strings=
+talos: dtb header: unavailable
+talos: status early boot log ready
+talos: dtb reserved: unavailable
+talos: dtb chosen bootargs: unavailable
+TALOS: reserved-memory start
+TALOS: reserved-memory done
+talos: reserved-memory: unavailable
+						
+assertion failed: addr.is_unicast()
+unsafe precondition(s) violated: ptr::add requires that the address calculation does not overflow
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.
+assertion failed: self.accepts(cx, ip_repr, repr)
+internal error: entered unreachable code
+assertion failed: overlap_start <= overlap_end
+assertion failed: self.tx_buffer.len() >= ack_len
+assertion failed: len_written == payload_len
+assertion failed: repr.control != TcpControl::Rst
+k7HBO
+unsafe precondition(s) violated: ptr::add requires that the address calculation does not overflow
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: ptr::offset_from_unsigned requires `self >= origin`
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: usize::unchecked_add cannot overflow
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: hint::assert_unchecked must never be called when the condition is false
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.
+attempt to add to sequence number with unsigned overflow
+attempt to subtract to sequence number with unsigned overflow
+attempt to subtract sequence numbers with underflow
+						
+assertion failed: prefix_len <= 32
+assertion failed: protocol_addr.is_unicast()
+assertion failed: hardware_addr.is_unicast()empty neighbor cache storage}
+internal error: entered unreachable code}
+assertion failed: size <= max_size
+assertion failed: count <= self.len()
+assertion failed: count <= self.window()
+unsafe precondition(s) violated: ptr::add requires that the address calculation does not overflow
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.
+unsafe precondition(s) violated: ptr::add requires that the address calculation does not overflow
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.
+called `Result::unwrap()` on an `Err` valueis_aligned_to: align is not a power-of-two
+assertion failed: !self.is_full()
+assertion failed: index < self.len()
+unsafe precondition(s) violated: ptr::add requires that the address calculation does not overflow
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: ptr::copy requires that both pointer arguments are aligned and non-null
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: ptr::read requires that the pointer argument is aligned and non-null
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: slice::from_raw_parts requires the pointer to be aligned and non-null, and the total size of the slice not to exceed `isize::MAX`
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: slice::from_raw_parts_mut requires the pointer to be aligned and non-null, and the total size of the slice not to exceed `isize::MAX`
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: slice::get_unchecked_mut requires that the index is within the slice
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.
+TryFromSliceError
+unsafe precondition(s) violated: ptr::add requires that the address calculation does not overflow
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.
+unsafe precondition(s) violated: ptr::add requires that the address calculation does not overflow
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: ptr::offset_from_unsigned requires `self >= origin`
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: usize::unchecked_add cannot overflow
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: ptr::swap_nonoverlapping requires that both pointer arguments are aligned and non-null and the specified memory ranges do not overlap
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.
+()00010203040506070809101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899unsafe precondition(s) violated: slice::get_unchecked requires that the range is within the slice
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.
+,`+*0
+!K@4
+jaUOo
+_unsafe precondition(s) violated: ptr::read requires that the pointer argument is aligned and non-null
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: slice::get_unchecked requires that the index is within the slice
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.
+called `Result::unwrap()` on an `Err` value
+called `Option::unwrap()` on a `None` valueunsafe precondition(s) violated: ptr::add requires that the address calculation does not overflow
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: slice::from_raw_parts requires the pointer to be aligned and non-null, and the total size of the slice not to exceed `isize::MAX`
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.,
+Error
+attempt to calculate the remainder with a divisor of zeroattempt to add with overflowattempt to multiply with overflowattempt to shift left with overflowattempt to shift right with overflowattempt to subtract with overflowunsafe precondition(s) violated: ptr::offset_from_unsigned requires `self >= origin`
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: usize::unchecked_add cannot overflow
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: hint::unreachable_unchecked must never be reached
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: invalid value for `char`
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.
+unsafe precondition(s) violated: ptr::add requires that the address calculation does not overflow
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: slice::from_raw_parts requires the pointer to be aligned and non-null, and the total size of the slice not to exceed `isize::MAX`
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.
+branch is not hit for types that cannot fit 999 (u8)
+branch is not hit for types that cannot fit 1E4 (u8)unsafe precondition(s) violated: hint::assert_unchecked must never be called when the condition is false
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.
+TryFromIntError
+mid > len
+assertion failed: alive.end <= (N + 1) as u8
+is_aligned_to: align is not a power-of-two
+unsafe precondition(s) violated: slice::split_at_unchecked requires the index to be within the slice
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: ptr::add requires that the address calculation does not overflow
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: ptr::copy_nonoverlapping requires that both pointer arguments are aligned and non-null and the specified memory ranges do not overlap
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: slice::from_raw_parts requires the pointer to be aligned and non-null, and the total size of the slice not to exceed `isize::MAX`
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: slice::get_unchecked requires that the range is within the slice
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.
+assertion failed: i >= index.saturating_sub(3)
+mid > lenis_aligned_to: align is not a power-of-two
+unsafe precondition(s) violated: slice::split_at_unchecked requires the index to be within the slice
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: slice::as_chunks_unchecked requires `N != 0` and the slice to split exactly into `N`-element chunks
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: ptr::add requires that the address calculation does not overflow
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: ptr::offset_from_unsigned requires `self >= origin`
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: hint::assert_unchecked must never be called when the condition is false
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: hint::unreachable_unchecked must never be reached
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: invalid value for `char`
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: slice::from_raw_parts requires the pointer to be aligned and non-null, and the total size of the slice not to exceed `isize::MAX`
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: slice::from_raw_parts_mut requires the pointer to be aligned and non-null, and the total size of the slice not to exceed `isize::MAX`
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: str::get_unchecked requires that the range is within the string slice
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.
+ { , :  {
+} }),
+unsafe precondition(s) violated: ptr::add requires that the address calculation does not overflow
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: str::get_unchecked requires that the range is within the string slice
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.
+==!=matches..panicked at :
+EmptyInvalidDigitPosOverflowNegOverflowNotAPowerOfTwoPA"
+';>NO
+	6=>V
+67VW
+)14:EFIJNOde
+;>fi
+./'(U
+:?EQ
+"%>?
+ #%&(38:HJLPSUVXZ\^`cefksx}
+PI73
+) as
+G	t<
+./?\]_
+)147:;=IJ]
+)14:;EFIJ^de
+):;EIW[^_de
+EIde
+INOWY^_
+FGNOXZ\^~
+tu&./
+NOZ[
+no7=?BESgu
+%_ m
+unsafe precondition(s) violated: ptr::add requires that the address calculation does not overflow
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.
+unsafe precondition(s) violated: ptr::add requires that the address calculation does not overflow
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: ptr::offset_from_unsigned requires `self >= origin`
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: hint::assert_unchecked must never be called when the condition is false
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: hint::unreachable_unchecked must never be reached
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: invalid value for `char`
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: slice::from_raw_parts requires the pointer to be aligned and non-null, and the total size of the slice not to exceed `isize::MAX`
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.unsafe precondition(s) violated: str::get_unchecked requires that the range is within the string slice
+This indicates a bug in the program. This Undefined Behavior check is optional, and cannot be relied on for safety.

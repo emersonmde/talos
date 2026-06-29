@@ -1,0 +1,9 @@
+present: TALOS: ssh-service-smoltcp-runtime-route-start
+present: TALOS: ssh-service-smoltcp-runtime-ready
+present: capture-nonce=
+present: static-recon-20260629
+present: runtime-binding=accepted-deterministic-device-interface-delivery
+present: ssh-ready=
+present: claims-service-success=false
+present: claims-phase-transition=false
+not-static-string: TALOS: kernel_main (emitted byte-by-byte by write_early_phase_line)

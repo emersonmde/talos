@@ -20844,6 +20844,17 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   planningNeeded=true before packet-I/O, OpenSSH/generated-root retry, remote
   receipt, compatibility, service success, ssh-ready=true, broad shell work, or
   phase transition can resume.
+- phase12-ssh-live-tcp-candidate-kernel-entry-blocker-reconciliation-20260629
+  accepts candidate-entry-discriminator-ready. No source/route/linker/header
+  defect was found in static review, and the non-published runtime-marker-route
+  archive still exposes the selected da591740/kernel_2712.img path plus
+  route-start/runtime-ready/nonce/claim-boundary tokens. The next serialized
+  hardware step is only
+  phase12-ssh-live-tcp-pi5-entry-marker-discriminator-v9-20260629, classifying
+  selected-fetch/no-kernel_main separately from kernel_main-without-runtime-ready
+  before any packet-I/O, OpenSSH/generated-root retry, remote receipt,
+  compatibility, service success, ssh-ready=true, broad shell work, or phase
+  transition can resume.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

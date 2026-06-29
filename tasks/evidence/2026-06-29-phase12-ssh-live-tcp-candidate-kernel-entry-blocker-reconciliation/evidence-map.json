@@ -1,0 +1,93 @@
+{
+  "task_id": "phase12-ssh-live-tcp-candidate-kernel-entry-blocker-reconciliation-20260629",
+  "terminal_classification": "candidate-entry-discriminator-ready",
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-entry-marker-discriminator-v9-20260629",
+  "planningNeeded": false,
+  "hardwareAction": false,
+  "labPublication": false,
+  "packetIo": false,
+  "opensshGeneratedRootRetry": false,
+  "inputs": {
+    "v6_task": "tasks/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v6.md",
+    "v8_task": "tasks/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v8.md",
+    "v8_classification": "blocked-candidate-kernel-not-starting",
+    "v8_selected_fetch": {
+      "path": "da591740/kernel_2712.img",
+      "bytes": 152160,
+      "sha256": "09ee965066407ebdba1c384f10c4fa2210a5befd6a8f663b3df047b5049a6b4e"
+    },
+    "v8_tftp_selected_serves": 2,
+    "v8_runtime_marker_visible": false,
+    "v8_kernel_main_visible": false,
+    "known_good_control": {
+      "snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+      "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "expected_marker": "rpi5-production-timer-preemption: PASS",
+      "selected_fetch_bytes": 104136
+    }
+  },
+  "static_archive_review": {
+    "evidence_dir": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-candidate-kernel-entry-blocker-reconciliation",
+    "selected_fetch": {
+      "path": "da591740/kernel_2712.img",
+      "bytes": 152144,
+      "sha256": "980af8c3973a205f1d3e69b99f01900ac7def66c3c88815c97ab02daad269676"
+    },
+    "root_kernel": {
+      "path": "kernel_2712.img",
+      "bytes": 152144,
+      "sha256": "980af8c3973a205f1d3e69b99f01900ac7def66c3c88815c97ab02daad269676"
+    },
+    "token_review": "static/string-token-review.txt",
+    "archive_review_stdout": "validation/runtime-marker-archive-review.stdout.txt",
+    "archive_review_stderr": "validation/runtime-marker-archive-review.stderr.txt",
+    "boot_tree_manifest": "validation/runtime-marker-boot-tree-manifest.txt",
+    "boot_artifact_bytes_retained": false
+  },
+  "marker_contract": {
+    "expected_order": [
+      "selected da591740/kernel_2712.img TFTP serve(s) with expected bytes/hash",
+      "TALOS: kernel_main as earliest Rust-side entry marker emitted before report_boot_identity",
+      "TALOS: ssh-service-smoltcp-runtime-route-start with run nonce",
+      "TALOS: ssh-service-smoltcp-runtime-ready with same run nonce"
+    ],
+    "fail_closed_classifications": {
+      "no_selected_fetch_or_identity": "blocked-candidate-identity",
+      "selected_fetch_but_no_kernel_main": "blocked-candidate-entry-not-starting",
+      "kernel_main_without_route_start": "candidate-entry-ready-runtime-blocked",
+      "route_start_without_runtime_ready": "candidate-entry-ready-runtime-blocked",
+      "both_entry_and_runtime_ready": "candidate-entry-and-runtime-ready",
+      "restore_or_capture_order_failure": "blocked-restore or inconclusive-with-required-discriminator"
+    }
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "v7 selected-fetch path was repaired before v8 and v8 proved two selected da591740/kernel_2712.img serves plus final pre-restore candidate identity."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "The runtime-marker route is wired through build.rs, src/boot/rpi5.rs, src/target/rpi5.rs, and src/network.rs; static review found no route/linker/header defect explaining the missing serial marker."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "TALOS: kernel_main is emitted byte-by-byte by write_early_phase_line, so absence from strings output is not evidence that the runtime image omits the marker."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "The first missing fact after v8 is hardware execution/serial visibility after selected fetch; v9 must distinguish no kernel_main from runtime-route failure in one serialized run."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Temporary archive and boot tree generated for this static review were removed; only metadata, manifests, hashes, and token review are retained."
+    }
+  ],
+  "validation": {
+    "git_status_before": "validation/git-status-before.txt",
+    "source_owner_inspection": "static/source-owner-inspection.md",
+    "jq_empty": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass; html backend wrote book/ with large search-index warning",
+    "git_diff_cached_check": "pass"
+  }
+}
