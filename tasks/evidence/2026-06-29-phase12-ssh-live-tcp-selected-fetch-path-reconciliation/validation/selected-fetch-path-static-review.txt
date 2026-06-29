@@ -1,0 +1,9 @@
+expected_fetch=da591740/kernel_2712.img
+expected_fetch_present=true
+root_kernel_bytes=152168
+
+expected_fetch_bytes=152168
+
+root_kernel_sha256=24e6cd252fcabc0b34b37009e43269bc97630c4cb82f8577082f4d31a496bc63
+expected_fetch_sha256=24e6cd252fcabc0b34b37009e43269bc97630c4cb82f8577082f4d31a496bc63
+expected_fetch_matches_root=true

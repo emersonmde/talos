@@ -1,0 +1,93 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-fetch-path-reconciliation-20260629",
+  "run_label": "selected-fetch-path-reconciliation-20260629T212400Z",
+  "classification": "fetch-path-ready",
+  "terminal": true,
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-candidate-preflight-v8-20260629",
+  "source_commit_before_commit": "e2d5335a45db85d3e69c60725a3ecf155c733fe9",
+  "hardware_run": false,
+  "boot_publication": false,
+  "no_power_cycle": true,
+  "no_packet_io": true,
+  "no_openssh_generated_root_retry": true,
+  "no_remote_receipt_or_compatibility_or_service_success_or_ssh_ready_or_phase_transition": true,
+  "inputs": {
+    "v7_blocker_task": "tasks/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v7.md",
+    "runtime_marker_route_task": "tasks/2026-06-29-phase12-ssh-live-tcp-runtime-marker-route-reconciliation.md",
+    "proof_contract_task": "tasks/2026-06-29-phase12-ssh-live-tcp-pi5-proof-contract.md"
+  },
+  "archive": {
+    "path_label": "target/tmp/selected-fetch-path-reconciliation-20260629T212400Z.tar.gz",
+    "sha256": "82657f084568461a6ea6f17864125e422a96e255a65fec00d4eaca8a59dca6d8"
+  },
+  "selected_fetch_path": {
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_present": true,
+    "expected_fetch_bytes": 152168,
+    "expected_fetch_sha256": "24e6cd252fcabc0b34b37009e43269bc97630c4cb82f8577082f4d31a496bc63",
+    "reconciled_contract": "preserve accepted da591740/kernel_2712.img expected_fetch; repair runtime-marker boot-tree helper to publish serial-prefixed mirror matching root files"
+  },
+  "findings": [
+    {
+      "finding": "runtime-marker boot-tree helper omitted serial-prefixed mirror required by accepted Pi 5 capture contract",
+      "disposition": "fixed",
+      "evidence": "scripts/rpi5-ssh-service-smoltcp-runtime-ready-boot-tree.sh now mirrors root boot files under da591740/"
+    },
+    {
+      "finding": "root-only kernel_2712.img visibility is insufficient for candidate-capture-ready under the existing capture contract",
+      "disposition": "not-an-issue",
+      "evidence": "contract preserved; no acceptance relies on root-only visibility"
+    },
+    {
+      "finding": "no-power lab publication was not required for this repair proof",
+      "disposition": "not-an-issue",
+      "evidence": "static boot-tree/archive review proves archive contains da591740/kernel_2712.img with bytes matching root kernel"
+    }
+  ],
+  "evidence": [
+    {
+      "level": "git status --short --branch",
+      "path": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-selected-fetch-path-reconciliation/validation/git-status-before.txt"
+    },
+    {
+      "level": "static inspection",
+      "path": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-selected-fetch-path-reconciliation/validation/selected-fetch-path-static-review.txt"
+    },
+    {
+      "level": "shell syntax",
+      "path": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-selected-fetch-path-reconciliation/validation/sh-n-runtime-ready-boot-tree.stdout.txt"
+    },
+    {
+      "level": "archive/static marker review",
+      "path": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-selected-fetch-path-reconciliation/validation/runtime-marker-archive-review.stdout.txt"
+    },
+    {
+      "level": "static inspection",
+      "path": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-selected-fetch-path-reconciliation/validation/static-inspection.txt"
+    },
+    {
+      "level": "jq validation",
+      "path": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-selected-fetch-path-reconciliation/validation/jq-empty-evidence-map.stdout.txt"
+    },
+    {
+      "level": "diff check",
+      "path": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-selected-fetch-path-reconciliation/validation/git-diff-check.stdout.txt"
+    },
+    {
+      "level": "docs validation",
+      "path": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-selected-fetch-path-reconciliation/validation/mdbook-build.stdout.txt"
+    }
+  ],
+  "validation_results": {
+    "git_status_before": "pass",
+    "static_inspection": "pass",
+    "sh_n_runtime_ready_boot_tree": "pass",
+    "runtime_marker_archive_static_review": "pass",
+    "conditional_no_power_lab_publication": "not_run_not_required_no_lab_mutation",
+    "jq_empty": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass_with_large_search_index_warning",
+    "cargo_fmt": "not_run_rust_source_not_touched",
+    "cargo_test": "not_run_rust_source_not_touched"
+  }
+}

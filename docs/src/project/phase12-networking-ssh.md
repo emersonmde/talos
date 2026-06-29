@@ -11888,3 +11888,18 @@ retry, remote receipt, compatibility, service success, ssh-ready=true, broad
 shell work, or phase transition was performed. The lab was restored to the
 a0452458... control tree. selected_next_task is null and planningNeeded=true
 pending supervisor repair/reconciliation of the selected Pi 5 fetch path.
+
+phase12-ssh-live-tcp-selected-fetch-path-reconciliation-20260629 accepts
+fetch-path-ready as a no-power source/archive repair after v7. The
+runtime-marker-route boot-tree helper now mirrors the root Pi 5 boot files
+under da591740/, preserving the accepted da591740/kernel_2712.img expected
+fetch path instead of relaxing the capture contract to root-only visibility.
+Static archive review proved the nonce-bearing runtime marker route and
+selected da591740/kernel_2712.img path in one materialized archive; the
+selected fetch file has 152,168 bytes and matches the root kernel_2712.img
+SHA-256. selected_next_task is
+phase12-ssh-live-tcp-pi5-candidate-preflight-v8-20260629; lab publication, Pi
+5 power, packet-I/O, OpenSSH/generated-root retry, remote receipt,
+compatibility, service success, ssh-ready=true, broad shell work, and phase
+transition remain blocked until that explicit serialized preflight is promoted
+and accepted.

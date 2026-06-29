@@ -20822,6 +20822,17 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   planningNeeded=true before another candidate preflight, packet-I/O,
   OpenSSH/generated-root retry, remote receipt, compatibility, service success,
   ssh-ready=true, broad shell work, or phase transition can resume.
+- phase12-ssh-live-tcp-selected-fetch-path-reconciliation-20260629 accepts
+  fetch-path-ready as a no-power source/archive repair. The runtime-marker
+  boot-tree helper now mirrors root Pi 5 boot files under da591740/, preserving
+  the accepted da591740/kernel_2712.img expected fetch path instead of
+  relaxing the capture contract. Static archive review proved the nonce-bearing
+  runtime marker route and selected 152,168-byte da591740/kernel_2712.img in
+  one materialized archive; selected_next_task is
+  phase12-ssh-live-tcp-pi5-candidate-preflight-v8-20260629. No lab
+  publication, Pi 5 power, packet-I/O, OpenSSH/generated-root retry, remote
+  receipt, compatibility, service success, ssh-ready=true, broad shell work, or
+  phase transition is accepted by this repair.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

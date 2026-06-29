@@ -1,0 +1,51 @@
+tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v7/candidate-preflight-v7-20260629T202403Z/candidate-run/preflight-identity.json:6:  "expected_fetch": "da591740/kernel_2712.img",
+tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v7/candidate-preflight-v7-20260629T202403Z/candidate-run/preflight-identity.json:7:  "expected_fetch_bytes": null,
+tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v7/candidate-preflight-v7-20260629T202403Z/candidate-run/preflight-identity.json:22:  "expected_fetch_present": false,
+tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v7/candidate-preflight-v7-20260629T202403Z/candidate-run/preflight-identity.json:23:  "expected_fetch_bytes_match": true,
+tasks/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v7.md:7:Classification: blocked-candidate-identity.
+tasks/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v7.md:37:blocked-candidate-identity.
+tasks/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v7.md:43:published candidate boot tree exposed root kernel_2712.img/kernel8.img entries
+tasks/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v7.md:44:but did not expose the serial-prefixed da591740/kernel_2712.img path required by
+tasks/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v7.md:66:  tree did not expose da591740/kernel_2712.img under the accepted capture
+tasks/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v7.md:67:  expected_fetch path.
+tasks/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v7.md:111:  da591740/kernel_2712.img was absent.
+25:- Reviewed the accepted runtime closeout, the lab-controller hardware evidence
+50:- expected TFTP fetch path: da591740/kernel_2712.img;
+59:worktree is dirty before archive creation, if the expected fetch path is not
+60:da591740/kernel_2712.img, or if the post-publication GET /status identity does
+223:- static review of accepted runtime closeout, lab-controller docs, Phase 12
+scripts/rpi5-ssh-service-smoltcp-runtime-ready-archive-review.sh:10:CAPTURE_NONCE="${2:-${TALOS_CAPTURE_NONCE:-runtime-marker-route-static}}"
+scripts/rpi5-ssh-service-smoltcp-runtime-ready-archive-review.sh:29:strings "$work_dir/kernel_2712.img" > "$work_dir/kernel_2712.strings"
+scripts/rpi5-ssh-service-smoltcp-runtime-ready-archive-review.sh:52:        echo "missing runtime marker route token in kernel_2712.img: $token" >&2
+scripts/rpi5-ssh-service-smoltcp-runtime-ready-boot-tree.sh:9:: "${TALOS_CAPTURE_NONCE:=runtime-marker-route-static}"
+scripts/rpi5-ssh-service-smoltcp-runtime-ready-boot-tree.sh:15:serial_prefix="da591740"
+scripts/rpi5-ssh-service-smoltcp-runtime-ready-boot-tree.sh:16:mkdir -p "$2/$serial_prefix"
+scripts/rpi5-ssh-service-smoltcp-runtime-ready-boot-tree.sh:17:for file in config.txt cmdline.txt bcm2712-rpi-5-b.dtb kernel_2712.img kernel8.img; do
+scripts/rpi5-ssh-service-smoltcp-runtime-ready-boot-tree.sh:18:    cp "$2/$file" "$2/$serial_prefix/$file"
+scripts/rpi5-ssh-service-smoltcp-runtime-ready-boot-tree.sh:22:    mkdir -p "$2/$serial_prefix/overlays"
+scripts/rpi5-ssh-service-smoltcp-runtime-ready-boot-tree.sh:23:    find "$2/overlays" -maxdepth 1 -type f -exec cp {} "$2/$serial_prefix/overlays/" \;
+target/tmp/selected-fetch-path-reconciliation-20260629T212400Z-boot-tree/bcm2712-rpi-5-b.dtb
+target/tmp/selected-fetch-path-reconciliation-20260629T212400Z-boot-tree/cmdline.txt
+target/tmp/selected-fetch-path-reconciliation-20260629T212400Z-boot-tree/config.txt
+target/tmp/selected-fetch-path-reconciliation-20260629T212400Z-boot-tree/da591740/bcm2712-rpi-5-b.dtb
+target/tmp/selected-fetch-path-reconciliation-20260629T212400Z-boot-tree/da591740/cmdline.txt
+target/tmp/selected-fetch-path-reconciliation-20260629T212400Z-boot-tree/da591740/config.txt
+target/tmp/selected-fetch-path-reconciliation-20260629T212400Z-boot-tree/da591740/kernel8.img
+target/tmp/selected-fetch-path-reconciliation-20260629T212400Z-boot-tree/da591740/kernel_2712.img
+target/tmp/selected-fetch-path-reconciliation-20260629T212400Z-boot-tree/da591740/overlays/bcm2712d0.dtbo
+target/tmp/selected-fetch-path-reconciliation-20260629T212400Z-boot-tree/da591740/overlays/overlay_map.dtb
+target/tmp/selected-fetch-path-reconciliation-20260629T212400Z-boot-tree/da591740/overlays/uart0-pi5.dtbo
+target/tmp/selected-fetch-path-reconciliation-20260629T212400Z-boot-tree/kernel8.img
+target/tmp/selected-fetch-path-reconciliation-20260629T212400Z-boot-tree/kernel_2712.img
+target/tmp/selected-fetch-path-reconciliation-20260629T212400Z-boot-tree/overlays/bcm2712d0.dtbo
+target/tmp/selected-fetch-path-reconciliation-20260629T212400Z-boot-tree/overlays/overlay_map.dtb
+target/tmp/selected-fetch-path-reconciliation-20260629T212400Z-boot-tree/overlays/uart0-pi5.dtbo
+expected_fetch=da591740/kernel_2712.img
+expected_fetch_present=true
+root_kernel_bytes=152168
+
+expected_fetch_bytes=152168
+
+root_kernel_sha256=24e6cd252fcabc0b34b37009e43269bc97630c4cb82f8577082f4d31a496bc63
+expected_fetch_sha256=24e6cd252fcabc0b34b37009e43269bc97630c4cb82f8577082f4d31a496bc63
+expected_fetch_matches_root=true
