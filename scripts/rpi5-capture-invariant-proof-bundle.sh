@@ -199,6 +199,7 @@ if [ "$DRY_RUN" = true ]; then
               power_cycle: "power-cycle.json",
               serial_observe_window: "serial-observe-window.json",
               tftp_delta_stable_pre_restore: "tftp-delta-stable-pre-restore.json",
+              capture_window_order: "capture-window-order.json",
               final_pre_restore_root_endpoint: "final-pre-restore-root-endpoint.json",
               final_pre_restore_root_endpoint_body: "final-pre-restore-root-endpoint-body.txt",
               final_pre_restore_root: "final-pre-restore-root.json",
@@ -263,6 +264,41 @@ if [ "$DRY_RUN" = true ]; then
 fi
 
 mkdir -p "$EVIDENCE_DIR"
+
+CAPTURE_WINDOW_ORDER="$EVIDENCE_DIR/capture-window-order.json"
+
+jq -n \
+    --arg run_label "$LABEL" \
+    --arg restore_snapshot "$RESTORE_SNAPSHOT" \
+    '{
+        contract_version: "pi5-candidate-capture-window-v5",
+        helper: "scripts/rpi5-capture-invariant-proof-bundle.sh",
+        run_label: $run_label,
+        restore_snapshot: $restore_snapshot,
+        rule: "final-pre-restore identity and stable TFTP delta must be captured by this helper before restore; post-restore/control identity must never satisfy candidate pre-restore evidence",
+        events: []
+    }' > "$CAPTURE_WINDOW_ORDER"
+
+append_capture_window_event() {
+    stage="$1"
+    shift
+    now="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+    files_json="$(printf '%s\n' "$@" | jq -R -s 'split("\n")[:-1]')"
+    order_tmp="${CAPTURE_WINDOW_ORDER}.tmp"
+    seq="$(jq '(.events | length) + 1' "$CAPTURE_WINDOW_ORDER")"
+    jq \
+        --arg stage "$stage" \
+        --arg captured_at "$now" \
+        --argjson sequence "$seq" \
+        --argjson evidence_files "$files_json" \
+        '.events += [{
+            sequence: $sequence,
+            stage: $stage,
+            captured_at: $captured_at,
+            evidence_files: $evidence_files
+        }]' "$CAPTURE_WINDOW_ORDER" > "$order_tmp"
+    mv "$order_tmp" "$CAPTURE_WINDOW_ORDER"
+}
 
 capture_root_endpoint() {
     endpoint_file="$1"
@@ -342,6 +378,9 @@ jq -n \
               or ($fetch == null)
               or ($expected_bytes != null and ($fetch.bytes // null) != $expected_bytes))
        }' > "$EVIDENCE_DIR/preflight-identity.json"
+append_capture_window_event preflight_identity \
+    pre-root-endpoint.json pre-root.json pre-status.json pre-boot-files.json \
+    pre-snapshots.json preflight-identity.json
 
 if jq -e '.staging_publication_mismatch' "$EVIDENCE_DIR/preflight-identity.json" >/dev/null; then
     jq -n \
@@ -420,8 +459,13 @@ serial_cursor="$(jq -r '.talos_serial_drain.final_cursor' "$EVIDENCE_DIR/serial-
 tftp_cursor="$(jq -r '.tftp.cursor_end' "$EVIDENCE_DIR/tftp-cursor-before-power.json")"
 printf '%s\n' "$serial_cursor" > "$EVIDENCE_DIR/serial-cursor-before-power.txt"
 printf '%s\n' "$tftp_cursor" > "$EVIDENCE_DIR/tftp-cursor-before-power.txt"
+append_capture_window_event pre_power_cursors \
+    pre-power-serial-peek.json serial-drain-before-power.json \
+    serial-read-empty-before-power.json tftp-cursor-before-power.json \
+    serial-cursor-before-power.txt tftp-cursor-before-power.txt
 
 curl -fsS -X POST "${API_BASE}/power/cycle" > "$EVIDENCE_DIR/power-cycle.json"
+append_capture_window_event power_cycle power-cycle.json
 
 set +e
 ./scripts/rpi5-observe-serial-window.sh \
@@ -430,6 +474,8 @@ set +e
 serial_exit="$?"
 set -e
 printf '%s\n' "$serial_exit" > "$EVIDENCE_DIR/serial-observe-window.exit"
+append_capture_window_event serial_observe_window \
+    serial-observe-window.json serial-observe-window.exit
 
 set +e
 ./scripts/rpi5-wait-tftp-delta.sh "$tftp_cursor" "$TFTP_TIMEOUT" "$STABLE_SAMPLES" \
@@ -437,16 +483,26 @@ set +e
 tftp_exit="$?"
 set -e
 printf '%s\n' "$tftp_exit" > "$EVIDENCE_DIR/tftp-delta-stable-pre-restore.exit"
+append_capture_window_event tftp_delta_stable_pre_restore \
+    tftp-delta-stable-pre-restore.json tftp-delta-stable-pre-restore.exit
 
 curl -fsS "${API_BASE}/status" > "$EVIDENCE_DIR/final-pre-restore-status.json"
 capture_root_endpoint "$EVIDENCE_DIR/final-pre-restore-root-endpoint-body.txt" "$EVIDENCE_DIR/final-pre-restore-root-endpoint.json"
 curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/final-pre-restore-root.json"
 curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/final-pre-restore-boot-files.json"
+append_capture_window_event final_pre_restore_identity \
+    final-pre-restore-status.json final-pre-restore-root-endpoint.json \
+    final-pre-restore-root-endpoint-body.txt final-pre-restore-root.json \
+    final-pre-restore-boot-files.json
 curl -fsS -X POST "${API_BASE}/boot/restore?name=${RESTORE_SNAPSHOT}" > "$EVIDENCE_DIR/restore-snapshot.json"
+append_capture_window_event restore_snapshot restore-snapshot.json
 capture_root_endpoint "$EVIDENCE_DIR/post-restore-root-endpoint-body.txt" "$EVIDENCE_DIR/post-restore-root-endpoint.json"
 curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/post-restore-root.json"
 curl -fsS "${API_BASE}/status" > "$EVIDENCE_DIR/post-restore-status.json"
 curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/post-restore-boot-files.json"
+append_capture_window_event post_restore_identity \
+    post-restore-root-endpoint.json post-restore-root-endpoint-body.txt \
+    post-restore-root.json post-restore-status.json post-restore-boot-files.json
 
 jq -n \
     --arg proof_label "$LABEL" \

@@ -361,8 +361,16 @@ The helper writes a deterministic proof bundle with pre-run `/status` and
 `/boot/files` samples, snapshots, an explicit pre-power serial drain, fresh
 serial and TFTP cursors, bounded accumulated serial output, stable same-cursor
 TFTP evidence before restore, final pre-restore `/status` and `/boot/files`
-samples, restore `/status` and `/boot/files` samples, and
-`capture-invariant-summary.json`. The pre-power drain uses `/serial/read`, not
+samples, restore `/status` and `/boot/files` samples,
+`capture-window-order.json`, and `capture-invariant-summary.json`. The
+`capture-window-order.json` file is the v5 fail-closed window contract: it must
+show helper-owned stages in this order: preflight identity, pre-power cursors,
+power cycle, serial observe, stable TFTP delta, final pre-restore identity,
+restore, and post-restore identity. Candidate readiness must be checked with
+`scripts/rpi5-candidate-capture-window-v5-check.sh`; missing order metadata,
+manual resume without helper-owned ordering, post-restore/control identity in
+the final-pre-restore slot, or expected selected-tree byte mismatches all block
+candidate-capture-ready. The pre-power drain uses `/serial/read`, not
 `/serial/peek`, because `peek` reports the retained log tail and does not
 consume retained bytes. Its summary suggests only the
 capture/observability classification; the task record remains responsible for

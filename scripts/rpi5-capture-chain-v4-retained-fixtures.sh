@@ -6,7 +6,7 @@ usage() {
 usage: rpi5-capture-chain-v4-retained-fixtures.sh
 
 Builds local replay fixtures from retained Pi 5 capture-chain blocker evidence
-and checks the pi5-capture-chain-v4 helper/checker contract without hardware.
+and checks the pi5-capture-chain-v5 helper/checker contract without hardware.
 EOF
 }
 
@@ -25,7 +25,7 @@ fi
 
 SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 REPO_ROOT="$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)"
-CHECKER="$SCRIPT_DIR/rpi5-proof-identity-join-v4-check.sh"
+CHECKER="$SCRIPT_DIR/rpi5-candidate-capture-window-v5-check.sh"
 SOURCE_ROOT="$REPO_ROOT/tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof"
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT INT TERM
@@ -52,6 +52,30 @@ add_endpoint_fallback() {
     jq '.selected_tree_identity_source = "/boot/files"' \
         "$dir/preflight-identity.json" > "$dir/preflight-identity.json.tmp"
     mv "$dir/preflight-identity.json.tmp" "$dir/preflight-identity.json"
+}
+
+add_capture_window_order() {
+    dir="$1"
+    label="$2"
+    jq -n \
+        --arg run_label "$label" \
+        '{
+            contract_version: "pi5-candidate-capture-window-v5",
+            helper: "scripts/rpi5-capture-invariant-proof-bundle.sh",
+            run_label: $run_label,
+            restore_snapshot: "pre-gem-mid-decode-discriminator-proof-20260610T0402Z",
+            rule: "final-pre-restore identity and stable TFTP delta must be captured by this helper before restore; post-restore/control identity must never satisfy candidate pre-restore evidence",
+            events: [
+                {sequence: 1, stage: "preflight_identity", captured_at: "2026-06-29T00:00:01Z", evidence_files: ["pre-root-endpoint.json","preflight-identity.json"]},
+                {sequence: 2, stage: "pre_power_cursors", captured_at: "2026-06-29T00:00:02Z", evidence_files: ["serial-cursor-before-power.txt","tftp-cursor-before-power.txt"]},
+                {sequence: 3, stage: "power_cycle", captured_at: "2026-06-29T00:00:03Z", evidence_files: ["power-cycle.json"]},
+                {sequence: 4, stage: "serial_observe_window", captured_at: "2026-06-29T00:00:04Z", evidence_files: ["serial-observe-window.json","serial-observe-window.exit"]},
+                {sequence: 5, stage: "tftp_delta_stable_pre_restore", captured_at: "2026-06-29T00:00:05Z", evidence_files: ["tftp-delta-stable-pre-restore.json","tftp-delta-stable-pre-restore.exit"]},
+                {sequence: 6, stage: "final_pre_restore_identity", captured_at: "2026-06-29T00:00:06Z", evidence_files: ["final-pre-restore-status.json","final-pre-restore-boot-files.json"]},
+                {sequence: 7, stage: "restore_snapshot", captured_at: "2026-06-29T00:00:07Z", evidence_files: ["restore-snapshot.json"]},
+                {sequence: 8, stage: "post_restore_identity", captured_at: "2026-06-29T00:00:08Z", evidence_files: ["post-restore-status.json"]}
+            ]
+        }' > "$dir/capture-window-order.json"
 }
 
 make_candidate_ready() {
@@ -112,6 +136,10 @@ run_case() {
     expected_reasons="$6"
     out_file="$TMP_DIR/$name.out.json"
     err_file="$TMP_DIR/$name.err.txt"
+
+    if [ ! -f "$dir/.skip-capture-window-order" ] && [ ! -f "$dir/capture-window-order.json" ]; then
+        add_capture_window_order "$dir" "$name"
+    fi
 
     set +e
     "$CHECKER" --evidence-dir "$dir" --label "$name" --report-kind "$kind" --nonce "$NONCE" \
@@ -200,6 +228,19 @@ jq --arg nonce "$NONCE" \
     "$stale_nonce/serial-drain-before-power.json" > "$stale_nonce/serial-drain-before-power.json.tmp"
 mv "$stale_nonce/serial-drain-before-power.json.tmp" "$stale_nonce/serial-drain-before-power.json"
 
+missing_order="$TMP_DIR/missing-order"
+cp -R "$accepted" "$missing_order"
+: > "$missing_order/.skip-capture-window-order"
+
+restore_contaminated_order="$TMP_DIR/restore-contaminated-order"
+cp -R "$accepted" "$restore_contaminated_order"
+add_capture_window_order "$restore_contaminated_order" restore-contaminated-order
+jq '(.events[] | select(.stage == "final_pre_restore_identity") | .sequence) = 8
+    | (.events[] | select(.stage == "post_restore_identity") | .sequence) = 6
+    | .events |= sort_by(.sequence)' \
+    "$restore_contaminated_order/capture-window-order.json" > "$restore_contaminated_order/capture-window-order.json.tmp"
+mv "$restore_contaminated_order/capture-window-order.json.tmp" "$restore_contaminated_order/capture-window-order.json"
+
 missing_control_marker="$TMP_DIR/missing-control-marker"
 cp -R "$SOURCE_ROOT/control-direct-run" "$missing_control_marker"
 add_endpoint_fallback "$missing_control_marker"
@@ -213,12 +254,14 @@ jq \
     "$missing_control_marker/serial-observe-window.json" > "$missing_control_marker/serial-observe-window.json.tmp"
 mv "$missing_control_marker/serial-observe-window.json.tmp" "$missing_control_marker/serial-observe-window.json"
 
-case_accepted="$(run_case accepted-candidate "$accepted" candidate true capture-chain-v4-ready '[]')"
+case_accepted="$(run_case accepted-candidate "$accepted" candidate true capture-chain-v5-ready '[]')"
 case_missing_identity="$(run_case missing-identity "$missing_identity" candidate false capture-staging-blocked '["missing-selected-tree-hash","final-pre-restore-selected-tree-mismatch"]')"
 case_missing_tftp="$(run_case missing-tftp "$missing_tftp" candidate false capture-staging-blocked '["expected-fetch-not-observed-in-tftp-delta"]')"
 case_missing_final="$(run_case missing-final "$missing_final" candidate false capture-staging-blocked '["final-pre-restore-selected-tree-mismatch"]')"
 case_missing_marker="$(run_case missing-marker "$missing_marker" candidate false capture-staging-blocked '["required-marker-not-present-after-power","run-unique-capture-nonce-not-present-after-power"]')"
 case_stale_nonce="$(run_case stale-nonce "$stale_nonce" candidate false capture-staging-blocked '["run-unique-capture-nonce-present-before-power"]')"
+case_missing_order="$(run_case missing-order "$missing_order" candidate false capture-staging-blocked '["missing-capture-window-v5-contract"]')"
+case_restore_contaminated_order="$(run_case restore-contaminated-order "$restore_contaminated_order" candidate false capture-staging-blocked '["capture-window-stage-order-invalid","final-pre-restore-identity-not-before-restore"]')"
 case_missing_control="$(run_case missing-control-marker "$missing_control_marker" control false capture-staging-blocked '["required-marker-not-present-after-power","required-control-marker-not-retained","run-unique-capture-nonce-not-present-after-power"]')"
 
 printf '%s\n' "$case_accepted" > "$TMP_DIR/accepted.json"
@@ -227,11 +270,13 @@ printf '%s\n' "$case_missing_tftp" > "$TMP_DIR/missing-tftp.json"
 printf '%s\n' "$case_missing_final" > "$TMP_DIR/missing-final.json"
 printf '%s\n' "$case_missing_marker" > "$TMP_DIR/missing-marker.json"
 printf '%s\n' "$case_stale_nonce" > "$TMP_DIR/stale-nonce.json"
+printf '%s\n' "$case_missing_order" > "$TMP_DIR/missing-order.json"
+printf '%s\n' "$case_restore_contaminated_order" > "$TMP_DIR/restore-contaminated-order.json"
 printf '%s\n' "$case_missing_control" > "$TMP_DIR/missing-control.json"
 
 result="$(jq -s \
     '{
-        contract_version: "pi5-capture-chain-v4-retained-fixtures",
+        contract_version: "pi5-capture-chain-v5-retained-fixtures",
         source_evidence: "tasks/evidence/2026-06-10-phase12-rp1-ethernet-gem-mid-decode-discriminator-pi5-proof",
         fixture_count: length,
         passed: all(.[]; .passed == true),
@@ -243,6 +288,8 @@ result="$(jq -s \
     "$TMP_DIR/missing-final.json" \
     "$TMP_DIR/missing-marker.json" \
     "$TMP_DIR/stale-nonce.json" \
+    "$TMP_DIR/missing-order.json" \
+    "$TMP_DIR/restore-contaminated-order.json" \
     "$TMP_DIR/missing-control.json")"
 
 printf '%s\n' "$result"

@@ -1,0 +1,34 @@
+{
+  "task_id": "phase12-ssh-live-tcp-candidate-capture-window-contract-repair-20260629",
+  "classification": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-candidate-capture-window-contract-repair/classification.json",
+  "task_record": "tasks/2026-06-29-phase12-ssh-live-tcp-candidate-capture-window-contract-repair.md",
+  "reviewed_v4_task_record": "tasks/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v4.md",
+  "reviewed_v4_evidence": {
+    "classification": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v4/candidate-preflight-v4-20260629T161757Z/classification.json",
+    "evidence_map": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v4/candidate-preflight-v4-20260629T161757Z/evidence-map.json",
+    "preflight_summary": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v4/candidate-preflight-v4-20260629T161757Z/preflight-summary.json",
+    "capture_invariant_summary": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v4/candidate-preflight-v4-20260629T161757Z/candidate-run/capture-invariant-summary.json"
+  },
+  "changed_helpers": [
+    "scripts/rpi5-capture-invariant-proof-bundle.sh",
+    "scripts/rpi5-candidate-capture-window-v5-check.sh",
+    "scripts/rpi5-capture-chain-v4-retained-fixtures.sh"
+  ],
+  "docs": [
+    "docs/src/project/lab-controller.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "validation": {
+    "git_status_before": "## main...origin/main [ahead 176]",
+    "static_inspection": "reviewed v4 classification.json, evidence-map.json, preflight-summary.json, and candidate-run/capture-invariant-summary.json",
+    "jq_empty_v4_json": "pass, 38 retained v4 JSON files",
+    "capture_bundle_dry_run": "pass",
+    "capture_window_v5_retained_fixtures": "pass, 9 fixtures",
+    "v4_contaminated_v5_check": "pass, expected exit 1 and capture-staging-blocked",
+    "shell_gate": "bash -n pass; shellcheck unavailable",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass"
+  },
+  "redaction_review": "Task-owned evidence is metadata-only: file paths, classifications, helper names, stage names, byte/count summaries, and validation outcomes. No packet payloads, key material, session material, boot artifact bytes, private user data, peer addresses, or stable secret-derived identifiers are retained."
+}

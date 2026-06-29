@@ -11803,3 +11803,18 @@ ssh-ready=true, generated-root/OpenSSH retry, and phase transition remain
 unaccepted. Phase 12.1 Ethernet remains paused at selected_discriminator=null,
 so planningNeeded=true and selected_next_task=null until supervisor planning or
 future source evidence selects a bounded successor.
+
+phase12-ssh-live-tcp-candidate-capture-window-contract-repair-20260629 repairs
+the candidate preflight capture-window contract after v4 evidence was
+contaminated by restore/control identity. The accepted local contract requires
+`scripts/rpi5-capture-invariant-proof-bundle.sh` to emit
+`capture-window-order.json` and requires
+`scripts/rpi5-candidate-capture-window-v5-check.sh` before any future
+candidate-capture-ready claim. The v5 checker keeps the v4 selected-tree,
+TFTP-byte, serial freshness, marker, final-pre-restore identity, and restore
+checks, then fails closed unless helper-owned ordering proves stable TFTP and
+final pre-restore identity were captured before restore. The repaired contract
+selects phase12-ssh-live-tcp-pi5-candidate-preflight-v5-20260629; hardware,
+packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility,
+service success, ssh-ready=true, broad shell work, and phase transition remain
+blocked until that explicit successor is promoted and accepted.

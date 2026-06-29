@@ -1,0 +1,52 @@
+{
+  "task_id": "phase12-ssh-live-tcp-candidate-capture-window-contract-repair-20260629",
+  "classification": "candidate-capture-window-contract-ready",
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-candidate-preflight-v5-20260629",
+  "planningNeeded": false,
+  "hardware_actions": "none",
+  "contract": {
+    "helper": "scripts/rpi5-capture-invariant-proof-bundle.sh",
+    "checker": "scripts/rpi5-candidate-capture-window-v5-check.sh",
+    "order_file": "capture-window-order.json",
+    "required_stage_order": [
+      "preflight_identity",
+      "pre_power_cursors",
+      "power_cycle",
+      "serial_observe_window",
+      "tftp_delta_stable_pre_restore",
+      "final_pre_restore_identity",
+      "restore_snapshot",
+      "post_restore_identity"
+    ],
+    "fail_closed_boundaries": [
+      "missing capture-window-order.json",
+      "manual resume without helper-owned ordering",
+      "TFTP delta captured after restore",
+      "final pre-restore identity captured after restore",
+      "post-restore/control identity in the final-pre-restore slot",
+      "selected-tree expected fetch byte mismatch"
+    ]
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "capture-invariant proof bundles now write helper-owned capture-window-order.json before restore and after each relevant capture stage"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "new v5 checker combines the v4 identity/freshness join with stage-order checks for pre-restore TFTP and final identity before restore"
+    },
+    {
+      "disposition": "fixed",
+      "finding": "retained fixture gate now includes accepted, missing-order, and restore-contaminated-order cases"
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "v4 contaminated evidence remains blocked and cannot be reclassified as candidate-capture-ready"
+    },
+    {
+      "disposition": "deferred",
+      "finding": "the next serialized Pi 5 hardware attempt is deferred to phase12-ssh-live-tcp-pi5-candidate-preflight-v5-20260629"
+    }
+  ]
+}
