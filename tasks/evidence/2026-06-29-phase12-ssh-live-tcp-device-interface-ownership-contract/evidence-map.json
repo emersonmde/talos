@@ -1,0 +1,114 @@
+{
+  "task_id": "phase12-ssh-live-tcp-device-interface-ownership-contract-20260629",
+  "classification": "ssh-live-tcp-device-interface-ownership-contract-selected",
+  "selected_device_interface_model": "network-owned-smoltcp-interface-with-driver-packet-adapter-ingress-and-descriptor-table-delivery",
+  "selected_next_task": "phase12-ssh-live-tcp-device-interface-local-core-20260629",
+  "planningNeeded": false,
+  "reviewed_inputs": [
+    "memory/talos-supervisor-state.json",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md",
+    "tasks/2026-06-29-phase12-ssh-local-to-live-tcp-gap-closeout.md",
+    "tasks/2026-06-29-phase12-ssh-selected-live-tcp-local-core.md",
+    "tasks/2026-06-29-phase12-ssh-local-to-live-tcp-gap-inventory.md",
+    "src/network.rs",
+    "src/userspace_socket_abi.rs",
+    "src/ssh_service_readiness.rs",
+    "src/rp1_ethernet.rs"
+  ],
+  "changed_files": [
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md",
+    "tasks/2026-06-29-phase12-ssh-live-tcp-device-interface-ownership-contract.md",
+    "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-device-interface-ownership-contract/classification.json",
+    "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-device-interface-ownership-contract/evidence-map.json"
+  ],
+  "candidate_dispositions": [
+    {
+      "candidate": "network-owned-smoltcp-interface-with-driver-packet-adapter-ingress-and-descriptor-table-delivery",
+      "disposition": "selected",
+      "reason": "Matches accepted src/network.rs ownership of protocol/socket/device-adapter boundaries and preserves descriptor-table delivery plus fail-closed readiness labels."
+    },
+    {
+      "candidate": "RP1-driver-owned-smoltcp-listener-and-descriptor-delivery",
+      "disposition": "rejected",
+      "reason": "Would mix hardware lifecycle, protocol polling, socket state, descriptor ownership, and readiness labels in src/rp1_ethernet.rs."
+    },
+    {
+      "candidate": "userspace-syscall-dispatch-owned-device-binding",
+      "disposition": "rejected",
+      "reason": "Would make syscall dispatch own device polling and interface lifetime."
+    },
+    {
+      "candidate": "SSH-service-owned-live-listener-binding",
+      "disposition": "rejected",
+      "reason": "SSH readiness composition does not own packet ingress, smoltcp polling, or NetworkSocketDescriptorTable allocation."
+    },
+    {
+      "candidate": "runtime-russh-or-OpenSSH-owned-socket-binding",
+      "disposition": "deferred",
+      "reason": "Runtime SSH server adoption is later strategy work after live TCP descriptor delivery exists."
+    },
+    {
+      "candidate": "no-device-host-only-continuation",
+      "disposition": "blocked",
+      "reason": "Already accepted as host-only and still reports BlockedNoDeviceInterfaceBinding when live binding is required."
+    }
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "The closeout missing fact is resolved into one selected source/local ownership model."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "src/network.rs owns protocol/socket, device adapter, descriptor table, report, and fail-closed label boundaries."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "src/rp1_ethernet.rs is limited to a future explicit hardware frame-provider role and remains paused."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "src/userspace_socket_abi.rs and src/ssh_service_readiness.rs keep syscall-dispatch and readiness-composition ownership respectively."
+    },
+    {
+      "disposition": "rejected",
+      "finding": "RP1-driver-owned, syscall-dispatch-owned, SSH-service-owned, and no-device-host-only ownership models do not satisfy the live TCP device/interface contract."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Runtime russh/OpenSSH socket binding remains a later strategy question."
+    },
+    {
+      "disposition": "blocked",
+      "finding": "Live TCP attempts, packet I/O, remote receipt, compatibility, Pi 5 hardware proof, ssh-ready=true, generated-root/OpenSSH retry, fake command expansion, runtime russh adoption, and phase transition remain blocked."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No source, docs, helper, task, or evidence artifact was removed."
+    }
+  ],
+  "redaction_boundary": {
+    "retained": [
+      "task ids",
+      "source paths",
+      "candidate model names",
+      "classification labels",
+      "validation commands/results",
+      "boolean readiness boundaries",
+      "metadata-only source ownership labels"
+    ],
+    "not_retained": [
+      "peer identifiers",
+      "addresses",
+      "packet payloads",
+      "key material",
+      "session material",
+      "boot artifact bytes",
+      "hardware data",
+      "private user data",
+      "stable secret-derived identifiers"
+    ]
+  }
+}

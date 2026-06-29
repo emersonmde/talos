@@ -1,0 +1,67 @@
+{
+  "task_id": "phase12-ssh-live-tcp-device-interface-ownership-contract-20260629",
+  "status": "accepted",
+  "classification": "ssh-live-tcp-device-interface-ownership-contract-selected",
+  "selected_device_interface_model": "network-owned-smoltcp-interface-with-driver-packet-adapter-ingress-and-descriptor-table-delivery",
+  "selected_next_task": "phase12-ssh-live-tcp-device-interface-local-core-20260629",
+  "planningNeeded": false,
+  "accepted_local_static_contract": true,
+  "accepted_live_tcp_connection_establishment": false,
+  "accepted_live_packet_io": false,
+  "accepted_remote_receipt": false,
+  "accepted_openssh_compatibility": false,
+  "accepted_pi5_hardware_proof": false,
+  "ssh_ready": false,
+  "source_owners": {
+    "network": "src/network.rs owns the smoltcp interface/listener poll boundary, DriverPacketAdapter/NetworkDevice frame movement, accepted NetworkSocketDescriptorTable delivery, metadata-only reports, and fail-closed labels.",
+    "rp1_ethernet": "src/rp1_ethernet.rs remains a later explicit hardware frame-provider owner only; it does not own sockets, descriptors, SSH readiness, or socket ABI dispatch.",
+    "userspace_socket_abi": "src/userspace_socket_abi.rs remains experimental syscall dispatch and focused local assertion owner.",
+    "ssh_service_readiness": "src/ssh_service_readiness.rs remains readiness composition owner and keeps live reachability, remote receipt, compatibility, hardware proof, and ssh-ready false."
+  },
+  "rejected_claims": [
+    "Pi 5 hardware proof",
+    "hardwareTestLock acquisition",
+    "boot publication",
+    "generated-root retry",
+    "OpenSSH retry",
+    "packet I/O",
+    "live TCP connection attempt",
+    "remote receipt",
+    "OpenSSH compatibility",
+    "ssh-ready=true",
+    "fake command expansion",
+    "runtime russh adoption",
+    "phase transition"
+  ],
+  "validation": [
+    {
+      "level": "pre-edit repository state",
+      "command": "git status --short --branch",
+      "result": "passed; main ahead of origin with no uncommitted Talos changes before task edits"
+    },
+    {
+      "level": "static task/source/docs/state review",
+      "result": "passed; reviewed accepted predecessor task records, current supervisor state, source owners, Phase 12 docs, and roadmap"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "level": "json validation",
+      "command": "jq empty tasks/evidence/2026-06-29-phase12-ssh-live-tcp-device-interface-ownership-contract/classification.json tasks/evidence/2026-06-29-phase12-ssh-live-tcp-device-interface-ownership-contract/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "staged diff validation",
+      "command": "git diff --cached --check",
+      "result": "passed before commit"
+    }
+  ]
+}

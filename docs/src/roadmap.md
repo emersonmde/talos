@@ -20530,6 +20530,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   NetworkSocketDescriptorTable. selected_next_task is null and
   planningNeeded=true because no later queued task has complete mechanically
   checkable dependencies for that selection.
+- phase12-ssh-live-tcp-device-interface-ownership-contract-20260629 selects
+  network-owned-smoltcp-interface-with-driver-packet-adapter-ingress-and-descriptor-table-delivery
+  as the source/local contract for that missing fact. src/network.rs owns the
+  future smoltcp interface/listener poll boundary, DriverPacketAdapter and
+  NetworkDevice frame movement, accepted NetworkSocketDescriptorTable delivery,
+  metadata-only reports, and fail-closed readiness labels. src/rp1_ethernet.rs
+  remains only a future explicit hardware frame-provider owner; it does not own
+  sockets, descriptors, SSH readiness, or syscall dispatch. Live TCP attempts,
+  packet I/O, generated-root/OpenSSH retry, remote receipt, compatibility,
+  hardware proof, ssh-ready=true, runtime russh adoption, fake command
+  expansion, and phase transition remain rejected. The selected next
+  local/static task is
+  phase12-ssh-live-tcp-device-interface-local-core-20260629.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

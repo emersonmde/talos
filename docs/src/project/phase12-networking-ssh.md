@@ -123,6 +123,22 @@ generated-root/OpenSSH retry, packet I/O, remote receipt, compatibility,
 ssh-ready=true, runtime russh adoption, fake command expansion, and phase
 transition remain rejected.
 
+The live TCP device/interface ownership contract selects the source/local model
+for that missing fact:
+network-owned-smoltcp-interface-with-driver-packet-adapter-ingress-and-descriptor-table-delivery.
+src/network.rs owns the future smoltcp interface/listener poll boundary,
+DriverPacketAdapter/NetworkDevice frame movement, NetworkSocketDescriptorTable
+accepted descriptor delivery, metadata-only reports, and fail-closed labels.
+src/rp1_ethernet.rs remains a later explicit hardware frame-provider owner
+only; it does not own sockets, descriptors, SSH readiness, or syscall dispatch.
+src/userspace_socket_abi.rs remains syscall dispatch and local assertion
+coverage, while src/ssh_service_readiness.rs remains readiness composition.
+The selected next local/static task is
+phase12-ssh-live-tcp-device-interface-local-core-20260629. Live TCP attempts,
+packet I/O, generated-root/OpenSSH retry, remote receipt, compatibility,
+hardware proof, ssh-ready=true, runtime russh adoption, fake command expansion,
+and phase transition remain rejected.
+
 Live networking/SSH remains paused while the local POSIX/VFS/userspace
 continuation advances. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces
