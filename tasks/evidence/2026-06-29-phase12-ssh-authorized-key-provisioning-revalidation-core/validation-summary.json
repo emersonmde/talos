@@ -1,0 +1,21 @@
+{
+  "task_id": "phase12-ssh-authorized-key-provisioning-revalidation-core-20260629",
+  "commands": [
+    {
+      "command": "git status --short --branch",
+      "level": "pre-edit repository state",
+      "result": "passed; main ahead of origin with no uncommitted Talos changes before task edits"
+    },
+    {
+      "command": "cargo -Zjson-target-spec test --quiet sshkeydiag",
+      "level": "unit tests",
+      "result": "passed; custom no_std runner reported 887 passed, including sshkeydiag, authorized_key, diagnostic_command, and ssh_service_readiness tests"
+    }
+  ],
+  "static_review": {
+    "authorized_key_metadata_only": true,
+    "sshkeydiag_fail_closed": true,
+    "sshservicediag_fail_closed": true,
+    "real_key_material_retained": false
+  }
+}

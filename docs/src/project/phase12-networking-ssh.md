@@ -11397,3 +11397,36 @@ readiness. This does not accept live SSH, TCP, packet I/O, host-key
 generation, deployed cryptographic sufficiency, Pi 5 proof, boot publication,
 generated-root retry, OpenSSH retry, persistence, or phase transition. The
 selected next task is phase12-ssh-host-key-provisioning-contract-20260629.
+
+phase12-ssh-host-key-provisioning-contract-20260629 revalidates the first
+host-key source/config policy after the local entropy diagnostic frontier.
+Operator-provisioned read-only VFS material at
+/etc/talos/ssh/ssh_host_ed25519_key remains selected, and the first runtime
+format remains unencrypted OpenSSH ssh-ed25519 private-key material through the
+accepted narrow parser/signing boundary. Diagnostics and durable evidence stay
+metadata-only: fixed labels, booleans, public path names, and byte-length
+classes may be retained, but private key bytes, authorized-key bytes,
+fingerprints, digests, public-key blobs, signatures, operator identity, and
+stable secret-derived identifiers must not be retained. Host-key generation,
+generated key persistence, authorized_keys provisioning, runtime KEX
+consumption, packet/session crypto, live SSH, TCP/IP, network reachability,
+hardware proof, boot publication, generated-root retry, OpenSSH retry, and
+phase transition remain unaccepted. No mechanically objective follow-up was
+selected by this contract until supervisor planning added the authorized-key
+provisioning revalidation slice.
+
+phase12-ssh-authorized-key-provisioning-revalidation-core-20260629 revalidates
+the first authorized-key source/config policy against the same non-retention
+rules. Operator-provisioned read-only VFS material at
+/etc/talos/ssh/authorized_keys remains selected for this slice. sshkeydiag may
+classify only missing, invalid, insufficient, and sufficient metadata states;
+sufficient metadata clears only the authorized-key prerequisite and does not
+accept authentication, service success, live SSH readiness, OpenSSH
+compatibility, or network reachability. The existing authorized_keys
+parser/key-match surface remains an in-memory prerequisite-only boundary for
+later userauth work and is not broadened by this revalidation. Real
+authorized-key bytes, comments, public-key blobs, fingerprints, digests,
+signatures, operator identity, and stable key-derived identifiers remain
+forbidden in durable evidence. selected_next_task=null and planningNeeded=true
+because no queued credential-readiness closeout or implementation follow-up is
+mechanically objective.

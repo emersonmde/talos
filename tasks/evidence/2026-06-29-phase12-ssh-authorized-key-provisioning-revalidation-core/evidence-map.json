@@ -1,0 +1,31 @@
+{
+  "task_id": "phase12-ssh-authorized-key-provisioning-revalidation-core-20260629",
+  "reviewed_source": [
+    "src/ssh_key_readiness.rs",
+    "src/diagnostic_command.rs",
+    "src/ssh_service_readiness.rs"
+  ],
+  "reviewed_task_records": [
+    "tasks/2026-06-29-phase12-ssh-host-key-provisioning-contract.md",
+    "tasks/2026-06-21-phase12-ssh-authorized-key-policy-contract.md",
+    "tasks/2026-06-21-phase12-ssh-authorized-key-vfs-metadata-core.md",
+    "tasks/2026-06-21-phase12-ssh-authorized-key-readiness-closeout.md",
+    "tasks/2026-06-22-phase12-ssh-authorized-keys-parser-policy-contract.md",
+    "tasks/2026-06-22-phase12-ssh-authorized-keys-parser-core.md",
+    "tasks/2026-06-22-phase12-ssh-service-readiness-diagnostic-core.md"
+  ],
+  "reviewed_docs": [
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/decisions/README.md"
+  ],
+  "changed_files": [
+    "docs/src/project/phase12-networking-ssh.md",
+    "tasks/2026-06-29-phase12-ssh-authorized-key-provisioning-revalidation-core.md",
+    "tasks/evidence/2026-06-29-phase12-ssh-authorized-key-provisioning-revalidation-core/classification.json",
+    "tasks/evidence/2026-06-29-phase12-ssh-authorized-key-provisioning-revalidation-core/evidence-map.json",
+    "tasks/evidence/2026-06-29-phase12-ssh-authorized-key-provisioning-revalidation-core/validation-summary.json"
+  ],
+  "hardware_actions": [],
+  "external_actions": [],
+  "secret_material_retained": false
+}

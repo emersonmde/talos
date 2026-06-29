@@ -1,0 +1,34 @@
+{
+  "task_id": "phase12-ssh-authorized-key-provisioning-revalidation-core-20260629",
+  "classification": "ssh-authorized-key-provisioning-revalidation-core-accepted",
+  "selected_authorized_key_source": "/etc/talos/ssh/authorized_keys",
+  "source_policy": "operator-provisioned-read-only-vfs-metadata",
+  "metadata_states": [
+    "missing",
+    "invalid",
+    "insufficient",
+    "sufficient"
+  ],
+  "clears_only": [
+    "authorized-key-prerequisite"
+  ],
+  "fail_closed": {
+    "sshkeydiag": true,
+    "sshservicediag": true,
+    "ssh_ready": false,
+    "authentication_success": false,
+    "shell_attached": false,
+    "reachability_accepted": false
+  },
+  "redaction": {
+    "retained_real_authorized_key_bytes": false,
+    "retained_public_key_blobs": false,
+    "retained_fingerprints": false,
+    "retained_digests": false,
+    "retained_signatures": false,
+    "retained_operator_identity": false,
+    "retained_stable_secret_derived_identifiers": false
+  },
+  "selected_next_task": null,
+  "planning_needed": true
+}
