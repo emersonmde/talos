@@ -1,0 +1,42 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-candidate-preflight-20260629",
+  "run_label": "candidate-preflight-20260629T100258Z",
+  "evidence_dir": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight/candidate-preflight-20260629T100258Z",
+  "evidence_level": [
+    "git status --short --branch",
+    "source commit ancestry",
+    "rpi5 boot archive build attempt",
+    "lab-controller API baseline status/files/snapshots",
+    "lab-controller API restore status/files/snapshots",
+    "static redaction review"
+  ],
+  "baseline": [
+    "baseline/git-status-before.txt",
+    "baseline/status.json",
+    "baseline/boot-files.json",
+    "baseline/boot-snapshots.json"
+  ],
+  "candidate_identity": [
+    "candidate/source-commit.txt",
+    "candidate/accepted-74a1433c-present.txt",
+    "candidate/accepted-e911597-present.txt",
+    "candidate/boot-source.txt",
+    "validation/rpi5-boot-tree.stderr.txt"
+  ],
+  "restore": [
+    "restore/restore-target.txt",
+    "restore/restore-result.json",
+    "restore/status-after-restore.json",
+    "restore/boot-files-after-restore.json",
+    "restore/boot-snapshots-after-restore.json"
+  ],
+  "classification": "classification.json",
+  "missing_by_design_due_to_blocked_identity": [
+    "candidate/archive-review.txt",
+    "candidate/identity.json",
+    "known-good control",
+    "candidate run",
+    "candidate rerun",
+    "fresh serial/TFTP cursor after publication"
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-candidate-preflight-20260629",
+  "run_label": "candidate-preflight-20260629T100258Z",
+  "terminal_classification": "blocked-candidate-identity",
+  "reason": "current source commit failed Pi 5 boot archive build: src/network.rs references missing PosixError::TimedOut; no candidate archive, publication, power-cycle, known-good control, candidate run, or rerun was performed",
+  "source_commit": "5999653e6835bed996bd1dbb666c29609ab411d3",
+  "restore_target": "abcontrol-secondary-workload-pre-20260524T231449Z",
+  "hardware_lock": {
+    "acquired": true,
+    "released": true,
+    "restored": true,
+    "releasedAt": "2026-06-29T10:07:53Z"
+  },
+  "lab_actions": [
+    "GET /status baseline",
+    "GET /boot/files baseline",
+    "GET /boot/snapshots baseline",
+    "POST /boot/restore",
+    "GET /status after restore",
+    "GET /boot/files after restore",
+    "GET /boot/snapshots after restore"
+  ],
+  "skipped_due_to_blocked_candidate_identity": [
+    "PUT /boot/archive",
+    "fresh serial cursor",
+    "fresh TFTP cursor",
+    "power-cycle",
+    "known-good control",
+    "candidate run",
+    "candidate rerun",
+    "packet-I/O discriminator",
+    "OpenSSH retry"
+  ],
+  "rejected_claims": {
+    "candidate_capture_ready": false,
+    "live_packet_io": false,
+    "remote_receipt": false,
+    "openssh_compatibility": false,
+    "service_success": false,
+    "ssh_ready_true": false,
+    "generated_root_retry": false,
+    "phase_transition": false
+  },
+  "redaction": {
+    "retained": [
+      "task id",
+      "run label",
+      "source commit",
+      "public file paths",
+      "lab status metadata",
+      "snapshot names",
+      "validation commands/results"
+    ],
+    "not_retained": [
+      "peer identifiers",
+      "addresses",
+      "packet payload contents",
+      "key material",
+      "session material",
+      "boot artifact bytes",
+      "private user data",
+      "stable secret-derived identifiers",
+      "unnecessary hardware data"
+    ]
+  }
+}

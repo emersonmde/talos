@@ -241,6 +241,19 @@ ssh-ready=true, generated-root retry, runtime russh adoption, fake command
 expansion, broad shell work, or a phase transition. The selected next task is
 phase12-ssh-live-tcp-pi5-candidate-preflight-20260629.
 
+The live TCP Pi 5 candidate preflight stopped at
+blocked-candidate-identity before publication. Source commit
+5999653e6835bed996bd1dbb666c29609ab411d3 contains the accepted runtime and
+proof-contract commits, but the current Pi 5 archive build fails because
+src/network.rs references `PosixError::TimedOut`, which is absent from
+src/posix.rs. No candidate archive, fresh serial/TFTP cursor, known-good
+control, candidate run, candidate rerun, packet-I/O discriminator, OpenSSH
+retry, remote receipt, compatibility, service success, ssh-ready=true,
+generated-root retry, runtime russh adoption, fake command expansion, broad
+shell work, or phase transition is accepted. The lab was restored to the named
+snapshot, and planningNeeded=true selects no successor until a bounded source
+repair or replacement candidate identity task is planned.
+
 Live networking/SSH remains paused while the local POSIX/VFS/userspace
 continuation advances. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces

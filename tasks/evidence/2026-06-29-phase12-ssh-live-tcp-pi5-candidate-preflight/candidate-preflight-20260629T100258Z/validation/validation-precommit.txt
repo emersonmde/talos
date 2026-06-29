@@ -1,0 +1,7 @@
+## jq
+## git diff --check
+## mdbook
+ INFO Book building has started
+ INFO Running the html backend
+ WARN search index is very large (20321370 bytes)
+ INFO HTML book written to `/opt/strider/openclaw/current/workspace/projects/talos/book`

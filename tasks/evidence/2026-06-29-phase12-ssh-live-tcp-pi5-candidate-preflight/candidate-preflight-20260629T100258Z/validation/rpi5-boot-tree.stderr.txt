@@ -1,0 +1,14 @@
+   Compiling talos v0.1.0 (/opt/strider/openclaw/current/workspace/projects/talos)
+error[E0599]: no variant, associated function, or constant named `TimedOut` found for enum `PosixError` in the current scope
+    --> src/network.rs:4078:35
+     |
+4078 |     Err(crate::posix::PosixError::TimedOut)
+     |                                   ^^^^^^^^ variant, associated function, or constant not found in `PosixError`
+     |
+    ::: src/posix.rs:15:1
+     |
+  15 | pub(crate) enum PosixError {
+     | -------------------------- variant, associated function, or constant `TimedOut` not found for this enum
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `talos` (bin "talos") due to 1 previous error

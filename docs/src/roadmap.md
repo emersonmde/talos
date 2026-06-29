@@ -20633,6 +20633,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   remote receipt, OpenSSH compatibility, service success, ssh-ready=true,
   generated-root retry, runtime russh adoption, fake command expansion, broad
   shell work, and phase transition remain rejected.
+- phase12-ssh-live-tcp-pi5-candidate-preflight-20260629 accepted a
+  blocked-candidate-identity result before any boot publication. Source commit
+  5999653e6835bed996bd1dbb666c29609ab411d3 has the accepted runtime/proof
+  commits in history, but `scripts/rpi5-boot-tree.sh` cannot produce a current
+  candidate archive because src/network.rs references missing
+  `PosixError::TimedOut`. The lab baseline was restored after retaining
+  baseline/restore identity, but no archive, fresh serial/TFTP cursor,
+  known-good control, candidate run, rerun, packet-I/O discriminator, OpenSSH
+  retry, remote receipt, compatibility, service success, ssh-ready=true,
+  generated-root retry, runtime russh adoption, fake command expansion, broad
+  shell work, or phase transition is accepted. selected_next_task is null and
+  planningNeeded=true until a bounded source repair or replacement candidate
+  identity task is planned.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
