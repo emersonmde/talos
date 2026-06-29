@@ -1,0 +1,73 @@
+{
+  "task_id": "phase12-ssh-credential-readiness-closeout-20260629",
+  "reviewed": {
+    "source": [
+      "src/entropy.rs",
+      "src/csprng.rs",
+      "src/ssh_key_readiness.rs",
+      "src/ssh_service_readiness.rs",
+      "src/diagnostic_command.rs"
+    ],
+    "docs": [
+      "docs/src/project/phase12-networking-ssh.md",
+      "docs/src/decisions/README.md"
+    ],
+    "tasks": [
+      "tasks/2026-06-29-phase12-ssh-entropy-source-contract.md",
+      "tasks/2026-06-29-phase12-ssh-entropy-diagnostic-local-core.md",
+      "tasks/2026-06-29-phase12-ssh-host-key-provisioning-contract.md",
+      "tasks/2026-06-29-phase12-ssh-authorized-key-provisioning-revalidation-core.md",
+      "tasks/2026-06-22-phase12-ssh-service-readiness-closeout.md",
+      "tasks/2026-06-22-phase12-ssh-publickey-auth-success-account-closeout.md",
+      "tasks/2026-06-22-phase12-ssh-publickey-verification-closeout.md",
+      "tasks/2026-06-22-phase12-ssh-publickey-auth-response-policy-closeout.md"
+    ],
+    "state": [
+      "memory/talos-supervisor-state.json queued phase12-ssh-service-readiness-prerequisite-revalidation-core-20260629",
+      "memory/talos-supervisor-state.json queued phase12-ssh-publickey-auth-lineage-revalidation-core-20260629"
+    ]
+  },
+  "changed": {
+    "docs": [
+      "docs/src/project/phase12-networking-ssh.md"
+    ],
+    "tasks": [
+      "tasks/2026-06-29-phase12-ssh-credential-readiness-closeout.md"
+    ],
+    "evidence": [
+      "tasks/evidence/2026-06-29-phase12-ssh-credential-readiness-closeout/classification.json",
+      "tasks/evidence/2026-06-29-phase12-ssh-credential-readiness-closeout/evidence-map.json"
+    ],
+    "source": []
+  },
+  "redaction_review": {
+    "retained": [
+      "fixed labels",
+      "booleans",
+      "public path names",
+      "public byte counts and lengths",
+      "public message numbers",
+      "task ids",
+      "validation commands",
+      "classifications"
+    ],
+    "not_retained": [
+      "real seed bytes",
+      "generated random bytes",
+      "host-key bytes",
+      "authorized_keys bytes",
+      "public-key blobs",
+      "signatures",
+      "signed-data bytes",
+      "fingerprints",
+      "digests",
+      "comments",
+      "operator identity",
+      "account identity",
+      "session-id bytes",
+      "exchange hashes",
+      "transport identifiers",
+      "stable secret-derived identifiers"
+    ]
+  }
+}

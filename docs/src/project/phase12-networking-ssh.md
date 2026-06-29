@@ -37,6 +37,16 @@ from diagnostics, task records, serial logs, and retained evidence. No new
 implementation task is queued by this contract; supervisor planning is
 required before any further host-key implementation or rework is promoted.
 
+The credential-readiness closeout reconciles the accepted local SSH credential
+substrate before any live/generated-root/OpenSSH retry. The substrate remains
+operator seed metadata plus operator-provisioned read-only VFS host-key and
+authorized_keys metadata; those inputs clear only prerequisite labels and never
+retain seed bytes, key bytes, public-key blobs, signatures, fingerprints,
+digests, session identifiers, exchange hashes, transport identifiers, comments,
+operator identity, or stable secret-derived identifiers in durable evidence.
+sshkeydiag and sshservicediag remain fail-closed, and the next mechanically
+objective local/static task is the service-readiness prerequisite revalidation.
+
 Live networking/SSH remains paused while the local POSIX/VFS/userspace
 continuation advances. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces

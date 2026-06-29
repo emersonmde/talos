@@ -1,0 +1,29 @@
+{
+  "task_id": "phase12-ssh-credential-readiness-closeout-20260629",
+  "classification": "ssh-credential-readiness-closeout-accepted",
+  "status": "accepted-after-commit",
+  "selected_next_task": "phase12-ssh-service-readiness-prerequisite-revalidation-core-20260629",
+  "planningNeeded": false,
+  "evidence_level": [
+    "static task/source/docs review",
+    "diff validation",
+    "docs validation",
+    "json validation"
+  ],
+  "accepted_substrate": {
+    "operator_seed": "metadata-only prerequisite",
+    "host_key": "operator-provisioned read-only VFS material prerequisite",
+    "authorized_keys": "operator-provisioned read-only VFS metadata prerequisite"
+  },
+  "not_accepted": [
+    "live SSH readiness",
+    "authentication success",
+    "packet/session crypto",
+    "session/channel behavior",
+    "shell attachment",
+    "Pi 5 hardware proof",
+    "generated-root retry",
+    "OpenSSH retry",
+    "phase transition"
+  ]
+}
