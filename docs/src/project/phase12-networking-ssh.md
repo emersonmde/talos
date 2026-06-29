@@ -11818,3 +11818,15 @@ selects phase12-ssh-live-tcp-pi5-candidate-preflight-v5-20260629; hardware,
 packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility,
 service success, ssh-ready=true, broad shell work, and phase transition remain
 blocked until that explicit successor is promoted and accepted.
+
+phase12-ssh-live-tcp-pi5-candidate-preflight-v5-20260629 accepts
+blocked-capture-window-contract. Candidate source/archive publication reached
+the selected 18e467bf... tree with an 87,432-byte
+da591740/kernel_2712.img, but the retained window cannot prove
+candidate-capture-ready because restore/control identity entered before clean
+helper-owned TFTP/final-identity evidence was retained. The v5 checker reports
+104,136-byte restored-control TFTP fetches and final pre-restore tree
+a0452458..., so selected_next_task is null and planningNeeded=true before any
+packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility,
+service success, ssh-ready=true, broad shell work, or phase transition can
+resume.

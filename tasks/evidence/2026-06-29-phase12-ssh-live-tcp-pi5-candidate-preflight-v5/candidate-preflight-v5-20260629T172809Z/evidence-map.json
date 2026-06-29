@@ -1,0 +1,24 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-candidate-preflight-v5-20260629",
+  "run_label": "candidate-preflight-v5-20260629T172809Z",
+  "evidence_dir": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v5/candidate-preflight-v5-20260629T172809Z",
+  "task_record": "tasks/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v5.md",
+  "classification": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v5/candidate-preflight-v5-20260629T172809Z/classification.json",
+  "preflight_summary": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v5/candidate-preflight-v5-20260629T172809Z/preflight-summary.json",
+  "archive_metadata": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v5/candidate-preflight-v5-20260629T172809Z/candidate-identity/archive-metadata.json",
+  "candidate_capture_summary": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v5/candidate-preflight-v5-20260629T172809Z/candidate-run/capture-invariant-summary.json",
+  "capture_window_order": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v5/candidate-preflight-v5-20260629T172809Z/candidate-run/capture-window-order.json",
+  "capture_window_v5_check": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v5/candidate-preflight-v5-20260629T172809Z/candidate-run/capture-window-v5-check.json",
+  "manual_restore_after_helper_stop": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v5/candidate-preflight-v5-20260629T172809Z/candidate-run/manual-restore-after-helper-stop.json",
+  "post_restore_status": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v5/candidate-preflight-v5-20260629T172809Z/status-after-all-restore.json",
+  "post_restore_boot_files": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v5/candidate-preflight-v5-20260629T172809Z/boot-files-after-all-restore.json",
+  "validation": {
+    "git_status_before": "validation/git-status-before.txt",
+    "boot_tree_exit": "validation/rpi5-boot-tree.exit",
+    "archive_review_exit": "validation/rpi5-archive-review.exit",
+    "capture_bundle_stdout": "validation/capture-bundle.stdout.json",
+    "capture_bundle_stderr": "validation/capture-bundle.stderr.txt",
+    "capture_window_v5_check_exit": "validation/capture-window-v5-check.exit",
+    "capture_bundle_exit": "validation/capture-bundle.exit"
+  }
+}

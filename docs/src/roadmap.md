@@ -20774,6 +20774,16 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   hardware retry, packet-I/O discriminator, OpenSSH/generated-root retry,
   remote receipt, compatibility, service success, ssh-ready=true, broad shell
   work, or phase transition is accepted by the repair itself.
+- phase12-ssh-live-tcp-pi5-candidate-preflight-v5-20260629 accepts
+  blocked-capture-window-contract. The reviewed candidate archive published
+  tree 18e467bf... with an 87,432-byte da591740/kernel_2712.img, but the
+  retained capture window is invalid because restore/control identity entered
+  before clean helper-owned TFTP/final identity evidence was retained. The v5
+  checker rejected the run with restored-control 104,136-byte TFTP fetches and
+  final pre-restore tree a0452458...; selected_next_task is null and
+  planningNeeded=true before packet-I/O, OpenSSH/generated-root retry, remote
+  receipt, compatibility, service success, ssh-ready=true, broad shell work, or
+  phase transition can resume.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
