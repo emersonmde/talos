@@ -1978,6 +1978,23 @@ hardware proof, boot publication, live networking/SSH, persistence, and phase
 transition remain deferred. The selected next local task is the explicit-fd
 separated redirection-token frontier checkpoint.
 
+The explicit-fd separated redirection-token frontier checkpoint freezes that
+local-only grammar boundary without adding runtime behavior. The accepted
+frontier remains exactly an fd token followed by an operator token followed by
+a path token for direct and fixed-/bin bare-name stdout/stderr commands, plus
+the same final-stage token pattern in the accepted two-stage combined pipeline
+forms. All accepted forms remain backed by descriptor VFS/userspace execution,
+bounded /bin lookup for bare-name forms, safe volatile /tmp leaf output paths,
+initramfs:/etc/banner.txt stdin for pipeline producers, pipe handoff for
+combined pipelines, lifecycle/status observations, and descriptor restoration
+controls. Persistence, nested/traversal paths, paths outside volatile /tmp,
+explicit fd input redirection, fd duplication/close syntax, mixed direct/bare
+broadening, multistage pipelines, PATH/current-directory lookup, command lookup
+beyond bounded /bin, arbitrary shell grammar, generated-root retry, Pi 5
+hardware proof, boot publication, live networking/SSH, and phase transition
+remain deferred. selected_next_task=null and planningNeeded=true because no
+later queued same-lane local POSIX/VFS task is mechanically objective.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:

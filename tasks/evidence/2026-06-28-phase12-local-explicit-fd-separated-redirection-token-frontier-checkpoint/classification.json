@@ -1,0 +1,61 @@
+{
+  "task_id": "phase12-local-explicit-fd-separated-redirection-token-frontier-checkpoint-20260628",
+  "classification": "local-explicit-fd-separated-redirection-token-frontier-checkpoint-accepted",
+  "accepted_frontier": {
+    "direct_path_form": [
+      "/bin/stdout 1 > /tmp/talos-output-alpha.txt",
+      "/bin/stdout 1 >> /tmp/talos-output-alpha.txt",
+      "/bin/stderr 2 > /tmp/talos-error-beta.log",
+      "/bin/stderr 2 >> /tmp/talos-error-beta.log"
+    ],
+    "bounded_bin_bare_name": [
+      "stdout 1 > /tmp/talos-output-alpha.txt",
+      "stdout 1 >> /tmp/talos-output-alpha.txt",
+      "stderr 2 > /tmp/talos-error-beta.log",
+      "stderr 2 >> /tmp/talos-error-beta.log"
+    ],
+    "direct_path_form_pipeline": [
+      "/bin/stdin < /etc/banner.txt | /bin/stdin 1 > /tmp/talos-pipeline-output-alpha.txt",
+      "/bin/stdin < /etc/banner.txt | /bin/stdin 1 >> /tmp/talos-pipeline-output-alpha.txt",
+      "/bin/stdin < /etc/banner.txt | /bin/stderr 2 > /tmp/talos-pipeline-error-beta.log",
+      "/bin/stdin < /etc/banner.txt | /bin/stderr 2 >> /tmp/talos-pipeline-error-beta.log"
+    ],
+    "bounded_bin_bare_name_pipeline": [
+      "stdin < /etc/banner.txt | stdin 1 > /tmp/talos-pipeline-output-alpha.txt",
+      "stdin < /etc/banner.txt | stdin 1 >> /tmp/talos-pipeline-output-alpha.txt",
+      "stdin < /etc/banner.txt | stderr 2 > /tmp/talos-pipeline-error-beta.log",
+      "stdin < /etc/banner.txt | stderr 2 >> /tmp/talos-pipeline-error-beta.log"
+    ]
+  },
+  "evidence": {
+    "execution": "descriptor-backed VFS/userspace command execution",
+    "lookup": "direct path-form loading or fixed bounded /bin bare-name lookup only",
+    "stdin_source": "initramfs:/etc/banner.txt through child-only producer fd0 rebinding for accepted pipeline forms",
+    "stdout_target": "safe volatile-vfs /tmp leaf truncate and append through child-only fd1 rebinding",
+    "stderr_target": "safe volatile-vfs /tmp leaf truncate and append through child-only fd2 rebinding",
+    "pipeline": "producer fd1 pipe handoff to final-stage fd0 for accepted two-stage combined pipelines",
+    "readback": "descriptor-backed cat readback observes accepted truncate-then-append bytes from predecessor QEMU/substitute transcripts",
+    "process_status": "waitpid, laststatus, pipestatus, lifecycle/status, /proc/talos/processes, and ps observations retained from predecessor gates",
+    "restoration_controls": "later direct and bare-name controls prove descriptor restoration",
+    "negative_controls": "missing operands, unsupported paths/operators/commands/stages, wrong fd/command pairings, unsupported fd tokens, producer/output misuse, mixed direct/bare stages, explicit fd input redirection, and arbitrary grammar fail closed"
+  },
+  "deferred": [
+    "persistent writable filesystem behavior",
+    "nested or traversal paths",
+    "paths outside volatile /tmp",
+    "explicit fd input redirection",
+    "fd duplication or close syntax",
+    "PATH or current-directory lookup",
+    "command lookup beyond bounded /bin",
+    "arbitrary shell grammar",
+    "live networking/SSH",
+    "Pi 5 hardware/lab proof",
+    "generated-root retry",
+    "boot publication",
+    "phase transition"
+  ],
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "No later queued same-lane local POSIX/VFS task is mechanically objective after the explicit-fd separated redirection-token frontier checkpoint.",
+  "hardware_claim": "none"
+}

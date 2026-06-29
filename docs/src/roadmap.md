@@ -20410,6 +20410,25 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   live networking/SSH, Pi 5 hardware proof, generated-root retry, boot
   publication, and phase transition remain deferred. The selected next local
   task is the explicit-fd separated redirection-token frontier checkpoint.
+- phase12-local-explicit-fd-separated-redirection-token-frontier-checkpoint-20260628
+  accepts local-explicit-fd-separated-redirection-token-frontier-checkpoint.
+  The checkpoint freezes the accepted explicit-fd separated-token grammar
+  without adding runtime behavior: fd token followed by operator token followed
+  by path token for direct and fixed-/bin bare-name stdout/stderr commands,
+  plus the same final-stage token pattern in the accepted direct and fixed-/bin
+  bare-name two-stage combined pipeline forms. Accepted behavior remains
+  descriptor-backed through VFS open/read, userspace launch/status, child-only
+  descriptor rebinding, safe volatile /tmp leaf output policy,
+  initramfs:/etc/banner.txt stdin for pipeline producers, pipeline handoff
+  where applicable, lifecycle/status/process observations, and descriptor
+  restoration controls. Persistence, nested/traversal paths, paths outside
+  volatile /tmp, explicit fd input redirection, fd duplication/close syntax,
+  mixed direct/bare broadening, multistage pipelines, PATH/current-directory
+  lookup, command lookup beyond bounded /bin, arbitrary shell grammar, live
+  networking/SSH, Pi 5 hardware proof, generated-root retry, boot publication,
+  and phase transition remain deferred. selected_next_task is null and
+  planningNeeded is true because no later queued same-lane local POSIX/VFS task
+  is mechanically objective.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
