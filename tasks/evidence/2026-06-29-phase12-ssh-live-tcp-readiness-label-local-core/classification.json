@@ -1,0 +1,38 @@
+{
+  "task_id": "phase12-ssh-live-tcp-readiness-label-local-core-20260629",
+  "classification": "ssh-live-tcp-readiness-label-local-core-accepted",
+  "accepted": true,
+  "accepted_local_static": {
+    "readiness_report": "SshLiveTcpDescriptorPrerequisiteReport",
+    "result": "LocalStaticDescriptorPrerequisiteAccepted",
+    "local_source_boundary_accepted": true,
+    "descriptor_facing_connection_delivered": true,
+    "live_reachability_accepted": false,
+    "ssh_ready": false
+  },
+  "fail_closed": {
+    "missing_local_source_boundary": "FailureLocalSourceBoundaryMissing",
+    "missing_descriptor_delivery": "FailureDescriptorDeliveryMissing",
+    "missing_real_device_interface_binding": "FailureDeviceInterfaceBindingMissing"
+  },
+  "rejected_claims": {
+    "live_packet_io": false,
+    "remote_receipt": false,
+    "openssh_compatibility": false,
+    "hardware_proof": false,
+    "service_success": false,
+    "generated_root_retry": false,
+    "runtime_russh_adoption": false,
+    "fake_command_expansion": false,
+    "phase_transition": false
+  },
+  "selected_next_task": "phase12-ssh-live-tcp-device-interface-frontier-closeout-20260629",
+  "redaction": {
+    "retains_peer_identifiers": false,
+    "retains_addresses": false,
+    "retains_packet_payloads": false,
+    "retains_key_or_session_material": false,
+    "retains_stable_secret_derived_identifiers": false,
+    "retains_hardware_data": false
+  }
+}

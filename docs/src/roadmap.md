@@ -20569,6 +20569,18 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   runtime russh adoption, fake command expansion, and phase transition
   rejected. The selected next local/static task is
   phase12-ssh-live-tcp-readiness-label-local-core-20260629.
+- phase12-ssh-live-tcp-readiness-label-local-core-20260629 composes the
+  accepted descriptor-facing live TCP prerequisite into sshservicediag metadata
+  without accepting live reachability. src/ssh_service_readiness.rs now reports
+  SshLiveTcpDescriptorPrerequisiteReport with local source and descriptor
+  delivered labels when the local/static boundary is accepted, plus an explicit
+  live-reachability-unaccepted label. Missing local source, missing descriptor
+  delivery, and required real device/interface binding fail closed. Live packet
+  I/O, remote receipt, OpenSSH compatibility, hardware proof, service success,
+  ssh-ready=true, generated-root/OpenSSH retry, runtime russh adoption, fake
+  command expansion, and phase transition remain rejected. The selected next
+  local/static task is
+  phase12-ssh-live-tcp-device-interface-frontier-closeout-20260629.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

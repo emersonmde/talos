@@ -169,6 +169,22 @@ packet I/O, generated-root/OpenSSH retry, remote receipt, compatibility,
 hardware proof, ssh-ready=true, runtime russh adoption, fake command expansion,
 and phase transition remain rejected.
 
+The live TCP readiness-label local core composes that descriptor-accept witness
+into sshservicediag metadata without accepting live networking.
+src/ssh_service_readiness.rs now reports
+SshLiveTcpDescriptorPrerequisiteReport with
+LocalStaticDescriptorPrerequisiteAccepted only when the local/static source
+boundary and descriptor-facing accepted-connection delivery are both accepted.
+The report emits a distinct local-source/descriptor-delivered prerequisite
+label while still emitting live-reachability-unaccepted and keeping live packet
+I/O, remote receipt, OpenSSH compatibility, hardware proof, service success,
+and ssh_ready false. Missing descriptor delivery and required real
+device/interface binding remain fail-closed. The selected next local/static
+task is phase12-ssh-live-tcp-device-interface-frontier-closeout-20260629. Live
+TCP attempts, packet I/O, generated-root/OpenSSH retry, remote receipt,
+compatibility, hardware proof, ssh-ready=true, runtime russh adoption, fake
+command expansion, and phase transition remain rejected.
+
 Live networking/SSH remains paused while the local POSIX/VFS/userspace
 continuation advances. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces

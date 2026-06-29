@@ -1,0 +1,58 @@
+{
+  "task_id": "phase12-ssh-live-tcp-readiness-label-local-core-20260629",
+  "source_files": [
+    "src/ssh_service_readiness.rs"
+  ],
+  "docs": [
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md",
+    "tasks/2026-06-29-phase12-ssh-live-tcp-readiness-label-local-core.md"
+  ],
+  "predecessor_evidence": [
+    "tasks/2026-06-29-phase12-ssh-live-tcp-listener-descriptor-accept-local-core.md",
+    "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-listener-descriptor-accept-local-core/classification.json",
+    "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-listener-descriptor-accept-local-core/evidence-map.json"
+  ],
+  "validation": [
+    {
+      "level": "fmt",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet live_tcp_descriptor_prerequisite",
+      "result": "passed"
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet ssh_service_readiness",
+      "result": "passed"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed; retained large search index warning"
+    },
+    {
+      "level": "json validation",
+      "command": "jq empty tasks/evidence/2026-06-29-phase12-ssh-live-tcp-readiness-label-local-core/classification.json tasks/evidence/2026-06-29-phase12-ssh-live-tcp-readiness-label-local-core/evidence-map.json",
+      "result": "passed"
+    }
+  ],
+  "redaction_review": {
+    "durable_evidence_contains_only": [
+      "task ids",
+      "source paths",
+      "public classifier names",
+      "validation commands",
+      "metadata-only state labels"
+    ],
+    "forbidden_material_retained": false
+  }
+}

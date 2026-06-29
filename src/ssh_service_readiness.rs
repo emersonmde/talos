@@ -238,6 +238,12 @@ pub(crate) enum SshServiceReadinessLabel {
     SocketDeliveryFailureOverLimit,
     SocketDeliveryFailureLifecycleViolation,
     SocketDeliveryFailureRedactionSensitive,
+    LiveTcpDescriptorPrerequisiteLocalSourceAccepted,
+    LiveTcpDescriptorPrerequisiteDescriptorDelivered,
+    LiveTcpDescriptorPrerequisiteLiveReachabilityUnaccepted,
+    LiveTcpDescriptorPrerequisiteFailureLocalSourceMissing,
+    LiveTcpDescriptorPrerequisiteFailureDescriptorMissing,
+    LiveTcpDescriptorPrerequisiteFailureDeviceInterfaceMissing,
     PeerOutputReceiptPrerequisiteOnly,
     PeerOutputReceiptChannelDataObserved,
     PeerOutputReceiptEofObserved,
@@ -759,6 +765,24 @@ impl SshServiceReadinessLabel {
             Self::SocketDeliveryFailureRedactionSensitive => {
                 "sshservicediag-socket-delivery-failure-redaction-sensitive"
             }
+            Self::LiveTcpDescriptorPrerequisiteLocalSourceAccepted => {
+                "sshservicediag-live-tcp-descriptor-prerequisite-local-source-accepted"
+            }
+            Self::LiveTcpDescriptorPrerequisiteDescriptorDelivered => {
+                "sshservicediag-live-tcp-descriptor-prerequisite-descriptor-delivered"
+            }
+            Self::LiveTcpDescriptorPrerequisiteLiveReachabilityUnaccepted => {
+                "sshservicediag-live-tcp-descriptor-prerequisite-live-reachability-unaccepted"
+            }
+            Self::LiveTcpDescriptorPrerequisiteFailureLocalSourceMissing => {
+                "sshservicediag-live-tcp-descriptor-prerequisite-failure-local-source-missing"
+            }
+            Self::LiveTcpDescriptorPrerequisiteFailureDescriptorMissing => {
+                "sshservicediag-live-tcp-descriptor-prerequisite-failure-descriptor-missing"
+            }
+            Self::LiveTcpDescriptorPrerequisiteFailureDeviceInterfaceMissing => {
+                "sshservicediag-live-tcp-descriptor-prerequisite-failure-device-interface-missing"
+            }
             Self::PeerOutputReceiptPrerequisiteOnly => {
                 "sshservicediag-peer-output-receipt-prerequisite-only"
             }
@@ -903,6 +927,7 @@ const MAX_SSH_CHANNEL_WINDOW_ACCOUNTING_LABELS: usize = 14;
 const MAX_SSH_CHANNEL_LIFECYCLE_LABELS: usize = 14;
 const MAX_SSH_POSIX_EOF_WAIT_LABELS: usize = 20;
 const MAX_SSH_SOCKET_DELIVERY_LABELS: usize = 16;
+const MAX_SSH_LIVE_TCP_DESCRIPTOR_PREREQUISITE_LABELS: usize = 8;
 const MAX_SSH_PEER_OUTPUT_RECEIPT_LABELS: usize = 20;
 const MAX_SSH_OPENSSH_COMPAT_DISCRIMINATOR_LABELS: usize = 20;
 const SSH_OPENSSH_COMPAT_TRANSCRIPT_MAX_EVENTS: usize = 8;
@@ -7388,6 +7413,166 @@ fn socket_delivery_channel_data_failure(
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum SshLiveTcpDescriptorPrerequisiteResult {
+    LocalStaticDescriptorPrerequisiteAccepted,
+    FailureLocalSourceBoundaryMissing,
+    FailureDescriptorDeliveryMissing,
+    FailureDeviceInterfaceBindingMissing,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct SshLiveTcpDescriptorPrerequisiteReport {
+    labels: [SshServiceReadinessLabel; MAX_SSH_LIVE_TCP_DESCRIPTOR_PREREQUISITE_LABELS],
+    label_count: usize,
+    result: SshLiveTcpDescriptorPrerequisiteResult,
+    local_source_boundary_accepted: bool,
+    descriptor_facing_connection_delivered: bool,
+}
+
+impl SshLiveTcpDescriptorPrerequisiteReport {
+    fn accepted() -> Self {
+        let mut report = Self::new(
+            SshLiveTcpDescriptorPrerequisiteResult::LocalStaticDescriptorPrerequisiteAccepted,
+            true,
+            true,
+        );
+        report.push(SshServiceReadinessLabel::LocalListenerModeled);
+        report.push(SshServiceReadinessLabel::LocalTransportModeled);
+        report.push(SshServiceReadinessLabel::LiveTcpDescriptorPrerequisiteLocalSourceAccepted);
+        report.push(SshServiceReadinessLabel::LiveTcpDescriptorPrerequisiteDescriptorDelivered);
+        report.push(
+            SshServiceReadinessLabel::LiveTcpDescriptorPrerequisiteLiveReachabilityUnaccepted,
+        );
+        report.push(SshServiceReadinessLabel::NotReady);
+        report
+    }
+
+    fn failure(
+        result: SshLiveTcpDescriptorPrerequisiteResult,
+        label: SshServiceReadinessLabel,
+        local_source_boundary_accepted: bool,
+        descriptor_facing_connection_delivered: bool,
+    ) -> Self {
+        let mut report = Self::new(
+            result,
+            local_source_boundary_accepted,
+            descriptor_facing_connection_delivered,
+        );
+        if local_source_boundary_accepted {
+            report.push(SshServiceReadinessLabel::LiveTcpDescriptorPrerequisiteLocalSourceAccepted);
+        }
+        report.push(label);
+        report.push(SshServiceReadinessLabel::NotReady);
+        report
+    }
+
+    const fn new(
+        result: SshLiveTcpDescriptorPrerequisiteResult,
+        local_source_boundary_accepted: bool,
+        descriptor_facing_connection_delivered: bool,
+    ) -> Self {
+        Self {
+            labels: [SshServiceReadinessLabel::NotReady;
+                MAX_SSH_LIVE_TCP_DESCRIPTOR_PREREQUISITE_LABELS],
+            label_count: 0,
+            result,
+            local_source_boundary_accepted,
+            descriptor_facing_connection_delivered,
+        }
+    }
+
+    fn push(&mut self, label: SshServiceReadinessLabel) {
+        self.labels[self.label_count] = label;
+        self.label_count += 1;
+    }
+
+    pub(crate) fn labels(&self) -> &[SshServiceReadinessLabel] {
+        &self.labels[..self.label_count]
+    }
+
+    pub(crate) const fn result(self) -> SshLiveTcpDescriptorPrerequisiteResult {
+        self.result
+    }
+
+    pub(crate) const fn local_source_boundary_accepted(self) -> bool {
+        self.local_source_boundary_accepted
+    }
+
+    pub(crate) const fn descriptor_facing_connection_delivered(self) -> bool {
+        self.descriptor_facing_connection_delivered
+    }
+
+    pub(crate) const fn live_packet_io_accepted(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn live_reachability_accepted(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn remote_receipt_accepted(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn compatibility_accepted(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn hardware_proof_accepted(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn service_success_accepted(self) -> bool {
+        false
+    }
+
+    pub(crate) const fn ssh_ready(self) -> bool {
+        false
+    }
+}
+
+pub(crate) fn classify_ssh_live_tcp_descriptor_prerequisite(
+    accept_report: crate::network::LiveTcpListenerDescriptorAcceptReport,
+) -> SshLiveTcpDescriptorPrerequisiteReport {
+    let local_source_boundary_accepted = accept_report.boundary().boundary()
+        == crate::network::LiveTcpListenerDescriptorBoundary::AcceptedLocalSourceBoundary;
+    let descriptor_facing_connection_delivered =
+        accept_report.descriptor_facing_connection_delivered();
+
+    match accept_report.delivery_state() {
+        crate::network::LiveTcpAcceptedConnectionDeliveryState::AcceptedLocalDescriptorDelivery => {
+            SshLiveTcpDescriptorPrerequisiteReport::accepted()
+        }
+        crate::network::LiveTcpAcceptedConnectionDeliveryState::BlockedMissingDeviceInterfaceBinding => {
+            SshLiveTcpDescriptorPrerequisiteReport::failure(
+                SshLiveTcpDescriptorPrerequisiteResult::FailureDeviceInterfaceBindingMissing,
+                SshServiceReadinessLabel::LiveTcpDescriptorPrerequisiteFailureDeviceInterfaceMissing,
+                local_source_boundary_accepted,
+                descriptor_facing_connection_delivered,
+            )
+        }
+        crate::network::LiveTcpAcceptedConnectionDeliveryState::BlockedNoDescriptorBridge
+            if local_source_boundary_accepted =>
+        {
+            SshLiveTcpDescriptorPrerequisiteReport::failure(
+                SshLiveTcpDescriptorPrerequisiteResult::FailureDescriptorDeliveryMissing,
+                SshServiceReadinessLabel::LiveTcpDescriptorPrerequisiteFailureDescriptorMissing,
+                local_source_boundary_accepted,
+                descriptor_facing_connection_delivered,
+            )
+        }
+        crate::network::LiveTcpAcceptedConnectionDeliveryState::BlockedNoDescriptorBridge => {
+            SshLiveTcpDescriptorPrerequisiteReport::failure(
+                SshLiveTcpDescriptorPrerequisiteResult::FailureLocalSourceBoundaryMissing,
+                SshServiceReadinessLabel::LiveTcpDescriptorPrerequisiteFailureLocalSourceMissing,
+                local_source_boundary_accepted,
+                descriptor_facing_connection_delivered,
+            )
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum SshPeerOutputReceiptOutputShape {
     Accepted,
     Malformed,
@@ -9009,6 +9194,16 @@ mod tests {
         labels
     }
 
+    fn live_tcp_descriptor_prerequisite_label_names(
+        report: &SshLiveTcpDescriptorPrerequisiteReport,
+    ) -> [&'static str; MAX_SSH_LIVE_TCP_DESCRIPTOR_PREREQUISITE_LABELS] {
+        let mut labels = [""; MAX_SSH_LIVE_TCP_DESCRIPTOR_PREREQUISITE_LABELS];
+        for (index, label) in report.labels().iter().enumerate() {
+            labels[index] = label.name();
+        }
+        labels
+    }
+
     fn peer_output_receipt_label_names(
         report: &SshPeerOutputReceiptReport,
     ) -> [&'static str; MAX_SSH_PEER_OUTPUT_RECEIPT_LABELS] {
@@ -9280,6 +9475,69 @@ mod tests {
             output_len: 8,
             force_output_backpressure: false,
         }
+    }
+
+    fn live_tcp_descriptor_accept_report(
+        accept_connection: bool,
+        require_device_interface_binding: bool,
+    ) -> crate::network::LiveTcpListenerDescriptorAcceptReport {
+        let server_owner =
+            crate::scheduler::ProcessOwnerId::new(SSH_LOCAL_TRANSPORT_OWNER_RAW).unwrap();
+        let client_owner =
+            crate::scheduler::ProcessOwnerId::new(SSH_LOCAL_TRANSPORT_CLIENT_OWNER_RAW).unwrap();
+        let endpoint = crate::network::Ipv4Endpoint::new(
+            crate::network::SOCKET_SYNTHETIC_LOCAL_IPV4_BE,
+            SSH_LOCAL_MODELED_ENDPOINT_PORT,
+        );
+        let mut sockets = crate::network::NetworkSocketDescriptorTable::<
+            SSH_LOCAL_TRANSPORT_SOCKET_CAPACITY,
+        >::new();
+        let listener = sockets
+            .open(
+                server_owner,
+                crate::network::SOCKET_DOMAIN_AF_INET,
+                crate::network::SOCKET_TYPE_STREAM,
+                crate::network::SOCKET_PROTOCOL_DEFAULT,
+            )
+            .unwrap();
+        sockets.bind(server_owner, listener, endpoint).unwrap();
+        sockets
+            .listen(
+                server_owner,
+                listener,
+                crate::network::SOCKET_LISTEN_BACKLOG_MIN as u8,
+            )
+            .unwrap();
+        let client = sockets
+            .open(
+                client_owner,
+                crate::network::SOCKET_DOMAIN_AF_INET,
+                crate::network::SOCKET_TYPE_STREAM,
+                crate::network::SOCKET_PROTOCOL_DEFAULT,
+            )
+            .unwrap();
+        sockets.connect(client_owner, client, endpoint).unwrap();
+        let connection_id = match sockets.socket(client).unwrap().state() {
+            crate::network::NetworkSocketState::Connected { connection_id, .. } => connection_id,
+            _ => panic!("local modeled client must be connected"),
+        };
+        if accept_connection {
+            let accepted = sockets.accept(server_owner, listener).unwrap();
+            let state = sockets.socket(accepted).unwrap().state();
+            assert!(matches!(
+                state,
+                crate::network::NetworkSocketState::Accepted {
+                    connection_id: accepted_connection_id,
+                    ..
+                } if accepted_connection_id == connection_id
+            ));
+        }
+        sockets
+            .live_tcp_listener_descriptor_accept_delivery(
+                connection_id,
+                require_device_interface_binding,
+            )
+            .unwrap()
     }
 
     fn posix_eof_wait_success_input<'a>(
@@ -12766,6 +13024,82 @@ mod tests {
         assert!(!report.live_reachability());
         assert!(!report.remote_receipt());
         assert!(!report.compatibility());
+        assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn live_tcp_descriptor_prerequisite_reports_local_static_boundary_separate_from_reachability() {
+        let accept_report = live_tcp_descriptor_accept_report(false, false);
+        let missing_descriptor = classify_ssh_live_tcp_descriptor_prerequisite(accept_report);
+
+        assert_eq!(
+            missing_descriptor.result(),
+            SshLiveTcpDescriptorPrerequisiteResult::FailureLocalSourceBoundaryMissing
+        );
+        assert!(missing_descriptor.labels().contains(
+            &SshServiceReadinessLabel::LiveTcpDescriptorPrerequisiteFailureLocalSourceMissing
+        ));
+        assert!(!missing_descriptor.local_source_boundary_accepted());
+        assert!(!missing_descriptor.descriptor_facing_connection_delivered());
+        assert!(!missing_descriptor.live_reachability_accepted());
+        assert!(!missing_descriptor.remote_receipt_accepted());
+        assert!(!missing_descriptor.compatibility_accepted());
+        assert!(!missing_descriptor.hardware_proof_accepted());
+        assert!(!missing_descriptor.service_success_accepted());
+        assert!(!missing_descriptor.ssh_ready());
+
+        let accepted_report = live_tcp_descriptor_accept_report(true, false);
+        let report = classify_ssh_live_tcp_descriptor_prerequisite(accepted_report);
+
+        assert_eq!(
+            report.result(),
+            SshLiveTcpDescriptorPrerequisiteResult::LocalStaticDescriptorPrerequisiteAccepted
+        );
+        assert_eq!(
+            &live_tcp_descriptor_prerequisite_label_names(&report)[..report.labels().len()],
+            &[
+                "sshservicediag-local-listener-modeled",
+                "sshservicediag-local-transport-modeled",
+                "sshservicediag-live-tcp-descriptor-prerequisite-local-source-accepted",
+                "sshservicediag-live-tcp-descriptor-prerequisite-descriptor-delivered",
+                "sshservicediag-live-tcp-descriptor-prerequisite-live-reachability-unaccepted",
+                "sshservicediag-not-ready",
+            ]
+        );
+        assert!(report.local_source_boundary_accepted());
+        assert!(report.descriptor_facing_connection_delivered());
+        assert!(!report.live_packet_io_accepted());
+        assert!(!report.live_reachability_accepted());
+        assert!(!report.remote_receipt_accepted());
+        assert!(!report.compatibility_accepted());
+        assert!(!report.hardware_proof_accepted());
+        assert!(!report.service_success_accepted());
+        assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn live_tcp_descriptor_prerequisite_fails_closed_when_real_device_binding_is_required() {
+        let accept_report = live_tcp_descriptor_accept_report(true, true);
+        let report = classify_ssh_live_tcp_descriptor_prerequisite(accept_report);
+
+        assert_eq!(
+            report.result(),
+            SshLiveTcpDescriptorPrerequisiteResult::FailureDeviceInterfaceBindingMissing
+        );
+        assert_eq!(
+            &live_tcp_descriptor_prerequisite_label_names(&report)[..report.labels().len()],
+            &[
+                "sshservicediag-live-tcp-descriptor-prerequisite-failure-device-interface-missing",
+                "sshservicediag-not-ready",
+            ]
+        );
+        assert!(!report.local_source_boundary_accepted());
+        assert!(!report.descriptor_facing_connection_delivered());
+        assert!(!report.live_reachability_accepted());
+        assert!(!report.remote_receipt_accepted());
+        assert!(!report.compatibility_accepted());
+        assert!(!report.hardware_proof_accepted());
+        assert!(!report.service_success_accepted());
         assert!(!report.ssh_ready());
     }
 
