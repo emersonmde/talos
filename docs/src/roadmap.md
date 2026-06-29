@@ -20442,6 +20442,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   hardware proof, boot publication, or phase transition is accepted. The
   selected next task is the source/evidence-only
   phase12-rp1-ethernet-link-not-ready-discriminator-reselection-20260629.
+- phase12-rp1-ethernet-link-not-ready-discriminator-reselection-20260629
+  accepts the source/evidence-only reselection checkpoint with
+  selected_discriminator=null, selected_next_task=null, and
+  planningNeeded=true. The accepted local POSIX/VFS readiness checkpoint does
+  not add Ethernet source evidence or authorize broader hardware ownership.
+  Retained Phase 12.1 evidence still lacks a narrow, source-backed,
+  qualitatively distinct link-not-ready discriminator after accepted
+  RGMII/TX-order, MII_CTRL1000 master-mode, one BMCR autoneg restart, and
+  BMCR_PDOWN-exit lifecycle gates all ended link-not-ready. Hardware proof,
+  packet I/O, live networking/SSH, OpenSSH retry, generated-root retry, fake
+  command expansion, persistence claims, and phase transition remain rejected
+  from this task; supervisor planning or new source evidence is required before
+  further Phase 12.1 Ethernet work.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

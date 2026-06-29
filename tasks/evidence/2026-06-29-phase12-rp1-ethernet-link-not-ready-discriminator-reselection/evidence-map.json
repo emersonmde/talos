@@ -1,0 +1,55 @@
+{
+  "task_id": "phase12-rp1-ethernet-link-not-ready-discriminator-reselection-20260629",
+  "classification": "rp1-ethernet-link-not-ready-reselection-paused-no-defensible-discriminator",
+  "selected_discriminator": null,
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "evidence": [
+    {
+      "level": "static/task evidence review",
+      "path": "tasks/2026-06-29-phase12-local-posix-vfs-to-network-readiness-checkpoint.md",
+      "result": "Accepted local POSIX/VFS readiness changes no RP1 Ethernet, PHY, MAC, packet, hardware, live networking, or SSH fact."
+    },
+    {
+      "level": "static/task evidence review",
+      "path": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-post-master-mode-autoneg-pause-closeout.md",
+      "result": "Accepted frontier preserved MII_CTRL1000 master-mode write/readback plus one BMCR autoneg restart, but link-ready/autoneg-complete remained false and no discriminator was selected."
+    },
+    {
+      "level": "static/task evidence review",
+      "path": "tasks/2026-06-18-phase12-rp1-ethernet-bcm54213pe-master-mode-autoneg-closeout.md",
+      "result": "Candidate terminal state retained BMSR link false, BMSR autoneg-complete false, ANLPAR 0x0000, MII_STAT1000 0x0000, and MACB_NSR_LINK false."
+    },
+    {
+      "level": "static/task evidence review",
+      "path": "tasks/2026-06-21-phase12-rp1-ethernet-link-ready-discriminator-source-contract.md",
+      "result": "Source contract found no defensible link-ready discriminator without new source evidence or explicit broader ownership strategy."
+    },
+    {
+      "level": "static/task evidence review",
+      "path": "tasks/2026-06-21-phase12-rp1-ethernet-bcm54213pe-lifecycle-ownership-closeout.md",
+      "result": "Accepted lifecycle proof observed BMCR_PDOWN already clear and closed as no-change link-not-ready."
+    },
+    {
+      "level": "source owner inspection",
+      "path": "src/target/rpi5.rs",
+      "result": "Retained RP1/BCM54213PE diagnostic surfaces include prior selected discriminators, but no new source-backed local core is selected by this task."
+    },
+    {
+      "level": "retained Linux source evidence",
+      "path": "tasks/evidence/2026-06-15-phase12-rp1-ethernet-bcm54213pe-config-init-source-contract/source/",
+      "result": "Broadcom PHY config/lifecycle/interrupt/MAC-related evidence remains already classified or deferred behind broader ownership and restore contracts."
+    },
+    {
+      "level": "docs",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "result": "Phase 12 project note updated to record the no-discriminator reselection pause."
+    },
+    {
+      "level": "docs",
+      "path": "docs/src/roadmap.md",
+      "result": "Roadmap updated to record selected_discriminator=null, selected_next_task=null, and planningNeeded=true."
+    }
+  ],
+  "next_action": "Supervisor planning is required before promoting local-core, hardware proof, packet I/O, live networking/SSH, OpenSSH retry, generated-root retry, or phase transition work."
+}

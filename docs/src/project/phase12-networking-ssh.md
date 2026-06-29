@@ -4,6 +4,18 @@ Phase 12 starts with source-only RP1 Ethernet research. The accepted Phase 11
 frontier allows source inventory and design selection, but it does not accept
 Ethernet implementation, packet I/O, live DMA, networking, sockets, or SSH.
 
+The link-not-ready discriminator reselection checkpoint after the accepted
+local POSIX/VFS readiness checkpoint selects no discriminator. Local
+descriptor-backed VFS/userspace progress removes the shell/redirection detour,
+but it does not add Ethernet source evidence or authorize broader hardware
+ownership. The retained Phase 12.1 Ethernet frontier remains paused after the
+accepted RGMII/TX-order, MII_CTRL1000 master-mode, one BMCR autoneg restart,
+and BMCR_PDOWN-exit lifecycle gates all ended link-not-ready. Hardware proof,
+packet I/O, live networking/SSH, OpenSSH retry, generated-root retry, fake
+command expansion, persistence claims, and phase transition remain rejected
+from the reselection task; supervisor planning or new source evidence is
+required before further Phase 12.1 Ethernet work.
+
 Live networking/SSH remains paused while the local POSIX/VFS/userspace
 continuation advances. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces
