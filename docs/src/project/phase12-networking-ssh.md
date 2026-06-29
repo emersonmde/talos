@@ -199,6 +199,20 @@ checkable dependencies for a live/hardware proof with candidate identity, fresh
 serial cursor, TFTP delta, known-good control, candidate rerun, hardware lock
 ownership, evidence redaction, and restore requirements.
 
+Supervisor planning resolved that gap with a local deterministic runtime task
+before any hardware/live proof. The accepted network-device smoltcp runtime
+core keeps src/network.rs as the owner of the network-device boundary:
+DriverPacketAdapter now implements smoltcp::phy::Device, and
+LiveTcpNetworkDeviceRuntimeReport connects a deterministic
+DriverPacketAdapter-backed smoltcp listener exchange to the already accepted
+descriptor-facing delivery witness. This is still local deterministic evidence
+only. Missing descriptor delivery, missing deterministic device-interface
+binding, and missing hardware frame provider remain fail-closed; live packet
+I/O, remote receipt, OpenSSH compatibility, Pi 5 hardware proof, service
+success, ssh-ready=true, runtime russh adoption, fake command expansion, and
+phase transition remain unaccepted. The selected next task is
+phase12-ssh-live-tcp-network-device-smoltcp-runtime-closeout-20260629.
+
 Live networking/SSH remains paused while the local POSIX/VFS/userspace
 continuation advances. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces

@@ -1,0 +1,27 @@
+{
+  "task_id": "phase12-ssh-live-tcp-network-device-smoltcp-runtime-core-20260629",
+  "classification": "ssh-live-tcp-network-device-smoltcp-runtime-core-accepted",
+  "status": "accepted",
+  "selected_next_task": "phase12-ssh-live-tcp-network-device-smoltcp-runtime-closeout-20260629",
+  "accepted_runtime_boundary": {
+    "driver_packet_adapter_is_smoltcp_device": true,
+    "deterministic_smoltcp_listener_path": true,
+    "descriptor_facing_delivery_required": true,
+    "host_only_bridge_distinguished": true
+  },
+  "rejected_claims": {
+    "pi5_hardware_action": false,
+    "boot_publication": false,
+    "generated_root_retry": false,
+    "openssh_retry": false,
+    "external_live_tcp_attempt": false,
+    "remote_receipt": false,
+    "openssh_compatibility": false,
+    "hardware_proof": false,
+    "ssh_ready_true": false,
+    "service_success": false,
+    "runtime_russh_adoption": false,
+    "fake_command_expansion": false,
+    "phase_transition": false
+  }
+}

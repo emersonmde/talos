@@ -1,0 +1,49 @@
+{
+  "task_id": "phase12-ssh-live-tcp-network-device-smoltcp-runtime-core-20260629",
+  "evidence_level": [
+    "source implementation",
+    "focused unit tests",
+    "docs validation",
+    "diff validation",
+    "static redaction review"
+  ],
+  "changed_source": [
+    "src/network.rs"
+  ],
+  "changed_docs": [
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "task_records": [
+    "tasks/2026-06-29-phase12-ssh-live-tcp-network-device-smoltcp-runtime-core.md",
+    "tasks/2026-06-29-phase12-ssh-live-tcp-device-interface-frontier-closeout.md"
+  ],
+  "focused_tests": [
+    "cargo -Zjson-target-spec test --quiet live_tcp_network_device_smoltcp_runtime_binding",
+    "cargo -Zjson-target-spec test --quiet live_tcp_listener_descriptor_boundary",
+    "cargo -Zjson-target-spec test --quiet driver_packet_adapter",
+    "cargo -Zjson-target-spec test --quiet ssh_service_readiness"
+  ],
+  "redaction": {
+    "retained": [
+      "task ids",
+      "source paths",
+      "public classifier names",
+      "metadata-only enum and report labels",
+      "boolean fields",
+      "frame count metadata",
+      "validation commands and results"
+    ],
+    "not_retained": [
+      "peer identifiers",
+      "addresses",
+      "packet payload contents",
+      "key material",
+      "session material",
+      "boot artifact bytes",
+      "private user data",
+      "stable secret-derived identifiers",
+      "hardware data"
+    ]
+  }
+}

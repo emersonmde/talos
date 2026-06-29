@@ -282,6 +282,34 @@ impl<const RX_CAPACITY: usize, const TX_CAPACITY: usize, const FRAME_CAPACITY: u
     }
 }
 
+impl<const RX_CAPACITY: usize, const TX_CAPACITY: usize, const FRAME_CAPACITY: usize>
+    smoltcp::phy::Device for DriverPacketAdapter<RX_CAPACITY, TX_CAPACITY, FRAME_CAPACITY>
+{
+    type RxToken<'a>
+        = SmoltcpPacketDeviceRxToken<FRAME_CAPACITY>
+    where
+        Self: 'a;
+    type TxToken<'a>
+        = SmoltcpPacketDeviceTxToken<'a, RX_CAPACITY, TX_CAPACITY, FRAME_CAPACITY>
+    where
+        Self: 'a;
+
+    fn receive(
+        &mut self,
+        timestamp: smoltcp::time::Instant,
+    ) -> Option<(Self::RxToken<'_>, Self::TxToken<'_>)> {
+        self.smoltcp_device.receive(timestamp)
+    }
+
+    fn transmit(&mut self, timestamp: smoltcp::time::Instant) -> Option<Self::TxToken<'_>> {
+        self.smoltcp_device.transmit(timestamp)
+    }
+
+    fn capabilities(&self) -> smoltcp::phy::DeviceCapabilities {
+        self.smoltcp_device.capabilities()
+    }
+}
+
 pub(crate) struct SmoltcpPacketDeviceRxToken<const FRAME_CAPACITY: usize> {
     frame: PacketQueueFrame<FRAME_CAPACITY>,
 }
@@ -2171,6 +2199,7 @@ const SMOLTCP_SOCKET_BRIDGE_PREFIX_LEN: u8 = 24;
 const SMOLTCP_SOCKET_BRIDGE_CLIENT_PORT: u16 = SOCKET_SYNTHETIC_CLIENT_PORT_BASE;
 const SMOLTCP_SOCKET_BRIDGE_SERVER_PORT: u16 = 8080;
 const SMOLTCP_SOCKET_BRIDGE_MAX_STEPS: usize = 48;
+const LIVE_TCP_RUNTIME_DRIVER_PACKET_PAYLOAD: &[u8] = b"runtime-device";
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct NetworkSocketDescriptor {
@@ -2548,6 +2577,14 @@ pub(crate) enum LiveTcpAcceptedConnectionDeliveryState {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum LiveTcpNetworkDeviceRuntimeBindingState {
+    AcceptedDeterministicDeviceInterfaceDelivery,
+    BlockedMissingDescriptorDelivery,
+    BlockedMissingDeviceInterfaceBinding,
+    BlockedMissingHardwareFrameProvider,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct LiveTcpListenerDescriptorBoundaryReport {
     boundary: LiveTcpListenerDescriptorBoundary,
     ownership_model: LiveTcpDeviceInterfaceOwnershipModel,
@@ -2656,6 +2693,77 @@ impl LiveTcpListenerDescriptorAcceptReport {
 
     pub(crate) const fn descriptor_facing_connection_delivered(self) -> bool {
         self.descriptor_facing_connection_delivered
+    }
+
+    pub(crate) const fn live_packet_io_accepted(self) -> bool {
+        self.live_packet_io_accepted
+    }
+
+    pub(crate) const fn live_reachability_accepted(self) -> bool {
+        self.live_reachability_accepted
+    }
+
+    pub(crate) const fn remote_receipt_accepted(self) -> bool {
+        self.remote_receipt_accepted
+    }
+
+    pub(crate) const fn compatibility_accepted(self) -> bool {
+        self.compatibility_accepted
+    }
+
+    pub(crate) const fn ssh_ready(self) -> bool {
+        self.ssh_ready
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct LiveTcpNetworkDeviceRuntimeReport {
+    accept_report: LiveTcpListenerDescriptorAcceptReport,
+    binding_state: LiveTcpNetworkDeviceRuntimeBindingState,
+    runtime_observation: Option<SmoltcpSocketBridgeObservation>,
+    descriptor_facing_connection_delivered: bool,
+    deterministic_device_interface_bound: bool,
+    hardware_frame_provider_bound: bool,
+    driver_packet_rx_frames: usize,
+    driver_packet_tx_frames: usize,
+    live_packet_io_accepted: bool,
+    live_reachability_accepted: bool,
+    remote_receipt_accepted: bool,
+    compatibility_accepted: bool,
+    ssh_ready: bool,
+}
+
+impl LiveTcpNetworkDeviceRuntimeReport {
+    pub(crate) const fn accept_report(self) -> LiveTcpListenerDescriptorAcceptReport {
+        self.accept_report
+    }
+
+    pub(crate) const fn binding_state(self) -> LiveTcpNetworkDeviceRuntimeBindingState {
+        self.binding_state
+    }
+
+    pub(crate) const fn runtime_observation(self) -> Option<SmoltcpSocketBridgeObservation> {
+        self.runtime_observation
+    }
+
+    pub(crate) const fn descriptor_facing_connection_delivered(self) -> bool {
+        self.descriptor_facing_connection_delivered
+    }
+
+    pub(crate) const fn deterministic_device_interface_bound(self) -> bool {
+        self.deterministic_device_interface_bound
+    }
+
+    pub(crate) const fn hardware_frame_provider_bound(self) -> bool {
+        self.hardware_frame_provider_bound
+    }
+
+    pub(crate) const fn driver_packet_rx_frames(self) -> usize {
+        self.driver_packet_rx_frames
+    }
+
+    pub(crate) const fn driver_packet_tx_frames(self) -> usize {
+        self.driver_packet_tx_frames
     }
 
     pub(crate) const fn live_packet_io_accepted(self) -> bool {
@@ -3230,6 +3338,95 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
         })
     }
 
+    pub(crate) fn live_tcp_network_device_smoltcp_runtime_binding(
+        &self,
+        connection_id: u64,
+        bind_deterministic_device_interface: bool,
+        require_hardware_frame_provider: bool,
+    ) -> Result<LiveTcpNetworkDeviceRuntimeReport, crate::posix::PosixError> {
+        let accept_report =
+            self.live_tcp_listener_descriptor_accept_delivery(connection_id, false)?;
+        if accept_report.delivery_state()
+            != LiveTcpAcceptedConnectionDeliveryState::AcceptedLocalDescriptorDelivery
+        {
+            return Ok(LiveTcpNetworkDeviceRuntimeReport {
+                accept_report,
+                binding_state:
+                    LiveTcpNetworkDeviceRuntimeBindingState::BlockedMissingDescriptorDelivery,
+                runtime_observation: None,
+                descriptor_facing_connection_delivered: false,
+                deterministic_device_interface_bound: false,
+                hardware_frame_provider_bound: false,
+                driver_packet_rx_frames: 0,
+                driver_packet_tx_frames: 0,
+                live_packet_io_accepted: false,
+                live_reachability_accepted: false,
+                remote_receipt_accepted: false,
+                compatibility_accepted: false,
+                ssh_ready: false,
+            });
+        }
+
+        if !bind_deterministic_device_interface {
+            return Ok(LiveTcpNetworkDeviceRuntimeReport {
+                accept_report,
+                binding_state:
+                    LiveTcpNetworkDeviceRuntimeBindingState::BlockedMissingDeviceInterfaceBinding,
+                runtime_observation: None,
+                descriptor_facing_connection_delivered: true,
+                deterministic_device_interface_bound: false,
+                hardware_frame_provider_bound: false,
+                driver_packet_rx_frames: 0,
+                driver_packet_tx_frames: 0,
+                live_packet_io_accepted: false,
+                live_reachability_accepted: false,
+                remote_receipt_accepted: false,
+                compatibility_accepted: false,
+                ssh_ready: false,
+            });
+        }
+
+        if require_hardware_frame_provider {
+            return Ok(LiveTcpNetworkDeviceRuntimeReport {
+                accept_report,
+                binding_state:
+                    LiveTcpNetworkDeviceRuntimeBindingState::BlockedMissingHardwareFrameProvider,
+                runtime_observation: None,
+                descriptor_facing_connection_delivered: true,
+                deterministic_device_interface_bound: true,
+                hardware_frame_provider_bound: false,
+                driver_packet_rx_frames: 0,
+                driver_packet_tx_frames: 0,
+                live_packet_io_accepted: false,
+                live_reachability_accepted: false,
+                remote_receipt_accepted: false,
+                compatibility_accepted: false,
+                ssh_ready: false,
+            });
+        }
+
+        let runtime_observation =
+            driver_packet_smoltcp_listener_transfer(LIVE_TCP_RUNTIME_DRIVER_PACKET_PAYLOAD)?;
+
+        Ok(LiveTcpNetworkDeviceRuntimeReport {
+            accept_report,
+            binding_state: LiveTcpNetworkDeviceRuntimeBindingState::AcceptedDeterministicDeviceInterfaceDelivery,
+            runtime_observation: Some(runtime_observation),
+            descriptor_facing_connection_delivered: true,
+            deterministic_device_interface_bound: true,
+            hardware_frame_provider_bound: false,
+            driver_packet_rx_frames: runtime_observation.client_to_server_frames()
+                + runtime_observation.server_to_client_frames(),
+            driver_packet_tx_frames: runtime_observation.client_to_server_frames()
+                + runtime_observation.server_to_client_frames(),
+            live_packet_io_accepted: false,
+            live_reachability_accepted: false,
+            remote_receipt_accepted: false,
+            compatibility_accepted: false,
+            ssh_ready: false,
+        })
+    }
+
     pub(crate) fn require_owner(
         &self,
         owner: crate::scheduler::ProcessOwnerId,
@@ -3515,12 +3712,115 @@ fn smoltcp_socket_bridge_transfer(
     Ok(observation)
 }
 
+fn driver_packet_smoltcp_listener_transfer(
+    payload: &[u8],
+) -> Result<SmoltcpSocketBridgeObservation, crate::posix::PosixError> {
+    if payload.len() > SMOLTCP_SOCKET_BRIDGE_TCP_BUFFER_CAPACITY {
+        return Err(crate::posix::PosixError::NoSpace);
+    }
+
+    let mut client_adapter = DriverPacketAdapter::<
+        SMOLTCP_SOCKET_BRIDGE_PACKET_QUEUE_CAPACITY,
+        SMOLTCP_SOCKET_BRIDGE_PACKET_QUEUE_CAPACITY,
+        SMOLTCP_SOCKET_BRIDGE_FRAME_CAPACITY,
+    >::new();
+    let mut server_adapter = DriverPacketAdapter::<
+        SMOLTCP_SOCKET_BRIDGE_PACKET_QUEUE_CAPACITY,
+        SMOLTCP_SOCKET_BRIDGE_PACKET_QUEUE_CAPACITY,
+        SMOLTCP_SOCKET_BRIDGE_FRAME_CAPACITY,
+    >::new();
+    let mut client_iface = smoltcp_driver_packet_interface(
+        &mut client_adapter,
+        SMOLTCP_SOCKET_BRIDGE_CLIENT_MAC,
+        SMOLTCP_SOCKET_BRIDGE_CLIENT_IPV4,
+    );
+    let mut server_iface = smoltcp_driver_packet_interface(
+        &mut server_adapter,
+        SMOLTCP_SOCKET_BRIDGE_SERVER_MAC,
+        SMOLTCP_SOCKET_BRIDGE_SERVER_IPV4,
+    );
+    let mut client_rx_storage = [0u8; SMOLTCP_SOCKET_BRIDGE_TCP_BUFFER_CAPACITY];
+    let mut client_tx_storage = [0u8; SMOLTCP_SOCKET_BRIDGE_TCP_BUFFER_CAPACITY];
+    let mut server_rx_storage = [0u8; SMOLTCP_SOCKET_BRIDGE_TCP_BUFFER_CAPACITY];
+    let mut server_tx_storage = [0u8; SMOLTCP_SOCKET_BRIDGE_TCP_BUFFER_CAPACITY];
+    let client_socket = smoltcp::socket::tcp::Socket::new(
+        smoltcp::socket::tcp::SocketBuffer::new(&mut client_rx_storage[..]),
+        smoltcp::socket::tcp::SocketBuffer::new(&mut client_tx_storage[..]),
+    );
+    let server_socket = smoltcp::socket::tcp::Socket::new(
+        smoltcp::socket::tcp::SocketBuffer::new(&mut server_rx_storage[..]),
+        smoltcp::socket::tcp::SocketBuffer::new(&mut server_tx_storage[..]),
+    );
+    let mut client_socket_storage = [smoltcp::iface::SocketStorage::EMPTY];
+    let mut server_socket_storage = [smoltcp::iface::SocketStorage::EMPTY];
+    let mut client_sockets = smoltcp::iface::SocketSet::new(&mut client_socket_storage[..]);
+    let mut server_sockets = smoltcp::iface::SocketSet::new(&mut server_socket_storage[..]);
+    let client_handle = client_sockets.add(client_socket);
+    let server_handle = server_sockets.add(server_socket);
+    server_sockets
+        .get_mut::<smoltcp::socket::tcp::Socket>(server_handle)
+        .listen(SMOLTCP_SOCKET_BRIDGE_SERVER_PORT)
+        .map_err(|_| crate::posix::PosixError::InvalidArgument)?;
+    client_sockets
+        .get_mut::<smoltcp::socket::tcp::Socket>(client_handle)
+        .connect(
+            client_iface.context(),
+            (
+                smoltcp::wire::IpAddress::v4(
+                    SMOLTCP_SOCKET_BRIDGE_SERVER_IPV4[0],
+                    SMOLTCP_SOCKET_BRIDGE_SERVER_IPV4[1],
+                    SMOLTCP_SOCKET_BRIDGE_SERVER_IPV4[2],
+                    SMOLTCP_SOCKET_BRIDGE_SERVER_IPV4[3],
+                ),
+                SMOLTCP_SOCKET_BRIDGE_SERVER_PORT,
+            ),
+            SMOLTCP_SOCKET_BRIDGE_CLIENT_PORT,
+        )
+        .map_err(|_| crate::posix::PosixError::InvalidArgument)?;
+
+    let mut observation = smoltcp_driver_packet_drive(
+        &mut client_adapter,
+        &mut server_adapter,
+        &mut client_iface,
+        &mut server_iface,
+        &mut client_sockets,
+        &mut server_sockets,
+        client_handle,
+        server_handle,
+        payload,
+    )?;
+    observation.payload_len = payload.len();
+    Ok(observation)
+}
+
 fn smoltcp_bridge_interface<
     const RX_CAPACITY: usize,
     const TX_CAPACITY: usize,
     const FRAME_CAPACITY: usize,
 >(
     adapter: &mut SmoltcpPacketDeviceAdapter<RX_CAPACITY, TX_CAPACITY, FRAME_CAPACITY>,
+    mac: [u8; ETHERNET_ADDR_LEN],
+    ipv4: [u8; 4],
+) -> smoltcp::iface::Interface {
+    let config = smoltcp::iface::Config::new(smoltcp::wire::EthernetAddress(mac).into());
+    let mut iface = smoltcp::iface::Interface::new(config, adapter, smoltcp::time::Instant::ZERO);
+    iface.update_ip_addrs(|addresses| {
+        addresses
+            .push(smoltcp::wire::IpCidr::new(
+                smoltcp::wire::IpAddress::v4(ipv4[0], ipv4[1], ipv4[2], ipv4[3]),
+                SMOLTCP_SOCKET_BRIDGE_PREFIX_LEN,
+            ))
+            .expect("single smoltcp IPv4 address slot remains available");
+    });
+    iface
+}
+
+fn smoltcp_driver_packet_interface<
+    const RX_CAPACITY: usize,
+    const TX_CAPACITY: usize,
+    const FRAME_CAPACITY: usize,
+>(
+    adapter: &mut DriverPacketAdapter<RX_CAPACITY, TX_CAPACITY, FRAME_CAPACITY>,
     mac: [u8; ETHERNET_ADDR_LEN],
     ipv4: [u8; 4],
 ) -> smoltcp::iface::Interface {
@@ -3550,6 +3850,25 @@ fn smoltcp_bridge_move_frames<
     let mut moved = 0usize;
     while let Some(frame) = from.pop_transmitted() {
         to.inject_received(frame.as_bytes())
+            .map_err(|_| crate::posix::PosixError::NoSpace)?;
+        moved += 1;
+    }
+    Ok(moved)
+}
+
+fn smoltcp_driver_packet_move_frames<
+    const FROM_RX_CAPACITY: usize,
+    const FROM_TX_CAPACITY: usize,
+    const TO_RX_CAPACITY: usize,
+    const TO_TX_CAPACITY: usize,
+    const FRAME_CAPACITY: usize,
+>(
+    from: &mut DriverPacketAdapter<FROM_RX_CAPACITY, FROM_TX_CAPACITY, FRAME_CAPACITY>,
+    to: &mut DriverPacketAdapter<TO_RX_CAPACITY, TO_TX_CAPACITY, FRAME_CAPACITY>,
+) -> Result<usize, crate::posix::PosixError> {
+    let mut moved = 0usize;
+    while let Some(frame) = from.pop_driver_tx() {
+        to.inject_driver_rx(frame.as_bytes())
             .map_err(|_| crate::posix::PosixError::NoSpace)?;
         moved += 1;
     }
@@ -3653,6 +3972,110 @@ fn smoltcp_bridge_drive<
     }
 
     Err(crate::posix::PosixError::Again)
+}
+
+fn smoltcp_driver_packet_drive<
+    const CLIENT_RX_CAPACITY: usize,
+    const CLIENT_TX_CAPACITY: usize,
+    const SERVER_RX_CAPACITY: usize,
+    const SERVER_TX_CAPACITY: usize,
+    const FRAME_CAPACITY: usize,
+>(
+    client_adapter: &mut DriverPacketAdapter<
+        CLIENT_RX_CAPACITY,
+        CLIENT_TX_CAPACITY,
+        FRAME_CAPACITY,
+    >,
+    server_adapter: &mut DriverPacketAdapter<
+        SERVER_RX_CAPACITY,
+        SERVER_TX_CAPACITY,
+        FRAME_CAPACITY,
+    >,
+    client_iface: &mut smoltcp::iface::Interface,
+    server_iface: &mut smoltcp::iface::Interface,
+    client_sockets: &mut smoltcp::iface::SocketSet<'_>,
+    server_sockets: &mut smoltcp::iface::SocketSet<'_>,
+    client_handle: smoltcp::iface::SocketHandle,
+    server_handle: smoltcp::iface::SocketHandle,
+    payload: &[u8],
+) -> Result<SmoltcpSocketBridgeObservation, crate::posix::PosixError> {
+    let mut observation = SmoltcpSocketBridgeObservation {
+        client_state: smoltcp::socket::tcp::State::Closed,
+        server_state: smoltcp::socket::tcp::State::Closed,
+        steps: 0,
+        client_to_server_frames: 0,
+        server_to_client_frames: 0,
+        payload_len: 0,
+    };
+    let mut payload_sent = payload.is_empty();
+    let mut payload_received = payload.is_empty();
+    let mut receive_buffer = [0u8; SMOLTCP_SOCKET_BRIDGE_TCP_BUFFER_CAPACITY];
+
+    let mut step = 0usize;
+    while step < SMOLTCP_SOCKET_BRIDGE_MAX_STEPS {
+        let now = smoltcp::time::Instant::from_millis(step as i64);
+        client_iface.poll(now, client_adapter, client_sockets);
+        observation.client_to_server_frames +=
+            smoltcp_driver_packet_move_frames(client_adapter, server_adapter)?;
+        server_iface.poll(now, server_adapter, server_sockets);
+        observation.server_to_client_frames +=
+            smoltcp_driver_packet_move_frames(server_adapter, client_adapter)?;
+        client_iface.poll(now, client_adapter, client_sockets);
+        observation.client_to_server_frames +=
+            smoltcp_driver_packet_move_frames(client_adapter, server_adapter)?;
+        server_iface.poll(now, server_adapter, server_sockets);
+        observation.server_to_client_frames +=
+            smoltcp_driver_packet_move_frames(server_adapter, client_adapter)?;
+
+        observation.client_state = client_sockets
+            .get::<smoltcp::socket::tcp::Socket>(client_handle)
+            .state();
+        observation.server_state = server_sockets
+            .get::<smoltcp::socket::tcp::Socket>(server_handle)
+            .state();
+        if observation.client_state == smoltcp::socket::tcp::State::Established
+            && observation.server_state == smoltcp::socket::tcp::State::Established
+        {
+            if !payload_sent {
+                let sent = client_sockets
+                    .get_mut::<smoltcp::socket::tcp::Socket>(client_handle)
+                    .send_slice(payload)
+                    .map_err(|_| crate::posix::PosixError::NoSpace)?;
+                if sent != payload.len() {
+                    return Err(crate::posix::PosixError::NoSpace);
+                }
+                payload_sent = true;
+            }
+            if payload_sent && !payload_received {
+                let server_socket =
+                    server_sockets.get_mut::<smoltcp::socket::tcp::Socket>(server_handle);
+                if server_socket.can_recv() {
+                    match server_socket.recv_slice(&mut receive_buffer[..payload.len()]) {
+                        Ok(received) if received == payload.len() => {
+                            if &receive_buffer[..payload.len()] != payload {
+                                return Err(crate::posix::PosixError::Io);
+                            }
+                            payload_received = true;
+                        }
+                        Ok(_) => return Err(crate::posix::PosixError::Io),
+                        Err(_) => return Err(crate::posix::PosixError::Pipe),
+                    }
+                }
+            }
+        }
+
+        observation.steps = step + 1;
+        if observation.client_state == smoltcp::socket::tcp::State::Established
+            && observation.server_state == smoltcp::socket::tcp::State::Established
+            && payload_sent
+            && payload_received
+        {
+            return Ok(observation);
+        }
+        step += 1;
+    }
+
+    Err(crate::posix::PosixError::TimedOut)
 }
 
 fn connected_endpoints(
@@ -6540,6 +6963,194 @@ mod tests {
         assert!(!live_required_delivery.remote_receipt_accepted());
         assert!(!live_required_delivery.compatibility_accepted());
         assert!(!live_required_delivery.ssh_ready());
+    }
+
+    #[test_case]
+    fn live_tcp_network_device_smoltcp_runtime_binding_reaches_descriptor_delivery() {
+        let owner = crate::scheduler::ProcessOwnerId::new(78).expect("owner id");
+        let endpoint = Ipv4Endpoint::new(SOCKET_SYNTHETIC_LOCAL_IPV4_BE, 22);
+        let mut sockets = NetworkSocketDescriptorTable::<4>::new();
+        let listener = sockets
+            .open(
+                owner,
+                SOCKET_DOMAIN_AF_INET,
+                SOCKET_TYPE_STREAM,
+                SOCKET_PROTOCOL_DEFAULT,
+            )
+            .expect("listener socket");
+        sockets
+            .bind(owner, listener, endpoint)
+            .expect("bind listener");
+        sockets.listen(owner, listener, 1).expect("listen");
+        let client = sockets
+            .open(
+                owner,
+                SOCKET_DOMAIN_AF_INET,
+                SOCKET_TYPE_STREAM,
+                SOCKET_PROTOCOL_DEFAULT,
+            )
+            .expect("client socket");
+        sockets
+            .connect(owner, client, endpoint)
+            .expect("connect local client to listener");
+        let connection_id = match sockets.socket(client).expect("client state").state() {
+            NetworkSocketState::Connected { connection_id, .. } => connection_id,
+            state => panic!("unexpected client state {state:?}"),
+        };
+        let accepted = sockets
+            .accept(owner, listener)
+            .expect("accept local client");
+        sockets
+            .send(owner, client, b"tcp-runtime")
+            .expect("send over descriptor bridge");
+        let mut recv = [0u8; 11];
+        assert_eq!(
+            sockets
+                .recv_peek(owner, accepted, &mut recv)
+                .expect("accepted descriptor receives payload"),
+            recv.len()
+        );
+
+        let host_only = sockets
+            .live_tcp_listener_descriptor_accept_delivery(connection_id, false)
+            .expect("host-only descriptor delivery report");
+        assert_eq!(
+            host_only.delivery_state(),
+            LiveTcpAcceptedConnectionDeliveryState::AcceptedLocalDescriptorDelivery
+        );
+        assert!(host_only.descriptor_facing_connection_delivered());
+        assert!(!host_only.boundary().device_interface_bound());
+        assert!(!host_only.live_packet_io_accepted());
+        assert!(!host_only.ssh_ready());
+
+        let runtime = sockets
+            .live_tcp_network_device_smoltcp_runtime_binding(connection_id, true, false)
+            .expect("deterministic runtime binding report");
+        assert_eq!(
+            runtime.binding_state(),
+            LiveTcpNetworkDeviceRuntimeBindingState::AcceptedDeterministicDeviceInterfaceDelivery
+        );
+        assert_eq!(
+            runtime.accept_report().delivery_state(),
+            LiveTcpAcceptedConnectionDeliveryState::AcceptedLocalDescriptorDelivery
+        );
+        assert!(runtime.descriptor_facing_connection_delivered());
+        assert!(runtime.deterministic_device_interface_bound());
+        assert!(!runtime.hardware_frame_provider_bound());
+        assert!(runtime.driver_packet_rx_frames() > 0);
+        assert_eq!(
+            runtime.driver_packet_rx_frames(),
+            runtime.driver_packet_tx_frames()
+        );
+        let observation = runtime
+            .runtime_observation()
+            .expect("runtime observation present");
+        assert_eq!(
+            observation.client_state(),
+            smoltcp::socket::tcp::State::Established
+        );
+        assert_eq!(
+            observation.server_state(),
+            smoltcp::socket::tcp::State::Established
+        );
+        assert_eq!(
+            observation.payload_len(),
+            LIVE_TCP_RUNTIME_DRIVER_PACKET_PAYLOAD.len()
+        );
+        assert!(!runtime.live_packet_io_accepted());
+        assert!(!runtime.live_reachability_accepted());
+        assert!(!runtime.remote_receipt_accepted());
+        assert!(!runtime.compatibility_accepted());
+        assert!(!runtime.ssh_ready());
+    }
+
+    #[test_case]
+    fn live_tcp_network_device_smoltcp_runtime_binding_fails_closed_without_runtime_prerequisites()
+    {
+        let owner = crate::scheduler::ProcessOwnerId::new(79).expect("owner id");
+        let endpoint = Ipv4Endpoint::new(SOCKET_SYNTHETIC_LOCAL_IPV4_BE, 22);
+        let mut sockets = NetworkSocketDescriptorTable::<4>::new();
+        let listener = sockets
+            .open(
+                owner,
+                SOCKET_DOMAIN_AF_INET,
+                SOCKET_TYPE_STREAM,
+                SOCKET_PROTOCOL_DEFAULT,
+            )
+            .expect("listener socket");
+        sockets
+            .bind(owner, listener, endpoint)
+            .expect("bind listener");
+        sockets.listen(owner, listener, 1).expect("listen");
+        let client = sockets
+            .open(
+                owner,
+                SOCKET_DOMAIN_AF_INET,
+                SOCKET_TYPE_STREAM,
+                SOCKET_PROTOCOL_DEFAULT,
+            )
+            .expect("client socket");
+        sockets
+            .connect(owner, client, endpoint)
+            .expect("connect local client to listener");
+        let connection_id = match sockets.socket(client).expect("client state").state() {
+            NetworkSocketState::Connected { connection_id, .. } => connection_id,
+            state => panic!("unexpected client state {state:?}"),
+        };
+
+        let missing_descriptor = sockets
+            .live_tcp_network_device_smoltcp_runtime_binding(connection_id, true, false)
+            .expect("missing descriptor report");
+        assert_eq!(
+            missing_descriptor.binding_state(),
+            LiveTcpNetworkDeviceRuntimeBindingState::BlockedMissingDescriptorDelivery
+        );
+        assert!(!missing_descriptor.descriptor_facing_connection_delivered());
+        assert!(!missing_descriptor.deterministic_device_interface_bound());
+        assert!(!missing_descriptor.live_reachability_accepted());
+        assert!(!missing_descriptor.ssh_ready());
+
+        let accepted = sockets
+            .accept(owner, listener)
+            .expect("accept local client");
+        sockets
+            .send(owner, client, b"tcp-runtime")
+            .expect("send over descriptor bridge");
+        let mut recv = [0u8; 11];
+        assert_eq!(
+            sockets
+                .recv_peek(owner, accepted, &mut recv)
+                .expect("accepted descriptor receives payload"),
+            recv.len()
+        );
+
+        let missing_interface = sockets
+            .live_tcp_network_device_smoltcp_runtime_binding(connection_id, false, false)
+            .expect("missing interface report");
+        assert_eq!(
+            missing_interface.binding_state(),
+            LiveTcpNetworkDeviceRuntimeBindingState::BlockedMissingDeviceInterfaceBinding
+        );
+        assert!(missing_interface.descriptor_facing_connection_delivered());
+        assert!(!missing_interface.deterministic_device_interface_bound());
+        assert_eq!(missing_interface.driver_packet_rx_frames(), 0);
+        assert!(!missing_interface.live_packet_io_accepted());
+        assert!(!missing_interface.ssh_ready());
+
+        let missing_hardware = sockets
+            .live_tcp_network_device_smoltcp_runtime_binding(connection_id, true, true)
+            .expect("missing hardware provider report");
+        assert_eq!(
+            missing_hardware.binding_state(),
+            LiveTcpNetworkDeviceRuntimeBindingState::BlockedMissingHardwareFrameProvider
+        );
+        assert!(missing_hardware.descriptor_facing_connection_delivered());
+        assert!(missing_hardware.deterministic_device_interface_bound());
+        assert!(!missing_hardware.hardware_frame_provider_bound());
+        assert_eq!(missing_hardware.driver_packet_tx_frames(), 0);
+        assert!(!missing_hardware.remote_receipt_accepted());
+        assert!(!missing_hardware.compatibility_accepted());
+        assert!(!missing_hardware.ssh_ready());
     }
 
     #[test_case]
