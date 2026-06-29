@@ -298,6 +298,17 @@ OpenSSH/generated-root retry, remote receipt, compatibility, service success,
 ssh-ready=true, runtime russh adoption, fake command expansion, broad shell
 work, or phase transition is accepted.
 
+The static known-good readiness contract reconciliation keeps the production
+success marker as the candidate-preflight gate and selects the
+known-good serial-window completeness discriminator. The retained known-good
+run repaired /status identity and TFTP capture, and the v3 classifier's
+kernel_main metadata-only policy remains valid, but the saturated-cursor
+direct-read fallback cannot prove that the missing
+rpi5-production-timer-preemption: PASS line means the kernel failed rather than
+the serial window was incomplete. Candidate preflight v3 remains blocked until
+the selected serial-window discriminator proves or precisely blocks that
+boundary.
+
 Earlier live networking/SSH work was paused while the local POSIX/VFS/userspace
 continuation advanced. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces

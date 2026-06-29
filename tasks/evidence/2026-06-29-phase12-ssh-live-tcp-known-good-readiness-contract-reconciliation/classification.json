@@ -1,0 +1,79 @@
+{
+  "task_id": "phase12-ssh-live-tcp-known-good-readiness-contract-reconciliation-20260629",
+  "classification": "known-good-serial-window-discriminator-ready",
+  "terminal": true,
+  "selected_next_task": "phase12-ssh-live-tcp-known-good-serial-window-completeness-discriminator-20260629",
+  "planningNeeded": false,
+  "contract_decision": {
+    "production_success_marker": {
+      "decision": "required",
+      "disposition": "blocked",
+      "first_missing_fact": "The current restored known-good tree has stable identity and TFTP fetches but lacks rpi5-production-timer-preemption: PASS in the retained primary serial artifact."
+    },
+    "kernel_main_metadata_policy": {
+      "decision": "metadata-only-not-required-for-v3-known-good-readiness",
+      "disposition": "not-an-issue"
+    },
+    "saturated_serial_cursor_direct_read_fallback": {
+      "decision": "allowed-for-retention-but-not-enough-to-prove-absence-when-marker-is-missing",
+      "disposition": "fixed",
+      "first_missing_fact": "A qualitatively different serial-window completeness discriminator is required to distinguish kernel-not-starting from serial-window loss."
+    },
+    "same_run_status_tftp_identity": {
+      "decision": "accepted-for-known-good-only-run",
+      "disposition": "fixed",
+      "tree_hash": "6ead8933b3287cddaf08ddcdbda7d4c770b365658ef1d0ad80a5dd0cf323f3ef",
+      "effective_kernel": "kernel_2712.img"
+    },
+    "stable_kernel_fetch_count_bytes": {
+      "decision": "accepted-for-known-good-only-run",
+      "disposition": "fixed",
+      "served_kernel_fetch_count": 2,
+      "served_kernel_fetch_bytes": [
+        82045,
+        82045
+      ]
+    },
+    "candidate_preflight_readiness": {
+      "decision": "not-ready",
+      "disposition": "blocked",
+      "reason": "The retained known-good evidence does not satisfy the production-marker gate."
+    }
+  },
+  "reviewed_evidence": {
+    "known_good_discriminator_task": "tasks/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator.md",
+    "known_good_discriminator_classification": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/classification.json",
+    "known_good_readiness_replay": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-readiness-contract-reconciliation/known-good-readiness-v3-replay.json",
+    "prior_marker_positive_known_good_task": "tasks/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof.md"
+  },
+  "replay_summary": {
+    "exit_code": 1,
+    "classification": "known-good-readiness-v3-blocked",
+    "rejection_reasons": [
+      "missing-production-success-marker"
+    ],
+    "stable_boot_identity": true,
+    "stable_tftp_delta": true,
+    "served_effective_kernel_fetch_count": 2,
+    "has_required_success_marker": false,
+    "has_kernel_main_metadata": false
+  },
+  "accepted_claims": [
+    "known-good /status identity and TFTP capture are stable for the retained 2026-06-29 run",
+    "kernel_main remains metadata-only for v3 known-good readiness",
+    "candidate preflight v3 remains blocked until known-good serial-window completeness is proven"
+  ],
+  "rejected_claims": [
+    "retained known-good evidence satisfies candidate preflight v3",
+    "production success marker can be dropped from the v3 known-good gate",
+    "packet I/O",
+    "OpenSSH compatibility",
+    "remote receipt",
+    "service success",
+    "ssh-ready=true",
+    "runtime russh adoption",
+    "fake command expansion",
+    "phase transition"
+  ],
+  "redaction_review": "Task-owned evidence records only task ids, source paths, public classifier names, tree hashes, kernel byte counts, cursor offsets, validation commands/results, and metadata-only labels; it adds no peer identifiers, packet payloads, key material, session material, boot artifact bytes, private user data, stable secret-derived identifiers, or unnecessary hardware data."
+}

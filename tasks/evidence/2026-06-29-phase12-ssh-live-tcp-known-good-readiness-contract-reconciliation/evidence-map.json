@@ -1,0 +1,44 @@
+{
+  "task_id": "phase12-ssh-live-tcp-known-good-readiness-contract-reconciliation-20260629",
+  "task_record": "tasks/2026-06-29-phase12-ssh-live-tcp-known-good-readiness-contract-reconciliation.md",
+  "classification": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-readiness-contract-reconciliation/classification.json",
+  "replay": {
+    "known_good_readiness_v3_replay": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-readiness-contract-reconciliation/known-good-readiness-v3-replay.json",
+    "known_good_readiness_v3_replay_exit": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-readiness-contract-reconciliation/known-good-readiness-v3-replay.exit",
+    "replay_summary": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-readiness-contract-reconciliation/replay-summary.json"
+  },
+  "reviewed_inputs": {
+    "lab_capture_contract_reconciliation_task": "tasks/2026-06-29-phase12-ssh-live-tcp-lab-capture-contract-reconciliation.md",
+    "known_good_capture_discriminator_task": "tasks/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator.md",
+    "known_good_capture_classification": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/classification.json",
+    "known_good_capture_evidence_map": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/evidence-map.json",
+    "known_good_capture_summary": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z/known-good-capture-summary.json",
+    "known_good_primary_readiness": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z/known-good-capture-discriminator-20260629T124233Z-runtime-readiness-primary.json",
+    "known_good_stable_tftp_delta": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z/tftp-delta-stable-pre-restore.json",
+    "prior_marker_positive_known_good_task": "tasks/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof.md",
+    "prior_marker_positive_known_good_classification": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof/classification.json",
+    "prior_marker_positive_known_good_primary": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof/known-good-runtime-readiness-v2-20260610T2332Z-runtime-readiness-primary.json"
+  },
+  "reviewed_source": [
+    "scripts/rpi5-known-good-readiness-v3-classify.sh",
+    "scripts/rpi5-observe-runtime-readiness.sh",
+    "scripts/rpi5-retain-runtime-readiness-primary.sh"
+  ],
+  "docs_touched": [
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "validation": {
+    "git_status_short_branch_before_edits": "pass",
+    "static_review_retained_known_good_and_prior_boundaries": "pass",
+    "sh_n_classifier": "pass",
+    "sh_n_observe_helper": "pass",
+    "sh_n_retention_helper": "pass",
+    "known_good_readiness_classifier_replay": "pass: exit 1 reproduced missing-production-success-marker only",
+    "jq_empty_task_json_evidence": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass before commit"
+  },
+  "redaction_review": "Task-owned evidence records only task ids, source paths, public classifier names, tree hashes, kernel byte counts, cursor offsets, validation commands/results, and metadata-only labels; it adds no peer identifiers, packet payloads, key material, session material, boot artifact bytes, private user data, stable secret-derived identifiers, or unnecessary hardware data."
+}

@@ -20691,6 +20691,18 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   OpenSSH/generated-root retry, remote receipt, compatibility, service success,
   ssh-ready=true, runtime russh adoption, fake command expansion, broad shell
   work, or phase transition.
+- phase12-ssh-live-tcp-known-good-readiness-contract-reconciliation-20260629
+  accepts known-good-serial-window-discriminator-ready. Static/source review
+  found no v3 classifier or helper defect: kernel_main remains metadata-only,
+  the production success marker remains the candidate-preflight gate, and the
+  retained known-good run has stable /status identity plus two 82045-byte TFTP
+  kernel fetches. The first missing fact is serial-window completeness under
+  the saturated-cursor direct-read fallback, so the selected next task is
+  phase12-ssh-live-tcp-known-good-serial-window-completeness-discriminator-20260629.
+  Candidate preflight v3, packet-I/O, OpenSSH/generated-root retry, remote
+  receipt, compatibility, service success, ssh-ready=true, runtime russh
+  adoption, fake command expansion, broad shell work, and phase transition
+  remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

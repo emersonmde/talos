@@ -1,0 +1,21 @@
+{
+  "task_id": "phase12-ssh-live-tcp-known-good-readiness-contract-reconciliation-20260629",
+  "classification": "known-good-readiness-contract-replay-complete",
+  "replay_exit_code": 1,
+  "replay_classification": "known-good-readiness-v3-blocked",
+  "replay_rejection_reasons": [
+    "missing-production-success-marker"
+  ],
+  "replay_checks": {
+    "has_required_success_marker": false,
+    "has_kernel_main_metadata": false,
+    "stable_boot_identity": true,
+    "pre_tree_hash": "6ead8933b3287cddaf08ddcdbda7d4c770b365658ef1d0ad80a5dd0cf323f3ef",
+    "final_tree_hash": "6ead8933b3287cddaf08ddcdbda7d4c770b365658ef1d0ad80a5dd0cf323f3ef",
+    "effective_kernel": "kernel_2712.img",
+    "stable_tftp_delta": true,
+    "served_effective_kernel_fetch_count": 2,
+    "retained_primary_cursor_window": true,
+    "tftp_cursor_window": true
+  }
+}
