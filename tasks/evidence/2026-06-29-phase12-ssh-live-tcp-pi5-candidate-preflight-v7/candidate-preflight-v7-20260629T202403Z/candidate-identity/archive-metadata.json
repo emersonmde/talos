@@ -1,0 +1,17 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-candidate-preflight-v7-20260629",
+  "run_label": "candidate-preflight-v7-20260629T202403Z",
+  "source_commit": "8cba0860d1670f45484c5f5cba86fbf62acf2ce0",
+  "archive": {
+    "path_label": "target/tmp/candidate-preflight-v7-20260629T202403Z.tar.gz",
+    "sha256": "e2ac98983e71368c1da385ef8c71df8359654a68680e7bc20caa3f6ae53f0896",
+    "bytes": 147961
+  },
+  "expected_fetch": {
+    "path": "da591740/kernel_2712.img",
+    "bytes": 152160,
+    "kernel_sha256": "0153b12ca2065d9e4e7de73aad037403f18485b0601ba8ed11cca28f9591f296"
+  },
+  "runtime_marker_route_review": "validation/rpi5-archive-review.stdout.txt",
+  "boot_artifact_bytes_retained": false
+}

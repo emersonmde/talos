@@ -1,0 +1,30 @@
+{
+  "label": "candidate-preflight-v7-20260629T202403Z",
+  "classification": "staging-publication-mismatch",
+  "reason": "pre-power-cycle boot identity did not match the expected staged tree",
+  "preflight_identity": {
+    "expected_tree_hash": "3d85d4aca0303a73beb577129aea36cc49d38cedb959f783646b0b63c9d3dfa0",
+    "observed_tree_hash": "3d85d4aca0303a73beb577129aea36cc49d38cedb959f783646b0b63c9d3dfa0",
+    "expected_kernel": "kernel_2712.img",
+    "observed_effective_kernel": "kernel_2712.img",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": null,
+    "observed_fetch_bytes": null,
+    "selected_tree_identity_source": "/boot/files",
+    "root_endpoint": {
+      "endpoint": "GET /",
+      "curl_exit": 0,
+      "http_code": 404,
+      "body_bytes": 55,
+      "usable_for_selected_tree_identity": false,
+      "selected_tree_identity_source": "/boot/files",
+      "fallback_used": true,
+      "fallback_reason": "root-endpoint-http-non-2xx"
+    },
+    "tree_matches": true,
+    "effective_kernel_matches": true,
+    "expected_fetch_present": false,
+    "expected_fetch_bytes_match": true,
+    "staging_publication_mismatch": true
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "contract_version": "pi5-candidate-capture-window-v5",
+  "base_contracts": [
+    "pi5-capture-chain-v4",
+    "pi5-candidate-capture-window-v5"
+  ],
+  "v4_exit": 2,
+  "v4_stderr": "missing required v4 proof bundle file: tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v7/candidate-preflight-v7-20260629T202403Z/candidate-run/serial-drain-before-power.json\n",
+  "decisive_rp1_hardware_classification_allowed": false,
+  "classification": "capture-staging-blocked",
+  "rejection_reasons": [
+    "capture-window-helper-run-incomplete",
+    "capture-window-helper-completion-missing",
+    "capture-window-helper-completion-count-mismatch",
+    "capture-window-missing-required-stage",
+    "capture-window-stage-order-invalid",
+    "final-pre-restore-identity-not-before-restore",
+    "tftp-delta-not-before-restore",
+    "capture-window-cursor-file-missing",
+    "capture-window-tftp-file-missing",
+    "capture-window-final-identity-file-missing",
+    "capture-window-restore-file-missing"
+  ],
+  "capture_window_contract": {
+    "helper": "scripts/rpi5-capture-invariant-proof-bundle.sh",
+    "run_label": "candidate-preflight-v7-20260629T202403Z",
+    "helper_run_completed": false,
+    "completed_at": null,
+    "completion_event_count": null,
+    "rule": "final-pre-restore identity and stable TFTP delta must be captured by this helper before restore; post-restore/control identity must never satisfy candidate pre-restore evidence; candidate-capture-ready also requires helper_run_completed=true from this foreground helper",
+    "stage_order": [
+      "preflight_identity"
+    ],
+    "final_pre_restore_before_restore": false,
+    "tftp_delta_before_restore": false,
+    "failure_boundary": "restore/control identity cannot satisfy candidate pre-restore evidence; missing or out-of-order helper-owned window metadata fails closed"
+  },
+  "rule": "v5 requires v4 identity/freshness plus helper-owned capture-window order proving TFTP and final pre-restore identity were captured before restore"
+}

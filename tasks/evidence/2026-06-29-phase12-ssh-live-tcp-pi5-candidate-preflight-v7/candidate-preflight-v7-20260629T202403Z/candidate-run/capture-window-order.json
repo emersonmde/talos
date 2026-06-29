@@ -1,0 +1,25 @@
+{
+  "contract_version": "pi5-candidate-capture-window-v5",
+  "helper": "scripts/rpi5-capture-invariant-proof-bundle.sh",
+  "run_label": "candidate-preflight-v7-20260629T202403Z",
+  "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+  "helper_run_started_at": "2026-06-29T20:24:07Z",
+  "helper_run_completed": false,
+  "completed_at": null,
+  "rule": "final-pre-restore identity and stable TFTP delta must be captured by this helper before restore; post-restore/control identity must never satisfy candidate pre-restore evidence; candidate-capture-ready also requires helper_run_completed=true from this foreground helper",
+  "events": [
+    {
+      "sequence": 1,
+      "stage": "preflight_identity",
+      "captured_at": "2026-06-29T20:24:07Z",
+      "evidence_files": [
+        "pre-root-endpoint.json",
+        "pre-root.json",
+        "pre-status.json",
+        "pre-boot-files.json",
+        "pre-snapshots.json",
+        "preflight-identity.json"
+      ]
+    }
+  ]
+}

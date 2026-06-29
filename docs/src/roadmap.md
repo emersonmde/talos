@@ -20812,6 +20812,16 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   confirmed the marker tokens and run nonce without lab publication. The
   selected next task is the serialized
   phase12-ssh-live-tcp-pi5-candidate-preflight-v7-20260629.
+- phase12-ssh-live-tcp-pi5-candidate-preflight-v7-20260629 accepts
+  blocked-candidate-identity. The runtime-marker-route archive built and
+  reviewed successfully, but lab publication exposed only root
+  kernel_2712.img/kernel8.img entries rather than the serial-prefixed
+  da591740/kernel_2712.img path required by the accepted candidate capture
+  contract. The foreground helper failed closed before power; the lab was
+  restored to the a0452458... control tree; selected_next_task is null and
+  planningNeeded=true before another candidate preflight, packet-I/O,
+  OpenSSH/generated-root retry, remote receipt, compatibility, service success,
+  ssh-ready=true, broad shell work, or phase transition can resume.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

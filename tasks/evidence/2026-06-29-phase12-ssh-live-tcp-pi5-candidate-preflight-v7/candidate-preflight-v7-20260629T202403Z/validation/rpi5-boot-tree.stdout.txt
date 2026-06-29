@@ -1,0 +1,8 @@
+target/tmp/candidate-preflight-v7-20260629T202403Z-boot-tree/bcm2712-rpi-5-b.dtb
+target/tmp/candidate-preflight-v7-20260629T202403Z-boot-tree/cmdline.txt
+target/tmp/candidate-preflight-v7-20260629T202403Z-boot-tree/config.txt
+target/tmp/candidate-preflight-v7-20260629T202403Z-boot-tree/kernel8.img
+target/tmp/candidate-preflight-v7-20260629T202403Z-boot-tree/kernel_2712.img
+target/tmp/candidate-preflight-v7-20260629T202403Z-boot-tree/overlays/bcm2712d0.dtbo
+target/tmp/candidate-preflight-v7-20260629T202403Z-boot-tree/overlays/overlay_map.dtb
+target/tmp/candidate-preflight-v7-20260629T202403Z-boot-tree/overlays/uart0-pi5.dtbo

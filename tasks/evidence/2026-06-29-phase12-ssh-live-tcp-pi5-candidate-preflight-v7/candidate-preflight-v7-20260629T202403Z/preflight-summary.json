@@ -1,0 +1,45 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-candidate-preflight-v7-20260629",
+  "run_label": "candidate-preflight-v7-20260629T202403Z",
+  "source_commit": "8cba0860d1670f45484c5f5cba86fbf62acf2ce0",
+  "archive": {
+    "task_id": "phase12-ssh-live-tcp-pi5-candidate-preflight-v7-20260629",
+    "run_label": "candidate-preflight-v7-20260629T202403Z",
+    "source_commit": "8cba0860d1670f45484c5f5cba86fbf62acf2ce0",
+    "archive": {
+      "path_label": "target/tmp/candidate-preflight-v7-20260629T202403Z.tar.gz",
+      "sha256": "e2ac98983e71368c1da385ef8c71df8359654a68680e7bc20caa3f6ae53f0896",
+      "bytes": 147961
+    },
+    "expected_fetch": {
+      "path": "da591740/kernel_2712.img",
+      "bytes": 152160,
+      "kernel_sha256": "0153b12ca2065d9e4e7de73aad037403f18485b0601ba8ed11cca28f9591f296"
+    },
+    "runtime_marker_route_review": "validation/rpi5-archive-review.stdout.txt",
+    "boot_artifact_bytes_retained": false
+  },
+  "baseline_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "post_publication_tree_hash": "3d85d4aca0303a73beb577129aea36cc49d38cedb959f783646b0b63c9d3dfa0",
+  "capture_suggested_classification": null,
+  "capture_checker_classification": "capture-staging-blocked",
+  "checker_rejection_reasons": [
+    "capture-window-helper-run-incomplete",
+    "capture-window-helper-completion-missing",
+    "capture-window-helper-completion-count-mismatch",
+    "capture-window-missing-required-stage",
+    "capture-window-stage-order-invalid",
+    "final-pre-restore-identity-not-before-restore",
+    "tftp-delta-not-before-restore",
+    "capture-window-cursor-file-missing",
+    "capture-window-tftp-file-missing",
+    "capture-window-final-identity-file-missing",
+    "capture-window-restore-file-missing"
+  ],
+  "marker_visible": false,
+  "marker_nonce": null,
+  "tftp_event_count": null,
+  "expected_fetch_count": null,
+  "final_pre_restore_tree_hash": null,
+  "post_restore_tree_hash": null
+}

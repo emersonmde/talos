@@ -1,0 +1,71 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-candidate-preflight-v7-20260629",
+  "run_label": "candidate-preflight-v7-20260629T202403Z",
+  "classification": "blocked-candidate-identity",
+  "terminal": true,
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "v7 published the accepted runtime-marker-route source archive, but the staged boot tree exposed only root kernel_2712.img/kernel8.img and not the serial-prefixed da591740/kernel_2712.img path required by the accepted capture contract, so the foreground helper failed closed before power. Supervisor planning must repair or reconcile the selected Pi 5 fetch path before another candidate preflight, packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility, service success, ssh-ready=true, broad shell work, or phase transition.",
+  "no_packet_io": true,
+  "no_openssh_retry": true,
+  "no_remote_receipt": true,
+  "no_compatibility_claim": true,
+  "no_service_success_claim": true,
+  "ssh_ready_claim": false,
+  "no_phase_transition": true,
+  "source_commit": "8cba0860d1670f45484c5f5cba86fbf62acf2ce0",
+  "archive": {
+    "task_id": "phase12-ssh-live-tcp-pi5-candidate-preflight-v7-20260629",
+    "run_label": "candidate-preflight-v7-20260629T202403Z",
+    "source_commit": "8cba0860d1670f45484c5f5cba86fbf62acf2ce0",
+    "archive": {
+      "path_label": "target/tmp/candidate-preflight-v7-20260629T202403Z.tar.gz",
+      "sha256": "e2ac98983e71368c1da385ef8c71df8359654a68680e7bc20caa3f6ae53f0896",
+      "bytes": 147961
+    },
+    "expected_fetch": {
+      "path": "da591740/kernel_2712.img",
+      "bytes": 152160,
+      "kernel_sha256": "0153b12ca2065d9e4e7de73aad037403f18485b0601ba8ed11cca28f9591f296"
+    },
+    "runtime_marker_route_review": "validation/rpi5-archive-review.stdout.txt",
+    "boot_artifact_bytes_retained": false
+  },
+  "blocker": {
+    "first_missing_fact": "published candidate boot tree did not expose da591740/kernel_2712.img in /boot/files under the accepted candidate capture expected_fetch path",
+    "preflight_identity": {
+      "expected_tree_hash": "3d85d4aca0303a73beb577129aea36cc49d38cedb959f783646b0b63c9d3dfa0",
+      "observed_tree_hash": "3d85d4aca0303a73beb577129aea36cc49d38cedb959f783646b0b63c9d3dfa0",
+      "expected_kernel": "kernel_2712.img",
+      "observed_effective_kernel": "kernel_2712.img",
+      "expected_fetch": "da591740/kernel_2712.img",
+      "expected_fetch_bytes": null,
+      "observed_fetch_bytes": null,
+      "selected_tree_identity_source": "/boot/files",
+      "root_endpoint": {
+        "endpoint": "GET /",
+        "curl_exit": 0,
+        "http_code": 404,
+        "body_bytes": 55,
+        "usable_for_selected_tree_identity": false,
+        "selected_tree_identity_source": "/boot/files",
+        "fallback_used": true,
+        "fallback_reason": "root-endpoint-http-non-2xx"
+      },
+      "tree_matches": true,
+      "effective_kernel_matches": true,
+      "expected_fetch_present": false,
+      "expected_fetch_bytes_match": true,
+      "staging_publication_mismatch": true
+    },
+    "helper_failed_before_power": true,
+    "power_cycle_performed": false,
+    "serial_window_performed": false,
+    "tftp_delta_performed": false
+  },
+  "restore": {
+    "manual_restore_after_helper_abort": true,
+    "restored_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img"
+  }
+}

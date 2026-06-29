@@ -1,0 +1,8 @@
+bcm2712-rpi-5-b.dtb
+cmdline.txt
+config.txt
+kernel8.img
+kernel_2712.img
+overlays/bcm2712d0.dtbo
+overlays/overlay_map.dtb
+overlays/uart0-pi5.dtbo

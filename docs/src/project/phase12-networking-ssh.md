@@ -11876,3 +11876,15 @@ phase12-ssh-live-tcp-pi5-candidate-preflight-v7-20260629; hardware action,
 packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility,
 service success, ssh-ready=true, broad shell work, and phase transition remain
 blocked until that explicit serialized preflight accepts candidate-capture-ready.
+
+phase12-ssh-live-tcp-pi5-candidate-preflight-v7-20260629 accepts
+blocked-candidate-identity. The accepted runtime-marker-route source/archive
+path built and reviewed successfully, but the published candidate tree exposed
+root kernel_2712.img/kernel8.img entries and did not expose the serial-prefixed
+da591740/kernel_2712.img path required by the accepted candidate capture
+contract. The foreground helper failed closed at preflight identity before
+power, so no serial window, TFTP delta, packet-I/O, OpenSSH/generated-root
+retry, remote receipt, compatibility, service success, ssh-ready=true, broad
+shell work, or phase transition was performed. The lab was restored to the
+a0452458... control tree. selected_next_task is null and planningNeeded=true
+pending supervisor repair/reconciliation of the selected Pi 5 fetch path.
