@@ -1,0 +1,2 @@
+516b0014eaead2a090779fba7bd8ea4da630f71e923e01182f0570aa9fc2de43  target/tmp/candidate-preflight-v6-20260629T184937Z-boot-tree/kernel_2712.img
+516b0014eaead2a090779fba7bd8ea4da630f71e923e01182f0570aa9fc2de43  target/tmp/candidate-preflight-v6-20260629T184937Z-boot-tree/da591740/kernel_2712.img

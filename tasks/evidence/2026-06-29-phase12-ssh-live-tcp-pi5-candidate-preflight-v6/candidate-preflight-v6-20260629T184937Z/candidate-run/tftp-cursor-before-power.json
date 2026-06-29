@@ -1,0 +1,23 @@
+{
+  "action": "tftp logs",
+  "ok": true,
+  "tftp": {
+    "cursor_end": 4682664,
+    "cursor_start": 3634088,
+    "events": [
+      {
+        "bytes": 87432,
+        "client_ip": "[redacted]",
+        "client_mac": "[redacted]",
+        "filename": "da591740/kernel_2712.img",
+        "line": "[redacted]",
+        "status": "served"
+      }
+    ],
+    "lines": "[redacted]",
+    "log": "/state/tftp.log",
+    "log_size": 4682664,
+    "tail_mode": true,
+    "truncated": true
+  }
+}

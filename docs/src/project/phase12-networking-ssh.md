@@ -11848,3 +11848,16 @@ phase12-ssh-live-tcp-pi5-candidate-preflight-v6-20260629; packet-I/O,
 OpenSSH/generated-root retry, remote receipt, compatibility, service success,
 ssh-ready=true, broad shell work, and phase transition remain blocked until
 that explicit hardware task accepts candidate-capture-ready.
+
+phase12-ssh-live-tcp-pi5-candidate-preflight-v6-20260629 accepts
+blocked-candidate-kernel-not-starting. The v6 run fixed the capture-window
+ownership problem: the foreground helper completed, TFTP observed two
+candidate da591740/kernel_2712.img serves at 87,432 bytes, final pre-restore
+identity still reported the candidate tree, and the helper-owned restore
+returned the lab to the a0452458... control tree. candidate-capture-ready
+remains rejected because the nonce-bearing
+`TALOS: ssh-service-smoltcp-runtime-ready` marker did not appear after power.
+selected_next_task is null and planningNeeded=true; packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility, service success,
+ssh-ready=true, broad shell work, and phase transition remain blocked pending
+supervisor planning.

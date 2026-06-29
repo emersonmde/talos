@@ -1,0 +1,36 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-candidate-preflight-v6-20260629",
+  "run_label": "candidate-preflight-v6-20260629T184937Z",
+  "evidence_dir": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v6/candidate-preflight-v6-20260629T184937Z",
+  "classification": "blocked-candidate-kernel-not-starting",
+  "artifacts": {
+    "classification": "classification.json",
+    "preflight_summary": "preflight-summary.json",
+    "archive_metadata": "candidate-identity/archive-metadata.json",
+    "candidate_capture_summary": "candidate-run/capture-invariant-summary.json",
+    "capture_window_order": "candidate-run/capture-window-order.json",
+    "capture_window_v5_check": "candidate-run/capture-window-v5-check.json",
+    "post_restore_status": "status-after-helper.json",
+    "post_restore_boot_files": "boot-files-after-helper.json",
+    "validations": "validation/"
+  },
+  "validation": {
+    "boot_tree_exit": "validation/rpi5-boot-tree.exit",
+    "archive_review_exit": "validation/rpi5-archive-review.exit",
+    "capture_bundle_exit": "validation/capture-bundle.exit",
+    "capture_window_v5_check_exit": "validation/capture-window-v5-check.exit"
+  },
+  "redaction": "Raw serial text, TFTP peer addresses/MACs, and raw log lines in JSON evidence are scrubbed after checker execution before commit.",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "rejected_claims": [
+    "packet-I/O discriminator",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility",
+    "service success",
+    "ssh-ready=true",
+    "broad shell work",
+    "phase transition"
+  ]
+}

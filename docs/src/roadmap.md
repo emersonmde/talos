@@ -20794,6 +20794,14 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   phase12-ssh-live-tcp-pi5-candidate-preflight-v6-20260629; packet-I/O,
   OpenSSH/generated-root retry, remote receipt, compatibility, service success,
   ssh-ready=true, broad shell work, and phase transition remain blocked.
+- phase12-ssh-live-tcp-pi5-candidate-preflight-v6-20260629 accepts
+  blocked-candidate-kernel-not-starting. The helper-owned capture/restore
+  contract passed with candidate TFTP byte agreement and final pre-restore
+  candidate identity, but the nonce-bearing
+  `TALOS: ssh-service-smoltcp-runtime-ready` marker was absent after power.
+  selected_next_task is null and planningNeeded=true before packet-I/O,
+  OpenSSH/generated-root retry, remote receipt, compatibility, service success,
+  ssh-ready=true, broad shell work, or phase transition can resume.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
