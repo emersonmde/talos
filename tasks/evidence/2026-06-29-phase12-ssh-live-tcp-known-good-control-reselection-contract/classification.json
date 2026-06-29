@@ -1,0 +1,64 @@
+{
+  "task_id": "phase12-ssh-live-tcp-known-good-control-reselection-contract-20260629",
+  "classification": "selected-known-good-control-contract-ready",
+  "selected_control_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+  "selected_control_archive": null,
+  "selected_next_task": "phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof-20260629",
+  "planningNeeded": false,
+  "expected_identity": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "configured_kernel": "kernel_2712.img",
+    "effective_kernel": "kernel_2712.img",
+    "kernel_byte_count": 104136,
+    "kernel_paths": [
+      "kernel_2712.img",
+      "kernel8.img",
+      "da591740/kernel_2712.img",
+      "da591740/kernel8.img"
+    ],
+    "config_byte_count": 118,
+    "cmdline_byte_count": 81
+  },
+  "serial_contract": {
+    "required_success_marker": "rpi5-production-timer-preemption: PASS",
+    "kernel_main_policy": "metadata-only-not-required-when-production-timer-pass-is-present"
+  },
+  "tftp_contract": {
+    "fresh_cursor_required": true,
+    "stable_same_cursor_delta_required": true,
+    "required_served_fetch": {
+      "filename": "da591740/kernel_2712.img",
+      "bytes": 104136
+    },
+    "rejected_substitutes": [
+      "stable zero-event window",
+      "82045-byte kernel serve from 6ead8933 baseline",
+      "post-restore replay byte labeling"
+    ]
+  },
+  "restore_target": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+  "hardware_lock_contract": {
+    "next_task_must_acquire_before": [
+      "boot snapshot restore",
+      "cursor capture",
+      "power-cycle",
+      "hardware observation"
+    ],
+    "next_task_must_release_after": [
+      "restore target is restored",
+      "post-restore GET /status is retained",
+      "post-restore GET /boot/files is retained"
+    ]
+  },
+  "rejected_claims": [
+    "candidate preflight",
+    "packet I/O discriminator",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility",
+    "service success",
+    "ssh-ready=true",
+    "broad shell work",
+    "phase transition"
+  ]
+}

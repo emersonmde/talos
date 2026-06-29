@@ -331,6 +331,20 @@ compatibility, service success, ssh-ready=true, broad shell work, and phase
 transition remain blocked until a reselected control proof explicitly unblocks
 them.
 
+The no-power known-good control reselection contract selects
+phase12-ssh-v10-openssh-clean-pre-20260624T074100Z as the current named
+snapshot for the accepted production-timer control lineage. The expected control
+identity is tree a0452458..., effective_kernel=kernel_2712.img, and
+104,136-byte kernel_2712.img/kernel8.img entries at both root and da591740/
+paths. The required serial marker is rpi5-production-timer-preemption: PASS;
+TALOS: kernel_main remains metadata-only when that downstream marker is present.
+The next bounded task is
+phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof-20260629, which must
+restore and prove that snapshot under hardwareTestLock before any candidate
+preflight, packet-I/O discriminator, OpenSSH/generated-root retry, remote
+receipt, compatibility, service success, ssh-ready=true, broad shell work, or
+phase transition resumes.
+
 Earlier live networking/SSH work was paused while the local POSIX/VFS/userspace
 continuation advanced. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces

@@ -1,0 +1,90 @@
+{
+  "task_id": "phase12-ssh-live-tcp-known-good-control-reselection-contract-20260629",
+  "task_record": "tasks/2026-06-29-phase12-ssh-live-tcp-known-good-control-reselection-contract.md",
+  "classification": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-control-reselection-contract/classification.json",
+  "selected_control": {
+    "kind": "snapshot",
+    "name": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "restore_target": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "selection_reason": "Retained v10 clean-rerun pre-status identifies the lab as the accepted a0452458 production-timer baseline/control before selected archive publication, and current read-only boot snapshot listing confirms the named snapshot remains available."
+  },
+  "read_only_lab_evidence_20260629T1534Z": {
+    "get_status": {
+      "result": "pass",
+      "tree_hash": "6ead8933b3287cddaf08ddcdbda7d4c770b365658ef1d0ad80a5dd0cf323f3ef",
+      "effective_kernel": "kernel_2712.img",
+      "configured_kernel": "kernel_2712.img",
+      "kernel_byte_count": 82045,
+      "interpretation": "current restored lab state is the stable 6ead baseline and is not the selected production-timer control"
+    },
+    "get_boot_files": {
+      "result": "pass",
+      "response_shape": ".boot.files",
+      "tree_hash": "6ead8933b3287cddaf08ddcdbda7d4c770b365658ef1d0ad80a5dd0cf323f3ef",
+      "effective_kernel": "kernel_2712.img",
+      "kernel_byte_count": 82045
+    },
+    "get_boot_snapshots": {
+      "result": "pass",
+      "snapshot_count": 605,
+      "selected_snapshot_present": true,
+      "selected_snapshot": {
+        "name": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+        "bytes": 201797,
+        "mtime": 1782286860
+      }
+    },
+    "get_root": {
+      "result": "not-used-for-identity",
+      "observed_result": "404 unknown endpoint",
+      "interpretation": "consistent with lab-controller docs; GET /status is authoritative"
+    }
+  },
+  "retained_repository_evidence": {
+    "kernel_entry_blocker_reconciliation": {
+      "path": "tasks/2026-06-29-phase12-ssh-live-tcp-known-good-kernel-entry-blocker-reconciliation.md",
+      "classification": "known-good-control-reselection-ready",
+      "selected_next_task": "phase12-ssh-live-tcp-known-good-control-reselection-contract-20260629"
+    },
+    "accepted_v3_control_proof": {
+      "task_record": "tasks/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof.md",
+      "classification": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/classification.json",
+      "readiness_classifier": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/readiness-v3-classification.json",
+      "pre_status": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/pre-status.json",
+      "tftp_delta": "tasks/evidence/2026-06-11-phase12-pi5-known-good-bounded-runtime-readiness-v3-pi5-proof/tftp-delta-stable.json",
+      "classification_summary": "valid-known-good-talos-readiness-v3 with production-timer PASS marker, a0452458 tree, effective_kernel=kernel_2712.img, and two 104136-byte served da591740/kernel_2712.img fetches"
+    },
+    "selected_snapshot_lineage": {
+      "pre_status": "tasks/evidence/2026-06-24-phase12-ssh-live-openssh-preclient-fetch-gated-discriminator-v10/rerun-clean/pre-status.sanitized.json",
+      "task_record_context": "tasks/2026-06-24-phase12-ssh-live-openssh-preclient-fetch-gated-discriminator-v10.md",
+      "lineage_summary": "clean rerun started from restored baseline/control a0452458 tree before publishing the selected archive"
+    }
+  },
+  "expected_control_contract": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "configured_kernel": "kernel_2712.img",
+    "effective_kernel": "kernel_2712.img",
+    "kernel_paths": [
+      "kernel_2712.img",
+      "kernel8.img",
+      "da591740/kernel_2712.img",
+      "da591740/kernel8.img"
+    ],
+    "kernel_byte_count": 104136,
+    "required_serial_success_marker": "rpi5-production-timer-preemption: PASS",
+    "kernel_main_policy": "metadata-only-not-required-when-production-timer-pass-is-present",
+    "required_tftp_fetch": "stable same-cursor da591740/kernel_2712.img serve at 104136 bytes before restore"
+  },
+  "validation": {
+    "git_status_short_branch_before_edits": "pass",
+    "lab_api_get_status": "pass",
+    "lab_api_get_boot_files": "pass",
+    "lab_api_get_boot_snapshots": "pass",
+    "jq_empty_task_json_evidence": "pass",
+    "sh_n_touched_shell_helpers": "not run: no shell helper/classifier scripts touched",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass before commit"
+  },
+  "redaction_review": "Task-owned evidence records task ids, snapshot names, tree hashes, byte counts, file paths, command/gate labels, and classification labels; it adds no packet payloads, peer identifiers, key material, session material, raw serial output, boot artifact bytes, private user data, or stable secret-derived identifiers."
+}

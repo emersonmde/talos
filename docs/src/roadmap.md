@@ -20728,6 +20728,17 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   candidate preflight v3/v4, packet-I/O discriminator, OpenSSH/generated-root
   retry, remote receipt, compatibility, service success, ssh-ready=true, broad
   shell work, or phase transition is unblocked yet.
+- phase12-ssh-live-tcp-known-good-control-reselection-contract-20260629 accepts
+  selected-known-good-control-contract-ready. The selected control is the
+  current named snapshot phase12-ssh-v10-openssh-clean-pre-20260624T074100Z,
+  expected to restore the a0452458... production-timer control tree with
+  effective_kernel=kernel_2712.img and 104,136-byte kernel entries. The next
+  task is
+  phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof-20260629; it must
+  prove that selected snapshot under hardwareTestLock before candidate preflight
+  v3/v4, packet-I/O, OpenSSH/generated-root retry, remote receipt,
+  compatibility, service success, ssh-ready=true, broad shell work, or phase
+  transition can resume.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
