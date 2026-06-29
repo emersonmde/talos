@@ -109,6 +109,20 @@ real device/interface ownership model; it does not unblock hardware, live TCP,
 OpenSSH, packet I/O, remote receipt, compatibility, ssh-ready=true, fake command
 expansion, or phase transition work.
 
+The local-to-live TCP gap closeout reconciles that accepted local/static source
+boundary before any live TCP, OpenSSH, or hardware work. The accepted boundary
+remains limited to the host-only smoltcp descriptor bridge and continues to
+report live packet I/O, live reachability, remote receipt, compatibility, and
+ssh_ready as false. The first missing fact is now the absent selected
+device/interface ownership model that can bind a real network device or driver
+packet adapter to a smoltcp TCP listener and deliver accepted live connections
+into NetworkSocketDescriptorTable. No queued successor has complete
+mechanically checkable dependencies for that selection, so selected_next_task is
+null and planningNeeded=true pending supervisor planning. Hardware,
+generated-root/OpenSSH retry, packet I/O, remote receipt, compatibility,
+ssh-ready=true, runtime russh adoption, fake command expansion, and phase
+transition remain rejected.
+
 Live networking/SSH remains paused while the local POSIX/VFS/userspace
 continuation advances. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces

@@ -1,0 +1,73 @@
+{
+  "task_id": "phase12-ssh-local-to-live-tcp-gap-closeout-20260629",
+  "classification": "ssh-local-to-live-tcp-gap-closeout-planning-needed",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "reviewed_inputs": [
+    "memory/talos-supervisor-state.json",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md",
+    "tasks/2026-06-29-phase12-ssh-local-to-live-tcp-gap-inventory.md",
+    "tasks/2026-06-29-phase12-ssh-selected-live-tcp-local-core.md",
+    "tasks/2026-06-29-phase12-ssh-local-substrate-closeout.md",
+    "tasks/2026-06-24-phase12-ssh-no-tcp-connect-live-network-substrate-checkpoint.md",
+    "tasks/2026-06-29-phase12-rp1-ethernet-link-not-ready-discriminator-reselection.md"
+  ],
+  "changed_files": [
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md",
+    "tasks/2026-06-29-phase12-ssh-local-to-live-tcp-gap-closeout.md",
+    "tasks/evidence/2026-06-29-phase12-ssh-local-to-live-tcp-gap-closeout/classification.json",
+    "tasks/evidence/2026-06-29-phase12-ssh-local-to-live-tcp-gap-closeout/evidence-map.json"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Accepted local/static behavior is reconciled with the selected source boundary in src/network.rs and src/userspace_socket_abi.rs."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The local source boundary remains distinct from unaccepted live TCP, packet I/O, remote receipt, OpenSSH compatibility, Pi 5 hardware proof, and ssh-ready=true."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The next missing fact is the absent selected device/interface ownership model for live TCP listener delivery into Talos descriptors."
+    },
+    {
+      "disposition": "blocked",
+      "finding": "Live/generated-root/OpenSSH retry, live TCP attempt, packet I/O, remote receipt, compatibility, hardware proof, runtime russh adoption, and ssh-ready=true remain blocked pending supervisor planning and later explicit live/hardware preconditions."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Phase 12.1 Ethernet selected-discriminator work remains paused by selected_discriminator=null."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No Rust source change was required for this closeout."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No source, docs, helper, task, or evidence artifact was removed."
+    }
+  ],
+  "redaction_boundary": {
+    "retained": [
+      "task ids",
+      "source paths",
+      "classification labels",
+      "validation commands/results",
+      "boolean readiness boundaries",
+      "metadata-only counts and labels from predecessor evidence"
+    ],
+    "not_retained": [
+      "peer identifiers",
+      "addresses",
+      "packet payloads",
+      "key material",
+      "session material",
+      "boot artifact bytes",
+      "hardware data",
+      "private user data"
+    ]
+  }
+}

@@ -20518,6 +20518,18 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   compatibility, ssh-ready=true, hardware proof, OpenSSH retry, fake command
   expansion, and phase transition remain rejected. The selected next task is
   phase12-ssh-local-to-live-tcp-gap-closeout-20260629.
+- phase12-ssh-local-to-live-tcp-gap-closeout-20260629 reconciles the accepted
+  local/static boundary before further live TCP, OpenSSH, or hardware work. The
+  accepted behavior remains limited to the host-only smoltcp descriptor bridge;
+  it still rejects live packet I/O, live reachability, remote receipt,
+  compatibility, ssh-ready=true, hardware proof, generated-root/OpenSSH retry,
+  runtime russh adoption, fake command expansion, and phase transition. The
+  first missing fact is the absent selected device/interface ownership model
+  that can bind a real network device or driver packet adapter to a smoltcp TCP
+  listener and then deliver accepted live connections into
+  NetworkSocketDescriptorTable. selected_next_task is null and
+  planningNeeded=true because no later queued task has complete mechanically
+  checkable dependencies for that selection.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

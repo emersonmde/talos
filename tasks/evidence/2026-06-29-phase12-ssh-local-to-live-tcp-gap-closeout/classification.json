@@ -1,0 +1,72 @@
+{
+  "task_id": "phase12-ssh-local-to-live-tcp-gap-closeout-20260629",
+  "status": "accepted",
+  "classification": "ssh-local-to-live-tcp-gap-closeout-planning-needed",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "The accepted local/static source boundary still lacks a selected device/interface ownership model that binds live packet I/O to a smoltcp TCP listener and Talos descriptor delivery; no later queued task has complete mechanically checkable dependencies for that selection.",
+  "accepted_local_static_boundary": true,
+  "accepted_live_tcp_connection_establishment": false,
+  "accepted_live_packet_io": false,
+  "accepted_remote_receipt": false,
+  "accepted_openssh_compatibility": false,
+  "accepted_pi5_hardware_proof": false,
+  "ssh_ready": false,
+  "first_missing_fact_after_closeout": "No selected device/interface ownership model binds a real network device or driver packet adapter to a smoltcp TCP listener and accepted NetworkSocketDescriptorTable delivery.",
+  "rejected_claims": [
+    "Pi 5 hardware proof",
+    "hardwareTestLock acquisition",
+    "boot publication",
+    "generated-root retry",
+    "OpenSSH retry",
+    "packet I/O",
+    "live TCP connection attempt",
+    "remote receipt",
+    "OpenSSH compatibility",
+    "ssh-ready=true",
+    "fake command expansion",
+    "runtime russh adoption",
+    "phase transition"
+  ],
+  "validation": [
+    {
+      "level": "pre-edit repository state",
+      "command": "git status --short --branch",
+      "result": "passed; main ahead of origin with no uncommitted Talos changes before task edits"
+    },
+    {
+      "level": "static task/source/docs/state review",
+      "result": "passed; reviewed accepted inventory, accepted selected local core, predecessor closeout, no-tcp-connect checkpoint, Ethernet selected-discriminator pause, Phase 12 docs, roadmap, and supervisor state"
+    },
+    {
+      "level": "conditional fmt",
+      "command": "cargo fmt --all -- --check",
+      "result": "not run; no Rust source touched"
+    },
+    {
+      "level": "conditional focused tests",
+      "command": "cargo -Zjson-target-spec test --quiet with focused filters",
+      "result": "not run; no Rust source or expected diagnostics touched"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "level": "json validation",
+      "command": "jq empty tasks/evidence/2026-06-29-phase12-ssh-local-to-live-tcp-gap-closeout/classification.json tasks/evidence/2026-06-29-phase12-ssh-local-to-live-tcp-gap-closeout/evidence-map.json",
+      "result": "passed"
+    },
+    {
+      "level": "staged diff validation",
+      "command": "git diff --cached --check",
+      "result": "passed before commit"
+    }
+  ]
+}
