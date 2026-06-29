@@ -1,0 +1,141 @@
+{
+  "action": "tftp logs",
+  "ok": true,
+  "tftp": {
+    "cursor_end": 4677260,
+    "cursor_start": 4675909,
+    "events": [
+      {
+        "bytes": 118,
+        "client_ip": "[redacted]",
+        "client_mac": "[redacted]",
+        "filename": "da591740/config.txt",
+        "line": "Jun 29 12:42:56 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to [redacted-ip]",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "[redacted]",
+        "client_mac": "[redacted]",
+        "filename": "da591740/config.txt",
+        "line": "Jun 29 12:42:56 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to [redacted-ip]",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "[redacted]",
+        "client_mac": "[redacted]",
+        "filename": "da591740/pieeprom.sig",
+        "line": "Jun 29 12:42:56 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for [redacted-ip]",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "[redacted]",
+        "client_mac": "[redacted]",
+        "filename": "da591740//config.txt",
+        "line": "Jun 29 12:42:56 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to [redacted-ip]",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "[redacted]",
+        "client_mac": "[redacted]",
+        "filename": "da591740//config.txt",
+        "line": "Jun 29 12:42:56 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to [redacted-ip]",
+        "status": "served"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "[redacted]",
+        "client_mac": "[redacted]",
+        "filename": "da591740/kernel_2712.img",
+        "line": "Jun 29 12:42:57 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to [redacted-ip]",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "[redacted]",
+        "client_mac": "[redacted]",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "Jun 29 12:42:57 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to [redacted-ip]",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "[redacted]",
+        "client_mac": "[redacted]",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "Jun 29 12:42:57 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to [redacted-ip]",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "[redacted]",
+        "client_mac": "[redacted]",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "Jun 29 12:42:57 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to [redacted-ip]",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "[redacted]",
+        "client_mac": "[redacted]",
+        "filename": "da591740//config.txt",
+        "line": "Jun 29 12:42:57 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to [redacted-ip]",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "[redacted]",
+        "client_mac": "[redacted]",
+        "filename": "da591740//cmdline.txt",
+        "line": "Jun 29 12:42:57 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to [redacted-ip]",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "[redacted]",
+        "client_mac": "[redacted]",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "Jun 29 12:42:57 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for [redacted-ip]",
+        "status": "not_found"
+      },
+      {
+        "bytes": 82045,
+        "client_ip": "[redacted]",
+        "client_mac": "[redacted]",
+        "filename": "da591740/kernel_2712.img",
+        "line": "Jun 29 12:42:57 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to [redacted-ip]",
+        "status": "served"
+      }
+    ],
+    "lines": [
+      "Jun 29 12:42:56 dnsmasq-tftp[1]: error 0 Early terminate received from [redacted-ip]",
+      "Jun 29 12:42:56 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to [redacted-ip]",
+      "Jun 29 12:42:56 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/config.txt to [redacted-ip]",
+      "Jun 29 12:42:56 dnsmasq-tftp[1]: file /var/tftpboot/da591740/pieeprom.sig not found for [redacted-ip]",
+      "Jun 29 12:42:56 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to [redacted-ip]",
+      "Jun 29 12:42:56 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to [redacted-ip]",
+      "Jun 29 12:42:57 dnsmasq-tftp[1]: error 0 Early terminate received from [redacted-ip]",
+      "Jun 29 12:42:57 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to [redacted-ip]",
+      "Jun 29 12:42:57 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/bcm2712-rpi-5-b.dtb to [redacted-ip]",
+      "Jun 29 12:42:57 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/overlay_map.dtb to [redacted-ip]",
+      "Jun 29 12:42:57 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//overlays/bcm2712d0.dtbo to [redacted-ip]",
+      "Jun 29 12:42:57 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//config.txt to [redacted-ip]",
+      "Jun 29 12:42:57 dnsmasq-tftp[1]: sent /var/tftpboot/da591740//cmdline.txt to [redacted-ip]",
+      "Jun 29 12:42:57 dnsmasq-tftp[1]: file /var/tftpboot/da591740/armstub8-2712.bin not found for [redacted-ip]",
+      "Jun 29 12:42:57 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to [redacted-ip]"
+    ],
+    "log": "/state/tftp.log",
+    "log_size": 4677260,
+    "tail_mode": false,
+    "truncated": false
+  },
+  "talos_tftp_stability": {
+    "stable": true,
+    "reason": "stable",
+    "stable_samples": 3,
+    "required_samples": 3
+  }
+}

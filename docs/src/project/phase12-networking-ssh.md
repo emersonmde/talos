@@ -285,6 +285,19 @@ OpenSSH/generated-root retry, remote receipt, compatibility, service success,
 ssh-ready=true, runtime russh adoption, fake command expansion, broad shell
 work, or phase transition is accepted.
 
+The follow-up known-good-only capture discriminator repaired the lab-capture
+identity contradiction but stopped at blocked-known-good-marker-absent. The
+restored known-good tree stayed stable across pre-power, final-pre-restore, and
+post-restore GET /status, and stable TFTP evidence before restore included two
+82045-byte da591740/kernel_2712.img serves. The retained primary serial
+readiness artifact used the saturated-cursor direct-read fallback, captured
+firmware/TFTP output, and still omitted TALOS: kernel_main and the required
+rpi5-production-timer-preemption: PASS marker. selected_next_task is null and
+planningNeeded=true; no candidate preflight v3, packet-I/O discriminator,
+OpenSSH/generated-root retry, remote receipt, compatibility, service success,
+ssh-ready=true, runtime russh adoption, fake command expansion, broad shell
+work, or phase transition is accepted.
+
 Earlier live networking/SSH work was paused while the local POSIX/VFS/userspace
 continuation advanced. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces

@@ -20676,6 +20676,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   packet-I/O discriminator, OpenSSH/generated-root retry, remote receipt,
   compatibility, service success, ssh-ready=true, runtime russh adoption, fake
   command expansion, broad shell work, or phase transition.
+- phase12-ssh-live-tcp-lab-capture-contract-reconciliation-20260629 accepts the
+  static/source reconciliation that repaired the capture-invariant helper's
+  status endpoint drift and selected a known-good-only discriminator before any
+  further candidate retry.
+- phase12-ssh-live-tcp-known-good-capture-discriminator-20260629 accepts a
+  blocked-known-good-marker-absent result. The known-good-only hardware run
+  proved stable GET /status identity for the restored 6ead8933... tree and a
+  stable TFTP delta with two 82045-byte da591740/kernel_2712.img serves before
+  restore. The retained primary serial readiness artifact used the
+  saturated-cursor direct-read fallback and omitted both TALOS: kernel_main and
+  rpi5-production-timer-preemption: PASS, so selected_next_task is null and
+  planningNeeded=true before candidate preflight v3, packet-I/O discriminator,
+  OpenSSH/generated-root retry, remote receipt, compatibility, service success,
+  ssh-ready=true, runtime russh adoption, fake command expansion, broad shell
+  work, or phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

@@ -1,0 +1,73 @@
+{
+  "task_id": "phase12-ssh-live-tcp-known-good-capture-discriminator-20260629",
+  "classification": "blocked-known-good-marker-absent",
+  "terminal": true,
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "known-good control proves stable identity and TFTP capture but still lacks the production serial success marker; supervisor planning is required before candidate preflight v3, packet-I/O discriminator, OpenSSH/generated-root retry, remote receipt, compatibility, service success, ssh-ready=true, runtime russh adoption, fake command expansion, broad shell work, or phase transition.",
+  "summary": {
+    "task_id": "phase12-ssh-live-tcp-known-good-capture-discriminator-20260629",
+    "run_label": "known-good-capture-discriminator-20260629T124233Z",
+    "evidence_dir": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z",
+    "restore_snapshot": "abcontrol-secondary-workload-pre-20260524T231449Z",
+    "command_results": {
+      "runtime_readiness_primary_exit_code": 1,
+      "tftp_delta_exit_code": 0,
+      "known_good_readiness_v3_classifier_exit_code": 1,
+      "restore_exit_code": 0
+    },
+    "identity": {
+      "pre_tree_hash": "6ead8933b3287cddaf08ddcdbda7d4c770b365658ef1d0ad80a5dd0cf323f3ef",
+      "pre_effective_kernel": "kernel_2712.img",
+      "pre_kernel_2712_bytes": 82045,
+      "final_tree_hash": "6ead8933b3287cddaf08ddcdbda7d4c770b365658ef1d0ad80a5dd0cf323f3ef",
+      "final_effective_kernel": "kernel_2712.img",
+      "final_kernel_2712_bytes": 82045,
+      "post_restore_tree_hash": "6ead8933b3287cddaf08ddcdbda7d4c770b365658ef1d0ad80a5dd0cf323f3ef",
+      "post_restore_effective_kernel": "kernel_2712.img"
+    },
+    "tftp": {
+      "stable": true,
+      "event_count": 13,
+      "served_kernel_fetch_count": 2,
+      "served_kernel_fetch_bytes": [
+        82045,
+        82045
+      ],
+      "cursor_start": 4675909,
+      "cursor_end": 4677260
+    },
+    "readiness_v3": {
+      "valid_known_good_talos_readiness_v3": false,
+      "classification": "known-good-readiness-v3-blocked",
+      "evidence_level": "local/static classification over retained serial hardware artifact plus lab-controller status and stable TFTP evidence",
+      "required_success_marker": "rpi5-production-timer-preemption: PASS",
+      "has_required_success_marker": false,
+      "has_kernel_main": false,
+      "kernel_main_policy": "metadata-only-not-required",
+      "stable_boot_identity": true,
+      "stable_tftp_delta": true,
+      "served_effective_kernel_fetch_count": 2
+    },
+    "rejection_reasons": [
+      "missing-production-success-marker"
+    ],
+    "redaction_review": "JSON evidence redacts local peer IP/MAC strings and TFTP client fields; no packet payloads, keys, session material, boot artifact bytes, private user data, or stable secret-derived identifiers are retained."
+  },
+  "accepted_claims": [
+    "known-good GET /status identity stayed stable across pre-power, final-pre-restore, and post-restore samples",
+    "stable pre-restore TFTP delta observed da591740/kernel_2712.img served twice with 82045 bytes"
+  ],
+  "rejected_claims": [
+    "known-good production runtime readiness marker observed",
+    "candidate preflight v3 ready",
+    "packet I/O",
+    "OpenSSH compatibility",
+    "remote receipt",
+    "service success",
+    "ssh-ready=true",
+    "runtime russh adoption",
+    "fake command expansion",
+    "phase transition"
+  ]
+}

@@ -1,0 +1,3 @@
+tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z/known-good-capture-discriminator-20260629T124233Z-runtime-readiness-primary.json
+tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z/known-good-capture-discriminator-20260629T124233Z-runtime-readiness-primary-summary.json
+tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z/known-good-capture-discriminator-20260629T124233Z-runtime-readiness-primary.status

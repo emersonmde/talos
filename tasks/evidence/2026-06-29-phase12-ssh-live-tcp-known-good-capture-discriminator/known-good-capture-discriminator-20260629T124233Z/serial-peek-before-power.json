@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "ZSBwaGFzZT1wb3N0LWFsbG9jYXRvcg0KdGFsb3M6IGJvb3RzdHJhcCByZXNlcnZlOiBzdGFydD0weDJmMDAwMDAwIGVuZD0weDJmMDEwMDAwIHBhZ2VzPTB4MTAgcGFnZV9zaXplPTB4MTAwMCByZWFzb249Ym9vdHN0cmFwLXBhZ2UtdGFibGVzDQp0YWxvczogcGFnZSBmcmFtZXMgcmVtYWluaW5nOiBzdGFydD0weDJmMDEwMDAwIGVuZD0weDNmYzAwMDAwIHBhZ2VzPTB4MTBiZjAgcGFnZV9zaXplPTB4MTAwMCBzb3VyY2U9Ym9vdHN0cmFwLXJlc2VydmUNCnRhbG9zOiBkdGIgbWVtb3J5OiBhZGRyZXNzX2NlbGxzPTIgc2l6ZV9jZWxscz0yIGNvdW50PTMgc2hvd249MyB0cnVuY2F0ZWQ9ZmFsc2UNCnRhbG9zOiBkdGIgbWVtb3J5WzBdOiBhZGRyPTB4MCBzaXplPTB4M2ZjMDAwMDANCnRhbG9zOiBkdGIgbWVtb3J5WzFdOiBhZGRyPTB4NDAwMDAwMDAgc2l6ZT0weGMwMDAwMDAwDQp0YWxvczogZHRiIG1lbW9yeVsyXTogYWRkcj0weDEwMDAwMDAwMCBzaXplPTB4MTAwMDAwMDAwDQo=",
+  "bytes": 500,
+  "cursor": 4194304,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "e phase=post-allocator\r\ntalos: bootstrap reserve: start=0x2f000000 end=0x2f010000 pages=0x10 page_size=0x1000 reason=bootstrap-page-tables\r\ntalos: page frames remaining: start=0x2f010000 end=0x3fc00000 pages=0x10bf0 page_size=0x1000 source=bootstrap-reserve\r\ntalos: dtb memory: address_cells=2 size_cells=2 count=3 shown=3 truncated=false\r\ntalos: dtb memory[0]: addr=0x0 size=0x3fc00000\r\ntalos: dtb memory[1]: addr=0x40000000 size=0xc0000000\r\ntalos: dtb memory[2]: addr=0x100000000 size=0x100000000\r\n"
+}

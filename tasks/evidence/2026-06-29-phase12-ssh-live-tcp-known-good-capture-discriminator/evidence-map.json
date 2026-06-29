@@ -1,0 +1,37 @@
+{
+  "task_id": "phase12-ssh-live-tcp-known-good-capture-discriminator-20260629",
+  "run_label": "known-good-capture-discriminator-20260629T124233Z",
+  "evidence_dir": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z",
+  "task_record": "tasks/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator.md",
+  "classification": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/classification.json",
+  "summary": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z/known-good-capture-summary.json",
+  "primary_runtime_readiness": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z/known-good-capture-discriminator-20260629T124233Z-runtime-readiness-primary.json",
+  "primary_runtime_readiness_summary": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z/known-good-capture-discriminator-20260629T124233Z-runtime-readiness-primary-summary.json",
+  "tftp_delta": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z/tftp-delta-stable-pre-restore.json",
+  "readiness_classifier": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z/known-good-readiness-v3-classification.json",
+  "lab_identity": {
+    "pre_status": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z/pre-status.json",
+    "pre_boot_files": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z/pre-boot-files.json",
+    "pre_boot_snapshots": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z/pre-boot-snapshots.json",
+    "final_pre_restore_status": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z/final-pre-restore-status.json",
+    "final_pre_restore_boot_files": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z/final-pre-restore-boot-files.json",
+    "post_restore_status": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z/post-restore-status.json",
+    "post_restore_boot_files": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z/post-restore-boot-files.json",
+    "post_restore_boot_snapshots": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z/post-restore-boot-snapshots.json"
+  },
+  "cursors_and_power": {
+    "serial_peek_before_power": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z/serial-peek-before-power.json",
+    "serial_cursor_before_power": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z/serial-cursor-before-power.txt",
+    "tftp_tail_before_power": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z/tftp-tail-before-power.json",
+    "tftp_cursor_before_power": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z/tftp-cursor-before-power.txt",
+    "power_cycle": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z/power-cycle.json",
+    "restore": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/known-good-capture-discriminator-20260629T124233Z/restore.json"
+  },
+  "validation": {
+    "jq_empty_task_json_evidence": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass before commit"
+  },
+  "redaction_review": "JSON evidence redacts local peer IP/MAC strings and TFTP client fields; no packet payloads, keys, session material, boot artifact bytes, private user data, or stable secret-derived identifiers are retained."
+}
