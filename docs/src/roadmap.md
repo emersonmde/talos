@@ -20464,6 +20464,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   remains dependency-blocked until future source evidence selects a
   discriminator. The selected next task is the source-only
   phase12-ssh-entropy-source-contract-20260629.
+- phase12-ssh-entropy-source-contract-20260629 accepts the source-only SSH
+  entropy contract without changing Rust runtime behavior. The selected seed
+  input for the next local diagnostic core is operator-provided material at
+  /etc/talos/operator-seed.bin, owned by the entropy, CSPRNG, SSH key-readiness,
+  and diagnostic-command modules. Local timer, scheduler-event, and
+  console-timing observations remain untrusted diagnostic context; deterministic
+  control input remains test-only; hardware RNG remains blocked as unaccepted.
+  Durable evidence is metadata-only and must not retain seed bytes, generated
+  random bytes, key bytes, fingerprints, digests, signatures, exchange hashes,
+  session identifiers, or stable secret-derived identifiers. This task does not
+  accept live SSH, TCP, packet I/O, host-key generation, deployed cryptographic
+  sufficiency, Pi 5 proof, boot publication, generated-root retry, OpenSSH
+  retry, persistence, or phase transition. The selected next local/static task
+  is phase12-ssh-entropy-diagnostic-local-core-20260629.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

@@ -1,0 +1,95 @@
+{
+  "task_id": "phase12-ssh-entropy-source-contract-20260629",
+  "status": "accepted",
+  "classification": "ssh-entropy-source-contract-accepted",
+  "evidence_level": [
+    "static source/docs/evidence review",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "selected_entropy_contract": {
+    "invariant": "local entropy diagnostics fail closed unless selected operator seed metadata is present, and entropy alone never sets ssh-ready=true",
+    "selected_source": {
+      "path": "/etc/talos/operator-seed.bin",
+      "owner_files": [
+        "src/entropy.rs",
+        "src/csprng.rs",
+        "src/ssh_key_readiness.rs",
+        "src/diagnostic_command.rs"
+      ],
+      "minimum_sufficient_bytes": 32,
+      "maximum_diagnostic_bytes": 4096,
+      "diagnostic_only_outputs": [
+        "fixed labels",
+        "booleans",
+        "byte counts"
+      ]
+    },
+    "diagnostic_output_shape": {
+      "entropy": [
+        "diag: entropy-label <label>",
+        "diag: hardware-rng <label>",
+        "diag: operator-seed <label> when required",
+        "diag: cryptographic-strength <bool>",
+        "diag: ssh-ready false"
+      ],
+      "sshkeydiag": [
+        "diag: sshkey-readiness sshkeydiag-not-ready",
+        "diag: sshkey-label <fixed-label>",
+        "diag: ssh-ready false"
+      ],
+      "csprng_readiness_labels": [
+        "csprng-missing-seed",
+        "csprng-invalid-seed",
+        "csprng-insufficient-seed",
+        "csprng-conditioning-failed",
+        "csprng-ready"
+      ]
+    },
+    "non_retention_rules": [
+      "no real operator seed bytes",
+      "no generated random bytes",
+      "no key bytes",
+      "no fingerprints",
+      "no digests",
+      "no signatures",
+      "no exchange hashes",
+      "no session identifiers",
+      "no stable secret-derived identifiers"
+    ]
+  },
+  "candidate_dispositions": {
+    "operator_seed_file": "selected",
+    "local_timer": "deferred-untrusted-diagnostic-only",
+    "scheduler_event": "deferred-untrusted-diagnostic-only",
+    "console_timing": "deferred-untrusted-diagnostic-only",
+    "deterministic_control": "rejected-production-entropy-test-control-only",
+    "hardware_rng": "blocked-unaccepted"
+  },
+  "selected_next_task": "phase12-ssh-entropy-diagnostic-local-core-20260629",
+  "planningNeeded": false,
+  "rejected_claims": [
+    "live-ssh",
+    "tcp",
+    "packet-io",
+    "host-key-generation",
+    "authorized-key-provisioning",
+    "deployed-cryptographic-sufficiency",
+    "hardware-rng",
+    "pi5-proof",
+    "boot-publication",
+    "generated-root-retry",
+    "openssh-retry",
+    "persistence",
+    "phase-transition"
+  ],
+  "validation": {
+    "git_status_short_branch_before_edits": "pass",
+    "static_source_docs_evidence_review": "pass",
+    "jq_empty_task_owned_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass before commit"
+  }
+}

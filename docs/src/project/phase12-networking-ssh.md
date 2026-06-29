@@ -16,12 +16,13 @@ command expansion, persistence claims, and phase transition remain rejected
 from the reselection task; supervisor planning or new source evidence is
 required before further Phase 12.1 Ethernet work.
 
-The Ethernet-pause to SSH entropy frontier checkpoint preserves that boundary
-and selects the source-only entropy contract as the next SSH substrate task:
-phase12-ssh-entropy-source-contract-20260629. The selected path may classify
-kernel entropy inputs and diagnostic shape for future host keys and session
-crypto, but it does not accept host keys, live SSH, TCP/IP, packet I/O, Pi 5
-hardware proof, or a phase transition.
+The Ethernet-pause to SSH entropy frontier checkpoint preserves that boundary,
+and the accepted phase12-ssh-entropy-source-contract-20260629 task selects the
+operator-provided seed material boundary as the next SSH substrate source
+contract. The selected next local/static task is
+phase12-ssh-entropy-diagnostic-local-core-20260629. This does not accept host
+keys, live SSH, TCP/IP, packet I/O, Pi 5 hardware proof, cryptographic
+sufficiency for deployed SSH, or a phase transition.
 
 Live networking/SSH remains paused while the local POSIX/VFS/userspace
 continuation advances. The accepted dual-stage pipeline stdin redirection core
@@ -11350,3 +11351,24 @@ bounded /bin, arbitrary shell grammar, live networking/SSH, Pi 5 hardware
 proof, generated-root retry, boot publication, and phase transition remain
 deferred. selected_next_task=null and planningNeeded=true because no later
 queued same-lane local POSIX/VFS task is mechanically objective.
+
+The accepted phase12-ssh-entropy-source-contract-20260629 task selects the
+source-only entropy boundary for future SSH substrate work. The only selected
+seed input for the next local diagnostic core is operator-provided material at
+/etc/talos/operator-seed.bin, owned by src/entropy.rs, src/csprng.rs,
+src/ssh_key_readiness.rs, and src/diagnostic_command.rs. Local timer,
+scheduler-event, and console-timing observations remain untrusted diagnostic
+context; deterministic control input remains test-only; hardware RNG remains
+blocked as entropydiag-hardware-rng-unaccepted until a future source/hardware
+task owns and proves it. Durable evidence may retain fixed labels, booleans,
+byte counts, bounded path names, and test/filter names only; it must not retain
+real seed bytes, generated random bytes, key bytes, fingerprints, digests,
+signatures, exchange hashes, session identifiers, or stable secret-derived
+identifiers. The accepted diagnostic shape is metadata-only: entropy reports
+entropy-label, hardware-rng, optional operator-seed, cryptographic-strength,
+and ssh-ready=false; sshkeydiag reports fixed sshkeydiag labels and
+ssh-ready=false. This does not accept live SSH, TCP, packet I/O, host-key
+generation, deployed cryptographic sufficiency, Pi 5 proof, boot publication,
+generated-root retry, OpenSSH retry, persistence, or phase transition. The
+selected next local/static task is
+phase12-ssh-entropy-diagnostic-local-core-20260629.
