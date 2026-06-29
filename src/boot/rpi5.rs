@@ -44,6 +44,9 @@ pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
     let services = target::services(boot_info);
     let dtb = report_boot_identity(boot_info, &services);
 
+    #[cfg(talos_boot_scenario = "rpi5_ssh_service_smoltcp_runtime_ready")]
+    target::rpi5::run_ssh_service_smoltcp_runtime_ready_route();
+
     #[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_candidate")]
     target::rpi5::run_rp1_ethernet_bootinfo_report_serial_visibility_candidate();
 

@@ -1,0 +1,8 @@
+target/tmp/runtime-marker-route-20260629T195300Z-boot-tree/bcm2712-rpi-5-b.dtb
+target/tmp/runtime-marker-route-20260629T195300Z-boot-tree/cmdline.txt
+target/tmp/runtime-marker-route-20260629T195300Z-boot-tree/config.txt
+target/tmp/runtime-marker-route-20260629T195300Z-boot-tree/kernel8.img
+target/tmp/runtime-marker-route-20260629T195300Z-boot-tree/kernel_2712.img
+target/tmp/runtime-marker-route-20260629T195300Z-boot-tree/overlays/bcm2712d0.dtbo
+target/tmp/runtime-marker-route-20260629T195300Z-boot-tree/overlays/overlay_map.dtb
+target/tmp/runtime-marker-route-20260629T195300Z-boot-tree/overlays/uart0-pi5.dtbo

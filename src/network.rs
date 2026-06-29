@@ -2733,6 +2733,22 @@ pub(crate) struct LiveTcpNetworkDeviceRuntimeReport {
     ssh_ready: bool,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct LiveTcpRuntimeMarkerRouteReport {
+    runtime_report: LiveTcpNetworkDeviceRuntimeReport,
+    marker_route_ready: bool,
+}
+
+impl LiveTcpRuntimeMarkerRouteReport {
+    pub(crate) const fn runtime_report(self) -> LiveTcpNetworkDeviceRuntimeReport {
+        self.runtime_report
+    }
+
+    pub(crate) const fn marker_route_ready(self) -> bool {
+        self.marker_route_ready
+    }
+}
+
 impl LiveTcpNetworkDeviceRuntimeReport {
     pub(crate) const fn accept_report(self) -> LiveTcpListenerDescriptorAcceptReport {
         self.accept_report
@@ -2785,6 +2801,62 @@ impl LiveTcpNetworkDeviceRuntimeReport {
     pub(crate) const fn ssh_ready(self) -> bool {
         self.ssh_ready
     }
+}
+
+pub(crate) fn live_tcp_runtime_marker_route_report()
+-> Result<LiveTcpRuntimeMarkerRouteReport, crate::posix::PosixError> {
+    let owner = crate::scheduler::ProcessOwnerId::new(79)
+        .ok_or(crate::posix::PosixError::InvalidArgument)?;
+    let endpoint = Ipv4Endpoint::new(SOCKET_SYNTHETIC_LOCAL_IPV4_BE, 22);
+    let mut sockets = NetworkSocketDescriptorTable::<4>::new();
+    let listener = sockets.open(
+        owner,
+        SOCKET_DOMAIN_AF_INET,
+        SOCKET_TYPE_STREAM,
+        SOCKET_PROTOCOL_DEFAULT,
+    )?;
+    sockets.bind(owner, listener, endpoint)?;
+    sockets.listen(owner, listener, 1)?;
+    let client = sockets.open(
+        owner,
+        SOCKET_DOMAIN_AF_INET,
+        SOCKET_TYPE_STREAM,
+        SOCKET_PROTOCOL_DEFAULT,
+    )?;
+    sockets.connect(owner, client, endpoint)?;
+    let connection_id = match sockets.socket(client)?.state() {
+        NetworkSocketState::Connected { connection_id, .. } => connection_id,
+        _ => return Err(crate::posix::PosixError::Pipe),
+    };
+    let accepted = sockets.accept(owner, listener)?;
+    sockets.send(owner, client, LIVE_TCP_RUNTIME_DRIVER_PACKET_PAYLOAD)?;
+    let mut recv = [0u8; LIVE_TCP_RUNTIME_DRIVER_PACKET_PAYLOAD.len()];
+    if sockets.recv_peek(owner, accepted, &mut recv)?
+        != LIVE_TCP_RUNTIME_DRIVER_PACKET_PAYLOAD.len()
+        || recv != *LIVE_TCP_RUNTIME_DRIVER_PACKET_PAYLOAD
+    {
+        return Err(crate::posix::PosixError::Io);
+    }
+
+    let runtime_report =
+        sockets.live_tcp_network_device_smoltcp_runtime_binding(connection_id, true, false)?;
+    let marker_route_ready = runtime_report.binding_state()
+        == LiveTcpNetworkDeviceRuntimeBindingState::AcceptedDeterministicDeviceInterfaceDelivery
+        && runtime_report.descriptor_facing_connection_delivered()
+        && runtime_report.deterministic_device_interface_bound()
+        && !runtime_report.hardware_frame_provider_bound()
+        && runtime_report.driver_packet_rx_frames() > 0
+        && runtime_report.driver_packet_rx_frames() == runtime_report.driver_packet_tx_frames()
+        && !runtime_report.live_packet_io_accepted()
+        && !runtime_report.live_reachability_accepted()
+        && !runtime_report.remote_receipt_accepted()
+        && !runtime_report.compatibility_accepted()
+        && !runtime_report.ssh_ready();
+
+    Ok(LiveTcpRuntimeMarkerRouteReport {
+        runtime_report,
+        marker_route_ready,
+    })
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -7056,6 +7128,30 @@ mod tests {
         assert_eq!(
             observation.payload_len(),
             LIVE_TCP_RUNTIME_DRIVER_PACKET_PAYLOAD.len()
+        );
+        assert!(!runtime.live_packet_io_accepted());
+        assert!(!runtime.live_reachability_accepted());
+        assert!(!runtime.remote_receipt_accepted());
+        assert!(!runtime.compatibility_accepted());
+        assert!(!runtime.ssh_ready());
+    }
+
+    #[test_case]
+    fn live_tcp_runtime_marker_route_report_reaches_fail_closed_runtime_path() {
+        let report = live_tcp_runtime_marker_route_report().expect("runtime marker route");
+        let runtime = report.runtime_report();
+        assert!(report.marker_route_ready());
+        assert_eq!(
+            runtime.binding_state(),
+            LiveTcpNetworkDeviceRuntimeBindingState::AcceptedDeterministicDeviceInterfaceDelivery
+        );
+        assert!(runtime.descriptor_facing_connection_delivered());
+        assert!(runtime.deterministic_device_interface_bound());
+        assert!(!runtime.hardware_frame_provider_bound());
+        assert!(runtime.driver_packet_rx_frames() > 0);
+        assert_eq!(
+            runtime.driver_packet_rx_frames(),
+            runtime.driver_packet_tx_frames()
         );
         assert!(!runtime.live_packet_io_accepted());
         assert!(!runtime.live_reachability_accepted());

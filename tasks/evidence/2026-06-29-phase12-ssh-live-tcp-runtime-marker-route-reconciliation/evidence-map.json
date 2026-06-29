@@ -1,0 +1,67 @@
+{
+  "task_id": "phase12-ssh-live-tcp-runtime-marker-route-reconciliation-20260629",
+  "run_label": "runtime-marker-route-20260629T195300Z",
+  "evidence_dir": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-runtime-marker-route-reconciliation",
+  "classification": "runtime-marker-route-ready",
+  "terminal": true,
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-candidate-preflight-v7-20260629",
+  "source_commit_before_commit": "4249851628b80ab88ce30a334326b873eaa0b7e0",
+  "hardware_run": false,
+  "boot_publication": false,
+  "archive": {
+    "path_label": "target/tmp/runtime-marker-route-20260629T195300Z.tar.gz",
+    "sha256": "30f2ce2c2188101f8fcac0e6c18335b48343c67c111e32ae1db8c0ae78fe0272"
+  },
+  "runtime_marker_route": {
+    "required_marker": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-marker-route-20260629T195300Z",
+    "nonce": "runtime-marker-route-20260629T195300Z",
+    "static_archive_review": "accepted-tokenized-strings",
+    "marker_route_ready_contract": [
+      "descriptor-facing-connection-delivered",
+      "deterministic-device-interface-bound",
+      "hardware-frame-provider-bound=false",
+      "driver-packet-rx-frames equals driver-packet-tx-frames",
+      "live-packet-io-accepted=false",
+      "live-reachability-accepted=false",
+      "remote-receipt-accepted=false",
+      "compatibility-accepted=false",
+      "ssh-ready=false",
+      "claims-service-success=false",
+      "claims-phase-transition=false"
+    ]
+  },
+  "evidence": [
+    {
+      "level": "static inspection",
+      "path": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-runtime-marker-route-reconciliation/validation/static-route-rg.txt"
+    },
+    {
+      "level": "archive/static marker review",
+      "path": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-runtime-marker-route-reconciliation/validation/runtime-marker-archive-review.stdout.txt"
+    },
+    {
+      "level": "fmt/lint/typecheck",
+      "path": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-runtime-marker-route-reconciliation/validation/cargo-fmt-check.stdout.txt"
+    },
+    {
+      "level": "unit tests",
+      "path": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-runtime-marker-route-reconciliation/validation/cargo-test-live-tcp-runtime-marker-route.stdout.txt"
+    },
+    {
+      "level": "docs validation",
+      "path": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-runtime-marker-route-reconciliation/validation/mdbook-build.stdout.txt"
+    },
+    {
+      "level": "diff check",
+      "path": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-runtime-marker-route-reconciliation/validation/git-diff-check.stdout.txt"
+    },
+    {
+      "level": "jq validation",
+      "path": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-runtime-marker-route-reconciliation/validation/jq-empty-evidence-map.final.stdout.txt"
+    },
+    {
+      "level": "cached diff check",
+      "path": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-runtime-marker-route-reconciliation/validation/git-diff-cached-check.stdout.txt"
+    }
+  ]
+}

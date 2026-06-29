@@ -20802,6 +20802,16 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   selected_next_task is null and planningNeeded=true before packet-I/O,
   OpenSSH/generated-root retry, remote receipt, compatibility, service success,
   ssh-ready=true, broad shell work, or phase transition can resume.
+- phase12-ssh-live-tcp-runtime-marker-route-reconciliation-20260629 accepts
+  runtime-marker-route-ready as a no-hardware source-route repair. The
+  rpi5_ssh_service_smoltcp_runtime_ready boot scenario now routes boot entry
+  into the deterministic smoltcp runtime binding, and the nonce-bearing
+  `TALOS: ssh-service-smoltcp-runtime-ready` marker is gated on
+  descriptor-facing delivery, deterministic device-interface binding,
+  fail-closed claim flags, and `ssh-ready=false`. Static archive review
+  confirmed the marker tokens and run nonce without lab publication. The
+  selected next task is the serialized
+  phase12-ssh-live-tcp-pi5-candidate-preflight-v7-20260629.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

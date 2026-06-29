@@ -1,0 +1,17 @@
+docs/src/project/phase12-networking-ssh.md:11859:`TALOS: ssh-service-smoltcp-runtime-ready` marker did not appear after power.
+build.rs:571:        value: "rpi5_ssh_service_smoltcp_runtime_ready",
+docs/src/roadmap.md:20801:  `TALOS: ssh-service-smoltcp-runtime-ready` marker was absent after power.
+src/main.rs:126:            talos_boot_scenario = "rpi5_ssh_service_smoltcp_runtime_ready",
+scripts/rpi5-ssh-service-smoltcp-runtime-ready-archive-review.sh:31:required_marker="TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=$CAPTURE_NONCE"
+scripts/rpi5-ssh-service-smoltcp-runtime-ready-archive-review.sh:34:    "TALOS: ssh-service-smoltcp-runtime-ready" \
+scripts/rpi5-ssh-service-smoltcp-runtime-ready-boot-tree.sh:11:export TALOS_BOOT_SCENARIO=rpi5_ssh_service_smoltcp_runtime_ready
+src/boot/rpi5.rs:47:    #[cfg(talos_boot_scenario = "rpi5_ssh_service_smoltcp_runtime_ready")]
+src/boot/rpi5.rs:48:    target::rpi5::run_ssh_service_smoltcp_runtime_ready_route();
+src/network.rs:2806:pub(crate) fn live_tcp_runtime_marker_route_report()
+src/network.rs:7140:    fn live_tcp_runtime_marker_route_report_reaches_fail_closed_runtime_path() {
+src/network.rs:7141:        let report = live_tcp_runtime_marker_route_report().expect("runtime marker route");
+src/target/rpi5.rs:25786:    talos_boot_scenario = "rpi5_ssh_service_smoltcp_runtime_ready"
+src/target/rpi5.rs:26027:#[cfg(talos_boot_scenario = "rpi5_ssh_service_smoltcp_runtime_ready")]
+src/target/rpi5.rs:26028:pub fn run_ssh_service_smoltcp_runtime_ready_route() -> ! {
+src/target/rpi5.rs:26038:    match crate::network::live_tcp_runtime_marker_route_report() {
+src/target/rpi5.rs:26041:            write_early_static("TALOS: ssh-service-smoltcp-runtime-ready");

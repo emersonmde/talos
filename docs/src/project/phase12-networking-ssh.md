@@ -11861,3 +11861,18 @@ selected_next_task is null and planningNeeded=true; packet-I/O,
 OpenSSH/generated-root retry, remote receipt, compatibility, service success,
 ssh-ready=true, broad shell work, and phase transition remain blocked pending
 supervisor planning.
+
+phase12-ssh-live-tcp-runtime-marker-route-reconciliation-20260629 accepts
+runtime-marker-route-ready as a no-hardware source-route repair after v6. The
+new rpi5_ssh_service_smoltcp_runtime_ready boot scenario now reaches a Pi 5
+runtime-marker route from boot entry through the deterministic smoltcp runtime
+binding and emits the nonce-bearing
+`TALOS: ssh-service-smoltcp-runtime-ready` marker only after descriptor-facing
+delivery and deterministic device-interface binding are observed. The static
+archive review confirms the marker tokens, run nonce, fail-closed claim flags,
+and `ssh-ready=false` are present in the generated kernel image without
+publishing to the lab. The selected next task is
+phase12-ssh-live-tcp-pi5-candidate-preflight-v7-20260629; hardware action,
+packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility,
+service success, ssh-ready=true, broad shell work, and phase transition remain
+blocked until that explicit serialized preflight accepts candidate-capture-ready.

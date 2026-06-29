@@ -568,6 +568,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[],
     },
     BootScenario {
+        value: "rpi5_ssh_service_smoltcp_runtime_ready",
+        implied_values: &[],
+        asm_defines: &[],
+    },
+    BootScenario {
         value: "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_candidate",
         implied_values: &[],
         asm_defines: &[],

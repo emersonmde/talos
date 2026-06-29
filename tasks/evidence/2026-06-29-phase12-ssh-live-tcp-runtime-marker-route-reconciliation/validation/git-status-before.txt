@@ -1,0 +1,9 @@
+## main...origin/main [ahead 180]
+ M build.rs
+ M src/boot/rpi5.rs
+ M src/main.rs
+ M src/network.rs
+ M src/target/rpi5.rs
+?? scripts/rpi5-ssh-service-smoltcp-runtime-ready-archive-review.sh
+?? scripts/rpi5-ssh-service-smoltcp-runtime-ready-boot-tree.sh
+?? tasks/evidence/2026-06-29-phase12-ssh-live-tcp-runtime-marker-route-reconciliation/
