@@ -1,0 +1,28 @@
+{
+  "task_id": "phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof-20260629",
+  "task_record": "tasks/2026-06-29-phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof.md",
+  "classification": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof/classification.json",
+  "current_run_label": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof/current-run-label.txt",
+  "run_evidence_dir": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof/selected-known-good-control-baseline-20260629T155308Z",
+  "terminal_classification": "known-good-control-ready",
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-candidate-preflight-v4-20260629",
+  "planningNeeded": null,
+  "artifacts": {
+    "before_restore_status": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof/selected-known-good-control-baseline-20260629T155308Z/before-selected-restore-status.json",
+    "selected_restore_before_power": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof/selected-known-good-control-baseline-20260629T155308Z/selected-restore-before-power.json",
+    "selected_restored_status": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof/selected-known-good-control-baseline-20260629T155308Z/selected-restored-status.json",
+    "pre_status": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof/selected-known-good-control-baseline-20260629T155308Z/pre-status.json",
+    "pre_boot_files": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof/selected-known-good-control-baseline-20260629T155308Z/pre-boot-files.json",
+    "serial_drain_before_power": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof/selected-known-good-control-baseline-20260629T155308Z/serial-drain-before-power.json",
+    "serial_window": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof/selected-known-good-control-baseline-20260629T155308Z/serial-observe-window.json",
+    "tftp_delta": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof/selected-known-good-control-baseline-20260629T155308Z/tftp-delta-stable-pre-restore.json",
+    "final_pre_restore_status": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof/selected-known-good-control-baseline-20260629T155308Z/final-pre-restore-status.json",
+    "restore_snapshot": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof/selected-known-good-control-baseline-20260629T155308Z/restore-snapshot.json",
+    "post_restore_status": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof/selected-known-good-control-baseline-20260629T155308Z/post-restore-status.json",
+    "runtime_readiness_primary": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof/selected-known-good-control-baseline-20260629T155308Z/selected-known-good-control-baseline-20260629T155308Z-runtime-readiness-primary.json",
+    "readiness_v3_classification": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof/selected-known-good-control-baseline-20260629T155308Z/readiness-v3-classification.json",
+    "post_task_status": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof/selected-known-good-control-baseline-20260629T155308Z/post-task-status.json",
+    "validation_summary": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof/validation-summary.json"
+  },
+  "redaction_review": "Task summary artifacts omit packet payloads, key/session material, SSH identifiers, public-key blobs, signatures, fingerprints, peer identifiers, operator identity, private user data, and secret-derived identifiers. Raw lab-controller TFTP evidence remains task-owned hardware evidence and may include local endpoint fields."
+}

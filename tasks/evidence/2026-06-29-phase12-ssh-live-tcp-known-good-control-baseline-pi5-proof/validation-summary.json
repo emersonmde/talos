@@ -1,0 +1,54 @@
+{
+  "gates": [
+    {
+      "gate": "git status --short --branch before edits/action",
+      "result": "pass",
+      "evidence": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof/git-status-before.txt"
+    },
+    {
+      "gate": "Lab API GET /status, GET /boot/files, GET /boot/snapshots before power and after restore",
+      "result": "pass",
+      "evidence": "selected run directory lab-controller JSON artifacts"
+    },
+    {
+      "gate": "Fresh serial cursor/completeness diagnostics before power",
+      "result": "pass",
+      "evidence": "serial-drain-before-power.json and serial-cursor-before-power.txt"
+    },
+    {
+      "gate": "GET /tftp/logs tail cursor and stable same-cursor delta before restore",
+      "result": "pass",
+      "evidence": "tftp-cursor-before-power.json and tftp-delta-stable-pre-restore.json"
+    },
+    {
+      "gate": "Accepted selected-control readiness classifier/contract gate",
+      "result": "pass",
+      "evidence": "readiness-v3-classification.json"
+    },
+    {
+      "gate": "Restore to named snapshot/control state and confirm with lab API GET /status",
+      "result": "pass",
+      "evidence": "restore-snapshot.json and post-restore-status.json"
+    },
+    {
+      "gate": "jq empty on task-owned JSON evidence",
+      "result": "pass"
+    },
+    {
+      "gate": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "gate": "/home/node/.cargo/bin/mdbook build",
+      "result": "pass",
+      "note": "mdbook warning only: search index is very large"
+    },
+    {
+      "gate": "git diff --cached --check before commit",
+      "result": "pass"
+    }
+  ],
+  "docs_touched": true,
+  "shell_helpers_touched": false,
+  "sh_n": "not run; no shell helper/classifier scripts were touched"
+}

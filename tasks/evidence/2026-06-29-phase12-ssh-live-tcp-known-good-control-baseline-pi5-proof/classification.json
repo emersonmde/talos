@@ -1,0 +1,90 @@
+{
+  "task_id": "phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof-20260629",
+  "run_label": "selected-known-good-control-baseline-20260629T155308Z",
+  "run_dir": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof/selected-known-good-control-baseline-20260629T155308Z",
+  "selected_control_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+  "capture_exit": 0,
+  "readiness_classifier_exit": 0,
+  "terminal_classification": "known-good-control-ready",
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-candidate-preflight-v4-20260629",
+  "planningNeeded": false,
+  "first_missing_fact": null,
+  "readiness": {
+    "valid_known_good_talos_readiness_v3": true,
+    "classification": "valid-known-good-talos-readiness-v3",
+    "evidence_level": "local/static classification over retained serial hardware artifact plus lab-controller status and stable TFTP evidence",
+    "required_success_marker": "rpi5-production-timer-preemption: PASS",
+    "has_required_success_marker": true,
+    "has_kernel_main": false,
+    "kernel_main_policy": "metadata-only-not-required",
+    "stable_boot_identity": true,
+    "stable_tftp_delta": true,
+    "served_effective_kernel_fetch_count": 2
+  },
+  "readiness_checks": {
+    "has_required_success_marker": true,
+    "has_kernel_main_metadata": false,
+    "stable_boot_identity": true,
+    "pre_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "final_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "stable_tftp_delta": true,
+    "served_effective_kernel_fetch_count": 2,
+    "retained_primary_cursor_window": true,
+    "tftp_cursor_window": true
+  },
+  "capture_summary": {
+    "suggested_classification": "post-handoff-marker-visible",
+    "identity_join_rejection_reasons": [],
+    "serial_window": {
+      "requested_timeout_seconds": 95,
+      "elapsed_seconds": 27,
+      "settle_ms": 1000,
+      "max_bytes": 65536,
+      "observe_attempts": 6,
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+      "capture_mode": "read",
+      "saturation_limit": 4194304,
+      "start_cursor_saturated": true,
+      "response_bytes": 6551,
+      "required_marker": "rpi5-production-timer-preemption: PASS",
+      "kernel_marker": "TALOS: kernel_main",
+      "firmware_network_marker": "NETWORK",
+      "has_kernel_main": false,
+      "has_required_marker": true,
+      "has_firmware_network": true,
+      "firmware_network_occurrences": 2,
+      "required_marker_occurrences": 1,
+      "marker_nonce": null,
+      "nonce_token": null,
+      "nonce_token_occurrences": 0,
+      "required_marker_excerpt": "it-remaining=199996953 classification=pi5-production-timer-preemption-complete\r\nrpi5-production-timer-preemption: PASS\r\n"
+    },
+    "tftp_event_count": 13,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "final_pre_restore_identity": {
+      "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "effective_kernel": "kernel_2712.img",
+      "expected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes_match": true
+    },
+    "restore": {
+      "snapshot_name": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "post_task_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "rejected_claims": [
+    "candidate archive publication",
+    "packet I/O",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility",
+    "service success",
+    "ssh-ready=true",
+    "broad shell work",
+    "phase transition"
+  ]
+}

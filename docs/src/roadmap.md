@@ -20739,6 +20739,17 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   v3/v4, packet-I/O, OpenSSH/generated-root retry, remote receipt,
   compatibility, service success, ssh-ready=true, broad shell work, or phase
   transition can resume.
+- phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof-20260629 accepts
+  known-good-control-ready. The hardware proof restored
+  phase12-ssh-v10-openssh-clean-pre-20260624T074100Z, retained fresh serial
+  and TFTP cursors, observed rpi5-production-timer-preemption: PASS in the
+  selected-control serial window, joined stable a0452458... identity with two
+  matching 104,136-byte da591740/kernel_2712.img TFTP serves, and restored the
+  same selected snapshot. The selected next task is
+  phase12-ssh-live-tcp-pi5-candidate-preflight-v4-20260629; packet-I/O,
+  OpenSSH/generated-root retry, remote receipt, compatibility, service success,
+  ssh-ready=true, broad shell work, and phase transition remain blocked until
+  the candidate preflight is explicitly promoted and accepted.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

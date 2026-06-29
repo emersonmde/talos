@@ -345,6 +345,19 @@ preflight, packet-I/O discriminator, OpenSSH/generated-root retry, remote
 receipt, compatibility, service success, ssh-ready=true, broad shell work, or
 phase transition resumes.
 
+The selected-control baseline Pi 5 proof accepts known-good-control-ready. The
+worker restored phase12-ssh-v10-openssh-clean-pre-20260624T074100Z, proved the
+a0452458... tree with effective_kernel=kernel_2712.img, retained a fresh
+serial drain/completeness diagnostic, observed the
+rpi5-production-timer-preemption: PASS marker in the post-power serial window,
+and retained stable same-cursor TFTP evidence with two matching 104,136-byte
+da591740/kernel_2712.img serves before restoring the same selected snapshot.
+The selected next bounded task is
+phase12-ssh-live-tcp-pi5-candidate-preflight-v4-20260629. Packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility, service success,
+ssh-ready=true, broad shell work, and phase transition remain blocked until
+that candidate preflight is explicitly promoted and accepted.
+
 Earlier live networking/SSH work was paused while the local POSIX/VFS/userspace
 continuation advanced. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces

@@ -1,0 +1,89 @@
+{
+  "action": "status",
+  "ok": true,
+  "boot": {
+    "active_name": "kernel8.img",
+    "configured_kernel": "kernel_2712.img",
+    "effective_kernel": "kernel_2712.img",
+    "config": {
+      "enable_rp1_uart": "1",
+      "kernel": "kernel_2712.img",
+      "os_check": "0"
+    },
+    "tree_hash": "6ead8933b3287cddaf08ddcdbda7d4c770b365658ef1d0ad80a5dd0cf323f3ef",
+    "file_count": 16,
+    "files": [
+      {
+        "name": "bcm2712-rpi-5-b.dtb",
+        "bytes": 78679
+      },
+      {
+        "name": "cmdline.txt",
+        "bytes": 81
+      },
+      {
+        "name": "config.txt",
+        "bytes": 118
+      },
+      {
+        "name": "da591740/bcm2712-rpi-5-b.dtb",
+        "bytes": 78679
+      },
+      {
+        "name": "da591740/cmdline.txt",
+        "bytes": 81
+      },
+      {
+        "name": "da591740/config.txt",
+        "bytes": 118
+      },
+      {
+        "name": "da591740/kernel8.img",
+        "bytes": 82045
+      },
+      {
+        "name": "da591740/kernel_2712.img",
+        "bytes": 82045
+      },
+      {
+        "name": "da591740/overlays/bcm2712d0.dtbo",
+        "bytes": 1363
+      },
+      {
+        "name": "da591740/overlays/overlay_map.dtb",
+        "bytes": 5971
+      },
+      {
+        "name": "da591740/overlays/uart0-pi5.dtbo",
+        "bytes": 1071
+      },
+      {
+        "name": "kernel8.img",
+        "bytes": 82045
+      },
+      {
+        "name": "kernel_2712.img",
+        "bytes": 82045
+      },
+      {
+        "name": "overlays/bcm2712d0.dtbo",
+        "bytes": 1363
+      },
+      {
+        "name": "overlays/overlay_map.dtb",
+        "bytes": 5971
+      },
+      {
+        "name": "overlays/uart0-pi5.dtbo",
+        "bytes": 1071
+      }
+    ],
+    "snapshot_count": 605,
+    "selected_snapshot": {
+      "bytes": 201797,
+      "mtime": 1782286860,
+      "name": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z"
+    }
+  },
+  "guard": null
+}

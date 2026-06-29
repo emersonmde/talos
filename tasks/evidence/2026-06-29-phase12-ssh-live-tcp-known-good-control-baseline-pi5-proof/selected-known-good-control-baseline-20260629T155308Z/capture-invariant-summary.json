@@ -1,0 +1,176 @@
+{
+  "label": "selected-known-good-control-baseline-20260629T155308Z",
+  "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+  "expected": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "fetch": "da591740/kernel_2712.img",
+    "fetch_bytes": 104136
+  },
+  "exits": {
+    "serial_observe_window": 0,
+    "tftp_delta_stable_pre_restore": 0
+  },
+  "preflight_identity": {
+    "expected_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "observed_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "expected_kernel": "kernel_2712.img",
+    "observed_effective_kernel": "kernel_2712.img",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 104136,
+    "observed_fetch_bytes": 104136,
+    "selected_tree_identity_source": "/boot/files",
+    "root_endpoint": {
+      "endpoint": "GET /",
+      "curl_exit": 0,
+      "http_code": 404,
+      "body_bytes": 55,
+      "usable_for_selected_tree_identity": false,
+      "selected_tree_identity_source": "/boot/files",
+      "fallback_used": true,
+      "fallback_reason": "root-endpoint-http-non-2xx"
+    },
+    "tree_matches": true,
+    "effective_kernel_matches": true,
+    "expected_fetch_present": true,
+    "expected_fetch_bytes_match": true,
+    "staging_publication_mismatch": false
+  },
+  "capture_chain_contract_version": "pi5-capture-chain-v4",
+  "final_pre_restore_identity": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "expected_tree_still_staged": true,
+    "expected_fetch_present": true,
+    "expected_fetch_bytes_match": true
+  },
+  "serial_window": {
+    "requested_timeout_seconds": 95,
+    "elapsed_seconds": 27,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "observe_attempts": 6,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 6551,
+    "required_marker": "rpi5-production-timer-preemption: PASS",
+    "kernel_marker": "TALOS: kernel_main",
+    "firmware_network_marker": "NETWORK",
+    "has_kernel_main": false,
+    "has_required_marker": true,
+    "has_firmware_network": true,
+    "firmware_network_occurrences": 2,
+    "required_marker_occurrences": 1,
+    "marker_nonce": null,
+    "nonce_token": null,
+    "nonce_token_occurrences": 0,
+    "required_marker_excerpt": "it-remaining=199996953 classification=pi5-production-timer-preemption-complete\r\nrpi5-production-timer-preemption: PASS\r\n"
+  },
+  "tftp_stability": {
+    "stable": true,
+    "reason": "stable",
+    "stable_samples": 3,
+    "required_samples": 3
+  },
+  "tftp_event_count": 13,
+  "expected_fetch_count": 2,
+  "expected_fetch_byte_match_count": 2,
+  "expected_fetch_events": [
+    {
+      "filename": "da591740/kernel_2712.img",
+      "status": "served",
+      "bytes": 104136
+    },
+    {
+      "filename": "da591740/kernel_2712.img",
+      "status": "served",
+      "bytes": 104136
+    }
+  ],
+  "proof_run_identity": {
+    "contract_version": "pi5-capture-transaction-v2",
+    "shared_run_label": "selected-known-good-control-baseline-20260629T155308Z",
+    "selected_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 104136,
+    "serial": {
+      "pre_power_peek": {
+        "cursor": 4194304,
+        "bytes": 65536,
+        "required_marker_occurrences": 3,
+        "nonce_token_occurrences": 0
+      },
+      "pre_power_drain": {
+        "attempts": 1,
+        "attempt_limit": 16,
+        "read_timeout_seconds": 1,
+        "settle_ms": 100,
+        "max_bytes_per_read": 65536,
+        "total_bytes": 0,
+        "final_cursor": 4194304,
+        "empty_before_power": true,
+        "discriminator": "empty-read-before-power"
+      },
+      "cursor_start": 4194304,
+      "cursor_end": 4194304,
+      "window_bytes": 6551,
+      "response_bytes": 6551,
+      "capture_mode": "read",
+      "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+      "required_marker": "rpi5-production-timer-preemption: PASS",
+      "freshness_contract": {
+        "contract_version": "cursor-nonce-post-power-freshness-v1",
+        "marker_nonce": null,
+        "nonce_token": null,
+        "marker_occurrences_after_saved_cursor": 1,
+        "nonce_occurrences_after_saved_cursor": 0,
+        "post_power_capture_bound": true,
+        "cursor_nonce_fresh": false,
+        "serial_freshness_ok": true
+      }
+    },
+    "tftp": {
+      "cursor_start": 4678611,
+      "cursor_end": 4679962,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2
+    },
+    "final_pre_restore": {
+      "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes_match": true
+    },
+    "restore": {
+      "snapshot_name": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "identity_join_contract": {
+    "contract_version": "pi5-capture-transaction-v2",
+    "decisive_rp1_hardware_classification_allowed": true,
+    "rejection_reasons": [],
+    "rejected_classification": null,
+    "rule": "missing or mismatched candidate identity, serial-window, or TFTP fields prevent decisive RP1 hardware classification"
+  },
+  "restore": {
+    "snapshot_name": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "suggested_classification": "post-handoff-marker-visible",
+  "proof_contract": {
+    "serial_freshness_contract": "cursor-nonce-post-power-freshness-v1",
+    "serial_observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "serial_capture_mode": "read",
+    "serial_start_cursor_saturated": true,
+    "tftp_contract": "stable-same-cursor-delta-before-restore",
+    "zero_event_tftp_meaningful_only_before_restore": true,
+    "firmware_network_is_not_talos_entry": true
+  }
+}

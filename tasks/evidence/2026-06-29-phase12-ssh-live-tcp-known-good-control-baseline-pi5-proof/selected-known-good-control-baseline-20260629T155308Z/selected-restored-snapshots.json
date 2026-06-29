@@ -1,0 +1,10 @@
+{
+  "action": "boot snapshots",
+  "ok": true,
+  "snapshot_count": 605,
+  "selected_snapshot": {
+    "bytes": 201797,
+    "mtime": 1782286860,
+    "name": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z"
+  }
+}
