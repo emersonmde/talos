@@ -139,6 +139,21 @@ packet I/O, generated-root/OpenSSH retry, remote receipt, compatibility,
 hardware proof, ssh-ready=true, runtime russh adoption, fake command expansion,
 and phase transition remain rejected.
 
+The live TCP device/interface local core represents that ownership contract in
+source without accepting live networking. src/network.rs now carries typed
+metadata for the selected
+network-owned-smoltcp-interface-with-driver-packet-adapter-ingress-and-descriptor-table-delivery
+model on LiveTcpListenerDescriptorBoundaryReport. The accepted host-only bridge
+still reports AcceptedLocalSourceBoundary when the smoltcp bridge is
+Established and an accepted Talos descriptor is attached, while a required real
+device/interface binding reports BlockedNoDeviceInterfaceBinding with
+BlockedMissingDeviceInterfaceBinding, device_interface_bound=false, and
+live_packet_io_accepted=false. The selected next local/static task is
+phase12-ssh-live-tcp-listener-descriptor-accept-local-core-20260629. Live TCP
+attempts, packet I/O, generated-root/OpenSSH retry, remote receipt,
+compatibility, hardware proof, ssh-ready=true, runtime russh adoption, fake
+command expansion, and phase transition remain rejected.
+
 Live networking/SSH remains paused while the local POSIX/VFS/userspace
 continuation advances. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces

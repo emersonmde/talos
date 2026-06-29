@@ -20543,6 +20543,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   expansion, and phase transition remain rejected. The selected next
   local/static task is
   phase12-ssh-live-tcp-device-interface-local-core-20260629.
+- phase12-ssh-live-tcp-device-interface-local-core-20260629 represents that
+  selected ownership model in source as typed metadata on
+  LiveTcpListenerDescriptorBoundaryReport. The report names the
+  network-owned-smoltcp-interface-with-driver-packet-adapter-ingress-and-descriptor-table-delivery
+  model, keeps the accepted host-only descriptor bridge as a local/static
+  AcceptedLocalSourceBoundary, and reports a required real device/interface
+  path as BlockedNoDeviceInterfaceBinding with
+  BlockedMissingDeviceInterfaceBinding, device_interface_bound=false, and
+  live_packet_io_accepted=false. Focused static/unit evidence keeps live
+  reachability, remote receipt, compatibility, ssh-ready=true, hardware proof,
+  OpenSSH retry, fake command expansion, runtime russh adoption, and phase
+  transition rejected. The selected next local/static task is
+  phase12-ssh-live-tcp-listener-descriptor-accept-local-core-20260629.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

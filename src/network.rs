@@ -2530,13 +2530,26 @@ pub(crate) enum LiveTcpListenerDescriptorBoundary {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum LiveTcpDeviceInterfaceOwnershipModel {
+    NetworkOwnedSmoltcpInterfaceWithDriverPacketAdapterIngressAndDescriptorTableDelivery,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum LiveTcpDeviceInterfaceBindingState {
+    LocalSourceBoundaryDoesNotRequireDeviceInterface,
+    BlockedMissingDeviceInterfaceBinding,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct LiveTcpListenerDescriptorBoundaryReport {
     boundary: LiveTcpListenerDescriptorBoundary,
+    ownership_model: LiveTcpDeviceInterfaceOwnershipModel,
     connection_id: u64,
     descriptor_bridge_established: bool,
     accepted_descriptor_attached: bool,
     payload_transfers: u64,
     last_payload_len: usize,
+    device_interface_binding_state: LiveTcpDeviceInterfaceBindingState,
     device_interface_bound: bool,
     live_packet_io_accepted: bool,
     live_reachability_accepted: bool,
@@ -2548,6 +2561,10 @@ pub(crate) struct LiveTcpListenerDescriptorBoundaryReport {
 impl LiveTcpListenerDescriptorBoundaryReport {
     pub(crate) const fn boundary(self) -> LiveTcpListenerDescriptorBoundary {
         self.boundary
+    }
+
+    pub(crate) const fn ownership_model(self) -> LiveTcpDeviceInterfaceOwnershipModel {
+        self.ownership_model
     }
 
     pub(crate) const fn connection_id(self) -> u64 {
@@ -2568,6 +2585,10 @@ impl LiveTcpListenerDescriptorBoundaryReport {
 
     pub(crate) const fn last_payload_len(self) -> usize {
         self.last_payload_len
+    }
+
+    pub(crate) const fn device_interface_binding_state(self) -> LiveTcpDeviceInterfaceBindingState {
+        self.device_interface_binding_state
     }
 
     pub(crate) const fn device_interface_bound(self) -> bool {
@@ -3071,14 +3092,21 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
         } else {
             LiveTcpListenerDescriptorBoundary::AcceptedLocalSourceBoundary
         };
+        let device_interface_binding_state = if require_device_interface_binding {
+            LiveTcpDeviceInterfaceBindingState::BlockedMissingDeviceInterfaceBinding
+        } else {
+            LiveTcpDeviceInterfaceBindingState::LocalSourceBoundaryDoesNotRequireDeviceInterface
+        };
 
         Ok(LiveTcpListenerDescriptorBoundaryReport {
             boundary,
+            ownership_model: LiveTcpDeviceInterfaceOwnershipModel::NetworkOwnedSmoltcpInterfaceWithDriverPacketAdapterIngressAndDescriptorTableDelivery,
             connection_id,
             descriptor_bridge_established,
             accepted_descriptor_attached,
             payload_transfers: record.payload_transfers(),
             last_payload_len: record.last_payload().payload_len(),
+            device_interface_binding_state,
             device_interface_bound: false,
             live_packet_io_accepted: false,
             live_reachability_accepted: false,
@@ -6307,11 +6335,19 @@ mod tests {
             report.boundary(),
             LiveTcpListenerDescriptorBoundary::AcceptedLocalSourceBoundary
         );
+        assert_eq!(
+            report.ownership_model(),
+            LiveTcpDeviceInterfaceOwnershipModel::NetworkOwnedSmoltcpInterfaceWithDriverPacketAdapterIngressAndDescriptorTableDelivery
+        );
         assert_eq!(report.connection_id(), connection_id);
         assert!(report.descriptor_bridge_established());
         assert!(report.accepted_descriptor_attached());
         assert_eq!(report.payload_transfers(), 1);
         assert_eq!(report.last_payload_len(), 4);
+        assert_eq!(
+            report.device_interface_binding_state(),
+            LiveTcpDeviceInterfaceBindingState::LocalSourceBoundaryDoesNotRequireDeviceInterface
+        );
         assert!(!report.device_interface_bound());
         assert!(!report.live_packet_io_accepted());
         assert!(!report.live_reachability_accepted());
@@ -6326,7 +6362,16 @@ mod tests {
             live_required.boundary(),
             LiveTcpListenerDescriptorBoundary::BlockedNoDeviceInterfaceBinding
         );
+        assert_eq!(
+            live_required.ownership_model(),
+            LiveTcpDeviceInterfaceOwnershipModel::NetworkOwnedSmoltcpInterfaceWithDriverPacketAdapterIngressAndDescriptorTableDelivery
+        );
+        assert_eq!(
+            live_required.device_interface_binding_state(),
+            LiveTcpDeviceInterfaceBindingState::BlockedMissingDeviceInterfaceBinding
+        );
         assert!(!live_required.device_interface_bound());
+        assert!(!live_required.live_packet_io_accepted());
         assert!(!live_required.live_reachability_accepted());
         assert!(!live_required.ssh_ready());
     }
