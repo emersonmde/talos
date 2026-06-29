@@ -319,6 +319,18 @@ firmware NETWORK output, but still did not observe TALOS: kernel_main or
 rpi5-production-timer-preemption: PASS. Candidate preflight v3 remains blocked
 and planningNeeded=true until the supervisor selects a new bounded direction.
 
+The static kernel-entry blocker reconciliation accepts
+known-good-control-reselection-ready. The first missing fact is not a
+helper/classifier defect or a live TCP runtime failure; it is that the blocked
+known-good runs used the stable 6ead8933... / 82,045-byte restored baseline,
+while the v3 production-marker contract is tied to the accepted a0452458... /
+104,136-byte production-timer control lineage. The next bounded task is
+phase12-ssh-live-tcp-known-good-control-reselection-contract-20260629. Candidate
+preflight v3/v4, packet-I/O, OpenSSH/generated-root retry, remote receipt,
+compatibility, service success, ssh-ready=true, broad shell work, and phase
+transition remain blocked until a reselected control proof explicitly unblocks
+them.
+
 Earlier live networking/SSH work was paused while the local POSIX/VFS/userspace
 continuation advanced. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces

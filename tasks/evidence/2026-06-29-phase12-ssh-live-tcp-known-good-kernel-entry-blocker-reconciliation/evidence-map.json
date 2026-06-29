@@ -1,0 +1,43 @@
+{
+  "task_id": "phase12-ssh-live-tcp-known-good-kernel-entry-blocker-reconciliation-20260629",
+  "task_record": "tasks/2026-06-29-phase12-ssh-live-tcp-known-good-kernel-entry-blocker-reconciliation.md",
+  "classification": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-kernel-entry-blocker-reconciliation/classification.json",
+  "reviewed_inputs": {
+    "known_good_capture_discriminator_task": "tasks/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator.md",
+    "known_good_capture_evidence_map": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-capture-discriminator/evidence-map.json",
+    "known_good_readiness_contract_reconciliation_task": "tasks/2026-06-29-phase12-ssh-live-tcp-known-good-readiness-contract-reconciliation.md",
+    "known_good_readiness_contract_evidence_map": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-readiness-contract-reconciliation/evidence-map.json",
+    "known_good_serial_window_task": "tasks/2026-06-29-phase12-ssh-live-tcp-known-good-serial-window-completeness-discriminator.md",
+    "known_good_serial_window_evidence_map": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-serial-window-completeness-discriminator/evidence-map.json",
+    "known_good_serial_window_classification": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-serial-window-completeness-discriminator/classification.json",
+    "prior_marker_positive_known_good_task": "tasks/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof.md",
+    "prior_marker_positive_known_good_primary": "tasks/evidence/2026-06-10-phase12-pi5-known-good-bounded-runtime-readiness-v2-pi5-proof/known-good-runtime-readiness-v2-20260610T2332Z-runtime-readiness-primary.json"
+  },
+  "reviewed_source": [
+    "scripts/rpi5-production-timer-preemption-boot-tree.sh",
+    "scripts/rpi5-production-timer-preemption-image.sh",
+    "scripts/rpi5-known-good-readiness-v3-classify.sh",
+    "scripts/rpi5-runtime-readiness-retention-guard.sh",
+    "scripts/rpi5-retain-runtime-readiness-primary.sh",
+    "src/boot/rpi5.rs",
+    "src/target/rpi5.rs"
+  ],
+  "docs_touched": [
+    "docs/src/project/lab-controller.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "validation": {
+    "git_status_short_branch_before_edits": "pass",
+    "jq_empty_directly_referenced_json_evidence": "pass",
+    "sh_n_reviewed_shell_helpers": "pass",
+    "rust_source_touched": false,
+    "cargo_gate": "not run: no Rust source touched",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass before commit"
+  },
+  "selected_next_task": "phase12-ssh-live-tcp-known-good-control-reselection-contract-20260629",
+  "planningNeeded": false,
+  "redaction_review": "Task-owned evidence records task ids, source paths, tree-hash prefixes, kernel byte counts, classifier labels, validation commands/results, and selected successor ids; no peer identifiers, packet payloads, key material, session material, boot artifact bytes, private user data, secret-derived identifiers, or unnecessary hardware data are added."
+}

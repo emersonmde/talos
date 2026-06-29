@@ -519,17 +519,21 @@ identity, and restore proof under one run label. This readiness does not by
 itself accept any RP1 mapped/read-value, trap/unmapped, or firmware-state
 behavior; the RP1 candidate must pass the same v2 join.
 
-For the current restored known-good control, the preferred readiness markers
-are `TALOS: kernel_main` plus `rpi5-production-timer-preemption: PASS` within
-that observation window after a stable 104,136-byte
-`da591740/kernel_2712.img` fetch. If the same fresh serial window omits
-`TALOS: kernel_main` but contains
+For the accepted production-timer known-good control, the preferred readiness
+markers are `TALOS: kernel_main` plus
+`rpi5-production-timer-preemption: PASS` within that observation window after a
+stable 104,136-byte `da591740/kernel_2712.img` fetch from the accepted
+`a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10`
+production-timer tree. Stable TFTP service of a different restored tree, such
+as the 82,045-byte `6ead8933...` baseline, is not this readiness contract even
+when its identity join is otherwise valid. If the same fresh serial window
+omits `TALOS: kernel_main` but contains
 `rpi5-production-timer-preemption: PASS`, the downstream PASS marker is
-sufficient for this restored production-timer control because source order
-proves it is reachable only after `kernel_main`. If a future accepted
-known-good control uses a different success marker, set
-`TALOS_READINESS_REQUIRED_MARKER` and record that exact marker in the proof
-bundle. If the run is inconclusive, retain one final pre-restore
+sufficient for the accepted production-timer control because source order proves
+it is reachable only after `kernel_main`. If a future accepted known-good
+control uses a different success marker, set `TALOS_READINESS_REQUIRED_MARKER`
+and record that exact marker in the proof bundle. If the run is inconclusive,
+retain one final pre-restore
 `GET /status`, `GET /boot/files`, and TFTP-tail or stable-delta sample.
 Restore evidence and hardware lock release evidence belong in the same proof
 bundle.
@@ -540,7 +544,7 @@ Classification rules:
   identify the expected boot tree, the stable TFTP delta includes the expected
   `kernel_2712.img` fetch before restore, and the bounded serial observation
   either reaches both `TALOS: kernel_main` and the proof-recorded success
-  marker or, for the current restored production-timer control, reaches the
+  marker or, for the accepted production-timer control, reaches the
   downstream `rpi5-production-timer-preemption: PASS` marker whose source-order
   proof is recorded in
   `phase11-known-good-runtime-marker-boundary-review-core-20260606`.

@@ -20715,6 +20715,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   OpenSSH/generated-root retry, remote receipt, compatibility, service success,
   ssh-ready=true, runtime russh adoption, fake command expansion, broad shell
   work, or phase transition.
+- phase12-ssh-live-tcp-known-good-kernel-entry-blocker-reconciliation-20260629
+  accepts known-good-control-reselection-ready. Static/source review found the
+  first missing fact behind blocked-known-good-kernel-not-starting is an
+  invalid/stale control snapshot for the production-marker contract: the
+  blocked known-good runs proved stable 6ead8933... identity and 82,045-byte
+  kernel fetches, but the v3 production-timer readiness gate belongs to the
+  accepted a0452458... / 104,136-byte production-timer control lineage that
+  previously observed rpi5-production-timer-preemption: PASS. The selected next
+  task is
+  phase12-ssh-live-tcp-known-good-control-reselection-contract-20260629; no
+  candidate preflight v3/v4, packet-I/O discriminator, OpenSSH/generated-root
+  retry, remote receipt, compatibility, service success, ssh-ready=true, broad
+  shell work, or phase transition is unblocked yet.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

@@ -1,0 +1,50 @@
+{
+  "task_id": "phase12-ssh-live-tcp-known-good-kernel-entry-blocker-reconciliation-20260629",
+  "classification": "known-good-control-reselection-ready",
+  "terminal": true,
+  "first_missing_fact": "invalid-or-stale-control-snapshot-for-production-marker-contract",
+  "reconciled_facts": {
+    "blocked_run_tree_hash": "6ead8933b3287cddaf08ddcdbda7d4c770b365658ef1d0ad80a5dd0cf323f3ef",
+    "blocked_run_kernel_bytes": 82045,
+    "blocked_run_identity_is_stable": true,
+    "blocked_run_tftp_fetches_are_stable": true,
+    "blocked_run_has_kernel_main": false,
+    "blocked_run_has_production_timer_pass": false,
+    "accepted_production_timer_control_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "accepted_production_timer_control_kernel_bytes": 104136,
+    "accepted_production_timer_marker": "rpi5-production-timer-preemption: PASS",
+    "source_order_proves_pass_after_kernel_entry": true
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "summary": "Classified the first missing fact as an invalid/stale control snapshot for the production-marker contract."
+    },
+    {
+      "disposition": "fixed",
+      "summary": "Updated docs to bind the production-timer readiness contract to the accepted a045/104136-byte control lineage."
+    },
+    {
+      "disposition": "not-an-issue",
+      "summary": "The v3 classifier still correctly requires the production-timer PASS marker and treats TALOS: kernel_main as metadata-only."
+    },
+    {
+      "disposition": "deferred",
+      "summary": "Candidate preflight, packet I/O, OpenSSH/generated-root retry, compatibility, service success, ssh-ready=true, broad shell work, and phase transition remain blocked."
+    }
+  ],
+  "selected_next_task": "phase12-ssh-live-tcp-known-good-control-reselection-contract-20260629",
+  "planningNeeded": false,
+  "rejected_next_tasks": [
+    "phase12-ssh-live-tcp-pi5-candidate-preflight-v3-20260629",
+    "phase12-ssh-live-tcp-pi5-candidate-preflight-v4-20260629",
+    "phase12-ssh-live-tcp-pi5-packet-io-discriminator-20260629",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility claim",
+    "service success claim",
+    "ssh-ready=true",
+    "phase transition"
+  ],
+  "redaction_review": "No peer identifiers, packet payloads, key material, session material, boot artifact bytes, private user data, secret-derived identifiers, or unnecessary hardware data added."
+}
