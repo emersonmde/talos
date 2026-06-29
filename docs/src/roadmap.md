@@ -20784,6 +20784,16 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   planningNeeded=true before packet-I/O, OpenSSH/generated-root retry, remote
   receipt, compatibility, service success, ssh-ready=true, broad shell work, or
   phase transition can resume.
+- phase12-ssh-live-tcp-candidate-capture-window-run-ownership-contract-20260629
+  accepts capture-window-run-ownership-ready as a no-hardware contract repair
+  after v5. The helper now writes incomplete-by-default completion metadata to
+  `capture-window-order.json` and only marks the run complete after
+  post-restore identity; the v5 checker rejects helper-incomplete,
+  missing-order, restore-contaminated, and restored-control windows before any
+  candidate-capture-ready claim. The selected next task is the serialized
+  phase12-ssh-live-tcp-pi5-candidate-preflight-v6-20260629; packet-I/O,
+  OpenSSH/generated-root retry, remote receipt, compatibility, service success,
+  ssh-ready=true, broad shell work, and phase transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

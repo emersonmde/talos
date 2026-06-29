@@ -11830,3 +11830,21 @@ a0452458..., so selected_next_task is null and planningNeeded=true before any
 packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility,
 service success, ssh-ready=true, broad shell work, or phase transition can
 resume.
+
+phase12-ssh-live-tcp-candidate-capture-window-run-ownership-contract-20260629
+accepts capture-window-run-ownership-ready as a no-hardware repair to the v5
+manual-restore race. The capture helper now initializes
+`capture-window-order.json` with `helper_run_completed=false`, marks
+`helper_run_completed=true`, `completed_at`, and `completion_event_count` only
+after post-restore identity is captured, and the v5 checker fails closed unless
+those completion fields match the retained stage list. The retained fixture
+gate now covers accepted, missing-order, restore-contaminated, and
+helper-incomplete windows. The next Pi 5 preflight must run the helper in the
+foreground to completion with a budget larger than the serial/TFTP windows; if
+helper completion is lost or any external/manual restore contaminates the
+window, the result stays blocked-capture-window-contract or blocked-restore.
+The selected next task is
+phase12-ssh-live-tcp-pi5-candidate-preflight-v6-20260629; packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility, service success,
+ssh-ready=true, broad shell work, and phase transition remain blocked until
+that explicit hardware task accepts candidate-capture-ready.

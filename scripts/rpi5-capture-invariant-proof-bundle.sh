@@ -211,6 +211,7 @@ if [ "$DRY_RUN" = true ]; then
               post_restore_root: "post-restore-root.json",
               post_restore_status: "post-restore-status.json",
               post_restore_boot_files: "post-restore-boot-files.json",
+              capture_window_order_completion: "capture-window-order.json completed_at/helper_run_completed",
               summary: "capture-invariant-summary.json"
           },
           contract: {
@@ -275,7 +276,10 @@ jq -n \
         helper: "scripts/rpi5-capture-invariant-proof-bundle.sh",
         run_label: $run_label,
         restore_snapshot: $restore_snapshot,
-        rule: "final-pre-restore identity and stable TFTP delta must be captured by this helper before restore; post-restore/control identity must never satisfy candidate pre-restore evidence",
+        helper_run_started_at: (now | todate),
+        helper_run_completed: false,
+        completed_at: null,
+        rule: "final-pre-restore identity and stable TFTP delta must be captured by this helper before restore; post-restore/control identity must never satisfy candidate pre-restore evidence; candidate-capture-ready also requires helper_run_completed=true from this foreground helper",
         events: []
     }' > "$CAPTURE_WINDOW_ORDER"
 
@@ -297,6 +301,18 @@ append_capture_window_event() {
             captured_at: $captured_at,
             evidence_files: $evidence_files
         }]' "$CAPTURE_WINDOW_ORDER" > "$order_tmp"
+    mv "$order_tmp" "$CAPTURE_WINDOW_ORDER"
+}
+
+mark_capture_window_completed() {
+    now="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+    order_tmp="${CAPTURE_WINDOW_ORDER}.tmp"
+    jq \
+        --arg completed_at "$now" \
+        '.helper_run_completed = true
+         | .completed_at = $completed_at
+         | .completion_event_count = (.events | length)' \
+        "$CAPTURE_WINDOW_ORDER" > "$order_tmp"
     mv "$order_tmp" "$CAPTURE_WINDOW_ORDER"
 }
 
@@ -503,6 +519,7 @@ curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/post-restore-boot-files.json
 append_capture_window_event post_restore_identity \
     post-restore-root-endpoint.json post-restore-root-endpoint-body.txt \
     post-restore-root.json post-restore-status.json post-restore-boot-files.json
+mark_capture_window_completed
 
 jq -n \
     --arg proof_label "$LABEL" \

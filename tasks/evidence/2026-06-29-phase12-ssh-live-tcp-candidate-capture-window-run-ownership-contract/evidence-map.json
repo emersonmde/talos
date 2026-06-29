@@ -1,0 +1,89 @@
+{
+  "task_id": "phase12-ssh-live-tcp-candidate-capture-window-run-ownership-contract-20260629",
+  "classification": "capture-window-run-ownership-ready",
+  "reviewed_artifacts": [
+    "tasks/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v5.md",
+    "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v5/candidate-preflight-v5-20260629T172809Z/classification.json",
+    "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v5/candidate-preflight-v5-20260629T172809Z/preflight-summary.json",
+    "scripts/rpi5-capture-invariant-proof-bundle.sh",
+    "scripts/rpi5-candidate-capture-window-v5-check.sh",
+    "scripts/rpi5-capture-chain-v4-retained-fixtures.sh",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md",
+    "memory/talos-supervisor-state.json"
+  ],
+  "changed_artifacts": [
+    "scripts/rpi5-capture-invariant-proof-bundle.sh",
+    "scripts/rpi5-candidate-capture-window-v5-check.sh",
+    "scripts/rpi5-capture-chain-v4-retained-fixtures.sh",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md",
+    "tasks/2026-06-29-phase12-ssh-live-tcp-candidate-capture-window-run-ownership-contract.md",
+    "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-candidate-capture-window-run-ownership-contract/classification.json",
+    "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-candidate-capture-window-run-ownership-contract/evidence-map.json"
+  ],
+  "fixture_gate": {
+    "command": "scripts/rpi5-capture-chain-v4-retained-fixtures.sh",
+    "result": "pass",
+    "fixture_count": 10,
+    "covered_cases": [
+      "accepted-candidate",
+      "missing-order",
+      "restore-contaminated-order",
+      "helper-incomplete"
+    ]
+  },
+  "blocked_v5_replay": {
+    "command": "scripts/rpi5-candidate-capture-window-v5-check.sh --evidence-dir tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v5/candidate-preflight-v5-20260629T172809Z/candidate-run --label candidate-preflight-v5-20260629T172809Z --report-kind candidate",
+    "exit_code": 1,
+    "classification": "capture-staging-blocked",
+    "new_completion_reasons": [
+      "capture-window-helper-run-incomplete",
+      "capture-window-helper-completion-missing",
+      "capture-window-helper-completion-count-mismatch"
+    ]
+  },
+  "validation": [
+    {
+      "level": "git status --short --branch before edits",
+      "result": "## main...origin/main [ahead 178]"
+    },
+    {
+      "level": "static inspection",
+      "result": "Reviewed v5 task/evidence, helper, checker, fixture gate, docs, roadmap, and supervisor state."
+    },
+    {
+      "level": "bash -n",
+      "result": "pass for touched shell scripts"
+    },
+    {
+      "level": "retained fixture gate",
+      "result": "pass; 10 fixtures"
+    },
+    {
+      "level": "blocked v5 evidence replay",
+      "result": "pass as blocker evidence; checker exited 1"
+    },
+    {
+      "level": "jq empty",
+      "result": "pass for task-owned JSON"
+    },
+    {
+      "level": "git diff --check",
+      "result": "pass"
+    },
+    {
+      "level": "mdbook build",
+      "result": "pass; html backend wrote book/ and search index warning is pre-existing size warning"
+    },
+    {
+      "level": "git diff --cached --check",
+      "result": "pass"
+    }
+  ],
+  "redaction_review": "metadata-only evidence; no packet payloads, key material, session material, boot artifact bytes, private user data, peer addresses, stable secret-derived identifiers, or unnecessary hardware data retained",
+  "no_lab_or_hardware_action": true,
+  "no_boot_publication_or_power_cycle": true,
+  "no_packet_io_or_openssh_claim": true,
+  "no_phase_transition": true
+}

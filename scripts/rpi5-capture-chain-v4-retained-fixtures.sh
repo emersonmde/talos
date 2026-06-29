@@ -64,7 +64,11 @@ add_capture_window_order() {
             helper: "scripts/rpi5-capture-invariant-proof-bundle.sh",
             run_label: $run_label,
             restore_snapshot: "pre-gem-mid-decode-discriminator-proof-20260610T0402Z",
-            rule: "final-pre-restore identity and stable TFTP delta must be captured by this helper before restore; post-restore/control identity must never satisfy candidate pre-restore evidence",
+            helper_run_started_at: "2026-06-29T00:00:00Z",
+            helper_run_completed: true,
+            completed_at: "2026-06-29T00:00:09Z",
+            completion_event_count: 8,
+            rule: "final-pre-restore identity and stable TFTP delta must be captured by this helper before restore; post-restore/control identity must never satisfy candidate pre-restore evidence; candidate-capture-ready also requires helper_run_completed=true from this foreground helper",
             events: [
                 {sequence: 1, stage: "preflight_identity", captured_at: "2026-06-29T00:00:01Z", evidence_files: ["pre-root-endpoint.json","preflight-identity.json"]},
                 {sequence: 2, stage: "pre_power_cursors", captured_at: "2026-06-29T00:00:02Z", evidence_files: ["serial-cursor-before-power.txt","tftp-cursor-before-power.txt"]},
@@ -241,6 +245,15 @@ jq '(.events[] | select(.stage == "final_pre_restore_identity") | .sequence) = 8
     "$restore_contaminated_order/capture-window-order.json" > "$restore_contaminated_order/capture-window-order.json.tmp"
 mv "$restore_contaminated_order/capture-window-order.json.tmp" "$restore_contaminated_order/capture-window-order.json"
 
+helper_incomplete="$TMP_DIR/helper-incomplete"
+cp -R "$accepted" "$helper_incomplete"
+add_capture_window_order "$helper_incomplete" helper-incomplete
+jq '.helper_run_completed = false
+    | .completed_at = null
+    | .completion_event_count = null' \
+    "$helper_incomplete/capture-window-order.json" > "$helper_incomplete/capture-window-order.json.tmp"
+mv "$helper_incomplete/capture-window-order.json.tmp" "$helper_incomplete/capture-window-order.json"
+
 missing_control_marker="$TMP_DIR/missing-control-marker"
 cp -R "$SOURCE_ROOT/control-direct-run" "$missing_control_marker"
 add_endpoint_fallback "$missing_control_marker"
@@ -262,6 +275,7 @@ case_missing_marker="$(run_case missing-marker "$missing_marker" candidate false
 case_stale_nonce="$(run_case stale-nonce "$stale_nonce" candidate false capture-staging-blocked '["run-unique-capture-nonce-present-before-power"]')"
 case_missing_order="$(run_case missing-order "$missing_order" candidate false capture-staging-blocked '["missing-capture-window-v5-contract"]')"
 case_restore_contaminated_order="$(run_case restore-contaminated-order "$restore_contaminated_order" candidate false capture-staging-blocked '["capture-window-stage-order-invalid","final-pre-restore-identity-not-before-restore"]')"
+case_helper_incomplete="$(run_case helper-incomplete "$helper_incomplete" candidate false capture-staging-blocked '["capture-window-helper-run-incomplete","capture-window-helper-completion-missing","capture-window-helper-completion-count-mismatch"]')"
 case_missing_control="$(run_case missing-control-marker "$missing_control_marker" control false capture-staging-blocked '["required-marker-not-present-after-power","required-control-marker-not-retained","run-unique-capture-nonce-not-present-after-power"]')"
 
 printf '%s\n' "$case_accepted" > "$TMP_DIR/accepted.json"
@@ -272,6 +286,7 @@ printf '%s\n' "$case_missing_marker" > "$TMP_DIR/missing-marker.json"
 printf '%s\n' "$case_stale_nonce" > "$TMP_DIR/stale-nonce.json"
 printf '%s\n' "$case_missing_order" > "$TMP_DIR/missing-order.json"
 printf '%s\n' "$case_restore_contaminated_order" > "$TMP_DIR/restore-contaminated-order.json"
+printf '%s\n' "$case_helper_incomplete" > "$TMP_DIR/helper-incomplete.json"
 printf '%s\n' "$case_missing_control" > "$TMP_DIR/missing-control.json"
 
 result="$(jq -s \
@@ -290,6 +305,7 @@ result="$(jq -s \
     "$TMP_DIR/stale-nonce.json" \
     "$TMP_DIR/missing-order.json" \
     "$TMP_DIR/restore-contaminated-order.json" \
+    "$TMP_DIR/helper-incomplete.json" \
     "$TMP_DIR/missing-control.json")"
 
 printf '%s\n' "$result"

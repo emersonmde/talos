@@ -103,9 +103,15 @@ output="$(jq -n \
     | (idx($events; "final_pre_restore_identity")) as $final_i
     | (idx($events; "restore_snapshot")) as $restore_i
     | (idx($events; "post_restore_identity")) as $post_i
+    | ($orderdoc.helper_run_completed == true) as $helper_completed
+    | ($orderdoc.completed_at // "") as $completed_at
+    | (($orderdoc.completion_event_count // -1) == ($events | length)) as $completion_count_matches
     | [
         (if $order_missing or (($orderdoc.contract_version // "") != "pi5-candidate-capture-window-v5") then "missing-capture-window-v5-contract" else empty end),
         (if ($orderdoc.helper // "") != "scripts/rpi5-capture-invariant-proof-bundle.sh" then "capture-window-helper-not-authoritative" else empty end),
+        (if $helper_completed then empty else "capture-window-helper-run-incomplete" end),
+        (if $completed_at != "" then empty else "capture-window-helper-completion-missing" end),
+        (if $completion_count_matches then empty else "capture-window-helper-completion-count-mismatch" end),
         (if ($orderdoc.run_label // "") != $run_label then "capture-window-run-label-mismatch" else empty end),
         (if ($events | length) == 0 then "missing-capture-window-events" else empty end),
         (if (($events | map(.sequence) | unique | length) != ($events | length)) then "capture-window-duplicate-sequence" else empty end),
@@ -133,6 +139,9 @@ output="$(jq -n \
         capture_window_contract: {
             helper: ($orderdoc.helper // null),
             run_label: ($orderdoc.run_label // null),
+            helper_run_completed: ($orderdoc.helper_run_completed // false),
+            completed_at: ($orderdoc.completed_at // null),
+            completion_event_count: ($orderdoc.completion_event_count // null),
             rule: ($orderdoc.rule // null),
             stage_order: ($events | map(.stage)),
             final_pre_restore_before_restore: ($final_i >= 0 and $restore_i >= 0 and $final_i < $restore_i),

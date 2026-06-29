@@ -1,0 +1,35 @@
+{
+  "task_id": "phase12-ssh-live-tcp-candidate-capture-window-run-ownership-contract-20260629",
+  "classification": "capture-window-run-ownership-ready",
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-candidate-preflight-v6-20260629",
+  "planningNeeded": false,
+  "run_ownership_contract": {
+    "helper": "scripts/rpi5-capture-invariant-proof-bundle.sh",
+    "checker": "scripts/rpi5-candidate-capture-window-v5-check.sh",
+    "required_completion_fields": [
+      "helper_run_completed",
+      "completed_at",
+      "completion_event_count"
+    ],
+    "foreground_completion_required": true,
+    "manual_restore_while_helper_running_allowed": false,
+    "lost_helper_completion_classification": [
+      "blocked-capture-window-contract",
+      "blocked-restore"
+    ],
+    "candidate_capture_ready_requires": [
+      "preflight_identity",
+      "pre_power_cursors",
+      "power_cycle",
+      "serial_observe_window",
+      "tftp_delta_stable_pre_restore",
+      "final_pre_restore_identity",
+      "restore_snapshot",
+      "post_restore_identity",
+      "helper_run_completed"
+    ]
+  },
+  "no_hardware_action_performed": true,
+  "no_packet_io_or_openssh_claim": true,
+  "no_phase_transition": true
+}
