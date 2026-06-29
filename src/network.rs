@@ -2523,6 +2523,79 @@ impl SmoltcpSocketBridgeRecord {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum LiveTcpListenerDescriptorBoundary {
+    AcceptedLocalSourceBoundary,
+    BlockedNoDeviceInterfaceBinding,
+    BlockedNoDescriptorBridge,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct LiveTcpListenerDescriptorBoundaryReport {
+    boundary: LiveTcpListenerDescriptorBoundary,
+    connection_id: u64,
+    descriptor_bridge_established: bool,
+    accepted_descriptor_attached: bool,
+    payload_transfers: u64,
+    last_payload_len: usize,
+    device_interface_bound: bool,
+    live_packet_io_accepted: bool,
+    live_reachability_accepted: bool,
+    remote_receipt_accepted: bool,
+    compatibility_accepted: bool,
+    ssh_ready: bool,
+}
+
+impl LiveTcpListenerDescriptorBoundaryReport {
+    pub(crate) const fn boundary(self) -> LiveTcpListenerDescriptorBoundary {
+        self.boundary
+    }
+
+    pub(crate) const fn connection_id(self) -> u64 {
+        self.connection_id
+    }
+
+    pub(crate) const fn descriptor_bridge_established(self) -> bool {
+        self.descriptor_bridge_established
+    }
+
+    pub(crate) const fn accepted_descriptor_attached(self) -> bool {
+        self.accepted_descriptor_attached
+    }
+
+    pub(crate) const fn payload_transfers(self) -> u64 {
+        self.payload_transfers
+    }
+
+    pub(crate) const fn last_payload_len(self) -> usize {
+        self.last_payload_len
+    }
+
+    pub(crate) const fn device_interface_bound(self) -> bool {
+        self.device_interface_bound
+    }
+
+    pub(crate) const fn live_packet_io_accepted(self) -> bool {
+        self.live_packet_io_accepted
+    }
+
+    pub(crate) const fn live_reachability_accepted(self) -> bool {
+        self.live_reachability_accepted
+    }
+
+    pub(crate) const fn remote_receipt_accepted(self) -> bool {
+        self.remote_receipt_accepted
+    }
+
+    pub(crate) const fn compatibility_accepted(self) -> bool {
+        self.compatibility_accepted
+    }
+
+    pub(crate) const fn ssh_ready(self) -> bool {
+        self.ssh_ready
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct NetworkSocketDescriptorTable<const CAPACITY: usize> {
     entries: [Option<NetworkSocket>; CAPACITY],
     smoltcp_bridges: [Option<SmoltcpSocketBridgeRecord>; CAPACITY],
@@ -2979,6 +3052,40 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
             .copied()
             .find(|record| record.connection_id == connection_id)
             .ok_or(crate::posix::PosixError::BadDescriptor)
+    }
+
+    pub(crate) fn live_tcp_listener_descriptor_boundary(
+        &self,
+        connection_id: u64,
+        require_device_interface_binding: bool,
+    ) -> Result<LiveTcpListenerDescriptorBoundaryReport, crate::posix::PosixError> {
+        let record = self.smoltcp_bridge_record(connection_id)?;
+        let descriptor_bridge_established = record.handshake().client_state()
+            == smoltcp::socket::tcp::State::Established
+            && record.handshake().server_state() == smoltcp::socket::tcp::State::Established;
+        let accepted_descriptor_attached = record.accepted_descriptor().is_some();
+        let boundary = if !descriptor_bridge_established || !accepted_descriptor_attached {
+            LiveTcpListenerDescriptorBoundary::BlockedNoDescriptorBridge
+        } else if require_device_interface_binding {
+            LiveTcpListenerDescriptorBoundary::BlockedNoDeviceInterfaceBinding
+        } else {
+            LiveTcpListenerDescriptorBoundary::AcceptedLocalSourceBoundary
+        };
+
+        Ok(LiveTcpListenerDescriptorBoundaryReport {
+            boundary,
+            connection_id,
+            descriptor_bridge_established,
+            accepted_descriptor_attached,
+            payload_transfers: record.payload_transfers(),
+            last_payload_len: record.last_payload().payload_len(),
+            device_interface_bound: false,
+            live_packet_io_accepted: false,
+            live_reachability_accepted: false,
+            remote_receipt_accepted: false,
+            compatibility_accepted: false,
+            ssh_ready: false,
+        })
     }
 
     pub(crate) fn require_owner(
@@ -6130,6 +6237,98 @@ mod tests {
                 poll_steps: 1,
             }
         );
+    }
+
+    #[test_case]
+    fn live_tcp_listener_descriptor_boundary_accepts_local_source_bridge_only() {
+        let owner = crate::scheduler::ProcessOwnerId::new(77).expect("owner id");
+        let endpoint = Ipv4Endpoint::new(SOCKET_SYNTHETIC_LOCAL_IPV4_BE, 22);
+        let mut sockets = NetworkSocketDescriptorTable::<4>::new();
+        let listener = sockets
+            .open(
+                owner,
+                SOCKET_DOMAIN_AF_INET,
+                SOCKET_TYPE_STREAM,
+                SOCKET_PROTOCOL_DEFAULT,
+            )
+            .expect("listener socket");
+        sockets
+            .bind(owner, listener, endpoint)
+            .expect("bind listener");
+        sockets
+            .listen(owner, listener, 1)
+            .expect("listen on local endpoint");
+        let client = sockets
+            .open(
+                owner,
+                SOCKET_DOMAIN_AF_INET,
+                SOCKET_TYPE_STREAM,
+                SOCKET_PROTOCOL_DEFAULT,
+            )
+            .expect("client socket");
+        sockets
+            .connect(owner, client, endpoint)
+            .expect("connect local client to listener");
+        let connection_id = match sockets.socket(client).expect("client state").state() {
+            NetworkSocketState::Connected { connection_id, .. } => connection_id,
+            state => panic!("unexpected client state {state:?}"),
+        };
+
+        let pre_accept = sockets
+            .live_tcp_listener_descriptor_boundary(connection_id, false)
+            .expect("pre-accept boundary report");
+        assert_eq!(
+            pre_accept.boundary(),
+            LiveTcpListenerDescriptorBoundary::BlockedNoDescriptorBridge
+        );
+        assert!(pre_accept.descriptor_bridge_established());
+        assert!(!pre_accept.accepted_descriptor_attached());
+        assert!(!pre_accept.ssh_ready());
+
+        let accepted = sockets
+            .accept(owner, listener)
+            .expect("accept local client");
+        sockets
+            .send(owner, client, b"tcp?")
+            .expect("send over descriptor bridge");
+        let mut recv = [0u8; 4];
+        assert_eq!(
+            sockets
+                .recv_peek(owner, accepted, &mut recv)
+                .expect("accepted descriptor receives payload"),
+            4
+        );
+        assert_eq!(&recv, b"tcp?");
+
+        let report = sockets
+            .live_tcp_listener_descriptor_boundary(connection_id, false)
+            .expect("local source boundary report");
+        assert_eq!(
+            report.boundary(),
+            LiveTcpListenerDescriptorBoundary::AcceptedLocalSourceBoundary
+        );
+        assert_eq!(report.connection_id(), connection_id);
+        assert!(report.descriptor_bridge_established());
+        assert!(report.accepted_descriptor_attached());
+        assert_eq!(report.payload_transfers(), 1);
+        assert_eq!(report.last_payload_len(), 4);
+        assert!(!report.device_interface_bound());
+        assert!(!report.live_packet_io_accepted());
+        assert!(!report.live_reachability_accepted());
+        assert!(!report.remote_receipt_accepted());
+        assert!(!report.compatibility_accepted());
+        assert!(!report.ssh_ready());
+
+        let live_required = sockets
+            .live_tcp_listener_descriptor_boundary(connection_id, true)
+            .expect("device-required boundary report");
+        assert_eq!(
+            live_required.boundary(),
+            LiveTcpListenerDescriptorBoundary::BlockedNoDeviceInterfaceBinding
+        );
+        assert!(!live_required.device_interface_bound());
+        assert!(!live_required.live_reachability_accepted());
+        assert!(!live_required.ssh_ready());
     }
 
     #[test_case]

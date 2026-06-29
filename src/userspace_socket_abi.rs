@@ -389,6 +389,19 @@ mod tests {
                 .accepted_descriptor(),
             Some(accepted_socket)
         );
+        let boundary = sockets
+            .live_tcp_listener_descriptor_boundary(connection_id, false)
+            .expect("local source boundary");
+        assert_eq!(
+            boundary.boundary(),
+            crate::network::LiveTcpListenerDescriptorBoundary::AcceptedLocalSourceBoundary
+        );
+        assert!(boundary.descriptor_bridge_established());
+        assert!(boundary.accepted_descriptor_attached());
+        assert!(!boundary.live_reachability_accepted());
+        assert!(!boundary.remote_receipt_accepted());
+        assert!(!boundary.compatibility_accepted());
+        assert!(!boundary.ssh_ready());
 
         user_memory[0x20..0x26].copy_from_slice(b"talos!");
         assert_eq!(

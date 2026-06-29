@@ -20506,6 +20506,18 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   compatibility, hardware proof, ssh-ready=true, fake command expansion, and
   phase transition remain rejected. The selected next local/static task is
   phase12-ssh-selected-live-tcp-local-core-20260629.
+- phase12-ssh-selected-live-tcp-local-core-20260629 accepts the local/static
+  source boundary for the host-only smoltcp descriptor bridge. src/network.rs
+  now reports LiveTcpListenerDescriptorBoundaryReport for a bridge connection:
+  an Established client/server smoltcp handshake, accepted Talos descriptor
+  attachment, and payload transfer metadata are enough only for
+  AcceptedLocalSourceBoundary. Requiring a future device/interface binding
+  returns BlockedNoDeviceInterfaceBinding with device_interface_bound=false.
+  src/userspace_socket_abi.rs asserts the private socket ABI reaches that local
+  source boundary. Live packet I/O, live reachability, remote receipt,
+  compatibility, ssh-ready=true, hardware proof, OpenSSH retry, fake command
+  expansion, and phase transition remain rejected. The selected next task is
+  phase12-ssh-local-to-live-tcp-gap-closeout-20260629.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

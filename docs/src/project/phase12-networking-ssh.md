@@ -93,6 +93,22 @@ phase12-ssh-selected-live-tcp-local-core-20260629. Live TCP attempts,
 generated-root/OpenSSH retry, packet I/O, remote receipt, compatibility,
 hardware proof, ssh-ready=true, and phase transition remain rejected.
 
+The selected live TCP local-core task accepts a source-level boundary rather
+than a live network claim. src/network.rs now exposes
+LiveTcpListenerDescriptorBoundaryReport for a specific smoltcp bridge
+connection: the existing descriptor-backed host-only bridge must reach
+Established on both smoltcp endpoints, attach an accepted Talos descriptor, and
+record payload transfer metadata before it reports
+AcceptedLocalSourceBoundary. When a future task requires device/interface
+binding, the same source path reports BlockedNoDeviceInterfaceBinding and keeps
+device_interface_bound=false. src/userspace_socket_abi.rs now asserts the
+private socket ABI reaches that accepted local source boundary. The report
+continues to hard-code live packet I/O, live reachability, remote receipt,
+compatibility, and ssh_ready to false. This narrows the next gap to selecting a
+real device/interface ownership model; it does not unblock hardware, live TCP,
+OpenSSH, packet I/O, remote receipt, compatibility, ssh-ready=true, fake command
+expansion, or phase transition work.
+
 Live networking/SSH remains paused while the local POSIX/VFS/userspace
 continuation advances. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces
