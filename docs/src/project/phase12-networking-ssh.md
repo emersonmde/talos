@@ -11469,3 +11469,46 @@ signatures, operator identity, and stable key-derived identifiers remain
 forbidden in durable evidence. selected_next_task=null and planningNeeded=true
 because no queued credential-readiness closeout or implementation follow-up is
 mechanically objective.
+
+phase12-ssh-credential-readiness-closeout-20260629 reconciles the accepted
+operator seed metadata, read-only VFS host-key material, and read-only VFS
+authorized_keys metadata as prerequisite-only credential inputs. These inputs
+do not accept deployed cryptographic sufficiency, live transport,
+authentication success, session/channel behavior, shell attachment,
+reachability, OpenSSH compatibility, or ssh-ready=true. The closeout selects
+phase12-ssh-service-readiness-prerequisite-revalidation-core-20260629 as the
+next local/static revalidation task.
+
+phase12-ssh-service-readiness-prerequisite-revalidation-core-20260629
+revalidates sshkeydiag and sshservicediag prerequisite composition. Host-key,
+authorized-key, operator-seed/CSPRNG, persistence, and exposure metadata may
+clear only their fixed prerequisite labels. sshservicediag remains fail-closed:
+transport-enabled=false, authentication-success=false, shell-attached=false,
+reachability-accepted=false, and ssh-ready=false unless a later explicit live
+task accepts otherwise. The selected next local/static task is
+phase12-ssh-publickey-auth-lineage-revalidation-core-20260629.
+
+phase12-ssh-publickey-auth-lineage-revalidation-core-20260629 revalidates the
+local modeled publickey-auth lineage. Local authentication success requires
+service-userauth recognition, a private in-memory userauth session-id handle,
+same-request authorized-key match, supported ssh-ed25519 algorithm, valid
+signature over reconstructed RFC 4252 signed data, reserved Talos account match,
+enabled account policy, and non-redaction-sensitive inputs. Metadata-only
+authorized_keys readiness is not authentication. The accepted success remains
+local/modelled and leaves service success, session/channel counts, shell
+attachment, reachability, and ssh-ready false. The selected next task is the
+local SSH substrate closeout.
+
+phase12-ssh-local-substrate-closeout-20260629 accepts the closeout for the
+reconciled local/static SSH substrate without changing runtime behavior. The
+accepted substrate remains limited to local modeled credential prerequisites,
+fail-closed readiness diagnostics, local publickey authentication reports,
+local session/channel bookkeeping, shell attachment, channel-data/stdio,
+channel-window accounting, lifecycle EOF/exit-status/close, POSIX EOF/wait,
+peer-output receipt, and local in-kernel stream socket delivery. Live network
+reachability, TCP connection establishment, remote receipt, OpenSSH/POSIX/Linux
+compatibility, Pi 5 hardware proof, deployed cryptographic sufficiency,
+ssh-ready=true, generated-root/OpenSSH retry, and phase transition remain
+unaccepted. Phase 12.1 Ethernet remains paused at selected_discriminator=null,
+so planningNeeded=true and selected_next_task=null until supervisor planning or
+future source evidence selects a bounded successor.

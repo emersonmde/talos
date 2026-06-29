@@ -20478,6 +20478,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   sufficiency, Pi 5 proof, boot publication, generated-root retry, OpenSSH
   retry, persistence, or phase transition. The selected next local/static task
   is phase12-ssh-entropy-diagnostic-local-core-20260629.
+- phase12-ssh-local-substrate-closeout-20260629 accepts the reconciled
+  local/static SSH substrate closeout without changing runtime behavior. The
+  accepted substrate remains local modeled only across credential prerequisites,
+  fail-closed readiness diagnostics, publickey-auth lineage, session/channel
+  bookkeeping, shell attachment, channel data/stdio, channel windows,
+  lifecycle EOF/exit-status/close, POSIX EOF/wait, peer-output receipt, and
+  local in-kernel stream socket delivery. Live Ethernet/TCP reachability,
+  remote receipt, OpenSSH/POSIX/Linux compatibility, Pi 5 hardware proof,
+  generated-root/OpenSSH retry, deployed cryptographic sufficiency,
+  ssh-ready=true, fake command expansion, and phase transition remain
+  unaccepted. Phase 12.1 Ethernet remains paused with
+  selected_discriminator=null, selected_next_task=null, and planningNeeded=true
+  until supervisor planning or future source evidence selects a bounded
+  successor.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

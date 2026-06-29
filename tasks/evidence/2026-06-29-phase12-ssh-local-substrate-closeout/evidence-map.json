@@ -1,0 +1,59 @@
+{
+  "task_id": "phase12-ssh-local-substrate-closeout-20260629",
+  "reviewed": {
+    "source": [
+      "src/ssh_service_readiness.rs",
+      "src/ssh_key_readiness.rs",
+      "src/ssh_runtime_crypto.rs",
+      "src/diagnostic_command.rs"
+    ],
+    "docs": [
+      "docs/src/project/phase12-networking-ssh.md",
+      "docs/src/roadmap.md",
+      "docs/src/decisions/README.md"
+    ],
+    "task_records": [
+      "tasks/2026-06-29-phase12-ssh-credential-readiness-closeout.md",
+      "tasks/2026-06-29-phase12-ssh-service-readiness-prerequisite-revalidation-core.md",
+      "tasks/2026-06-29-phase12-ssh-publickey-auth-lineage-revalidation-core.md",
+      "tasks/2026-06-22-phase12-ssh-session-channel-open-closeout.md",
+      "tasks/2026-06-23-phase12-ssh-session-shell-attachment-closeout.md",
+      "tasks/2026-06-23-phase12-ssh-channel-data-stdio-closeout.md",
+      "tasks/2026-06-23-phase12-ssh-channel-window-accounting-closeout.md",
+      "tasks/2026-06-23-phase12-ssh-channel-lifecycle-exit-status-closeout.md",
+      "tasks/2026-06-23-phase12-ssh-posix-eof-wait-closeout.md",
+      "tasks/2026-06-23-phase12-ssh-peer-output-receipt-closeout.md",
+      "tasks/2026-06-23-phase12-ssh-live-socket-delivery-closeout.md",
+      "tasks/2026-06-24-phase12-ssh-no-tcp-connect-live-network-substrate-checkpoint.md",
+      "tasks/2026-06-29-phase12-ethernet-paused-ssh-entropy-frontier-checkpoint.md"
+    ],
+    "state": [
+      "memory/talos-supervisor-state.json current task, hardware lock, intervention, and task queue frontier"
+    ]
+  },
+  "changed": {
+    "task_records": [
+      "tasks/2026-06-29-phase12-ssh-local-substrate-closeout.md"
+    ],
+    "docs": [
+      "docs/src/project/phase12-networking-ssh.md",
+      "docs/src/roadmap.md"
+    ],
+    "evidence": [
+      "tasks/evidence/2026-06-29-phase12-ssh-local-substrate-closeout/classification.json",
+      "tasks/evidence/2026-06-29-phase12-ssh-local-substrate-closeout/evidence-map.json"
+    ]
+  },
+  "redaction_review": {
+    "retained": [
+      "task ids",
+      "source/doc/evidence paths",
+      "public SSH message and counter names",
+      "fixed readiness labels",
+      "public booleans",
+      "validation commands",
+      "classifications"
+    ],
+    "forbidden_material_retained": false
+  }
+}

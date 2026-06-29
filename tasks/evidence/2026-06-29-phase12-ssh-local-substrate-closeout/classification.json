@@ -1,0 +1,25 @@
+{
+  "task_id": "phase12-ssh-local-substrate-closeout-20260629",
+  "classification": "ssh-local-substrate-closeout-planning-needed",
+  "status": "accepted",
+  "selected_next_task": null,
+  "planning_needed": true,
+  "accepted_boundary": {
+    "local_substitute_ssh_substrate": true,
+    "live_network_reachability": false,
+    "live_openssh_compatibility": false,
+    "hardware_proof": false,
+    "ssh_ready": false,
+    "phase_transition": false
+  },
+  "ethernet_boundary": {
+    "selected_discriminator": null,
+    "selected_discriminator_queue_dependency_blocked": true
+  },
+  "evidence_level": [
+    "static source/docs/task review",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ]
+}
