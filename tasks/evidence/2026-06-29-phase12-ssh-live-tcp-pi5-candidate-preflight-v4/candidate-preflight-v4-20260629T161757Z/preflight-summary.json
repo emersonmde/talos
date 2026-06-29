@@ -1,0 +1,14 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-candidate-preflight-v4-20260629",
+  "run_label": "candidate-preflight-v4-20260629T161757Z",
+  "classification": "inconclusive-with-required-discriminator",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "archive_sha256": "19531e484284f5fd7da29ca87102298ffd8c2d0ed916dcd6543e9c008c794d57",
+  "archive_bytes": 175336,
+  "expected_fetch_bytes": 87432,
+  "post_publication_tree_hash": "18e467bf70316e41fa4232d3b7b3ea328160c3c77befa799e00dffe707fa603e",
+  "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "no_packet_io_or_openssh_claim": true,
+  "first_missing_fact": "capture-window-contamination: original capture bundle continued/restored while manual completion used the same saved cursors, so pre-restore TFTP/final identity evidence labels the restored control tree instead of a clean candidate window"
+}

@@ -1,0 +1,10 @@
+{
+  "archive_path": "target/tmp/candidate-preflight-v4-20260629T161757Z.tar.gz",
+  "archive_sha256": "19531e484284f5fd7da29ca87102298ffd8c2d0ed916dcd6543e9c008c794d57",
+  "archive_bytes": 175336,
+  "boot_tree": "target/tmp/candidate-preflight-v4-20260629T161757Z-boot-tree",
+  "boot_tree_manifest_hash": "d477f1aaeb72a8a5b9c76028e0419851ff94071ac2fca2e98dc68880a00c4e53",
+  "expected_fetch": "da591740/kernel_2712.img",
+  "expected_fetch_bytes": 87432,
+  "kernel_2712_sha256": "516b0014eaead2a090779fba7bd8ea4da630f71e923e01182f0570aa9fc2de43"
+}

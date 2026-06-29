@@ -358,6 +358,15 @@ OpenSSH/generated-root retry, remote receipt, compatibility, service success,
 ssh-ready=true, broad shell work, and phase transition remain blocked until
 that candidate preflight is explicitly promoted and accepted.
 
+Candidate preflight v4 was promoted after that selected-control proof, but its
+first run is inconclusive-with-required-discriminator. Candidate archive
+identity was established, but the retained pre-restore capture window was
+contaminated by restore/control identity, so candidate-capture-ready and
+packet-I/O remain unaccepted. selected_next_task is null and
+planningNeeded=true before any further candidate preflight, packet-I/O
+discriminator, OpenSSH/generated-root retry, remote receipt, compatibility,
+service success, ssh-ready=true, broad shell work, or phase transition.
+
 Earlier live networking/SSH work was paused while the local POSIX/VFS/userspace
 continuation advanced. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces

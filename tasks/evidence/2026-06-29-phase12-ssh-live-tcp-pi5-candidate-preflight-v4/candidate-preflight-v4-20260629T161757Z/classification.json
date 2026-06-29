@@ -1,0 +1,41 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-candidate-preflight-v4-20260629",
+  "run_label": "candidate-preflight-v4-20260629T161757Z",
+  "classification": "inconclusive-with-required-discriminator",
+  "candidate_capture_ready": false,
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "first_missing_fact": "capture-window-contamination: original capture bundle continued/restored while manual completion used the same saved cursors, so pre-restore TFTP/final identity evidence labels the restored control tree instead of a clean candidate window",
+  "archive_metadata": {
+    "archive_path": "target/tmp/candidate-preflight-v4-20260629T161757Z.tar.gz",
+    "archive_sha256": "19531e484284f5fd7da29ca87102298ffd8c2d0ed916dcd6543e9c008c794d57",
+    "archive_bytes": 175336,
+    "boot_tree": "target/tmp/candidate-preflight-v4-20260629T161757Z-boot-tree",
+    "boot_tree_manifest_hash": "d477f1aaeb72a8a5b9c76028e0419851ff94071ac2fca2e98dc68880a00c4e53",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 87432,
+    "kernel_2712_sha256": "516b0014eaead2a090779fba7bd8ea4da630f71e923e01182f0570aa9fc2de43"
+  },
+  "capture_summary": {
+    "identity_join_rejection_reasons": [
+      "capture-window-contamination",
+      "tftp-restored-control-byte-label",
+      "final-pre-restore-restored-control-tree"
+    ],
+    "suggested_classification": "identity-join-mismatch",
+    "has_kernel_main": false,
+    "has_required_marker": false,
+    "tftp_event_count": 13,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 0,
+    "final_pre_restore_identity": {
+      "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "effective_kernel": "kernel_2712.img",
+      "expected_tree_still_staged": false,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes_match": false
+    },
+    "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "redaction_review": "Task-owned JSON evidence was scrubbed after capture to replace peer IP/MAC fields and dnsmasq line peer identifiers with redacted placeholders. Durable evidence retains task ids, run label, source/archive metadata, tree hashes, byte counts, cursor/capture classifications, and metadata-only counts; it does not retain packet payload contents, key material, session material, boot artifact bytes, private user data, stable secret-derived identifiers, or unnecessary hardware data."
+}
