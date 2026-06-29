@@ -1,0 +1,78 @@
+{
+  "task_id": "phase12-ssh-publickey-auth-lineage-revalidation-core-20260629",
+  "classification": "ssh-publickey-auth-lineage-revalidation-core-accepted",
+  "status": "accepted-after-commit",
+  "selected_next_task": "phase12-ssh-local-substrate-closeout-20260629",
+  "planningNeeded": false,
+  "revalidated_lineage": {
+    "service_userauth_requested": "required",
+    "session_identifier": "private in-memory handle required",
+    "authorized_key_match": "same-request in-memory public-key blob match required",
+    "algorithm": "ssh-ed25519 required",
+    "signature": "present, well-formed, and verified required",
+    "account": "reserved Talos account plus enabled account policy required",
+    "redaction_sensitive": "must be false"
+  },
+  "fail_closed_cases": [
+    "malformed request",
+    "unsupported algorithm",
+    "unauthorized key",
+    "unsigned success request",
+    "bad signature",
+    "missing session identifier",
+    "missing service-userauth prerequisite",
+    "missing account policy prerequisite",
+    "account mismatch",
+    "redaction-sensitive input"
+  ],
+  "local_only_boundary": {
+    "authentication_success": "local modeled only on account success report",
+    "service_success": false,
+    "session_count": 0,
+    "channel_count": 0,
+    "shell_attached": false,
+    "reachability_accepted": false,
+    "ssh_ready": false
+  },
+  "retained_evidence_allowed": [
+    "fixed labels",
+    "public length and count fields",
+    "public message numbers",
+    "validation commands",
+    "task ids",
+    "classifications"
+  ],
+  "retained_evidence_rejected": [
+    "real seed bytes",
+    "host-key bytes",
+    "authorized_keys bytes",
+    "request public-key blobs",
+    "session-id bytes",
+    "signatures",
+    "signed-data bytes",
+    "fingerprints",
+    "digests",
+    "comments",
+    "peer strings",
+    "operator identity",
+    "account identity",
+    "transport identifiers",
+    "packet payloads",
+    "stable key-derived identifiers"
+  ],
+  "non_goals_preserved": [
+    "new authentication methods",
+    "account database expansion",
+    "live sockets",
+    "packet I/O",
+    "generated-root retry",
+    "OpenSSH retry",
+    "Pi 5 hardware proof",
+    "boot publication",
+    "session or shell success",
+    "broad compatibility claim",
+    "fake command expansion",
+    "phase transition"
+  ],
+  "commit": "recorded in durable supervisor state after commit"
+}

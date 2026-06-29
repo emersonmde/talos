@@ -1,0 +1,62 @@
+{
+  "task_id": "phase12-ssh-publickey-auth-lineage-revalidation-core-20260629",
+  "classification": "ssh-publickey-auth-lineage-revalidation-core-accepted",
+  "validation": [
+    {
+      "level": "pre-edit repository state",
+      "command": "git status --short --branch",
+      "result": "passed; main ahead of origin with no uncommitted Talos changes before task edits"
+    },
+    {
+      "level": "static source/docs/task review",
+      "result": "passed; publickey auth lineage remains local modeled, same-request matched, redacted, and fail-closed outside account-success prerequisites"
+    },
+    {
+      "level": "conditional Rust format",
+      "command": "cargo fmt --all -- --check",
+      "result": "not run; no Rust source touched"
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet authorized_key",
+      "result": "passed; custom no_std runner reported 887 passed"
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet publickey",
+      "result": "passed; custom no_std runner reported 887 passed"
+    },
+    {
+      "level": "unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet userauth",
+      "result": "passed; custom no_std runner reported 887 passed"
+    },
+    {
+      "level": "conditional unit tests",
+      "command": "cargo -Zjson-target-spec test --quiet ssh_service_readiness",
+      "result": "not run; src/ssh_service_readiness.rs was not touched and publickey/userauth gates exercised ssh_service_readiness tests"
+    },
+    {
+      "level": "diff validation",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "level": "docs validation",
+      "command": "/home/node/.cargo/bin/mdbook build",
+      "result": "passed"
+    },
+    {
+      "level": "task-owned JSON validation",
+      "command": "jq empty tasks/evidence/2026-06-29-phase12-ssh-publickey-auth-lineage-revalidation-core/classification.json tasks/evidence/2026-06-29-phase12-ssh-publickey-auth-lineage-revalidation-core/evidence-map.json tasks/evidence/2026-06-29-phase12-ssh-publickey-auth-lineage-revalidation-core/validation-summary.json",
+      "result": "passed"
+    },
+    {
+      "level": "staged diff validation",
+      "command": "git diff --cached --check",
+      "result": "passed before commit"
+    }
+  ],
+  "selected_next_task": "phase12-ssh-local-substrate-closeout-20260629",
+  "planningNeeded": false
+}

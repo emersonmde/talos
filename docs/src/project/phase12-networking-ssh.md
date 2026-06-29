@@ -60,6 +60,22 @@ phase12-ssh-publickey-auth-lineage-revalidation-core-20260629; live SSH,
 generated-root/OpenSSH retry, hardware proof, authentication success, and phase
 transition remain rejected.
 
+The accepted SSH publickey authentication lineage revalidation confirms that
+local modeled publickey authentication still requires the full accepted
+lineage: service-userauth prerequisite, private session-id handle, same-request
+authorized_keys public-key match, supported ssh-ed25519 algorithm, valid
+signature over the modeled request, reserved Talos account match, and enabled
+account policy. Metadata-only authorized_keys readiness remains insufficient
+for authentication; request key blobs, signatures, signed data, session-id
+bytes, fingerprints, digests, comments, operator identity, peer strings, and
+stable key-derived identifiers remain absent from durable evidence. The only
+authentication-success state remains local/modelled and continues to report
+service-success=false, session-count=0, channel-count=0, shell-attached=false,
+reachability-accepted=false, and ssh-ready=false. The next mechanically
+objective local/static task is phase12-ssh-local-substrate-closeout-20260629;
+live SSH, generated-root/OpenSSH retry, hardware proof, session or shell
+success, and phase transition remain rejected.
+
 Live networking/SSH remains paused while the local POSIX/VFS/userspace
 continuation advances. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces

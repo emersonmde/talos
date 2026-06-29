@@ -1,0 +1,50 @@
+{
+  "task_id": "phase12-ssh-publickey-auth-lineage-revalidation-core-20260629",
+  "classification": "ssh-publickey-auth-lineage-revalidation-core-accepted",
+  "source_reviewed": [
+    "src/ssh_key_readiness.rs",
+    "src/ssh_service_readiness.rs",
+    "src/ssh_runtime_crypto.rs"
+  ],
+  "records_reviewed": [
+    "tasks/2026-06-29-phase12-ssh-service-readiness-prerequisite-revalidation-core.md",
+    "tasks/2026-06-29-phase12-ssh-credential-readiness-closeout.md",
+    "tasks/2026-06-29-phase12-ssh-authorized-key-provisioning-revalidation-core.md",
+    "tasks/2026-06-22-phase12-ssh-publickey-verification-closeout.md",
+    "tasks/2026-06-22-phase12-ssh-publickey-auth-response-policy-closeout.md",
+    "tasks/2026-06-22-phase12-ssh-publickey-auth-success-account-closeout.md",
+    "memory/talos-supervisor-state.json"
+  ],
+  "changed_files": [
+    "docs/src/project/phase12-networking-ssh.md",
+    "tasks/2026-06-29-phase12-ssh-publickey-auth-lineage-revalidation-core.md",
+    "tasks/evidence/2026-06-29-phase12-ssh-publickey-auth-lineage-revalidation-core/classification.json",
+    "tasks/evidence/2026-06-29-phase12-ssh-publickey-auth-lineage-revalidation-core/evidence-map.json",
+    "tasks/evidence/2026-06-29-phase12-ssh-publickey-auth-lineage-revalidation-core/validation-summary.json"
+  ],
+  "unchanged_source": [
+    "src/ssh_key_readiness.rs",
+    "src/ssh_service_readiness.rs",
+    "src/ssh_runtime_crypto.rs"
+  ],
+  "evidence_levels": [
+    "static source/docs/task review",
+    "unit tests",
+    "docs validation",
+    "diff validation",
+    "task-owned JSON validation"
+  ],
+  "redaction_review": {
+    "result": "passed",
+    "retained_only": [
+      "fixed labels",
+      "public length and count fields",
+      "public message numbers",
+      "validation commands",
+      "task ids",
+      "classifications"
+    ],
+    "retained_no_secret_material": true
+  },
+  "hardware_scope": "No Pi 5 hardware/lab action, hardwareTestLock acquisition, boot publication, TFTP/serial evidence, generated-root retry, OpenSSH retry, live networking/SSH, real secret material retention, session or shell success, fake command expansion, or phase transition was performed or claimed."
+}
