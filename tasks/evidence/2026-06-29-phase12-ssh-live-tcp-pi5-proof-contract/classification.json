@@ -1,0 +1,78 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-proof-contract-20260629",
+  "classification": "ssh-live-tcp-pi5-proof-contract-accepted",
+  "status": "accepted",
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-candidate-preflight-20260629",
+  "selected_candidate_identity_requirements": {
+    "clean_worktree": true,
+    "source_commit_required": true,
+    "required_accepted_commits": [
+      "74a1433cfa1312df7c6f96839c825095b28cff26",
+      "e91159723769ceeb187b4dd10fc4f03deb0cb3d5"
+    ],
+    "archive_path_bytes_and_sha256_required": true,
+    "archive_contents_retained": false,
+    "expected_tftp_fetch_path": "da591740/kernel_2712.img",
+    "expected_kernel_bytes_required": true,
+    "post_publication_status_identity_required": [
+      "boot.tree_hash",
+      "boot.effective_kernel",
+      "boot.configured_kernel",
+      "boot.config",
+      "guard fields",
+      "snapshot state"
+    ]
+  },
+  "required_evidence_windows": {
+    "before_publication": [
+      "git status --short --branch",
+      "source commit and accepted commit ancestry",
+      "candidate archive path, bytes, sha256, archive review, expected fetch bytes",
+      "lab API GET /status, GET /boot/files, GET /boot/snapshots for restored baseline",
+      "named restore target"
+    ],
+    "after_publication_before_power": [
+      "lab API GET /status",
+      "lab API GET /boot/files",
+      "lab API GET /boot/snapshots",
+      "fresh serial cursor",
+      "fresh TFTP cursor",
+      "hardwareTestLock ownership"
+    ],
+    "during_control_candidate_and_rerun": [
+      "stable same-cursor TFTP delta before restore",
+      "serial observation from saved cursor or explicit saturated-cursor fallback",
+      "final pre-restore lab API GET /status and GET /boot/files",
+      "terminal summary separating boot request, TFTP capture, staging, frame-provider, descriptor, and packet/device-interface outcomes"
+    ],
+    "after_restore": [
+      "restore API result",
+      "lab API GET /status",
+      "lab API GET /boot/files",
+      "lab API GET /boot/snapshots",
+      "hardwareTestLock release and restored=true",
+      "redaction review"
+    ]
+  },
+  "terminal_classifications": [
+    "candidate-capture-ready",
+    "blocked-candidate-identity",
+    "blocked-tftp-capture",
+    "blocked-serial-capture",
+    "blocked-known-good-control",
+    "blocked-restore",
+    "inconclusive-with-required-discriminator"
+  ],
+  "rejected_claims": {
+    "pi5_hardware_action": false,
+    "boot_publication": false,
+    "openssh_compatibility": false,
+    "remote_receipt": false,
+    "service_success": false,
+    "ssh_ready_true": false,
+    "generated_root_retry": false,
+    "runtime_russh_adoption": false,
+    "fake_command_expansion": false,
+    "phase_transition": false
+  }
+}

@@ -228,6 +228,19 @@ identity, fresh serial cursor, TFTP delta, known-good control, candidate rerun,
 hardware lock ownership, evidence redaction, and restore requirements before any
 later hardware action.
 
+The live TCP Pi 5 proof contract accepts only that static evidence contract. A
+future candidate preflight must identify a clean-source Pi 5 boot archive with
+the accepted runtime commits in history, expected da591740/kernel_2712.img
+fetch bytes, archive path/byte-count/SHA-256 metadata, post-publication
+GET /status identity, fresh serial and TFTP cursors, known-good control,
+candidate run, candidate rerun, hardwareTestLock ownership, pre-restore TFTP
+and serial evidence, restore proof, and redaction review. The contract permits
+candidate-capture-ready or explicit blocker classifications only. It does not
+accept Pi 5 packet I/O, remote receipt, OpenSSH compatibility, service success,
+ssh-ready=true, generated-root retry, runtime russh adoption, fake command
+expansion, broad shell work, or a phase transition. The selected next task is
+phase12-ssh-live-tcp-pi5-candidate-preflight-20260629.
+
 Live networking/SSH remains paused while the local POSIX/VFS/userspace
 continuation advances. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces

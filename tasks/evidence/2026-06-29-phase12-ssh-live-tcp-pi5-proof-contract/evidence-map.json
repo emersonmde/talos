@@ -1,0 +1,63 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-proof-contract-20260629",
+  "evidence_level": [
+    "static task review",
+    "static lab-controller contract review",
+    "docs validation",
+    "diff validation",
+    "static redaction review"
+  ],
+  "reviewed_task_records": [
+    "tasks/2026-06-29-phase12-ssh-live-tcp-network-device-smoltcp-runtime-closeout.md",
+    "tasks/2026-06-29-phase12-ssh-live-tcp-network-device-smoltcp-runtime-core.md"
+  ],
+  "reviewed_docs": [
+    "docs/src/project/lab-controller.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "changed_docs": [
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "task_records": [
+    "tasks/2026-06-29-phase12-ssh-live-tcp-pi5-proof-contract.md"
+  ],
+  "task_owned_json": [
+    "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-proof-contract/classification.json",
+    "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-proof-contract/evidence-map.json"
+  ],
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-candidate-preflight-20260629",
+  "validation": [
+    "git status --short --branch",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "jq empty tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-proof-contract/classification.json tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-proof-contract/evidence-map.json",
+    "git diff --cached --check"
+  ],
+  "redaction": {
+    "retained": [
+      "task ids",
+      "source commits",
+      "source paths",
+      "task paths",
+      "public classifier names",
+      "archive metadata fields",
+      "tree-hash and boot-config identity fields",
+      "cursor offsets",
+      "validation commands and results",
+      "metadata-only labels"
+    ],
+    "not_retained": [
+      "peer identifiers",
+      "addresses",
+      "packet payload contents",
+      "key material",
+      "session material",
+      "boot artifact bytes",
+      "private user data",
+      "stable secret-derived identifiers",
+      "unnecessary hardware data"
+    ]
+  }
+}

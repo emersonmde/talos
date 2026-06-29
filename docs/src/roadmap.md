@@ -20620,6 +20620,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   must define candidate identity, fresh serial cursor, TFTP delta, known-good
   control, candidate rerun, hardware lock ownership, evidence redaction, and
   restore requirements before any later hardware action.
+- phase12-ssh-live-tcp-pi5-proof-contract-20260629 accepts only the static Pi 5
+  proof contract for the accepted deterministic runtime boundary. A later
+  candidate preflight must join clean-source commit identity, the accepted
+  runtime commits, candidate archive path/byte-count/SHA-256 metadata, expected
+  da591740/kernel_2712.img fetch bytes, post-publication lab API identity,
+  fresh serial and TFTP cursors, known-good control, candidate run, candidate
+  rerun, hardwareTestLock ownership, pre-restore TFTP/serial evidence, restore
+  proof, and redaction review before any hardware classification can be
+  accepted. The only contract-level successor is
+  phase12-ssh-live-tcp-pi5-candidate-preflight-20260629. Pi 5 packet I/O,
+  remote receipt, OpenSSH compatibility, service success, ssh-ready=true,
+  generated-root retry, runtime russh adoption, fake command expansion, broad
+  shell work, and phase transition remain rejected.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
