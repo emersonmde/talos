@@ -20429,6 +20429,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   and phase transition remain deferred. selected_next_task is null and
   planningNeeded is true because no later queued same-lane local POSIX/VFS task
   is mechanically objective.
+- phase12-local-posix-vfs-to-network-readiness-checkpoint-20260629 accepts the
+  local POSIX/VFS to network readiness checkpoint without adding runtime
+  behavior. The accepted local frontier remains descriptor-backed and bounded
+  to VFS open/read, VFS/userspace exec, argv/envp startup records, descriptor
+  inheritance, lifecycle/status/wait/process observations, accepted pipes, and
+  the exact accepted volatile /tmp redirection grammar surfaces. More
+  shell/redirection grammar is not the next feature unless tied to a real
+  VFS/syscall/userspace or live-network acceptance need. The retained Phase
+  12.1 Ethernet frontier remains paused at BCM54213PE timeout/link-not-ready;
+  no link-ready, packet I/O, networking/SSH, generated-root retry, Pi 5
+  hardware proof, boot publication, or phase transition is accepted. The
+  selected next task is the source/evidence-only
+  phase12-rp1-ethernet-link-not-ready-discriminator-reselection-20260629.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

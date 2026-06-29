@@ -1995,6 +1995,21 @@ hardware proof, boot publication, live networking/SSH, and phase transition
 remain deferred. selected_next_task=null and planningNeeded=true because no
 later queued same-lane local POSIX/VFS task is mechanically objective.
 
+The local POSIX/VFS to network readiness checkpoint keeps that local frontier
+frozen rather than adding more shell grammar. The accepted command-visible
+surface is enough to serve as a regression/control base for descriptor-backed
+open/read, VFS-backed exec, argv/envp, descriptor inheritance, wait/status,
+pipes, process observations, and bounded volatile /tmp redirection. Additional
+redirection or parser expansion is not feature progress unless it is required
+for a real VFS/syscall/userspace capability or a live-network acceptance need.
+The selected next task is therefore the source/evidence-only Phase 12.1
+link-not-ready discriminator reselection checkpoint. Persistence,
+nested/traversal paths, paths outside volatile /tmp, explicit fd input
+redirection, fd duplication/close syntax, PATH/current-directory lookup,
+command lookup beyond bounded /bin, arbitrary shell grammar, generated-root
+retry, Pi 5 hardware proof, boot publication, live networking/SSH acceptance,
+and phase transition remain deferred.
+
 ## Scheduler Implications
 
 Before implementing scheduler structs, check that:
