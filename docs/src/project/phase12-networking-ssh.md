@@ -11365,10 +11365,22 @@ byte counts, bounded path names, and test/filter names only; it must not retain
 real seed bytes, generated random bytes, key bytes, fingerprints, digests,
 signatures, exchange hashes, session identifiers, or stable secret-derived
 identifiers. The accepted diagnostic shape is metadata-only: entropy reports
-entropy-label, hardware-rng, optional operator-seed, cryptographic-strength,
-and ssh-ready=false; sshkeydiag reports fixed sshkeydiag labels and
-ssh-ready=false. This does not accept live SSH, TCP, packet I/O, host-key
+entropy-label, hardware-rng, optional operator-seed, csprng-readiness,
+cryptographic-strength, and ssh-ready=false; sshkeydiag reports fixed
+sshkeydiag labels and ssh-ready=false. This does not accept live SSH, TCP,
+packet I/O, host-key generation, deployed cryptographic sufficiency, Pi 5
+proof, boot publication, generated-root retry, OpenSSH retry, persistence, or
+phase transition. The selected next local/static task is
+phase12-ssh-entropy-diagnostic-local-core-20260629.
+
+phase12-ssh-entropy-diagnostic-local-core-20260629 accepts the bounded
+metadata-only entropy diagnostic core. The entropy command now reports the
+CSPRNG readiness labels selected by the source contract:
+csprng-missing-seed, csprng-insufficient-seed, and csprng-ready in local/static
+fixtures, while retaining ssh-ready=false. Sufficient fixture seed material can
+set only the entropy diagnostic cryptographic-strength metadata; sshkeydiag and
+sshservicediag remain fail-closed and do not consume that readiness as live SSH
+readiness. This does not accept live SSH, TCP, packet I/O, host-key
 generation, deployed cryptographic sufficiency, Pi 5 proof, boot publication,
 generated-root retry, OpenSSH retry, persistence, or phase transition. The
-selected next local/static task is
-phase12-ssh-entropy-diagnostic-local-core-20260629.
+selected next task is phase12-ssh-host-key-provisioning-contract-20260629.

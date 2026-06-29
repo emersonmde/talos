@@ -1,0 +1,42 @@
+{
+  "task_id": "phase12-ssh-entropy-diagnostic-local-core-20260629",
+  "source_contract": "tasks/2026-06-29-phase12-ssh-entropy-source-contract.md",
+  "source_files_reviewed": [
+    "src/entropy.rs",
+    "src/csprng.rs",
+    "src/ssh_key_readiness.rs",
+    "src/ssh_service_readiness.rs",
+    "src/diagnostic_command.rs"
+  ],
+  "source_files_changed": [
+    "src/diagnostic_command.rs"
+  ],
+  "docs_changed": [
+    "docs/src/project/phase12-networking-ssh.md"
+  ],
+  "task_records": [
+    "tasks/2026-06-29-phase12-ssh-entropy-diagnostic-local-core.md"
+  ],
+  "task_owned_json": [
+    "tasks/evidence/2026-06-29-phase12-ssh-entropy-diagnostic-local-core/classification.json",
+    "tasks/evidence/2026-06-29-phase12-ssh-entropy-diagnostic-local-core/evidence-map.json"
+  ],
+  "validation_commands": [
+    "git status --short --branch before edits",
+    "cargo fmt --all -- --check",
+    "cargo -Zjson-target-spec test --quiet dispatcher_reports_entropy_diagnostic_fail_closed_without_crypto_claim",
+    "cargo -Zjson-target-spec test --quiet dispatcher_reports_ssh_key_readiness_fail_closed_without_secret_material",
+    "cargo -Zjson-target-spec test --quiet all_missing_default_reports_every_fail_closed_label",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "jq empty on task-owned JSON",
+    "git diff --cached --check"
+  ],
+  "hardware_scope": {
+    "pi5_hardware_run": false,
+    "lab_controller": false,
+    "boot_publication": false,
+    "tftp_or_serial_evidence": false,
+    "openssh_retry": false
+  }
+}

@@ -1,4 +1,5 @@
 use crate::{
+    csprng::{CsprngReadinessReport, OperatorSeededCsprng},
     entropy::{self, EntropyDiagnosticSnapshot},
     initramfs::ReadOnlyInitramfs,
     runtime_console::{self, ConsoleBackend, DEFAULT_RUNTIME_CONSOLE},
@@ -267,12 +268,11 @@ fn write_entropy_response(
     context: DiagnosticContext,
     sink: &mut impl DiagnosticResponseSink,
 ) -> Result<DiagnosticDispatchResult, DiagnosticDispatchError> {
-    let snapshot = match context {
-        DiagnosticContext::FailClosedDefault => EntropyDiagnosticSnapshot::empty(),
-        DiagnosticContext::ReadOnlyVfsMetadata(initramfs) => {
-            entropy::entropy_snapshot_with_operator_seed_material(initramfs)
-        }
-    };
+    let csprng_readiness = csprng_readiness_report(context);
+    let mut snapshot = entropy_snapshot(context);
+    if csprng_readiness.state().is_ready() {
+        snapshot = snapshot.with_csprng_ready();
+    }
     let report = entropy::classify_entropy_snapshot(snapshot);
     let mut responses = 0usize;
     write_line(sink, &mut responses, "diag: ok entropy")?;
@@ -293,6 +293,11 @@ fn write_entropy_response(
             &["diag: operator-seed ", seed_label.name()],
         )?;
     }
+    write_parts_line(
+        sink,
+        &mut responses,
+        &["diag: csprng-readiness ", csprng_readiness.state().name()],
+    )?;
     write_bool_line(
         sink,
         &mut responses,
@@ -424,9 +429,7 @@ fn ssh_key_readiness_snapshot(context: DiagnosticContext) -> SshKeyReadinessSnap
                 authorized_key_metadata,
             );
             let exposure = ssh_key_readiness::classify_exposure_marker(initramfs);
-            let entropy = entropy::classify_entropy_snapshot(
-                entropy::entropy_snapshot_with_operator_seed_material(initramfs),
-            );
+            let entropy = entropy::classify_entropy_snapshot(entropy_snapshot(context));
             SshKeyReadinessSnapshot::fail_closed_default()
                 .with_host_key_material(host_key_metadata)
                 .with_authorized_key_material(authorized_key_metadata)
@@ -434,6 +437,24 @@ fn ssh_key_readiness_snapshot(context: DiagnosticContext) -> SshKeyReadinessSnap
                 .with_persistence_state(persistence)
                 .with_exposure_state(exposure)
                 .with_entropy_report(entropy)
+        }
+    }
+}
+
+fn entropy_snapshot(context: DiagnosticContext) -> EntropyDiagnosticSnapshot {
+    match context {
+        DiagnosticContext::FailClosedDefault => EntropyDiagnosticSnapshot::empty(),
+        DiagnosticContext::ReadOnlyVfsMetadata(initramfs) => {
+            entropy::entropy_snapshot_with_operator_seed_material(initramfs)
+        }
+    }
+}
+
+fn csprng_readiness_report(context: DiagnosticContext) -> CsprngReadinessReport {
+    match context {
+        DiagnosticContext::FailClosedDefault => CsprngReadinessReport::missing_seed(),
+        DiagnosticContext::ReadOnlyVfsMetadata(initramfs) => {
+            OperatorSeededCsprng::from_initramfs(initramfs).readiness()
         }
     }
 }
@@ -657,10 +678,10 @@ mod tests {
         let result = dispatch_default_diagnostic_command(b"entropy", &mut sink).unwrap();
 
         assert_eq!(result.status, DiagnosticDispatchStatus::Handled);
-        assert_eq!(result.response_lines, 6);
+        assert_eq!(result.response_lines, 7);
         assert_eq!(
             sink.as_str(),
-            "diag: ok entropy\ndiag: entropy-label entropydiag-fail-closed-no-input\ndiag: hardware-rng entropydiag-hardware-rng-unaccepted\ndiag: operator-seed entropydiag-operator-seed-required\ndiag: cryptographic-strength false\ndiag: ssh-ready false\n"
+            "diag: ok entropy\ndiag: entropy-label entropydiag-fail-closed-no-input\ndiag: hardware-rng entropydiag-hardware-rng-unaccepted\ndiag: operator-seed entropydiag-operator-seed-required\ndiag: csprng-readiness csprng-missing-seed\ndiag: cryptographic-strength false\ndiag: ssh-ready false\n"
         );
     }
 
@@ -701,10 +722,10 @@ mod tests {
         .unwrap();
 
         assert_eq!(entropy_result.status, DiagnosticDispatchStatus::Handled);
-        assert_eq!(entropy_result.response_lines, 6);
+        assert_eq!(entropy_result.response_lines, 7);
         assert_eq!(
             entropy_sink.as_str(),
-            "diag: ok entropy\ndiag: entropy-label entropydiag-fail-closed-no-input\ndiag: hardware-rng entropydiag-hardware-rng-unaccepted\ndiag: operator-seed entropydiag-operator-seed-required\ndiag: cryptographic-strength false\ndiag: ssh-ready false\n"
+            "diag: ok entropy\ndiag: entropy-label entropydiag-fail-closed-no-input\ndiag: hardware-rng entropydiag-hardware-rng-unaccepted\ndiag: operator-seed entropydiag-operator-seed-required\ndiag: csprng-readiness csprng-missing-seed\ndiag: cryptographic-strength false\ndiag: ssh-ready false\n"
         );
 
         let mut ssh_sink = CaptureSink::new();
@@ -734,10 +755,10 @@ mod tests {
         .unwrap();
 
         assert_eq!(entropy_result.status, DiagnosticDispatchStatus::Handled);
-        assert_eq!(entropy_result.response_lines, 5);
+        assert_eq!(entropy_result.response_lines, 6);
         assert_eq!(
             entropy_sink.as_str(),
-            "diag: ok entropy\ndiag: entropy-label entropydiag-untrusted-local-mix\ndiag: hardware-rng entropydiag-hardware-rng-unaccepted\ndiag: cryptographic-strength false\ndiag: ssh-ready false\n"
+            "diag: ok entropy\ndiag: entropy-label entropydiag-untrusted-local-mix\ndiag: hardware-rng entropydiag-hardware-rng-unaccepted\ndiag: csprng-readiness csprng-insufficient-seed\ndiag: cryptographic-strength false\ndiag: ssh-ready false\n"
         );
 
         let mut ssh_sink = CaptureSink::new();
@@ -767,10 +788,10 @@ mod tests {
         .unwrap();
 
         assert_eq!(entropy_result.status, DiagnosticDispatchStatus::Handled);
-        assert_eq!(entropy_result.response_lines, 5);
+        assert_eq!(entropy_result.response_lines, 6);
         assert_eq!(
             entropy_sink.as_str(),
-            "diag: ok entropy\ndiag: entropy-label entropydiag-untrusted-local-mix\ndiag: hardware-rng entropydiag-hardware-rng-unaccepted\ndiag: cryptographic-strength false\ndiag: ssh-ready false\n"
+            "diag: ok entropy\ndiag: entropy-label entropydiag-untrusted-local-mix\ndiag: hardware-rng entropydiag-hardware-rng-unaccepted\ndiag: csprng-readiness csprng-ready\ndiag: cryptographic-strength true\ndiag: ssh-ready false\n"
         );
 
         let mut ssh_sink = CaptureSink::new();
