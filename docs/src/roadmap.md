@@ -20703,6 +20703,18 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   receipt, compatibility, service success, ssh-ready=true, runtime russh
   adoption, fake command expansion, broad shell work, and phase transition
   remain blocked.
+- phase12-ssh-live-tcp-known-good-serial-window-completeness-discriminator-20260629
+  accepts blocked-known-good-kernel-not-starting. The known-good-only hardware
+  run used an empty pre-power /serial/read drain before one power cycle, then
+  retained the saturated-cursor direct-read post-power window. Stable identity
+  stayed on the restored 6ead8933... tree, stable TFTP evidence retained two
+  matching 82045-byte da591740/kernel_2712.img serves, and serial retained
+  firmware NETWORK output, but no TALOS: kernel_main or
+  rpi5-production-timer-preemption: PASS marker. selected_next_task is null and
+  planningNeeded=true before candidate preflight v3, packet-I/O,
+  OpenSSH/generated-root retry, remote receipt, compatibility, service success,
+  ssh-ready=true, runtime russh adoption, fake command expansion, broad shell
+  work, or phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

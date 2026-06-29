@@ -1,0 +1,29 @@
+{
+  "action": "serial drain before power",
+  "ok": true,
+  "responses": [
+    {
+      "action": "serial read",
+      "base64": "",
+      "bytes": 0,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "",
+      "truncated": false
+    }
+  ],
+  "talos_serial_drain": {
+    "contract_version": "pi5-capture-transaction-v2",
+    "attempts": 1,
+    "attempt_limit": 96,
+    "read_timeout_seconds": 1,
+    "settle_ms": 100,
+    "max_bytes_per_read": 65536,
+    "total_bytes": 0,
+    "final_cursor": 4194304,
+    "empty_before_power": true,
+    "discriminator": "empty-read-before-power",
+    "rule": "empty pre-power /serial/read is strong positive evidence; non-empty drain requires cursor-nonce-post-power-freshness-v1"
+  }
+}

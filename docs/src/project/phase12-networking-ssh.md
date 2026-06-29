@@ -309,6 +309,16 @@ the serial window was incomplete. Candidate preflight v3 remains blocked until
 the selected serial-window discriminator proves or precisely blocks that
 boundary.
 
+The known-good serial-window completeness discriminator then stopped at
+blocked-known-good-kernel-not-starting. It used a qualitatively different
+serial completeness gate: an empty pre-power /serial/read drain before one
+known-good-only power cycle, followed by the saturated-cursor direct-read
+post-power window. The run retained stable identity for the restored 6ead8933...
+tree, two matching 82045-byte da591740/kernel_2712.img TFTP serves, and
+firmware NETWORK output, but still did not observe TALOS: kernel_main or
+rpi5-production-timer-preemption: PASS. Candidate preflight v3 remains blocked
+and planningNeeded=true until the supervisor selects a new bounded direction.
+
 Earlier live networking/SSH work was paused while the local POSIX/VFS/userspace
 continuation advanced. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces

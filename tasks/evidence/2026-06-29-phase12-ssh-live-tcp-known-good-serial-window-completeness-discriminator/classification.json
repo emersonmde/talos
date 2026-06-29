@@ -1,0 +1,76 @@
+{
+  "task_id": "phase12-ssh-live-tcp-known-good-serial-window-completeness-discriminator-20260629",
+  "classification": "blocked-known-good-kernel-not-starting",
+  "terminal": true,
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "known-good serial-window completeness discriminator proved empty pre-power serial drain, stable boot identity, stable TFTP fetches, and firmware network output, but the same fresh post-power serial window still omitted TALOS: kernel_main and rpi5-production-timer-preemption: PASS; supervisor planning is required before candidate preflight v3 or packet-I/O.",
+  "run_label": "known-good-serial-window-completeness-20260629T140602Z",
+  "evidence_dir": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-known-good-serial-window-completeness-discriminator/known-good-serial-window-completeness-20260629T140602Z",
+  "contract_decision": {
+    "discriminator": "empty-pre-power-drain-plus-post-power-direct-read-window",
+    "hardware_power_cycles": 1,
+    "restore_snapshot": "abcontrol-secondary-workload-pre-20260524T231449Z",
+    "expected_tree_hash": "6ead8933b3287cddaf08ddcdbda7d4c770b365658ef1d0ad80a5dd0cf323f3ef",
+    "expected_kernel": "kernel_2712.img",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 82045
+  },
+  "checks": {
+    "preflight_identity_ok": true,
+    "empty_pre_power_serial_drain": true,
+    "serial_capture_mode": "read",
+    "serial_observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "serial_response_bytes": 4473,
+    "has_kernel_main": false,
+    "has_required_success_marker": false,
+    "firmware_network_occurrences": 2,
+    "stable_tftp_delta": true,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "identity_join_rejection_reasons": [],
+    "final_pre_restore_tree_hash": "6ead8933b3287cddaf08ddcdbda7d4c770b365658ef1d0ad80a5dd0cf323f3ef",
+    "post_restore_tree_hash": "6ead8933b3287cddaf08ddcdbda7d4c770b365658ef1d0ad80a5dd0cf323f3ef",
+    "safety_restore_same_tree": true
+  },
+  "first_missing_fact": "The restored known-good 6ead8933 tree fetches kernel_2712.img and produces firmware network serial output after an empty pre-power drain, but it does not reach TALOS: kernel_main or rpi5-production-timer-preemption: PASS in the fresh 90-second post-power serial window.",
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "The selected discriminator used an empty pre-power /serial/read drain before power rather than the previous retained-tail/readiness helper alone."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Stable identity and TFTP fetch evidence joined the same restored tree with two matching 82045-byte da591740/kernel_2712.img serves."
+    },
+    {
+      "disposition": "blocked",
+      "finding": "The post-power serial window captured firmware network output but no TALOS: kernel_main or rpi5-production-timer-preemption: PASS marker."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "The redundant safety restore retained the same 6ead8933 tree and was followed by helper restore/post-restore evidence; it is recorded as recovery metadata and did not publish a candidate archive."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Candidate preflight v3, packet I/O, OpenSSH/generated-root retry, remote receipt, compatibility, service success, ssh-ready=true, runtime russh adoption, broad shell work, and phase transition remain deferred."
+    },
+    {
+      "disposition": "removed",
+      "finding": "No source, helper, docs, task, or evidence artifact was removed."
+    }
+  ],
+  "rejected_claims": [
+    "known-good-capture-ready",
+    "candidate preflight v3",
+    "packet I/O",
+    "OpenSSH compatibility",
+    "remote receipt",
+    "service success",
+    "ssh-ready=true",
+    "runtime russh adoption",
+    "fake command expansion",
+    "phase transition"
+  ],
+  "redaction_review": "Classification and evidence-map summaries omit peer IP/MAC and packet contents. Raw lab-controller TFTP artifacts remain task-owned hardware evidence and include the endpoint local client fields; no key material, session material, boot artifact bytes, private user data, or secret-derived identifiers are added."
+}
