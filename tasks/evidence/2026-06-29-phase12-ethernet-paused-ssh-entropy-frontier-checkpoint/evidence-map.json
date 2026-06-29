@@ -1,0 +1,39 @@
+{
+  "task_id": "phase12-ethernet-paused-ssh-entropy-frontier-checkpoint-20260629",
+  "classification": "ethernet-paused-ssh-entropy-frontier-checkpoint-accepted",
+  "selected_next_task": "phase12-ssh-entropy-source-contract-20260629",
+  "planningNeeded": false,
+  "evidence": [
+    {
+      "level": "static/task evidence review",
+      "path": "tasks/2026-06-29-phase12-rp1-ethernet-link-not-ready-discriminator-reselection.md",
+      "result": "Accepted selected_discriminator=null and selected_next_task=null for the RP1 Ethernet link-not-ready frontier; no local core, hardware proof, packet I/O, live networking/SSH, OpenSSH retry, generated-root retry, or phase transition was unblocked."
+    },
+    {
+      "level": "static/task evidence review",
+      "path": "tasks/evidence/2026-06-29-phase12-rp1-ethernet-link-not-ready-discriminator-reselection/classification.json",
+      "result": "Structured evidence preserves the no-discriminator Ethernet pause and rejects hardware/networking claims."
+    },
+    {
+      "level": "static/task evidence review",
+      "path": "tasks/2026-06-29-phase12-local-posix-vfs-to-network-readiness-checkpoint.md",
+      "result": "Accepted local POSIX/VFS readiness is descriptor-backed substrate evidence and does not add Ethernet source evidence or reopen shell grammar expansion as standalone progress."
+    },
+    {
+      "level": "docs",
+      "path": "docs/src/project/phase12-networking-ssh.md",
+      "result": "Updated to record the Ethernet pause boundary and selected source-only entropy contract."
+    },
+    {
+      "level": "docs",
+      "path": "docs/src/roadmap.md",
+      "result": "Updated to record phase12-ethernet-paused-ssh-entropy-frontier-checkpoint-20260629 and selected_next_task=phase12-ssh-entropy-source-contract-20260629."
+    },
+    {
+      "level": "supervisor queue static inspection",
+      "path": "memory/talos-supervisor-state.json",
+      "result": "phase12-ssh-entropy-source-contract-20260629 is queued with explicit scope, non-goals, dependencies, acceptance criteria, validation gates, docs requirements, and evidence requirements."
+    }
+  ],
+  "next_action": "Promote phase12-ssh-entropy-source-contract-20260629 on the next worker wake if dependencies remain satisfied; keep selected-discriminator Ethernet tasks dependency-blocked until future source evidence selects a discriminator."
+}

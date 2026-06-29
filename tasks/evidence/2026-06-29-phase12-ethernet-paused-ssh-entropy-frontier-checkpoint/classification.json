@@ -1,0 +1,59 @@
+{
+  "task_id": "phase12-ethernet-paused-ssh-entropy-frontier-checkpoint-20260629",
+  "status": "accepted",
+  "classification": "ethernet-paused-ssh-entropy-frontier-checkpoint-accepted",
+  "evidence_level": [
+    "static task/docs/evidence review",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_input_frontier": {
+    "ethernet_reselection": {
+      "task_id": "phase12-rp1-ethernet-link-not-ready-discriminator-reselection-20260629",
+      "commit": "bf206e2b750130ac1cf9de8151c746e1fbb34202",
+      "selected_discriminator": null,
+      "selected_next_task": null,
+      "planningNeeded": true
+    },
+    "local_posix_vfs_readiness_checkpoint": {
+      "task_id": "phase12-local-posix-vfs-to-network-readiness-checkpoint-20260629",
+      "changes_ethernet_frontier": false,
+      "reopens_shell_grammar_as_progress": false
+    }
+  },
+  "ethernet_pause_boundary": {
+    "selected_discriminator": null,
+    "selected_discriminator_queue_dependency_blocked": true,
+    "link_ready_accepted": false,
+    "packet_io_accepted": false,
+    "live_networking_ssh_accepted": false,
+    "openssh_retry_accepted": false,
+    "generated_root_retry_accepted": false,
+    "hardware_proof_accepted": false,
+    "phase_transition_accepted": false
+  },
+  "selected_next_task": "phase12-ssh-entropy-source-contract-20260629",
+  "planningNeeded": false,
+  "selected_next_task_reason": "The queued entropy source contract is source-only, bounded, and useful for eventual SSH host keys and session crypto without depending on RP1 Ethernet link-ready hardware.",
+  "rejected_claims": [
+    "link-ready",
+    "packet-io",
+    "live-networking",
+    "ssh",
+    "openssh-retry",
+    "generated-root-retry",
+    "hardware-proof",
+    "fake-command-expansion",
+    "persistence-claim",
+    "phase-transition"
+  ],
+  "validation": {
+    "git_status_short_branch_before_edits": "pass",
+    "static_task_docs_evidence_review": "pass",
+    "jq_empty_task_owned_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass before commit"
+  }
+}

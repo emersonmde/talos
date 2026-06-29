@@ -20455,6 +20455,15 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   command expansion, persistence claims, and phase transition remain rejected
   from this task; supervisor planning or new source evidence is required before
   further Phase 12.1 Ethernet work.
+- phase12-ethernet-paused-ssh-entropy-frontier-checkpoint-20260629 accepts the
+  Ethernet-pause to SSH substrate checkpoint without changing runtime
+  behavior. The accepted Ethernet boundary remains selected_discriminator=null:
+  no link-ready, packet I/O, live networking/SSH, OpenSSH retry, hardware
+  proof, generated-root retry, fake command expansion, or phase transition is
+  accepted, and the selected-discriminator local/hardware/closeout queue
+  remains dependency-blocked until future source evidence selects a
+  discriminator. The selected next task is the source-only
+  phase12-ssh-entropy-source-contract-20260629.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

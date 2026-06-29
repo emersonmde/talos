@@ -16,6 +16,13 @@ command expansion, persistence claims, and phase transition remain rejected
 from the reselection task; supervisor planning or new source evidence is
 required before further Phase 12.1 Ethernet work.
 
+The Ethernet-pause to SSH entropy frontier checkpoint preserves that boundary
+and selects the source-only entropy contract as the next SSH substrate task:
+phase12-ssh-entropy-source-contract-20260629. The selected path may classify
+kernel entropy inputs and diagnostic shape for future host keys and session
+crypto, but it does not accept host keys, live SSH, TCP/IP, packet I/O, Pi 5
+hardware proof, or a phase transition.
+
 Live networking/SSH remains paused while the local POSIX/VFS/userspace
 continuation advances. The accepted dual-stage pipeline stdin redirection core
 now covers the local-only direct path-form and fixed-/bin bare-name surfaces
