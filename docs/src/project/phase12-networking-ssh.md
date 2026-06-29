@@ -11933,3 +11933,17 @@ candidate-entry-ready-runtime-blocked, and only unlock packet-I/O if selected
 fetch identity, clean helper-owned pre-restore candidate window,
 TALOS: kernel_main, route-start, and nonce-bearing runtime-ready markers all
 appear in order.
+
+phase12-ssh-live-tcp-pi5-entry-marker-discriminator-v9-20260629 accepts
+blocked-candidate-entry-not-starting. The reviewed candidate archive exposed
+selected da591740/kernel_2712.img at 152,152 bytes; lab publication retained
+candidate tree 49a9cb5b...; the foreground capture helper observed two
+selected TFTP serves with matching bytes and final pre-restore candidate
+identity before restoring to a0452458.... The entry/runtime marker-order
+checker found zero `TALOS: kernel_main`, zero runtime route-start, and zero
+nonce-bearing runtime-ready markers in the post-power serial window while
+firmware NETWORK markers were still present. selected_next_task is null and
+planningNeeded=true; packet-I/O, OpenSSH/generated-root retry, remote receipt,
+compatibility, service success, ssh-ready=true, broad shell work, and phase
+transition remain blocked pending supervisor planning for the
+selected-fetch/no-entry boundary.

@@ -1,0 +1,21 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-entry-marker-discriminator-v9-20260629",
+  "run_label": "entry-marker-v9-20260629T231514Z",
+  "source_commit": "6f50d28b3fc02a7897f6d672eea85da0e24ee549",
+  "archive": {
+    "path_label": "target/tmp/entry-marker-v9-20260629T231514Z.tar.gz",
+    "sha256": "7fc6352513c6e753d12ad64b06a7ac9f6bad5a6a176da628dc173040f8065f65"
+  },
+  "selected_fetch": {
+    "path": "da591740/kernel_2712.img",
+    "bytes": 152152,
+    "sha256": "6c08216a0487b1b78067b939fdfac5f9c456ec5e7e74154ebbcba502207826eb"
+  },
+  "expected_marker_order": [
+    "selected da591740/kernel_2712.img TFTP serve with matching byte count",
+    "TALOS: kernel_main",
+    "TALOS: ssh-service-smoltcp-runtime-route-start",
+    "TALOS: ssh-service-smoltcp-runtime-ready with run nonce"
+  ],
+  "required_marker": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=entry-marker-v9-20260629T231514Z"
+}

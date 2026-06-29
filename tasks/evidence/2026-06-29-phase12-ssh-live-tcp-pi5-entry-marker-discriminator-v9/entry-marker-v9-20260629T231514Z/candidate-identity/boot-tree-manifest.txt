@@ -1,0 +1,16 @@
+bcm2712-rpi-5-b.dtb 78679 bytes
+cmdline.txt 81 bytes
+config.txt 118 bytes
+da591740/bcm2712-rpi-5-b.dtb 78679 bytes
+da591740/cmdline.txt 81 bytes
+da591740/config.txt 118 bytes
+da591740/kernel8.img 152152 bytes
+da591740/kernel_2712.img 152152 bytes
+da591740/overlays/bcm2712d0.dtbo 1363 bytes
+da591740/overlays/overlay_map.dtb 5971 bytes
+da591740/overlays/uart0-pi5.dtbo 1071 bytes
+kernel8.img 152152 bytes
+kernel_2712.img 152152 bytes
+overlays/bcm2712d0.dtbo 1363 bytes
+overlays/overlay_map.dtb 5971 bytes
+overlays/uart0-pi5.dtbo 1071 bytes

@@ -1,0 +1,32 @@
+{
+  "run_label": "entry-marker-v9-20260629T231514Z",
+  "checker": "entry-runtime-marker-order-v1",
+  "selected_fetch_count": 2,
+  "selected_fetch_byte_match_count": 2,
+  "final_pre_restore_selected_tree_ok": true,
+  "markers": {
+    "kernel_main": {
+      "token": "TALOS: kernel_main",
+      "occurrences": 0,
+      "first_index": null
+    },
+    "runtime_route_start": {
+      "token": "TALOS: ssh-service-smoltcp-runtime-route-start",
+      "occurrences": 0,
+      "first_index": null
+    },
+    "runtime_ready": {
+      "token": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=entry-marker-v9-20260629T231514Z",
+      "occurrences": 0,
+      "first_index": null
+    }
+  },
+  "order": {
+    "kernel_before_route_start": false,
+    "route_start_before_runtime_ready": false,
+    "kernel_before_runtime_ready": false
+  },
+  "terminal_classification": "blocked-candidate-entry-not-starting",
+  "no_packet_io": true,
+  "no_openssh_generated_root_retry": true
+}
