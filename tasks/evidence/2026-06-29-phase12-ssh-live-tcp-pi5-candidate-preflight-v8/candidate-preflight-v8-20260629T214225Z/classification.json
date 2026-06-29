@@ -1,0 +1,85 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-candidate-preflight-v8-20260629",
+  "run_label": "candidate-preflight-v8-20260629T214225Z",
+  "classification": "blocked-candidate-kernel-not-starting",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "v8 retained clean selected-fetch and helper-owned capture/restore evidence, but the nonce-bearing TALOS: ssh-service-smoltcp-runtime-ready marker was absent after power; packet-I/O/OpenSSH/generated-root retry/remote receipt/compatibility/service success/ssh-ready=true/broad shell work/phase transition remain blocked pending supervisor planning.",
+  "source_commit": "3a8f0092c9653a291be66c0581fb4287b9eda99e",
+  "archive": {
+    "path_label": "target/tmp/candidate-preflight-v8-20260629T214225Z.tar.gz",
+    "sha256": "2e599aff901b68e46ff2e8d495f0e6e1017bc44f51e53d93b035c0fa83e88372",
+    "bytes": 295724
+  },
+  "expected_fetch": {
+    "path": "da591740/kernel_2712.img",
+    "bytes": 152160,
+    "kernel_sha256": "09ee965066407ebdba1c384f10c4fa2210a5befd6a8f663b3df047b5049a6b4e"
+  },
+  "post_publication_tree_hash": "2f5083a58d2371dc13431cd545c5f9846ca9287a00531bcb31d1656d5665fb3a",
+  "final_pre_restore_tree_hash": "2f5083a58d2371dc13431cd545c5f9846ca9287a00531bcb31d1656d5665fb3a",
+  "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "tftp_event_count": 13,
+  "expected_fetch_count": 2,
+  "expected_fetch_byte_match_count": 2,
+  "marker_visible": false,
+  "checker_classification": "capture-staging-blocked",
+  "checker_rejection_reasons": [
+    "run-unique-capture-nonce-not-present-after-power",
+    "required-marker-not-present-after-power"
+  ],
+  "serial_capture": {
+    "capture_mode": "read",
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "cursor_file": 4194304,
+    "cursor_start": 4194304,
+    "cursor_end": 4194304,
+    "response_bytes": 4473,
+    "required_marker": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=candidate-preflight-v8-20260629T214225Z",
+    "required_marker_occurrences": 0,
+    "required_marker_excerpt": "",
+    "nonce_token": "capture-nonce=candidate-preflight-v8-20260629T214225Z",
+    "nonce_token_occurrences": 0,
+    "pre_power_nonce_occurrences": 0,
+    "empty_pre_power": true,
+    "nonce_fresh": false,
+    "serial_freshness_ok": true
+  },
+  "proof_run_identity": {
+    "selected_tree_hash": "2f5083a58d2371dc13431cd545c5f9846ca9287a00531bcb31d1656d5665fb3a",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 152160,
+    "tftp": {
+      "cursor_file": 4684015,
+      "delta_cursor_start": 4684015,
+      "delta_cursor_end": 4685366,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        152160,
+        152160
+      ]
+    },
+    "final_pre_restore": {
+      "tree_hash": "2f5083a58d2371dc13431cd545c5f9846ca9287a00531bcb31d1656d5665fb3a",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 152160
+    },
+    "restore": {
+      "snapshot_name": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "no_packet_io": true,
+  "no_openssh_retry": true,
+  "no_remote_receipt": true,
+  "no_compatibility_claim": true,
+  "no_service_success_claim": true,
+  "ssh_ready": false,
+  "no_phase_transition": true
+}

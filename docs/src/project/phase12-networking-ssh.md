@@ -11903,3 +11903,17 @@ phase12-ssh-live-tcp-pi5-candidate-preflight-v8-20260629; lab publication, Pi
 compatibility, service success, ssh-ready=true, broad shell work, and phase
 transition remain blocked until that explicit serialized preflight is promoted
 and accepted.
+
+phase12-ssh-live-tcp-pi5-candidate-preflight-v8-20260629 accepts
+blocked-candidate-kernel-not-starting. The selected-fetch repair held through
+lab publication and the helper-owned hardware window: TFTP observed two
+da591740/kernel_2712.img serves at 152,160 bytes, final pre-restore identity
+still reported the candidate tree
+2f5083a58d2371dc13431cd545c5f9846ca9287a00531bcb31d1656d5665fb3a, and the
+helper-owned restore returned the lab to the a0452458... control tree.
+candidate-capture-ready remains rejected because the nonce-bearing
+`TALOS: ssh-service-smoltcp-runtime-ready` marker did not appear after power.
+selected_next_task is null and planningNeeded=true; packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility, service success,
+ssh-ready=true, broad shell work, and phase transition remain blocked pending
+supervisor planning.

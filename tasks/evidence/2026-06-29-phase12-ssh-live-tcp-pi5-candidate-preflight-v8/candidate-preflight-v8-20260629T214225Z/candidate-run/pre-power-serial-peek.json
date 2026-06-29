@@ -1,0 +1,10 @@
+{
+  "action": "serial peek",
+  "base64": "",
+  "bytes": 65536,
+  "cursor": 4194304,
+  "drained": true,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "[redacted]"
+}

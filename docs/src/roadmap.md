@@ -20833,6 +20833,17 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   publication, Pi 5 power, packet-I/O, OpenSSH/generated-root retry, remote
   receipt, compatibility, service success, ssh-ready=true, broad shell work, or
   phase transition is accepted by this repair.
+- phase12-ssh-live-tcp-pi5-candidate-preflight-v8-20260629 accepts
+  blocked-candidate-kernel-not-starting. The selected-fetch repair held through
+  lab publication and helper-owned hardware capture: TFTP observed two
+  da591740/kernel_2712.img serves at 152,160 bytes, final pre-restore identity
+  stayed on candidate tree 2f5083a58..., and helper-owned restore returned the
+  lab to the a0452458... control tree. The nonce-bearing
+  `TALOS: ssh-service-smoltcp-runtime-ready` marker was absent after power, so
+  candidate-capture-ready remains rejected; selected_next_task is null and
+  planningNeeded=true before packet-I/O, OpenSSH/generated-root retry, remote
+  receipt, compatibility, service success, ssh-ready=true, broad shell work, or
+  phase transition can resume.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

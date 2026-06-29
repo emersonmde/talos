@@ -1,0 +1,43 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-candidate-preflight-v8-20260629",
+  "run_label": "candidate-preflight-v8-20260629T214225Z",
+  "source_commit": "3a8f0092c9653a291be66c0581fb4287b9eda99e",
+  "archive": {
+    "task_id": "phase12-ssh-live-tcp-pi5-candidate-preflight-v8-20260629",
+    "run_label": "candidate-preflight-v8-20260629T214225Z",
+    "source_commit": "3a8f0092c9653a291be66c0581fb4287b9eda99e",
+    "archive": {
+      "path_label": "target/tmp/candidate-preflight-v8-20260629T214225Z.tar.gz",
+      "sha256": "2e599aff901b68e46ff2e8d495f0e6e1017bc44f51e53d93b035c0fa83e88372",
+      "bytes": 295724
+    },
+    "expected_fetch": {
+      "path": "da591740/kernel_2712.img",
+      "bytes": 152160,
+      "kernel_sha256": "09ee965066407ebdba1c384f10c4fa2210a5befd6a8f663b3df047b5049a6b4e"
+    },
+    "root_kernel": {
+      "path": "kernel_2712.img",
+      "bytes": 152160,
+      "kernel_sha256": "09ee965066407ebdba1c384f10c4fa2210a5befd6a8f663b3df047b5049a6b4e"
+    },
+    "runtime_marker_route_review": "validation/rpi5-archive-review.stdout.txt",
+    "boot_artifact_bytes_retained": false
+  },
+  "baseline_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "post_publication_tree_hash": "2f5083a58d2371dc13431cd545c5f9846ca9287a00531bcb31d1656d5665fb3a",
+  "capture_suggested_classification": "reset-side-effect-without-visible-marker-candidate",
+  "capture_checker_classification": "capture-staging-blocked",
+  "checker_rejection_reasons": [
+    "run-unique-capture-nonce-not-present-after-power",
+    "required-marker-not-present-after-power"
+  ],
+  "marker_visible": false,
+  "marker_nonce": null,
+  "tftp_event_count": 13,
+  "expected_fetch_count": 2,
+  "expected_fetch_byte_match_count": 2,
+  "final_pre_restore_tree_hash": "2f5083a58d2371dc13431cd545c5f9846ca9287a00531bcb31d1656d5665fb3a",
+  "post_helper_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+}

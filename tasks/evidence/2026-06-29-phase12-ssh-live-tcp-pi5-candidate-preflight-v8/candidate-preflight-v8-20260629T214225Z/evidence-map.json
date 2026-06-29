@@ -1,0 +1,64 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-candidate-preflight-v8-20260629",
+  "run_label": "candidate-preflight-v8-20260629T214225Z",
+  "evidence_dir": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v8/candidate-preflight-v8-20260629T214225Z",
+  "aborted_pre_publication_attempt": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v8/candidate-preflight-v8-20260629T214041Z",
+  "classification": "classification.json",
+  "preflight_summary": "preflight-summary.json",
+  "candidate_identity": {
+    "source_commit": "candidate-identity/source-commit.txt",
+    "accepted_ancestry": "candidate-identity/accepted-ancestry.txt",
+    "archive_metadata": "candidate-identity/archive-metadata.json",
+    "boot_tree_manifest": "candidate-identity/boot-tree-manifest.txt",
+    "boot_tree_file_sha256": "candidate-identity/boot-tree-file-sha256.txt",
+    "publish_candidate": "candidate-identity/publish-candidate.json",
+    "status_after_publish_candidate": "candidate-identity/status-after-publish-candidate.json",
+    "boot_files_after_publish_candidate": "candidate-identity/boot-files-after-publish-candidate.json",
+    "boot_snapshots_after_publish_candidate": "candidate-identity/boot-snapshots-after-publish-candidate.json"
+  },
+  "lab_baseline_and_restore": {
+    "baseline_status": "baseline-status-before-candidate-action.json",
+    "baseline_boot_files": "baseline-boot-files-before-candidate-action.json",
+    "baseline_boot_snapshots": "baseline-boot-snapshots-before-candidate-action.json",
+    "status_after_helper": "status-after-helper.json",
+    "boot_files_after_helper": "boot-files-after-helper.json",
+    "manual_restore_after_helper": "manual-restore-after-helper.json",
+    "status_after_manual_restore": "status-after-manual-restore.json",
+    "boot_files_after_manual_restore": "boot-files-after-manual-restore.json"
+  },
+  "candidate_run": {
+    "expected_tree_hash": "candidate-run/expected-tree-hash.txt",
+    "expected_fetch_bytes": "candidate-run/expected-fetch-bytes.txt",
+    "nonce": "candidate-run/nonce.txt",
+    "serial_marker": "candidate-run/serial-marker.txt",
+    "preflight_identity": "candidate-run/preflight-identity.json",
+    "serial_cursor_before_power": "candidate-run/serial-cursor-before-power.txt",
+    "tftp_cursor_before_power": "candidate-run/tftp-cursor-before-power.txt",
+    "serial_observe_window": "candidate-run/serial-observe-window.json",
+    "tftp_delta_stable_pre_restore": "candidate-run/tftp-delta-stable-pre-restore.json",
+    "final_pre_restore_status": "candidate-run/final-pre-restore-status.json",
+    "final_pre_restore_boot_files": "candidate-run/final-pre-restore-boot-files.json",
+    "restore_snapshot": "candidate-run/restore-snapshot.json",
+    "post_restore_status": "candidate-run/post-restore-status.json",
+    "capture_invariant_summary": "candidate-run/capture-invariant-summary.json",
+    "capture_window_order": "candidate-run/capture-window-order.json",
+    "capture_window_v5_check": "candidate-run/capture-window-v5-check.json"
+  },
+  "validation": {
+    "git_status_before": "validation/git-status-before.txt",
+    "boot_tree_exit": "validation/rpi5-boot-tree.exit",
+    "boot_tree_stdout": "validation/rpi5-boot-tree.stdout.txt",
+    "archive_review_exit": "validation/rpi5-archive-review.exit",
+    "archive_review_stdout": "validation/rpi5-archive-review.stdout.txt",
+    "capture_bundle_exit": "validation/capture-bundle.exit",
+    "capture_bundle_stdout": "validation/capture-bundle.stdout.json",
+    "capture_window_check_exit": "validation/capture-window-v5-check.exit"
+  },
+  "redaction_review": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_peer_fields_retained": false,
+    "packet_payloads_retained": false,
+    "key_material_retained": false,
+    "boot_artifact_bytes_retained": false
+  }
+}
