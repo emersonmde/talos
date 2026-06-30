@@ -1,0 +1,60 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-candidate-entry-bisect-discriminator-v14-20260630",
+  "run_label": "phase12-entry-bisect-v14-20260630T125233Z",
+  "terminal_classification": "blocked-control-entry",
+  "selected_next_task": "phase12-ssh-live-tcp-kernel-entry-boundary-closeout-v14-20260630",
+  "planningNeeded": false,
+  "packetIo": false,
+  "opensshGeneratedRootRetry": false,
+  "sshReady": false,
+  "hardwareAction": true,
+  "labPublication": true,
+  "pi5PowerAction": true,
+  "bootSnapshotMutation": true,
+  "contract_checks": {
+    "source_commit": "7ee6ae84f1a44992f3c676d794dc5aef32e456cf",
+    "archive_sha256": "6d00c25878e35ee193a0da9fd01652d906ee2360adca014aad3838d02ce1cf10",
+    "expected_tree_hash": "59b29c6004943c7789d910071809291ab279a1c90cc1d1c6963fba7ea7b60f7b",
+    "preflight_tree_matches": true,
+    "final_pre_restore_tree_matches": true,
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "selected_kernel_bytes": 52848,
+    "selected_kernel_sha256": "1f2b2246fb3c5d00852ee981d0be93275786fe6e92520de5a4945d2c9862d38e",
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "stable_tftp": true,
+    "serial_capture_mode": "read",
+    "serial_response_bytes": 4473,
+    "firmware_network_present": true,
+    "firmware_network_occurrences": 2,
+    "minimal_entry_control_marker_present": false,
+    "minimal_entry_control_marker_occurrences": 0,
+    "nonce_token_occurrences": 0,
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "phase_lines": {
+    "firmware NETWORK": true,
+    "TALOS: rust_entry": false,
+    "TALOS: boot info parsed": false,
+    "TALOS: target init": false,
+    "TALOS: exceptions ready": false,
+    "TALOS: kernel_main": false,
+    "TALOS: minimal-entry-control-ready": false
+  },
+  "inconclusive_triage": {
+    "required": false,
+    "reason": "Identity, selected-fetch TFTP byte agreement, final pre-restore identity, and restore proof were decisive; capture/staging was not suspect.",
+    "known_good_control_run": false
+  },
+  "redaction_review": {
+    "task_summary_omits_raw_serial_text": true,
+    "task_summary_omits_raw_tftp_peer_logs": true,
+    "packet_payloads_retained": false,
+    "key_or_session_material_retained": false,
+    "private_user_data_retained": false,
+    "raw_serial_endpoint_artifact_retained": true,
+    "raw_tftp_endpoint_artifact_retained": true,
+    "note": "Raw lab-controller serial/TFTP artifacts are retained only under task-owned hardware evidence."
+  }
+}

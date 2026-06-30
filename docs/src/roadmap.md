@@ -21182,6 +21182,18 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   phase12-ssh-live-tcp-pi5-candidate-entry-bisect-discriminator-v14-20260630;
   packet-I/O/OpenSSH/generated-root retry remain blocked unless a later
   serialized Pi 5 task accepts candidate-capture-ready.
+- phase12-ssh-live-tcp-pi5-candidate-entry-bisect-discriminator-v14-20260630
+  accepts blocked-control-entry. The serialized Pi 5 minimal entry-control run
+  retained selected fetch identity for tree 59b29c6... and selected
+  da591740/kernel_2712.img at 52,848 bytes, observed two matching stable
+  same-cursor TFTP selected serves, preserved final pre-restore identity, and
+  restored to the a0452458... selected-control tree. The serial window retained
+  firmware NETWORK output but no rust_entry, boot-info-parsed, target-init,
+  exceptions-ready, kernel_main, or nonce-bearing minimal-entry-control-ready
+  marker. The selected next task is
+  phase12-ssh-live-tcp-kernel-entry-boundary-closeout-v14-20260630; packet-I/O,
+  OpenSSH/generated-root retry, remote receipt, compatibility, service success,
+  ssh-ready=true, broad shell work, and phase transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

@@ -12345,3 +12345,21 @@ rust_entry, boot-info-parsed, target-init, exceptions-ready, kernel_main, and
 the minimal marker, restore to
 phase12-ssh-v10-openssh-clean-pre-20260624T074100Z, and fail closed without
 selecting packet-I/O or OpenSSH directly.
+
+phase12-ssh-live-tcp-pi5-candidate-entry-bisect-discriminator-v14-20260630
+accepts blocked-control-entry. The serialized Pi 5 minimal entry-control run
+published a run-unique selected-path archive from source commit 7ee6ae84...,
+tree 59b29c6..., selected da591740/kernel_2712.img at 52,848 bytes with
+SHA-256 1f2b2246..., and required nonce-bearing
+TALOS: minimal-entry-control-ready marker. Stable same-cursor TFTP evidence
+observed two selected kernel serves with matching bytes, final pre-restore
+identity stayed on the minimal entry-control tree, and restore to
+phase12-ssh-v10-openssh-clean-pre-20260624T074100Z / a0452458... succeeded.
+The fresh serial window retained firmware NETWORK output but did not retain
+rust_entry, boot-info-parsed, target-init, exceptions-ready, kernel_main, or
+the minimal-entry-control marker. Because identity, TFTP, final identity, and
+restore proof were decisive, no inconclusive known-good control branch was
+required. The selected next task is
+phase12-ssh-live-tcp-kernel-entry-boundary-closeout-v14-20260630; packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility, service success,
+ssh-ready=true, broad shell work, and phase transition remain blocked.

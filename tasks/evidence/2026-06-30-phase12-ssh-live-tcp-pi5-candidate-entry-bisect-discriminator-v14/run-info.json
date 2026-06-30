@@ -1,0 +1,7 @@
+{
+  "run_label": "phase12-entry-bisect-v14-20260630T125233Z",
+  "run_dir": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-entry-bisect-discriminator-v14/phase12-entry-bisect-v14-20260630T125233Z",
+  "capture_exit": 0,
+  "expected_tree_hash": "59b29c6004943c7789d910071809291ab279a1c90cc1d1c6963fba7ea7b60f7b",
+  "expected_fetch_bytes": 52848
+}

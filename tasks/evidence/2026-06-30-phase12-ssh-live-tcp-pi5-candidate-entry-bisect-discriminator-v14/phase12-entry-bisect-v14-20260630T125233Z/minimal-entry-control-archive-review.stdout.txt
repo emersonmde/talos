@@ -1,0 +1,32 @@
+archive=/opt/strider/openclaw/current/workspace/tmp/phase12-entry-bisect-v14-20260630T125233Z.tar.gz
+sha256=6d00c25878e35ee193a0da9fd01652d906ee2360adca014aad3838d02ce1cf10
+file_count=19
+kernel_size=52848
+header_image_size=52848
+text_offset=0
+flags=12
+loader_diagnostic=false
+circle_config_loader_diagnostic=false
+manifest:
+  bcm2712-rpi-5-b.dtb
+  cmdline.txt
+  config.txt
+  da591740
+  da591740/bcm2712-rpi-5-b.dtb
+  da591740/cmdline.txt
+  da591740/config.txt
+  da591740/kernel8.img
+  da591740/kernel_2712.img
+  da591740/overlays
+  da591740/overlays/bcm2712d0.dtbo
+  da591740/overlays/overlay_map.dtb
+  da591740/overlays/uart0-pi5.dtbo
+  kernel8.img
+  kernel_2712.img
+  overlays
+  overlays/bcm2712d0.dtbo
+  overlays/overlay_map.dtb
+  overlays/uart0-pi5.dtbo
+minimal_entry_control=ready
+required_marker=TALOS: minimal-entry-control-ready capture-nonce=phase12-entry-bisect-v14-20260630T125233Z
+archive=/opt/strider/openclaw/current/workspace/tmp/phase12-entry-bisect-v14-20260630T125233Z.tar.gz
