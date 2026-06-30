@@ -11947,3 +11947,18 @@ planningNeeded=true; packet-I/O, OpenSSH/generated-root retry, remote receipt,
 compatibility, service success, ssh-ready=true, broad shell work, and phase
 transition remain blocked pending supervisor planning for the
 selected-fetch/no-entry boundary.
+
+phase12-ssh-live-tcp-selected-fetch-no-entry-source-reconciliation-20260630
+accepts candidate-entry-control-contract-required as a no-hardware
+source/artifact reconciliation after v9. Fresh non-published materialization
+still produces matching root and da591740/kernel_2712.img files at 152,152
+bytes, with valid Image header fields and the expected runtime-marker-route
+tokens. Static symbol/startup inspection keeps the accepted Pi 5 Image contract:
+_start and __kernel_start at 0x200000, rust_entry reachable from startup, and
+boot::rpi5::kernel_main present. No bounded source/archive repair was found, and
+raw assembly early-entry provenance markers remain quarantined. The selected
+next task is
+phase12-ssh-live-tcp-minimal-entry-control-contract-20260630, which must define
+a materially different minimal entry-control proof before any packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility, service success,
+ssh-ready=true, broad shell work, or phase transition can resume.

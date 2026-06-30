@@ -1,0 +1,3 @@
+152152 target/tmp/selected-fetch-no-entry-source-reconciliation-20260630T0024Z-boot-tree/kernel_2712.img
+152152 target/tmp/selected-fetch-no-entry-source-reconciliation-20260630T0024Z-boot-tree/da591740/kernel_2712.img
+304304 total

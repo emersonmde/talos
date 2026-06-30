@@ -1,0 +1,73 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-fetch-no-entry-source-reconciliation-20260630",
+  "terminal_classification": "candidate-entry-control-contract-required",
+  "selected_next_task": "phase12-ssh-live-tcp-minimal-entry-control-contract-20260630",
+  "planningNeeded": false,
+  "hardwareAction": false,
+  "labPublication": false,
+  "bootSnapshotMutation": false,
+  "packetIo": false,
+  "opensshGeneratedRootRetry": false,
+  "v9_inputs": {
+    "task_record": "tasks/2026-06-29-phase12-ssh-live-tcp-pi5-entry-marker-discriminator-v9.md",
+    "evidence_map": "tasks/evidence/2026-06-29-phase12-ssh-live-tcp-pi5-entry-marker-discriminator-v9/entry-marker-v9-20260629T231514Z/evidence-map.json",
+    "classification": "blocked-candidate-entry-not-starting",
+    "selected_fetch": {
+      "path": "da591740/kernel_2712.img",
+      "bytes": 152152,
+      "sha256": "6c08216a0487b1b78067b939fdfac5f9c456ec5e7e74154ebbcba502207826eb"
+    },
+    "final_pre_restore_candidate_tree": "49a9cb5bc267a3877979356cca273f1747cd7cc3430d82ac6c3bdbfddedc1a3e",
+    "missing_markers": [
+      "TALOS: kernel_main",
+      "TALOS: ssh-service-smoltcp-runtime-route-start",
+      "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=entry-marker-v9-20260629T231514Z"
+    ]
+  },
+  "materialized_archive": {
+    "archive_metadata": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-fetch-no-entry-source-reconciliation/materialized/archive-metadata.txt",
+    "boot_tree_manifest": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-fetch-no-entry-source-reconciliation/materialized/boot-tree-manifest.txt",
+    "archive_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-fetch-no-entry-source-reconciliation/validation/archive-review.stdout.txt",
+    "runtime_route_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-fetch-no-entry-source-reconciliation/validation/runtime-ready-archive-review.stdout.txt",
+    "kernel_bytes": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-fetch-no-entry-source-reconciliation/static/kernel-bytes.txt",
+    "kernel_sha256": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-fetch-no-entry-source-reconciliation/static/kernel-sha256.txt",
+    "image_header_words": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-fetch-no-entry-source-reconciliation/static/image-header-words.txt",
+    "runtime_token_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-fetch-no-entry-source-reconciliation/static/runtime-token-review.txt",
+    "source_artifact_inspection": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-fetch-no-entry-source-reconciliation/static/source-artifact-inspection.md",
+    "entry_disassembly": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-fetch-no-entry-source-reconciliation/static/entry-disassembly.txt",
+    "symbols": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-fetch-no-entry-source-reconciliation/static/symbols.txt"
+  },
+  "fresh_static_result": {
+    "source_commit": "9e7dfa5ec8300ec3ca9ddf849b8e8e0910313ad1",
+    "archive_sha256": "49839b192e0e52e3df82906799e6d11c401bb7bbf2927facd12421a82e3ea4c0",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "selected_fetch_bytes": 152152,
+    "selected_fetch_sha256": "d6f170e1edfe5bb3ed3b9b0455c03bce68b0a9b44b097cf5985f2916b239cc41",
+    "image_header": {
+      "text_offset": 0,
+      "header_image_size": 152152,
+      "flags": 12
+    },
+    "entry_symbols": {
+      "_start": "0x200000",
+      "__kernel_start": "0x200000",
+      "rust_entry": "0x20924c",
+      "boot_rpi5_kernel_main": "0x20bbb8",
+      "__kernel_image_end": "0x225258"
+    }
+  },
+  "validation": {
+    "git_status_before": "## main...origin/main [ahead 186]",
+    "non_published_materialization": "pass",
+    "source_static_review": "pass",
+    "jq_empty_evidence_map": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "redaction": {
+    "raw_serial_text": "not retained by this no-hardware task",
+    "raw_tftp_peer_lines": "not retained by this no-hardware task",
+    "private_material": "none"
+  }
+}

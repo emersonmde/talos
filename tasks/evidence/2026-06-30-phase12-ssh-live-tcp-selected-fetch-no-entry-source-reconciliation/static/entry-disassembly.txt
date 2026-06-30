@@ -1,0 +1,90 @@
+
+target/aarch64-talos-rpi5-bcm2712/debug/talos:	file format elf64-littleaarch64
+
+Disassembly of section .text.boot:
+
+0000000000200000 <_start>:
+  200000:      	b	0x200040 <_start+0x40>
+		...
+  200010: 58 52 02 00  	.word	0x00025258
+  200014: 00 00 00 00  	.word	0x00000000
+  200018: 0c 00 00 00  	.word	0x0000000c
+		...
+  200038: 41 52 4d 64  	.word	0x644d5241
+  20003c: 00 00 00 00  	.word	0x00000000
+  200040:      	mov	x19, x0
+  200044:      	mrs	x0, CPACR_EL1
+  200048:      	orr	x0, x0, #0x300000
+  20004c:      	msr	CPACR_EL1, x0
+  200050:      	isb
+  200054:      	nop
+  200058:      	adr	x0, 0x225260 <__bss_start>
+  20005c:      	nop
+  200060:      	adr	x1, 0x225270 <__heap_start>
+  200064:      	cmp	x0, x1
+  200068:      	b.hs	0x200074 <_start+0x74>
+  20006c:      	str	xzr, [x0], #0x8
+  200070:      	b	0x200064 <_start+0x64>
+  200074:      	adrp	x0, 0x365000 <__stack_bottom+0x3fd90>
+  200078:      	add	x0, x0, #0x270
+  20007c:      	mov	sp, x0
+  200080:      	mov	x0, x19
+  200084:      	bl	0x20924c <rust_entry>
+  200088:      	wfe
+  20008c:      	b	0x200088 <_start+0x88>
+
+Disassembly of section .vectors:
+
+0000000000200800 <__exception_vectors>:
+  200800:      	sub	sp, sp, #0x20
+  200804:      	stp	x0, x1, [sp]
+  200808:      	mov	x0, #0x0                // =0
+  20080c:      	str	x0, [sp, #0x10]
+  200810:      	b	0x219e60 <__exception_entry_frame>
+  200814:      	nop
+  200818:      	nop
+  20081c:      	nop
+  200820:      	nop
+  200824:      	nop
+  200828:      	nop
+  20082c:      	nop
+  200830:      	nop
+  200834:      	nop
+  200838:      	nop
+  20083c:      	nop
+  200840:      	nop
+  200844:      	nop
+  200848:      	nop
+  20084c:      	nop
+  200850:      	nop
+  200854:      	nop
+  200858:      	nop
+  20085c:      	nop
+  200860:      	nop
+  200864:      	nop
+  200868:      	nop
+  20086c:      	nop
+  200870:      	nop
+  200874:      	nop
+  200878:      	nop
+  20087c:      	nop
+  200880:      	sub	sp, sp, #0x20
+  200884:      	stp	x0, x1, [sp]
+  200888:      	mov	x0, #0x1                // =1
+  20088c:      	str	x0, [sp, #0x10]
+  200890:      	b	0x219e60 <__exception_entry_frame>
+  200894:      	nop
+  200898:      	nop
+  20089c:      	nop
+  2008a0:      	nop
+  2008a4:      	nop
+  2008a8:      	nop
+  2008ac:      	nop
+  2008b0:      	nop
+  2008b4:      	nop
+  2008b8:      	nop
+  2008bc:      	nop
+  2008c0:      	nop
+  2008c4:      	nop
+  2008c8:      	nop
+  2008cc:      	nop

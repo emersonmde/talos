@@ -1,0 +1,10 @@
+0000000000200000 T __kernel_start
+0000000000200000 T _start
+0000000000209248 t _RNvCsgchfY6xkV2w_5talos11kernel_main
+000000000020924c T rust_entry
+000000000020bbb8 t _RNvNtNtCsgchfY6xkV2w_5talos4boot4rpi511kernel_main
+0000000000219fe0 R __rodata_start
+0000000000225258 R __kernel_image_end
+0000000000225260 B __bss_start
+0000000000225270 B __heap_start
+0000000000365270 B __stack_top
