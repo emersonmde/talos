@@ -1,0 +1,326 @@
+use super::{BootInfo, rpi5_reports::*};
+use crate::device_tree::{
+    FdtHeader, FdtInitrdRange, FdtMemoryBanks, FdtMemoryReservations, FdtReservedMemoryRanges,
+};
+use crate::target::TargetServices;
+use crate::{KERNEL_GLOBAL_ALLOCATOR, arch, diagnostics, memory_map, println, target};
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+struct Rpi5DtbPhase {
+    reservations: Option<FdtMemoryReservations>,
+    reserved_memory_ranges: Option<FdtReservedMemoryRanges>,
+    memory_banks: Option<FdtMemoryBanks>,
+    blob: Option<memory_map::FdtBlobRange>,
+    firmware_initrd: Option<FdtInitrdRange>,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+struct Rpi5MemoryPhase {
+    candidate: memory_map::EarlyUsableMemory,
+    seed: memory_map::EarlyPageFrameSeed,
+    reservation: memory_map::EarlyBootstrapPageReservation,
+    layout: Option<memory_map::EarlyTranslationTableLayout>,
+}
+
+fn report_unavailable(line: &'static str) {
+    target::console::write_static(line);
+    target::rpi5::wait_uart10_empty_early_phase();
+}
+
+pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
+    target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::KernelMain);
+
+    #[cfg(talos_boot_scenario = "rpi5_minimal_entry_control")]
+    target::rpi5::run_minimal_entry_control_marker();
+
+    #[cfg(any(
+        talos_boot_scenario = "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_candidate",
+        talos_boot_scenario = "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_earliest_only_control"
+    ))]
+    target::rpi5::write_rp1_ethernet_bootinfo_report_serial_visibility_earliest_marker();
+
+    #[cfg(
+        talos_boot_scenario = "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_earliest_only_control"
+    )]
+    target::rpi5::run_rp1_ethernet_bootinfo_report_serial_visibility_earliest_only_control();
+
+    let services = target::services(boot_info);
+    let dtb = report_boot_identity(boot_info, &services);
+
+    #[cfg(talos_boot_scenario = "rpi5_ssh_service_smoltcp_runtime_ready")]
+    target::rpi5::run_ssh_service_smoltcp_runtime_ready_route();
+
+    #[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_candidate")]
+    target::rpi5::run_rp1_ethernet_bootinfo_report_serial_visibility_candidate();
+
+    let memory_phase = plan_boot_memory(&dtb);
+
+    if let Some(memory_phase) = memory_phase {
+        let caches_enabled = memory_phase
+            .layout
+            .map(|layout| enable_translation_and_caches(boot_info, layout))
+            .unwrap_or(false);
+        if caches_enabled {
+            init_bootstrap_allocator(memory_phase.reservation.remaining);
+        }
+        report_post_allocator_memory(memory_phase);
+    }
+
+    report_dtb_memory_banks(dtb.memory_banks);
+
+    #[cfg(talos_boot_scenario = "rpi5_generated_root_boot_transport")]
+    install_firmware_initramfs_generated_root(&services);
+
+    #[cfg(talos_boot_scenario = "rpi5_psci_secondary_core_alive")]
+    target::rpi5::run_psci_secondary_core_alive_proof();
+
+    #[cfg(talos_boot_scenario = "rpi5_secondary_core_workload")]
+    target::rpi5::run_secondary_core_workload_proof();
+
+    #[cfg(talos_boot_scenario = "rpi5_smp_lock_cache_coherence")]
+    target::rpi5::run_smp_lock_cache_coherence_proof();
+
+    #[cfg(talos_boot_scenario = "rpi5_cross_core_ipi_delivery")]
+    target::rpi5::run_cross_core_ipi_delivery_proof();
+
+    #[cfg(talos_boot_scenario = "rpi5_remote_wakeup_request")]
+    target::rpi5::run_remote_wakeup_request_proof();
+
+    #[cfg(talos_boot_scenario = "rpi5_production_secondary_dispatch")]
+    target::rpi5::run_production_secondary_dispatch_proof();
+
+    #[cfg(talos_boot_scenario = "rpi5_shared_scheduler_metadata")]
+    target::rpi5::run_shared_scheduler_metadata_proof();
+
+    #[cfg(talos_boot_scenario = "rpi5_shared_runqueue_migration")]
+    target::rpi5::run_shared_runqueue_migration_proof();
+
+    #[cfg(talos_boot_scenario = "rpi5_load_balancing_proof")]
+    target::rpi5::run_load_balancing_proof();
+
+
+--- main rust-entry route ---
+    #[cfg(not(all(
+        talos_target_rpi5_bcm2712,
+        any(
+            talos_boot_scenario = "rpi5_rp1_entry_control",
+            talos_boot_scenario = "rpi5_rp1_uart0_fr_read",
+            talos_boot_scenario = "rpi5_rp1_uart0_fr_read_delayed_marker",
+            talos_boot_scenario = "rpi5_rp1_final_preload_marker_hold",
+            talos_boot_scenario = "rpi5_rp1_uart0_fr_read_hold_control",
+            talos_boot_scenario = "rpi5_rp1_uart0_fr_shaped_no_mmio_marker",
+            talos_boot_scenario = "rpi5_rp1_uart0_fr_tail_stable_result",
+            talos_boot_scenario = "rpi5_rp1_uart0_fr_tail_stable_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_gpio14_status_read",
+            talos_boot_scenario = "rpi5_rp1_gpio14_status_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_interrupt_routing_msix_cfg_read",
+            talos_boot_scenario = "rpi5_rp1_interrupt_routing_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_gic_visible_route_status_read",
+            talos_boot_scenario = "rpi5_rp1_gic_visible_route_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_gpio_bank_source_status_read",
+            talos_boot_scenario = "rpi5_rp1_gpio_bank_source_status_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_clock_manager_status_read",
+            talos_boot_scenario = "rpi5_rp1_clock_manager_status_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_read",
+            talos_boot_scenario = "rpi5_rp1_gpio14_ownership_route_preflight_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_enable_toggle",
+            talos_boot_scenario = "rpi5_rp1_clock_adc_ctrl_enable_toggle_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_read",
+            talos_boot_scenario = "rpi5_rp1_clock_adc_window_coherence_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_read",
+            talos_boot_scenario = "rpi5_rp1_sysinfo_clock_sentinel_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_read",
+            talos_boot_scenario = "rpi5_rp1_clock_reset_dependency_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_dma_cache_small_diagnostic_visibility_candidate",
+            talos_boot_scenario = "rpi5_rp1_dma_cache_small_diagnostic_visibility_no_plan_control",
+            talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_visibility_candidate",
+            talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_visibility_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_decode_discriminator_candidate",
+            talos_boot_scenario = "rpi5_rp1_ethernet_gem_mid_decode_discriminator_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_ethernet_observed_window_discriminator_candidate",
+            talos_boot_scenario = "rpi5_rp1_ethernet_observed_window_discriminator_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_ethernet_prereq_ownership_candidate",
+            talos_boot_scenario = "rpi5_rp1_ethernet_prereq_ownership_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_ethernet_clock_reset_readonly_baseline_candidate",
+            talos_boot_scenario = "rpi5_rp1_ethernet_clock_reset_readonly_baseline_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_ethernet_clock_reset_write_restore_candidate",
+            talos_boot_scenario = "rpi5_rp1_ethernet_clock_reset_write_restore_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_ethernet_clk_eth_ctrl_write_restore_candidate",
+            talos_boot_scenario = "rpi5_rp1_ethernet_clk_eth_ctrl_write_restore_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_candidate",
+            talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_no_mdio_control",
+            talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_v2_candidate",
+            talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_readonly_preflight_v2_no_mdio_control",
+            talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_bmcr_autoneg_restart_candidate",
+            talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_bmcr_autoneg_restart_no_mdio_control",
+            talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_autoneg_convergence_candidate",
+            talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_autoneg_convergence_no_mdio_control",
+            talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_candidate",
+            talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_tx_selected_read_discriminator_no_mdio_control",
+            talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_candidate",
+            talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_mii_ctrl1000_master_mode_no_write_control",
+            talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_master_mode_autoneg_candidate",
+            talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_master_mode_autoneg_no_mdio_control",
+            talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_candidate",
+            talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_lifecycle_powerdown_exit_no_mdio_control",
+            talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_read",
+            talos_boot_scenario = "rpi5_rp1_pcie2_host_link_status_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_read",
+            talos_boot_scenario = "rpi5_rp1_endpoint_config_identity_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_bridge_config_preflight_read",
+            talos_boot_scenario = "rpi5_rp1_bridge_config_preflight_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_bridge_setup_state_read",
+            talos_boot_scenario = "rpi5_rp1_bridge_setup_state_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_observed_aperture_read",
+            talos_boot_scenario = "rpi5_rp1_observed_aperture_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_observed_gpio_status_read",
+            talos_boot_scenario = "rpi5_rp1_observed_gpio_status_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator",
+            talos_boot_scenario = "rpi5_rp1_gpio16_owned_event_discriminator_no_mmio_control",
+            talos_boot_scenario = "rpi5_rp1_handoff_reset",
+            talos_boot_scenario = "rpi5_rp1_post_handoff_marker_reset",
+            talos_boot_scenario = "rpi5_rp1_ethernet_kernel_entry_serial_beacon",
+            talos_boot_scenario = "rpi5_rust_entry_uart10_marker_loop"
+        )
+    )))]
+    {
+        #[cfg(talos_target_rpi5_bcm2712)]
+        target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::RustEntry);
+
+        let boot_info = BootInfo::from_aarch64_x0(dtb_pa);
+
+        #[cfg(talos_target_rpi5_bcm2712)]
+        target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::BootInfoParsed);
+
+        target::init(&boot_info);
+
+        #[cfg(talos_target_rpi5_bcm2712)]
+        target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::TargetInit);
+
+        arch::aarch64::exceptions::init();
+
+        #[cfg(talos_target_rpi5_bcm2712)]
+        target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::ExceptionsReady);
+
+        #[cfg(test)]
+        {
+            test_main();
+            target::qemu::exit_success();
+        }
+
+        #[cfg(not(test))]
+        kernel_main(&boot_info)
+    }
+
+--- minimal marker route ---
+#[cfg(talos_boot_scenario = "rpi5_minimal_entry_control")]
+pub fn run_minimal_entry_control_marker() -> ! {
+    write_early_static("TALOS: minimal-entry-control-ready");
+    if let Some(nonce) = option_env!("TALOS_CAPTURE_NONCE") {
+        if !nonce.is_empty() {
+            write_early_static(" capture-nonce=");
+            write_early_static(nonce);
+        }
+    }
+    write_early_static(" contract-id=phase12-ssh-live-tcp-minimal-entry-control-v1");
+    write_early_static(" selected-fetch-path=da591740/kernel_2712.img");
+    write_early_static(" expected-previous-marker=kernel_main");
+    write_early_static(" source=kernel-main-entry-control");
+    write_early_static(" live-tcp-route=false packet-io=false openssh=false");
+    write_early_static(" ssh-ready=false claims-service-success=false");
+    write_early_static(" claims-phase-transition=false\n");
+    wait_uart10_empty_early_phase();
+    loop {
+        core::hint::spin_loop();
+    }
+}
+
+--- boot tree helper ---
+#!/bin/sh
+set -eu
+
+if [ "$#" -ne 2 ]; then
+    echo "usage: $0 <pi-firmware-boot-source> <output-dir>" >&2
+    exit 2
+fi
+
+: "${TALOS_CAPTURE_NONCE:=minimal-entry-control-static}"
+export TALOS_CAPTURE_NONCE
+export TALOS_BOOT_SCENARIO=rpi5_minimal_entry_control
+
+./scripts/rpi5-boot-tree.sh "$1" "$2" >/dev/null
+
+serial_prefix="da591740"
+mkdir -p "$2/$serial_prefix"
+for file in config.txt cmdline.txt bcm2712-rpi-5-b.dtb kernel_2712.img kernel8.img; do
+    cp "$2/$file" "$2/$serial_prefix/$file"
+done
+
+if [ -d "$2/overlays" ]; then
+    mkdir -p "$2/$serial_prefix/overlays"
+    find "$2/overlays" -maxdepth 1 -type f -exec cp {} "$2/$serial_prefix/overlays/" \;
+fi
+
+find "$2" -type f | sort
+
+--- archive review helper ---
+#!/bin/sh
+set -eu
+
+if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
+    echo "usage: $0 <talos-rpi5-boot.tar.gz> [capture-nonce]" >&2
+    exit 2
+fi
+
+ARCHIVE="$1"
+CAPTURE_NONCE="${2:-${TALOS_CAPTURE_NONCE:-minimal-entry-control-static}}"
+
+case "$CAPTURE_NONCE" in
+    ''|*[!A-Za-z0-9_.:-]*)
+        echo "capture nonce may contain only A-Z, a-z, 0-9, _, ., :, and -" >&2
+        exit 2
+        ;;
+esac
+
+tmp_root="${TMPDIR:-/tmp}"
+work_dir="$(mktemp -d "$tmp_root/talos-rpi5-minimal-entry-control-review.XXXXXX")"
+cleanup() {
+    rm -rf "$work_dir"
+}
+trap cleanup EXIT
+
+./scripts/rpi5-archive-review.sh "$ARCHIVE"
+tar -xzf "$ARCHIVE" -C "$work_dir"
+
+if ! cmp -s "$work_dir/kernel_2712.img" "$work_dir/da591740/kernel_2712.img"; then
+    echo "serial-prefixed selected kernel differs from root kernel_2712.img" >&2
+    exit 1
+fi
+
+strings "$work_dir/kernel_2712.img" > "$work_dir/kernel_2712.strings"
+
+required_marker="TALOS: minimal-entry-control-ready capture-nonce=$CAPTURE_NONCE"
+for token in \
+    "TALOS: minimal-entry-control-ready" \
+    "capture-nonce=" \
+    "$CAPTURE_NONCE" \
+    "contract-id=phase12-ssh-live-tcp-minimal-entry-control-v1" \
+    "selected-fetch-path=da591740/kernel_2712.img" \
+    "expected-previous-marker=kernel_main" \
+    "source=kernel-main-entry-control" \
+    "live-tcp-route=false" \
+    "packet-io=false" \
+    "openssh=false" \
+    "ssh-ready=false" \
+    "claims-service-success=false" \
+    "claims-phase-transition=false"
+do
+    if ! grep -Fq "$token" "$work_dir/kernel_2712.strings"; then
+        echo "missing minimal entry-control token in kernel_2712.img: $token" >&2
+        exit 1
+    fi
+done
+
+printf 'minimal_entry_control=ready\n'
+printf 'required_marker=%s\n' "$required_marker"
+printf 'archive=%s\n' "$ARCHIVE"

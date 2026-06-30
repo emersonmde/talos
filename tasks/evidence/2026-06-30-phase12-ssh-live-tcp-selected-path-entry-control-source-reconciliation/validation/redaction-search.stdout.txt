@@ -1,0 +1,56 @@
+tasks/2026-06-30-phase12-ssh-live-tcp-selected-path-entry-control-source-reconciliation.md:118:This no-hardware task retained no raw serial text, raw TFTP peer/log-line
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-entry-control-source-reconciliation/evidence-map.json:101:    "raw_serial_text_retained": false,
+docs/src/project/phase12-networking-ssh.md:33:OpenSSH ssh-ed25519 private material. Real host-key bytes, public-key blobs,
+docs/src/project/phase12-networking-ssh.md:66:authorized_keys public-key match, supported ssh-ed25519 algorithm, valid
+docs/src/project/phase12-networking-ssh.md:8463:ssh-ed25519, chacha20-poly1305@openssh.com in both directions,
+docs/src/project/phase12-networking-ssh.md:8487:curve25519-sha256, ssh-ed25519, chacha20-poly1305@openssh.com in both
+docs/src/project/phase12-networking-ssh.md:8561:runtime format to unencrypted OpenSSH ssh-ed25519 private-key material in an
+docs/src/project/phase12-networking-ssh.md:8585:ssh-ed25519 private material. Missing, non-regular, empty, oversized,
+docs/src/project/phase12-networking-ssh.md:8589:An in-memory host-key handle can produce an ephemeral ssh-ed25519 Signature for
+docs/src/project/phase12-networking-ssh.md:8607:caller-owned exchange-hash input and an ephemeral in-memory ssh-ed25519
+docs/src/project/phase12-networking-ssh.md:8658:ssh-ed25519 host-key handle, expands RFC4253-style key material, and builds
+docs/src/project/phase12-networking-ssh.md:9052:ssh-ed25519 line in /etc/talos/ssh/authorized_keys, read through the accepted
+docs/src/project/phase12-networking-ssh.md:9053:read-only VFS boundary: optional leading whitespace, literal ssh-ed25519,
+docs/src/project/phase12-networking-ssh.md:9060:decode accepted ssh-ed25519 lines and compare the decoded publickey blob
+docs/src/project/phase12-networking-ssh.md:9076:parses only option-free ssh-ed25519 public-key lines, ignores blank and
+docs/src/project/phase12-networking-ssh.md:9081:The key-match boundary remains in-memory only: accepted decoded ssh-ed25519
+docs/src/project/phase12-networking-ssh.md:9095:The retained source/unit evidence covers accepted ssh-ed25519 key match,
+docs/src/project/phase12-networking-ssh.md:9113:read-only VFS boundary, parse only narrow option-free ssh-ed25519 public-key
+docs/src/project/phase12-networking-ssh.md:9137:The accepted algorithm is ssh-ed25519 only. The signed data is the RFC 4252
+docs/src/project/phase12-networking-ssh.md:9160:service ssh-connection, method publickey, algorithm ssh-ed25519, an
+docs/src/project/phase12-networking-ssh.md:9161:ssh-ed25519 request public-key blob, an authorized_keys prerequisite-only
+docs/src/project/phase12-networking-ssh.md:9167:ssh-ed25519 signature through the accepted ssh-key/signature surfaces, and
+docs/src/project/phase12-networking-ssh.md:9198:can locally verify only ssh-ed25519 signatures for modeled decrypted
+docs/src/project/phase12-networking-ssh.md:9215:ssh-ed25519 publickey key probes when the accepted encrypted userauth request,
+docs/src/project/phase12-networking-ssh.md:9240:message numbers for this slice: USERAUTH_PK_OK for unsigned ssh-ed25519
+docs/src/project/phase12-networking-ssh.md:9272:The retained evidence covers PK_OK for unsigned authorized ssh-ed25519 probes,
+docs/src/project/phase12-networking-ssh.md:9291:selection. USERAUTH_PK_OK is accepted only for unsigned authorized ssh-ed25519
+docs/src/project/phase12-networking-ssh.md:9315:ssh-ed25519 publickey request that has the accepted encrypted userauth request
+docs/src/project/phase12-networking-ssh.md:9343:only for a signed-valid ssh-ed25519 publickey request whose encrypted
+docs/src/project/phase12-networking-ssh.md:9397:ssh-ed25519 request. Account mismatch, disabled or missing policy, missing
+docs/src/project/phase12-networking-ssh.md:10222:only. Retained evidence excludes raw serial text, raw TFTP lines, client
+docs/src/project/phase12-networking-ssh.md:11735:format remains unencrypted OpenSSH ssh-ed25519 private-key material through the
+docs/src/project/phase12-networking-ssh.md:11785:same-request authorized-key match, supported ssh-ed25519 algorithm, valid
+docs/src/roadmap.md:16366:  server policy is curve25519-sha256, ssh-ed25519,
+docs/src/roadmap.md:16382:  ssh-ed25519, chacha20-poly1305@openssh.com, hmac-sha2-256, compression none,
+docs/src/roadmap.md:16430:  operator-provisioned unencrypted OpenSSH ssh-ed25519 private-key material at
+docs/src/roadmap.md:16446:  /etc/talos/ssh/ssh_host_ed25519_key as unencrypted OpenSSH ssh-ed25519
+docs/src/roadmap.md:16452:  produce an ephemeral in-memory ssh-ed25519 Signature for caller-owned
+docs/src/roadmap.md:16467:  ephemeral in-memory ssh-ed25519 Signature object. No private bytes,
+docs/src/roadmap.md:16510:  signs through the accepted in-memory ssh-ed25519 host-key handle, expands
+docs/src/roadmap.md:16781:  format is a narrow OpenSSH-style option-free ssh-ed25519 public-key line in
+docs/src/roadmap.md:16786:  first key-match boundary may compare decoded ssh-ed25519 publickey blobs
+docs/src/roadmap.md:16800:  parses only option-free ssh-ed25519 lines, ignores blank and leading-#
+docs/src/roadmap.md:16804:  in-memory only: decoded ssh-ed25519 publickey blobs are compared
+docs/src/roadmap.md:16815:  prerequisite. The retained source/unit evidence covers accepted ssh-ed25519
+docs/src/roadmap.md:16832:  narrow option-free ssh-ed25519 public-key lines from
+docs/src/roadmap.md:16848:  key. The first accepted algorithm is ssh-ed25519 only, and signed data is
+docs/src/roadmap.md:16860:  ssh-ed25519 signatures for modeled decrypted
+docs/src/roadmap.md:16862:  request key parses as ssh-ed25519, the authorized_keys report is a
+docs/src/roadmap.md:16887:  locally verify only ssh-ed25519 signatures for modeled decrypted
+docs/src/roadmap.md:16899:  USERAUTH_PK_OK is accepted only for unsigned ssh-ed25519 publickey key
+docs/src/roadmap.md:16915:  unsigned ssh-ed25519 publickey probes with accepted service/userauth,
+docs/src/roadmap.md:16940:  unsigned authorized ssh-ed25519 key probes after accepted service/userauth,
+docs/src/roadmap.md:16952:  signed-valid ssh-ed25519 publickey request with the accepted encrypted
+docs/src/roadmap.md:16971:  only for a signed-valid ssh-ed25519 publickey request satisfying the accepted
+docs/src/roadmap.md:17012:  policy, and signed-valid ssh-ed25519 request. Account mismatch, disabled or

@@ -1,0 +1,10 @@
+0000000000200000 T __kernel_start
+0000000000200000 T _start
+0000000000202d20 t talos::target::rpi5::run_minimal_entry_control_marker
+0000000000202f9c t talos::kernel_main
+0000000000202fa0 T rust_entry
+00000000002039bc t talos::boot::rpi5::kernel_main
+00000000002081b0 R __rodata_start
+000000000020ce78 R __kernel_image_end
+000000000020ce80 B __bss_start
+000000000020ce90 B __heap_start

@@ -1,0 +1,5 @@
+## main...origin/main [ahead 189]
+ M docs/src/project/phase12-networking-ssh.md
+ M docs/src/roadmap.md
+?? tasks/2026-06-30-phase12-ssh-live-tcp-selected-path-entry-control-source-reconciliation.md
+?? tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-entry-control-source-reconciliation/

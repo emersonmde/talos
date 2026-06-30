@@ -11991,3 +11991,22 @@ packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility,
 service success, ssh-ready=true, broad shell work, and phase transition remain
 blocked pending supervisor planning for the selected-path entry-control
 boundary.
+
+phase12-ssh-live-tcp-selected-path-entry-control-source-reconciliation-20260630
+accepts serial-capture-control-required as a no-hardware source/artifact
+reconciliation after the minimal-control blocker. Fresh non-published
+materialization still proves the selected da591740/kernel_2712.img mirror,
+52,856-byte Image, valid header fields, normal startup/rust_entry/kernel_main
+route, minimal-control tokens, and fail-closed live-TCP/OpenSSH claims. No
+bounded source, archive, helper, or lab-identity repair was found. The first
+missing fact is now whether the selected a0452458... control emits an expected
+Talos-side entry marker under the same selected-path capture contract. The
+selected next task is
+phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator-20260630;
+it must restore phase12-ssh-v10-openssh-clean-pre-20260624T074100Z, expect
+104,136-byte da591740/kernel_2712.img selected fetches, and check for the
+accepted known-good marker rpi5-production-timer-preemption: PASS while
+recording TALOS: kernel_main as metadata-only under the selected v10 control.
+live TCP candidate retry, packet-I/O, OpenSSH/generated-root retry, remote
+receipt, compatibility, service success, ssh-ready=true, broad shell work, and
+phase transition remain blocked.

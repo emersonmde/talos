@@ -20899,6 +20899,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   candidate retry, packet-I/O, OpenSSH/generated-root retry, remote receipt,
   compatibility, service success, ssh-ready=true, broad shell work, or phase
   transition can resume.
+- phase12-ssh-live-tcp-selected-path-entry-control-source-reconciliation-20260630
+  accepts serial-capture-control-required. No hardware, lab publication, or boot
+  snapshot mutation was performed. Fresh non-published minimal-control
+  materialization still proves the selected da591740/kernel_2712.img mirror,
+  52,856-byte Image, valid header fields, normal startup/rust_entry/kernel_main
+  route, minimal-control tokens, and fail-closed live-TCP/OpenSSH claims. No
+  bounded source/archive/helper/lab-identity defect was found, so the selected
+  next task is
+  phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator-20260630.
+  That successor is dependency-gated on restoring
+  phase12-ssh-v10-openssh-clean-pre-20260624T074100Z, checking 104,136-byte
+  da591740/kernel_2712.img selected fetches, and looking for the accepted
+  known-good marker rpi5-production-timer-preemption: PASS with TALOS:
+  kernel_main retained as selected-v10-control metadata only.
+  Live TCP candidate retry, packet-I/O, OpenSSH/generated-root retry, remote
+  receipt, compatibility, service success, ssh-ready=true, broad shell work,
+  and phase transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

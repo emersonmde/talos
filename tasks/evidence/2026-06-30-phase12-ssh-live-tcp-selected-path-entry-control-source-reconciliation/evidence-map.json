@@ -1,0 +1,150 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-path-entry-control-source-reconciliation-20260630",
+  "terminal_classification": "serial-capture-control-required",
+  "selected_next_task": "phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator-20260630",
+  "planningNeeded": false,
+  "hardwareAction": false,
+  "labPublication": false,
+  "bootSnapshotMutation": false,
+  "pi5PowerAction": false,
+  "liveTcpCandidateRetry": false,
+  "packetIo": false,
+  "opensshGeneratedRootRetry": false,
+  "accepted_inputs_reviewed": {
+    "v9_reconciliation_task": "tasks/2026-06-24-phase12-ssh-tftp-capture-invariant-reconciliation-v9.md",
+    "selected_fetch_no_entry_reconciliation": "tasks/2026-06-30-phase12-ssh-live-tcp-selected-fetch-no-entry-source-reconciliation.md",
+    "minimal_entry_control_contract": "tasks/2026-06-30-phase12-ssh-live-tcp-minimal-entry-control-contract.md",
+    "minimal_entry_control_discriminator": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-control-discriminator.md",
+    "known_good_control_baseline": "tasks/2026-06-29-phase12-ssh-live-tcp-known-good-control-baseline-pi5-proof.md",
+    "known_good_serial_window_completeness": "tasks/2026-06-29-phase12-ssh-live-tcp-known-good-serial-window-completeness-discriminator.md",
+    "kernel_entry_serial_beacon": "tasks/2026-06-16-phase12-rp1-ethernet-kernel-entry-serial-beacon-pi5-proof.md"
+  },
+  "static_materialization": {
+    "scenario": "rpi5_minimal_entry_control",
+    "capture_nonce": "selected-path-entry-control-reconciliation-20260630",
+    "retained_archive_bytes": false,
+    "archive_sha256": "9642a452a28201c8ee4f3471a50bc1fa560d7e00d9bfd488b8ff7002f188f3bf",
+    "kernel_sha256": "a2c2af6ddb1429073ac41a7d9b36f187486155478eb9f4d2a8641d6ebd7bcc4b",
+    "kernel_size": 52856,
+    "header_image_size": 52856,
+    "text_offset": 0,
+    "flags": 12,
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "selected_mirror": "root kernel_2712.img matches da591740/kernel_2712.img"
+  },
+  "source_static_result": {
+    "bounded_source_or_archive_defect_found": false,
+    "normal_entry_route_present": true,
+    "raw_assembly_early_entry_provenance_revived": false,
+    "tokens_present": [
+      "TALOS: minimal-entry-control-ready",
+      "capture-nonce=selected-path-entry-control-reconciliation-20260630",
+      "contract-id=phase12-ssh-live-tcp-minimal-entry-control-v1",
+      "selected-fetch-path=da591740/kernel_2712.img",
+      "expected-previous-marker=kernel_main",
+      "source=kernel-main-entry-control",
+      "live-tcp-route=false",
+      "packet-io=false",
+      "openssh=false",
+      "ssh-ready=false",
+      "claims-service-success=false",
+      "claims-phase-transition=false"
+    ],
+    "entry_symbols": {
+      "__kernel_start": "0x200000",
+      "_start": "0x200000",
+      "run_minimal_entry_control_marker": "0x202d20",
+      "talos_kernel_main": "0x202f9c",
+      "rust_entry": "0x202fa0",
+      "boot_rpi5_kernel_main": "0x2039bc",
+      "__kernel_image_end": "0x20ce78"
+    }
+  },
+  "known_good_control_comparison": {
+    "selected_control_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "restore_target": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "selected_control_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "expected_effective_kernel": "kernel_2712.img",
+    "expected_selected_fetch_path": "da591740/kernel_2712.img",
+    "selected_control_fetch_bytes": 104136,
+    "expected_known_good_marker": "rpi5-production-timer-preemption: PASS",
+    "kernel_main_policy": "metadata-only-for-selected v10 control when downstream production-timer PASS marker is present",
+    "known_good_control_baseline_classification": "known-good-control-ready",
+    "known_good_serial_window_completeness_classification": "blocked-known-good-kernel-not-starting",
+    "kernel_entry_serial_beacon_classification": "earliest-kernel-entry-beacon-observed",
+    "comparison_result": "Retained evidence shows Talos-side serial visibility depends on the selected control/artifact and capture contract: an earlier kernel-entry beacon emitted a nonce-bearing Talos marker, the selected v10 control proof accepted downstream production-timer readiness while treating kernel_main as metadata-only, and the latest minimal-control selected fetch preserved TFTP identity but emitted no nonce-bearing minimal marker."
+  },
+  "selected_successor_contract": {
+    "task_id": "phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator-20260630",
+    "snapshot_or_archive": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "restore_target": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "expected_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "expected_effective_kernel": "kernel_2712.img",
+    "expected_selected_fetch": {
+      "path": "da591740/kernel_2712.img",
+      "bytes": 104136
+    },
+    "expected_marker": "rpi5-production-timer-preemption: PASS",
+    "metadata_marker": "TALOS: kernel_main",
+    "metadata_marker_policy": "record as metadata; selected v10 control readiness is keyed to the downstream production-timer PASS marker",
+    "fail_closed_classifications": [
+      "known-good-entry-baseline-passes",
+      "blocked-known-good-entry-baseline",
+      "blocked-control-identity",
+      "blocked-control-tftp-capture",
+      "blocked-restore",
+      "inconclusive-with-required-discriminator"
+    ]
+  },
+  "first_missing_fact": "No retained same-control baseline proves that the current selected a0452458... snapshot emits an expected Talos-side entry marker under the same selected-path capture contract after the minimal-control blocker.",
+  "evidence_paths": {
+    "task_record": "tasks/2026-06-30-phase12-ssh-live-tcp-selected-path-entry-control-source-reconciliation.md",
+    "evidence_map": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-entry-control-source-reconciliation/evidence-map.json",
+    "boot_tree_manifest": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-entry-control-source-reconciliation/materialized/boot-tree-manifest.txt",
+    "archive_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-entry-control-source-reconciliation/validation/archive-review.stdout.txt",
+    "minimal_entry_control_archive_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-entry-control-source-reconciliation/validation/minimal-entry-control-archive-review.stdout.txt",
+    "source_route_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-entry-control-source-reconciliation/static/source-route-review.txt",
+    "token_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-entry-control-source-reconciliation/static/token-review.txt",
+    "symbols": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-entry-control-source-reconciliation/static/symbols.txt",
+    "kernel_bytes": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-entry-control-source-reconciliation/static/kernel-bytes.txt",
+    "kernel_sha256": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-entry-control-source-reconciliation/static/kernel-sha256.txt",
+    "image_header_words": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-entry-control-source-reconciliation/static/image-header-words.txt"
+  },
+  "validation_results": {
+    "git_status_before_action": "## main...origin/main [ahead 189]; no uncommitted Talos changes before task-owned evidence creation",
+    "accepted_evidence_review": "passed",
+    "non_published_materialization": "passed",
+    "source_static_review": "passed",
+    "known_good_control_comparison": "passed",
+    "cargo_fmt": "conditional skip: no Rust source touched",
+    "cargo_test": "conditional skip: no Rust source or target routing touched",
+    "focused_helper_validation": "passed: archive-review and minimal-entry-control archive-review helpers accepted materialized archive",
+    "jq_empty": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "redaction_search": "passed: task-owned evidence has no raw serial, raw TFTP peer/log-line fields, packet payloads, or key/session material; broader docs hits are pre-existing SSH algorithm prose",
+    "git_diff_cached_check": "passed"
+  },
+  "redaction_review": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_peer_logs_retained": false,
+    "packet_payloads_retained": false,
+    "key_or_session_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false
+  },
+  "rejected_claims": [
+    "lab publication",
+    "Pi 5 power action",
+    "hardwareTestLock acquisition",
+    "live TCP candidate retry",
+    "packet-I/O discriminator",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility",
+    "service success",
+    "ssh-ready=true",
+    "broad shell work",
+    "phase transition"
+  ]
+}
