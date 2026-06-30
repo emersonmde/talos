@@ -1,0 +1,1 @@
+ea69b6959680206781b1cb5a3e1dd25840784cdde976279e9a4816c94555f5d2  /opt/strider/openclaw/current/workspace/tmp/selected-image-handoff-v19-20260630T184630Z.tar.gz

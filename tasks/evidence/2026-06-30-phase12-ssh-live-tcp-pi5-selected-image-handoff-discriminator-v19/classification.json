@@ -1,0 +1,69 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19-20260630",
+  "terminal_classification": "selected-image-handoff-entry-reached",
+  "planningNeeded": false,
+  "selected_next_task": "phase12-ssh-live-tcp-selected-image-handoff-discriminator-closeout-v19-20260630",
+  "hardware_lock": {
+    "acquired_before_lab_publication_or_power": true,
+    "release_requires_restore_proof": true,
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "predecessor_contract": {
+    "source_commit": "309b85265cfe90b1802368bf05f44bd8e9af6ad4",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "expected_kernel_bytes": 104136,
+    "expected_kernel_sha256": "2343a009a14972d050ccf0fc706539163b6b5cb3ee3717b9cb6753f2ec7c2328",
+    "expected_marker": "rpi5-production-timer-preemption: PASS",
+    "restore_target": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "why_different_from_v18": "full current-tree startup/rust_entry/kernel_main/production-timer route instead of compact pre-stack UART marker loop"
+  },
+  "first_run": {
+    "label": "selected-image-handoff-v19-20260630T184630Z",
+    "classification": "identity-join-mismatch",
+    "decisive": false,
+    "rejection_reasons": [
+      "serial-freshness-v1-not-proven"
+    ],
+    "disposition": "inconclusive-capture-freshness-rerun-with-changed-drain"
+  },
+  "decisive_run": {
+    "label": "selected-image-handoff-v19-rerun-drain64-20260630T184819Z",
+    "suggested_classification": "post-handoff-marker-visible",
+    "selected_tree_hash": "4edd4f1dad12ea06e3c45b1435f9a2d16e9c2046226d8963a0d8413a9f7226d1",
+    "effective_kernel": "kernel_2712.img",
+    "selected_fetch_count": 2,
+    "selected_fetch_byte_match_count": 2,
+    "tftp_event_count": 13,
+    "serial_capture_mode": "read",
+    "serial_observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "serial_response_bytes": 8291,
+    "pre_power_drain_empty": true,
+    "has_firmware_network": true,
+    "firmware_network_occurrences": 2,
+    "has_expected_marker": true,
+    "expected_marker_occurrences": 1,
+    "has_kernel_main": false,
+    "final_pre_restore_identity": {
+      "tree_hash": "4edd4f1dad12ea06e3c45b1435f9a2d16e9c2046226d8963a0d8413a9f7226d1",
+      "effective_kernel": "kernel_2712.img",
+      "expected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes_match": true
+    },
+    "restore": {
+      "snapshot_name": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    },
+    "identity_join_rejection_reasons": []
+  },
+  "non_claims": [
+    "no packet I/O",
+    "no OpenSSH/generated-root retry",
+    "no remote receipt",
+    "no compatibility/service readiness",
+    "no minimal-entry route repair started",
+    "no broad shell work",
+    "no phase transition"
+  ]
+}

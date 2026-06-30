@@ -1,0 +1,92 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19-20260630",
+  "terminal_classification": "selected-image-handoff-entry-reached",
+  "planningNeeded": false,
+  "selected_next_task": "phase12-ssh-live-tcp-selected-image-handoff-discriminator-closeout-v19-20260630",
+  "evidence_paths": {
+    "task_record": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19.md",
+    "classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19/classification.json",
+    "decisive_run_dir": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19/selected-image-handoff-v19-rerun-drain64-20260630T184819Z",
+    "first_inconclusive_run_dir": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19/selected-image-handoff-v19-20260630T184630Z",
+    "archive_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19/validation/archive-review.stdout.txt",
+    "kernel_sha256": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19/static/kernel-sha256.txt",
+    "kernel_bytes": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19/static/kernel-bytes.txt",
+    "selected_root_match": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19/static/selected-root-match.txt",
+    "token_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19/static/token-review.txt"
+  },
+  "decisive_evidence_summary": {
+    "label": "selected-image-handoff-v19-rerun-drain64-20260630T184819Z",
+    "suggested_classification": "post-handoff-marker-visible",
+    "selected_tree_hash": "4edd4f1dad12ea06e3c45b1435f9a2d16e9c2046226d8963a0d8413a9f7226d1",
+    "effective_kernel": "kernel_2712.img",
+    "selected_fetch_count": 2,
+    "selected_fetch_byte_match_count": 2,
+    "tftp_event_count": 13,
+    "serial_capture_mode": "read",
+    "serial_observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "serial_response_bytes": 8291,
+    "pre_power_drain_empty": true,
+    "has_firmware_network": true,
+    "firmware_network_occurrences": 2,
+    "has_expected_marker": true,
+    "expected_marker_occurrences": 1,
+    "has_kernel_main": false,
+    "final_pre_restore_identity": {
+      "tree_hash": "4edd4f1dad12ea06e3c45b1435f9a2d16e9c2046226d8963a0d8413a9f7226d1",
+      "effective_kernel": "kernel_2712.img",
+      "expected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes_match": true
+    },
+    "restore": {
+      "snapshot_name": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    },
+    "identity_join_rejection_reasons": []
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Executed selected Pi 5 current-tree production-timer selected-path handoff discriminator."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "First capture-freshness rejection was resolved by changed 64-attempt pre-power drain rerun."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Selected TFTP byte service, final identity, and restore proof match the predecessor contract."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "PASS marker is decisive for this task even when TALOS: kernel_main is absent from the retained direct-read window."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Closeout must decide the next bounded task before minimal-entry repair, packet I/O, OpenSSH retry, service readiness, broad shell work, or phase transition."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Immediate packet-I/O/OpenSSH/service-readiness/phase-transition successors remain blocked."
+    }
+  ],
+  "validation_results": {
+    "git_status_before_action": "recorded",
+    "archive_materialization_review": "pass",
+    "lab_api_candidate_identity_after_publication_before_power": "pass",
+    "fresh_serial_cursor_and_capture": "pass on rerun; empty pre-power drain and direct-read post-power window",
+    "tftp_cursor_delta_before_restore": "pass; stable selected-byte evidence",
+    "final_pre_restore_identity_before_restore": "pass",
+    "restore_to_predecessor_baseline": "pass",
+    "jq_empty_task_json_and_state": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "redaction_review": {
+    "raw_lab_serial_tftp_retained_under_task_owned_run_dirs": true,
+    "packet_payloads_retained": false,
+    "key_or_session_material_retained": false,
+    "private_user_data_retained": false
+  }
+}

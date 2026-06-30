@@ -12594,3 +12594,21 @@ phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19-20260630;
 minimal-entry route repair, packet-I/O/OpenSSH/generated-root retry, remote
 receipt, compatibility/service readiness, broad shell work, and phase
 transition remain blocked.
+
+phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19-20260630
+accepts selected-image-handoff-entry-reached. Serialized Pi 5 hardware
+evidence published the current-tree production-timer selected-path control
+archive selected by the v19 reconciliation: selected tree
+4edd4f1dad12ea06e3c45b1435f9a2d16e9c2046226d8963a0d8413a9f7226d1,
+effective kernel kernel_2712.img, and selected da591740/kernel_2712.img at
+104,136 bytes with SHA-256 2343a009.... The first run was capture-inconclusive
+because pre-power serial drain did not empty; the rerun changed the capture
+condition to a 64-attempt pre-power drain, drained empty before power, observed
+two stable selected TFTP serves, retained firmware NETWORK output and one
+rpi5-production-timer-preemption: PASS marker, confirmed final pre-restore
+identity, and restored phase12-ssh-v10-openssh-clean-pre-20260624T074100Z to
+tree a0452458.... The selected next task is
+phase12-ssh-live-tcp-selected-image-handoff-discriminator-closeout-v19-20260630;
+minimal-entry repair, packet-I/O/OpenSSH/generated-root retry, remote receipt,
+compatibility/service readiness, broad shell work, and phase transition remain
+blocked until closeout explicitly reconciles the frontier.
