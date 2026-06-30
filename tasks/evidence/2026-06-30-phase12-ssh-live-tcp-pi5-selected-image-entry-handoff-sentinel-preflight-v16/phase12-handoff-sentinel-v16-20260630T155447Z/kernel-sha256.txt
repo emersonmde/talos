@@ -1,0 +1,1 @@
+7a841135cb2e5d6bf9be11d900e8c9fbabbac32a43f539780a90adc50e374888  target/tmp/phase12-handoff-sentinel-v16-20260630T155447Z-boot-tree/kernel_2712.img

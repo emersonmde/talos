@@ -1,0 +1,3 @@
+handoff_sentinel=ready
+required_marker=TALOS: selected-image-handoff-sentinel-v16
+archive=target/tmp/phase12-handoff-sentinel-v16-20260630T155447Z-talos-rpi5-boot.tar.gz

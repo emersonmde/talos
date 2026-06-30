@@ -1,0 +1,120 @@
+{
+  "contract_version": "pi5-candidate-capture-window-v5",
+  "base_contracts": [
+    "pi5-capture-transaction-v2",
+    "pi5-capture-transaction-v3",
+    "pi5-capture-transaction-run-unique-v1",
+    "pi5-capture-chain-v4",
+    "pi5-candidate-capture-window-v5"
+  ],
+  "run_label": "phase12-handoff-sentinel-v16-20260630T155447Z",
+  "report_kind": "candidate",
+  "decisive_rp1_hardware_classification_allowed": false,
+  "classification": "capture-staging-blocked",
+  "rejection_reasons": [
+    "missing-run-unique-capture-nonce",
+    "required-marker-not-present-after-power"
+  ],
+  "endpoint_identity": {
+    "root_endpoint": {
+      "endpoint": "GET /",
+      "curl_exit": 0,
+      "http_code": 404,
+      "body_bytes": 55,
+      "usable_for_selected_tree_identity": false,
+      "selected_tree_identity_source": "/boot/files",
+      "fallback_used": true,
+      "fallback_reason": "root-endpoint-http-non-2xx"
+    },
+    "selected_tree_identity_source": "/boot/files",
+    "fallback_used": true,
+    "trust_boundary": {
+      "api_visible_boot_files_sufficient": false,
+      "requires_same_power_cycle_tftp_served_kernel_byte_agreement": true,
+      "requires_final_pre_restore_identity": true
+    }
+  },
+  "proof_run_identity": {
+    "selected_tree_hash": "531cc00d5d4f28696993a3c3852dde5b2fcbc32dee63a9412a472720371d31e0",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 87432,
+    "tftp": {
+      "cursor_file": 4700227,
+      "delta_cursor_start": 4700227,
+      "delta_cursor_end": 4701578,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "expected_fetch_bytes_seen": [
+        87432,
+        87432
+      ]
+    },
+    "final_pre_restore": {
+      "tree_hash": "531cc00d5d4f28696993a3c3852dde5b2fcbc32dee63a9412a472720371d31e0",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes": 87432
+    },
+    "restore": {
+      "snapshot_name": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "serial_capture": {
+    "capture_mode": "read",
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "cursor_file": 4194304,
+    "cursor_start": 4194304,
+    "cursor_end": 4194304,
+    "response_bytes": 4475,
+    "required_marker": "TALOS: selected-image-handoff-sentinel-v16",
+    "required_marker_occurrences": 0,
+    "required_marker_excerpt": "",
+    "nonce_token": null,
+    "nonce_token_occurrences": 0,
+    "pre_power_nonce_occurrences": 0,
+    "empty_pre_power": true,
+    "nonce_fresh": false,
+    "serial_freshness_ok": true
+  },
+  "claim_boundary": {
+    "accepted_if_ready": "capture-chain identity/freshness only",
+    "rejected_runtime_claims": [
+      "live-gem-visibility",
+      "ethernet-driver-readiness",
+      "rp1-mmio-dma-programming",
+      "packet-io",
+      "networking",
+      "ssh",
+      "phase-transition"
+    ]
+  },
+  "rule": "v5 requires v4 identity/freshness plus helper-owned capture-window order proving TFTP and final pre-restore identity were captured before restore",
+  "v4_exit": 1,
+  "v4_stderr": "",
+  "capture_window_contract": {
+    "helper": "scripts/rpi5-capture-invariant-proof-bundle.sh",
+    "run_label": "phase12-handoff-sentinel-v16-20260630T155447Z",
+    "helper_run_completed": true,
+    "completed_at": "2026-06-30T15:56:26Z",
+    "completion_event_count": 8,
+    "rule": "final-pre-restore identity and stable TFTP delta must be captured by this helper before restore; post-restore/control identity must never satisfy candidate pre-restore evidence; candidate-capture-ready also requires helper_run_completed=true from this foreground helper",
+    "stage_order": [
+      "preflight_identity",
+      "pre_power_cursors",
+      "power_cycle",
+      "serial_observe_window",
+      "tftp_delta_stable_pre_restore",
+      "final_pre_restore_identity",
+      "restore_snapshot",
+      "post_restore_identity"
+    ],
+    "final_pre_restore_before_restore": true,
+    "tftp_delta_before_restore": true,
+    "failure_boundary": "restore/control identity cannot satisfy candidate pre-restore evidence; missing or out-of-order helper-owned window metadata fails closed"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "action": "boot archive publish",
+  "tree_hash": "531cc00d5d4f28696993a3c3852dde5b2fcbc32dee63a9412a472720371d31e0",
+  "effective_kernel": "kernel_2712.img",
+  "configured_kernel": "kernel_2712.img",
+  "selected_fetch": {
+    "name": "da591740/kernel_2712.img",
+    "bytes": 87432,
+    "sha256": null
+  }
+}

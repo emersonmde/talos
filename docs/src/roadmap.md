@@ -21270,6 +21270,18 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   phase12-ssh-live-tcp-pi5-selected-image-entry-handoff-sentinel-preflight-v16-20260630;
   packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
   broad shell work, and phase transition remain blocked.
+- phase12-ssh-live-tcp-pi5-selected-image-entry-handoff-sentinel-preflight-v16-20260630
+  accepts blocked-selected-image-handoff. Serialized Pi 5 hardware evidence
+  restored the phase12-ssh-v10-openssh-clean-pre-20260624T074100Z baseline and
+  proved selected-byte service for the handoff sentinel image: tree
+  531cc00d5d4f28696993a3c3852dde5b2fcbc32dee63a9412a472720371d31e0, selected
+  da591740/kernel_2712.img at 87,432 bytes, SHA-256 7a841135..., and two
+  stable same-cursor selected kernel serves. The fresh serial window retained
+  firmware NETWORK output but no TALOS: selected-image-handoff-sentinel-v16 or
+  later Talos marker. The selected next task is
+  phase12-ssh-live-tcp-selected-image-entry-handoff-boundary-closeout-v16-20260630;
+  packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
+  broad shell work, and phase transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

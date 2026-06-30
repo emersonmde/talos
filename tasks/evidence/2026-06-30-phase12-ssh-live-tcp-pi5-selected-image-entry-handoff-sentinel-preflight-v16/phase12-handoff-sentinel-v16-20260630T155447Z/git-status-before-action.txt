@@ -1,0 +1,2 @@
+## main...origin/main [ahead 214]
+?? tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-handoff-sentinel-preflight-v16/
