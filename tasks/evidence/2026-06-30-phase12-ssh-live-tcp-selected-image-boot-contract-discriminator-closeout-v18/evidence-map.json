@@ -1,0 +1,60 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-image-boot-contract-discriminator-closeout-v18-20260630",
+  "terminal_classification": "selected-image-boot-contract-handoff-blocker-supervisor-planning",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "v18 proved selected-byte service for the repeated compact boot-contract _start discriminator image, final pre-restore identity, and restore, but still observed no TALOS: boot-contract-v18 or later Talos marker after firmware NETWORK. Supervisor must plan the next bounded firmware/image-handoff investigation or discriminator before any rerun, packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness claim, minimal-entry route repair, broad shell work, or phase transition.",
+  "referenced_evidence": {
+    "reconciliation_task": "tasks/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17.md",
+    "reconciliation_evidence_map": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17/evidence-map.json",
+    "discriminator_task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-boot-contract-discriminator-v18.md",
+    "discriminator_evidence_map": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-boot-contract-discriminator-v18/evidence-map.json",
+    "discriminator_classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-boot-contract-discriminator-v18/classification.json",
+    "run_dir": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-boot-contract-discriminator-v18/phase12-boot-contract-v18-20260630T1709Z/"
+  },
+  "reconciled_facts": {
+    "predecessor_classification": "blocked-selected-image-handoff-after-boot-contract-discriminator",
+    "source_commit": "9b6f1654d85a73b4f5b07c89c41cfa99230a9c9f",
+    "published_tree_hash": "61811ab93aafa897cf5a0c937bf5485b0abdd4f7c14d770d399393d98f3866c9",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "selected_kernel_size_bytes": 87432,
+    "selected_kernel_sha256": "fb501f7374888158c60f090b3cc0805f8fda97d98fd18e966c307310b5c00753",
+    "selected_kernel_serve_count": 2,
+    "selected_kernel_serve_byte_match_count": 2,
+    "final_pre_restore_identity_matched": true,
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "marker_classification": {
+    "firmware_NETWORK": "present",
+    "TALOS_boot_contract_v18": "absent",
+    "TALOS_kernel_main": "absent",
+    "later_Talos_marker": "absent"
+  },
+  "successor_analysis": {
+    "minimal_entry_route_repair_authorized": false,
+    "packet_io_authorized": false,
+    "openssh_generated_root_retry_authorized": false,
+    "remote_receipt_authorized": false,
+    "compatibility_or_service_readiness_claim_authorized": false,
+    "broad_shell_work_authorized": false,
+    "phase_transition_authorized": false,
+    "mechanically_unblocked_successor": null
+  },
+  "validation_results": {
+    "git_status_before_action": "pass",
+    "jq_empty_referenced_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "redaction_review": {
+    "raw_serial_text_retained_in_closeout": false,
+    "raw_tftp_peer_logs_retained_in_closeout": false,
+    "packet_payloads_retained": false,
+    "key_or_session_material_retained": false,
+    "private_user_data_retained": false,
+    "references_task_owned_hardware_evidence_only": true
+  },
+  "commit": "recorded in talos-supervisor-state.json after final commit"
+}

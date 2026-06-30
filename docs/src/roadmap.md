@@ -21333,6 +21333,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
   minimal-entry route repair, broad shell work, and phase transition remain
   blocked.
+- phase12-ssh-live-tcp-selected-image-boot-contract-discriminator-closeout-v18-20260630
+  accepts selected-image-boot-contract-handoff-blocker-supervisor-planning. No
+  code, hardware, lab publication, boot snapshot mutation, Pi 5 power cycle,
+  packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility
+  claim, service success claim, ssh-ready=true, fake/kernel-backed command
+  expansion, minimal-entry route repair, broad shell work, or phase transition
+  was performed. The closeout preserves the v18 decisive facts: selected-byte
+  service for the repeated compact boot-contract _start discriminator image,
+  final pre-restore identity on tree 61811ab93..., and restore to
+  a0452458.... The first missing fact remains the firmware-to-selected-image
+  handoff into the selected kernel bytes because the fresh serial window
+  retained firmware NETWORK output but no TALOS: boot-contract-v18 marker,
+  kernel_main, or later Talos marker. No queued successor is mechanically
+  unblocked; selected_next_task is null and planningNeeded=true before any
+  rerun, packet-I/O/OpenSSH/generated-root retry, compatibility/service
+  readiness, minimal-entry route repair, broad shell work, or phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
