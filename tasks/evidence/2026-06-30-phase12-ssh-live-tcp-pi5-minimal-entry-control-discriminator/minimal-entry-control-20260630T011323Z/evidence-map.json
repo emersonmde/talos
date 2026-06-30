@@ -1,0 +1,39 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-minimal-entry-control-discriminator-20260630",
+  "run_label": "minimal-entry-control-20260630T011323Z",
+  "evidence_dir": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-control-discriminator/minimal-entry-control-20260630T011323Z",
+  "classification": "blocked-selected-path-entry-control",
+  "artifacts": {
+    "classification": "classification.json",
+    "archive_metadata": "control-identity/archive-metadata.json",
+    "control_capture_summary": "control-run/capture-invariant-summary.json",
+    "capture_window_order": "control-run/capture-window-order.json",
+    "capture_window_v5_check": "control-run/capture-window-v5-check.json",
+    "marker_check": "control-run/minimal-entry-control-marker-check.json",
+    "post_restore_status": "status-after-helper.json",
+    "post_restore_boot_files": "boot-files-after-helper.json",
+    "validations": "validation/"
+  },
+  "validation": {
+    "git_status_before": "validation/git-status-before.txt",
+    "boot_tree_exit": "validation/rpi5-minimal-entry-control-boot-tree.exit",
+    "archive_review_exit": "validation/rpi5-minimal-entry-control-archive-review.exit",
+    "capture_bundle_exit": "validation/capture-bundle.exit",
+    "capture_window_v5_check_exit": "validation/capture-window-v5-check.exit"
+  },
+  "redaction": "Raw serial/TFTP text, peer/address/mac/ip-like fields, and raw log line fields in JSON evidence are scrubbed after checker execution before commit.",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "Minimal entry-control discriminator preserved the first missing fact; supervisor planning required before retrying candidate/runtime work.",
+  "rejected_claims": [
+    "live TCP runtime route",
+    "packet-I/O discriminator",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility",
+    "service success",
+    "ssh-ready=true",
+    "broad shell work",
+    "phase transition"
+  ]
+}

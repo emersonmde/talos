@@ -20889,6 +20889,16 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   Packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility,
   service success, ssh-ready=true, broad shell work, and phase transition
   remain blocked.
+- phase12-ssh-live-tcp-pi5-minimal-entry-control-discriminator-20260630
+  accepts blocked-selected-path-entry-control. The selected minimal control
+  archive was served twice through da591740/kernel_2712.img at 52,848 bytes and
+  final pre-restore identity stayed on control tree ab20b3c9..., but the
+  retained post-power serial window had zero nonce-bearing TALOS:
+  minimal-entry-control-ready markers while firmware NETWORK markers were
+  present. selected_next_task is null and planningNeeded=true before live TCP
+  candidate retry, packet-I/O, OpenSSH/generated-root retry, remote receipt,
+  compatibility, service success, ssh-ready=true, broad shell work, or phase
+  transition can resume.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

@@ -1,0 +1,32 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-minimal-entry-control-discriminator-20260630",
+  "run_label": "minimal-entry-control-20260630T011323Z",
+  "source_commit": "6e1ff8bb4a2a23d11f97078cf6c07e24d5fc4fcc",
+  "archive": {
+    "task_id": "phase12-ssh-live-tcp-pi5-minimal-entry-control-discriminator-20260630",
+    "run_label": "minimal-entry-control-20260630T011323Z",
+    "source_commit": "6e1ff8bb4a2a23d11f97078cf6c07e24d5fc4fcc",
+    "archive": {
+      "path_label": "target/tmp/minimal-entry-control-20260630T011323Z.tar.gz",
+      "sha256": "72dffa14b6bca6711288ab2684e23c64ae8755a0653b5fc68ce4dba1836c6a06",
+      "bytes": 114774
+    },
+    "expected_fetch": {
+      "path": "da591740/kernel_2712.img",
+      "bytes": 52848,
+      "kernel_sha256": "adca8ccfe7a9d7fa23ef93275c6afec3730c27ed2df5fc308ef2bc772060d8ed"
+    },
+    "root_kernel": {
+      "path": "kernel_2712.img",
+      "bytes": 52848,
+      "kernel_sha256": "adca8ccfe7a9d7fa23ef93275c6afec3730c27ed2df5fc308ef2bc772060d8ed"
+    },
+    "minimal_entry_control_review": "validation/rpi5-minimal-entry-control-archive-review.stdout.txt",
+    "boot_artifact_bytes_retained": false
+  },
+  "baseline_tree_hash": "[redacted]",
+  "post_publication_tree_hash": "ab20b3c96ce9b71aa8b19e5a277ebb119c6a0d34465d940b9c34fbdac2897c6b",
+  "terminal_classification": "blocked-selected-path-entry-control",
+  "selected_next_task": null,
+  "planningNeeded": true
+}

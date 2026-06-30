@@ -1,0 +1,32 @@
+archive=target/tmp/minimal-entry-control-20260630T011323Z.tar.gz
+sha256=72dffa14b6bca6711288ab2684e23c64ae8755a0653b5fc68ce4dba1836c6a06
+file_count=19
+kernel_size=52848
+header_image_size=52848
+text_offset=0
+flags=12
+loader_diagnostic=false
+circle_config_loader_diagnostic=false
+manifest:
+  bcm2712-rpi-5-b.dtb
+  cmdline.txt
+  config.txt
+  da591740
+  da591740/bcm2712-rpi-5-b.dtb
+  da591740/cmdline.txt
+  da591740/config.txt
+  da591740/kernel8.img
+  da591740/kernel_2712.img
+  da591740/overlays
+  da591740/overlays/bcm2712d0.dtbo
+  da591740/overlays/overlay_map.dtb
+  da591740/overlays/uart0-pi5.dtbo
+  kernel8.img
+  kernel_2712.img
+  overlays
+  overlays/bcm2712d0.dtbo
+  overlays/overlay_map.dtb
+  overlays/uart0-pi5.dtbo
+minimal_entry_control=ready
+required_marker=TALOS: minimal-entry-control-ready capture-nonce=minimal-entry-control-20260630T011323Z
+archive=target/tmp/minimal-entry-control-20260630T011323Z.tar.gz

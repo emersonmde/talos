@@ -1,0 +1,14 @@
+{
+  "run_label": "minimal-entry-control-20260630T011323Z",
+  "checker": "minimal-entry-control-marker-v1",
+  "required_marker": "TALOS: minimal-entry-control-ready capture-nonce=minimal-entry-control-20260630T011323Z",
+  "selected_fetch_count": 2,
+  "selected_fetch_byte_match_count": 2,
+  "final_pre_restore_selected_tree_ok": true,
+  "marker_occurrences": 0,
+  "nonce_occurrences": 0,
+  "serial_freshness_ok": false,
+  "terminal_classification": null,
+  "no_live_tcp": true,
+  "no_openssh_generated_root_retry": true
+}

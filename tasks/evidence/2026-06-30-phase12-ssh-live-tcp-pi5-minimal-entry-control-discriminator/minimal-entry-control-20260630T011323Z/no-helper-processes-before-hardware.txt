@@ -1,0 +1,3 @@
+pre-hardware helper process check was contaminated by the worker shell command string and is not used as acceptance evidence.
+The authoritative serialized hardware evidence for this task is hardwareTestLock plus the foreground rpi5-capture-invariant-proof-bundle capture-window order.
+No separate background capture helper output is used for classification.

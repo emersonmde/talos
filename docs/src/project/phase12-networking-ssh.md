@@ -11978,3 +11978,16 @@ phase12-ssh-live-tcp-pi5-minimal-entry-control-discriminator-20260630.
 Packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility,
 service success, ssh-ready=true, broad shell work, and phase transition remain
 blocked.
+
+phase12-ssh-live-tcp-pi5-minimal-entry-control-discriminator-20260630 accepts
+blocked-selected-path-entry-control. The minimal control archive was published
+and fetched through the selected da591740/kernel_2712.img path twice at 52,848
+bytes, with final pre-restore identity still on tree
+ab20b3c96ce9b71aa8b19e5a277ebb119c6a0d34465d940b9c34fbdac2897c6b before
+restore to a0452458.... The post-power serial window retained firmware NETWORK
+markers but zero nonce-bearing TALOS: minimal-entry-control-ready markers.
+selected_next_task is null and planningNeeded=true; live TCP candidate retry,
+packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility,
+service success, ssh-ready=true, broad shell work, and phase transition remain
+blocked pending supervisor planning for the selected-path entry-control
+boundary.
