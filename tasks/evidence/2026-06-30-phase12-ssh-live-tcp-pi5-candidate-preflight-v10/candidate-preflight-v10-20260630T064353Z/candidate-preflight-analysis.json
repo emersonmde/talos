@@ -1,0 +1,80 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-candidate-preflight-v10-20260630",
+  "run_label": "candidate-preflight-v10-20260630T064353Z",
+  "terminal_classification": "blocked-candidate-kernel-not-starting",
+  "planningNeeded": true,
+  "planningReason": "Selected v10 candidate bytes were published and served twice from da591740/kernel_2712.img, but the retained post-power serial window showed firmware NETWORK/TFTP output only and did not contain the nonce-bearing route-start or runtime-ready marker. Packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility, service success, ssh-ready=true, broad shell work, and phase transition remain blocked pending supervisor planning.",
+  "selected_next_task": null,
+  "candidate_identity": {
+    "source_commit": "fb7f371765f4e5022dc56ffa038c5a6c338d5bcd",
+    "archive_sha256": "d9cd5e672cb6e873d3f61a87a81e2f484f93f36b8a07ff72ddce45b3a99d84f4",
+    "published_tree_hash": "67035e440ea9b8cfc555ee55603808bdc5c99f9ef461260c348670705c23667d",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "kernel_sha256": "3e260a556cbe39c0fd49c0649ce5ec523491cac77a342e843d1fbd62f23dbd3c",
+    "kernel_bytes": 152152,
+    "expected_kernel_sha256": "3e260a556cbe39c0fd49c0649ce5ec523491cac77a342e843d1fbd62f23dbd3c",
+    "expected_kernel_bytes": 152152,
+    "selected_matches_root": true
+  },
+  "lab_identity": {
+    "publish_ok": true,
+    "power_cycle_ok": true,
+    "pre_power_tree_hash": "67035e440ea9b8cfc555ee55603808bdc5c99f9ef461260c348670705c23667d",
+    "pre_power_effective_kernel": "kernel_2712.img",
+    "final_pre_restore_tree_hash": "67035e440ea9b8cfc555ee55603808bdc5c99f9ef461260c348670705c23667d",
+    "final_pre_restore_effective_kernel": "kernel_2712.img",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "post_restore_effective_kernel": "kernel_2712.img",
+    "restore_ok": true,
+    "restore_target_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "restored_to_target": true
+  },
+  "serial_summary": {
+    "raw_artifact": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-preflight-v10/candidate-preflight-v10-20260630T064353Z/candidate-preflight-v10-20260630T064353Z-runtime-readiness-primary.json",
+    "capture_mode": "read",
+    "response_bytes": 4475,
+    "firmware_network_present": true,
+    "route_marker_present": false,
+    "runtime_ready_marker_present": false,
+    "capture_nonce_present": false,
+    "route_before_ready": false,
+    "helper_exit_code": 1,
+    "helper_classification": "known-good-fetch-observed-without-talos-readiness"
+  },
+  "tftp_summary": {
+    "raw_artifact": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-preflight-v10/candidate-preflight-v10-20260630T064353Z/tftp-delta-stable-pre-restore.json",
+    "helper_exit_code": 0,
+    "stable": true,
+    "event_count": 13,
+    "cursor_start": 4692121,
+    "cursor_end": 4693472,
+    "selected_fetch_count": 2,
+    "selected_fetch_bytes": [
+      152152,
+      152152
+    ]
+  },
+  "restore_summary": {
+    "helper_exit_code": 0,
+    "restored_to": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "restored_to_expected_tree": true
+  },
+  "helper_exit_codes": {
+    "runtime_readiness_retain": 1,
+    "tftp_stable_delta": 0,
+    "restore": 0
+  },
+  "rejected_claims": [
+    "candidate-capture-ready",
+    "packet I/O",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility",
+    "service success",
+    "ssh-ready=true",
+    "broad shell work",
+    "phase transition"
+  ],
+  "first_missing_fact": "No nonce-bearing TALOS ssh-service-smoltcp runtime route-start or runtime-ready marker appeared after selected v10 kernel bytes were served."
+}

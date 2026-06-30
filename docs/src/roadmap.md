@@ -21006,6 +21006,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   OpenSSH/generated-root retry, remote receipt, compatibility, service success,
   ssh-ready=true, broad shell work, and phase transition remain blocked unless
   that hardware task accepts candidate-capture-ready.
+- phase12-ssh-live-tcp-pi5-candidate-preflight-v10-20260630 accepts
+  blocked-candidate-kernel-not-starting. The serialized Pi 5 run published the
+  v10 runtime-marker candidate from source commit
+  fb7f371765f4e5022dc56ffa038c5a6c338d5bcd. Stable lab identity and TFTP
+  evidence showed tree 67035e44... serving two selected
+  da591740/kernel_2712.img fetches at 152,152 bytes with SHA-256
+  3e260a556cbe39c0fd49c0649ce5ec523491cac77a342e843d1fbd62f23dbd3c, then
+  restore returned to the a0452458... selected-control tree. The serial window
+  contained firmware NETWORK/TFTP output but no nonce-bearing route-start or
+  runtime-ready marker, so candidate-capture-ready remains rejected.
+  selected_next_task is null and planningNeeded=true; packet-I/O,
+  OpenSSH/generated-root retry, remote receipt, compatibility, service success,
+  ssh-ready=true, broad shell work, and phase transition remain blocked pending
+  supervisor planning.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

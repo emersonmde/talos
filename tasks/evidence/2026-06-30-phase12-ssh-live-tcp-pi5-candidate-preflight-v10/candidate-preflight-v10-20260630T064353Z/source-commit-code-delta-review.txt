@@ -1,0 +1,1 @@
+pass: no src/scripts/build/target metadata changes after source commit
