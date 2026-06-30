@@ -30,6 +30,9 @@ fn report_unavailable(line: &'static str) {
 pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
     target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::KernelMain);
 
+    #[cfg(talos_boot_scenario = "rpi5_minimal_entry_control")]
+    target::rpi5::run_minimal_entry_control_marker();
+
     #[cfg(any(
         talos_boot_scenario = "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_candidate",
         talos_boot_scenario = "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_earliest_only_control"

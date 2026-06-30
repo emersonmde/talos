@@ -20875,6 +20875,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   phase12-ssh-live-tcp-minimal-entry-control-contract-20260630. Packet-I/O,
   OpenSSH/generated-root retry, remote receipt, compatibility, service success,
   ssh-ready=true, broad shell work, and phase transition remain blocked.
+- phase12-ssh-live-tcp-minimal-entry-control-contract-20260630 accepts
+  minimal-entry-control-proof-ready. No hardware, lab publication, or boot
+  snapshot mutation was performed. The new rpi5_minimal_entry_control scenario
+  keeps the selected Pi 5 Image/startup/rust_entry/kernel_main path, emits the
+  existing TALOS: kernel_main marker, then emits nonce-bearing TALOS:
+  minimal-entry-control-ready before BootInfo/reporting/runtime work. Static
+  archive review proves the selected da591740/kernel_2712.img mirror, 52,848
+  byte kernel image, accepted Image header fields, and fail-closed non-claims
+  for live TCP, packet I/O, OpenSSH, ssh-ready, service success, and phase
+  transition. The selected next task is
+  phase12-ssh-live-tcp-pi5-minimal-entry-control-discriminator-20260630.
+  Packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility,
+  service success, ssh-ready=true, broad shell work, and phase transition
+  remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

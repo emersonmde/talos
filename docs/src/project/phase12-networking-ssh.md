@@ -11962,3 +11962,19 @@ phase12-ssh-live-tcp-minimal-entry-control-contract-20260630, which must define
 a materially different minimal entry-control proof before any packet-I/O,
 OpenSSH/generated-root retry, remote receipt, compatibility, service success,
 ssh-ready=true, broad shell work, or phase transition can resume.
+
+phase12-ssh-live-tcp-minimal-entry-control-contract-20260630 accepts
+minimal-entry-control-proof-ready as a no-hardware control contract. The new
+rpi5_minimal_entry_control scenario uses the normal selected Pi 5
+Image/startup/rust_entry/kernel_main path, emits the existing TALOS:
+kernel_main early-phase line, then immediately emits nonce-bearing TALOS:
+minimal-entry-control-ready before BootInfo/reporting/runtime work. Static
+archive review proves the selected da591740/kernel_2712.img mirror, kernel
+bytes/hash/header metadata, and fail-closed non-claims: live-tcp-route=false,
+packet-io=false, openssh=false, ssh-ready=false,
+claims-service-success=false, and claims-phase-transition=false. The selected
+next task is
+phase12-ssh-live-tcp-pi5-minimal-entry-control-discriminator-20260630.
+Packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility,
+service success, ssh-ready=true, broad shell work, and phase transition remain
+blocked.

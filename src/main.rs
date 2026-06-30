@@ -124,6 +124,7 @@
             talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_boot_transport_sentinel_control",
             talos_boot_scenario = "rpi5_rp1_ethernet_kernel_entry_serial_beacon",
             talos_boot_scenario = "rpi5_ssh_service_smoltcp_runtime_ready",
+            talos_boot_scenario = "rpi5_minimal_entry_control",
             talos_boot_scenario = "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_candidate",
             talos_boot_scenario = "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_earliest_only_control",
             talos_boot_scenario = "rpi5_rp1_ethernet_mdio_register_vector_staging_sentinel_candidate",
