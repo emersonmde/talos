@@ -21194,6 +21194,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   phase12-ssh-live-tcp-kernel-entry-boundary-closeout-v14-20260630; packet-I/O,
   OpenSSH/generated-root retry, remote receipt, compatibility, service success,
   ssh-ready=true, broad shell work, and phase transition remain blocked.
+- phase12-ssh-live-tcp-kernel-entry-boundary-closeout-v14-20260630 accepts
+  minimal-entry-control-no-kernel-entry-supervisor-planning. No code, hardware,
+  lab publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+  OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+  success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+  shell work, or phase transition was performed. The v14 discriminator proved
+  selected-byte service for a minimal current-tree entry-control image with two
+  matching selected da591740/kernel_2712.img serves, final pre-restore identity
+  on tree 59b29c6..., and restore to a0452458.... The serial window still
+  retained only firmware NETWORK output and no rust_entry, boot-info-parsed,
+  target-init, exceptions-ready, kernel_main, or nonce-bearing
+  minimal-entry-control-ready marker. No queued successor is mechanically
+  unblocked; selected_next_task is null and planningNeeded=true before any
+  rerun, packet-I/O, OpenSSH/generated-root retry, remote receipt,
+  compatibility/service readiness claim, broad shell work, or phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
