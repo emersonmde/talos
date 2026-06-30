@@ -12421,3 +12421,21 @@ phase12-ssh-live-tcp-selected-image-entry-boundary-closeout-v15-20260630;
 packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility,
 service success, ssh-ready=true, broad shell work, and phase transition remain
 blocked.
+
+phase12-ssh-live-tcp-selected-image-entry-boundary-closeout-v15-20260630
+accepts selected-image-entry-no-entry-supervisor-planning. No code
+implementation, hardware action, lab publication, boot snapshot mutation, Pi 5
+power cycle, packet-I/O, OpenSSH/generated-root retry, remote receipt,
+compatibility claim, service success claim, ssh-ready=true, fake/kernel-backed
+command expansion, broad shell work, or phase transition was performed. The
+v15 repaired preflight proved selected-byte service for the repaired minimal
+entry-control image: tree 4380329c..., selected da591740/kernel_2712.img at
+52,848 bytes with SHA-256 f68905fc..., two stable same-cursor selected serves,
+final pre-restore identity on the repaired tree, and restore to a0452458....
+The serial window still retained firmware NETWORK output but no TALOS:
+asm_start, TALOS: asm_pre_rust_entry, Rust phase lines, kernel_main,
+nonce-bearing minimal-entry-control-ready marker, or run nonce. No queued
+successor is mechanically unblocked; selected_next_task is null and
+planningNeeded=true before any rerun, packet-I/O, OpenSSH/generated-root retry,
+remote receipt, compatibility/service readiness claim, broad shell work, or
+phase transition.

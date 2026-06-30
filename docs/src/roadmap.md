@@ -21238,6 +21238,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   phase12-ssh-live-tcp-selected-image-entry-boundary-closeout-v15-20260630;
   packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
   broad shell work, and phase transition remain blocked.
+- phase12-ssh-live-tcp-selected-image-entry-boundary-closeout-v15-20260630
+  accepts selected-image-entry-no-entry-supervisor-planning. No code, hardware,
+  lab publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+  OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+  success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+  shell work, or phase transition was performed. The closeout preserves the v15
+  decisive facts: tree 4380329c..., selected da591740/kernel_2712.img at
+  52,848 bytes with SHA-256 f68905fc..., two stable same-cursor selected
+  serves, final pre-restore identity on the repaired tree, and restore to
+  a0452458.... The serial window still retained firmware NETWORK output but no
+  TALOS assembly-entry markers, Rust phase lines, kernel_main, nonce-bearing
+  minimal-entry-control-ready marker, or run nonce. No queued successor is
+  mechanically unblocked; selected_next_task is null and planningNeeded=true
+  before any rerun, packet-I/O/OpenSSH/generated-root retry,
+  compatibility/service readiness, broad shell work, or phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
