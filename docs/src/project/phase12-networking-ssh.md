@@ -12010,3 +12010,19 @@ recording TALOS: kernel_main as metadata-only under the selected v10 control.
 live TCP candidate retry, packet-I/O, OpenSSH/generated-root retry, remote
 receipt, compatibility, service success, ssh-ready=true, broad shell work, and
 phase transition remain blocked.
+
+phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator-20260630
+accepts known-good-entry-baseline-passes. The worker restored
+phase12-ssh-v10-openssh-clean-pre-20260624T074100Z, confirmed selected tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 with
+effective_kernel=kernel_2712.img, retained an empty pre-power serial drain,
+power-cycled once, observed firmware NETWORK output, one
+rpi5-production-timer-preemption: PASS marker, and stable TFTP evidence with
+two 104,136-byte da591740/kernel_2712.img serves before restoring the same
+selected snapshot. TALOS: kernel_main remains selected-v10-control metadata
+only when the downstream PASS marker is present. This proves the minimal-control
+missing marker is not a generic selected-path serial/capture outage, but it
+does not authorize live TCP candidate retry, packet-I/O, OpenSSH/generated-root
+retry, remote receipt, compatibility, service success, ssh-ready=true, broad
+shell work, or phase transition; planningNeeded=true for the next supervisor
+boundary.

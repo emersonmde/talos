@@ -1,0 +1,79 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator-20260630",
+  "run_label": "selected-path-known-good-entry-baseline-20260630T021700Z",
+  "terminal_classification": "known-good-entry-baseline-passes",
+  "planningNeeded": true,
+  "selected_next_task": null,
+  "hardwareAction": true,
+  "labPublication": false,
+  "bootSnapshotMutation": true,
+  "pi5PowerAction": true,
+  "liveTcpCandidateRetry": false,
+  "packetIo": false,
+  "opensshGeneratedRootRetry": false,
+  "expected_contract": {
+    "snapshot_or_archive": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "restore_target": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "expected_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "expected_effective_kernel": "kernel_2712.img",
+    "expected_selected_fetch": {
+      "path": "da591740/kernel_2712.img",
+      "bytes": 104136
+    },
+    "expected_marker": "rpi5-production-timer-preemption: PASS",
+    "metadata_marker": "TALOS: kernel_main"
+  },
+  "observed": {
+    "pre_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "final_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "serial_capture_mode": "read",
+    "serial_response_bytes": 6580,
+    "has_required_marker": true,
+    "required_marker_occurrences": 1,
+    "has_kernel_main": false,
+    "has_firmware_network": true,
+    "firmware_network_occurrences": 2,
+    "stable_tftp": true,
+    "served_selected_kernel_fetches": 2,
+    "pre_power_serial_drain_discriminator": "empty-read-before-power",
+    "valid_known_good_talos_readiness_v3": true,
+    "readiness_rejection_reasons": []
+  },
+  "evidence_paths": {
+    "before_restore_status": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator/selected-path-known-good-entry-baseline-20260630T021700Z/before-restore-status.json",
+    "selected_restore_before_power": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator/selected-path-known-good-entry-baseline-20260630T021700Z/selected-restore-before-power.json",
+    "pre_status": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator/selected-path-known-good-entry-baseline-20260630T021700Z/pre-status.json",
+    "pre_boot_files": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator/selected-path-known-good-entry-baseline-20260630T021700Z/pre-boot-files.json",
+    "pre_power_serial_peek": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator/selected-path-known-good-entry-baseline-20260630T021700Z/pre-power-serial-peek.json",
+    "serial_drain_before_power": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator/selected-path-known-good-entry-baseline-20260630T021700Z/serial-drain-before-power.json",
+    "serial_cursor_before_power": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator/selected-path-known-good-entry-baseline-20260630T021700Z/serial-cursor-before-power.json",
+    "tftp_cursor_before_power": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator/selected-path-known-good-entry-baseline-20260630T021700Z/tftp-cursor-before-power.json",
+    "power_cycle": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator/selected-path-known-good-entry-baseline-20260630T021700Z/power-cycle.json",
+    "serial_window": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator/selected-path-known-good-entry-baseline-20260630T021700Z/serial-observe-window.json",
+    "runtime_readiness_primary": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator/selected-path-known-good-entry-baseline-20260630T021700Z/selected-path-known-good-entry-baseline-20260630T021700Z-runtime-readiness-primary.json",
+    "tftp_delta": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator/selected-path-known-good-entry-baseline-20260630T021700Z/tftp-delta-stable-pre-restore.json",
+    "final_pre_restore_status": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator/selected-path-known-good-entry-baseline-20260630T021700Z/final-pre-restore-status.json",
+    "readiness_v3_classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator/selected-path-known-good-entry-baseline-20260630T021700Z/readiness-v3-classification.json",
+    "restore_snapshot": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator/selected-path-known-good-entry-baseline-20260630T021700Z/restore-snapshot.json",
+    "post_restore_status": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator/selected-path-known-good-entry-baseline-20260630T021700Z/post-restore-status.json"
+  },
+  "validation_results": {
+    "git_status_before_action": "recorded",
+    "lab_api_status_boot_files_snapshots": "recorded before power and after restore",
+    "serial_cursor_completeness": "recorded",
+    "tftp_tail_cursor_and_stable_delta": "recorded",
+    "marker_capture_checker": "rpi5-observe-serial-window.sh configured for rpi5-production-timer-preemption: PASS",
+    "restore_confirmation": "recorded",
+    "no_live_tcp_no_packet_io_no_openssh": true
+  },
+  "redaction_review": {
+    "packet_payloads_retained": false,
+    "key_or_session_material_retained": false,
+    "private_user_data_retained": false,
+    "raw_tftp_peer_logs_retained": true,
+    "raw_serial_endpoint_artifact_retained": true,
+    "note": "Raw lab-controller serial/TFTP artifacts are retained only under the task-owned hardware evidence directory; task summary omits packet payloads and SSH/session material."
+  }
+}
