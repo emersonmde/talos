@@ -1,0 +1,1 @@
+task evidence retains metadata only; generated boot tree and archive bytes removed after static review

@@ -1,0 +1,118 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-image-handoff-contract-reconciliation-v19-20260630",
+  "terminal_classification": "selected-image-handoff-control-discriminator-ready",
+  "planningNeeded": false,
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19-20260630",
+  "preserved_v18_facts": {
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "selected_fetch_count": 2,
+    "selected_kernel_bytes": 87432,
+    "selected_kernel_sha256": "fb501f7374888158c60f090b3cc0805f8fda97d98fd18e966c307310b5c00753",
+    "final_pre_restore_identity": "61811ab93aafa897cf5a0c937bf5485b0abdd4f7c14d770d399393d98f3866c9",
+    "restore_target": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "absent_markers": [
+      "TALOS: boot-contract-v18",
+      "TALOS: kernel_main",
+      "later Talos marker"
+    ]
+  },
+  "reviewed_inputs": {
+    "v17_reconciliation": "tasks/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17.md",
+    "v18_hardware_discriminator": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-boot-contract-discriminator-v18.md",
+    "v18_closeout": "tasks/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-discriminator-closeout-v18.md",
+    "current_tree_production_timer_control": "tasks/2026-06-30-phase12-ssh-live-tcp-current-tree-production-timer-control-contract.md",
+    "current_tree_production_timer_hardware_control": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-current-tree-production-timer-entry-baseline-discriminator.md"
+  },
+  "fresh_static_materialization": {
+    "source_commit": "309b85265cfe90b1802368bf05f44bd8e9af6ad4",
+    "boot_source_dir_label": "target/rpi5-production-timer-preemption-boot-tree",
+    "archive_sha256": "1a70c5b918e25322d235eee2ea5e985f45b054f25f90cbd9496face3d66b6fc7",
+    "kernel_sha256": "2343a009a14972d050ccf0fc706539163b6b5cb3ee3717b9cb6753f2ec7c2328",
+    "kernel_bytes": 104136,
+    "selected_fetch": {
+      "path": "da591740/kernel_2712.img",
+      "selected_matches_root": true,
+      "bytes": 104136
+    },
+    "header": {
+      "text_offset": 0,
+      "header_image_size": 104136,
+      "flags": 12,
+      "magic": "ARMd"
+    },
+    "expected_marker": "rpi5-production-timer-preemption: PASS",
+    "artifacts_removed_after_review": true
+  },
+  "successor_contract": {
+    "task_id": "phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19-20260630",
+    "classification_if_marker_present": "selected-image-handoff-entry-reached",
+    "classification_if_selected_bytes_without_marker": "blocked-selected-image-handoff-after-v19-discriminator",
+    "expected_marker": "rpi5-production-timer-preemption: PASS",
+    "metadata_only_when_pass_present": [
+      "TALOS: kernel_main",
+      "earlier phase lines"
+    ],
+    "restore_target": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "why_different_from_v18": "Uses the full current-tree production-timer selected-path control that has accepted downstream PASS evidence, rather than the compact pre-stack UART marker loop used by v18."
+  },
+  "evidence_paths": {
+    "task_record": "tasks/2026-06-30-phase12-ssh-live-tcp-selected-image-handoff-contract-reconciliation-v19.md",
+    "classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-handoff-contract-reconciliation-v19/classification.json",
+    "control_contract": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-handoff-contract-reconciliation-v19/static/control-discriminator-contract.txt",
+    "archive_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-handoff-contract-reconciliation-v19/validation/production-timer-control-archive-review.stdout.txt",
+    "boot_tree_manifest": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-handoff-contract-reconciliation-v19/materialized/boot-tree-manifest.txt",
+    "archive_sha256": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-handoff-contract-reconciliation-v19/materialized/archive-sha256.txt",
+    "kernel_sha256": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-handoff-contract-reconciliation-v19/static/kernel-sha256.txt",
+    "kernel_bytes": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-handoff-contract-reconciliation-v19/static/kernel-bytes.txt",
+    "image_header": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-handoff-contract-reconciliation-v19/static/image-header.txt",
+    "token_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-handoff-contract-reconciliation-v19/static/token-review.txt",
+    "symbol_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-handoff-contract-reconciliation-v19/static/symbols.txt",
+    "no_boot_artifact_bytes": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-handoff-contract-reconciliation-v19/validation/no-boot-artifact-bytes.txt"
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Reconciled v18 as selected-byte service without entry proof."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Selected a bounded current-tree production-timer selected-path control discriminator for the next serialized hardware task."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Static source, linker, Image header, config/kernel naming, and selected mirror review found no bounded repair before the next control discriminator."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Fresh current-tree production-timer materialization preserves root/selected kernel equality, valid Image header fields, and the PASS marker token."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "The hardware successor must decide the fresh selected-path control result before packet-I/O, OpenSSH/generated-root retry, remote receipt, service readiness, minimal-entry repair, broad shell work, or phase transition."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Same-shape v18 rerun, packet-I/O, OpenSSH/generated-root retry, remote receipt, service-readiness claims, minimal-entry repair, broad shell work, and phase transition as immediate successors."
+    }
+  ],
+  "validation_results": {
+    "git_status_before_action": "pass",
+    "jq_empty_referenced_and_new_json": "pass",
+    "sh_n": "not run; no shell helpers touched",
+    "cargo_fmt": "not run; no Rust source touched",
+    "cargo_build_selected_handoff_scenario": "pass via production-timer control materialization",
+    "non_published_archive_materialization_review": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "redaction_review": {
+    "raw_hardware_serial_or_tftp_logs_retained": false,
+    "packet_payloads_retained": false,
+    "key_or_session_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false,
+    "stable_secret_derived_identifiers_retained": false
+  }
+}

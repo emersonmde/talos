@@ -12573,3 +12573,24 @@ successor is mechanically unblocked; selected_next_task is null and
 planningNeeded=true before any rerun, packet-I/O, OpenSSH/generated-root
 retry, remote receipt, compatibility/service readiness claim, minimal-entry
 route repair, broad shell work, or phase transition.
+
+phase12-ssh-live-tcp-selected-image-handoff-contract-reconciliation-v19-20260630
+accepts selected-image-handoff-control-discriminator-ready. No hardware action,
+lab publication, boot snapshot mutation, Pi 5 power action, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility/service readiness
+claim, ssh-ready=true, fake/kernel-backed command expansion, broad shell work,
+or phase transition was performed. Static review preserved the v18 facts:
+selected da591740/kernel_2712.img bytes were served twice at 87,432 bytes,
+final pre-restore selected identity held, restore succeeded, and no TALOS:
+boot-contract-v18 or later Talos marker appeared. No bounded source, linker,
+Image header, selected mirror, config/kernel naming, or archive-helper repair
+was accepted. The selected successor is a qualitatively different current-tree
+production-timer selected-path control discriminator: source commit
+309b85265cfe90b1802368bf05f44bd8e9af6ad4, selected
+da591740/kernel_2712.img at 104,136 bytes with SHA-256 2343a009..., valid
+Image header fields, root/selected kernel equality, and expected
+rpi5-production-timer-preemption: PASS. The selected next task is
+phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19-20260630;
+minimal-entry route repair, packet-I/O/OpenSSH/generated-root retry, remote
+receipt, compatibility/service readiness, broad shell work, and phase
+transition remain blocked.

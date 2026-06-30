@@ -1,0 +1,14 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-image-handoff-contract-reconciliation-v19-20260630",
+  "terminal_classification": "selected-image-handoff-control-discriminator-ready",
+  "planningNeeded": false,
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19-20260630",
+  "hardwareAction": false,
+  "labPublication": false,
+  "bootSnapshotMutation": false,
+  "pi5PowerAction": false,
+  "packetIo": false,
+  "opensshGeneratedRootRetry": false,
+  "repair_found": false,
+  "control_discriminator_ready": true
+}

@@ -1,0 +1,16 @@
+source_commit=309b85265cfe90b1802368bf05f44bd8e9af6ad4
+boot_source=target/rpi5-production-timer-preemption-boot-tree
+boot_tree=target/tmp/2026-06-30-phase12-ssh-live-tcp-selected-image-handoff-contract-reconciliation-v19-production-timer-control-boot-tree
+archive=target/tmp/2026-06-30-phase12-ssh-live-tcp-selected-image-handoff-contract-reconciliation-v19-production-timer-control-boot.tar.gz
+restore_target=phase12-ssh-v10-openssh-clean-pre-20260624T074100Z
+expected_selected_path=da591740/kernel_2712.img
+expected_selected_bytes=104136
+expected_kernel_sha256=2343a009a14972d050ccf0fc706539163b6b5cb3ee3717b9cb6753f2ec7c2328
+expected_marker=rpi5-production-timer-preemption: PASS
+why_different_from_v18=full current-tree production-timer selected-path control that previously reached downstream PASS twice; not a compact pre-stack UART marker loop
+hardwareAction=false
+labPublication=false
+bootSnapshotMutation=false
+pi5PowerAction=false
+packetIo=false
+opensshGeneratedRootRetry=false

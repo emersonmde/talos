@@ -1,0 +1,4 @@
+TALOS: asm_pre_rust_entry
+TALOS: secondary_pre_rust_entry
+rpi5-production-timer-preemption: PASS
+TALOS: secondary_rust_entry

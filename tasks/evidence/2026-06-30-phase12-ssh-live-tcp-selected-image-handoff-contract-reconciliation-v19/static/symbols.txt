@@ -1,0 +1,5 @@
+0000000000200000 T _start
+00000000002052c8 t _RNvNtNtCsgchfY6xkV2w_5talos6target4rpi537run_production_timer_preemption_proof
+0000000000206d30 t _RNvCsgchfY6xkV2w_5talos11kernel_main
+0000000000206df4 T rust_entry
+000000000020ab60 t _RNvNtNtCsgchfY6xkV2w_5talos4boot4rpi511kernel_main
