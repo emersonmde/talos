@@ -1,0 +1,95 @@
+{
+  "task_id": "phase12-ssh-live-tcp-candidate-no-runtime-marker-source-reconciliation-20260630",
+  "terminal_classification": "candidate-runtime-marker-route-repair-ready",
+  "planningNeeded": false,
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v11-20260630",
+  "hardwareAction": false,
+  "labPublication": false,
+  "bootSnapshotMutation": false,
+  "pi5PowerAction": false,
+  "liveTcpRetry": false,
+  "packetIo": false,
+  "opensshGeneratedRootRetry": false,
+  "reviewed_inputs": {
+    "v10_candidate_preflight": {
+      "task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-preflight-v10.md",
+      "classification": "blocked-candidate-kernel-not-starting",
+      "commit": "17542d27815bc7e3423d8684e0dbd37477bb4dcd",
+      "summary": "Selected da591740/kernel_2712.img bytes were served twice, but route-start/runtime-ready markers were absent from retained serial."
+    },
+    "current_tree_production_timer_control": {
+      "task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-current-tree-production-timer-entry-baseline-discriminator.md",
+      "classification": "current-tree-entry-path-passes-control",
+      "summary": "Downstream production-timer PASS was observed while TALOS: kernel_main remained metadata-only absent."
+    }
+  },
+  "candidate_static_review": {
+    "capture_nonce": "candidate-no-runtime-marker-reconciliation",
+    "kernel_bytes": 152160,
+    "kernel_sha256": "77a751a54f4d71d461778daac35326f966a1cced9064f1bafd4b64095a842ee1",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "selected_matches_root": true,
+    "image_header": {
+      "text_offset": 0,
+      "header_image_size": 152160,
+      "flags": 12,
+      "magic": "ARMd"
+    },
+    "runtime_marker_route_tokens_present": true,
+    "generated_boot_bytes_retained": false
+  },
+  "repair": {
+    "type": "helper-classifier-contract",
+    "file": "scripts/rpi5-observe-runtime-readiness.sh",
+    "summary": "Added TALOS_READINESS_REQUIRED_MARKERS all-of marker checks and TALOS_READINESS_REQUIRE_KERNEL_MARKER=false for contracts where kernel_main is metadata-only. Defaults preserve kernel_main-required behavior."
+  },
+  "findings": [
+    {
+      "disposition": "not-an-issue",
+      "finding": "Fresh candidate archive materialization preserves selected mirror identity, Image header fields, route-start/runtime-ready tokens, nonce, and fail-closed non-claims."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Optimized symbol/layout inspection preserves the normal Pi 5 entry path and runtime-marker route symbols."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Serial readiness helper no longer forces kernel_main for runtime-marker contracts that require route-start plus runtime-ready and explicitly mark kernel_main metadata-only."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Whether candidate hardware emits the repaired marker contract remains for the selected v11 Pi 5 preflight."
+    }
+  ],
+  "evidence_paths": {
+    "task_record": "tasks/2026-06-30-phase12-ssh-live-tcp-candidate-no-runtime-marker-source-reconciliation.md",
+    "source_artifact_inspection": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-no-runtime-marker-source-reconciliation/static/source-artifact-inspection.md",
+    "archive_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-no-runtime-marker-source-reconciliation/validation/candidate-archive-review.stdout.txt",
+    "candidate_symbols": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-no-runtime-marker-source-reconciliation/static/candidate-optz-symbols.txt",
+    "production_timer_symbols": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-no-runtime-marker-source-reconciliation/static/production-timer-optz-symbols.txt",
+    "optional_kernel_helper_fixture": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-no-runtime-marker-source-reconciliation/validation/runtime-readiness-helper-optional-kernel.stdout.json",
+    "kernel_required_helper_fixture": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-no-runtime-marker-source-reconciliation/validation/runtime-readiness-helper-kernel-required.stdout.json"
+  },
+  "validation_results": {
+    "git_status_before_edits": "recorded",
+    "fresh_non_published_candidate_archive_materialization": "pass",
+    "static_marker_checker_review": "pass",
+    "cargo_fmt": "not run; Rust source not touched",
+    "cargo_test": "not run; Rust source not touched; focused shell fixture validation run instead",
+    "sh_n": "pass",
+    "focused_helper_fixture_validation": "pass",
+    "jq_empty": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pending final staged validation"
+  },
+  "redaction_review": {
+    "raw_serial_retained": false,
+    "raw_tftp_peer_logs_retained": false,
+    "packet_payloads_retained": false,
+    "key_or_session_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false
+  },
+  "commit": null
+}

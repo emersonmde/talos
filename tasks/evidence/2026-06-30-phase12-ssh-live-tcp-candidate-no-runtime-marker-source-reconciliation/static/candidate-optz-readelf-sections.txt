@@ -1,0 +1,44 @@
+There are 17 section headers, starting at offset 0x8a8a60:
+
+Section Headers:
+  [Nr] Name              Type             Address           Offset
+       Size              EntSize          Flags  Link  Info  Align
+  [ 0]                   NULL             0000000000000000  00000000
+       0000000000000000  0000000000000000           0     0     0
+  [ 1] .text.boot        PROGBITS         0000000000200000  00010000
+       0000000000000090  0000000000000000  AX       0     0     4096
+  [ 2] .vectors          PROGBITS         0000000000200800  00010800
+       0000000000000794  0000000000000000  AX       0     0     2048
+  [ 3] .text             PROGBITS         0000000000201000  00011000
+       0000000000018fd8  0000000000000000  AX       0     0     4096
+  [ 4] .rodata           PROGBITS         0000000000219fe0  00029fe0
+       000000000000b280  0000000000000000 AMS       0     0     16
+  [ 5] .bss              NOBITS           0000000000225260  00035260
+       0000000000000010  0000000000000000  WA       0     0     16
+  [ 6] .debug_abbrev     PROGBITS         0000000000000000  00035260
+       000000000001faeb  0000000000000000           0     0     1
+  [ 7] .debug_info       PROGBITS         0000000000000000  00054d4b
+       000000000029345a  0000000000000000           0     0     1
+  [ 8] .debug_str        PROGBITS         0000000000000000  002e81a5
+       0000000000222d34  0000000000000001  MS       0     0     1
+  [ 9] .debug_line       PROGBITS         0000000000000000  0050aed9
+       000000000009cbed  0000000000000000           0     0     1
+  [10] .debug_loc        PROGBITS         0000000000000000  005a7ac6
+       00000000001ca041  0000000000000000           0     0     1
+  [11] .debug_aranges    PROGBITS         0000000000000000  00771b07
+       000000000001e9b0  0000000000000000           0     0     1
+  [12] .debug_frame      PROGBITS         0000000000000000  007904b8
+       0000000000035a48  0000000000000000           0     0     8
+  [13] .debug_ranges     PROGBITS         0000000000000000  007c5f00
+       00000000000aa0b0  0000000000000000           0     0     1
+  [14] .symtab           SYMTAB           0000000000000000  0086ffb0
+       000000000001b660  0000000000000018          16   4398     8
+  [15] .shstrtab         STRTAB           0000000000000000  0088b610
+       00000000000000a8  0000000000000000           0     0     1
+  [16] .strtab           STRTAB           0000000000000000  0088b6b8
+       000000000001d3a2  0000000000000000           0     0     1
+Key to Flags:
+  W (write), A (alloc), X (execute), M (merge), S (strings), I (info),
+  L (link order), O (extra OS processing required), G (group), T (TLS),
+  C (compressed), x (unknown), o (OS specific), E (exclude),
+  D (mbind), p (processor specific)

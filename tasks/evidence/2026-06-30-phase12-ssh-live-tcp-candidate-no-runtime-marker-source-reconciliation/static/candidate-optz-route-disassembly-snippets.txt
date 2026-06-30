@@ -1,0 +1,299 @@
+14-  20003c: 00 00 00 00  	.word	0x00000000
+15-  200040: aa0003f3     	mov	x19, x0
+16-  200044: d5381040     	mrs	x0, CPACR_EL1
+17-  200048: b26c0400     	orr	x0, x0, #0x300000
+18-  20004c: d5181040     	msr	CPACR_EL1, x0
+19-  200050: d5033fdf     	isb
+20-  200054: d503201f     	nop
+21-  200058: 10129040     	adr	x0,  <__bss_start>
+22-  20005c: d503201f     	nop
+23-  200060: 10129081     	adr	x1,  <__heap_start>
+24-<L0>:
+25-  200064: eb01001f     	cmp	x0, x1
+26-  200068: 54000062     	b.hs	 <L1>
+27-  20006c: f800841f     	str	xzr, [x0], #0x8
+28-  200070: 17fffffd     	b	 <L0>
+29-<L1>:
+30-  200074: b0000b20     	adrp	x0, 0x365000 <__stack_bottom+0x3fd90>
+31-  200078: 9109c000     	add	x0, x0, #0x270
+32-  20007c: 9100001f     	mov	sp, x0
+33-  200080: aa1303e0     	mov	x0, x19
+34:  200084: 94002472     	bl	 <rust_entry>
+35-<L2>:
+36-  200088: d503205f     	wfe
+37-  20008c: 17ffffff     	b	 <L2>
+38-
+39-Disassembly of section .vectors:
+40-
+41-0000000000200800 <__exception_vectors>:
+42-  200800: d10083ff     	sub	sp, sp, #0x20
+43-  200804: a90007e0     	stp	x0, x1, [sp]
+44-  200808: d2800000     	mov	x0, #0x0                // =0
+45-  20080c: f9000be0     	str	x0, [sp, #0x10]
+46-  200810: 14006594     	b	 <__exception_entry_frame>
+47-  200814: d503201f     	nop
+48-  200818: d503201f     	nop
+49-  20081c: d503201f     	nop
+50-  200820: d503201f     	nop
+51-  200824: d503201f     	nop
+52-  200828: d503201f     	nop
+53-  20082c: d503201f     	nop
+54-  200830: d503201f     	nop
+--
+4974-  205110: 5280014b     	mov	w11, #0xa               // =10
+4975-  205114: d2820009     	mov	x9, #0x1000             // =4096
+4976-  205118: f2afa009     	movk	x9, #0x7d00, lsl #16
+4977-  20511c: f2c00209     	movk	x9, #0x10, lsl #32
+4978-  205120: b900012b     	str	w11, [x9]
+4979-  205124: b940192a     	ldr	w10, [x9, #0x18]
+4980-  205128: d5033f9f     	dsb	sy
+4981-  20512c: d2820009     	mov	x9, #0x1000             // =4096
+4982-  205130: f2afa009     	movk	x9, #0x7d00, lsl #16
+4983-  205134: f2c00209     	movk	x9, #0x10, lsl #32
+4984-  205138: d2a00415     	mov	x21, #0x200000          // =2097152
+4985-<L2>:
+4986-  20513c: b940192a     	ldr	w10, [x9, #0x18]
+4987-  205140: 3738006a     	tbnz	w10, #0x7,  <L3>
+4988-  205144: f10006b5     	subs	x21, x21, #0x1
+4989-  205148: 54ffffa1     	b.ne	 <L2>
+4990-<L3>:
+4991-  20514c: d5033f9f     	dsb	sy
+4992-  205150: 140000ec     	b	 <OUTLINED_FUNCTION_3>
+4993-
+4994:0000000000205154 <_RNvNtNtCsgchfY6xkV2w_5talos6target4rpi543run_ssh_service_smoltcp_runtime_ready_route>:
+4995-  205154: d106c3ff     	sub	sp, sp, #0x1b0
+4996-  205158: a9157bfd     	stp	x29, x30, [sp, #0x150]
+4997-  20515c: a9166ffc     	stp	x28, x27, [sp, #0x160]
+4998-  205160: a91767fa     	stp	x26, x25, [sp, #0x170]
+4999-  205164: a9185ff8     	stp	x24, x23, [sp, #0x180]
+5000-  205168: a91957f6     	stp	x22, x21, [sp, #0x190]
+5001-  20516c: a91a4ff4     	stp	x20, x19, [sp, #0x1a0]
+5002-  205170: d298b540     	mov	x0, #0xc5aa             // =50602
+5003-  205174: 528005c1     	mov	w1, #0x2e               // =46
+5004-  205178: f2a00420     	movk	x0, #0x21, lsl #16
+5005-  20517c: f2c00000     	movk	x0, #0x0, lsl #32
+5006-  205180: f2e00000     	movk	x0, #0x0, lsl #48
+5007-  205184: 97fff939     	bl	 <_RNvNtNtCsgchfY6xkV2w_5talos6target4rpi518write_early_static>
+5008-  205188: d298bb15     	mov	x21, #0xc5d8            // =50648
+5009-  20518c: 528001e1     	mov	w1, #0xf                // =15
+5010-  205190: f2a00435     	movk	x21, #0x21, lsl #16
+5011-  205194: f2c00015     	movk	x21, #0x0, lsl #32
+5012-  205198: f2e00015     	movk	x21, #0x0, lsl #48
+5013-  20519c: aa1503e0     	mov	x0, x21
+5014-  2051a0: 97fff932     	bl	 <_RNvNtNtCsgchfY6xkV2w_5talos6target4rpi518write_early_static>
+5015-  2051a4: d298b014     	mov	x20, #0xc580            // =50560
+5016-  2051a8: 52800541     	mov	w1, #0x2a               // =42
+5017-  2051ac: f2a00434     	movk	x20, #0x21, lsl #16
+5018-  2051b0: f2c00014     	movk	x20, #0x0, lsl #32
+5019-  2051b4: f2e00014     	movk	x20, #0x0, lsl #48
+5020-  2051b8: aa1403e0     	mov	x0, x20
+5021-  2051bc: 97fff92b     	bl	 <_RNvNtNtCsgchfY6xkV2w_5talos6target4rpi518write_early_static>
+5022-  2051c0: d298bce0     	mov	x0, #0xc5e7             // =50663
+5023-  2051c4: 528004e1     	mov	w1, #0x27               // =39
+5024-  2051c8: f2a00420     	movk	x0, #0x21, lsl #16
+5025-  2051cc: f2c00000     	movk	x0, #0x0, lsl #32
+5026-  2051d0: f2e00000     	movk	x0, #0x0, lsl #48
+5027-  2051d4: 97fff925     	bl	 <_RNvNtNtCsgchfY6xkV2w_5talos6target4rpi518write_early_static>
+5028-  2051d8: 910023e8     	add	x8, sp, #0x8
+5029:  2051dc: 94000d7c     	bl	 <_RNvNtCsgchfY6xkV2w_5talos7network36live_tcp_runtime_marker_route_report>
+5030-  2051e0: f94007e8     	ldr	x8, [sp, #0x8]
+5031-  2051e4: b100051f     	cmn	x8, #0x1
+5032-  2051e8: 54000e80     	b.eq	 <L0>
+5033-  2051ec: 394523e8     	ldrb	w8, [sp, #0x148]
+5034-  2051f0: 36000f88     	tbz	w8, #0x0,  <L1>
+5035-  2051f4: 3944f7e8     	ldrb	w8, [sp, #0x13d]
+5036-  2051f8: 3944f3e9     	ldrb	w9, [sp, #0x13c]
+5037-  2051fc: d298e320     	mov	x0, #0xc719             // =50969
+5038-  205200: 3944efea     	ldrb	w10, [sp, #0x13b]
+5039-  205204: 3944fbfb     	ldrb	w27, [sp, #0x13e]
+5040-  205208: f2a00420     	movk	x0, #0x21, lsl #16
+5041-  20520c: 53103d08     	lsl	w8, w8, #16
+5042-  205210: a952dbf7     	ldp	x23, x22, [sp, #0x128]
+5043-  205214: 2a092149     	orr	w9, w10, w9, lsl #8
+5044-  205218: f2c00000     	movk	x0, #0x0, lsl #32
+5045-  20521c: 3944fff3     	ldrb	w19, [sp, #0x13f]
+5046-  205220: 2a1b611c     	orr	w28, w8, w27, lsl #24
+5047-  205224: 3944ebf8     	ldrb	w24, [sp, #0x13a]
+5048-  205228: 3944e7f9     	ldrb	w25, [sp, #0x139]
+5049-  20522c: 3944e3fa     	ldrb	w26, [sp, #0x138]
+--
+8900-  208790: 52800228     	mov	w8, #0x11               // =17
+8901-  208794: 39008678     	strb	w24, [x19, #0x21]
+8902-  208798: 39000268     	strb	w8, [x19]
+8903-  20879c: 14000007     	b	 <L5>
+8904-<L3>:
+8905-  2087a0: 52800228     	mov	w8, #0x11               // =17
+8906-  2087a4: 940001b1     	bl	 <OUTLINED_FUNCTION_10>
+8907-  2087a8: 14000004     	b	 <L5>
+8908-<L4>:
+8909-  2087ac: 940001a3     	bl	 <OUTLINED_FUNCTION_8>
+8910-  2087b0: 940001a8     	bl	 <OUTLINED_FUNCTION_9>
+8911-  2087b4: a901da74     	stp	x20, x22, [x19, #0x18]
+8912-<L5>:
+8913-  2087b8: 940001e3     	bl	 <OUTLINED_FUNCTION_21>
+8914-  2087bc: 940001e5     	bl	 <OUTLINED_FUNCTION_22>
+8915-<L6>:
+8916-  2087c0: 940001d8     	bl	 <OUTLINED_FUNCTION_19>
+8917-  2087c4: a8c47bfd     	ldp	x29, x30, [sp], #0x40
+8918-  2087c8: d65f03c0     	ret
+8919-
+8920:00000000002087cc <_RNvNtCsgchfY6xkV2w_5talos7network36live_tcp_runtime_marker_route_report>:
+8921-  2087cc: a9ba7bfd     	stp	x29, x30, [sp, #-0x60]!
+8922-  2087d0: a9016ffc     	stp	x28, x27, [sp, #0x10]
+8923-  2087d4: a90267fa     	stp	x26, x25, [sp, #0x20]
+8924-  2087d8: a9035ff8     	stp	x24, x23, [sp, #0x30]
+8925-  2087dc: a90457f6     	stp	x22, x21, [sp, #0x40]
+8926-  2087e0: a9054ff4     	stp	x20, x19, [sp, #0x50]
+8927-  2087e4: d121c3ff     	sub	sp, sp, #0x870
+8928-  2087e8: aa0803f3     	mov	x19, x8
+8929-  2087ec: 910063e8     	add	x8, sp, #0x18
+8930-  2087f0: 97fff789     	bl	 <_RNvMsG_NtCsgchfY6xkV2w_5talos7networkINtB5_28NetworkSocketDescriptorTableKj4_E3newB7_>
+8931-  2087f4: 94000180     	bl	 <OUTLINED_FUNCTION_5>
+8932-  2087f8: 940001d0     	bl	 <OUTLINED_FUNCTION_20>
+8933-  2087fc: 540000c1     	b.ne	 <L1>
+8934-<L0>:
+8935-  208800: 395847e8     	ldrb	w8, [sp, #0x611]
+8936-  208804: 92800009     	mov	x9, #-0x1               // =-1
+8937-  208808: f9000269     	str	x9, [x19]
+8938-  20880c: 39002268     	strb	w8, [x19, #0x8]
+8939-  208810: 14000014     	b	 <L4>
+8940-<L1>:
+--
+9675-  209204: d29a91e0     	mov	x0, #0xd48f             // =54415
+9676-  209208: 528002a1     	mov	w1, #0x15               // =21
+9677-  20920c: d5033f5f     	clrex
+9678-  209210: f2a00420     	movk	x0, #0x21, lsl #16
+9679-  209214: f2c00000     	movk	x0, #0x0, lsl #32
+9680-  209218: f2e00000     	movk	x0, #0x0, lsl #48
+9681-  20921c: 97ffdf7b     	bl	 <_RNvNtNtCsgchfY6xkV2w_5talos6target7console12write_static>
+9682-  209220: d2820009     	mov	x9, #0x1000             // =4096
+9683-  209224: f2afa009     	movk	x9, #0x7d00, lsl #16
+9684-  209228: f2c00209     	movk	x9, #0x10, lsl #32
+9685-  20922c: d2a00415     	mov	x21, #0x200000          // =2097152
+9686-<L4>:
+9687-  209230: b940192a     	ldr	w10, [x9, #0x18]
+9688-  209234: 3738006a     	tbnz	w10, #0x7,  <L5>
+9689-  209238: f10006b5     	subs	x21, x21, #0x1
+9690-  20923c: 54ffffa1     	b.ne	 <L4>
+9691-<L5>:
+9692-  209240: d5033f9f     	dsb	sy
+9693-  209244: 97ffdf6f     	bl	 <_RNvNtNtCsgchfY6xkV2w_5talos4arch7aarch644halt>
+9694-
+9695:0000000000209248 <_RNvCsgchfY6xkV2w_5talos11kernel_main>:
+9696:  209248: 94000a5c     	bl	 <_RNvNtNtCsgchfY6xkV2w_5talos4boot4rpi511kernel_main>
+9697-
+9698:000000000020924c <rust_entry>:
+9699-  20924c: d100c3ff     	sub	sp, sp, #0x30
+9700-  209250: a9024ffe     	stp	x30, x19, [sp, #0x20]
+9701-  209254: aa0003f3     	mov	x19, x0
+9702-  209258: 2a1f03e0     	mov	w0, wzr
+9703-  20925c: 97ffe9b2     	bl	 <_RNvNtNtCsgchfY6xkV2w_5talos6target4rpi522write_early_phase_line>
+9704-  209260: d5384248     	mrs	x8, CurrentEL
+9705-  209264: 52800029     	mov	w9, #0x1                // =1
+9706-  209268: 52800020     	mov	w0, #0x1                // =1
+9707-  20926c: 53020d08     	ubfx	w8, w8, #2, #2
+9708-  209270: a900fff3     	stp	x19, xzr, [sp, #0x8]
+9709-  209274: 390067e9     	strb	w9, [sp, #0x19]
+9710-  209278: 390063e8     	strb	w8, [sp, #0x18]
+9711-  20927c: 97ffe9aa     	bl	 <_RNvNtNtCsgchfY6xkV2w_5talos6target4rpi522write_early_phase_line>
+9712-  209280: 910023e0     	add	x0, sp, #0x8
+9713-  209284: 97ffff6a     	bl	 <_RNvNtCsgchfY6xkV2w_5talos6target4init>
+9714-  209288: 52800040     	mov	w0, #0x2                // =2
+9715-  20928c: 97ffe9a6     	bl	 <_RNvNtNtCsgchfY6xkV2w_5talos6target4rpi522write_early_phase_line>
+9716-  209290: 94000280     	bl	 <_RNvNtNtNtCsgchfY6xkV2w_5talos4arch7aarch6410exceptions4init>
+9717-  209294: 52800060     	mov	w0, #0x3                // =3
+9718-  209298: 97ffe9a3     	bl	 <_RNvNtNtCsgchfY6xkV2w_5talos6target4rpi522write_early_phase_line>
+9719-  20929c: 910023e0     	add	x0, sp, #0x8
+9720:  2092a0: 97ffffea     	bl	 <_RNvCsgchfY6xkV2w_5talos11kernel_main>
+9721-
+9722-00000000002092a4 <_RNvMNtNtCsgchfY6xkV2w_5talos11device_tree6memoryNtB2_21FdtMemoryReservations12reported_len>:
+9723-  2092a4: aa1f03e8     	mov	x8, xzr
+9724-<L0>:
+9725-  2092a8: f100111f     	cmp	x8, #0x4
+9726-  2092ac: 540000a0     	b.eq	 <L1>
+9727-  2092b0: f8418409     	ldr	x9, [x0], #0x18
+9728-  2092b4: b4000069     	cbz	x9,  <L1>
+9729-  2092b8: 91000508     	add	x8, x8, #0x1
+9730-  2092bc: 17fffffb     	b	 <L0>
+9731-<L1>:
+9732-  2092c0: aa0803e0     	mov	x0, x8
+9733-  2092c4: d65f03c0     	ret
+9734-
+9735-00000000002092c8 <_RNvMs0_NtNtCsgchfY6xkV2w_5talos11device_tree6memoryNtB5_23FdtReservedMemoryRanges12reported_len>:
+9736-  2092c8: aa0003e8     	mov	x8, x0
+9737-  2092cc: aa1f03e0     	mov	x0, xzr
+9738-  2092d0: 91004508     	add	x8, x8, #0x11
+9739-<L0>:
+9740-  2092d4: f100101f     	cmp	x0, #0x4
+--
+12734-  20bb7c: aa1303e0     	mov	x0, x19
+12735-  20bb80: 97ffff9d     	bl	 <_RNvXs2_NtCsgchfY6xkV2w_5talos15runtime_consoleINtB5_14RuntimeConsoleNtNtB7_5pl0115Pl011ENtNtCseijFR6oQb7J_4core3fmt5Write9write_strB7_.llvm.15348807704411859531>
+12736-  20bb84: a9424ff4     	ldp	x20, x19, [sp, #0x20]
+12737-  20bb88: a94157f6     	ldp	x22, x21, [sp, #0x10]
+12738-  20bb8c: f84307fe     	ldr	x30, [sp], #0x30
+12739-  20bb90: d65f03c0     	ret
+12740-
+12741-000000000020bb94 <_RNvYINtNtCsgchfY6xkV2w_5talos15runtime_console14RuntimeConsoleNtNtB7_5pl0115Pl011ENtNtCseijFR6oQb7J_4core3fmt5Write9write_fmtB7_.llvm.15348807704411859531>:
+12742-  20bb94: aa0203e3     	mov	x3, x2
+12743-  20bb98: aa0103e2     	mov	x2, x1
+12744-  20bb9c: d29c8701     	mov	x1, #0xe438             // =58424
+12745-  20bba0: f2a00421     	movk	x1, #0x21, lsl #16
+12746-  20bba4: f2c00001     	movk	x1, #0x0, lsl #32
+12747-  20bba8: f2e00001     	movk	x1, #0x0, lsl #48
+12748-  20bbac: 14003590     	b	 <_RNvNtCseijFR6oQb7J_4core3fmt5write>
+12749-
+12750-000000000020bbb0 <OUTLINED_FUNCTION_0>:
+12751-  20bbb0: 390033e8     	strb	w8, [sp, #0xc]
+12752-  20bbb4: 17ffff85     	b	 <_RNvNvMNtNtCseijFR6oQb7J_4core3ptr7mut_ptrOp3add18precondition_check>
+12753-
+12754:000000000020bbb8 <_RNvNtNtCsgchfY6xkV2w_5talos4boot4rpi511kernel_main>:
+12755-  20bbb8: d10743ff     	sub	sp, sp, #0x1d0
+12756-  20bbbc: f900dbfd     	str	x29, [sp, #0x1b0]
+12757-  20bbc0: a91c4ffe     	stp	x30, x19, [sp, #0x1c0]
+12758-  20bbc4: aa0003f3     	mov	x19, x0
+12759-  20bbc8: 52800080     	mov	w0, #0x4                // =4
+12760-  20bbcc: 97ffdf56     	bl	 <_RNvNtNtCsgchfY6xkV2w_5talos6target4rpi522write_early_phase_line>
+12761-  20bbd0: d2986e08     	mov	x8, #0xc370             // =50032
+12762-  20bbd4: d2993409     	mov	x9, #0xc9a0             // =51616
+12763-  20bbd8: 3940466a     	ldrb	w10, [x19, #0x11]
+12764-  20bbdc: f2a00428     	movk	x8, #0x21, lsl #16
+12765-  20bbe0: f2a00429     	movk	x9, #0x21, lsl #16
+12766-  20bbe4: 5280006b     	mov	w11, #0x3               // =3
+12767-  20bbe8: f2c00008     	movk	x8, #0x0, lsl #32
+12768-  20bbec: f2c00009     	movk	x9, #0x0, lsl #32
+12769-  20bbf0: 7100015f     	cmp	w10, #0x0
+12770-  20bbf4: f2e00008     	movk	x8, #0x0, lsl #48
+12771-  20bbf8: f2e00009     	movk	x9, #0x0, lsl #48
+12772-  20bbfc: 390083ea     	strb	w10, [sp, #0x20]
+12773-  20bc00: 528000ea     	mov	w10, #0x7               // =7
+12774-  20bc04: 9a881128     	csel	x8, x9, x8, ne
+12775-  20bc08: 910003e1     	mov	x1, sp
+12776-  20bc0c: 9a8b1149     	csel	x9, x10, x11, ne
+12777-  20bc10: aa1303e0     	mov	x0, x19
+12778-  20bc14: a90127e8     	stp	x8, x9, [sp, #0x10]
+12779-  20bc18: f9400268     	ldr	x8, [x19]
+12780-  20bc1c: 52800029     	mov	w9, #0x1                // =1
+12781-  20bc20: a90023e9     	stp	x9, x8, [sp]
+12782-  20bc24: 9100a3e8     	add	x8, sp, #0x28
+12783-  20bc28: 94000002     	bl	 <_RNvNtNtCsgchfY6xkV2w_5talos4boot4rpi520report_boot_identity.llvm.8399787495843342187>
+12784:  20bc2c: 97ffe54a     	bl	 <_RNvNtNtCsgchfY6xkV2w_5talos6target4rpi543run_ssh_service_smoltcp_runtime_ready_route>
+12785-
+12786-000000000020bc30 <_RNvNtNtCsgchfY6xkV2w_5talos4boot4rpi520report_boot_identity.llvm.8399787495843342187>:
+12787-  20bc30: a9ba7bfd     	stp	x29, x30, [sp, #-0x60]!
+12788-  20bc34: a9016ffc     	stp	x28, x27, [sp, #0x10]
+12789-  20bc38: a90267fa     	stp	x26, x25, [sp, #0x20]
+12790-  20bc3c: a9035ff8     	stp	x24, x23, [sp, #0x30]
+12791-  20bc40: a90457f6     	stp	x22, x21, [sp, #0x40]
+12792-  20bc44: a9054ff4     	stp	x20, x19, [sp, #0x50]
+12793-  20bc48: d107c3ff     	sub	sp, sp, #0x1f0
+12794-  20bc4c: aa0003f4     	mov	x20, x0
+12795-  20bc50: d29c9160     	mov	x0, #0xe48b             // =58507
+12796-  20bc54: aa0103f5     	mov	x21, x1
+12797-  20bc58: f2a00420     	movk	x0, #0x21, lsl #16
+12798-  20bc5c: 528004e1     	mov	w1, #0x27               // =39
+12799-  20bc60: aa0803f3     	mov	x19, x8
+12800-  20bc64: f2c00000     	movk	x0, #0x0, lsl #32
+12801-  20bc68: f2e00000     	movk	x0, #0x0, lsl #48
+12802-  20bc6c: 97ffd507     	bl	 <_RNvNtNtCsgchfY6xkV2w_5talos6target7console6__print>
+12803-  20bc70: d29c93c0     	mov	x0, #0xe49e             // =58526
+12804-  20bc74: 52800921     	mov	w1, #0x49               // =73

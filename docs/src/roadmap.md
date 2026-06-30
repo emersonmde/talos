@@ -21020,6 +21020,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   OpenSSH/generated-root retry, remote receipt, compatibility, service success,
   ssh-ready=true, broad shell work, and phase transition remain blocked pending
   supervisor planning.
+- phase12-ssh-live-tcp-candidate-no-runtime-marker-source-reconciliation-20260630
+  accepts candidate-runtime-marker-route-repair-ready. No hardware, lab
+  publication, boot snapshot mutation, Pi 5 power action, live TCP retry,
+  packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility
+  claim, service success claim, ssh-ready=true, broad shell work, or phase
+  transition was performed. Static materialization found no Rust route or
+  archive defect: selected da591740/kernel_2712.img still mirrors root, keeps a
+  valid Image header, and embeds nonce-bearing route-start/runtime-ready
+  tokens. The bounded repair is the serial readiness helper contract:
+  TALOS_READINESS_REQUIRED_MARKERS can now require route-start and runtime-ready
+  as an all-of marker list, while
+  TALOS_READINESS_REQUIRE_KERNEL_MARKER=false matches accepted contracts where
+  TALOS: kernel_main is metadata-only. selected_next_task is
+  phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v11-20260630;
+  packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility,
+  service success, ssh-ready=true, broad shell work, and phase transition
+  remain blocked unless v11 accepts candidate-capture-ready.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

@@ -12,6 +12,8 @@ TIMEOUT_SECONDS="${2:-75}"
 SETTLE_MS="${3:-1000}"
 MAX_BYTES="${4:-65536}"
 REQUIRED_MARKER="${TALOS_READINESS_REQUIRED_MARKER:-rpi5-production-timer-preemption: PASS}"
+REQUIRED_MARKERS="${TALOS_READINESS_REQUIRED_MARKERS:-}"
+REQUIRE_KERNEL_MARKER="${TALOS_READINESS_REQUIRE_KERNEL_MARKER:-true}"
 CAPTURE_MODE="${TALOS_SERIAL_CAPTURE_MODE:-auto}"
 SATURATION_LIMIT="${TALOS_SERIAL_CURSOR_SATURATION_LIMIT:-4194304}"
 
@@ -27,6 +29,15 @@ case "$CAPTURE_MODE" in
         ;;
     *)
         echo "TALOS_SERIAL_CAPTURE_MODE must be auto, observe, or read" >&2
+        exit 2
+        ;;
+esac
+
+case "$REQUIRE_KERNEL_MARKER" in
+    true|false)
+        ;;
+    *)
+        echo "TALOS_READINESS_REQUIRE_KERNEL_MARKER must be true or false" >&2
         exit 2
         ;;
 esac
@@ -94,6 +105,8 @@ while :; do
 
     annotated="$(jq -s \
         --arg required_marker "$REQUIRED_MARKER" \
+        --arg required_markers_list "$REQUIRED_MARKERS" \
+        --arg require_kernel_marker "$REQUIRE_KERNEL_MARKER" \
         --argjson cursor_start "$SERIAL_CURSOR" \
         --argjson cursor_end "$observe_cursor" \
         --argjson requested_timeout_seconds "$TIMEOUT_SECONDS" \
@@ -105,11 +118,17 @@ while :; do
         --argjson saturation_limit "$SATURATION_LIMIT" \
         '(if length == 0 then {} else .[-1] end) as $last
          | (map(.text // "") | add) as $text
+         | (if $required_markers_list == "" then [$required_marker]
+            else ($required_markers_list | split("|") | map(select(. != "")))
+            end) as $configured_required_markers
+         | (if ($configured_required_markers | length) == 0 then [$required_marker]
+            else $configured_required_markers
+            end) as $required_markers
          | (map((.bytes // ((.text // "") | length)) | tonumber) | add) as $response_bytes
          | ($text | contains("TALOS: kernel_main")) as $has_kernel_main
-         | ($text | contains($required_marker)) as $has_required_marker
+         | (all($required_markers[]; $text | contains(.))) as $has_required_marker
          | ($text | contains("talos>")) as $has_prompt
-         | ($has_kernel_main and $has_required_marker) as $ready
+         | ((if $require_kernel_marker == "true" then $has_kernel_main else true end) and $has_required_marker) as $ready
          | (if $capture_mode == "read" then $response_bytes else ($cursor_end - $cursor_start) end) as $window_bytes
          | $last + {
              cursor_start: $cursor_start,
@@ -129,7 +148,9 @@ while :; do
                  start_cursor_saturated: ($cursor_start >= $saturation_limit),
                  response_bytes: $response_bytes,
                  required_kernel_marker: "TALOS: kernel_main",
+                 require_kernel_marker: ($require_kernel_marker == "true"),
                  required_success_marker: $required_marker,
+                 required_success_markers: $required_markers,
                  prompt_marker: "talos>",
                  has_kernel_main: $has_kernel_main,
                  has_required_success_marker: $has_required_marker,
@@ -159,13 +180,21 @@ done
 if [ -z "$annotated" ]; then
     annotated="$(jq -n \
         --arg required_marker "$REQUIRED_MARKER" \
+        --arg required_markers_list "$REQUIRED_MARKERS" \
+        --arg require_kernel_marker "$REQUIRE_KERNEL_MARKER" \
         --argjson requested_timeout_seconds "$TIMEOUT_SECONDS" \
         --argjson settle_ms "$SETTLE_MS" \
         --argjson max_bytes "$MAX_BYTES" \
         --argjson cursor_start "$SERIAL_CURSOR" \
         --arg capture_mode "$CAPTURE_MODE" \
         --argjson saturation_limit "$SATURATION_LIMIT" \
-        '{talos_runtime_readiness: {
+        '(if $required_markers_list == "" then [$required_marker]
+          else ($required_markers_list | split("|") | map(select(. != "")))
+          end) as $configured_required_markers
+         | (if ($configured_required_markers | length) == 0 then [$required_marker]
+            else $configured_required_markers
+            end) as $required_markers
+         | {talos_runtime_readiness: {
             requested_timeout_seconds: $requested_timeout_seconds,
             elapsed_seconds: 0,
             settle_ms: $settle_ms,
@@ -177,7 +206,9 @@ if [ -z "$annotated" ]; then
             start_cursor_saturated: ($cursor_start >= $saturation_limit),
             response_bytes: 0,
             required_kernel_marker: "TALOS: kernel_main",
+            require_kernel_marker: ($require_kernel_marker == "true"),
             required_success_marker: $required_marker,
+            required_success_markers: $required_markers,
             prompt_marker: "talos>",
             has_kernel_main: false,
             has_required_success_marker: false,

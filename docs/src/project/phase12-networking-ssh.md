@@ -12139,3 +12139,22 @@ a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. selected_next_
 is null and planningNeeded=true; packet-I/O, OpenSSH/generated-root retry,
 remote receipt, compatibility, service success, ssh-ready=true, broad shell
 work, and phase transition remain blocked pending supervisor planning.
+
+phase12-ssh-live-tcp-candidate-no-runtime-marker-source-reconciliation-20260630
+accepts candidate-runtime-marker-route-repair-ready. No hardware, lab
+publication, boot snapshot mutation, Pi 5 power action, live TCP retry,
+packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility claim,
+service success claim, ssh-ready=true, broad shell work, or phase transition
+was performed. Fresh non-published materialization of the runtime-marker
+candidate preserved matching root/selected da591740/kernel_2712.img, valid
+Image header fields, optimized entry/runtime-route symbols, and nonce-bearing
+route-start/runtime-ready tokens. The bounded repair is in the serial readiness
+helper: scripts/rpi5-observe-runtime-readiness.sh now supports an all-of marker
+list through TALOS_READINESS_REQUIRED_MARKERS and can make TALOS: kernel_main
+optional through TALOS_READINESS_REQUIRE_KERNEL_MARKER=false when an accepted
+contract treats kernel_main as metadata-only. The default remains
+kernel_main-required. The selected next task is
+phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v11-20260630;
+packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility,
+service success, ssh-ready=true, broad shell work, and phase transition remain
+blocked unless that serialized hardware task accepts candidate-capture-ready.

@@ -1,0 +1,15 @@
+0000000000200000 T __kernel_start
+0000000000200000 T _start
+0000000000200114 t talos_rpi5_asm_start_line
+0000000000200126 t talos_rpi5_asm_start_line_end
+00000000002052c8 t _RNvNtNtCsgchfY6xkV2w_5talos6target4rpi537run_production_timer_preemption_proof
+0000000000206d30 t _RNvCsgchfY6xkV2w_5talos11kernel_main
+0000000000206df4 T rust_entry
+000000000020ab60 t _RNvNtNtCsgchfY6xkV2w_5talos4boot4rpi511kernel_main
+0000000000210b50 R __rodata_start
+00000000002196c8 D __kernel_image_end
+000000000021a000 B __bss_start
+000000000021f000 B __bss_end
+000000000021f000 B __heap_start
+000000000031f000 B __stack_bottom
+000000000035f000 B __stack_top

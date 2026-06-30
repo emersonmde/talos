@@ -540,7 +540,11 @@ omits `TALOS: kernel_main` but contains
 sufficient for the accepted production-timer control because source order proves
 it is reachable only after `kernel_main`. If a future accepted known-good
 control uses a different success marker, set `TALOS_READINESS_REQUIRED_MARKER`
-and record that exact marker in the proof bundle. If the run is inconclusive,
+and record that exact marker in the proof bundle. If a task contract requires
+multiple markers, set `TALOS_READINESS_REQUIRED_MARKERS` to a pipe-separated
+all-of marker list. If the accepted contract treats `TALOS: kernel_main` as
+metadata-only, set `TALOS_READINESS_REQUIRE_KERNEL_MARKER=false`; the default
+remains kernel-main-required. If the run is inconclusive,
 retain one final pre-restore
 `GET /status`, `GET /boot/files`, and TFTP-tail or stable-delta sample.
 Restore evidence and hardware lock release evidence belong in the same proof

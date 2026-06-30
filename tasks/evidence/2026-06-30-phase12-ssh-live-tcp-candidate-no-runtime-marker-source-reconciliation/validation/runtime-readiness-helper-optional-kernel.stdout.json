@@ -1,0 +1,33 @@
+{
+  "ok": true,
+  "cursor_start": 4194304,
+  "cursor_end": 200,
+  "bytes": 164,
+  "text": "firmware\nTALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=test\nTALOS: ssh-service-smoltcp-runtime-ready capture-nonce=test\n",
+  "truncated": false,
+  "talos_runtime_readiness": {
+    "requested_timeout_seconds": 3,
+    "elapsed_seconds": 0,
+    "settle_ms": 1,
+    "max_bytes": 4096,
+    "observe_attempts": 1,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 164,
+    "required_kernel_marker": "TALOS: kernel_main",
+    "require_kernel_marker": false,
+    "required_success_marker": "rpi5-production-timer-preemption: PASS",
+    "required_success_markers": [
+      "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=test",
+      "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=test"
+    ],
+    "prompt_marker": "talos>",
+    "has_kernel_main": false,
+    "has_required_success_marker": true,
+    "has_prompt_marker": false,
+    "valid_known_good_talos_readiness": true,
+    "classification": "valid-known-good-talos-readiness"
+  }
+}
