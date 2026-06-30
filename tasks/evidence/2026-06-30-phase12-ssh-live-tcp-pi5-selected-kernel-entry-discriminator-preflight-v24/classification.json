@@ -1,0 +1,62 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-kernel-entry-discriminator-preflight-v24-20260630",
+  "run_label": "selected-kernel-entry-discriminator-v24-20260630T231402Z",
+  "classification": "blocked-selected-kernel-entry-marker-missing",
+  "selected_next_task": "phase12-ssh-live-tcp-selected-kernel-entry-discriminator-closeout-v24-20260630",
+  "planningNeeded": false,
+  "evidence_level": "serialized Pi 5 hardware preflight with selected-tree identity, stable same-cursor TFTP selected-byte evidence before restore, fresh post-power serial window, final pre-restore identity, restore proof, and task-owned JSON evidence",
+  "static_archive_review": {
+    "archive_review_stdout": "selected_kernel_entry_discriminator=ready\nrequired_marker=TALOS: selected-kernel-entry-discriminator-v23\narchive=target/tmp/selected-kernel-entry-discriminator-v23.tar.gz\narchive_sha256=8bc9c544c364abfd8aaaeaba3b18196600a73f480d08c018f20c9bcc3cd4717b\nkernel_2712_sha256=8051d7a600fe0867cfe093ffc6322ccdb532abaf58f323ece3f4013cca8054c7\nkernel_2712_size=87432\nheader_image_size=87432\ntext_offset=0\nflags=12\nlater_runtime_markers_absent=true\n",
+    "kernel_bytes": 87432,
+    "kernel_sha256": "8051d7a600fe0867cfe093ffc6322ccdb532abaf58f323ece3f4013cca8054c7",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "required_marker": "TALOS: selected-kernel-entry-discriminator-v23"
+  },
+  "hardware_summary": {
+    "selected_tree_hash": "dbe73980d5c5aa7876e49665ad528b8c9a0696f0d16c4a0d82bb99cd924294ce",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 87432,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "stable_tftp_event_count": 13,
+    "serial_required_marker": "TALOS: selected-kernel-entry-discriminator-v23",
+    "serial_marker_present": false,
+    "serial_marker_occurrences": 0,
+    "firmware_network_occurrences": 2,
+    "pre_power_drain_empty": true,
+    "final_pre_restore_selected_tree": true,
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "identity_join_rejection_reasons": [],
+    "helper_suggested_classification": "reset-side-effect-without-visible-marker-candidate"
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Executed the v23 _start selected-kernel-entry discriminator under hardwareTestLock with the exact selected archive contract."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Selected-byte service, final pre-restore identity, serial freshness, and restore proof matched the v23 discriminator contract."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "The _start-level selected-kernel-entry marker was absent from the fresh post-power serial window; closeout must reconcile the first missing selected-kernel-entry fact before any broader live TCP work."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness, broad shell work, fake command expansion, and phase transition remain rejected as successors."
+    }
+  ],
+  "rejected_claims": [
+    "packet I/O",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility/service readiness",
+    "ssh-ready=true",
+    "broad shell work",
+    "fake/kernel-backed command expansion",
+    "phase transition"
+  ]
+}

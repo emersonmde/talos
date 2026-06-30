@@ -21504,6 +21504,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   phase12-ssh-live-tcp-pi5-selected-kernel-entry-discriminator-preflight-v24-20260630;
   packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
   broad shell work, fake command expansion, and phase transition remain blocked.
+- phase12-ssh-live-tcp-pi5-selected-kernel-entry-discriminator-preflight-v24-20260630
+  accepts blocked-selected-kernel-entry-marker-missing. Under hardwareTestLock,
+  the worker published the v23 _start discriminator archive with selected
+  da591740/kernel_2712.img at 87,432 bytes and SHA-256 8051d7a6.... The run
+  drained serial empty before power, captured two stable selected TFTP serves
+  at 87,432 bytes, retained final pre-restore identity on selected tree
+  dbe73980..., and restored the lab to tree a0452458.... The post-power serial
+  window retained firmware output but zero
+  TALOS: selected-kernel-entry-discriminator-v23 occurrences, so the selected
+  next task is
+  phase12-ssh-live-tcp-selected-kernel-entry-discriminator-closeout-v24-20260630.
+  Packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
+  broad shell work, fake command expansion, and phase transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

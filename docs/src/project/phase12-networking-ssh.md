@@ -12777,3 +12777,23 @@ phase12-ssh-live-tcp-pi5-selected-kernel-entry-discriminator-preflight-v24-20260
 packet-I/O/OpenSSH/generated-root retry, remote receipt,
 compatibility/service readiness, broad shell work, fake command expansion, and
 phase transition remain blocked.
+
+phase12-ssh-live-tcp-pi5-selected-kernel-entry-discriminator-preflight-v24-20260630
+accepts blocked-selected-kernel-entry-marker-missing. The serialized Pi 5
+preflight published the v23 _start selected-kernel-entry discriminator contract:
+selected da591740/kernel_2712.img at 87,432 bytes with SHA-256 8051d7a6...,
+valid Image header fields, root/selected equality, and the expected
+TALOS: selected-kernel-entry-discriminator-v23 marker before CPACR, BSS, stack,
+Rust entry, BootInfo, minimal-entry, networking, or service code. The hardware
+run published selected tree dbe73980..., drained serial empty before power,
+observed two stable selected TFTP serves at 87,432 bytes, retained final
+pre-restore identity on the selected tree, and restored
+phase12-ssh-v10-openssh-clean-pre-20260624T074100Z to tree a0452458.... The
+post-power serial window retained firmware output but zero
+TALOS: selected-kernel-entry-discriminator-v23 occurrences. Because identity,
+TFTP, serial freshness, final identity, and restore proof were decisive, no
+known-good control or candidate rerun was required. The selected next task is
+phase12-ssh-live-tcp-selected-kernel-entry-discriminator-closeout-v24-20260630;
+packet-I/O/OpenSSH/generated-root retry, remote receipt,
+compatibility/service readiness claim, ssh-ready=true, broad shell work,
+fake/kernel-backed command expansion, and phase transition remain blocked.

@@ -1,0 +1,36 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-kernel-entry-discriminator-preflight-v24-20260630",
+  "classification": "blocked-selected-kernel-entry-marker-missing",
+  "evidence_root": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-kernel-entry-discriminator-preflight-v24",
+  "primary_run_label": "selected-kernel-entry-discriminator-v24-20260630T231402Z",
+  "retained_artifacts": {
+    "classification": "classification.json",
+    "static_archive_review_stdout": "static/archive-review.stdout.txt",
+    "static_archive_review_stderr": "static/archive-review.stderr.txt",
+    "static_archive_sha256": "static/archive-sha256.txt",
+    "static_kernel_sha256": "static/kernel-sha256.txt",
+    "static_kernel_size": "static/kernel-size.txt",
+    "primary_run_directory": "selected-kernel-entry-discriminator-v24-20260630T231402Z",
+    "primary_capture_summary": "selected-kernel-entry-discriminator-v24-20260630T231402Z/capture-invariant-summary.json",
+    "primary_serial_window": "selected-kernel-entry-discriminator-v24-20260630T231402Z/serial-observe-window.json",
+    "primary_tftp_delta": "selected-kernel-entry-discriminator-v24-20260630T231402Z/tftp-delta-stable-pre-restore.json",
+    "primary_final_pre_restore_status": "selected-kernel-entry-discriminator-v24-20260630T231402Z/final-pre-restore-status.json",
+    "primary_restore_proof": "selected-kernel-entry-discriminator-v24-20260630T231402Z/restore-snapshot.json",
+    "primary_post_restore_status": "selected-kernel-entry-discriminator-v24-20260630T231402Z/post-restore-status.json",
+    "lock_lifecycle": "memory/talos-supervisor-state.json.hardwareTestLock"
+  },
+  "validation_plan": [
+    "git status --short --branch before edits/action",
+    "Static non-published archive/image review before publication",
+    "Lab API GET / candidate identity before publication and before power action",
+    "Fresh serial cursor/drain before Pi 5 power action",
+    "GET /tftp/logs cursor delta before restore",
+    "Restore to the predecessor-named baseline and confirm with Lab API GET / before releasing hardwareTestLock",
+    "jq empty on task-owned JSON evidence and supervisor state",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "git diff --cached --check before commit"
+  ],
+  "selected_next_task": "phase12-ssh-live-tcp-selected-kernel-entry-discriminator-closeout-v24-20260630",
+  "planningNeeded": false
+}
