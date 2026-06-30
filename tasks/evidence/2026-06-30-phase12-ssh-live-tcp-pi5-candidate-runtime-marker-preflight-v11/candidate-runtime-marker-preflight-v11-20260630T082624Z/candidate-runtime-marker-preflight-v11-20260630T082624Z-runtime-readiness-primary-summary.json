@@ -1,0 +1,34 @@
+{
+  "run_label": "candidate-runtime-marker-preflight-v11-20260630T082624Z",
+  "retained_primary_artifact": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v11/candidate-runtime-marker-preflight-v11-20260630T082624Z/candidate-runtime-marker-preflight-v11-20260630T082624Z-runtime-readiness-primary.json",
+  "status_artifact": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v11/candidate-runtime-marker-preflight-v11-20260630T082624Z/candidate-runtime-marker-preflight-v11-20260630T082624Z-runtime-readiness-primary.status",
+  "helper_exit_code": 0,
+  "derived_from_retained_primary_artifact": true,
+  "overwrite_policy": "refuse-existing-primary-summary-or-status",
+  "followup_artifact_policy": "follow-up direct-read or endpoint checks must use separately named artifacts and must not replace this primary artifact",
+  "talos_runtime_readiness": {
+    "requested_timeout_seconds": 120,
+    "elapsed_seconds": 6,
+    "settle_ms": 1000,
+    "max_bytes": 131072,
+    "observe_attempts": 1,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 708,
+    "required_kernel_marker": "TALOS: kernel_main",
+    "require_kernel_marker": false,
+    "required_success_marker": "rpi5-production-timer-preemption: PASS",
+    "required_success_markers": [
+      "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=candidate-runtime-marker-preflight-v11-20260630T082624Z",
+      "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=candidate-runtime-marker-preflight-v11-20260630T082624Z"
+    ],
+    "prompt_marker": "talos>",
+    "has_kernel_main": false,
+    "has_required_success_marker": true,
+    "has_prompt_marker": false,
+    "valid_known_good_talos_readiness": true,
+    "classification": "valid-known-good-talos-readiness"
+  }
+}

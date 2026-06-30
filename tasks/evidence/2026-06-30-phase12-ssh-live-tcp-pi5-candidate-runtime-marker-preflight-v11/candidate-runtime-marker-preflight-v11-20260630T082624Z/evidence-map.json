@@ -1,0 +1,48 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v11-20260630",
+  "terminal_classification": "blocked-candidate-tftp-capture",
+  "planningNeeded": true,
+  "planningReason": "v11 candidate first missing fact: candidate-tftp-capture",
+  "selected_next_task": null,
+  "hardwareAction": true,
+  "labPublication": true,
+  "bootSnapshotMutation": true,
+  "pi5PowerAction": true,
+  "packetIo": false,
+  "opensshGeneratedRootRetry": false,
+  "run_label": "candidate-runtime-marker-preflight-v11-20260630T082624Z",
+  "evidence_paths": {
+    "run_dir": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v11/candidate-runtime-marker-preflight-v11-20260630T082624Z/",
+    "analysis": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v11/candidate-runtime-marker-preflight-v11-20260630T082624Z/candidate-preflight-analysis.json",
+    "archive_metadata": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v11/candidate-runtime-marker-preflight-v11-20260630T082624Z/candidate-identity/archive-metadata.json",
+    "publish_archive": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v11/candidate-runtime-marker-preflight-v11-20260630T082624Z/candidate-identity/publish-candidate.json",
+    "serial_primary": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v11/candidate-runtime-marker-preflight-v11-20260630T082624Z/candidate-runtime-marker-preflight-v11-20260630T082624Z-runtime-readiness-primary.json",
+    "serial_primary_summary": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v11/candidate-runtime-marker-preflight-v11-20260630T082624Z/candidate-runtime-marker-preflight-v11-20260630T082624Z-runtime-readiness-primary-summary.json",
+    "tftp_delta": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v11/candidate-runtime-marker-preflight-v11-20260630T082624Z/tftp-delta-stable-pre-restore.json",
+    "final_pre_restore_status": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v11/candidate-runtime-marker-preflight-v11-20260630T082624Z/final-pre-restore-status.json",
+    "restore_snapshot": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v11/candidate-runtime-marker-preflight-v11-20260630T082624Z/restore-snapshot.json",
+    "post_restore_status": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v11/candidate-runtime-marker-preflight-v11-20260630T082624Z/post-restore-status.json",
+    "recovery_restore": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v11/candidate-runtime-marker-preflight-v11-20260630T082624Z/recovery-restore-snapshot.json"
+  },
+  "validation_results": {
+    "git_status_before_action": "recorded",
+    "candidate_archive_materialization": "pass",
+    "candidate_archive_static_marker_selected_fetch_review": "pass",
+    "lab_api_status_files_snapshots_before_after_restore": "pass",
+    "fresh_serial_cursor_before_power": "pass",
+    "runtime_marker_checker": "pass; route-start and runtime-ready nonce markers observed with kernel_main optional per v11 contract",
+    "tftp_cursor_and_stable_delta": "blocked; stable same-cursor TFTP delta had zero events",
+    "restore_confirmation": "pass",
+    "marker_checker": "blocked-candidate-tftp-capture"
+  },
+  "redaction_review": {
+    "raw_serial_retained_as_task_owned_hardware_evidence": true,
+    "raw_tftp_peer_logs_retained": true,
+    "packet_payloads_retained": false,
+    "key_or_session_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false,
+    "summary_json_omits_raw_serial_text_and_peer_fields": true
+  },
+  "commit": null
+}

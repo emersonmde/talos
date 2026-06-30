@@ -12158,3 +12158,23 @@ phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v11-20260630;
 packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility,
 service success, ssh-ready=true, broad shell work, and phase transition remain
 blocked unless that serialized hardware task accepts candidate-capture-ready.
+
+phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v11-20260630
+accepts blocked-candidate-tftp-capture. The serialized Pi 5 run published the
+v11 runtime-marker candidate from source commit
+55c6920fbe86b233ea82b7d764e18f595b1e50cb, with selected
+da591740/kernel_2712.img at 152,176 bytes and SHA-256
+d16c7d8dc44d0f8009a92e61f871be7713c360c162170167f5f3a8da379cd4c5. Lab
+identity stayed stable at tree
+d0419aa69f7e6dc7600122eeebdb94aa287eab49f863b677252f2ad1e8e3c42e before
+restore. The repaired readiness helper observed both nonce-bearing
+route-start and runtime-ready markers with kernel_main optional, but the
+stable same-cursor TFTP delta contained zero events, so selected fetch identity
+was not proved in the same helper-owned pre-restore TFTP window.
+candidate-capture-ready remains rejected. The lab was restored to
+phase12-ssh-v10-openssh-clean-pre-20260624T074100Z /
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+selected_next_task is null and planningNeeded=true; packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility, service success,
+ssh-ready=true, broad shell work, and phase transition remain blocked pending
+supervisor planning.

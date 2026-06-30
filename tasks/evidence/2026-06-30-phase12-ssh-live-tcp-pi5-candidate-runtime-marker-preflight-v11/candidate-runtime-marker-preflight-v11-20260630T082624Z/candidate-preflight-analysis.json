@@ -1,0 +1,81 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v11-20260630",
+  "run_label": "candidate-runtime-marker-preflight-v11-20260630T082624Z",
+  "source_commit": "55c6920fbe86b233ea82b7d764e18f595b1e50cb",
+  "archive": {
+    "task_id": "phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v11-20260630",
+    "run_label": "candidate-runtime-marker-preflight-v11-20260630T082624Z",
+    "source_commit": "55c6920fbe86b233ea82b7d764e18f595b1e50cb",
+    "archive": {
+      "path_label": "target/tmp/candidate-runtime-marker-preflight-v11-20260630T082624Z.tar.gz",
+      "sha256": "0e50f503d090cbe3c9435a545abcc457ee8c2e7f76270ab2cbc15dbb6fac478c",
+      "bytes": 295710
+    },
+    "expected_fetch": {
+      "path": "da591740/kernel_2712.img",
+      "bytes": 152176,
+      "kernel_sha256": "d16c7d8dc44d0f8009a92e61f871be7713c360c162170167f5f3a8da379cd4c5"
+    },
+    "marker_contract": {
+      "required_markers": [
+        "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=candidate-runtime-marker-preflight-v11-20260630T082624Z",
+        "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=candidate-runtime-marker-preflight-v11-20260630T082624Z"
+      ],
+      "require_kernel_marker": false
+    },
+    "generated_boot_bytes_retained": false
+  },
+  "preflight_identity": {
+    "expected_tree_hash": "d0419aa69f7e6dc7600122eeebdb94aa287eab49f863b677252f2ad1e8e3c42e",
+    "observed_tree_hash": "d0419aa69f7e6dc7600122eeebdb94aa287eab49f863b677252f2ad1e8e3c42e",
+    "expected_kernel": "kernel_2712.img",
+    "observed_effective_kernel": "kernel_2712.img",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 152176,
+    "observed_fetch_bytes": 152176,
+    "tree_matches": true,
+    "effective_kernel_matches": true,
+    "expected_fetch_present": true,
+    "expected_fetch_bytes_match": true,
+    "staging_publication_mismatch": false
+  },
+  "readiness_exit_code": 0,
+  "runtime_readiness": {
+    "requested_timeout_seconds": 120,
+    "elapsed_seconds": 6,
+    "settle_ms": 1000,
+    "max_bytes": 131072,
+    "observe_attempts": 1,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 708,
+    "required_kernel_marker": "TALOS: kernel_main",
+    "require_kernel_marker": false,
+    "required_success_marker": "rpi5-production-timer-preemption: PASS",
+    "required_success_markers": [
+      "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=candidate-runtime-marker-preflight-v11-20260630T082624Z",
+      "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=candidate-runtime-marker-preflight-v11-20260630T082624Z"
+    ],
+    "prompt_marker": "talos>",
+    "has_kernel_main": false,
+    "has_required_success_marker": true,
+    "has_prompt_marker": false,
+    "valid_known_good_talos_readiness": true,
+    "classification": "valid-known-good-talos-readiness"
+  },
+  "tftp_exit_code": 1,
+  "tftp_event_count": 0,
+  "expected_fetch_count": 0,
+  "expected_fetch_byte_match_count": 0,
+  "final_pre_restore_tree_hash": "d0419aa69f7e6dc7600122eeebdb94aa287eab49f863b677252f2ad1e8e3c42e",
+  "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+  "first_missing_fact": "candidate-tftp-capture",
+  "terminal_classification": "blocked-candidate-tftp-capture",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "no_packet_io": true,
+  "no_openssh_generated_root_retry": true
+}

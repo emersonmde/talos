@@ -1,0 +1,23 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v11-20260630",
+  "run_label": "candidate-runtime-marker-preflight-v11-20260630T082624Z",
+  "source_commit": "55c6920fbe86b233ea82b7d764e18f595b1e50cb",
+  "archive": {
+    "path_label": "target/tmp/candidate-runtime-marker-preflight-v11-20260630T082624Z.tar.gz",
+    "sha256": "0e50f503d090cbe3c9435a545abcc457ee8c2e7f76270ab2cbc15dbb6fac478c",
+    "bytes": 295710
+  },
+  "expected_fetch": {
+    "path": "da591740/kernel_2712.img",
+    "bytes": 152176,
+    "kernel_sha256": "d16c7d8dc44d0f8009a92e61f871be7713c360c162170167f5f3a8da379cd4c5"
+  },
+  "marker_contract": {
+    "required_markers": [
+      "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=candidate-runtime-marker-preflight-v11-20260630T082624Z",
+      "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=candidate-runtime-marker-preflight-v11-20260630T082624Z"
+    ],
+    "require_kernel_marker": false
+  },
+  "generated_boot_bytes_retained": false
+}
