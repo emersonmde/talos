@@ -12293,3 +12293,19 @@ The selected next task is
 phase12-ssh-live-tcp-kernel-entry-boundary-closeout-v13-20260630; packet-I/O,
 OpenSSH/generated-root retry, remote receipt, compatibility, service success,
 ssh-ready=true, broad shell work, and phase transition remain blocked.
+
+phase12-ssh-live-tcp-kernel-entry-boundary-closeout-v13-20260630 accepts
+candidate-entry-boundary-needs-supervisor-planning. No code implementation,
+hardware action, lab publication, boot snapshot mutation, Pi 5 power cycle,
+packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility claim,
+service success claim, ssh-ready=true, fake/kernel-backed command expansion,
+broad shell work, or phase transition was performed. The closeout reconciles
+the v13 control result as a generic selected-path lab/control pass, not as a
+live TCP candidate success: v12 still proved selected candidate fetch with no
+kernel/runtime markers, v13 static review found no bounded source/archive
+defect, and the current-tree production-timer control's absent early phase
+lines are metadata-only only because its downstream PASS marker appeared. No
+queued successor is mechanically unblocked; selected_next_task is null and
+planningNeeded=true before any rerun, packet-I/O, OpenSSH/generated-root retry,
+remote receipt, compatibility, service success, ssh-ready=true, broad shell
+work, or phase transition.

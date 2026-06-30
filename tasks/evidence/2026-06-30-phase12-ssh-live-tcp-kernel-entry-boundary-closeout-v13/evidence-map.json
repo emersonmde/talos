@@ -1,0 +1,127 @@
+{
+  "task_id": "phase12-ssh-live-tcp-kernel-entry-boundary-closeout-v13-20260630",
+  "terminal_classification": "candidate-entry-boundary-needs-supervisor-planning",
+  "evidence_level": [
+    "accepted task/evidence inspection",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "no_code_implementation": true,
+  "no_hardware_action": true,
+  "no_lab_publication": true,
+  "no_boot_snapshot_mutation": true,
+  "no_pi5_power_action": true,
+  "no_packet_io": true,
+  "no_openssh_generated_root_retry": true,
+  "no_fake_kernel_backed_command_expansion": true,
+  "first_missing_fact": "v12 proved selected candidate TFTP fetch identity but no candidate kernel/runtime markers; v13 static reconciliation found no bounded source/archive defect; v13 current-tree production-timer control proved the lab selected-path can reach a downstream Talos PASS marker, but it does not identify why the live TCP candidate selected image lacks rust_entry, boot-info, target-init, exceptions-ready, kernel_main, route-start, and runtime-ready markers",
+  "accepted_inputs": {
+    "v12_capture_boundary_closeout": {
+      "task": "phase12-ssh-live-tcp-tftp-capture-boundary-closeout-v12-20260630",
+      "classification": "candidate-kernel-entry-boundary-needs-supervisor-planning",
+      "commit": "15942cd6fcbd3a53bb6d589f8804bb576a63a472",
+      "selected_next_task": null,
+      "planningNeeded": true,
+      "selected_candidate_fetch_proved": true,
+      "candidate_kernel_main_present": false,
+      "candidate_route_start_present": false,
+      "candidate_runtime_ready_present": false
+    },
+    "v13_source_artifact_reconciliation": {
+      "task": "phase12-ssh-live-tcp-candidate-entry-boundary-source-artifact-reconciliation-v13-20260630",
+      "classification": "candidate-entry-control-contract-required",
+      "commit": "fed97d0e7308b8ab41c10eac3f2650ac844c76bd",
+      "selected_next_task": "phase12-ssh-live-tcp-candidate-entry-control-contract-v13-20260630",
+      "bounded_source_or_archive_defect_found": false
+    },
+    "v13_control_contract": {
+      "task": "phase12-ssh-live-tcp-candidate-entry-control-contract-v13-20260630",
+      "classification": "candidate-entry-control-contract-ready",
+      "commit": "ec4ae89d8e55f251be3fe8120ad2b82e9c3f54a2",
+      "selected_next_task": "phase12-ssh-live-tcp-pi5-candidate-entry-control-discriminator-v13-20260630"
+    },
+    "v13_control_discriminator": {
+      "task": "phase12-ssh-live-tcp-pi5-candidate-entry-control-discriminator-v13-20260630",
+      "classification": "control-entry-passes",
+      "commit": "5f893799a77dbb61b665cfe723508b052ec460e6",
+      "selected_next_task": "phase12-ssh-live-tcp-kernel-entry-boundary-closeout-v13-20260630",
+      "selected_kernel_path": "da591740/kernel_2712.img",
+      "selected_kernel_bytes": 104136,
+      "stable_tftp_selected_fetches": 2,
+      "firmware_network_present": true,
+      "pass_marker_present": true,
+      "pass_marker_occurrences": 1,
+      "phase_lines": {
+        "TALOS: rust_entry": false,
+        "TALOS: boot info parsed": false,
+        "TALOS: target init": false,
+        "TALOS: exceptions ready": false,
+        "TALOS: kernel_main": false
+      },
+      "phase_line_policy": "metadata-only for this control when rpi5-production-timer-preemption: PASS is present",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "successor_analysis": {
+    "selected_next_task": null,
+    "planningNeeded": true,
+    "planningReason": "v13 proved the selected-path lab/control can enter Talos and reach a downstream current-tree marker, while the live TCP candidate remains selected-fetch-with-no-kernel-entry-marker and no bounded source/archive defect has been found. Supervisor must plan a new bounded candidate-specific entry discriminator or source repair before any rerun, packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness claim, broad shell work, or phase transition.",
+    "candidate_runtime_marker_preflight_v13_blocked": true,
+    "candidate_runtime_marker_preflight_v13_block_reason": "its dependency requires candidate-entry-source-repair-ready from v13 source/artifact reconciliation; that predecessor accepted candidate-entry-control-contract-required instead",
+    "packet_io_discriminator_v13_blocked": true,
+    "packet_io_block_reason": "no predecessor accepted candidate-capture-ready or selected the packet-I/O discriminator",
+    "openssh_generated_root_retry_blocked": true,
+    "openssh_generated_root_retry_block_reason": "candidate-capture-ready and ssh-ready remain rejected"
+  },
+  "findings": [
+    {
+      "finding": "current-tree production-timer control proves selected-path entry/capture can reach a downstream Talos PASS marker in the lab",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "control PASS does not explain the live TCP candidate's missing kernel/runtime entry markers",
+      "disposition": "deferred"
+    },
+    {
+      "finding": "no queued successor is mechanically unblocked by control-entry-passes because candidate-capture-ready was not accepted",
+      "disposition": "blocked"
+    },
+    {
+      "finding": "packet-I/O/OpenSSH/generated-root retry as immediate successors from this closeout",
+      "disposition": "removed"
+    },
+    {
+      "finding": "hardwareTestLock can remain unlocked because this closeout is no-hardware and relies on accepted predecessor evidence",
+      "disposition": "not-an-issue"
+    }
+  ],
+  "validation_results": {
+    "git_status_before_action": "pass",
+    "jq_empty_referenced_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "evidence_paths": {
+    "v12_closeout_task": "tasks/2026-06-30-phase12-ssh-live-tcp-tftp-capture-boundary-closeout-v12.md",
+    "v12_closeout_evidence_map": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-tftp-capture-boundary-closeout-v12/evidence-map.json",
+    "v13_source_artifact_reconciliation_task": "tasks/2026-06-30-phase12-ssh-live-tcp-candidate-entry-boundary-source-artifact-reconciliation-v13.md",
+    "v13_source_artifact_reconciliation_evidence_map": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-boundary-source-artifact-reconciliation-v13/candidate-entry-boundary-source-artifact-reconciliation-v13-20260630T105617Z/static-evidence-map.json",
+    "v13_control_contract_task": "tasks/2026-06-30-phase12-ssh-live-tcp-candidate-entry-control-contract-v13.md",
+    "v13_control_contract_evidence_map": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-control-contract-v13/evidence-map.json",
+    "v13_control_discriminator_task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-entry-control-discriminator-v13.md",
+    "v13_control_discriminator_evidence_map": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-entry-control-discriminator-v13/evidence-map.json",
+    "v13_control_discriminator_classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-entry-control-discriminator-v13/classification.json"
+  },
+  "redaction_review": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_peer_or_log_lines_retained": false,
+    "packet_payloads_retained": false,
+    "key_or_session_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false,
+    "references_task_owned_predecessor_hardware_evidence": true
+  },
+  "commit": null
+}
