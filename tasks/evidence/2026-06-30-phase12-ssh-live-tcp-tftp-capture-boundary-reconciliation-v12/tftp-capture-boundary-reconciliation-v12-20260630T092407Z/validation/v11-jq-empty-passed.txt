@@ -1,0 +1,3 @@
+evidence-map.json
+candidate-preflight-analysis.json
+tftp-delta-stable-pre-restore.json

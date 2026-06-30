@@ -21051,6 +21051,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   planningNeeded=true; packet-I/O, OpenSSH/generated-root retry, remote
   receipt, compatibility, service success, ssh-ready=true, broad shell work,
   and phase transition remain blocked pending supervisor planning.
+- phase12-ssh-live-tcp-tftp-capture-boundary-reconciliation-v12-20260630
+  accepts tftp-capture-helper-repair-ready. No hardware, lab publication, boot
+  snapshot mutation, Pi 5 power action, packet-I/O, OpenSSH/generated-root
+  retry, generated-root work, broad shell work, or phase transition was
+  performed. Read-only replay of retained v11 cursor 4693472 now returns the
+  delayed boot-time TFTP events, so the old stable-zero helper result is timing
+  evidence rather than durable no-request proof. scripts/rpi5-wait-tftp-delta.sh
+  now waits the full configured timeout before returning stable-zero-timeout for
+  empty deltas while still accepting stable event-containing deltas early. The
+  selected next task is
+  phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12-20260630;
+  packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility,
+  service success, ssh-ready=true, broad shell work, and phase transition
+  remain blocked until v12 accepts candidate-capture-ready under the repaired
+  TFTP contract.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

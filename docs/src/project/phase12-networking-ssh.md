@@ -12178,3 +12178,20 @@ selected_next_task is null and planningNeeded=true; packet-I/O,
 OpenSSH/generated-root retry, remote receipt, compatibility, service success,
 ssh-ready=true, broad shell work, and phase transition remain blocked pending
 supervisor planning.
+
+phase12-ssh-live-tcp-tftp-capture-boundary-reconciliation-v12-20260630 accepts
+tftp-capture-helper-repair-ready. No hardware, lab publication, boot snapshot
+mutation, Pi 5 power action, packet-I/O, OpenSSH/generated-root retry,
+generated-root work, broad shell work, or phase transition was performed.
+Read-only replay of retained v11 cursor 4693472 now returns 13 parsed TFTP
+events at the v11 boot time, proving the old stable-zero helper result was not
+durable no-request evidence. The replay is retained only as timing/cursor
+evidence because post-restore byte labels reflect the current served root.
+scripts/rpi5-wait-tftp-delta.sh now permits event-containing responses to
+finish after stable samples but requires empty responses to wait until the
+configured timeout before returning stable-zero-timeout. The selected next task
+is phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12-20260630;
+packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility,
+service success, ssh-ready=true, broad shell work, and phase transition remain
+blocked until that serialized hardware task accepts candidate-capture-ready
+under the repaired TFTP contract.

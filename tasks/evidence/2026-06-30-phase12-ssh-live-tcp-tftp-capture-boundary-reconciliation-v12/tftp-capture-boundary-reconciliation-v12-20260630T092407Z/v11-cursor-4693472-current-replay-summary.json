@@ -1,0 +1,17 @@
+{
+  "cursor_start": 4693472,
+  "cursor_end": 4694823,
+  "event_count": 13,
+  "kernel_events": [
+    {
+      "bytes": 104136,
+      "status": "served",
+      "line": "Jun 30 08:26:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4"
+    },
+    {
+      "bytes": 104136,
+      "status": "served",
+      "line": "Jun 30 08:26:56 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4"
+    }
+  ]
+}

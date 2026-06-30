@@ -1,0 +1,83 @@
+{
+  "task_id": "phase12-ssh-live-tcp-tftp-capture-boundary-reconciliation-v12-20260630",
+  "run_label": "tftp-capture-boundary-reconciliation-v12-20260630T092407Z",
+  "terminal_classification": "tftp-capture-helper-repair-ready",
+  "no_hardware": true,
+  "no_packet_io": true,
+  "no_openssh_generated_root_retry": true,
+  "retained_v11_evidence": {
+    "source_task": "phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v11-20260630",
+    "source_commit": "264956598bcf8222f73cadd040741ec11e340b2a",
+    "original_cursor": 4693472,
+    "original_stable_delta_event_count": 0,
+    "current_replay": {
+      "cursor_start": 4693472,
+      "cursor_end": 4694823,
+      "event_count": 13,
+      "kernel_events": [
+        {
+          "bytes": 104136,
+          "status": "served",
+          "line": "Jun 30 08:26:55 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4"
+        },
+        {
+          "bytes": 104136,
+          "status": "served",
+          "line": "Jun 30 08:26:56 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4"
+        }
+      ]
+    }
+  },
+  "repaired_helper": {
+    "file": "scripts/rpi5-wait-tftp-delta.sh",
+    "algorithm": "event-containing responses may complete after stable samples; empty responses must wait until the configured timeout before returning stable-zero-timeout",
+    "retained_v11_cursor_exit": 0,
+    "retained_v11_cursor_event_count": 13,
+    "retained_v11_cursor_reason": "stable",
+    "empty_tail_exit": 1,
+    "empty_tail_event_count": 0,
+    "empty_tail_reason": "stable-zero-timeout",
+    "empty_tail_elapsed_seconds": 4
+  },
+  "findings": [
+    {
+      "finding": "v11 zero-event pre-restore result was not durable no-request evidence",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "scripts/rpi5-wait-tftp-delta.sh exited on stable empty samples before the capture window elapsed",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "post-restore replay byte labels reflect current served-root metadata and cannot reclassify selected-byte identity",
+      "disposition": "not-an-issue"
+    },
+    {
+      "finding": "packet-I/O and OpenSSH/generated-root retry remain blocked until v12 hardware preflight proves selected fetch and runtime markers under repaired contract",
+      "disposition": "deferred"
+    },
+    {
+      "finding": "same-shaped stable-zero helper acceptance",
+      "disposition": "removed"
+    }
+  ],
+  "validation_results": {
+    "git_status_before_action": "recorded",
+    "v11_json_jq_empty": "pass",
+    "read_only_tftp_cursor_replay": "pass",
+    "shell_syntax": "pass",
+    "targeted_helper_replay": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12-20260630",
+  "planningNeeded": false,
+  "evidence_paths": {
+    "run_dir": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-tftp-capture-boundary-reconciliation-v12/tftp-capture-boundary-reconciliation-v12-20260630T092407Z/",
+    "current_replay": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-tftp-capture-boundary-reconciliation-v12/tftp-capture-boundary-reconciliation-v12-20260630T092407Z/v11-cursor-4693472-current-replay.json",
+    "current_replay_summary": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-tftp-capture-boundary-reconciliation-v12/tftp-capture-boundary-reconciliation-v12-20260630T092407Z/v11-cursor-4693472-current-replay-summary.json",
+    "retained_cursor_helper_replay": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-tftp-capture-boundary-reconciliation-v12/tftp-capture-boundary-reconciliation-v12-20260630T092407Z/validation/repaired-helper-retained-v11-cursor.stdout.json",
+    "empty_tail_helper_timeout": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-tftp-capture-boundary-reconciliation-v12/tftp-capture-boundary-reconciliation-v12-20260630T092407Z/validation/repaired-helper-empty-tail-timeout.stdout.json"
+  }
+}

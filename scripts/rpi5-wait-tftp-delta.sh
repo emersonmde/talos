@@ -54,16 +54,17 @@ while :; do
         STABLE_SEEN=1
     fi
 
-    if [ "$STABLE_SEEN" -ge "$STABLE_SAMPLES" ]; then
+    if [ "$STABLE_SEEN" -ge "$STABLE_SAMPLES" ] && [ "$event_count" -gt 0 ]; then
         printf '%s\n' "$response" | annotate_response true stable
-        if [ "$event_count" -gt 0 ]; then
-            exit 0
-        fi
-        exit 1
+        exit 0
     fi
 
     if [ "$(date +%s)" -ge "$DEADLINE" ]; then
-        printf '%s\n' "$response" | annotate_response false timeout
+        if [ "$STABLE_SEEN" -ge "$STABLE_SAMPLES" ]; then
+            printf '%s\n' "$response" | annotate_response true stable-zero-timeout
+        else
+            printf '%s\n' "$response" | annotate_response false timeout
+        fi
         exit 1
     fi
 
