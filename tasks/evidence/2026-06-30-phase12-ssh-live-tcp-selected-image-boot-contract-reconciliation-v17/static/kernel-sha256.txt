@@ -1,0 +1,1 @@
+fb501f7374888158c60f090b3cc0805f8fda97d98fd18e966c307310b5c00753  /opt/strider/openclaw/current/workspace/tmp/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17-boot-tree/kernel_2712.img

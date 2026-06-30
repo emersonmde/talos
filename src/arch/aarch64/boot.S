@@ -31,6 +31,35 @@ _start:
     b 4b
 #endif
 
+#if defined(TALOS_RPI5_BOOT_CONTRACT_DISCRIMINATOR_SCENARIO)
+4:
+    adrp x0, talos_rpi5_boot_contract_v18_line
+    add x0, x0, :lo12:talos_rpi5_boot_contract_v18_line
+    mov x1, #(talos_rpi5_boot_contract_v18_line_end - talos_rpi5_boot_contract_v18_line)
+5:
+    ldrb w11, [x0], #1
+    mov x9, #0x1000
+    movk x9, #0x7d00, lsl #16
+    movk x9, #0x10, lsl #32
+    str w11, [x9]
+    ldr w10, [x9, #0x18]
+    mov x21, #0x200000
+6:
+    ldr w10, [x9, #0x18]
+    tbnz w10, #7, 7f
+    subs x21, x21, #1
+    b.ne 6b
+7:
+    dsb sy
+    subs x1, x1, #1
+    b.ne 5b
+    mov x21, #0x80000
+8:
+    subs x21, x21, #1
+    b.ne 8b
+    b 4b
+#endif
+
 #if defined(TALOS_RPI5_SMP_BOOT_SCENARIO) || defined(TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO)
     adrp x0, talos_rpi5_asm_start_line
     add x0, x0, :lo12:talos_rpi5_asm_start_line
@@ -73,7 +102,7 @@ _start:
 
 .size _start, . - _start
 
-#if defined(TALOS_RPI5_SMP_BOOT_SCENARIO) || defined(TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO) || defined(TALOS_RPI5_HANDOFF_SENTINEL_SCENARIO)
+#if defined(TALOS_RPI5_SMP_BOOT_SCENARIO) || defined(TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO) || defined(TALOS_RPI5_HANDOFF_SENTINEL_SCENARIO) || defined(TALOS_RPI5_BOOT_CONTRACT_DISCRIMINATOR_SCENARIO)
 talos_rpi5_early_uart_write:
     mov x22, x30
     cbz x1, 2f
@@ -123,6 +152,12 @@ talos_rpi5_asm_pre_rust_line_end:
 talos_rpi5_handoff_sentinel_line:
     .ascii "TALOS: selected-image-handoff-sentinel-v16\r\n"
 talos_rpi5_handoff_sentinel_line_end:
+#endif
+
+#if defined(TALOS_RPI5_BOOT_CONTRACT_DISCRIMINATOR_SCENARIO)
+talos_rpi5_boot_contract_v18_line:
+    .ascii "TALOS: boot-contract-v18\r\n"
+talos_rpi5_boot_contract_v18_line_end:
 #endif
 
 .align 2

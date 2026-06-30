@@ -14,6 +14,8 @@ const QEMU_SMP_ASM: &str = "TALOS_QEMU_SMP_BOOT_SCENARIO";
 const RPI5_SMP_ASM: &str = "TALOS_RPI5_SMP_BOOT_SCENARIO";
 const RPI5_EARLY_ENTRY_PROVENANCE_ASM: &str = "TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO";
 const RPI5_HANDOFF_SENTINEL_ASM: &str = "TALOS_RPI5_HANDOFF_SENTINEL_SCENARIO";
+const RPI5_BOOT_CONTRACT_DISCRIMINATOR_ASM: &str =
+    "TALOS_RPI5_BOOT_CONTRACT_DISCRIMINATOR_SCENARIO";
 const RPI5_EL0_TRAP_PROOF_ASM: &str = "TALOS_RPI5_EL0_TRAP_PROOF_SCENARIO";
 const RPI5_SYSCALL_PROOF_ASM: &str = "TALOS_RPI5_SYSCALL_PROOF_SCENARIO";
 const QEMU_SYSCALL_SMOKE_ASM: &str = "TALOS_QEMU_SYSCALL_SMOKE_SCENARIO";
@@ -583,6 +585,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         value: "rpi5_selected_image_handoff_sentinel",
         implied_values: &[],
         asm_defines: &[RPI5_HANDOFF_SENTINEL_ASM],
+    },
+    BootScenario {
+        value: "rpi5_selected_image_boot_contract_discriminator",
+        implied_values: &[],
+        asm_defines: &[RPI5_BOOT_CONTRACT_DISCRIMINATOR_ASM],
     },
     BootScenario {
         value: "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_candidate",

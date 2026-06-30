@@ -1,0 +1,18 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17-20260630",
+  "classification": "selected-image-boot-contract-discriminator-ready",
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-image-boot-contract-discriminator-v18-20260630",
+  "planningNeeded": false,
+  "source_commit": "1fc8e6bd8a915c0b7e7b4e34041f64c9d6195b11",
+  "non_published_archive_sha256": "620aeebd5139365678bb656b2126920f3ce737b559603187553c43f7d85fb427",
+  "kernel_sha256": "fb501f7374888158c60f090b3cc0805f8fda97d98fd18e966c307310b5c00753",
+  "kernel_bytes": 87432,
+  "required_marker": "TALOS: boot-contract-v18",
+  "selected_fetch": "da591740/kernel_2712.img",
+  "restore_target": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+  "hardwareAction": false,
+  "labPublication": false,
+  "bootSnapshotMutation": false,
+  "packetIo": false,
+  "opensshGeneratedRootRetry": false
+}

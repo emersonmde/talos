@@ -21296,6 +21296,27 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   selected_next_task is null and planningNeeded=true before any rerun,
   packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
   minimal-entry route repair, broad shell work, or phase transition.
+- phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17-20260630
+  accepts selected-image-boot-contract-discriminator-ready. No hardware,
+  hardwareTestLock acquisition, lab publication, boot snapshot mutation, Pi 5
+  power cycle, packet-I/O, OpenSSH/generated-root retry, remote receipt,
+  compatibility claim, service success claim, ssh-ready=true, fake command
+  expansion, minimal-entry repair, broad shell work, or phase transition was
+  performed. Static review found no Image header, linker, selected-mirror,
+  config/kernel naming, or root/selected equality defect under the normal Pi 5
+  firmware contract. The task added a qualitatively different _start
+  discriminator, rpi5_selected_image_boot_contract_discriminator, which emits
+  repeated TALOS: boot-contract-v18 through inline UART10 writes and FR
+  flushes without the v16 BL helper, BSS/stack/Rust path, networking, packet
+  I/O, OpenSSH, or shell work. Non-published materialization retained an
+  87,432-byte selected kernel with SHA-256 fb501f73..., text_offset=0,
+  header_image_size=87,432, flags=12, root/prefixed selected kernel equality,
+  marker-token evidence, symbol/disassembly evidence, and fail-closed archive
+  review behavior. The selected next task is
+  phase12-ssh-live-tcp-pi5-selected-image-boot-contract-discriminator-v18-20260630;
+  packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
+  minimal-entry route repair, broad shell work, and phase transition remain
+  blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

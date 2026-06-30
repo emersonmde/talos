@@ -1,0 +1,16 @@
+/opt/strider/openclaw/current/workspace/tmp/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17-boot-tree/bcm2712-rpi-5-b.dtb
+/opt/strider/openclaw/current/workspace/tmp/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17-boot-tree/cmdline.txt
+/opt/strider/openclaw/current/workspace/tmp/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17-boot-tree/config.txt
+/opt/strider/openclaw/current/workspace/tmp/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17-boot-tree/da591740/bcm2712-rpi-5-b.dtb
+/opt/strider/openclaw/current/workspace/tmp/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17-boot-tree/da591740/cmdline.txt
+/opt/strider/openclaw/current/workspace/tmp/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17-boot-tree/da591740/config.txt
+/opt/strider/openclaw/current/workspace/tmp/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17-boot-tree/da591740/kernel8.img
+/opt/strider/openclaw/current/workspace/tmp/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17-boot-tree/da591740/kernel_2712.img
+/opt/strider/openclaw/current/workspace/tmp/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17-boot-tree/da591740/overlays/bcm2712d0.dtbo
+/opt/strider/openclaw/current/workspace/tmp/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17-boot-tree/da591740/overlays/overlay_map.dtb
+/opt/strider/openclaw/current/workspace/tmp/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17-boot-tree/da591740/overlays/uart0-pi5.dtbo
+/opt/strider/openclaw/current/workspace/tmp/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17-boot-tree/kernel8.img
+/opt/strider/openclaw/current/workspace/tmp/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17-boot-tree/kernel_2712.img
+/opt/strider/openclaw/current/workspace/tmp/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17-boot-tree/overlays/bcm2712d0.dtbo
+/opt/strider/openclaw/current/workspace/tmp/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17-boot-tree/overlays/overlay_map.dtb
+/opt/strider/openclaw/current/workspace/tmp/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17-boot-tree/overlays/uart0-pi5.dtbo

@@ -1,0 +1,98 @@
+
+target/aarch64-talos-rpi5-bcm2712/debug/talos:	file format elf64-littleaarch64
+
+Disassembly of section .text.boot:
+
+0000000000200000 <_start>:
+  200000: 14000010     	b	0x200040 <_start+0x40>
+		...
+  200010: 88 55 01 00  	.word	0x00015588
+  200014: 00 00 00 00  	.word	0x00000000
+  200018: 0c 00 00 00  	.word	0x0000000c
+		...
+  200038: 41 52 4d 64  	.word	0x644d5241
+  20003c: 00 00 00 00  	.word	0x00000000
+  200040: aa0003f3     	mov	x19, x0
+  200044: 90000000     	adrp	x0, 0x200000 <_start>
+  200048: 91052000     	add	x0, x0, #0x148
+  20004c: d2800341     	mov	x1, #0x1a               // =26
+  200050: 3840140b     	ldrb	w11, [x0], #0x1
+  200054: d2820009     	mov	x9, #0x1000             // =4096
+  200058: f2afa009     	movk	x9, #0x7d00, lsl #16
+  20005c: f2c00209     	movk	x9, #0x10, lsl #32
+  200060: b900012b     	str	w11, [x9]
+  200064: b940192a     	ldr	w10, [x9, #0x18]
+  200068: d2a00415     	mov	x21, #0x200000          // =2097152
+  20006c: b940192a     	ldr	w10, [x9, #0x18]
+  200070: 3738006a     	tbnz	w10, #0x7, 0x20007c <_start+0x7c>
+  200074: f10006b5     	subs	x21, x21, #0x1
+  200078: 54ffffa1     	b.ne	0x20006c <_start+0x6c>
+  20007c: d5033f9f     	dsb	sy
+  200080: f1000421     	subs	x1, x1, #0x1
+  200084: 54fffe61     	b.ne	0x200050 <_start+0x50>
+  200088: d2a00115     	mov	x21, #0x80000           // =524288
+  20008c: f10006b5     	subs	x21, x21, #0x1
+  200090: 54ffffe1     	b.ne	0x20008c <_start+0x8c>
+  200094: 17ffffec     	b	0x200044 <_start+0x44>
+  200098: d5381040     	mrs	x0, CPACR_EL1
+  20009c: b26c0400     	orr	x0, x0, #0x300000
+  2000a0: d5181040     	msr	CPACR_EL1, x0
+  2000a4: d5033fdf     	isb
+  2000a8: d503201f     	nop
+  2000ac: 100aa720     	adr	x0, 0x215590 <__bss_start>
+  2000b0: d503201f     	nop
+  2000b4: 100aa821     	adr	x1, 0x2155b8 <__bss_end>
+  2000b8: eb01001f     	cmp	x0, x1
+  2000bc: 54000062     	b.hs	0x2000c8 <_start+0xc8>
+  2000c0: f800841f     	str	xzr, [x0], #0x8
+  2000c4: 17fffffd     	b	0x2000b8 <_start+0xb8>
+  2000c8: b0000aa0     	adrp	x0, 0x355000 <__stack_bottom+0x3fa40>
+  2000cc: 91170000     	add	x0, x0, #0x5c0
+  2000d0: 9100001f     	mov	sp, x0
+  2000d4: aa1303e0     	mov	x0, x19
+  2000d8: 940014cb     	bl	0x205404 <rust_entry>
+  2000dc: d503205f     	wfe
+  2000e0: 17ffffff     	b	0x2000dc <_start+0xdc>
+
+00000000002000e4 <talos_rpi5_early_uart_write>:
+  2000e4: aa1e03f6     	mov	x22, x30
+  2000e8: b40000c1     	cbz	x1, 0x200100 <talos_rpi5_early_uart_write+0x1c>
+  2000ec: 3840140b     	ldrb	w11, [x0], #0x1
+  2000f0: 94000005     	bl	0x200104 <talos_rpi5_early_uart_putc>
+  2000f4: f1000421     	subs	x1, x1, #0x1
+  2000f8: 54ffffa1     	b.ne	0x2000ec <talos_rpi5_early_uart_write+0x8>
+  2000fc: 94000009     	bl	0x200120 <talos_rpi5_early_uart_wait_empty>
+  200100: d61f02c0     	br	x22
+
+0000000000200104 <talos_rpi5_early_uart_putc>:
+  200104: d2820009     	mov	x9, #0x1000             // =4096
+  200108: f2afa009     	movk	x9, #0x7d00, lsl #16
+  20010c: f2c00209     	movk	x9, #0x10, lsl #32
+  200110: b900012b     	str	w11, [x9]
+  200114: b940192a     	ldr	w10, [x9, #0x18]
+  200118: d5033f9f     	dsb	sy
+  20011c: d65f03c0     	ret
+
+0000000000200120 <talos_rpi5_early_uart_wait_empty>:
+  200120: d2820009     	mov	x9, #0x1000             // =4096
+  200124: f2afa009     	movk	x9, #0x7d00, lsl #16
+  200128: f2c00209     	movk	x9, #0x10, lsl #32
+  20012c: d2a00415     	mov	x21, #0x200000          // =2097152
+  200130: b940192a     	ldr	w10, [x9, #0x18]
+  200134: 3738006a     	tbnz	w10, #0x7, 0x200140 <talos_rpi5_early_uart_wait_empty+0x20>
+  200138: f10006b5     	subs	x21, x21, #0x1
+  20013c: 54ffffa1     	b.ne	0x200130 <talos_rpi5_early_uart_wait_empty+0x10>
+  200140: d5033f9f     	dsb	sy
+  200144: d65f03c0     	ret
+
+0000000000200148 <talos_rpi5_boot_contract_v18_line>:
+  200148: 54 41 4c 4f  	.word	0x4f4c4154
+  20014c: 53 3a 20 62  	.word	0x62203a53
+  200150: 6f 6f 74 2d  	.word	0x2d746f6f
+  200154: 63 6f 6e 74  	.word	0x746e6f63
+  200158: 72 61 63 74  	.word	0x74636172
+  20015c: 2d 76 31 38  	.word	0x3831762d
+  200160: 0d 0a        	.short	0x0a0d
+
+0000000000200162 <talos_rpi5_boot_contract_v18_line_end>:
+  200162: 00 00        	.short	0x0000

@@ -12515,3 +12515,26 @@ successor is mechanically unblocked; selected_next_task is null and
 planningNeeded=true before any rerun, packet-I/O, OpenSSH/generated-root retry,
 remote receipt, compatibility/service readiness claim, minimal-entry route
 repair, broad shell work, or phase transition.
+
+phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17-20260630
+accepts selected-image-boot-contract-discriminator-ready. No hardware action,
+hardwareTestLock acquisition, lab publication, boot snapshot mutation, Pi 5
+power cycle, packet-I/O, OpenSSH/generated-root retry, remote receipt,
+compatibility claim, service success claim, ssh-ready=true, fake/kernel-backed
+command expansion, minimal-entry route repair, broad shell work, or phase
+transition was performed. Static reconciliation found no Image header, linker,
+config/kernel naming, selected mirror, or root/selected equality defect for the
+normal Pi 5 firmware contract. The task instead replaced the v16 one-shot
+helper topology with a qualitatively different repeated compact _start marker:
+rpi5_selected_image_boot_contract_discriminator emits TALOS:
+boot-contract-v18 from _start through inline UART10 writes and FR flushes,
+without BL helper, BSS clear, stack setup, rust_entry, kernel_main, networking,
+packet I/O, OpenSSH, or shell work. Non-published materialization retained an
+87,432-byte selected kernel with SHA-256 fb501f73..., text_offset=0,
+header_image_size=87,432, flags=12, root/prefixed selected kernel equality,
+marker-token evidence, symbol/disassembly evidence, and fail-closed archive
+review behavior. The selected next task is
+phase12-ssh-live-tcp-pi5-selected-image-boot-contract-discriminator-v18-20260630;
+packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
+minimal-entry route repair, broad shell work, and phase transition remain
+blocked.

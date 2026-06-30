@@ -1,0 +1,33 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17-20260630",
+  "evidence": [
+    {
+      "level": "static/source review",
+      "path": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17/static/discriminator-contract.txt"
+    },
+    {
+      "level": "image/archive inspection",
+      "path": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17/static/image-header.txt"
+    },
+    {
+      "level": "symbol/disassembly inspection",
+      "path": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17/static/symbols.txt"
+    },
+    {
+      "level": "symbol/disassembly inspection",
+      "path": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17/static/start-disassembly.txt"
+    },
+    {
+      "level": "image/archive inspection",
+      "path": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17/materialized/archive-sha256.txt"
+    },
+    {
+      "level": "image/archive inspection",
+      "path": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17/validation/boot-contract-discriminator-archive-review.stdout.txt"
+    },
+    {
+      "level": "classification",
+      "path": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17/classification.json"
+    }
+  ]
+}

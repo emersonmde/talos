@@ -1,0 +1,7 @@
+source_commit=1fc8e6bd8a915c0b7e7b4e34041f64c9d6195b11
+scenario=rpi5_selected_image_boot_contract_discriminator
+selected_fetch=da591740/kernel_2712.img
+required_marker=TALOS: boot-contract-v18
+restore_target=phase12-ssh-v10-openssh-clean-pre-20260624T074100Z
+qualitative_delta=no BL subroutine, no Rust/BSS/stack path, repeated compact marker loop at _start, per-byte UART10 FR flush
+non_published_archive=/opt/strider/openclaw/current/workspace/tmp/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17-boot.tar.gz

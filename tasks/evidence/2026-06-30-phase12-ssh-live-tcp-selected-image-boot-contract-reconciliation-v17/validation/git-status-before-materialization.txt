@@ -1,0 +1,6 @@
+## main...origin/main [ahead 216]
+ M build.rs
+ M src/arch/aarch64/boot.S
+?? scripts/rpi5-selected-image-boot-contract-discriminator-archive-review.sh
+?? scripts/rpi5-selected-image-boot-contract-discriminator-boot-tree.sh
+?? tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17/
