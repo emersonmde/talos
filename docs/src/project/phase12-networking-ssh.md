@@ -12045,3 +12045,18 @@ planningNeeded=true before any minimal-control v2 hardware, live TCP candidate
 preflight, packet-I/O, OpenSSH/generated-root retry, remote receipt,
 compatibility, service success, ssh-ready=true, broad shell work, or phase
 transition.
+
+phase12-ssh-live-tcp-current-tree-production-timer-control-contract-20260630
+accepts current-tree-production-timer-control-ready. No hardware, lab
+publication, boot snapshot mutation, or Pi 5 power action was performed. Fresh
+non-published materialization of the current-tree production-timer control
+proved selected da591740/kernel_2712.img visibility, matching root/selected
+104,136-byte kernel images, valid Image header fields, the expected
+rpi5-production-timer-preemption: PASS token, and the startup/rust_entry/
+kernel_main to production-timer proof route metadata. The generated boot tree
+and archive were removed after metadata retention. The selected next task is
+phase12-ssh-live-tcp-pi5-current-tree-production-timer-entry-baseline-discriminator-20260630;
+minimal-control v2 hardware, live TCP candidate preflight, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility, service success,
+ssh-ready=true, broad shell work, and phase transition remain blocked until
+that explicit Pi 5 discriminator is accepted.

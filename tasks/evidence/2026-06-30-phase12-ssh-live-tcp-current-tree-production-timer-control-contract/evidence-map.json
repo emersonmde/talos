@@ -1,0 +1,129 @@
+{
+  "task_id": "phase12-ssh-live-tcp-current-tree-production-timer-control-contract-20260630",
+  "terminal_classification": "current-tree-production-timer-control-ready",
+  "planningNeeded": false,
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-current-tree-production-timer-entry-baseline-discriminator-20260630",
+  "hardwareAction": false,
+  "labPublication": false,
+  "bootSnapshotMutation": false,
+  "pi5PowerAction": false,
+  "liveTcpCandidateRetry": false,
+  "packetIo": false,
+  "opensshGeneratedRootRetry": false,
+  "reviewed_inputs": {
+    "entry_artifact_delta_reconciliation": {
+      "task": "tasks/2026-06-30-phase12-ssh-live-tcp-entry-artifact-delta-reconciliation.md",
+      "classification": "blocked-no-entry-artifact-repair",
+      "summary": "No bounded current-tree minimal/runtime source or artifact repair found; current-tree selected-fetch/no-entry remains the first missing fact."
+    },
+    "minimal_entry_control_blocker": {
+      "task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-control-discriminator.md",
+      "classification": "blocked-selected-path-entry-control"
+    },
+    "selected_known_good_baseline": {
+      "task": "tasks/2026-06-30-phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator.md",
+      "classification": "known-good-entry-baseline-passes",
+      "summary": "Selected a0452458 control emitted rpi5-production-timer-preemption: PASS with two 104136-byte selected fetches."
+    }
+  },
+  "fresh_static_materialization": {
+    "source_commit": "b614d6e752d409f29c2b7db7463773fb5e90d302",
+    "boot_source_dir_label": "target/rpi5-production-timer-preemption-boot-tree",
+    "artifacts_removed_after_review": true,
+    "archive_sha256": "1469743d4d646edfa428a5fc166743d35c9fc79f35797d1a854be10b65d78e5f",
+    "manifest_sha256": "98b67954e71335aff606f49980935a208c108bdfcad65249dd124f1262b19c35",
+    "kernel_sha256": "2343a009a14972d050ccf0fc706539163b6b5cb3ee3717b9cb6753f2ec7c2328",
+    "kernel_bytes": 104136,
+    "header": {
+      "text_offset": 0,
+      "header_image_size": 104136,
+      "flags": 12,
+      "magic": "ARMd"
+    },
+    "selected_fetch": {
+      "path": "da591740/kernel_2712.img",
+      "selected_matches_root": true,
+      "bytes": 104136
+    },
+    "expected_marker": "rpi5-production-timer-preemption: PASS",
+    "restore_target": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z"
+  },
+  "evidence_paths": {
+    "archive_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-current-tree-production-timer-control-contract/validation/archive-review.stdout.txt",
+    "boot_tree_manifest": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-current-tree-production-timer-control-contract/materialized/boot-tree-manifest.txt",
+    "archive_sha256": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-current-tree-production-timer-control-contract/materialized/archive-sha256.txt",
+    "kernel_sha256": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-current-tree-production-timer-control-contract/static/kernel-sha256.txt",
+    "kernel_bytes": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-current-tree-production-timer-control-contract/static/kernel-bytes.txt",
+    "image_header": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-current-tree-production-timer-control-contract/static/image-header.txt",
+    "token_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-current-tree-production-timer-control-contract/static/token-review.txt",
+    "symbol_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-current-tree-production-timer-control-contract/static/symbols.txt",
+    "control_contract": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-current-tree-production-timer-control-contract/static/control-contract.txt",
+    "no_boot_artifact_bytes": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-current-tree-production-timer-control-contract/validation/no-boot-artifact-bytes.txt"
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Selected the explicit current-tree production-timer Pi 5 discriminator as the next proof before any minimal/live TCP retry."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Current-tree production-timer archive retains selected da591740/kernel_2712.img mirroring and accepted Image header fields."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Expected production-timer PASS marker token is present in the current-tree image."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Symbol/source route preserves startup, rust_entry, kernel_main, boot::rpi5::kernel_main, and run_production_timer_preemption_proof metadata."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Hardware discriminator, minimal-control v2, candidate preflight, packet-I/O, OpenSSH/generated-root retry, and phase transition remain dependency-gated."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Generated non-published boot tree and archive bytes were removed after metadata retention."
+    }
+  ],
+  "decision": {
+    "repair_found": false,
+    "control_contract_ready": true,
+    "selected_next_task": "phase12-ssh-live-tcp-pi5-current-tree-production-timer-entry-baseline-discriminator-20260630",
+    "non_claims": [
+      "no hardware",
+      "no lab publication",
+      "no boot snapshot mutation",
+      "no Pi 5 power action",
+      "no live TCP candidate retry",
+      "no packet I/O",
+      "no OpenSSH/generated-root retry",
+      "no remote receipt",
+      "no compatibility claim",
+      "no service success claim",
+      "no ssh-ready=true",
+      "no broad shell work",
+      "no phase transition"
+    ]
+  },
+  "validation_results": {
+    "git_status_before_action": "recorded",
+    "static_prior_evidence_review": "pass",
+    "non_published_boot_tree_archive_review": "pass",
+    "rpi5_archive_helper_validation": "pass",
+    "cargo_fmt": "not run; Rust source not touched",
+    "cargo_test": "not run; Rust source or target routing not touched",
+    "sh_n": "not run; shell helpers/classifiers not touched",
+    "jq_empty": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "redaction_review": {
+    "packet_payloads_retained": false,
+    "key_or_session_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false,
+    "raw_hardware_serial_or_tftp_logs_retained": false
+  }
+}

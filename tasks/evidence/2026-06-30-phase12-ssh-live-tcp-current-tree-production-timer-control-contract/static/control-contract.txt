@@ -1,0 +1,13 @@
+source_commit=b614d6e752d409f29c2b7db7463773fb5e90d302
+boot_source=target/rpi5-production-timer-preemption-boot-tree
+boot_tree=target/tmp/2026-06-30-phase12-ssh-live-tcp-current-tree-production-timer-control-contract-boot-tree
+archive=target/tmp/2026-06-30-phase12-ssh-live-tcp-current-tree-production-timer-control-contract-boot.tar.gz
+restore_target=phase12-ssh-v10-openssh-clean-pre-20260624T074100Z
+expected_selected_path=da591740/kernel_2712.img
+expected_marker=rpi5-production-timer-preemption: PASS
+hardwareAction=false
+labPublication=false
+bootSnapshotMutation=false
+pi5PowerAction=false
+packetIo=false
+opensshGeneratedRootRetry=false
