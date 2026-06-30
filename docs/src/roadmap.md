@@ -21155,6 +21155,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   rerun, packet-I/O, OpenSSH/generated-root retry, remote receipt,
   compatibility, service success, ssh-ready=true, broad shell work, or phase
   transition.
+- phase12-ssh-live-tcp-candidate-vs-control-entry-delta-reconciliation-v14-20260630
+  accepts candidate-entry-bisect-contract-required. No hardware, lab
+  publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+  OpenSSH/generated-root retry, fake command expansion, broad shell work, or
+  phase transition was performed. The v12 live TCP candidate still has selected
+  fetch/final identity but no retained rust_entry, boot-info-parsed,
+  target-init, exceptions-ready, kernel_main, route-start, or runtime-ready
+  serial markers. The v13 production-timer control proves generic selected-path
+  entry, not live TCP candidate readiness. No bounded source/helper/archive
+  repair is accepted; the selected next task is
+  phase12-ssh-live-tcp-candidate-entry-bisect-control-contract-v14-20260630 to
+  define a minimal-entry selected-path control discriminator before any rerun.
+  Packet-I/O/OpenSSH/generated-root retry remain blocked until a later Pi 5
+  task accepts candidate-capture-ready.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
