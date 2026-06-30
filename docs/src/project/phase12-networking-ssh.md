@@ -12233,3 +12233,25 @@ not accepted. selected_next_task is null and planningNeeded=true; supervisor
 planning is required before any rerun, packet-I/O, OpenSSH/generated-root
 retry, remote receipt, compatibility, service success, ssh-ready=true, broad
 shell work, or phase transition.
+
+phase12-ssh-live-tcp-candidate-entry-boundary-source-artifact-reconciliation-v13-20260630
+accepts candidate-entry-control-contract-required. No hardware action, lab
+publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. Static review found no bounded
+source/archive defect after the v12 selected-fetch proof: no source, script,
+linker, target, Cargo, or build-script files changed after the v12 candidate
+source commit; the fresh non-published archive retained matching root/selected
+da591740/kernel_2712.img, valid Image header fields, and entry symbols for
+_start, rust_entry, the top-level kernel_main, boot::rpi5::kernel_main, and
+run_ssh_service_smoltcp_runtime_ready_route before generated boot bytes were
+removed. The first missing fact is now under-specified entry visibility rather
+than TFTP identity or archive construction: v12 checked kernel_main and the
+runtime markers, but did not contract rust_entry, boot-info-parsed,
+target-init, and exceptions-ready phase-line classification. The selected next
+task is phase12-ssh-live-tcp-candidate-entry-control-contract-v13-20260630;
+packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility,
+service success, ssh-ready=true, broad shell work, and phase transition remain
+blocked until a future serialized hardware/control task accepts
+candidate-capture-ready under explicit criteria.

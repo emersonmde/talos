@@ -1,0 +1,15 @@
+archive_sha256=3566f3dca0a8e16da1c0cf3be53a5894f7552a2a603667423d836129d3415583
+archive_bytes=295696
+
+root_kernel_sha256=8c03ce3fbb2365e6acd2a357cc2077badf1e32024d45236f59fef12db0099fdb
+root_kernel_bytes=152136
+
+selected_kernel_sha256=8c03ce3fbb2365e6acd2a357cc2077badf1e32024d45236f59fef12db0099fdb
+selected_kernel_bytes=152136
+
+header_text_offset=0
+
+header_image_size=152136
+
+header_flags=12
+

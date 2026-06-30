@@ -21092,6 +21092,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   rerun, packet-I/O, OpenSSH/generated-root retry, remote receipt,
   compatibility, service success, ssh-ready=true, broad shell work, or phase
   transition.
+- phase12-ssh-live-tcp-candidate-entry-boundary-source-artifact-reconciliation-v13-20260630
+  accepts candidate-entry-control-contract-required. No hardware, lab
+  publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+  OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+  success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+  shell work, or phase transition was performed. Static review found no bounded
+  source/archive defect after v12: the reviewed source paths are unchanged from
+  the v12 candidate source commit, the fresh non-published archive preserved a
+  matching root/selected da591740/kernel_2712.img with valid Image header
+  fields, and symbols retain _start, rust_entry, kernel_main, and the live TCP
+  runtime-marker route. The first missing fact is the uncontracted earlier
+  entry phase-line boundary before kernel_main and runtime markers. The
+  selected next task is
+  phase12-ssh-live-tcp-candidate-entry-control-contract-v13-20260630; packet-I/O,
+  OpenSSH/generated-root retry, remote receipt, compatibility, service success,
+  ssh-ready=true, broad shell work, and phase transition remain blocked until a
+  future serialized hardware/control task accepts candidate-capture-ready under
+  explicit criteria.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

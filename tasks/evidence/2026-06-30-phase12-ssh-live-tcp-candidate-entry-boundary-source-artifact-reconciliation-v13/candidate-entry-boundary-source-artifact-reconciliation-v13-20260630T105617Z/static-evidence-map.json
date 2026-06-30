@@ -1,0 +1,85 @@
+{
+  "task_id": "phase12-ssh-live-tcp-candidate-entry-boundary-source-artifact-reconciliation-v13-20260630",
+  "run_label": "candidate-entry-boundary-source-artifact-reconciliation-v13-20260630T105617Z",
+  "current_head": "15942cd6fcbd3a53bb6d589f8804bb576a63a472",
+  "v12_candidate_source_commit": "1a199ad3f5f8416af2d5088214c5a6d3bf433433",
+  "source_paths_changed_since_v12_candidate": false,
+  "archive_review": {
+    "level": "fresh non-published archive metadata/static review",
+    "archive_sha256": "3566f3dca0a8e16da1c0cf3be53a5894f7552a2a603667423d836129d3415583",
+    "archive_bytes": 295696,
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "selected_kernel_sha256": "8c03ce3fbb2365e6acd2a357cc2077badf1e32024d45236f59fef12db0099fdb",
+    "selected_kernel_bytes": 152136,
+    "selected_kernel_matches_root_kernel": true,
+    "boot_artifact_bytes_retained": false,
+    "generated_archive_removed_before_acceptance": true,
+    "generated_boot_tree_removed_before_acceptance": true
+  },
+  "marker_contract": {
+    "nonce": "v13src-105617",
+    "expected_pre_kernel_main_lines": [
+      "TALOS: rust_entry",
+      "TALOS: boot info parsed",
+      "TALOS: target init",
+      "TALOS: exceptions ready"
+    ],
+    "expected_kernel_main_marker": "TALOS: kernel_main",
+    "expected_route_start_marker": "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=v13src-105617",
+    "expected_runtime_ready_marker": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=v13src-105617",
+    "runtime_blocked_marker_available": true
+  },
+  "static_findings": [
+    {
+      "finding": "v12 selected fetch identity is a real serial-prefixed mirror of the root kernel_2712.img",
+      "disposition": "not-an-issue"
+    },
+    {
+      "finding": "live TCP runtime route starts only after rust_entry, boot-info parse, target init, exception init, kernel_main, target service construction, and boot identity reporting",
+      "disposition": "not-an-issue"
+    },
+    {
+      "finding": "v12 marker checker did not require or classify the earlier rust_entry/boot-info/target-init/exceptions-ready phase lines, leaving the first missing runtime fact under-specified",
+      "disposition": "deferred"
+    },
+    {
+      "finding": "no bounded source/archive defect explains selected TFTP fetch with no kernel_main marker",
+      "disposition": "not-an-issue"
+    },
+    {
+      "finding": "the first local archive materialization used an over-64-character nonce and failed the build.rs nonce guard before image creation",
+      "disposition": "fixed"
+    }
+  ],
+  "selected_next_task": "phase12-ssh-live-tcp-candidate-entry-control-contract-v13-20260630",
+  "terminal_classification": "candidate-entry-control-contract-required",
+  "validation_results": {
+    "git_status_before_action": "pass",
+    "static_source_artifact_symbol_marker_inspection": "pass",
+    "fresh_non_published_archive_review": "pass after rerun with build.rs-valid short nonce; initial overlong nonce failed before image creation",
+    "generated_boot_bytes_removed": "pass",
+    "jq_empty_static_evidence": "pass",
+    "cargo_fmt_or_tests": "not run; no Rust source changes",
+    "shell_helper_checks": "not run; no shell helper changes"
+  },
+  "evidence_paths": {
+    "run_dir": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-boundary-source-artifact-reconciliation-v13/candidate-entry-boundary-source-artifact-reconciliation-v13-20260630T105617Z/",
+    "static_evidence_map": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-boundary-source-artifact-reconciliation-v13/candidate-entry-boundary-source-artifact-reconciliation-v13-20260630T105617Z/static-evidence-map.json",
+    "archive_review_stdout": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-boundary-source-artifact-reconciliation-v13/candidate-entry-boundary-source-artifact-reconciliation-v13-20260630T105617Z/validation/rpi5-ssh-runtime-archive-review.stdout.txt",
+    "initial_overlong_nonce_failure": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-boundary-source-artifact-reconciliation-v13/candidate-entry-boundary-source-artifact-reconciliation-v13-20260630T105617Z/validation/rpi5-ssh-runtime-boot-tree.stderr.txt",
+    "short_nonce_build_stderr": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-boundary-source-artifact-reconciliation-v13/candidate-entry-boundary-source-artifact-reconciliation-v13-20260630T105617Z/validation/rpi5-ssh-runtime-boot-tree-short-nonce.stderr.txt",
+    "source_diff_from_v12_candidate": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-boundary-source-artifact-reconciliation-v13/candidate-entry-boundary-source-artifact-reconciliation-v13-20260630T105617Z/static-review/source-diff-from-v12-candidate.txt",
+    "marker_strings": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-boundary-source-artifact-reconciliation-v13/candidate-entry-boundary-source-artifact-reconciliation-v13-20260630T105617Z/static-review/kernel-marker-strings.txt",
+    "entry_symbols": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-boundary-source-artifact-reconciliation-v13/candidate-entry-boundary-source-artifact-reconciliation-v13-20260630T105617Z/static-review/entry-symbols.txt"
+  },
+  "redaction_review": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_peer_or_log_lines_retained": false,
+    "packet_payloads_retained": false,
+    "key_or_session_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false,
+    "generated_boot_artifact_bytes_removed": true
+  },
+  "commit": null
+}

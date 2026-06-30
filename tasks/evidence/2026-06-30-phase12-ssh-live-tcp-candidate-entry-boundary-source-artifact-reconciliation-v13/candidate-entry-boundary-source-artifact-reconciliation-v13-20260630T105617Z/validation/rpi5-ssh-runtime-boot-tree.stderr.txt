@@ -1,0 +1,19 @@
+   Compiling talos v0.1.0 (/opt/strider/openclaw/current/workspace/projects/talos)
+error: failed to run custom build command for `talos v0.1.0 (/opt/strider/openclaw/current/workspace/projects/talos)`
+
+Caused by:
+  process didn't exit successfully: `/opt/strider/openclaw/current/workspace/projects/talos/target/debug/build/talos-2a941c1251b447df/build-script-build` (exit status: 101)
+  --- stdout
+  cargo:rerun-if-changed=src/arch/aarch64/boot.S
+  cargo:rerun-if-changed=src/arch/aarch64/vectors.S
+  cargo:rerun-if-changed=linker.ld
+  cargo:rerun-if-changed=linker-rpi5.ld
+  cargo:rerun-if-env-changed=TALOS_BOOT_SCENARIO
+  cargo:rerun-if-env-changed=TALOS_CAPTURE_NONCE
+  cargo:rerun-if-changed=userland/generated-root.manifest
+
+  --- stderr
+
+  thread 'main' (1955091) panicked at build.rs:1526:9:
+  TALOS_CAPTURE_NONCE must be 64 characters or fewer
+  note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
