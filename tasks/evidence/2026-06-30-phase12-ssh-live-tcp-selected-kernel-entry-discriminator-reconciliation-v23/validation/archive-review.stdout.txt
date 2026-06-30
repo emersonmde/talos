@@ -1,0 +1,10 @@
+selected_kernel_entry_discriminator=ready
+required_marker=TALOS: selected-kernel-entry-discriminator-v23
+archive=target/tmp/selected-kernel-entry-discriminator-v23.tar.gz
+archive_sha256=8bab1eff73e2d4e8116c7f454bfeccb2494cf1c78e49b58fc44b9b6ca6be2199
+kernel_2712_sha256=8051d7a600fe0867cfe093ffc6322ccdb532abaf58f323ece3f4013cca8054c7
+kernel_2712_size=87432
+header_image_size=87432
+text_offset=0
+flags=12
+later_runtime_markers_absent=true

@@ -1,0 +1,2 @@
+boot_tree=target/tmp/selected-kernel-entry-discriminator-v23-boot-tree
+archive=target/tmp/selected-kernel-entry-discriminator-v23.tar.gz

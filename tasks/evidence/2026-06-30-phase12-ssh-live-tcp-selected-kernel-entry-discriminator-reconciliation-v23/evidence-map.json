@@ -1,0 +1,60 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-kernel-entry-discriminator-reconciliation-v23-20260630",
+  "classification": "selected-kernel-entry-discriminator-repair-ready",
+  "evidence_root": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-kernel-entry-discriminator-reconciliation-v23",
+  "accepted_predecessors": {
+    "accepted_v19_preflight_classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19/classification.json",
+    "accepted_v19_closeout_classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-handoff-discriminator-closeout-v19/classification.json",
+    "accepted_v20_polled_console_preflight": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-polled-console-preflight-v20.md",
+    "accepted_v20_polled_console_closeout": "tasks/2026-06-30-phase12-ssh-live-tcp-minimal-entry-polled-console-closeout-v20.md",
+    "accepted_v21_reconciliation_classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-console-boundary-reconciliation-v21/classification.json",
+    "accepted_v22_preflight_classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-console-boundary-preflight-v22/classification.json",
+    "accepted_v22_closeout_classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-console-boundary-closeout-v22/classification.json"
+  },
+  "source_changes": [
+    "build.rs",
+    "src/main.rs",
+    "src/arch/aarch64/boot.S",
+    "scripts/rpi5-selected-kernel-entry-discriminator-boot-tree.sh",
+    "scripts/rpi5-selected-kernel-entry-discriminator-archive-review.sh"
+  ],
+  "static_evidence": {
+    "archive_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-kernel-entry-discriminator-reconciliation-v23/validation/archive-review.stdout.txt",
+    "archive_review_stderr": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-kernel-entry-discriminator-reconciliation-v23/validation/archive-review.stderr.txt",
+    "archive_sha256": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-kernel-entry-discriminator-reconciliation-v23/static/archive-sha256.txt",
+    "kernel_size": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-kernel-entry-discriminator-reconciliation-v23/static/kernel-size.txt",
+    "kernel_sha256": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-kernel-entry-discriminator-reconciliation-v23/static/kernel-sha256.txt",
+    "selected_root_match": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-kernel-entry-discriminator-reconciliation-v23/static/selected-root-match.txt",
+    "kernel_selected_strings": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-kernel-entry-discriminator-reconciliation-v23/static/kernel-selected-strings.txt",
+    "image_header_words": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-kernel-entry-discriminator-reconciliation-v23/static/image-header-words.txt",
+    "boot_tree_file_manifest": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-kernel-entry-discriminator-reconciliation-v23/materialized/boot-tree-files.txt",
+    "materialization_note": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-kernel-entry-discriminator-reconciliation-v23/materialized/materialization.txt"
+  },
+  "validation": {
+    "sh_n_helpers": "passed",
+    "cargo_fmt_check": "passed",
+    "cargo_rpi5_build": "passed",
+    "non_published_archive_review": "passed",
+    "generated_boot_bytes_removed": "passed",
+    "jq_empty": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed before commit"
+  },
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-kernel-entry-discriminator-preflight-v24-20260630",
+  "planningNeeded": false,
+  "non_claims": [
+    "no hardware action",
+    "no lab publication",
+    "no boot snapshot mutation",
+    "no Pi 5 power action",
+    "no packet I/O",
+    "no OpenSSH/generated-root retry",
+    "no remote receipt",
+    "no compatibility/service readiness claim",
+    "no ssh-ready=true claim",
+    "no fake/kernel-backed command expansion",
+    "no broad shell work",
+    "no phase transition"
+  ]
+}

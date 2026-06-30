@@ -12756,3 +12756,24 @@ occurrences. selected_next_task is null and planningNeeded=true before another
 selected-kernel-entry discriminator or repair, packet-I/O/OpenSSH/generated-root
 retry, remote receipt, compatibility/service readiness, broad shell work, fake
 command expansion, or phase transition.
+
+phase12-ssh-live-tcp-selected-kernel-entry-discriminator-reconciliation-v23-20260630
+accepts selected-kernel-entry-discriminator-repair-ready. No hardware action,
+lab publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The repair preserves v22's
+decisive selected-byte service, final selected identity, serial freshness,
+firmware NETWORK output, and restore proof, then moves the next discriminator to
+_start before CPACR setup, BSS clearing, stack setup, Rust entry,
+BootInfo/reporting, minimal-entry markers, networking, or service code. The new
+rpi5_selected_kernel_entry_discriminator scenario emits
+TALOS: selected-kernel-entry-discriminator-v23 through the early UART10 writer
+and parks in WFE. Non-published materialization retained an 87,432-byte selected
+kernel with SHA-256 8051d7a6..., valid Image header fields, root/selected
+equality, selected da591740/kernel_2712.img path, and later runtime/service
+markers absent. The selected next task is
+phase12-ssh-live-tcp-pi5-selected-kernel-entry-discriminator-preflight-v24-20260630;
+packet-I/O/OpenSSH/generated-root retry, remote receipt,
+compatibility/service readiness, broad shell work, fake command expansion, and
+phase transition remain blocked.

@@ -21487,6 +21487,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   OpenSSH/generated-root retry, remote receipt, compatibility/service
   readiness, broad shell work, fake/kernel-backed command expansion, or phase
   transition.
+- phase12-ssh-live-tcp-selected-kernel-entry-discriminator-reconciliation-v23-20260630
+  accepts selected-kernel-entry-discriminator-repair-ready. No hardware action,
+  lab publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+  OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+  success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+  shell work, or phase transition was performed. The no-hardware repair keeps
+  v22's selected-byte/no-marker fact and adds a dedicated
+  rpi5_selected_kernel_entry_discriminator scenario that emits
+  TALOS: selected-kernel-entry-discriminator-v23 at _start before CPACR, BSS,
+  stack, Rust entry, BootInfo, minimal-entry, networking, or service code, then
+  parks in WFE. Static non-published review retained an 87,432-byte selected
+  kernel with SHA-256 8051d7a6..., valid Image header fields, root/selected
+  equality, selected da591740/kernel_2712.img path, and later runtime/service
+  markers absent. The selected next task is
+  phase12-ssh-live-tcp-pi5-selected-kernel-entry-discriminator-preflight-v24-20260630;
+  packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
+  broad shell work, fake command expansion, and phase transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

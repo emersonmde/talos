@@ -1,0 +1,120 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-kernel-entry-discriminator-reconciliation-v23-20260630",
+  "status": "accepted",
+  "classification": "selected-kernel-entry-discriminator-repair-ready",
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-kernel-entry-discriminator-preflight-v24-20260630",
+  "planningNeeded": false,
+  "evidence_level": "no-hardware source/assembly/helper repair, accepted v19-v22 static inspection, non-published Pi 5 boot-tree/archive materialization, image/header/string/root-selected equality review, task-owned JSON evidence, docs build, shell syntax check, Rust format/build checks, and diff checks",
+  "hardwareAction": false,
+  "hardwareTestLockAcquired": false,
+  "labPublication": false,
+  "bootSnapshotMutation": false,
+  "pi5PowerAction": false,
+  "packetIo": false,
+  "opensshGeneratedRootRetry": false,
+  "remoteReceipt": false,
+  "compatibilityOrServiceReadinessClaim": false,
+  "sshReadyClaim": false,
+  "fakeKernelBackedCommandExpansion": false,
+  "phaseTransition": false,
+  "preserved_v22_facts": {
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "selected_fetch_byte_count": 69816,
+    "selected_fetch_byte_match_count": 2,
+    "v22_kernel_sha256": "22ed9e1b6f0c04a28a662c55ddb48769505001c53caab40a04cbea40fa397cb7",
+    "final_pre_restore_selected_identity_held": true,
+    "restore_succeeded": true,
+    "pre_power_serial_drained_empty": true,
+    "firmware_network_output_present": true,
+    "capture_nonce_occurrences": 0,
+    "minimal_entry_console_boundary_start_occurrences": 0,
+    "minimal_entry_control_ready_occurrences": 0
+  },
+  "repair": {
+    "source_files": [
+      "build.rs",
+      "src/main.rs",
+      "src/arch/aarch64/boot.S"
+    ],
+    "helper_files": [
+      "scripts/rpi5-selected-kernel-entry-discriminator-boot-tree.sh",
+      "scripts/rpi5-selected-kernel-entry-discriminator-archive-review.sh"
+    ],
+    "scenario": "rpi5_selected_kernel_entry_discriminator",
+    "asm_define": "TALOS_RPI5_SELECTED_KERNEL_ENTRY_DISCRIMINATOR_SCENARIO",
+    "marker": "TALOS: selected-kernel-entry-discriminator-v23",
+    "marker_source": "_start via talos_rpi5_early_uart_write on UART10",
+    "boundary_stage": "selected-kernel-entry-before-rust",
+    "qualitatively_different_from_v22": "v22 depended on src/boot/rpi5.rs and later BootInfo/minimal-entry marker paths; v23 emits before CPACR setup, BSS clearing, stack setup, rust_entry, BootInfo reporting, minimal-entry code, networking, or service code, then parks in WFE."
+  },
+  "static_materialization": {
+    "archive": "target/tmp/selected-kernel-entry-discriminator-v23.tar.gz",
+    "archive_sha256": "8bab1eff73e2d4e8116c7f454bfeccb2494cf1c78e49b58fc44b9b6ca6be2199",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "kernel_bytes": 87432,
+    "kernel_sha256": "8051d7a600fe0867cfe093ffc6322ccdb532abaf58f323ece3f4013cca8054c7",
+    "header_text_offset": 0,
+    "header_image_size": 87432,
+    "header_flags": 12,
+    "root_selected_kernel_equal": true,
+    "required_markers": [
+      "TALOS: selected-kernel-entry-discriminator-v23"
+    ],
+    "forbidden_later_markers_absent": [
+      "TALOS: minimal-entry-console-boundary-start",
+      "TALOS: minimal-entry-control-ready",
+      "TALOS: ssh-service-smoltcp-runtime",
+      "rpi5-production-timer-preemption: PASS"
+    ],
+    "generated_boot_bytes_removed": true
+  },
+  "v24_contract": {
+    "restore_target": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z or the current accepted control snapshot named by the v24 task",
+    "fail_closed_classifications": [
+      "selected-kernel-entry-marker-retained",
+      "blocked-selected-kernel-entry-marker-missing",
+      "selected-kernel-entry-inconclusive-after-triage"
+    ],
+    "redaction_rules": "Retain task ids, path labels, hashes, byte counts, marker names, classifications, validation outcomes, and selected successor metadata; omit generated boot bytes, packet payloads, SSH/session/key material, private user data, stable secret-derived identifiers, and unnecessary raw hardware data."
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Added a bounded _start-level selected-kernel-entry discriminator before CPACR, BSS, stack, Rust, BootInfo, minimal-entry, networking, or service code."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Added selected-kernel-entry boot-tree and archive-review helpers that preserve da591740/kernel_2712.img and reject later runtime/service markers."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "v22 selected-byte service, final selected identity, serial freshness, firmware NETWORK output, and restore proof remain decisive."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Non-published v23 materialization preserved root/selected equality, valid Image header fields, and the expected selected fetch path."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Removed the stale assumption that another Rust/BootInfo-level marker can decide selected-kernel _start entry after v22 retained no Talos marker at either direct early or post-boot-identity stages."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Only the serialized v24 Pi 5 preflight can decide whether the _start marker is retained on hardware."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness, broad shell work, fake command expansion, and phase transition remain blocked."
+    }
+  ],
+  "rejected_claims": [
+    "packet I/O",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility/service readiness",
+    "ssh-ready=true",
+    "broad shell work",
+    "fake/kernel-backed command expansion",
+    "phase transition"
+  ]
+}

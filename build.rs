@@ -16,6 +16,8 @@ const RPI5_EARLY_ENTRY_PROVENANCE_ASM: &str = "TALOS_RPI5_EARLY_ENTRY_PROVENANCE
 const RPI5_HANDOFF_SENTINEL_ASM: &str = "TALOS_RPI5_HANDOFF_SENTINEL_SCENARIO";
 const RPI5_BOOT_CONTRACT_DISCRIMINATOR_ASM: &str =
     "TALOS_RPI5_BOOT_CONTRACT_DISCRIMINATOR_SCENARIO";
+const RPI5_SELECTED_KERNEL_ENTRY_DISCRIMINATOR_ASM: &str =
+    "TALOS_RPI5_SELECTED_KERNEL_ENTRY_DISCRIMINATOR_SCENARIO";
 const RPI5_EL0_TRAP_PROOF_ASM: &str = "TALOS_RPI5_EL0_TRAP_PROOF_SCENARIO";
 const RPI5_SYSCALL_PROOF_ASM: &str = "TALOS_RPI5_SYSCALL_PROOF_SCENARIO";
 const QEMU_SYSCALL_SMOKE_ASM: &str = "TALOS_QEMU_SYSCALL_SMOKE_SCENARIO";
@@ -580,6 +582,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         value: "rpi5_minimal_entry_control",
         implied_values: &[],
         asm_defines: &[RPI5_EARLY_ENTRY_PROVENANCE_ASM],
+    },
+    BootScenario {
+        value: "rpi5_selected_kernel_entry_discriminator",
+        implied_values: &[],
+        asm_defines: &[RPI5_SELECTED_KERNEL_ENTRY_DISCRIMINATOR_ASM],
     },
     BootScenario {
         value: "rpi5_selected_image_handoff_sentinel",
