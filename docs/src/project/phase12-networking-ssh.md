@@ -12276,3 +12276,20 @@ phase12-ssh-live-tcp-pi5-candidate-entry-control-discriminator-v13-20260630;
 packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility,
 service success, ssh-ready=true, broad shell work, and phase transition remain
 blocked.
+
+phase12-ssh-live-tcp-pi5-candidate-entry-control-discriminator-v13-20260630
+accepts control-entry-passes. The serialized Pi 5 control published the
+current-tree production-timer selected-path archive, captured stable
+same-cursor TFTP evidence with two selected da591740/kernel_2712.img serves at
+104,136 bytes, observed firmware NETWORK output and one
+rpi5-production-timer-preemption: PASS marker, confirmed final pre-restore
+identity stayed on control tree 4edd4f1..., and restored to
+phase12-ssh-v10-openssh-clean-pre-20260624T074100Z / a0452458.... The
+contracted phase lines TALOS: rust_entry, TALOS: boot info parsed,
+TALOS: target init, TALOS: exceptions ready, and TALOS: kernel_main were absent
+in the fresh serial window; under the predecessor contract they are
+metadata-only for this control because the downstream PASS marker was present.
+The selected next task is
+phase12-ssh-live-tcp-kernel-entry-boundary-closeout-v13-20260630; packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility, service success,
+ssh-ready=true, broad shell work, and phase transition remain blocked.

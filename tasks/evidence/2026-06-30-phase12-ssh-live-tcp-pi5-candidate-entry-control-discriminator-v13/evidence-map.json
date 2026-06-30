@@ -1,0 +1,64 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-candidate-entry-control-discriminator-v13-20260630",
+  "terminal_classification": "control-entry-passes",
+  "selected_next_task": "phase12-ssh-live-tcp-kernel-entry-boundary-closeout-v13-20260630",
+  "planningNeeded": false,
+  "hardwareAction": true,
+  "labPublication": true,
+  "bootSnapshotMutation": true,
+  "pi5PowerAction": true,
+  "packetIo": false,
+  "opensshGeneratedRootRetry": false,
+  "run_label": "phase12-entry-control-v13-20260630T111930Z",
+  "contract": {
+    "expected_tree_hash": "4edd4f1dad12ea06e3c45b1435f9a2d16e9c2046226d8963a0d8413a9f7226d1",
+    "preflight_tree_matches": true,
+    "final_pre_restore_tree_matches": true,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "stable_tftp": true,
+    "serial_capture_mode": "read",
+    "serial_response_bytes": 8072,
+    "firmware_network_present": true,
+    "pass_marker_present": true,
+    "pass_marker_occurrences": 1,
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "phase_lines": {
+    "TALOS: rust_entry": false,
+    "TALOS: boot info parsed": false,
+    "TALOS: target init": false,
+    "TALOS: exceptions ready": false,
+    "TALOS: kernel_main": false
+  },
+  "evidence_paths": {
+    "run_dir": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-entry-control-discriminator-v13/phase12-entry-control-v13-20260630T111930Z/",
+    "classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-entry-control-discriminator-v13/classification.json",
+    "capture_summary": "capture-invariant-summary.json",
+    "serial_window": "serial-observe-window.json",
+    "tftp_delta": "tftp-delta-stable-pre-restore.json",
+    "restore_snapshot": "restore-snapshot.json",
+    "post_restore_status": "post-run-status.json"
+  },
+  "validation_results": {
+    "git_status_before_action": "recorded",
+    "lab_api_identity_before_hardware": "pass",
+    "fresh_serial_cursor_and_repaired_tftp_delta": "pass",
+    "restore_confirmation": "pass",
+    "jq_empty_task_evidence": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "redaction_review": {
+    "task_summary_omits_raw_serial_text": true,
+    "task_summary_omits_raw_tftp_peer_logs": true,
+    "packet_payloads_retained": false,
+    "key_or_session_material_retained": false,
+    "private_user_data_retained": false,
+    "raw_serial_endpoint_artifact_retained": true,
+    "raw_tftp_endpoint_artifact_retained": true,
+    "note": "Raw lab-controller serial/TFTP artifacts are retained only under task-owned hardware evidence."
+  }
+}

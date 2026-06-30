@@ -1,0 +1,16 @@
+target/tmp/phase12-entry-control-v13-20260630T111930Z-boot-tree/bcm2712-rpi-5-b.dtb
+target/tmp/phase12-entry-control-v13-20260630T111930Z-boot-tree/cmdline.txt
+target/tmp/phase12-entry-control-v13-20260630T111930Z-boot-tree/config.txt
+target/tmp/phase12-entry-control-v13-20260630T111930Z-boot-tree/da591740/bcm2712-rpi-5-b.dtb
+target/tmp/phase12-entry-control-v13-20260630T111930Z-boot-tree/da591740/cmdline.txt
+target/tmp/phase12-entry-control-v13-20260630T111930Z-boot-tree/da591740/config.txt
+target/tmp/phase12-entry-control-v13-20260630T111930Z-boot-tree/da591740/kernel8.img
+target/tmp/phase12-entry-control-v13-20260630T111930Z-boot-tree/da591740/kernel_2712.img
+target/tmp/phase12-entry-control-v13-20260630T111930Z-boot-tree/da591740/overlays/bcm2712d0.dtbo
+target/tmp/phase12-entry-control-v13-20260630T111930Z-boot-tree/da591740/overlays/overlay_map.dtb
+target/tmp/phase12-entry-control-v13-20260630T111930Z-boot-tree/da591740/overlays/uart0-pi5.dtbo
+target/tmp/phase12-entry-control-v13-20260630T111930Z-boot-tree/kernel8.img
+target/tmp/phase12-entry-control-v13-20260630T111930Z-boot-tree/kernel_2712.img
+target/tmp/phase12-entry-control-v13-20260630T111930Z-boot-tree/overlays/bcm2712d0.dtbo
+target/tmp/phase12-entry-control-v13-20260630T111930Z-boot-tree/overlays/overlay_map.dtb
+target/tmp/phase12-entry-control-v13-20260630T111930Z-boot-tree/overlays/uart0-pi5.dtbo
