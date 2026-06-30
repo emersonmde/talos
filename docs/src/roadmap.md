@@ -20929,6 +20929,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   any live TCP candidate retry, packet-I/O, OpenSSH/generated-root retry,
   remote receipt, compatibility, service success, ssh-ready=true, broad shell
   work, or phase transition.
+- phase12-ssh-live-tcp-entry-artifact-delta-reconciliation-20260630 accepts
+  blocked-no-entry-artifact-repair. No hardware, lab publication, boot snapshot
+  mutation, or Pi 5 power action was performed. Fresh non-published
+  materialization reproduced the current-tree minimal-control and
+  runtime-marker-route artifact shape with selected da591740/kernel_2712.img
+  mirrors, valid Image headers, and expected marker tokens, then removed the
+  generated boot bytes after metadata retention. No bounded source, script,
+  archive, or docs repair was found, and the minimal-control diagnostic remains
+  a valid current-tree selected-path entry check rather than a quarantined
+  non-representative shim. selected_next_task is null and planningNeeded=true;
+  minimal-control v2 hardware, live TCP candidate preflight, packet-I/O,
+  OpenSSH/generated-root retry, remote receipt, compatibility, service success,
+  ssh-ready=true, broad shell work, and phase transition remain blocked pending
+  supervisor planning for the current-tree selected-fetch/no-entry boundary.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

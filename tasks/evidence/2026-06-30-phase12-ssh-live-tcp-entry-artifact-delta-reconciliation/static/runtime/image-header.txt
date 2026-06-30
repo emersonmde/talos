@@ -1,0 +1,4 @@
+text_offset=0
+header_image_size=152152
+flags=12
+magic=ARMd

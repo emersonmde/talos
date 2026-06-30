@@ -1,0 +1,1 @@
+9c06b7718ebe729217362f998af7f1e044b75e3aa3e74475f1a27779eadddcf7  tasks/evidence/2026-06-30-phase12-ssh-live-tcp-entry-artifact-delta-reconciliation/materialized/minimal/minimal-entry-control-static.tar.gz

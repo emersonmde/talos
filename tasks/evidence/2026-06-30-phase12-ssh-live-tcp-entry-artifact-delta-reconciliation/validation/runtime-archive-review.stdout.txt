@@ -1,0 +1,32 @@
+archive=tasks/evidence/2026-06-30-phase12-ssh-live-tcp-entry-artifact-delta-reconciliation/materialized/runtime/runtime-marker-route-static.tar.gz
+sha256=ef89888026a556a7fdf3eecbb88d4a85f1f0abd2622ff2dbaabd4807c5608070
+file_count=19
+kernel_size=152152
+header_image_size=152152
+text_offset=0
+flags=12
+loader_diagnostic=false
+circle_config_loader_diagnostic=false
+manifest:
+  bcm2712-rpi-5-b.dtb
+  cmdline.txt
+  config.txt
+  da591740
+  da591740/bcm2712-rpi-5-b.dtb
+  da591740/cmdline.txt
+  da591740/config.txt
+  da591740/kernel8.img
+  da591740/kernel_2712.img
+  da591740/overlays
+  da591740/overlays/bcm2712d0.dtbo
+  da591740/overlays/overlay_map.dtb
+  da591740/overlays/uart0-pi5.dtbo
+  kernel8.img
+  kernel_2712.img
+  overlays
+  overlays/bcm2712d0.dtbo
+  overlays/overlay_map.dtb
+  overlays/uart0-pi5.dtbo
+runtime_marker_route=ready
+required_marker=TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=entry-artifact-delta-static-runtime
+archive=tasks/evidence/2026-06-30-phase12-ssh-live-tcp-entry-artifact-delta-reconciliation/materialized/runtime/runtime-marker-route-static.tar.gz

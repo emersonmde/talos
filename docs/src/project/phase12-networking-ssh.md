@@ -12026,3 +12026,22 @@ does not authorize live TCP candidate retry, packet-I/O, OpenSSH/generated-root
 retry, remote receipt, compatibility, service success, ssh-ready=true, broad
 shell work, or phase transition; planningNeeded=true for the next supervisor
 boundary.
+
+phase12-ssh-live-tcp-entry-artifact-delta-reconciliation-20260630 accepts
+blocked-no-entry-artifact-repair. No hardware, lab publication, boot snapshot
+mutation, or Pi 5 power action was performed. Fresh non-published
+materialization reproduced the current-tree artifact shape: minimal-control
+keeps matching root/selected da591740/kernel_2712.img at 52,840 bytes and the
+runtime-marker route keeps matching root/selected da591740/kernel_2712.img at
+152,152 bytes; both retain valid arm64 Image headers, selected-fetch mirror
+identity, and expected marker tokens. No bounded source/script/archive/docs
+repair was found, and the minimal-control diagnostic is not quarantined as
+invalid because it remains the thinnest current-tree selected-path check for
+normal startup/rust_entry/kernel_main before live TCP work. The first missing
+fact remains current-tree selected-fetch/no-entry: selected current-tree bytes
+are served, while the selected known-good control emits a downstream
+Talos-side marker under the same capture path. selected_next_task is null and
+planningNeeded=true before any minimal-control v2 hardware, live TCP candidate
+preflight, packet-I/O, OpenSSH/generated-root retry, remote receipt,
+compatibility, service success, ssh-ready=true, broad shell work, or phase
+transition.

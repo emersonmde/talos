@@ -1,0 +1,1 @@
+e19f85f7c514c5b02bcd1d0cfa887d4d17669a4dcd243e8b8340d788cfa01a53  tasks/evidence/2026-06-30-phase12-ssh-live-tcp-entry-artifact-delta-reconciliation/materialized/minimal/boot-tree/kernel_2712.img
