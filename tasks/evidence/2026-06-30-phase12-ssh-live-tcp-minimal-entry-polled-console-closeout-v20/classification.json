@@ -1,0 +1,65 @@
+{
+  "task_id": "phase12-ssh-live-tcp-minimal-entry-polled-console-closeout-v20-20260630",
+  "status": "accepted",
+  "classification": "minimal-entry-polled-console-frontier-blocked-supervisor-planning",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "v20 proved selected-byte service and restore for the repaired minimal-entry selected image, but the fresh post-power serial window still had zero TALOS: minimal-entry-control-ready occurrences. No queued successor is mechanically unblocked until the supervisor defines the next bounded minimal-entry route or handoff discriminator/repair.",
+  "evidence_level": "accepted v17 route repair inspection, accepted v19 selected-image handoff proof inspection, accepted serialized Pi 5 v20 hardware preflight inspection, task-owned JSON evidence, docs build, and diff checks",
+  "predecessors": {
+    "route_repair_v17": {
+      "task_id": "phase12-ssh-live-tcp-minimal-entry-route-repair-v17-20260630",
+      "classification": "minimal-entry-polled-console-repair-supervisor-preflight-required",
+      "commit": "6a73669b3059268c4974e6f991c0f478dea3a9a8",
+      "summary": "Minimal-entry-control-ready was moved to the polled runtime console path and archive review requires source=kernel-main-entry-control-polled-console."
+    },
+    "handoff_discriminator_v19": {
+      "task_id": "phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19-20260630",
+      "classification": "selected-image-handoff-entry-reached",
+      "commit": "edd7341d70c726669ec6163a126170b0c5bc797e",
+      "summary": "Current-tree selected bytes reached the production-timer PASS marker with selected-byte, final identity, and restore proof."
+    },
+    "minimal_entry_preflight_v20": {
+      "task_id": "phase12-ssh-live-tcp-pi5-minimal-entry-polled-console-preflight-v20-20260630",
+      "classification": "blocked-minimal-entry-polled-console-marker-missing",
+      "commit": "2e7594d76d57d8816abbebe32e26b79d4726ecb9",
+      "selected_tree_hash": "3eee516f3047e8fab9b44007cbb433b67ea3c25f1ae64563b0d719e7e7be3b39",
+      "selected_fetch_path": "da591740/kernel_2712.img",
+      "selected_fetch_byte_count": 52728,
+      "selected_fetch_byte_match_count": 2,
+      "kernel_sha256": "ccc95535706f1d896788800c8bba712cdeaac8bc6fedbbae313de06623040b33",
+      "serial_marker": "TALOS: minimal-entry-control-ready capture-nonce=phase12-route-repair-v17-static",
+      "serial_marker_present": false,
+      "serial_marker_occurrences": 0,
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Reconciled the v20 hardware preflight as decisive selected-byte, serial-freshness, final-identity, and restore evidence for the repaired v17 minimal-entry selected image."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "The first missing fact remains the absent TALOS: minimal-entry-control-ready marker after selected-byte service."
+    },
+    {
+      "disposition": "removed",
+      "finding": "The queued v21 runtime-marker post-minimal-entry preflight is not mechanically unblocked because the marker-retained prerequisite is not satisfied."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No known-good control or candidate rerun was required in v20 because the preflight was not inconclusive for identity, TFTP capture, serial freshness, or restore."
+    }
+  ],
+  "rejected_claims": [
+    "packet I/O",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility/service readiness",
+    "ssh-ready=true",
+    "broad shell work",
+    "fake/kernel-backed command expansion",
+    "phase transition"
+  ]
+}

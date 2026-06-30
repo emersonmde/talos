@@ -1,0 +1,33 @@
+{
+  "task_id": "phase12-ssh-live-tcp-minimal-entry-polled-console-closeout-v20-20260630",
+  "classification": "minimal-entry-polled-console-frontier-blocked-supervisor-planning",
+  "evidence_root": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-polled-console-closeout-v20",
+  "retained_artifacts": {
+    "classification": "classification.json",
+    "accepted_v17_route_repair_task": "tasks/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17.md",
+    "accepted_v17_route_repair_classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/classification.json",
+    "accepted_v19_handoff_task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19.md",
+    "accepted_v19_handoff_classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19/classification.json",
+    "accepted_v20_preflight_task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-polled-console-preflight-v20.md",
+    "accepted_v20_preflight_classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-polled-console-preflight-v20/classification.json",
+    "accepted_v20_preflight_evidence_map": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-polled-console-preflight-v20/evidence-map.json"
+  },
+  "frontier_reconciliation": {
+    "decisive_v20_facts": [
+      "selected da591740/kernel_2712.img served twice at 52,728 bytes",
+      "kernel SHA-256 ccc95535706f1d896788800c8bba712cdeaac8bc6fedbbae313de06623040b33 matched the repaired v17 contract",
+      "pre-power serial drain was empty",
+      "final pre-restore identity remained on selected tree 3eee516f3047e8fab9b44007cbb433b67ea3c25f1ae64563b0d719e7e7be3b39",
+      "restore returned to a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    ],
+    "first_missing_fact": "TALOS: minimal-entry-control-ready was absent from the fresh post-power serial window.",
+    "mechanically_unblocked_successor": null
+  },
+  "validation_plan": [
+    "git status --short --branch before edits/action",
+    "jq empty on task-owned JSON evidence",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build after docs update",
+    "git diff --cached --check before commit"
+  ]
+}

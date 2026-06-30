@@ -12673,3 +12673,20 @@ phase12-ssh-live-tcp-minimal-entry-polled-console-closeout-v20-20260630;
 packet-I/O/OpenSSH/generated-root retry, remote receipt, compatibility/service
 readiness claim, ssh-ready=true, broad shell work, fake/kernel-backed command
 expansion, and phase transition remain blocked.
+
+phase12-ssh-live-tcp-minimal-entry-polled-console-closeout-v20-20260630
+accepts minimal-entry-polled-console-frontier-blocked-supervisor-planning. No
+code implementation, hardware action, lab publication, boot snapshot mutation,
+Pi 5 power cycle, packet-I/O, OpenSSH/generated-root retry, remote receipt,
+compatibility claim, service success claim, ssh-ready=true,
+fake/kernel-backed command expansion, broad shell work, or phase transition was
+performed. The closeout preserves the accepted v20 facts: the repaired v17
+selected image was served twice at 52,728 bytes, final pre-restore identity
+stayed on selected tree 3eee516f..., and restore returned to a0452458.... The
+first missing fact remains the absent TALOS: minimal-entry-control-ready marker
+from the fresh post-power serial window. Because the marker-retained
+prerequisite is absent, the queued v21 runtime-marker post-minimal-entry
+preflight is not mechanically unblocked; selected_next_task is null and
+planningNeeded=true before another minimal-entry discriminator, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility/service readiness,
+broad shell work, or phase transition.
