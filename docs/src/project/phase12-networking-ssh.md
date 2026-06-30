@@ -12326,3 +12326,22 @@ define a minimal-entry selected-path control discriminator before any rerun.
 Packet-I/O/OpenSSH/generated-root retry remain blocked until a later Pi 5 task
 accepts candidate-capture-ready with selected fetch plus route-start and
 nonce-bearing runtime-ready markers.
+
+phase12-ssh-live-tcp-candidate-entry-bisect-control-contract-v14-20260630
+accepts candidate-entry-bisect-control-ready. No hardware, lab publication,
+boot snapshot mutation, Pi 5 power cycle, packet-I/O, OpenSSH/generated-root
+retry, remote receipt, compatibility claim, service success claim,
+ssh-ready=true, broad shell work, or phase transition was performed. The
+contract selects exactly one hardware discriminator:
+phase12-ssh-live-tcp-pi5-candidate-entry-bisect-discriminator-v14-20260630
+must run the current-tree rpi5_minimal_entry_control selected-path archive
+from source commit 54a4a718d364ffc8fee65abb5b766c6938165361, using
+scripts/rpi5-minimal-entry-control-boot-tree.sh, selected
+da591740/kernel_2712.img at 52,840 bytes with SHA-256
+7647de5448a7c14f73441491bcb9e17be19c24551f0a9ad1d7b5ca8a8214b63a, and the
+required nonce-bearing marker TALOS: minimal-entry-control-ready. The
+successor must capture fresh serial/TFTP evidence, classify firmware NETWORK,
+rust_entry, boot-info-parsed, target-init, exceptions-ready, kernel_main, and
+the minimal marker, restore to
+phase12-ssh-v10-openssh-clean-pre-20260624T074100Z, and fail closed without
+selecting packet-I/O or OpenSSH directly.

@@ -21169,6 +21169,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   define a minimal-entry selected-path control discriminator before any rerun.
   Packet-I/O/OpenSSH/generated-root retry remain blocked until a later Pi 5
   task accepts candidate-capture-ready.
+- phase12-ssh-live-tcp-candidate-entry-bisect-control-contract-v14-20260630
+  accepts candidate-entry-bisect-control-ready. No hardware, lab publication,
+  boot snapshot mutation, Pi 5 power cycle, packet-I/O, OpenSSH/generated-root
+  retry, remote receipt, compatibility claim, service success claim,
+  ssh-ready=true, broad shell work, or phase transition was performed. The
+  selected one-step discriminator is the current-tree rpi5_minimal_entry_control
+  selected-path archive from source commit 54a4a718... with selected
+  da591740/kernel_2712.img at 52,840 bytes, SHA-256 7647de54..., and required
+  nonce-bearing TALOS: minimal-entry-control-ready marker. The selected next
+  task is
+  phase12-ssh-live-tcp-pi5-candidate-entry-bisect-discriminator-v14-20260630;
+  packet-I/O/OpenSSH/generated-root retry remain blocked unless a later
+  serialized Pi 5 task accepts candidate-capture-ready.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

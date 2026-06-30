@@ -1,0 +1,136 @@
+{
+  "task_id": "phase12-ssh-live-tcp-candidate-entry-bisect-control-contract-v14-20260630",
+  "terminal_classification": "candidate-entry-bisect-control-ready",
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-candidate-entry-bisect-discriminator-v14-20260630",
+  "planning_needed": false,
+  "hardware_action": false,
+  "lab_publication": false,
+  "boot_snapshot_mutation": false,
+  "pi5_power_action": false,
+  "packet_io": false,
+  "openssh_generated_root_retry": false,
+  "remote_receipt": false,
+  "compatibility_claim": false,
+  "service_success_claim": false,
+  "ssh_ready_true": false,
+  "phase_transition": false,
+  "inputs": {
+    "v12_candidate_task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12.md",
+    "v12_candidate_evidence_map": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12/candidate-runtime-marker-preflight-v12-20260630T094011Z/evidence-map.json",
+    "v13_control_task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-entry-control-discriminator-v13.md",
+    "v13_control_evidence_map": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-entry-control-discriminator-v13/evidence-map.json",
+    "v14_delta_task": "tasks/2026-06-30-phase12-ssh-live-tcp-candidate-vs-control-entry-delta-reconciliation-v14.md",
+    "v14_delta_evidence_map": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-vs-control-entry-delta-reconciliation-v14/evidence-map.json",
+    "historical_minimal_entry_context": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-control-discriminator.md"
+  },
+  "selected_discriminator": {
+    "successor_task": "phase12-ssh-live-tcp-pi5-candidate-entry-bisect-discriminator-v14-20260630",
+    "variable": "minimal current-tree kernel_main hook under the selected da591740/kernel_2712.img path, with production-timer secondary route and live TCP route construction stripped",
+    "boot_scenario": "rpi5_minimal_entry_control",
+    "control_helper": "scripts/rpi5-minimal-entry-control-boot-tree.sh",
+    "archive_review_helper": "scripts/rpi5-minimal-entry-control-archive-review.sh",
+    "source_commit": "54a4a718d364ffc8fee65abb5b766c6938165361",
+    "static_review_nonce": "candidate-entry-bisect-v14-static",
+    "hardware_nonce_pattern": "candidate-entry-bisect-v14-<UTC timestamp>",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "selected_kernel_size_bytes": 52840,
+    "selected_kernel_sha256": "7647de5448a7c14f73441491bcb9e17be19c24551f0a9ad1d7b5ca8a8214b63a",
+    "non_published_archive_sha256": "a4839ebbe33960b75b8b88206e4fa8382a4e255989eb2b1c65da4730ce1aad67",
+    "required_marker": "TALOS: minimal-entry-control-ready capture-nonce=<run nonce>",
+    "restore_target": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "hardware_successor_requirements": {
+    "lock": "Acquire hardwareTestLock before lab status reads that affect the boot tree, publication, Pi 5 power action, or restore-affecting operation; release only after restore proof.",
+    "capture_order": [
+      "pre-publication lab API identity and boot snapshots",
+      "run-unique archive identity and selected da591740/kernel_2712.img bytes",
+      "fresh serial cursor/completeness diagnostics",
+      "pre-power TFTP tail cursor",
+      "one helper-owned Pi 5 power/capture window",
+      "repaired stable same-cursor TFTP delta before restore",
+      "final pre-restore lab identity",
+      "marker classification for firmware NETWORK, rust_entry, boot-info-parsed, target-init, exceptions-ready, kernel_main, and nonce-bearing minimal-entry-control-ready",
+      "restore to named selected-control snapshot",
+      "post-restore lab API identity and hardwareTestLock release"
+    ],
+    "inconclusive_triage_order": [
+      "candidate/control identity",
+      "fresh serial cursor",
+      "TFTP delta",
+      "known-good control if capture/staging is suspect",
+      "bounded candidate/control rerun only when the recorded missing fact requires it"
+    ]
+  },
+  "fail_closed_classifications": {
+    "candidate-entry-discriminator-passes": "Selected fetch identity, final pre-restore identity, restore proof, and nonce-bearing minimal-entry-control-ready appear in the retained serial window; may select narrowed v14 candidate entry preflight but not packet-I/O/OpenSSH.",
+    "blocked-control-entry": "Selected fetch succeeds but the minimal control marker is absent.",
+    "blocked-identity": "Selected fetch bytes/hash, final pre-restore identity, or selected mirror identity disagree.",
+    "blocked-tftp-capture": "The TFTP/log window cannot prove selected da591740/kernel_2712.img bytes before restore.",
+    "blocked-restore": "Restore proof is missing or disagrees.",
+    "inconclusive-with-required-discriminator": "The first missing fact is named and no same-shaped retry is selected without supervisor planning."
+  },
+  "static_artifacts": {
+    "boot_tree_files": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-bisect-control-contract-v14/static/boot-tree-files.txt",
+    "kernel_bytes": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-bisect-control-contract-v14/static/kernel-bytes.txt",
+    "kernel_sha256": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-bisect-control-contract-v14/static/kernel-sha256.txt",
+    "archive_sha256": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-bisect-control-contract-v14/static/archive-sha256.txt",
+    "marker_token_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-bisect-control-contract-v14/static/marker-token-review.txt",
+    "archive_review_stdout": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-bisect-control-contract-v14/validation/minimal-entry-control-archive-review.stdout.txt",
+    "generated_boot_archive_bytes_removed": true
+  },
+  "findings": [
+    {
+      "finding": "Promoted exactly one mechanically unblocked no-hardware v14 bisect contract task.",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "Selected current-tree minimal entry-control as the single discriminator between the v12 live TCP no-entry endpoint and v13 production-timer passing endpoint.",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "Recorded exact source/helper/archive identity, required marker, restore target, inconclusive-run triage, fail-closed classifications, and redaction rules.",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "Prior minimal-entry failure is boundary context only; the hardware successor must fail closed if the fresh current-tree run still lacks the minimal marker.",
+      "disposition": "not-an-issue"
+    },
+    {
+      "finding": "Packet-I/O, OpenSSH/generated-root retry, service readiness, and phase transition as immediate successors.",
+      "disposition": "removed"
+    }
+  ],
+  "validation": {
+    "git_status_before_action": "pass",
+    "static_review_of_inputs_and_discriminator_metadata": "pass",
+    "non_published_minimal_entry_control_archive_review": "pass",
+    "jq_empty_touched_json_and_state": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "redaction_review": {
+    "retained": [
+      "task ids",
+      "commit ids",
+      "path labels",
+      "hashes",
+      "byte counts",
+      "marker labels",
+      "classification strings",
+      "validation command results"
+    ],
+    "not_retained": [
+      "raw serial text",
+      "raw TFTP peer or log-line fields",
+      "packet payloads",
+      "SSH keys or session material",
+      "boot artifact bytes",
+      "private user data",
+      "stable secret-derived identifiers",
+      "unnecessary hardware data"
+    ]
+  },
+  "commit": "recorded-in-talos-supervisor-state"
+}

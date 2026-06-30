@@ -1,0 +1,2 @@
+target/tmp/phase12-candidate-entry-bisect-control-contract-v14-boot-tree/kernel_2712.img 52840 bytes
+target/tmp/phase12-candidate-entry-bisect-control-contract-v14-boot-tree/da591740/kernel_2712.img 52840 bytes

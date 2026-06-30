@@ -1,0 +1,2 @@
+7647de5448a7c14f73441491bcb9e17be19c24551f0a9ad1d7b5ca8a8214b63a  target/tmp/phase12-candidate-entry-bisect-control-contract-v14-boot-tree/kernel_2712.img
+7647de5448a7c14f73441491bcb9e17be19c24551f0a9ad1d7b5ca8a8214b63a  target/tmp/phase12-candidate-entry-bisect-control-contract-v14-boot-tree/da591740/kernel_2712.img
