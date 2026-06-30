@@ -1,0 +1,16 @@
+bcm2712-rpi-5-b.dtb 78679
+cmdline.txt 81
+config.txt 118
+da591740/bcm2712-rpi-5-b.dtb 78679
+da591740/cmdline.txt 81
+da591740/config.txt 118
+da591740/kernel8.img 152152
+da591740/kernel_2712.img 152152
+da591740/overlays/bcm2712d0.dtbo 1363
+da591740/overlays/overlay_map.dtb 5971
+da591740/overlays/uart0-pi5.dtbo 1071
+kernel8.img 152152
+kernel_2712.img 152152
+overlays/bcm2712d0.dtbo 1363
+overlays/overlay_map.dtb 5971
+overlays/uart0-pi5.dtbo 1071

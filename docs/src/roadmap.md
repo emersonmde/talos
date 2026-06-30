@@ -20988,6 +20988,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   remote receipt, compatibility, service success, ssh-ready=true, broad shell
   work, and phase transition remain blocked until that no-hardware contract is
   accepted.
+- phase12-ssh-live-tcp-candidate-entry-preflight-contract-v10-20260630 accepts
+  candidate-entry-preflight-contract-ready. No hardware, lab publication, boot
+  snapshot mutation, Pi 5 power action, packet-I/O, OpenSSH/generated-root
+  retry, remote receipt, compatibility claim, service success claim,
+  ssh-ready=true, broad shell work, or phase transition was performed. The
+  accepted contract binds the future serialized candidate preflight to source
+  commit fb7f371765f4e5022dc56ffa038c5a6c338d5bcd, boot scenario
+  rpi5_ssh_service_smoltcp_runtime_ready, capture nonce
+  candidate-entry-preflight-v10, selected da591740/kernel_2712.img at 152,152
+  bytes with SHA-256
+  3e260a556cbe39c0fd49c0649ce5ec523491cac77a342e843d1fbd62f23dbd3c,
+  route-start/runtime-ready marker ordering, and
+  phase12-ssh-v10-openssh-clean-pre-20260624T074100Z / a0452458... as both
+  known-good control and restore target. selected_next_task is
+  phase12-ssh-live-tcp-pi5-candidate-preflight-v10-20260630; packet-I/O,
+  OpenSSH/generated-root retry, remote receipt, compatibility, service success,
+  ssh-ready=true, broad shell work, and phase transition remain blocked unless
+  that hardware task accepts candidate-capture-ready.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

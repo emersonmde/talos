@@ -12099,3 +12099,25 @@ phase12-ssh-live-tcp-candidate-entry-preflight-contract-v10-20260630; candidate
 publication, Pi 5 power, packet-I/O, OpenSSH/generated-root retry, remote
 receipt, compatibility, service success, ssh-ready=true, broad shell work, and
 phase transition remain blocked until that no-hardware contract is accepted.
+
+phase12-ssh-live-tcp-candidate-entry-preflight-contract-v10-20260630 accepts
+candidate-entry-preflight-contract-ready. No hardware, lab publication, boot
+snapshot mutation, Pi 5 power action, packet-I/O, OpenSSH/generated-root retry,
+remote receipt, compatibility claim, service success claim, ssh-ready=true,
+broad shell work, or phase transition was performed. Fresh non-published
+materialization of the rpi5_ssh_service_smoltcp_runtime_ready candidate bound
+the future hardware preflight to source commit
+fb7f371765f4e5022dc56ffa038c5a6c338d5bcd, capture nonce
+candidate-entry-preflight-v10, selected da591740/kernel_2712.img at 152,152
+bytes, kernel SHA-256
+3e260a556cbe39c0fd49c0649ce5ec523491cac77a342e843d1fbd62f23dbd3c, and valid
+Image header fields. The marker contract requires route-start before
+runtime-ready with the same nonce, uses
+phase12-ssh-v10-openssh-clean-pre-20260624T074100Z /
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 as both
+known-good control and restore target, and preserves fail-closed
+blocked/inconclusive classifications. The selected next task is
+phase12-ssh-live-tcp-pi5-candidate-preflight-v10-20260630; packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility, service success,
+ssh-ready=true, broad shell work, and phase transition remain blocked unless
+that serialized hardware task accepts candidate-capture-ready.

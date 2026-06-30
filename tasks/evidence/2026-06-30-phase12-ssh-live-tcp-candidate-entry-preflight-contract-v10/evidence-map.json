@@ -1,0 +1,128 @@
+{
+  "task_id": "phase12-ssh-live-tcp-candidate-entry-preflight-contract-v10-20260630",
+  "terminal_classification": "candidate-entry-preflight-contract-ready",
+  "planningNeeded": false,
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-candidate-preflight-v10-20260630",
+  "hardwareAction": false,
+  "labPublication": false,
+  "bootSnapshotMutation": false,
+  "pi5PowerAction": false,
+  "packetIo": false,
+  "opensshGeneratedRootRetry": false,
+  "reviewed_inputs": {
+    "scenario_specific_reconciliation": {
+      "task": "tasks/2026-06-30-phase12-ssh-live-tcp-minimal-control-scenario-specific-reconciliation.md",
+      "classification": "diagnostic-control-quarantined-candidate-contract-ready",
+      "commit": "fb7f371765f4e5022dc56ffa038c5a6c338d5bcd",
+      "summary": "Accepted reconciliation quarantined the minimal diagnostic as scenario-specific after the current-tree production-timer PASS control and selected this exact candidate-entry preflight contract."
+    },
+    "current_tree_entry_control": {
+      "task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-current-tree-production-timer-entry-baseline-discriminator.md",
+      "classification": "current-tree-entry-path-passes-control",
+      "summary": "Current-tree selected bytes reached downstream rpi5-production-timer-preemption: PASS twice while TALOS: kernel_main stayed metadata-only absent."
+    }
+  },
+  "candidate_contract": {
+    "source_commit": "fb7f371765f4e5022dc56ffa038c5a6c338d5bcd",
+    "boot_scenario": "rpi5_ssh_service_smoltcp_runtime_ready",
+    "capture_nonce": "candidate-entry-preflight-v10",
+    "archive_recreation_command": "TALOS_CAPTURE_NONCE=candidate-entry-preflight-v10 ./scripts/rpi5-ssh-service-smoltcp-runtime-ready-boot-tree.sh <pi-firmware-boot-source> <output-boot-tree>; tar -czf <archive> -C <output-boot-tree> .",
+    "archive_sha256": "9e12d233123992bbf4187996214c4267696985d152ada7565240ca3f4ad7b143",
+    "archive_bytes_retained": false,
+    "kernel_sha256": "3e260a556cbe39c0fd49c0649ce5ec523491cac77a342e843d1fbd62f23dbd3c",
+    "kernel_bytes": 152152,
+    "selected_fetch": {
+      "path": "da591740/kernel_2712.img",
+      "bytes": 152152,
+      "selected_matches_root": true
+    },
+    "image_header": {
+      "text_offset": 0,
+      "header_image_size": 152152,
+      "flags": 12,
+      "magic": "ARMd"
+    },
+    "expected_markers": [
+      "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=candidate-entry-preflight-v10",
+      "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=candidate-entry-preflight-v10"
+    ],
+    "known_good_control": {
+      "snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+      "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "selected_kernel_path": "da591740/kernel_2712.img",
+      "selected_kernel_bytes": 104136,
+      "required_marker": "rpi5-production-timer-preemption: PASS",
+      "kernel_main_policy": "metadata-only absent when downstream production-timer PASS, selected fetch identity, stable boot identity, and cursor windows are present"
+    },
+    "restore_target": {
+      "snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+      "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    },
+    "hardware_lock_lifecycle": "Future hardware task must acquire hardwareTestLock before lab publication, boot snapshot mutation, Pi 5 power, TFTP/serial capture, or restore-affecting operation; release only after restore proof and post-restore identity are retained."
+  },
+  "fail_closed_classifications": [
+    "candidate-capture-ready",
+    "blocked-candidate-identity",
+    "blocked-candidate-kernel-not-starting",
+    "blocked-candidate-tftp-capture",
+    "blocked-runtime-marker-route",
+    "blocked-capture-window-contract",
+    "blocked-restore",
+    "inconclusive-with-required-discriminator"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Bound the v10 candidate preflight to the accepted scenario-specific reconciliation instead of the older minimal-control chain."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Defined exact source commit, capture nonce, archive/kernel hashes, selected da591740/kernel_2712.img identity, marker contract, known-good control, restore target, and hardware lock lifecycle for one future serialized candidate preflight."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Fresh non-published archive review proves the candidate route markers and fail-closed non-claims are embedded with the selected-path mirror; no source repair was required."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Candidate publication, Pi 5 power, packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility, service success, ssh-ready=true, broad shell work, and phase transition remain blocked until an explicit hardware successor accepts candidate-capture-ready."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Generated non-published candidate boot tree and archive bytes were removed after retaining manifests, hashes, Image header fields, and archive-review output."
+    }
+  ],
+  "evidence_paths": {
+    "task_record": "tasks/2026-06-30-phase12-ssh-live-tcp-candidate-entry-preflight-contract-v10.md",
+    "source_commit": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-preflight-contract-v10/static/source-commit.txt",
+    "boot_tree_manifest": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-preflight-contract-v10/materialized/candidate/boot-tree-manifest.txt",
+    "archive_sha256": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-preflight-contract-v10/materialized/candidate/archive-sha256.txt",
+    "kernel_sha256": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-preflight-contract-v10/static/candidate-kernel-sha256.txt",
+    "kernel_bytes": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-preflight-contract-v10/static/candidate-kernel-bytes.txt",
+    "selected_root_match": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-preflight-contract-v10/static/candidate-selected-root-match.txt",
+    "image_header": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-preflight-contract-v10/static/candidate-image-header-words.txt",
+    "marker_contract": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-preflight-contract-v10/static/marker-contract.json",
+    "archive_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-preflight-contract-v10/validation/candidate-archive-review.stdout.txt"
+  },
+  "validation_results": {
+    "git_status_before_action": "pass; main ahead of origin with no uncommitted tracked Talos changes before task-owned evidence",
+    "static_review_of_accepted_reconciliation": "pass",
+    "non_published_candidate_boot_tree_archive_review": "pass",
+    "cargo_fmt": "not run; Rust source not touched",
+    "cargo_test": "not run; Rust source or target routing not touched",
+    "sh_n": "not run; shell helpers/classifiers not touched",
+    "jq_empty": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "redaction_review": {
+    "raw_serial_retained": false,
+    "raw_tftp_peer_logs_retained": false,
+    "packet_payloads_retained": false,
+    "key_or_session_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false
+  },
+  "commit": null
+}

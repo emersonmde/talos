@@ -1,0 +1,29 @@
+{
+  "capture_nonce": "candidate-entry-preflight-v10",
+  "expected_selected_fetch": {
+    "path": "da591740/kernel_2712.img",
+    "bytes": 152152,
+    "kernel_sha256": "3e260a556cbe39c0fd49c0649ce5ec523491cac77a342e843d1fbd62f23dbd3c",
+    "selected_matches_root": true
+  },
+  "required_markers_in_order": [
+    "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=candidate-entry-preflight-v10",
+    "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=candidate-entry-preflight-v10"
+  ],
+  "required_static_tokens": [
+    "runtime-binding=accepted-deterministic-device-interface-delivery",
+    "descriptor-facing-connection-delivered=",
+    "deterministic-device-interface-bound=",
+    "hardware-frame-provider-bound=",
+    "driver-packet-rx-frames=",
+    "driver-packet-tx-frames=",
+    "live-packet-io-accepted=",
+    "live-reachability-accepted=",
+    "remote-receipt-accepted=",
+    "compatibility-accepted=",
+    "ssh-ready=",
+    "claims-service-success=false",
+    "claims-phase-transition=false"
+  ],
+  "static_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-candidate-entry-preflight-contract-v10/validation/candidate-archive-review.stdout.txt"
+}
