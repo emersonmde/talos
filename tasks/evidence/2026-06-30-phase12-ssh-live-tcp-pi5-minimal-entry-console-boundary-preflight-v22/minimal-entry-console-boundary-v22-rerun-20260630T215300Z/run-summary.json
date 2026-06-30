@@ -1,0 +1,19 @@
+{
+  "label": "minimal-entry-console-boundary-v22-rerun-20260630T215300Z",
+  "classification": "blocked-minimal-entry-console-boundary-marker-missing",
+  "selected_next_task": "phase12-ssh-live-tcp-minimal-entry-console-boundary-closeout-v22-20260630",
+  "planningNeeded": false,
+  "selected_tree_hash": "1bf796cf078cef91ade341fb7e97562e2bd4be2f21c4215aaade53ad30366847",
+  "expected_fetch_path": "da591740/kernel_2712.img",
+  "expected_fetch_byte_count": 69816,
+  "expected_fetch_count": 2,
+  "expected_fetch_byte_match_count": 2,
+  "serial_marker_present": false,
+  "serial_marker_occurrences": 0,
+  "nonce_token_occurrences": 0,
+  "final_pre_restore_selected_tree": true,
+  "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+  "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "identity_join_rejection_reasons": [],
+  "helper_suggested_classification": "reset-side-effect-without-visible-marker-candidate"
+}

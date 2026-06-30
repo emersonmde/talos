@@ -1,0 +1,40 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-minimal-entry-console-boundary-preflight-v22-20260630",
+  "classification": "blocked-minimal-entry-console-boundary-marker-missing",
+  "evidence_root": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-console-boundary-preflight-v22",
+  "primary_run_label": "minimal-entry-console-boundary-v22-rerun-20260630T215300Z",
+  "supporting_run_label": "minimal-entry-console-boundary-v22-20260630T213900Z",
+  "retained_artifacts": {
+    "classification": "classification.json",
+    "static_materialization": "static/materialization.json",
+    "archive_review_stdout": "static/archive-review.stdout.txt",
+    "archive_review_stderr": "static/archive-review.stderr.txt",
+    "kernel_sha256": "static/kernel-sha256.txt",
+    "kernel_size": "static/kernel-size.txt",
+    "primary_run_directory": "minimal-entry-console-boundary-v22-rerun-20260630T215300Z",
+    "primary_capture_summary": "minimal-entry-console-boundary-v22-rerun-20260630T215300Z/capture-invariant-summary.json",
+    "primary_run_summary": "minimal-entry-console-boundary-v22-rerun-20260630T215300Z/run-summary.json",
+    "primary_serial_window": "minimal-entry-console-boundary-v22-rerun-20260630T215300Z/serial-observe-window.json",
+    "primary_tftp_delta": "minimal-entry-console-boundary-v22-rerun-20260630T215300Z/tftp-delta-stable-pre-restore.json",
+    "primary_final_pre_restore_status": "minimal-entry-console-boundary-v22-rerun-20260630T215300Z/final-pre-restore-status.json",
+    "primary_restore_proof": "minimal-entry-console-boundary-v22-rerun-20260630T215300Z/restore-snapshot.json",
+    "primary_post_restore_status": "minimal-entry-console-boundary-v22-rerun-20260630T215300Z/post-restore-status.json",
+    "supporting_first_run_capture_summary": "minimal-entry-console-boundary-v22-20260630T213900Z/capture-invariant-summary.json",
+    "supporting_first_run_note": "minimal-entry-console-boundary-v22-20260630T213900Z/capture-window-order.json",
+    "lock_lifecycle": "memory/talos-supervisor-state.json.hardwareTestLock"
+  },
+  "validation_plan": [
+    "git status --short --branch before edits/action",
+    "Static non-published archive/image review before publication",
+    "Lab API GET / candidate identity before publication and before power action",
+    "Fresh serial cursor/drain before Pi 5 power action",
+    "GET /tftp/logs cursor delta before restore",
+    "Restore to the predecessor-named baseline and confirm with Lab API GET / before releasing hardwareTestLock",
+    "jq empty on task-owned JSON evidence and supervisor state",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "git diff --cached --check before commit"
+  ],
+  "selected_next_task": "phase12-ssh-live-tcp-minimal-entry-console-boundary-closeout-v22-20260630",
+  "planningNeeded": false
+}

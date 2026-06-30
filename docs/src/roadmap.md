@@ -21456,6 +21456,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   the old runtime-marker v21 preflight, packet-I/O/OpenSSH/generated-root retry,
   remote receipt, compatibility/service readiness, broad shell work, and phase
   transition remain blocked.
+- phase12-ssh-live-tcp-pi5-minimal-entry-console-boundary-preflight-v22-20260630
+  accepts blocked-minimal-entry-console-boundary-marker-missing. The serialized
+  Pi 5 preflight published the v21 console-boundary selected image contract
+  with selected da591740/kernel_2712.img at 69,816 bytes and SHA-256
+  22ed9e1b..., drained serial empty before power, observed two stable selected
+  TFTP serves, retained final pre-restore identity on selected tree
+  1bf796cf..., and restored the lab to a0452458.... The fresh post-power serial
+  window retained firmware output but zero TALOS: minimal-entry-control-ready
+  and zero capture-nonce=phase12-console-boundary-v21-static occurrences. The
+  selected next task is
+  phase12-ssh-live-tcp-minimal-entry-console-boundary-closeout-v22-20260630;
+  packet-I/O, OpenSSH/generated-root retry, compatibility or service-readiness
+  claims, broad shell work, fake/kernel-backed command expansion, and phase
+  transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

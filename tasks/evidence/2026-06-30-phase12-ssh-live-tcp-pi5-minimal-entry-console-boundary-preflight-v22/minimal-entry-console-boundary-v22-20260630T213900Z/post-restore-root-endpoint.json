@@ -1,0 +1,10 @@
+{
+  "endpoint": "GET /",
+  "curl_exit": 22,
+  "http_code": 404,
+  "body_bytes": 0,
+  "usable_for_selected_tree_identity": false,
+  "selected_tree_identity_source": "/boot/files",
+  "fallback_used": true,
+  "fallback_reason": "manual split-run endpoint requery returned 404 after helper completion; clean rerun evidence is authoritative"
+}

@@ -1,0 +1,1 @@
+69816 target/tmp/minimal-entry-console-boundary-v21-static-boot-tree/kernel_2712.img

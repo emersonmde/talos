@@ -1,0 +1,2 @@
+## main...origin/main [ahead 226]
+?? tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-console-boundary-preflight-v22/

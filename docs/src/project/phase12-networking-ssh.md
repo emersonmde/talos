@@ -12716,3 +12716,25 @@ phase12-ssh-live-tcp-pi5-minimal-entry-console-boundary-preflight-v22-20260630;
 the old runtime-marker v21 preflight, packet-I/O/OpenSSH/generated-root retry,
 remote receipt, compatibility/service readiness, broad shell work, and phase
 transition remain blocked.
+
+phase12-ssh-live-tcp-pi5-minimal-entry-console-boundary-preflight-v22-20260630
+accepts blocked-minimal-entry-console-boundary-marker-missing. The serialized
+Pi 5 preflight published the v21 console-boundary selected image contract:
+selected da591740/kernel_2712.img at 69,816 bytes with SHA-256 22ed9e1b...,
+contract-id phase12-ssh-live-tcp-minimal-entry-control-v2, the direct early
+boundary marker, the post-boot-identity minimal-entry ready marker, and
+no-service/no-phase-transition guard tokens. The clean rerun published selected
+tree 1bf796cf..., drained serial empty before power, observed two stable
+selected TFTP serves at 69,816 bytes, retained final pre-restore identity on
+the selected tree, and restored phase12-ssh-v10-openssh-clean-pre-20260624T074100Z
+to tree a0452458.... The post-power serial window retained firmware output but
+zero TALOS: minimal-entry-control-ready and zero
+capture-nonce=phase12-console-boundary-v21-static occurrences. Because
+identity, TFTP, serial freshness, final identity, and restore proof were
+decisive, no known-good control was required; a clean candidate rerun was used
+only after first-run evidence hygiene became supporting-only. The selected next
+task is
+phase12-ssh-live-tcp-minimal-entry-console-boundary-closeout-v22-20260630;
+packet-I/O/OpenSSH/generated-root retry, remote receipt, compatibility/service
+readiness claim, ssh-ready=true, broad shell work, fake/kernel-backed command
+expansion, and phase transition remain blocked.

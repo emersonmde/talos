@@ -1,0 +1,72 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-minimal-entry-console-boundary-preflight-v22-20260630",
+  "status": "accepted",
+  "classification": "blocked-minimal-entry-console-boundary-marker-missing",
+  "selected_next_task": "phase12-ssh-live-tcp-minimal-entry-console-boundary-closeout-v22-20260630",
+  "planningNeeded": false,
+  "evidence_level": "serialized Pi 5 hardware preflight with lab-controller selected-tree identity, stable TFTP selected-byte evidence, drained fresh serial window, final pre-restore identity, restore proof, clean rerun after first-run evidence hygiene issue, and task-owned JSON evidence",
+  "primary_run_label": "minimal-entry-console-boundary-v22-rerun-20260630T215300Z",
+  "prior_run_label": "minimal-entry-console-boundary-v22-20260630T213900Z",
+  "static_materialization": {
+    "label": "minimal-entry-console-boundary-v22-20260630T213900Z",
+    "capture_nonce": "phase12-console-boundary-v21-static",
+    "archive": "target/tmp/minimal-entry-console-boundary-v21-static.tar.gz",
+    "archive_sha256": "3c71a4527ed7cbf690b64257fc575f2a901a25bc428124d30f8f596f26e68f8f",
+    "kernel_sha256": "22ed9e1b6f0c04a28a662c55ddb48769505001c53caab40a04cbea40fa397cb7",
+    "kernel_bytes": 69816,
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "required_marker": "TALOS: minimal-entry-control-ready capture-nonce=phase12-console-boundary-v21-static"
+  },
+  "hardware_summary": {
+    "selected_tree_hash": "1bf796cf078cef91ade341fb7e97562e2bd4be2f21c4215aaade53ad30366847",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 69816,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "serial_required_marker": "TALOS: minimal-entry-control-ready capture-nonce=phase12-console-boundary-v21-static",
+    "serial_marker_present": false,
+    "serial_marker_occurrences": 0,
+    "nonce_token_occurrences": 0,
+    "firmware_network_occurrences": 2,
+    "pre_power_drain_empty": true,
+    "final_pre_restore_selected_tree": true,
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "identity_join_rejection_reasons": [],
+    "helper_suggested_classification": "reset-side-effect-without-visible-marker-candidate"
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Executed the v21 console-boundary repair under hardwareTestLock with the exact selected archive contract and clean rerun evidence after the first foreground helper session was not monitored to completion."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Selected-byte service, final pre-restore identity, and restore proof matched the v21 console-boundary candidate contract in the clean rerun."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "The repaired minimal-entry console-boundary markers were absent from the fresh post-power serial window; closeout must reconcile the first missing selected-kernel-entry fact before broader live TCP work."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness, broad shell work, fake command expansion, and phase transition remain rejected as successors."
+    }
+  ],
+  "evidence_hygiene": {
+    "first_run": "minimal-entry-console-boundary-v22-20260630T213900Z",
+    "disposition": "quarantined-as-supporting-only",
+    "reason": "The first helper completed and generated an authoritative capture summary, but a later manual same-cursor TFTP/final-identity requery after restore overwrote some raw files whose byte labels depend on the current boot root. The clean rerun is the primary acceptance evidence."
+  },
+  "rejected_claims": [
+    "packet I/O",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility/service readiness",
+    "ssh-ready=true",
+    "broad shell work",
+    "fake/kernel-backed command expansion",
+    "phase transition"
+  ]
+}
