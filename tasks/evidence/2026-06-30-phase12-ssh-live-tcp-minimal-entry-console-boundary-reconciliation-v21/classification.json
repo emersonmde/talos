@@ -1,0 +1,126 @@
+{
+  "task_id": "phase12-ssh-live-tcp-minimal-entry-console-boundary-reconciliation-v21-20260630",
+  "status": "accepted",
+  "classification": "minimal-entry-console-boundary-repair-ready",
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-minimal-entry-console-boundary-preflight-v22-20260630",
+  "planningNeeded": false,
+  "evidence_level": "no-hardware source/helper repair, accepted v17/v19/v20 static inspection, non-published Pi 5 boot-tree/archive materialization, image/header/string/root-selected equality review, task-owned JSON evidence, docs build, shell syntax check, Rust format/build checks, and diff checks",
+  "hardwareAction": false,
+  "hardwareTestLockAcquired": false,
+  "labPublication": false,
+  "bootSnapshotMutation": false,
+  "pi5PowerAction": false,
+  "packetIo": false,
+  "opensshGeneratedRootRetry": false,
+  "remoteReceipt": false,
+  "compatibilityOrServiceReadinessClaim": false,
+  "sshReadyClaim": false,
+  "fakeKernelBackedCommandExpansion": false,
+  "phaseTransition": false,
+  "preserved_v20_facts": {
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "selected_fetch_byte_count": 52728,
+    "selected_fetch_byte_match_count": 2,
+    "v20_kernel_sha256": "ccc95535706f1d896788800c8bba712cdeaac8bc6fedbbae313de06623040b33",
+    "final_pre_restore_selected_identity_held": true,
+    "restore_succeeded": true,
+    "pre_power_serial_drained_empty": true,
+    "minimal_entry_control_ready_occurrences": 0
+  },
+  "repair": {
+    "source_files": [
+      "src/boot/rpi5.rs",
+      "src/target/rpi5.rs"
+    ],
+    "helper_files": [
+      "scripts/rpi5-minimal-entry-control-archive-review.sh"
+    ],
+    "old_contract_id": "phase12-ssh-live-tcp-minimal-entry-control-v1",
+    "new_contract_id": "phase12-ssh-live-tcp-minimal-entry-control-v2",
+    "basis": "v20 proved selected-byte service and restore but retained no Talos marker. Static source review found the v17 route stopped at first kernel_main before report_boot_identity exercised the normal firmware_console/println! path that v19 production-timer selected-image proof actually covered.",
+    "early_marker": {
+      "marker": "TALOS: minimal-entry-console-boundary-start",
+      "source": "kernel-main-entry-direct-uart",
+      "boundary_stage": "pre-boot-identity"
+    },
+    "ready_marker": {
+      "marker": "TALOS: minimal-entry-control-ready",
+      "source": "kernel-main-post-boot-identity-polled-console",
+      "boundary_stage": "post-boot-identity"
+    },
+    "qualitatively_different_from_v20": "The v22 run can distinguish no selected-kernel entry, early direct-writer entry with missing post-boot-identity polled-console marker, and retained post-boot-identity polled-console readiness; v20 checked only one first-kernel_main marker."
+  },
+  "static_materialization": {
+    "capture_nonce": "phase12-console-boundary-v21-static",
+    "archive": "target/tmp/minimal-entry-console-boundary-v21-static.tar.gz",
+    "archive_sha256": "3c71a4527ed7cbf690b64257fc575f2a901a25bc428124d30f8f596f26e68f8f",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "kernel_bytes": 69816,
+    "kernel_sha256": "22ed9e1b6f0c04a28a662c55ddb48769505001c53caab40a04cbea40fa397cb7",
+    "header_text_offset": 0,
+    "header_image_size": 69816,
+    "header_flags": 12,
+    "root_selected_kernel_equal": true,
+    "required_markers": [
+      "TALOS: minimal-entry-console-boundary-start capture-nonce=phase12-console-boundary-v21-static",
+      "TALOS: minimal-entry-control-ready capture-nonce=phase12-console-boundary-v21-static"
+    ],
+    "no_service_claim_tokens": [
+      "live-tcp-route=false",
+      "packet-io=false",
+      "openssh=false",
+      "ssh-ready=false",
+      "claims-service-success=false",
+      "claims-phase-transition=false"
+    ]
+  },
+  "v22_contract": {
+    "restore_target": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z or the current accepted control snapshot named by the v22 task",
+    "fail_closed_classifications": [
+      "minimal-entry-console-boundary-marker-retained",
+      "blocked-minimal-entry-console-boundary-marker-missing",
+      "minimal-entry-console-boundary-inconclusive-after-triage"
+    ],
+    "redaction_rules": "Retain task ids, path labels, hashes, byte counts, marker names, classifications, validation outcomes, and selected successor metadata; omit raw serial/TFTP peer/log-line fields unless required and redacted by v22, packet payloads, SSH/session/key material, private user data, stable secret-derived identifiers, and unnecessary hardware data."
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "v17 marker placement treated a first-kernel_main runtime-console write as equivalent to the downstream production-timer console path that v19 proved; the marker now runs after report_boot_identity."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Added a direct early boundary marker so the next run can distinguish selected kernel entry from post-boot-identity console readiness."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Archive review now rejects stale v1/single-marker artifacts."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Removed the stale assumption that selected-byte service alone proves the minimal-entry marker visibility boundary."
+    },
+    {
+      "disposition": "removed",
+      "finding": "The old runtime-marker post-minimal-entry v21 preflight remains blocked because v20 did not retain the required marker."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Only the serialized v22 Pi 5 preflight can decide whether the repaired boundary markers are retained on hardware."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No Image header, linker placement, selected root mirror, or da591740 selected-fetch-path defect was found in static review."
+    }
+  ],
+  "rejected_claims": [
+    "packet I/O",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility/service readiness",
+    "ssh-ready=true",
+    "broad shell work",
+    "fake/kernel-backed command expansion",
+    "phase transition"
+  ]
+}

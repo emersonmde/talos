@@ -21437,6 +21437,25 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   discriminator or repair, packet-I/O, OpenSSH/generated-root retry, remote
   receipt, compatibility/service readiness, broad shell work, or phase
   transition.
+- phase12-ssh-live-tcp-minimal-entry-console-boundary-reconciliation-v21-20260630
+  accepts minimal-entry-console-boundary-repair-ready. No hardware action, lab
+  publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+  OpenSSH/generated-root retry, remote receipt, compatibility/service readiness
+  claim, fake command expansion, broad shell work, or phase transition was
+  performed. The repair preserves v20's selected-byte/restore facts and fixes
+  the minimal-entry boundary: the route now emits a direct early
+  TALOS: minimal-entry-console-boundary-start marker before boot identity,
+  continues through report_boot_identity, and then emits
+  TALOS: minimal-entry-control-ready through the post-boot-identity
+  firmware_console path under contract-id
+  phase12-ssh-live-tcp-minimal-entry-control-v2. Static non-published
+  materialization retained a 69,816-byte selected kernel with SHA-256
+  22ed9e1b..., valid Image header fields, root/selected equality, and
+  fail-closed no-service tokens. The selected next task is
+  phase12-ssh-live-tcp-pi5-minimal-entry-console-boundary-preflight-v22-20260630;
+  the old runtime-marker v21 preflight, packet-I/O/OpenSSH/generated-root retry,
+  remote receipt, compatibility/service readiness, broad shell work, and phase
+  transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

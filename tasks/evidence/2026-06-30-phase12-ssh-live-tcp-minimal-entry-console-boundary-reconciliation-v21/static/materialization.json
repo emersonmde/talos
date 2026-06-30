@@ -1,0 +1,36 @@
+{
+  "label": "minimal-entry-console-boundary-v21-static",
+  "capture_nonce": "phase12-console-boundary-v21-static",
+  "boot_source": "target/tmp/rpi5-observed-gpio-status-known-good-tree",
+  "boot_tree": "target/tmp/minimal-entry-console-boundary-v21-static-boot-tree",
+  "archive": "target/tmp/minimal-entry-console-boundary-v21-static.tar.gz",
+  "archive_sha256": "3c71a4527ed7cbf690b64257fc575f2a901a25bc428124d30f8f596f26e68f8f",
+  "selected_fetch_path": "da591740/kernel_2712.img",
+  "kernel_2712_size": 69816,
+  "kernel_2712_sha256": "22ed9e1b6f0c04a28a662c55ddb48769505001c53caab40a04cbea40fa397cb7",
+  "root_selected_kernel_equal": true,
+  "image_header": {
+    "text_offset": 0,
+    "image_size": 69816,
+    "flags": 12
+  },
+  "required_markers": [
+    "TALOS: minimal-entry-console-boundary-start capture-nonce=phase12-console-boundary-v21-static",
+    "TALOS: minimal-entry-control-ready capture-nonce=phase12-console-boundary-v21-static"
+  ],
+  "marker_contract": {
+    "contract_id": "phase12-ssh-live-tcp-minimal-entry-control-v2",
+    "early_marker_source": "kernel-main-entry-direct-uart",
+    "ready_marker_source": "kernel-main-post-boot-identity-polled-console",
+    "early_boundary_stage": "pre-boot-identity",
+    "ready_boundary_stage": "post-boot-identity"
+  },
+  "rejected_claims": {
+    "live_tcp_route": false,
+    "packet_io": false,
+    "openssh": false,
+    "ssh_ready": false,
+    "service_success": false,
+    "phase_transition": false
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "task_id": "phase12-ssh-live-tcp-minimal-entry-console-boundary-reconciliation-v21-20260630",
+  "classification": "minimal-entry-console-boundary-repair-ready",
+  "evidence_root": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-console-boundary-reconciliation-v21",
+  "retained_artifacts": {
+    "classification": "classification.json",
+    "materialization": "static/materialization.json",
+    "archive_review_stdout": "static/archive-review.stdout.txt",
+    "archive_review_stderr": "static/archive-review.stderr.txt",
+    "boot_tree_files": "static/boot-tree-files.txt",
+    "boot_tree_stderr": "static/boot-tree.stderr.txt",
+    "kernel_selected_strings": "static/kernel-selected-strings.txt",
+    "kernel_sha256": "static/kernel-sha256.txt",
+    "kernel_size": "static/kernel-size.txt",
+    "archive_sha256": "static/archive-sha256.txt",
+    "accepted_v17_route_repair_task": "tasks/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17.md",
+    "accepted_v17_route_repair_classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/classification.json",
+    "accepted_v19_handoff_task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19.md",
+    "accepted_v19_handoff_classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19/classification.json",
+    "accepted_v20_preflight_task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-polled-console-preflight-v20.md",
+    "accepted_v20_preflight_classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-polled-console-preflight-v20/classification.json",
+    "accepted_v20_preflight_evidence_map": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-polled-console-preflight-v20/evidence-map.json",
+    "accepted_v20_closeout_task": "tasks/2026-06-30-phase12-ssh-live-tcp-minimal-entry-polled-console-closeout-v20.md",
+    "accepted_v20_closeout_classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-polled-console-closeout-v20/classification.json"
+  },
+  "source_changes": [
+    "src/boot/rpi5.rs",
+    "src/target/rpi5.rs",
+    "scripts/rpi5-minimal-entry-control-archive-review.sh"
+  ],
+  "validation_plan": [
+    "git status --short --branch before edits/action",
+    "jq empty on referenced and task-owned JSON evidence",
+    "sh -n on touched shell helpers",
+    "cargo fmt --all -- --check",
+    "cargo -Zjson-target-spec build --target targets/aarch64-talos-rpi5-bcm2712.json",
+    "Non-published archive materialization plus header/string/root-selected equality review",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "git diff --cached --check before commit"
+  ],
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-minimal-entry-console-boundary-preflight-v22-20260630",
+  "planningNeeded": false
+}

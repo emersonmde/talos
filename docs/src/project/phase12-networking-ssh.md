@@ -12690,3 +12690,29 @@ preflight is not mechanically unblocked; selected_next_task is null and
 planningNeeded=true before another minimal-entry discriminator, packet-I/O,
 OpenSSH/generated-root retry, remote receipt, compatibility/service readiness,
 broad shell work, or phase transition.
+
+phase12-ssh-live-tcp-minimal-entry-console-boundary-reconciliation-v21-20260630
+accepts minimal-entry-console-boundary-repair-ready. No hardware action, lab
+publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The repair preserves the v20
+facts that the repaired selected image was served twice at 52,728 bytes, final
+pre-restore identity held, restore succeeded, pre-power serial was drained
+empty, and TALOS: minimal-entry-control-ready was absent. Static review found
+the v17 route stopped at first kernel_main before report_boot_identity had
+exercised the normal firmware_console/println! path that v19's downstream
+production-timer proof actually covered. The minimal-entry route now emits a
+direct early TALOS: minimal-entry-console-boundary-start marker at
+boundary-stage=pre-boot-identity, continues through report_boot_identity, then
+emits TALOS: minimal-entry-control-ready from
+source=kernel-main-post-boot-identity-polled-console at
+boundary-stage=post-boot-identity. Non-published materialization retained a
+69,816-byte selected kernel with SHA-256 22ed9e1b..., valid Image header
+fields, root/selected equality, contract-id
+phase12-ssh-live-tcp-minimal-entry-control-v2, and fail-closed no-service
+tokens. The selected next task is
+phase12-ssh-live-tcp-pi5-minimal-entry-console-boundary-preflight-v22-20260630;
+the old runtime-marker v21 preflight, packet-I/O/OpenSSH/generated-root retry,
+remote receipt, compatibility/service readiness, broad shell work, and phase
+transition remain blocked.

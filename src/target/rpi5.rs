@@ -13010,6 +13010,21 @@ pub fn run_rp1_ethernet_kernel_entry_serial_beacon() -> ! {
 }
 
 #[cfg(talos_boot_scenario = "rpi5_minimal_entry_control")]
+pub fn write_minimal_entry_console_boundary_start() {
+    write_early_static("TALOS: minimal-entry-console-boundary-start");
+    if let Some(nonce) = option_env!("TALOS_CAPTURE_NONCE") {
+        if !nonce.is_empty() {
+            write_early_static(" capture-nonce=");
+            write_early_static(nonce);
+        }
+    }
+    write_early_static(
+        " contract-id=phase12-ssh-live-tcp-minimal-entry-control-v2 selected-fetch-path=da591740/kernel_2712.img expected-next-marker=minimal-entry-control-ready source=kernel-main-entry-direct-uart boundary-stage=pre-boot-identity live-tcp-route=false packet-io=false openssh=false ssh-ready=false claims-service-success=false claims-phase-transition=false\n",
+    );
+    wait_uart10_empty_early_phase();
+}
+
+#[cfg(talos_boot_scenario = "rpi5_minimal_entry_control")]
 pub fn run_minimal_entry_control_marker() -> ! {
     crate::print!("TALOS: minimal-entry-control-ready");
     if let Some(nonce) = option_env!("TALOS_CAPTURE_NONCE") {
@@ -13018,7 +13033,7 @@ pub fn run_minimal_entry_control_marker() -> ! {
         }
     }
     crate::println!(
-        " contract-id=phase12-ssh-live-tcp-minimal-entry-control-v1 selected-fetch-path=da591740/kernel_2712.img expected-previous-marker=kernel_main source=kernel-main-entry-control-polled-console live-tcp-route=false packet-io=false openssh=false ssh-ready=false claims-service-success=false claims-phase-transition=false"
+        " contract-id=phase12-ssh-live-tcp-minimal-entry-control-v2 selected-fetch-path=da591740/kernel_2712.img expected-previous-marker=minimal-entry-console-boundary-start source=kernel-main-post-boot-identity-polled-console boundary-stage=post-boot-identity live-tcp-route=false packet-io=false openssh=false ssh-ready=false claims-service-success=false claims-phase-transition=false"
     );
     wait_uart10_empty_early_phase();
     loop {

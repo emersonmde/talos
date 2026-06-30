@@ -1,0 +1,11 @@
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-console-boundary-reconciliation-v21/classification.json
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-console-boundary-reconciliation-v21/evidence-map.json
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-console-boundary-reconciliation-v21/static/materialization.json
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-polled-console-closeout-v20/classification.json
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-polled-console-closeout-v20/evidence-map.json
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/classification.json
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/evidence-map.json
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-polled-console-preflight-v20/classification.json
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-polled-console-preflight-v20/evidence-map.json
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-handoff-discriminator-closeout-v19/classification.json
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-handoff-discriminator-closeout-v19/evidence-map.json

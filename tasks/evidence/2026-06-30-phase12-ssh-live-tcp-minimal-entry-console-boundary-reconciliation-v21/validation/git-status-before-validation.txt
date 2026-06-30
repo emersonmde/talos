@@ -1,0 +1,8 @@
+## main...origin/main [ahead 225]
+ M docs/src/project/phase12-networking-ssh.md
+ M docs/src/roadmap.md
+ M scripts/rpi5-minimal-entry-control-archive-review.sh
+ M src/boot/rpi5.rs
+ M src/target/rpi5.rs
+?? tasks/2026-06-30-phase12-ssh-live-tcp-minimal-entry-console-boundary-reconciliation-v21.md
+?? tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-console-boundary-reconciliation-v21/

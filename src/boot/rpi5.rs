@@ -31,7 +31,7 @@ pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
     target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::KernelMain);
 
     #[cfg(talos_boot_scenario = "rpi5_minimal_entry_control")]
-    target::rpi5::run_minimal_entry_control_marker();
+    target::rpi5::write_minimal_entry_console_boundary_start();
 
     #[cfg(any(
         talos_boot_scenario = "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_candidate",
@@ -46,6 +46,9 @@ pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
 
     let services = target::services(boot_info);
     let dtb = report_boot_identity(boot_info, &services);
+
+    #[cfg(talos_boot_scenario = "rpi5_minimal_entry_control")]
+    target::rpi5::run_minimal_entry_control_marker();
 
     #[cfg(talos_boot_scenario = "rpi5_ssh_service_smoltcp_runtime_ready")]
     target::rpi5::run_ssh_service_smoltcp_runtime_ready_route();

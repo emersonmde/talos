@@ -37,13 +37,18 @@ required_marker="TALOS: minimal-entry-control-ready capture-nonce=$CAPTURE_NONCE
 for token in \
     "TALOS: asm_start" \
     "TALOS: asm_pre_rust_entry" \
+    "TALOS: minimal-entry-console-boundary-start" \
     "TALOS: minimal-entry-control-ready" \
     "capture-nonce=" \
     "$CAPTURE_NONCE" \
-    "contract-id=phase12-ssh-live-tcp-minimal-entry-control-v1" \
+    "contract-id=phase12-ssh-live-tcp-minimal-entry-control-v2" \
     "selected-fetch-path=da591740/kernel_2712.img" \
-    "expected-previous-marker=kernel_main" \
-    "source=kernel-main-entry-control-polled-console" \
+    "expected-next-marker=minimal-entry-control-ready" \
+    "expected-previous-marker=minimal-entry-console-boundary-start" \
+    "source=kernel-main-entry-direct-uart" \
+    "source=kernel-main-post-boot-identity-polled-console" \
+    "boundary-stage=pre-boot-identity" \
+    "boundary-stage=post-boot-identity" \
     "live-tcp-route=false" \
     "packet-io=false" \
     "openssh=false" \
