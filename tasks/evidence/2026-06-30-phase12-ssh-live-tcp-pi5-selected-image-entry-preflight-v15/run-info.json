@@ -1,0 +1,25 @@
+{
+  "run_label": "phase12-entry-preflight-v15-20260630T141202Z",
+  "run_dir": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15/phase12-entry-preflight-v15-20260630T141202Z",
+  "source_commit": "3d7659260bad591f2722ee91e8ec56953b0dec61",
+  "boot_source": "target/tmp/rpi5-observed-gpio-status-known-good-tree",
+  "control_helper": "scripts/rpi5-minimal-entry-control-boot-tree.sh",
+  "archive_review_helper": "scripts/rpi5-minimal-entry-control-archive-review.sh",
+  "boot_scenario": "rpi5_minimal_entry_control",
+  "capture_nonce": "phase12-entry-preflight-v15-20260630T141202Z",
+  "archive_sha256": "8d3d909c024fdaff578a3fa4272bf00f210f434cccd2f21ad61f0d2857d72589",
+  "selected_fetch_path": "da591740/kernel_2712.img",
+  "selected_kernel_size_bytes": 52848,
+  "selected_kernel_sha256": "f68905fc306a360f33c0347c0b23c7c053451491fdc9ec0c5c32169230da5615",
+  "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+  "marker_contract": [
+    "TALOS: asm_start",
+    "TALOS: asm_pre_rust_entry",
+    "TALOS: rust_entry",
+    "TALOS: boot info parsed",
+    "TALOS: target init",
+    "TALOS: exceptions ready",
+    "TALOS: kernel_main",
+    "TALOS: minimal-entry-control-ready capture-nonce=phase12-entry-preflight-v15-20260630T141202Z"
+  ]
+}

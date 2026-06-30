@@ -1,0 +1,16 @@
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15/phase12-entry-preflight-v15-20260630T141202Z/boot-tree/bcm2712-rpi-5-b.dtb
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15/phase12-entry-preflight-v15-20260630T141202Z/boot-tree/cmdline.txt
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15/phase12-entry-preflight-v15-20260630T141202Z/boot-tree/config.txt
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15/phase12-entry-preflight-v15-20260630T141202Z/boot-tree/da591740/bcm2712-rpi-5-b.dtb
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15/phase12-entry-preflight-v15-20260630T141202Z/boot-tree/da591740/cmdline.txt
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15/phase12-entry-preflight-v15-20260630T141202Z/boot-tree/da591740/config.txt
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15/phase12-entry-preflight-v15-20260630T141202Z/boot-tree/da591740/kernel8.img
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15/phase12-entry-preflight-v15-20260630T141202Z/boot-tree/da591740/kernel_2712.img
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15/phase12-entry-preflight-v15-20260630T141202Z/boot-tree/da591740/overlays/bcm2712d0.dtbo
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15/phase12-entry-preflight-v15-20260630T141202Z/boot-tree/da591740/overlays/overlay_map.dtb
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15/phase12-entry-preflight-v15-20260630T141202Z/boot-tree/da591740/overlays/uart0-pi5.dtbo
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15/phase12-entry-preflight-v15-20260630T141202Z/boot-tree/kernel8.img
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15/phase12-entry-preflight-v15-20260630T141202Z/boot-tree/kernel_2712.img
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15/phase12-entry-preflight-v15-20260630T141202Z/boot-tree/overlays/bcm2712d0.dtbo
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15/phase12-entry-preflight-v15-20260630T141202Z/boot-tree/overlays/overlay_map.dtb
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15/phase12-entry-preflight-v15-20260630T141202Z/boot-tree/overlays/uart0-pi5.dtbo

@@ -1,0 +1,77 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15-20260630",
+  "run_label": "phase12-entry-preflight-v15-20260630T141202Z",
+  "terminal_classification": "blocked-selected-image-entry",
+  "selected_next_task": "phase12-ssh-live-tcp-selected-image-entry-boundary-closeout-v15-20260630",
+  "planningNeeded": false,
+  "packetIo": false,
+  "opensshGeneratedRootRetry": false,
+  "sshReady": false,
+  "hardwareAction": true,
+  "labPublication": true,
+  "pi5PowerAction": true,
+  "bootSnapshotMutation": true,
+  "contract_checks": {
+    "source_commit": "3d7659260bad591f2722ee91e8ec56953b0dec61",
+    "archive_sha256": "8d3d909c024fdaff578a3fa4272bf00f210f434cccd2f21ad61f0d2857d72589",
+    "expected_tree_hash": "4380329ce566e557569cb1d6ad9844a2eb6d10ae8ca742e1fc4d78b6617deaab",
+    "preflight_tree_matches": true,
+    "final_pre_restore_tree_matches": true,
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "selected_kernel_bytes": 52848,
+    "selected_kernel_sha256": "f68905fc306a360f33c0347c0b23c7c053451491fdc9ec0c5c32169230da5615",
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "stable_tftp": true,
+    "serial_capture_mode": "read",
+    "serial_response_bytes": 4475,
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "phase_lines": {
+    "firmware NETWORK": true,
+    "TALOS: asm_start": false,
+    "TALOS: asm_pre_rust_entry": false,
+    "TALOS: rust_entry": false,
+    "TALOS: boot info parsed": false,
+    "TALOS: target init": false,
+    "TALOS: exceptions ready": false,
+    "TALOS: kernel_main": false,
+    "TALOS: minimal-entry-control-ready": false,
+    "capture nonce": false
+  },
+  "marker_counts": {
+    "firmware_NETWORK": 2,
+    "asm_start": 0,
+    "asm_pre_rust_entry": 0,
+    "rust_entry": 0,
+    "boot_info_parsed": 0,
+    "target_init": 0,
+    "exceptions_ready": 0,
+    "kernel_main": 0,
+    "minimal_entry_control_ready": 0,
+    "capture_nonce": 0
+  },
+  "classification_basis": {
+    "blocked_selected_image_entry": "Selected fetch identity, stable TFTP byte agreement, final pre-restore identity, and restore proof were decisive, but asm_start, asm_pre_rust_entry, Rust phase lines, kernel_main, and the nonce-bearing minimal-entry-control-ready marker were absent.",
+    "not_blocked_identity": "Preflight and final pre-restore tree identity matched the published v15 tree and selected kernel bytes matched.",
+    "not_blocked_tftp_capture": "Stable same-cursor TFTP delta observed two da591740/kernel_2712.img serves with the expected byte count.",
+    "not_blocked_restore": "Restore to the predecessor-named snapshot succeeded and post-restore tree hash was recorded.",
+    "not_selected_image_entry_fixed": "The predecessor-required entry marker contract was not observed."
+  },
+  "inconclusive_triage": {
+    "required": false,
+    "reason": "Identity, selected-fetch TFTP byte agreement, final pre-restore identity, and restore proof were decisive; capture/staging was not suspect.",
+    "known_good_control_run": false
+  },
+  "redaction_review": {
+    "task_summary_omits_raw_serial_text": true,
+    "task_summary_omits_raw_tftp_peer_logs": true,
+    "packet_payloads_retained": false,
+    "key_or_session_material_retained": false,
+    "private_user_data_retained": false,
+    "raw_serial_endpoint_artifact_retained": true,
+    "raw_tftp_endpoint_artifact_retained": true,
+    "note": "Raw lab-controller serial/TFTP artifacts are retained only under task-owned hardware evidence."
+  }
+}

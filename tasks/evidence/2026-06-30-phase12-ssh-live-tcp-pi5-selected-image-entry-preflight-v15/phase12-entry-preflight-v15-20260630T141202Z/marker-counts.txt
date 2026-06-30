@@ -1,0 +1,10 @@
+NETWORK=2
+TALOS: asm_start=0
+TALOS: asm_pre_rust_entry=0
+TALOS: rust_entry=0
+TALOS: boot info parsed=0
+TALOS: target init=0
+TALOS: exceptions ready=0
+TALOS: kernel_main=0
+TALOS: minimal-entry-control-ready=0
+capture-nonce=phase12-entry-preflight-v15-20260630T141202Z=0

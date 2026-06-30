@@ -1,0 +1,15 @@
+{
+  "hardwareTestLock": {
+    "locked": true,
+    "owner": "worker",
+    "taskId": "phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15-20260630",
+    "acquiredAt": "2026-06-30T14:12:25Z",
+    "releasedAt": null,
+    "restored": false,
+    "note": "Worker acquired hardwareTestLock for serialized v15 selected-image entry preflight; no packet-I/O or OpenSSH/generated-root retry authorized."
+  },
+  "currentTask": {
+    "id": "phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15-20260630",
+    "status": "in_progress"
+  }
+}

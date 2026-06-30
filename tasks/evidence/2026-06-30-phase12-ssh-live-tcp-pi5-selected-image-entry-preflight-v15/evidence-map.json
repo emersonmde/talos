@@ -1,0 +1,48 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15-20260630",
+  "terminal_classification": "blocked-selected-image-entry",
+  "selected_next_task": "phase12-ssh-live-tcp-selected-image-entry-boundary-closeout-v15-20260630",
+  "planningNeeded": false,
+  "run_label": "phase12-entry-preflight-v15-20260630T141202Z",
+  "run_identity": {
+    "source_commit": "3d7659260bad591f2722ee91e8ec56953b0dec61",
+    "archive_retained": false,
+    "archive_sha256": "8d3d909c024fdaff578a3fa4272bf00f210f434cccd2f21ad61f0d2857d72589",
+    "tree_hash": "4380329ce566e557569cb1d6ad9844a2eb6d10ae8ca742e1fc4d78b6617deaab",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "selected_kernel_size_bytes": 52848,
+    "selected_kernel_sha256": "f68905fc306a360f33c0347c0b23c7c053451491fdc9ec0c5c32169230da5615",
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z"
+  },
+  "hardware_evidence": {
+    "run_dir": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15/phase12-entry-preflight-v15-20260630T141202Z/",
+    "publish_archive": "publish-archive.json",
+    "lab_identity_before_hardware": "lab-identity-before-hardware.json",
+    "capture_summary": "capture-invariant-summary.json",
+    "capture_window_order": "capture-window-order.json",
+    "serial_window": "serial-observe-window.json",
+    "tftp_delta": "tftp-delta-stable-pre-restore.json",
+    "restore_snapshot": "restore-snapshot.json",
+    "post_restore_status": "post-restore-status.json",
+    "classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15/classification.json"
+  },
+  "validation_results": {
+    "git_status_before_action": "recorded",
+    "lab_api_identity_before_hardware": "pass",
+    "fresh_serial_cursor_and_repaired_tftp_delta": "pass",
+    "restore_confirmation": "pass",
+    "jq_empty_task_evidence": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "redaction_review": {
+    "task_summary_omits_raw_serial_text": true,
+    "task_summary_omits_raw_tftp_peer_logs": true,
+    "packet_payloads_retained": false,
+    "key_or_session_material_retained": false,
+    "private_user_data_retained": false,
+    "raw_serial_endpoint_artifact_retained": true,
+    "raw_tftp_endpoint_artifact_retained": true
+  }
+}

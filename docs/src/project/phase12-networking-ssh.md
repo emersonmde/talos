@@ -12402,3 +12402,22 @@ tokens. The selected next task is
 phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15-20260630; packet-I/O,
 OpenSSH/generated-root retry, remote receipt, compatibility/service readiness
 claim, broad shell work, and phase transition remain blocked.
+
+phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15-20260630 accepts
+blocked-selected-image-entry. The serialized Pi 5 repaired minimal
+entry-control run published source commit 3d765926..., tree 4380329c...,
+selected da591740/kernel_2712.img at 52,848 bytes with SHA-256 f68905fc...,
+and required the full v15 entry-progress ladder. Stable same-cursor TFTP
+evidence observed two selected kernel serves with matching bytes, final
+pre-restore identity stayed on the repaired tree, and restore to
+phase12-ssh-v10-openssh-clean-pre-20260624T074100Z / a0452458... succeeded.
+The fresh serial window retained firmware NETWORK output but did not retain
+TALOS: asm_start, TALOS: asm_pre_rust_entry, rust_entry, boot-info-parsed,
+target-init, exceptions-ready, kernel_main, the nonce-bearing
+minimal-entry-control-ready marker, or the run nonce. Because identity, TFTP,
+final identity, and restore proof were decisive, no inconclusive known-good
+control branch was required. The selected next task is
+phase12-ssh-live-tcp-selected-image-entry-boundary-closeout-v15-20260630;
+packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility,
+service success, ssh-ready=true, broad shell work, and phase transition remain
+blocked.

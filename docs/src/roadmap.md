@@ -21226,6 +21226,18 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15-20260630;
   packet-I/O/OpenSSH/generated-root retry remain blocked until a later Pi 5
   task accepts the full selected-image entry marker contract.
+- phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15-20260630 accepts
+  blocked-selected-image-entry. Serialized Pi 5 hardware evidence restored the
+  phase12-ssh-v10-openssh-clean-pre-20260624T074100Z baseline and proved
+  selected-byte service for the repaired minimal entry-control image: tree
+  4380329c..., selected da591740/kernel_2712.img at 52,848 bytes, SHA-256
+  f68905fc..., and two stable same-cursor selected kernel serves. The serial
+  window retained firmware NETWORK output but no TALOS: asm_start,
+  asm_pre_rust_entry, Rust phase lines, kernel_main, nonce-bearing
+  minimal-entry-control-ready marker, or run nonce. The selected next task is
+  phase12-ssh-live-tcp-selected-image-entry-boundary-closeout-v15-20260630;
+  packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
+  broad shell work, and phase transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
