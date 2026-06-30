@@ -1,0 +1,100 @@
+{
+  "task_id": "phase12-ssh-live-tcp-tftp-capture-boundary-closeout-v12-20260630",
+  "terminal_classification": "candidate-kernel-entry-boundary-needs-supervisor-planning",
+  "evidence_level": [
+    "accepted task/evidence inspection",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "no_code_implementation": true,
+  "no_hardware_action": true,
+  "no_lab_publication": true,
+  "no_boot_snapshot_mutation": true,
+  "no_pi5_power_action": true,
+  "no_packet_io": true,
+  "no_openssh_generated_root_retry": true,
+  "no_fake_kernel_backed_command_expansion": true,
+  "first_missing_fact": "selected candidate TFTP fetch identity is proved under the repaired capture contract, but the retained serial window has no TALOS: kernel_main, no nonce-bearing route-start marker, and no nonce-bearing runtime-ready marker",
+  "accepted_inputs": {
+    "tftp_capture_reconciliation": {
+      "task": "phase12-ssh-live-tcp-tftp-capture-boundary-reconciliation-v12-20260630",
+      "classification": "tftp-capture-helper-repair-ready",
+      "commit": "1a199ad3f5f8416af2d5088214c5a6d3bf433433",
+      "selected_next_task": "phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12-20260630"
+    },
+    "candidate_runtime_marker_preflight": {
+      "task": "phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12-20260630",
+      "classification": "blocked-candidate-kernel-not-starting",
+      "commit": "17f9dbebe877f6d98913dc497bd8b18da9e10e88",
+      "selected_next_task": "phase12-ssh-live-tcp-tftp-capture-boundary-closeout-v12-20260630",
+      "source_commit": "1a199ad3f5f8416af2d5088214c5a6d3bf433433",
+      "archive_sha256": "054be8c7b6a44e9c221d85121974ff323d4ec91c642e6bc1f081861187ad6042",
+      "selected_kernel_bytes": 152176,
+      "selected_kernel_sha256": "76cf4214a0ced6fc85c107bbc123a703133f72999c112abcb9786ab5018a6050",
+      "pre_restore_tftp_events": 13,
+      "selected_kernel_fetches": 2,
+      "final_pre_restore_tree_hash": "400bf7c5f4ae49ca484322499c7d2ec06cd7f8f57961241d705f01b823035ca9",
+      "restored_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "kernel_main_present": false,
+      "route_start_present": false,
+      "runtime_ready_present": false
+    }
+  },
+  "successor_analysis": {
+    "selected_next_task": null,
+    "planningNeeded": true,
+    "planningReason": "v12 proved selected TFTP fetch identity under the repaired capture contract but did not reach Talos kernel/runtime markers; supervisor must plan the next bounded source/helper/control discriminator before any rerun, packet-I/O, OpenSSH/generated-root retry, or phase transition.",
+    "packet_io_discriminator_blocked": true,
+    "packet_io_block_reason": "v12 did not accept candidate-capture-ready or candidate-entry-and-runtime-ready",
+    "runtime_marker_control_contract_blocked": true,
+    "runtime_marker_control_contract_block_reason": "its dependency requires runtime-marker-control-contract-required from the prior source reconciliation, but that predecessor accepted candidate-runtime-marker-route-repair-ready and selected v11 instead"
+  },
+  "findings": [
+    {
+      "finding": "selected candidate TFTP fetch identity is no longer the first missing fact",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "candidate-capture-ready remains rejected because no kernel_main, route-start, or runtime-ready marker appeared after selected fetch proof",
+      "disposition": "blocked"
+    },
+    {
+      "finding": "next repair/discriminator is not worker-selectable from the existing queue",
+      "disposition": "deferred"
+    },
+    {
+      "finding": "packet-I/O/OpenSSH/generated-root retry as a successor from this blocked v12 result",
+      "disposition": "removed"
+    },
+    {
+      "finding": "selected-control restore proof is sufficient for closeout",
+      "disposition": "not-an-issue"
+    }
+  ],
+  "validation_results": {
+    "git_status_before_action": "pass",
+    "jq_empty_referenced_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "evidence_paths": {
+    "v12_reconciliation_task": "tasks/2026-06-30-phase12-ssh-live-tcp-tftp-capture-boundary-reconciliation-v12.md",
+    "v12_reconciliation_evidence_map": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-tftp-capture-boundary-reconciliation-v12/tftp-capture-boundary-reconciliation-v12-20260630T092407Z/evidence-map.json",
+    "v12_preflight_task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12.md",
+    "v12_preflight_evidence_map": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12/candidate-runtime-marker-preflight-v12-20260630T094011Z/evidence-map.json",
+    "v12_preflight_tftp_delta": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12/candidate-runtime-marker-preflight-v12-20260630T094011Z/candidate-run/tftp-delta-stable-pre-restore.json",
+    "v12_preflight_marker_check": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12/candidate-runtime-marker-preflight-v12-20260630T094011Z/candidate-run/route-start-runtime-ready-marker-check.json"
+  },
+  "redaction_review": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_peer_or_log_lines_retained": false,
+    "packet_payloads_retained": false,
+    "key_or_session_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false,
+    "references_task_owned_predecessor_hardware_evidence": true
+  },
+  "commit": null
+}

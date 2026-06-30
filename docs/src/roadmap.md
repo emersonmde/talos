@@ -21078,6 +21078,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   phase12-ssh-live-tcp-tftp-capture-boundary-closeout-v12-20260630; packet-I/O,
   OpenSSH/generated-root retry, remote receipt, compatibility, service success,
   ssh-ready=true, broad shell work, and phase transition remain blocked.
+- phase12-ssh-live-tcp-tftp-capture-boundary-closeout-v12-20260630
+  accepts candidate-kernel-entry-boundary-needs-supervisor-planning. No code,
+  hardware, lab publication, boot snapshot mutation, Pi 5 power cycle,
+  packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility
+  claim, service success claim, ssh-ready=true, broad shell work, or phase
+  transition was performed. The repaired TFTP contract is accepted: selected
+  candidate kernel fetch identity was captured in-window before restore. The
+  first missing fact is now kernel/runtime entry visibility because the serial
+  window still had no TALOS: kernel_main and no nonce-bearing route-start or
+  runtime-ready markers. Existing queued successors are not mechanically
+  unblocked; selected_next_task is null and planningNeeded=true before any
+  rerun, packet-I/O, OpenSSH/generated-root retry, remote receipt,
+  compatibility, service success, ssh-ready=true, broad shell work, or phase
+  transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

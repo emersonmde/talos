@@ -12214,3 +12214,22 @@ selected next task is
 phase12-ssh-live-tcp-tftp-capture-boundary-closeout-v12-20260630; packet-I/O,
 OpenSSH/generated-root retry, remote receipt, compatibility, service success,
 ssh-ready=true, broad shell work, and phase transition remain blocked.
+
+phase12-ssh-live-tcp-tftp-capture-boundary-closeout-v12-20260630 accepts
+candidate-kernel-entry-boundary-needs-supervisor-planning. No code
+implementation, hardware action, lab publication, boot snapshot mutation, Pi 5
+power cycle, packet-I/O, OpenSSH/generated-root retry, remote receipt,
+compatibility claim, service success claim, ssh-ready=true, broad shell work,
+or phase transition was performed. The closeout preserves the repaired v12 TFTP
+contract as accepted evidence: selected candidate da591740/kernel_2712.img was
+served in-window before restore, and final identity stayed on the candidate
+tree. The first missing fact is now candidate kernel/runtime entry visibility:
+the retained serial window still lacked TALOS: kernel_main and both
+nonce-bearing runtime markers. Existing queued successors are not mechanically
+unblocked: packet-I/O requires candidate-capture-ready or
+candidate-entry-and-runtime-ready, and the runtime-marker control contract
+requires an earlier runtime-marker-control-contract-required result that was
+not accepted. selected_next_task is null and planningNeeded=true; supervisor
+planning is required before any rerun, packet-I/O, OpenSSH/generated-root
+retry, remote receipt, compatibility, service success, ssh-ready=true, broad
+shell work, or phase transition.
