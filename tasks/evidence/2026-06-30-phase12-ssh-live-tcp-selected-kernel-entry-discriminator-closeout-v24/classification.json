@@ -1,0 +1,63 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-kernel-entry-discriminator-closeout-v24-20260630",
+  "status": "accepted",
+  "classification": "selected-kernel-entry-frontier-blocked-supervisor-planning",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "v24 proved selected-byte service and restore for the _start-level selected-kernel-entry discriminator image, but the fresh post-power serial window still had zero TALOS: selected-kernel-entry-discriminator-v23 occurrences. No queued successor is mechanically unblocked until the supervisor defines the next bounded selected-kernel-entry repair, lab discriminator, or dependency refresh.",
+  "first_missing_fact": "The fresh post-power serial window retained firmware output but zero TALOS: selected-kernel-entry-discriminator-v23 occurrences from the earliest _start selected-kernel-entry discriminator.",
+  "evidence_level": "no-hardware closeout using accepted v19, v20, v21, v22, v23, and v24 task/evidence inspection plus task-owned JSON evidence",
+  "predecessor": {
+    "task_id": "phase12-ssh-live-tcp-pi5-selected-kernel-entry-discriminator-preflight-v24-20260630",
+    "classification": "blocked-selected-kernel-entry-marker-missing",
+    "commit": "352a36f96f2aa5b0238dfa5fb07a4932fca7b49b",
+    "selected_next_task": "phase12-ssh-live-tcp-selected-kernel-entry-discriminator-closeout-v24-20260630"
+  },
+  "preserved_v24_facts": {
+    "selected_tree_hash": "dbe73980d5c5aa7876e49665ad528b8c9a0696f0d16c4a0d82bb99cd924294ce",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 87432,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "kernel_sha256": "8051d7a600fe0867cfe093ffc6322ccdb532abaf58f323ece3f4013cca8054c7",
+    "pre_power_drain_empty": true,
+    "firmware_network_output_present": true,
+    "firmware_network_occurrences": 2,
+    "serial_marker": "TALOS: selected-kernel-entry-discriminator-v23",
+    "serial_marker_present": false,
+    "serial_marker_occurrences": 0,
+    "final_pre_restore_selected_tree": true,
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "primary_run_label": "selected-kernel-entry-discriminator-v24-20260630T231402Z"
+  },
+  "blocked_successors": [
+    "packet I/O",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility/service readiness",
+    "ssh-ready=true",
+    "broad shell work",
+    "fake/kernel-backed command expansion",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Reconciled v24 as decisive selected-byte, serial-freshness, final-identity, and restore evidence for the v23 _start selected-kernel-entry discriminator image."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "The first missing fact is selected-kernel image entry itself, because the earliest _start discriminator marker did not appear."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Removed packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness, fake command expansion, broad shell work, and phase transition as mechanically unblocked successors."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No known-good control or candidate rerun was required because identity, TFTP, serial freshness, final identity, and restore facts were decisive."
+    }
+  ]
+}

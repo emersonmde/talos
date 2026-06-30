@@ -21517,6 +21517,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   phase12-ssh-live-tcp-selected-kernel-entry-discriminator-closeout-v24-20260630.
   Packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
   broad shell work, fake command expansion, and phase transition remain blocked.
+- phase12-ssh-live-tcp-selected-kernel-entry-discriminator-closeout-v24-20260630
+  accepts selected-kernel-entry-frontier-blocked-supervisor-planning. No
+  hardware action, lab publication, boot snapshot mutation, Pi 5 power cycle,
+  packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility claim,
+  service success claim, ssh-ready=true, fake command expansion, broad shell
+  work, or phase transition was performed. The closeout preserves v24's
+  selected-byte service for the v23 _start discriminator image, final selected
+  identity on tree dbe73980..., fresh serial capture with firmware output, and
+  restore proof to tree a0452458.... The first missing fact is selected-kernel
+  image entry itself: the post-power serial window had zero
+  TALOS: selected-kernel-entry-discriminator-v23 occurrences even though the
+  marker is emitted at _start before CPACR, BSS, stack, Rust entry, BootInfo,
+  minimal-entry, networking, or service code. selected_next_task is null and
+  planningNeeded=true before another selected-kernel-entry repair, lab
+  discriminator, dependency refresh, packet-I/O/OpenSSH/generated-root retry,
+  compatibility/service readiness, broad shell work, fake command expansion, or
+  phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
