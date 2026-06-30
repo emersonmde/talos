@@ -1,0 +1,8 @@
+{
+  "label": "minimal-entry-polled-console-v20-20260630T195900Z",
+  "capture_nonce": "phase12-route-repair-v17-static",
+  "archive": "target/tmp/minimal-entry-polled-console-v20-20260630T195900Z.tar.gz",
+  "archive_sha256_line": "9835d077e0c8f9c15f66eb39a6bd71d6bb38e47a9a42a78d9ccf49fec2a0a1cd  target/tmp/minimal-entry-polled-console-v20-20260630T195900Z.tar.gz\n",
+  "kernel_sha256_line": "ccc95535706f1d896788800c8bba712cdeaac8bc6fedbbae313de06623040b33  target/tmp/minimal-entry-polled-console-v20-20260630T195900Z-boot-tree/kernel_2712.img\n",
+  "kernel_size_line": "52728 target/tmp/minimal-entry-polled-console-v20-20260630T195900Z-boot-tree/kernel_2712.img\n"
+}

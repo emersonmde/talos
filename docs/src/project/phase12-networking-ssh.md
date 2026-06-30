@@ -12654,3 +12654,22 @@ exact polled-console marker contract, so selected_next_task is null and
 planningNeeded=true before any hardware run, packet-I/O/OpenSSH/generated-root
 retry, remote receipt, compatibility/service readiness claim, broad shell work,
 or phase transition.
+
+phase12-ssh-live-tcp-pi5-minimal-entry-polled-console-preflight-v20-20260630
+accepts blocked-minimal-entry-polled-console-marker-missing. The serialized
+Pi 5 preflight used the repaired v17 selected image contract: selected
+da591740/kernel_2712.img at 52,728 bytes with SHA-256 ccc95535...,
+source=kernel-main-entry-control-polled-console, and no-service/no-phase
+transition guard tokens. The hardware run published selected tree
+3eee516f..., drained serial empty before power, observed two stable selected
+TFTP serves at 52,728 bytes, retained final pre-restore identity on the
+selected tree, and restored phase12-ssh-v10-openssh-clean-pre-20260624T074100Z
+to tree a0452458.... The post-power serial window retained firmware output
+but zero TALOS: minimal-entry-control-ready marker occurrences. Because
+identity, TFTP, serial freshness, final identity, and restore proof were
+decisive, no known-good control or candidate rerun was required. The selected
+next task is
+phase12-ssh-live-tcp-minimal-entry-polled-console-closeout-v20-20260630;
+packet-I/O/OpenSSH/generated-root retry, remote receipt, compatibility/service
+readiness claim, ssh-ready=true, broad shell work, fake/kernel-backed command
+expansion, and phase transition remain blocked.

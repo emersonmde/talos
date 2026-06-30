@@ -1,0 +1,62 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-minimal-entry-polled-console-preflight-v20-20260630",
+  "status": "accepted",
+  "classification": "blocked-minimal-entry-polled-console-marker-missing",
+  "selected_next_task": "phase12-ssh-live-tcp-minimal-entry-polled-console-closeout-v20-20260630",
+  "planningNeeded": false,
+  "evidence_level": "serialized Pi 5 hardware preflight with lab-controller selected-tree identity, stable TFTP selected-byte evidence, drained fresh serial window, final pre-restore identity, restore proof, and task-owned JSON evidence",
+  "run_label": "minimal-entry-polled-console-v20-20260630T195900Z",
+  "static_materialization": {
+    "label": "minimal-entry-polled-console-v20-20260630T195900Z",
+    "capture_nonce": "phase12-route-repair-v17-static",
+    "archive": "target/tmp/minimal-entry-polled-console-v20-20260630T195900Z.tar.gz",
+    "archive_sha256_line": "9835d077e0c8f9c15f66eb39a6bd71d6bb38e47a9a42a78d9ccf49fec2a0a1cd  target/tmp/minimal-entry-polled-console-v20-20260630T195900Z.tar.gz\n",
+    "kernel_sha256_line": "ccc95535706f1d896788800c8bba712cdeaac8bc6fedbbae313de06623040b33  target/tmp/minimal-entry-polled-console-v20-20260630T195900Z-boot-tree/kernel_2712.img\n",
+    "kernel_size_line": "52728 target/tmp/minimal-entry-polled-console-v20-20260630T195900Z-boot-tree/kernel_2712.img\n"
+  },
+  "hardware_summary": {
+    "selected_tree_hash": "3eee516f3047e8fab9b44007cbb433b67ea3c25f1ae64563b0d719e7e7be3b39",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 52728,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "serial_marker": "TALOS: minimal-entry-control-ready capture-nonce=phase12-route-repair-v17-static",
+    "serial_marker_present": false,
+    "serial_marker_occurrences": 0,
+    "pre_power_drain_empty": true,
+    "final_pre_restore_selected_tree": true,
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "identity_join_rejection_reasons": [],
+    "helper_suggested_classification": "reset-side-effect-without-visible-marker-candidate"
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Executed the repaired v17 minimal-entry polled-console preflight under hardwareTestLock with the v17 selected-byte contract."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Selected-byte service, final pre-restore identity, and restore proof all matched the repaired v17 candidate contract."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "The repaired minimal-entry-control-ready marker was still absent from the fresh post-power serial window; closeout must reconcile the first missing route fact before any broader live TCP work."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness, broad shell work, fake command expansion, and phase transition remain rejected as successors."
+    }
+  ],
+  "rejected_claims": [
+    "packet I/O",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility/service readiness",
+    "ssh-ready=true",
+    "broad shell work",
+    "fake/kernel-backed command expansion",
+    "phase transition"
+  ]
+}

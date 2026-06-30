@@ -1,0 +1,27 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-minimal-entry-polled-console-preflight-v20-20260630",
+  "classification": "blocked-minimal-entry-polled-console-marker-missing",
+  "evidence_root": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-polled-console-preflight-v20",
+  "retained_artifacts": {
+    "static_materialization": "static/materialization.json",
+    "archive_review_stdout": "static/archive-review.stdout.txt",
+    "archive_review_stderr": "static/archive-review.stderr.txt",
+    "kernel_sha256": "static/kernel-sha256.txt",
+    "kernel_size": "static/kernel-size.txt",
+    "run_directory": "minimal-entry-polled-console-v20-20260630T195900Z",
+    "capture_summary": "minimal-entry-polled-console-v20-20260630T195900Z/capture-invariant-summary.json",
+    "run_summary": "minimal-entry-polled-console-v20-20260630T195900Z/run-summary.json",
+    "serial_window": "minimal-entry-polled-console-v20-20260630T195900Z/serial-observe-window.json",
+    "tftp_delta": "minimal-entry-polled-console-v20-20260630T195900Z/tftp-delta-stable-pre-restore.json",
+    "final_pre_restore_status": "minimal-entry-polled-console-v20-20260630T195900Z/final-pre-restore-status.json",
+    "restore_proof": "minimal-entry-polled-console-v20-20260630T195900Z/restore-snapshot.json",
+    "post_restore_status": "minimal-entry-polled-console-v20-20260630T195900Z/post-restore-status.json",
+    "lock_lifecycle": "memory/talos-supervisor-state.json.hardwareTestLock"
+  },
+  "validation_plan": [
+    "jq empty on task-owned JSON evidence",
+    "git diff --check",
+    "mdbook build after docs update",
+    "git diff --cached --check before commit"
+  ]
+}
