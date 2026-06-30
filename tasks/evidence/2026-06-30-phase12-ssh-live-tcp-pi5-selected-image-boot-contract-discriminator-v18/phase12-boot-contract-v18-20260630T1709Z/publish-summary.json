@@ -1,0 +1,18 @@
+{
+  "archive_path": "/opt/strider/openclaw/current/workspace/tmp/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17-boot.tar.gz",
+  "expected_marker": "TALOS: boot-contract-v18",
+  "expected_kernel_sha256": "fb501f7374888158c60f090b3cc0805f8fda97d98fd18e966c307310b5c00753",
+  "expected_kernel_bytes": 87432,
+  "published_tree_hash": "61811ab93aafa897cf5a0c937bf5485b0abdd4f7c14d770d399393d98f3866c9",
+  "effective_kernel": "kernel_2712.img",
+  "selected_fetch": {
+    "bytes": 87432,
+    "mtime": 1782839742,
+    "name": "da591740/kernel_2712.img"
+  },
+  "root_kernel": {
+    "bytes": 87432,
+    "mtime": 1782839742,
+    "name": "kernel_2712.img"
+  }
+}

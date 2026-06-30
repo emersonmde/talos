@@ -12538,3 +12538,20 @@ phase12-ssh-live-tcp-pi5-selected-image-boot-contract-discriminator-v18-20260630
 packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
 minimal-entry route repair, broad shell work, and phase transition remain
 blocked.
+
+phase12-ssh-live-tcp-pi5-selected-image-boot-contract-discriminator-v18-20260630
+accepts blocked-selected-image-handoff-after-boot-contract-discriminator.
+Serialized Pi 5 hardware evidence restored the
+phase12-ssh-v10-openssh-clean-pre-20260624T074100Z baseline and proved
+selected-byte service for the repeated compact _start discriminator image:
+tree 61811ab93aafa897cf5a0c937bf5485b0abdd4f7c14d770d399393d98f3866c9,
+selected da591740/kernel_2712.img at 87,432 bytes, SHA-256 fb501f73..., and
+two stable same-cursor selected kernel serves. The fresh serial window
+retained firmware NETWORK output but no TALOS: boot-contract-v18 marker,
+kernel_main, or later Talos marker. Because identity, TFTP, final
+pre-restore identity, serial freshness, and restore proof were decisive, no
+inconclusive known-good control branch was required. The selected next task is
+phase12-ssh-live-tcp-selected-image-boot-contract-discriminator-closeout-v18-20260630;
+packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
+minimal-entry route repair, broad shell work, and phase transition remain
+blocked.

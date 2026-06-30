@@ -1,0 +1,10 @@
+boot_contract_discriminator=ready
+required_marker=TALOS: boot-contract-v18
+archive=/opt/strider/openclaw/current/workspace/tmp/2026-06-30-phase12-ssh-live-tcp-selected-image-boot-contract-reconciliation-v17-boot.tar.gz
+archive_sha256=48f7ee7506bd07521b3813a65541767527f1180e521665fb98c043daab8b8e99
+kernel_2712_sha256=fb501f7374888158c60f090b3cc0805f8fda97d98fd18e966c307310b5c00753
+kernel_2712_size=87432
+header_image_size=87432
+text_offset=0
+flags=12
+forbidden_v16_and_later_markers_absent=true

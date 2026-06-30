@@ -1,0 +1,61 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-image-boot-contract-discriminator-v18-20260630",
+  "run_label": "phase12-boot-contract-v18-20260630T1709Z",
+  "run_dir": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-boot-contract-discriminator-v18/phase12-boot-contract-v18-20260630T1709Z",
+  "classification": {
+    "task_id": "phase12-ssh-live-tcp-pi5-selected-image-boot-contract-discriminator-v18-20260630",
+    "run_label": "phase12-boot-contract-v18-20260630T1709Z",
+    "marker": "TALOS: boot-contract-v18",
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "source_commit": "9b6f1654d85a73b4f5b07c89c41cfa99230a9c9f",
+    "rematerialized_archive_sha256": "48f7ee7506bd07521b3813a65541767527f1180e521665fb98c043daab8b8e99",
+    "published": {
+      "tree_hash": "61811ab93aafa897cf5a0c937bf5485b0abdd4f7c14d770d399393d98f3866c9",
+      "effective_kernel": "kernel_2712.img",
+      "selected_fetch_path": "da591740/kernel_2712.img",
+      "selected_fetch_bytes": 87432
+    },
+    "evidence": {
+      "identity_join_ok": true,
+      "marker_seen": false,
+      "firmware_network_seen": true,
+      "selected_fetch_count": 2,
+      "selected_fetch_byte_match_count": 2,
+      "tftp_stable": true,
+      "final_pre_restore_tree_hash": "61811ab93aafa897cf5a0c937bf5485b0abdd4f7c14d770d399393d98f3866c9",
+      "final_pre_restore_selected_tree_ok": true,
+      "restore_ok": true,
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "suggested_classification": "reset-side-effect-without-visible-marker-candidate",
+      "rejection_reasons": []
+    },
+    "terminal_classification": "blocked-selected-image-handoff-after-boot-contract-discriminator",
+    "selected_next_task": "phase12-ssh-live-tcp-selected-image-boot-contract-discriminator-closeout-v18-20260630",
+    "planningNeeded": false,
+    "prohibited_work_performed": {
+      "packetIo": false,
+      "opensshGeneratedRootRetry": false,
+      "remoteReceipt": false,
+      "compatibilityOrServiceReadinessClaim": false,
+      "minimalEntryRouteRepair": false,
+      "broadShellWork": false,
+      "phaseTransition": false
+    }
+  },
+  "evidence_paths": {
+    "classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-boot-contract-discriminator-v18/phase12-boot-contract-v18-20260630T1709Z/classification.json",
+    "capture_summary": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-boot-contract-discriminator-v18/phase12-boot-contract-v18-20260630T1709Z/capture-invariant-summary.json",
+    "serial_window": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-boot-contract-discriminator-v18/phase12-boot-contract-v18-20260630T1709Z/serial-observe-window.json",
+    "tftp_delta": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-boot-contract-discriminator-v18/phase12-boot-contract-v18-20260630T1709Z/tftp-delta-stable-pre-restore.json",
+    "final_pre_restore_status": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-boot-contract-discriminator-v18/phase12-boot-contract-v18-20260630T1709Z/final-pre-restore-status.json",
+    "restore": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-boot-contract-discriminator-v18/phase12-boot-contract-v18-20260630T1709Z/restore-snapshot.json",
+    "post_restore_status": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-boot-contract-discriminator-v18/phase12-boot-contract-v18-20260630T1709Z/post-restore-status.json"
+  },
+  "redaction_review": {
+    "task_summary_omits_raw_serial_and_tftp_lines": true,
+    "raw_hardware_endpoint_artifacts_retained_only_under_task_evidence": true,
+    "packet_payloads_retained": false,
+    "ssh_key_or_session_material_retained": false,
+    "private_user_data_retained": false
+  }
+}
