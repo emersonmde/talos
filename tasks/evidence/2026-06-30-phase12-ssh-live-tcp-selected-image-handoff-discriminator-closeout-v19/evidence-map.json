@@ -1,0 +1,83 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-image-handoff-discriminator-closeout-v19-20260630",
+  "terminal_classification": "selected-image-handoff-frontier-reconciled-minimal-entry-route-repair-ready",
+  "selected_next_task": "phase12-ssh-live-tcp-minimal-entry-route-repair-v17-20260630",
+  "planningNeeded": false,
+  "referenced_evidence": {
+    "contract_reconciliation_task": "tasks/2026-06-30-phase12-ssh-live-tcp-selected-image-handoff-contract-reconciliation-v19.md",
+    "contract_reconciliation_evidence_map": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-handoff-contract-reconciliation-v19/evidence-map.json",
+    "contract_reconciliation_classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-handoff-contract-reconciliation-v19/classification.json",
+    "hardware_discriminator_task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19.md",
+    "hardware_discriminator_evidence_map": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19/evidence-map.json",
+    "hardware_discriminator_classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19/classification.json",
+    "decisive_run_dir": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19/selected-image-handoff-v19-rerun-drain64-20260630T184819Z"
+  },
+  "reconciled_facts": {
+    "predecessor_classification": "selected-image-handoff-entry-reached",
+    "source_commit": "309b85265cfe90b1802368bf05f44bd8e9af6ad4",
+    "selected_tree_hash": "4edd4f1dad12ea06e3c45b1435f9a2d16e9c2046226d8963a0d8413a9f7226d1",
+    "effective_kernel": "kernel_2712.img",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "selected_kernel_size_bytes": 104136,
+    "selected_kernel_sha256": "2343a009a14972d050ccf0fc706539163b6b5cb3ee3717b9cb6753f2ec7c2328",
+    "selected_kernel_serve_count": 2,
+    "selected_kernel_serve_byte_match_count": 2,
+    "pre_power_drain_empty": true,
+    "firmware_NETWORK": "present",
+    "expected_marker": "rpi5-production-timer-preemption: PASS",
+    "expected_marker_occurrences": 1,
+    "TALOS_kernel_main_retained": false,
+    "final_pre_restore_identity_matched": true,
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "successor_analysis": {
+    "minimal_entry_route_repair_authorized": true,
+    "minimal_entry_route_repair_task": "phase12-ssh-live-tcp-minimal-entry-route-repair-v17-20260630",
+    "minimal_entry_route_repair_dependency_refreshed_to_v19_closeout": true,
+    "packet_io_authorized": false,
+    "openssh_generated_root_retry_authorized": false,
+    "remote_receipt_authorized": false,
+    "compatibility_or_service_readiness_claim_authorized": false,
+    "broad_shell_work_authorized": false,
+    "phase_transition_authorized": false
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Reconciled v19 selected-image PASS marker evidence as handoff-entry reached for the current-tree production-timer selected path."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Selected the queued minimal-entry route repair as the next bounded no-hardware task with refreshed dependencies."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "TALOS: kernel_main absence from the retained direct-read window does not invalidate the accepted v19 PASS marker contract."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Minimal-entry route repair must still classify or repair the remaining minimal-entry path separately."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Packet-I/O, OpenSSH/generated-root retry, remote receipt, service-readiness claims, broad shell work, and phase transition remain blocked."
+    }
+  ],
+  "validation_results": {
+    "git_status_before_action": "pass",
+    "jq_empty_referenced_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "redaction_review": {
+    "raw_serial_text_retained_in_closeout": false,
+    "raw_tftp_peer_logs_retained_in_closeout": false,
+    "packet_payloads_retained": false,
+    "key_or_session_material_retained": false,
+    "private_user_data_retained": false,
+    "references_task_owned_hardware_evidence_only": true
+  },
+  "commit": "recorded in talos-supervisor-state.json after final commit"
+}

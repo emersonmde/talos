@@ -12612,3 +12612,22 @@ phase12-ssh-live-tcp-selected-image-handoff-discriminator-closeout-v19-20260630;
 minimal-entry repair, packet-I/O/OpenSSH/generated-root retry, remote receipt,
 compatibility/service readiness, broad shell work, and phase transition remain
 blocked until closeout explicitly reconciles the frontier.
+
+phase12-ssh-live-tcp-selected-image-handoff-discriminator-closeout-v19-20260630
+accepts selected-image-handoff-frontier-reconciled-minimal-entry-route-repair-ready.
+No code implementation, hardware action, lab publication, boot snapshot
+mutation, Pi 5 power cycle, packet-I/O, OpenSSH/generated-root retry, remote
+receipt, compatibility claim, service success claim, ssh-ready=true,
+fake/kernel-backed command expansion, broad shell work, or phase transition was
+performed. The closeout preserves the decisive v19 facts: selected-byte service
+for the current-tree production-timer selected-path control, final
+pre-restore identity on tree 4edd4f1..., one
+rpi5-production-timer-preemption: PASS marker after an empty pre-power drain,
+and restore to a0452458.... That accepts selected-image handoff entry for the
+normal current-tree path but does not prove the separate minimal-entry route,
+packet I/O, OpenSSH compatibility, remote receipt, service readiness, or shell
+behavior. The selected next task is the already queued
+phase12-ssh-live-tcp-minimal-entry-route-repair-v17-20260630, with dependencies
+refreshed to require this v19 closeout; packet-I/O/OpenSSH/generated-root
+retry, remote receipt, compatibility/service readiness, broad shell work, and
+phase transition remain blocked.

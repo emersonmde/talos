@@ -1,0 +1,15 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-image-handoff-discriminator-closeout-v19-20260630",
+  "terminal_classification": "selected-image-handoff-frontier-reconciled-minimal-entry-route-repair-ready",
+  "planningNeeded": false,
+  "selected_next_task": "phase12-ssh-live-tcp-minimal-entry-route-repair-v17-20260630",
+  "hardwareAction": false,
+  "labPublication": false,
+  "bootSnapshotMutation": false,
+  "pi5PowerAction": false,
+  "packetIo": false,
+  "opensshGeneratedRootRetry": false,
+  "remoteReceipt": false,
+  "compatibilityOrServiceReadinessClaim": false,
+  "phaseTransition": false
+}
