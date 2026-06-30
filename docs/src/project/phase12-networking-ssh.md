@@ -12472,3 +12472,46 @@ successor is mechanically unblocked; selected_next_task is null and
 planningNeeded=true before any rerun, packet-I/O, OpenSSH/generated-root retry,
 remote receipt, compatibility/service readiness claim, broad shell work, or
 phase transition.
+
+phase12-ssh-live-tcp-selected-image-entry-handoff-sentinel-core-v16-20260630
+accepts selected-image-handoff-sentinel-ready. No hardware action, lab
+publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The task added the dedicated
+rpi5_selected_image_handoff_sentinel scenario, which writes TALOS:
+selected-image-handoff-sentinel-v16 directly from _start and parks before
+CPACR setup, BSS clear, stack setup, rust_entry, kernel_main, networking,
+packet I/O, OpenSSH, or shell work. Static non-published materialization
+retained an 87,432-byte selected kernel with SHA-256 7a841135..., root/prefixed
+selected kernel equality, accepted Image header fields, symbol/disassembly
+evidence, marker-token evidence, and fail-closed archive review behavior. The
+selected next task was the serialized Pi 5 handoff sentinel preflight only.
+
+phase12-ssh-live-tcp-pi5-selected-image-entry-handoff-sentinel-preflight-v16-20260630
+accepts blocked-selected-image-handoff. Serialized Pi 5 hardware evidence
+restored the phase12-ssh-v10-openssh-clean-pre-20260624T074100Z baseline and
+proved selected-byte service for the handoff sentinel image: tree
+531cc00d5d4f28696993a3c3852dde5b2fcbc32dee63a9412a472720371d31e0, selected
+da591740/kernel_2712.img at 87,432 bytes, SHA-256 7a841135..., and two stable
+same-cursor selected kernel serves. The fresh serial window retained firmware
+NETWORK output but no TALOS: selected-image-handoff-sentinel-v16, kernel_main,
+or later Talos marker. The selected next task was the v16 handoff boundary
+closeout only.
+
+phase12-ssh-live-tcp-selected-image-entry-handoff-boundary-closeout-v16-20260630
+accepts selected-image-handoff-no-start-supervisor-planning. No code
+implementation, hardware action, lab publication, boot snapshot mutation, Pi 5
+power cycle, packet-I/O, OpenSSH/generated-root retry, remote receipt,
+compatibility claim, service success claim, ssh-ready=true, fake/kernel-backed
+command expansion, broad shell work, or phase transition was performed. The
+closeout preserves the decisive v16 facts: selected-byte service for the
+_start-level handoff sentinel image, final pre-restore identity on tree
+531cc00d..., and restore to a0452458.... The first missing fact is now the
+firmware-to-selected-image handoff into the selected kernel bytes, because the
+fresh serial window retained firmware NETWORK output but no
+selected-image-handoff-sentinel-v16 marker or later Talos marker. No queued
+successor is mechanically unblocked; selected_next_task is null and
+planningNeeded=true before any rerun, packet-I/O, OpenSSH/generated-root retry,
+remote receipt, compatibility/service readiness claim, minimal-entry route
+repair, broad shell work, or phase transition.

@@ -21282,6 +21282,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   phase12-ssh-live-tcp-selected-image-entry-handoff-boundary-closeout-v16-20260630;
   packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
   broad shell work, and phase transition remain blocked.
+- phase12-ssh-live-tcp-selected-image-entry-handoff-boundary-closeout-v16-20260630
+  accepts selected-image-handoff-no-start-supervisor-planning. No code,
+  hardware, lab publication, boot snapshot mutation, Pi 5 power cycle,
+  packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility
+  claim, service success claim, ssh-ready=true, fake/kernel-backed command
+  expansion, broad shell work, or phase transition was performed. The closeout
+  preserves the v16 decisive facts: selected-byte service for the _start-level
+  handoff sentinel image, final pre-restore identity on tree 531cc00d..., and
+  restore to a0452458.... The serial window still retained firmware NETWORK
+  output but no TALOS: selected-image-handoff-sentinel-v16, kernel_main, or
+  later Talos marker. No queued successor is mechanically unblocked;
+  selected_next_task is null and planningNeeded=true before any rerun,
+  packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
+  minimal-entry route repair, broad shell work, or phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

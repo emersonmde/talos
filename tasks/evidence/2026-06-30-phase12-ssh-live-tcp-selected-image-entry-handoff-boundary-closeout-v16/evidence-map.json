@@ -1,0 +1,60 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-image-entry-handoff-boundary-closeout-v16-20260630",
+  "terminal_classification": "selected-image-handoff-no-start-supervisor-planning",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "v16 proved selected-byte service for the handoff sentinel image, final pre-restore identity, and restore, but still observed no TALOS: selected-image-handoff-sentinel-v16 or later Talos marker after firmware NETWORK. Supervisor must plan the next bounded firmware/image-handoff investigation or discriminator before any rerun, packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness claim, broad shell work, or phase transition.",
+  "referenced_evidence": {
+    "core_task": "tasks/2026-06-30-phase12-ssh-live-tcp-selected-image-entry-handoff-sentinel-core-v16.md",
+    "core_evidence_map": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-entry-handoff-sentinel-core-v16/evidence-map.json",
+    "preflight_task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-handoff-sentinel-preflight-v16.md",
+    "preflight_evidence_map": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-handoff-sentinel-preflight-v16/evidence-map.json",
+    "preflight_classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-handoff-sentinel-preflight-v16/classification.json",
+    "run_dir": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-handoff-sentinel-preflight-v16/phase12-handoff-sentinel-v16-20260630T155447Z/"
+  },
+  "reconciled_facts": {
+    "predecessor_classification": "blocked-selected-image-handoff",
+    "source_commit": "7f7c942db38a80e9a5e79559d49bb7cde94064d0",
+    "published_tree_hash": "531cc00d5d4f28696993a3c3852dde5b2fcbc32dee63a9412a472720371d31e0",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "selected_kernel_size_bytes": 87432,
+    "selected_kernel_sha256": "7a841135cb2e5d6bf9be11d900e8c9fbabbac32a43f539780a90adc50e374888",
+    "selected_kernel_serve_count": 2,
+    "selected_kernel_serve_byte_match_count": 2,
+    "final_pre_restore_identity_matched": true,
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "marker_classification": {
+    "firmware_NETWORK": "present",
+    "TALOS_selected_image_handoff_sentinel_v16": "absent",
+    "TALOS_kernel_main": "absent",
+    "later_Talos_marker": "absent"
+  },
+  "successor_analysis": {
+    "minimal_entry_route_repair_authorized": false,
+    "packet_io_authorized": false,
+    "openssh_generated_root_retry_authorized": false,
+    "remote_receipt_authorized": false,
+    "compatibility_or_service_readiness_claim_authorized": false,
+    "broad_shell_work_authorized": false,
+    "phase_transition_authorized": false,
+    "mechanically_unblocked_successor": null
+  },
+  "validation_results": {
+    "git_status_before_action": "pass",
+    "jq_empty_referenced_json": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "redaction_review": {
+    "raw_serial_text_retained_in_closeout": false,
+    "raw_tftp_peer_logs_retained_in_closeout": false,
+    "packet_payloads_retained": false,
+    "key_or_session_material_retained": false,
+    "private_user_data_retained": false,
+    "references_task_owned_hardware_evidence_only": true
+  },
+  "commit": "recorded in talos-supervisor-state.json after final commit"
+}
