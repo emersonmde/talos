@@ -1,0 +1,84 @@
+{
+  "task_id": "phase12-ssh-live-tcp-entry-artifact-delta-reconciliation-20260630",
+  "terminal_classification": "blocked-no-entry-artifact-repair",
+  "planningNeeded": true,
+  "selected_next_task": null,
+  "reviewed_inputs": {
+    "v8_candidate_no_entry": {
+      "task": "tasks/2026-06-29-phase12-ssh-live-tcp-pi5-candidate-preflight-v8.md",
+      "classification": "blocked-candidate-kernel-not-starting",
+      "summary": "selected da591740/kernel_2712.img fetched at 152160 bytes, final pre-restore identity retained, runtime-ready marker absent"
+    },
+    "v9_entry_marker": {
+      "task": "tasks/2026-06-29-phase12-ssh-live-tcp-pi5-entry-marker-discriminator-v9.md",
+      "classification": "blocked-candidate-entry-not-starting",
+      "summary": "selected da591740/kernel_2712.img fetched at 152152 bytes, TALOS: kernel_main and runtime markers absent"
+    },
+    "minimal_entry_control": {
+      "task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-control-discriminator.md",
+      "classification": "blocked-selected-path-entry-control",
+      "summary": "selected da591740/kernel_2712.img fetched at 52848 bytes, minimal-entry-control marker absent"
+    },
+    "selected_path_source_reconciliation": {
+      "task": "tasks/2026-06-30-phase12-ssh-live-tcp-selected-path-entry-control-source-reconciliation.md",
+      "classification": "serial-capture-control-required"
+    },
+    "selected_known_good_baseline": {
+      "task": "tasks/2026-06-30-phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator.md",
+      "classification": "known-good-entry-baseline-passes",
+      "summary": "selected a0452458 control emitted rpi5-production-timer-preemption: PASS with two 104136-byte selected fetches"
+    }
+  },
+  "fresh_static_materialization": {
+    "source_commit": "d21a75893e543633fc27da4095a496dff5a993d4",
+    "boot_source_dir_label": "target/tmp/rpi5-observed-gpio-status-known-good-tree",
+    "artifacts_removed_after_review": true,
+    "minimal_control": {
+      "archive_sha256_path": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-entry-artifact-delta-reconciliation/materialized/minimal/archive-sha256.txt",
+      "boot_tree_manifest": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-entry-artifact-delta-reconciliation/materialized/minimal/boot-tree-manifest.txt",
+      "archive_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-entry-artifact-delta-reconciliation/validation/minimal-archive-review.stdout.txt",
+      "kernel_bytes": 52840,
+      "header": {
+        "text_offset": 0,
+        "header_image_size": 52840,
+        "flags": 12,
+        "magic": "ARMd"
+      },
+      "selected_matches_root": true,
+      "required_marker": "TALOS: minimal-entry-control-ready capture-nonce=entry-artifact-delta-static-minimal"
+    },
+    "runtime_marker_route": {
+      "archive_sha256_path": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-entry-artifact-delta-reconciliation/materialized/runtime/archive-sha256.txt",
+      "boot_tree_manifest": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-entry-artifact-delta-reconciliation/materialized/runtime/boot-tree-manifest.txt",
+      "archive_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-entry-artifact-delta-reconciliation/validation/runtime-archive-review.stdout.txt",
+      "kernel_bytes": 152152,
+      "header": {
+        "text_offset": 0,
+        "header_image_size": 152152,
+        "flags": 12,
+        "magic": "ARMd"
+      },
+      "selected_matches_root": true,
+      "required_marker": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=entry-artifact-delta-static-runtime"
+    }
+  },
+  "decision": {
+    "repair_found": false,
+    "diagnostic_control_quarantined": false,
+    "first_missing_fact": "current-tree selected minimal/runtime kernel bytes are served, but no current-tree Rust-side entry marker is observed while the selected known-good control emits a downstream Talos marker under the same capture path",
+    "planningReason": "No bounded repair found and no successor is authorized by this task. Supervisor planning is required before hardware, candidate preflight, packet-I/O, OpenSSH/generated-root retry, ssh-ready=true, broad shell work, or phase transition."
+  },
+  "validation_results": {
+    "git_status_before_action": "recorded",
+    "static_prior_evidence_review": "pass",
+    "non_published_boot_tree_archive_review": "pass",
+    "rpi5_archive_helper_validation": "pass",
+    "cargo_fmt": "not run; Rust source not touched",
+    "cargo_test": "not run; Rust source or target routing not touched",
+    "sh_n": "not run; shell helpers/classifiers not touched",
+    "jq_empty": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  }
+}

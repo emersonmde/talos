@@ -20972,6 +20972,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   remote receipt, compatibility, service success, ssh-ready=true, broad shell
   work, and phase transition remain blocked until that reconciliation is
   accepted.
+- phase12-ssh-live-tcp-minimal-control-scenario-specific-reconciliation-20260630
+  accepts diagnostic-control-quarantined-candidate-contract-ready. No hardware,
+  lab publication, boot snapshot mutation, or Pi 5 power action was performed.
+  The current-tree production-timer Pi 5 proof showed current source selected
+  bytes can reach downstream rpi5-production-timer-preemption: PASS while
+  TALOS: kernel_main remains metadata-only absent, matching the selected
+  known-good baseline. The older minimal entry-control diagnostic is therefore
+  quarantined as scenario-specific, not a broad entry blocker. Static review of
+  a non-published runtime-marker candidate archive proved matching
+  root/selected da591740/kernel_2712.img at 152,152 bytes, valid Image header
+  fields, and route-start/runtime-ready marker tokens. selected_next_task is
+  phase12-ssh-live-tcp-candidate-entry-preflight-contract-v10-20260630;
+  candidate publication, Pi 5 power, packet-I/O, OpenSSH/generated-root retry,
+  remote receipt, compatibility, service success, ssh-ready=true, broad shell
+  work, and phase transition remain blocked until that no-hardware contract is
+  accepted.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

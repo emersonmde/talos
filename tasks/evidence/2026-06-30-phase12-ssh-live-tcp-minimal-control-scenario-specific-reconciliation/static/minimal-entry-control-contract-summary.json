@@ -1,0 +1,47 @@
+{
+  "task_id": "phase12-ssh-live-tcp-minimal-entry-control-contract-20260630",
+  "terminal_classification": "minimal-entry-control-proof-ready",
+  "planningNeeded": null,
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-minimal-entry-control-discriminator-20260630",
+  "control_contract": {
+    "scenario": "rpi5_minimal_entry_control",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "expected_marker_order": [
+      "selected TFTP fetch of da591740/kernel_2712.img",
+      "TALOS: kernel_main",
+      "TALOS: minimal-entry-control-ready capture-nonce=minimal-entry-control-contract-20260630"
+    ],
+    "contract_id": "phase12-ssh-live-tcp-minimal-entry-control-v1",
+    "live_tcp_route": false,
+    "packet_io": false,
+    "openssh": false,
+    "ssh_ready": false,
+    "claims_service_success": false,
+    "claims_phase_transition": false
+  },
+  "materialized_archive": {
+    "retained_archive_bytes": false,
+    "archive_sha256": "f455dc3ab55ba0f2bd7afb7a57d5866b5d2ae1c040ac92bce3360708696a195d",
+    "kernel_sha256": "313f1842b8905e88642e4f8278a9b17eec4f30ab856e352a77c523160e1bbf21",
+    "kernel_size": 52848,
+    "header_image_size": 52848,
+    "text_offset": 0,
+    "flags": 12,
+    "selected_mirror": "root kernel_2712.img matches da591740/kernel_2712.img",
+    "manifest_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-control-contract/materialized/boot-tree-manifest.txt"
+  },
+  "validation_results": {
+    "git_status_before_action": "## main...origin/main [ahead 187]; no uncommitted Talos changes before promotion",
+    "non_published_materialization": "passed",
+    "archive_review": "passed",
+    "minimal_entry_control_archive_review": "passed",
+    "source_static_review": "passed",
+    "objdump": "unavailable: /usr/bin/objdump cannot disassemble aarch64-talos-rpi5-bcm2712 ELF in this environment",
+    "cargo_fmt": "passed",
+    "cargo_test": "passed",
+    "jq_empty": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed"
+  }
+}

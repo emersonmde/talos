@@ -1,0 +1,128 @@
+{
+  "task_id": "phase12-ssh-live-tcp-minimal-control-scenario-specific-reconciliation-20260630",
+  "terminal_classification": "diagnostic-control-quarantined-candidate-contract-ready",
+  "planningNeeded": false,
+  "selected_next_task": "phase12-ssh-live-tcp-candidate-entry-preflight-contract-v10-20260630",
+  "hardwareAction": false,
+  "labPublication": false,
+  "bootSnapshotMutation": false,
+  "pi5PowerAction": false,
+  "liveTcpCandidateRetry": false,
+  "packetIo": false,
+  "opensshGeneratedRootRetry": false,
+  "reviewed_inputs": {
+    "minimal_entry_control_contract": {
+      "task": "tasks/2026-06-30-phase12-ssh-live-tcp-minimal-entry-control-contract.md",
+      "classification": "minimal-entry-control-proof-ready",
+      "summary": "The minimal control required early TALOS: kernel_main and nonce-bearing minimal-entry-control-ready markers."
+    },
+    "minimal_entry_control_hardware_blocker": {
+      "task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-control-discriminator.md",
+      "classification": "blocked-selected-path-entry-control",
+      "summary": "Selected 52,848-byte da591740/kernel_2712.img bytes were served and final identity was retained, but no minimal-entry-control marker appeared."
+    },
+    "selected_known_good_baseline": {
+      "task": "tasks/2026-06-30-phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator.md",
+      "classification": "known-good-entry-baseline-passes",
+      "summary": "Selected a0452458 control emitted rpi5-production-timer-preemption: PASS while TALOS: kernel_main was metadata-only absent."
+    },
+    "entry_artifact_delta_reconciliation": {
+      "task": "tasks/2026-06-30-phase12-ssh-live-tcp-entry-artifact-delta-reconciliation.md",
+      "classification": "blocked-no-entry-artifact-repair",
+      "summary": "No current-tree minimal/runtime source or archive repair was found before the current-tree production-timer control was introduced."
+    },
+    "current_tree_production_timer_hardware_control": {
+      "task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-current-tree-production-timer-entry-baseline-discriminator.md",
+      "classification": "current-tree-entry-path-passes-control",
+      "summary": "Current-tree selected 104,136-byte da591740/kernel_2712.img bytes reached downstream rpi5-production-timer-preemption: PASS twice under the same selected-path capture contract while TALOS: kernel_main remained metadata-only absent."
+    }
+  },
+  "decision": {
+    "repair_found": false,
+    "minimal_diagnostic_quarantined": true,
+    "quarantine_reason": "The minimal entry-control diagnostic depends on early kernel_main/minimal markers that the accepted selected known-good and current-tree production-timer controls both treat as metadata-only absent when a downstream PASS marker is present. The current-tree production-timer hardware control proves current-tree selected bytes can reach Rust-side downstream execution, so the older minimal no-entry result is scenario-specific and no longer a valid broad entry blocker.",
+    "direct_candidate_contract_objectively_checkable": true,
+    "candidate_contract_next_task": "phase12-ssh-live-tcp-candidate-entry-preflight-contract-v10-20260630",
+    "candidate_contract_boundary": "one future no-hardware contract must statically define the live TCP candidate archive identity, selected da591740/kernel_2712.img fetch identity, expected route-start/runtime-ready markers, selected known-good control, restore target, hardware lock lifecycle, redaction rules, and fail-closed classifications before any candidate publication or Pi 5 power action"
+  },
+  "candidate_static_review": {
+    "nonce": "scenario-reconciliation-runtime-v10",
+    "archive_sha256": "2ddf35d1f7033c062cf58fff7feb187479e77826fbe327bd41d19ff5cca10865",
+    "kernel_sha256": "f6d12eb3377cb4dc545057b137e151e318cc8a76a4b91ac007b98631c964850f",
+    "kernel_bytes": 152152,
+    "header": {
+      "text_offset": 0,
+      "header_image_size": 152152,
+      "flags": 12,
+      "magic": "ARMd"
+    },
+    "selected_fetch": {
+      "path": "da591740/kernel_2712.img",
+      "selected_matches_root": true,
+      "bytes": 152152
+    },
+    "expected_markers": [
+      "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=scenario-reconciliation-runtime-v10",
+      "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=scenario-reconciliation-runtime-v10"
+    ],
+    "archive_bytes_retained": false
+  },
+  "evidence_paths": {
+    "task_record": "tasks/2026-06-30-phase12-ssh-live-tcp-minimal-control-scenario-specific-reconciliation.md",
+    "current_tree_pass_summary": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-control-scenario-specific-reconciliation/static/current-tree-production-timer-pass-summary.json",
+    "selected_known_good_pass_summary": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-control-scenario-specific-reconciliation/static/selected-known-good-pass-summary.json",
+    "entry_artifact_delta_summary": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-control-scenario-specific-reconciliation/static/entry-artifact-delta-summary.json",
+    "minimal_entry_control_contract_summary": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-control-scenario-specific-reconciliation/static/minimal-entry-control-contract-summary.json",
+    "candidate_archive_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-control-scenario-specific-reconciliation/validation/candidate-archive-review.stdout.txt",
+    "candidate_boot_tree_manifest": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-control-scenario-specific-reconciliation/materialized/candidate/boot-tree-manifest.txt",
+    "candidate_archive_sha256": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-control-scenario-specific-reconciliation/materialized/candidate/archive-sha256.txt",
+    "candidate_kernel_sha256": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-control-scenario-specific-reconciliation/static/candidate-kernel-sha256.txt",
+    "candidate_kernel_bytes": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-control-scenario-specific-reconciliation/static/candidate-kernel-bytes.txt",
+    "candidate_image_header": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-control-scenario-specific-reconciliation/static/candidate-image-header-words.txt",
+    "candidate_token_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-control-scenario-specific-reconciliation/static/candidate-token-review.txt"
+  },
+  "findings": [
+    {
+      "disposition": "not-an-issue",
+      "finding": "The selected-path capture contract is not generically broken: selected known-good and current-tree production-timer controls both observed downstream PASS markers."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Reclassified the minimal entry-control result as scenario-specific because its required early markers are metadata-only absent in both accepted downstream PASS controls."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Static candidate materialization proves a direct live TCP candidate preflight contract is objectively checkable without hardware in the next task."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Candidate publication, Pi 5 power, packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility, service success, ssh-ready=true, broad shell work, and phase transition remain blocked."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Generated non-published candidate boot tree and archive bytes were removed after metadata retention."
+    }
+  ],
+  "validation_results": {
+    "git_status_before_action": "recorded",
+    "static_comparison_of_accepted_evidence": "pass",
+    "non_published_candidate_boot_tree_archive_review": "pass",
+    "rpi5_archive_helper_validation": "pass",
+    "cargo_fmt": "not run; Rust source not touched",
+    "cargo_test": "not run; Rust source or target routing not touched",
+    "sh_n": "not run; shell helpers/classifiers not touched",
+    "jq_empty": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "redaction_review": {
+    "raw_serial_retained": false,
+    "raw_tftp_peer_logs_retained": false,
+    "packet_payloads_retained": false,
+    "key_or_session_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false
+  },
+  "commit": null
+}

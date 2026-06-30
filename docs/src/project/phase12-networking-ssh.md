@@ -12081,3 +12081,21 @@ live TCP candidate preflight, packet-I/O, OpenSSH/generated-root retry, remote
 receipt, compatibility, service success, ssh-ready=true, broad shell work, and
 phase transition remain blocked until that scenario-specific reconciliation is
 accepted.
+
+phase12-ssh-live-tcp-minimal-control-scenario-specific-reconciliation-20260630
+accepts diagnostic-control-quarantined-candidate-contract-ready. No hardware,
+lab publication, boot snapshot mutation, or Pi 5 power action was performed.
+The new decisive fact is the current-tree production-timer Pi 5 proof: current
+source selected bytes reached downstream rpi5-production-timer-preemption: PASS
+twice while TALOS: kernel_main remained metadata-only absent, matching the
+selected known-good baseline policy. The older minimal entry-control diagnostic
+is now quarantined as scenario-specific because it required early
+kernel_main/minimal-control markers that accepted downstream PASS controls do
+not retain. A non-published runtime-marker candidate archive was statically
+reviewed at 152,152 bytes with matching root/selected da591740/kernel_2712.img,
+valid Image header fields, and route-start/runtime-ready marker tokens. The
+selected next task is
+phase12-ssh-live-tcp-candidate-entry-preflight-contract-v10-20260630; candidate
+publication, Pi 5 power, packet-I/O, OpenSSH/generated-root retry, remote
+receipt, compatibility, service success, ssh-ready=true, broad shell work, and
+phase transition remain blocked until that no-hardware contract is accepted.

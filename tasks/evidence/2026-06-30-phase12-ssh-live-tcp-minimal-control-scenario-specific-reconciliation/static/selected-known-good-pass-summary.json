@@ -1,0 +1,45 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-path-known-good-entry-baseline-discriminator-20260630",
+  "terminal_classification": "known-good-entry-baseline-passes",
+  "planningNeeded": true,
+  "selected_next_task": null,
+  "observed": {
+    "pre_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "final_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "serial_capture_mode": "read",
+    "serial_response_bytes": 6580,
+    "has_required_marker": true,
+    "required_marker_occurrences": 1,
+    "has_kernel_main": false,
+    "has_firmware_network": true,
+    "firmware_network_occurrences": 2,
+    "stable_tftp": true,
+    "served_selected_kernel_fetches": 2,
+    "pre_power_serial_drain_discriminator": "empty-read-before-power",
+    "valid_known_good_talos_readiness_v3": true,
+    "readiness_rejection_reasons": []
+  },
+  "expected_contract": {
+    "snapshot_or_archive": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "restore_target": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "expected_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "expected_effective_kernel": "kernel_2712.img",
+    "expected_selected_fetch": {
+      "path": "da591740/kernel_2712.img",
+      "bytes": 104136
+    },
+    "expected_marker": "rpi5-production-timer-preemption: PASS",
+    "metadata_marker": "TALOS: kernel_main"
+  },
+  "validation_results": {
+    "git_status_before_action": "recorded",
+    "lab_api_status_boot_files_snapshots": "recorded before power and after restore",
+    "serial_cursor_completeness": "recorded",
+    "tftp_tail_cursor_and_stable_delta": "recorded",
+    "marker_capture_checker": "rpi5-observe-serial-window.sh configured for rpi5-production-timer-preemption: PASS",
+    "restore_confirmation": "recorded",
+    "no_live_tcp_no_packet_io_no_openssh": true
+  }
+}
