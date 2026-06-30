@@ -1,0 +1,40 @@
+0000000000200000 <_start>:
+  200000: 14000010     	b	 <_start+0x40>
+		...
+  200010: 88 55 01 00  	.word	0x00015588
+  200014: 00 00 00 00  	.word	0x00000000
+  200018: 0c 00 00 00  	.word	0x0000000c
+		...
+  200038: 41 52 4d 64  	.word	0x644d5241
+  20003c: 00 00 00 00  	.word	0x00000000
+  200040: aa0003f3     	mov	x19, x0
+  200044: 90000000     	adrp	x0, 0x200000 <_start>
+  200048: 91043000     	add	x0, x0, #0x10c
+  20004c: d2800581     	mov	x1, #0x2c               // =44
+  200050: 94000016     	bl	 <talos_rpi5_early_uart_write>
+<L0>:
+  200054: d503205f     	wfe
+  200058: 17ffffff     	b	 <L0>
+  20005c: d5381040     	mrs	x0, CPACR_EL1
+  200060: b26c0400     	orr	x0, x0, #0x300000
+  200064: d5181040     	msr	CPACR_EL1, x0
+  200068: d5033fdf     	isb
+  20006c: d503201f     	nop
+  200070: 100aa900     	adr	x0,  <__bss_start>
+  200074: d503201f     	nop
+  200078: 100aaa01     	adr	x1,  <__bss_end>
+<L1>:
+  20007c: eb01001f     	cmp	x0, x1
+  200080: 54000062     	b.hs	 <L2>
+  200084: f800841f     	str	xzr, [x0], #0x8
+  200088: 17fffffd     	b	 <L1>
+<L2>:
+  20008c: b0000aa0     	adrp	x0, 0x355000 <__stack_bottom+0x3fa40>
+  200090: 91170000     	add	x0, x0, #0x5c0
+  200094: 9100001f     	mov	sp, x0
+  200098: aa1303e0     	mov	x0, x19
+  20009c: 940014da     	bl	 <rust_entry>
+<L3>:
+  2000a0: d503205f     	wfe
+  2000a4: 17ffffff     	b	 <L3>
+

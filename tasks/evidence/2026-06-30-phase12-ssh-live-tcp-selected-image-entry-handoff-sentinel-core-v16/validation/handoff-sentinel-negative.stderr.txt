@@ -1,0 +1,1 @@
+missing handoff sentinel marker in kernel_2712.img: TALOS: selected-image-handoff-sentinel-v16

@@ -21253,6 +21253,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   mechanically unblocked; selected_next_task is null and planningNeeded=true
   before any rerun, packet-I/O/OpenSSH/generated-root retry,
   compatibility/service readiness, broad shell work, or phase transition.
+- phase12-ssh-live-tcp-selected-image-entry-handoff-sentinel-core-v16-20260630
+  accepts selected-image-handoff-sentinel-ready. No hardware, lab publication,
+  boot snapshot mutation, Pi 5 power cycle, packet-I/O, OpenSSH/generated-root
+  retry, remote receipt, compatibility claim, service success claim,
+  ssh-ready=true, fake/kernel-backed command expansion, broad shell work, or
+  phase transition was performed. The dedicated
+  rpi5_selected_image_handoff_sentinel scenario writes TALOS:
+  selected-image-handoff-sentinel-v16 from _start and parks before CPACR
+  setup, BSS clear, stack setup, rust_entry, kernel_main, networking, packet
+  I/O, OpenSSH, or shell work. Static non-published materialization retained a
+  87,432-byte selected kernel with SHA-256 7a841135..., root/prefixed selected
+  kernel equality, accepted Image header fields, symbol/disassembly evidence,
+  marker-token evidence, and fail-closed archive review behavior. The selected
+  next task is
+  phase12-ssh-live-tcp-pi5-selected-image-entry-handoff-sentinel-preflight-v16-20260630;
+  packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
+  broad shell work, and phase transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

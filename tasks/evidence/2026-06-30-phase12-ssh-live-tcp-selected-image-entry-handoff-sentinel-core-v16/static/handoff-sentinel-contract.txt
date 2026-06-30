@@ -1,0 +1,14 @@
+source_head_before_accept=228232d6826182dcd4635379dd312db77fd4227d
+boot_source=target/rpi5-production-timer-preemption-boot-tree
+boot_tree=target/tmp/2026-06-30-phase12-ssh-live-tcp-selected-image-entry-handoff-sentinel-core-v16-boot-tree
+archive=target/tmp/2026-06-30-phase12-ssh-live-tcp-selected-image-entry-handoff-sentinel-core-v16-boot.tar.gz
+restore_target=phase12-ssh-v10-openssh-clean-pre-20260624T074100Z
+expected_selected_path=da591740/kernel_2712.img
+required_marker=TALOS: selected-image-handoff-sentinel-v16
+scenario=rpi5_selected_image_handoff_sentinel
+hardwareAction=false
+labPublication=false
+bootSnapshotMutation=false
+pi5PowerAction=false
+packetIo=false
+opensshGeneratedRootRetry=false

@@ -21,6 +21,16 @@ _start:
 3:
     mov x19, x0
 
+#if defined(TALOS_RPI5_HANDOFF_SENTINEL_SCENARIO)
+    adrp x0, talos_rpi5_handoff_sentinel_line
+    add x0, x0, :lo12:talos_rpi5_handoff_sentinel_line
+    mov x1, #(talos_rpi5_handoff_sentinel_line_end - talos_rpi5_handoff_sentinel_line)
+    bl talos_rpi5_early_uart_write
+4:
+    wfe
+    b 4b
+#endif
+
 #if defined(TALOS_RPI5_SMP_BOOT_SCENARIO) || defined(TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO)
     adrp x0, talos_rpi5_asm_start_line
     add x0, x0, :lo12:talos_rpi5_asm_start_line
@@ -63,7 +73,7 @@ _start:
 
 .size _start, . - _start
 
-#if defined(TALOS_RPI5_SMP_BOOT_SCENARIO) || defined(TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO)
+#if defined(TALOS_RPI5_SMP_BOOT_SCENARIO) || defined(TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO) || defined(TALOS_RPI5_HANDOFF_SENTINEL_SCENARIO)
 talos_rpi5_early_uart_write:
     mov x22, x30
     cbz x1, 2f
@@ -99,6 +109,7 @@ talos_rpi5_early_uart_wait_empty:
     dsb sy
     ret
 
+#if defined(TALOS_RPI5_SMP_BOOT_SCENARIO) || defined(TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO)
 talos_rpi5_asm_start_line:
     .ascii "TALOS: asm_start\r\n"
 talos_rpi5_asm_start_line_end:
@@ -106,6 +117,13 @@ talos_rpi5_asm_start_line_end:
 talos_rpi5_asm_pre_rust_line:
     .ascii "TALOS: asm_pre_rust_entry\r\n"
 talos_rpi5_asm_pre_rust_line_end:
+#endif
+
+#if defined(TALOS_RPI5_HANDOFF_SENTINEL_SCENARIO)
+talos_rpi5_handoff_sentinel_line:
+    .ascii "TALOS: selected-image-handoff-sentinel-v16\r\n"
+talos_rpi5_handoff_sentinel_line_end:
+#endif
 
 .align 2
 #endif

@@ -1,0 +1,96 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-image-entry-handoff-sentinel-core-v16-20260630",
+  "terminal_classification": "selected-image-handoff-sentinel-ready",
+  "planningNeeded": false,
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-image-entry-handoff-sentinel-preflight-v16-20260630",
+  "hardwareAction": false,
+  "labPublication": false,
+  "bootSnapshotMutation": false,
+  "pi5PowerAction": false,
+  "packetIo": false,
+  "opensshGeneratedRootRetry": false,
+  "source_review": {
+    "v13_control_result": "current-tree production-timer selected-path PASS proves the lab can serve selected bytes and enter Talos for a control image",
+    "v15_selected_result": "repaired minimal entry-control selected bytes were served twice, but serial retained no assembly, Rust, kernel_main, minimal marker, or nonce tokens",
+    "first_principles_boundary": "after selected bytes are served, prove whether firmware branches into the selected arm64 Image before BSS clear, stack setup, Rust entry, networking, packet I/O, OpenSSH, or shell behavior"
+  },
+  "sentinel": {
+    "scenario": "rpi5_selected_image_handoff_sentinel",
+    "asm_define": "TALOS_RPI5_HANDOFF_SENTINEL_SCENARIO",
+    "required_marker": "TALOS: selected-image-handoff-sentinel-v16",
+    "entry_contract": "_start branches over the arm64 Image header, writes the sentinel marker through the existing RP1 UART0 early writer, then parks in WFE before CPACR setup, BSS clear, stack setup, rust_entry, kernel_main, networking, packet I/O, OpenSSH, or shell work",
+    "restore_target_for_successor": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z"
+  },
+  "selected_archive_metadata": {
+    "source_head_before_accept": "228232d6826182dcd4635379dd312db77fd4227d",
+    "boot_source": "target/rpi5-production-timer-preemption-boot-tree",
+    "archive_sha256": "92608259636787e90feb9c9d9322e8c62987455598acd91c7cce41600c7ee91f",
+    "kernel_sha256": "7a841135cb2e5d6bf9be11d900e8c9fbabbac32a43f539780a90adc50e374888",
+    "kernel_bytes": 87432,
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "selected_matches_root": true,
+    "image_header": {
+      "text_offset": 0,
+      "header_image_size": 87432,
+      "flags": 12,
+      "magic": "ARMd"
+    },
+    "archive_bytes_removed_after_review": true
+  },
+  "evidence_paths": {
+    "task_record": "tasks/2026-06-30-phase12-ssh-live-tcp-selected-image-entry-handoff-sentinel-core-v16.md",
+    "static_contract": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-entry-handoff-sentinel-core-v16/static/handoff-sentinel-contract.txt",
+    "image_header": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-entry-handoff-sentinel-core-v16/static/image-header.txt",
+    "kernel_sha256": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-entry-handoff-sentinel-core-v16/static/kernel-sha256.txt",
+    "selected_root_match": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-entry-handoff-sentinel-core-v16/static/selected-root-match.txt",
+    "token_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-entry-handoff-sentinel-core-v16/static/token-review.txt",
+    "symbols": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-entry-handoff-sentinel-core-v16/static/symbols.txt",
+    "start_disassembly": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-entry-handoff-sentinel-core-v16/static/start-disassembly.txt",
+    "archive_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-entry-handoff-sentinel-core-v16/validation/archive-review.stdout.txt",
+    "sentinel_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-entry-handoff-sentinel-core-v16/validation/handoff-sentinel-review.stdout.txt",
+    "fail_closed_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-entry-handoff-sentinel-core-v16/validation/handoff-sentinel-negative-result.txt"
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Added a dedicated assembly-first selected-image handoff sentinel scenario that emits one marker from _start and parks before later boot phases."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Added boot-tree and fail-closed archive-review helpers for the selected-image handoff sentinel, including root/prefixed selected kernel equality and marker-token checks."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "v13 production-timer PASS and v15 selected-byte/no-entry do not conflict: v13 proves selected-path entry can work for a different image; v15 leaves the selected minimal-entry firmware-to-image branch unproved."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Pi 5 marker presence, packet I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness, broad shell work, and phase transition remain dependency-gated."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Generated non-published boot tree and archive bytes were removed after metadata retention."
+    }
+  ],
+  "validation_results": {
+    "git_status_before_action": "pass",
+    "sh_n": "pass",
+    "cargo_fmt": "pass",
+    "cargo_build_rpi5_handoff_sentinel": "pass",
+    "non_published_archive_materialization": "pass",
+    "archive_review": "pass",
+    "handoff_sentinel_archive_review": "pass",
+    "fail_closed_archive_review": "pass",
+    "jq_empty": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "redaction_review": {
+    "packet_payloads_retained": false,
+    "key_or_session_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false,
+    "raw_hardware_serial_or_tftp_logs_retained": false
+  }
+}

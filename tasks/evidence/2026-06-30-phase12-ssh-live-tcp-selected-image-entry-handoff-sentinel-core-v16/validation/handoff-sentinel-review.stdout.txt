@@ -1,0 +1,3 @@
+handoff_sentinel=ready
+required_marker=TALOS: selected-image-handoff-sentinel-v16
+archive=target/tmp/v16-review-rerun.tar.gz

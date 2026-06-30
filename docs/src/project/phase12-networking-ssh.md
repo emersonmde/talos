@@ -1757,6 +1757,25 @@ RP1 MMIO writes, DMA, descriptor rings, interrupts, clock/reset ownership,
 PHY/MDIO ownership, packet I/O, networking, sockets, SSH, Phase 12.2, or a
 phase transition.
 
+phase12-ssh-live-tcp-selected-image-entry-handoff-sentinel-core-v16-20260630
+accepts selected-image-handoff-sentinel-ready. No hardware action, lab
+publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The new
+rpi5_selected_image_handoff_sentinel scenario writes TALOS:
+selected-image-handoff-sentinel-v16 from _start and then parks before CPACR
+setup, BSS clear, stack setup, rust_entry, kernel_main, networking, packet I/O,
+OpenSSH, or shell work. Static non-published materialization retained a
+87,432-byte selected kernel with SHA-256 7a841135..., root/prefixed
+da591740/kernel_2712.img equality, accepted arm64 Image header fields, symbol
+and disassembly evidence, marker-token evidence, and fail-closed archive
+review behavior. The selected next task is
+phase12-ssh-live-tcp-pi5-selected-image-entry-handoff-sentinel-preflight-v16-20260630;
+packet-I/O, OpenSSH/generated-root retry, remote receipt,
+compatibility/service readiness, broad shell work, and phase transition remain
+blocked.
+
 ## Observed-Window GEM MID Discriminator Core
 
 phase12-rp1-ethernet-observed-window-discriminator-core-20260610 accepts the

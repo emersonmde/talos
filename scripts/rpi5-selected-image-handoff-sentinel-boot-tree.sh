@@ -1,0 +1,27 @@
+#!/bin/sh
+set -eu
+
+if [ "$#" -ne 2 ]; then
+    echo "usage: $0 <pi-firmware-boot-source> <output-dir>" >&2
+    exit 2
+fi
+
+SOURCE_DIR="$1"
+OUTPUT_DIR="$2"
+SERIAL_PREFIX="da591740"
+
+export TALOS_BOOT_SCENARIO=rpi5_selected_image_handoff_sentinel
+
+./scripts/rpi5-boot-tree.sh "$SOURCE_DIR" "$OUTPUT_DIR" >/dev/null
+
+mkdir -p "$OUTPUT_DIR/$SERIAL_PREFIX"
+for file in config.txt cmdline.txt bcm2712-rpi-5-b.dtb kernel_2712.img kernel8.img; do
+    cp "$OUTPUT_DIR/$file" "$OUTPUT_DIR/$SERIAL_PREFIX/$file"
+done
+
+if [ -d "$OUTPUT_DIR/overlays" ]; then
+    mkdir -p "$OUTPUT_DIR/$SERIAL_PREFIX/overlays"
+    find "$OUTPUT_DIR/overlays" -maxdepth 1 -type f -exec cp {} "$OUTPUT_DIR/$SERIAL_PREFIX/overlays/" \;
+fi
+
+find "$OUTPUT_DIR" -type f | sort
