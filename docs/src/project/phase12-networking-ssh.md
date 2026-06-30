@@ -12380,3 +12380,25 @@ minimal-entry-control-ready marker. No queued successor is mechanically
 unblocked; selected_next_task is null and planningNeeded=true before any
 rerun, packet-I/O, OpenSSH/generated-root retry, remote receipt,
 compatibility/service readiness claim, broad shell work, or phase transition.
+
+phase12-ssh-live-tcp-selected-image-entry-invariant-reconciliation-v15-20260630
+accepts selected-image-entry-source-repair-ready. No hardware action, lab
+publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The selected invariant is an
+entry-progress ladder for selected Pi 5 kernel_2712.img after firmware NETWORK:
+TALOS: asm_start, TALOS: asm_pre_rust_entry, rust_entry, boot-info-parsed,
+target-init, exceptions-ready, kernel_main, and the nonce-bearing
+minimal-entry-control-ready marker. The contradicting v14 evidence remains:
+the selected minimal image was served twice with matching bytes and final
+pre-restore identity, but serial retained only firmware NETWORK output. The
+repair adds TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO only to
+rpi5_minimal_entry_control and makes
+scripts/rpi5-minimal-entry-control-archive-review.sh require TALOS: asm_start
+and TALOS: asm_pre_rust_entry. Static non-published materialization retained a
+52,832-byte selected kernel with SHA-256 16d1fe57... and the repaired marker
+tokens. The selected next task is
+phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15-20260630; packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility/service readiness
+claim, broad shell work, and phase transition remain blocked.

@@ -35,6 +35,8 @@ strings "$work_dir/kernel_2712.img" > "$work_dir/kernel_2712.strings"
 
 required_marker="TALOS: minimal-entry-control-ready capture-nonce=$CAPTURE_NONCE"
 for token in \
+    "TALOS: asm_start" \
+    "TALOS: asm_pre_rust_entry" \
     "TALOS: minimal-entry-control-ready" \
     "capture-nonce=" \
     "$CAPTURE_NONCE" \

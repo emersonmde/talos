@@ -1,0 +1,69 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-image-entry-invariant-reconciliation-v15-20260630",
+  "classification": "selected-image-entry-source-repair-ready",
+  "selected_invariant": "A selected Pi 5 kernel_2712.img after firmware NETWORK must expose asm_start, asm_pre_rust_entry, Rust phase lines, kernel_main, and the nonce-bearing minimal-entry-control-ready marker so the next hardware preflight can fail closed at the first missing entry boundary.",
+  "contradicting_v14_evidence": {
+    "task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-entry-bisect-discriminator-v14.md",
+    "classification": "blocked-control-entry",
+    "selected_kernel_size": 52848,
+    "selected_kernel_sha256": "1f2b2246fb3c5d00852ee981d0be93275786fe6e92520de5a4945d2c9862d38e",
+    "selected_tree_hash": "59b29c6004943c7789d910071809291ab279a1c90cc1d1c6963fba7ea7b60f7b",
+    "observed_tftp_selected_serves": 2,
+    "serial_firmware_network_present": true,
+    "serial_talos_markers_absent": [
+      "TALOS: rust_entry",
+      "TALOS: boot info parsed",
+      "TALOS: target init",
+      "TALOS: exceptions ready",
+      "TALOS: kernel_main",
+      "TALOS: minimal-entry-control-ready"
+    ]
+  },
+  "source_changes": [
+    {
+      "path": "build.rs",
+      "change": "rpi5_minimal_entry_control now emits TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO for assembly-level entry markers."
+    },
+    {
+      "path": "scripts/rpi5-minimal-entry-control-archive-review.sh",
+      "change": "archive review now requires TALOS: asm_start and TALOS: asm_pre_rust_entry tokens."
+    }
+  ],
+  "materialized_static_archive": {
+    "boot_source": "target/tmp/rpi5-observed-gpio-status-known-good-tree",
+    "static_nonce": "phase12-entry-v15-static",
+    "archive_retained": false,
+    "archive_sha256": "599195f80594583e2bf55cfc742fbba5c260080ca9948f50fcc8e80536a19756",
+    "kernel_path": "da591740/kernel_2712.img",
+    "kernel_size": 52832,
+    "kernel_sha256": "16d1fe575ea47b5863b26019786dc8bc25de40ff9d84df99277c7aeb41cb5643",
+    "header": {
+      "text_offset": 0,
+      "image_size": 52832,
+      "flags": 12
+    },
+    "metadata_files": [
+      "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-entry-invariant-reconciliation-v15/materialized/boot-tree-files.txt",
+      "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-entry-invariant-reconciliation-v15/materialized/kernel-size.txt",
+      "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-entry-invariant-reconciliation-v15/materialized/kernel-sha256.txt",
+      "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-entry-invariant-reconciliation-v15/materialized/archive-sha256.txt",
+      "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-entry-invariant-reconciliation-v15/materialized/marker-token-review.txt"
+    ]
+  },
+  "validation": {
+    "sh_n_boot_tree": "passed",
+    "sh_n_archive_review": "passed",
+    "archive_review": "passed",
+    "cargo_fmt": "passed",
+    "jq_empty": "passed",
+    "git_diff_check": "passed",
+    "mdbook_build": "passed",
+    "git_diff_cached_check": "passed"
+  },
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15-20260630",
+  "planning_needed": false,
+  "hardware_action": false,
+  "lab_publication": false,
+  "packet_io": false,
+  "openssh_generated_root_retry": false
+}

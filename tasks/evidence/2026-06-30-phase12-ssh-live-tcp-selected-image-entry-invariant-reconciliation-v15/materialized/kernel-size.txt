@@ -1,0 +1,1 @@
+52832 target/tmp/phase12-v15-minimal-entry-control-boot-tree/kernel_2712.img

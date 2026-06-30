@@ -1,0 +1,4 @@
+## main...origin/main [ahead 210]
+ M build.rs
+ M scripts/rpi5-minimal-entry-control-archive-review.sh
+?? tasks/evidence/2026-06-30-phase12-ssh-live-tcp-selected-image-entry-invariant-reconciliation-v15/

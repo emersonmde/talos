@@ -21209,6 +21209,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   unblocked; selected_next_task is null and planningNeeded=true before any
   rerun, packet-I/O, OpenSSH/generated-root retry, remote receipt,
   compatibility/service readiness claim, broad shell work, or phase transition.
+- phase12-ssh-live-tcp-selected-image-entry-invariant-reconciliation-v15-20260630
+  accepts selected-image-entry-source-repair-ready. No hardware, lab
+  publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+  OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+  success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+  shell work, or phase transition was performed. The selected invariant is now
+  an entry-progress ladder for selected Pi 5 kernel_2712.img after firmware
+  NETWORK: TALOS: asm_start, TALOS: asm_pre_rust_entry, Rust phase lines,
+  kernel_main, and the nonce-bearing minimal-entry-control-ready marker. The
+  repair adds the existing assembly-level early-entry provenance define only to
+  rpi5_minimal_entry_control and makes the minimal archive review require both
+  assembly tokens. Static non-published materialization produced a 52,832-byte
+  selected kernel SHA-256 16d1fe57... with the repaired tokens. The selected
+  next task is
+  phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15-20260630;
+  packet-I/O/OpenSSH/generated-root retry remain blocked until a later Pi 5
+  task accepts the full selected-image entry marker contract.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

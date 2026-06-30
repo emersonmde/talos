@@ -12,6 +12,7 @@ struct BootScenario {
 
 const QEMU_SMP_ASM: &str = "TALOS_QEMU_SMP_BOOT_SCENARIO";
 const RPI5_SMP_ASM: &str = "TALOS_RPI5_SMP_BOOT_SCENARIO";
+const RPI5_EARLY_ENTRY_PROVENANCE_ASM: &str = "TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO";
 const RPI5_EL0_TRAP_PROOF_ASM: &str = "TALOS_RPI5_EL0_TRAP_PROOF_SCENARIO";
 const RPI5_SYSCALL_PROOF_ASM: &str = "TALOS_RPI5_SYSCALL_PROOF_SCENARIO";
 const QEMU_SYSCALL_SMOKE_ASM: &str = "TALOS_QEMU_SYSCALL_SMOKE_SCENARIO";
@@ -575,7 +576,7 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
     BootScenario {
         value: "rpi5_minimal_entry_control",
         implied_values: &[],
-        asm_defines: &[],
+        asm_defines: &[RPI5_EARLY_ENTRY_PROVENANCE_ASM],
     },
     BootScenario {
         value: "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_candidate",
