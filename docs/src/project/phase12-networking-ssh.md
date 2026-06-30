@@ -12255,3 +12255,24 @@ packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility,
 service success, ssh-ready=true, broad shell work, and phase transition remain
 blocked until a future serialized hardware/control task accepts
 candidate-capture-ready under explicit criteria.
+
+phase12-ssh-live-tcp-candidate-entry-control-contract-v13-20260630 accepts
+candidate-entry-control-contract-ready. No hardware action, lab publication,
+boot snapshot mutation, Pi 5 power cycle, packet-I/O, OpenSSH/generated-root
+retry, generated-root work, remote receipt, compatibility claim, service
+success claim, ssh-ready=true, broad shell work, or phase transition was
+performed. The selected control is one serialized current-tree
+production-timer selected-path phase-line discriminator: source commit
+1b428d0e4fda3fd26fe3869c7e5f43d648bba11a, control tree
+4edd4f1dad12ea06e3c45b1435f9a2d16e9c2046226d8963a0d8413a9f7226d1, selected
+da591740/kernel_2712.img at 104,136 bytes with SHA-256
+2343a009a14972d050ccf0fc706539163b6b5cb3ee3717b9cb6753f2ec7c2328, and
+required downstream marker rpi5-production-timer-preemption: PASS. The
+successor must classify TALOS: rust_entry, TALOS: boot info parsed,
+TALOS: target init, TALOS: exceptions ready, and TALOS: kernel_main as present
+or absent in the fresh serial window; when PASS is present, absent phase lines
+or kernel_main are metadata-only for that control. The selected next task is
+phase12-ssh-live-tcp-pi5-candidate-entry-control-discriminator-v13-20260630;
+packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility,
+service success, ssh-ready=true, broad shell work, and phase transition remain
+blocked.

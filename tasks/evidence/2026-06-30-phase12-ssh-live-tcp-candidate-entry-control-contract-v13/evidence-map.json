@@ -1,0 +1,127 @@
+{
+  "task_id": "phase12-ssh-live-tcp-candidate-entry-control-contract-v13-20260630",
+  "terminal_classification": "candidate-entry-control-contract-ready",
+  "planningNeeded": false,
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-candidate-entry-control-discriminator-v13-20260630",
+  "hardwareAction": false,
+  "labPublication": false,
+  "bootSnapshotMutation": false,
+  "pi5PowerAction": false,
+  "packetIo": false,
+  "opensshGeneratedRootRetry": false,
+  "contract": {
+    "control_name": "current-tree production-timer selected-path phase-line discriminator",
+    "source_commit": "1b428d0e4fda3fd26fe3869c7e5f43d648bba11a",
+    "boot_scenario": "rpi5_production_timer_preemption_proof",
+    "expected_tree_hash": "4edd4f1dad12ea06e3c45b1435f9a2d16e9c2046226d8963a0d8413a9f7226d1",
+    "expected_effective_kernel": "kernel_2712.img",
+    "expected_selected_fetch": {
+      "path": "da591740/kernel_2712.img",
+      "bytes": 104136,
+      "sha256": "2343a009a14972d050ccf0fc706539163b6b5cb3ee3717b9cb6753f2ec7c2328"
+    },
+    "required_downstream_marker": "rpi5-production-timer-preemption: PASS",
+    "phase_lines_to_classify": [
+      "TALOS: rust_entry",
+      "TALOS: boot info parsed",
+      "TALOS: target init",
+      "TALOS: exceptions ready",
+      "TALOS: kernel_main"
+    ],
+    "restore_target": {
+      "snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+      "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    },
+    "control_entry_passes": [
+      "selected fetch identity captured in-window",
+      "final pre-restore identity remains on expected control tree",
+      "firmware NETWORK serial output is present",
+      "required downstream PASS marker is present",
+      "all phase-line inputs are classified as present or absent",
+      "restore proof succeeds"
+    ],
+    "metadata_only_when_pass_present": [
+      "absent early phase lines",
+      "absent TALOS: kernel_main"
+    ],
+    "fail_closed_classifications": [
+      "blocked-control-entry",
+      "blocked-control-identity",
+      "blocked-control-tftp-capture",
+      "blocked-restore",
+      "inconclusive-with-required-discriminator"
+    ],
+    "hardware_lock_requirements": "Successor must own hardwareTestLock before lab publication, boot snapshot mutation, restore-affecting lab operations, or Pi 5 power action and release only after restore proof.",
+    "inconclusive_triage": [
+      "candidate/control identity",
+      "fresh serial cursor",
+      "TFTP delta",
+      "known-good control if capture/staging is suspect",
+      "one bounded contracted rerun only when required"
+    ]
+  },
+  "accepted_inputs": {
+    "v12_selected_fetch_preflight": {
+      "task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12.md",
+      "classification": "blocked-candidate-kernel-not-starting",
+      "selected_fetch_proved": true,
+      "runtime_markers_present": false
+    },
+    "v13_source_artifact_reconciliation": {
+      "task": "tasks/2026-06-30-phase12-ssh-live-tcp-candidate-entry-boundary-source-artifact-reconciliation-v13.md",
+      "classification": "candidate-entry-control-contract-required",
+      "bounded_source_or_archive_defect_found": false
+    },
+    "current_tree_production_timer_baseline": {
+      "task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-current-tree-production-timer-entry-baseline-discriminator.md",
+      "classification": "current-tree-entry-path-passes-control",
+      "selected_fetch_proved": true,
+      "downstream_pass_marker_present": true,
+      "kernel_main_metadata_only_absent": true
+    }
+  },
+  "findings": [
+    {
+      "finding": "selected exactly one successor hardware/control task",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "defined explicit pass and fail-closed classifications for the control discriminator",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "made early phase-line and kernel_main handling explicit under downstream PASS",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "production-timer control exercises selected fetch and startup path without packet-I/O or OpenSSH",
+      "disposition": "not-an-issue"
+    },
+    {
+      "finding": "hardware execution belongs to the selected successor under hardwareTestLock",
+      "disposition": "deferred"
+    },
+    {
+      "finding": "packet-I/O/OpenSSH/generated-root retry are not valid successors from this contract",
+      "disposition": "removed"
+    }
+  ],
+  "validation_results": {
+    "git_status_before_action": "pass",
+    "static_review_v12_and_selected_control_current_tree_evidence": "pass",
+    "jq_empty_task_evidence_and_state": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "redaction_review": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_peer_or_log_lines_retained": false,
+    "packet_payloads_retained": false,
+    "key_or_session_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false,
+    "stable_secret_derived_identifiers_retained": false
+  },
+  "commit": null
+}

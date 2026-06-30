@@ -21110,6 +21110,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   ssh-ready=true, broad shell work, and phase transition remain blocked until a
   future serialized hardware/control task accepts candidate-capture-ready under
   explicit criteria.
+- phase12-ssh-live-tcp-candidate-entry-control-contract-v13-20260630 accepts
+  candidate-entry-control-contract-ready. No hardware, lab publication, boot
+  snapshot mutation, Pi 5 power cycle, packet-I/O, OpenSSH/generated-root
+  retry, generated-root work, remote receipt, compatibility claim, service
+  success claim, ssh-ready=true, broad shell work, or phase transition was
+  performed. The contract selects one current-tree production-timer selected-
+  path phase-line discriminator using source commit
+  1b428d0e4fda3fd26fe3869c7e5f43d648bba11a, expected control tree
+  4edd4f1..., selected da591740/kernel_2712.img at 104,136 bytes, SHA-256
+  2343a009..., required downstream marker rpi5-production-timer-preemption:
+  PASS, explicit present/absent classification for rust_entry,
+  boot-info-parsed, target-init, exceptions-ready, and kernel_main, and
+  restore to the a0452458... selected-control tree. The selected next task is
+  phase12-ssh-live-tcp-pi5-candidate-entry-control-discriminator-v13-20260630;
+  packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility,
+  service success, ssh-ready=true, broad shell work, and phase transition
+  remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
