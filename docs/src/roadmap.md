@@ -21470,6 +21470,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   packet-I/O, OpenSSH/generated-root retry, compatibility or service-readiness
   claims, broad shell work, fake/kernel-backed command expansion, and phase
   transition remain blocked.
+- phase12-ssh-live-tcp-minimal-entry-console-boundary-closeout-v22-20260630
+  accepts minimal-entry-console-boundary-frontier-blocked-supervisor-planning.
+  No hardware action, lab publication, boot snapshot mutation, Pi 5 power
+  cycle, packet-I/O, OpenSSH/generated-root retry, remote receipt,
+  compatibility claim, service success claim, ssh-ready=true, fake command
+  expansion, broad shell work, or phase transition was performed. The closeout
+  preserves v22's selected-byte service, final selected identity, fresh serial
+  capture with firmware output, and restore proof. The first missing fact is
+  selected-kernel entry visibility for the minimal-entry boundary path: the
+  post-power serial window had zero
+  capture-nonce=phase12-console-boundary-v21-static occurrences, including zero
+  direct early boundary-marker and zero post-boot-identity ready-marker
+  occurrences. selected_next_task is null and planningNeeded=true before
+  another selected-kernel-entry discriminator or repair, packet-I/O,
+  OpenSSH/generated-root retry, remote receipt, compatibility/service
+  readiness, broad shell work, fake/kernel-backed command expansion, or phase
+  transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

@@ -1,0 +1,62 @@
+{
+  "task_id": "phase12-ssh-live-tcp-minimal-entry-console-boundary-closeout-v22-20260630",
+  "status": "accepted",
+  "classification": "minimal-entry-console-boundary-frontier-blocked-supervisor-planning",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "v22 proved selected-byte service and restore for the repaired minimal-entry console-boundary selected image, but the fresh post-power serial window still had zero capture-nonce=phase12-console-boundary-v21-static occurrences. No queued successor is mechanically unblocked until the supervisor defines the next bounded selected-kernel-entry discriminator or repair.",
+  "first_missing_fact": "The fresh post-power serial window retained firmware output but zero capture-nonce=phase12-console-boundary-v21-static occurrences, including zero direct early boundary-marker and zero post-boot-identity ready-marker occurrences.",
+  "evidence_level": "no-hardware closeout using accepted v17, v19, v20, v21, and v22 task/evidence inspection plus task-owned JSON evidence",
+  "predecessor": {
+    "task_id": "phase12-ssh-live-tcp-pi5-minimal-entry-console-boundary-preflight-v22-20260630",
+    "classification": "blocked-minimal-entry-console-boundary-marker-missing",
+    "commit": "23155907b792a05391bc10c280eb71e70b1f50ab",
+    "selected_next_task": "phase12-ssh-live-tcp-minimal-entry-console-boundary-closeout-v22-20260630"
+  },
+  "preserved_v22_facts": {
+    "selected_tree_hash": "1bf796cf078cef91ade341fb7e97562e2bd4be2f21c4215aaade53ad30366847",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 69816,
+    "expected_fetch_byte_match_count": 2,
+    "kernel_sha256": "22ed9e1b6f0c04a28a662c55ddb48769505001c53caab40a04cbea40fa397cb7",
+    "pre_power_drain_empty": true,
+    "firmware_network_output_present": true,
+    "serial_marker_present": false,
+    "serial_marker_occurrences": 0,
+    "nonce_token_occurrences": 0,
+    "final_pre_restore_selected_tree": true,
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "primary_run_label": "minimal-entry-console-boundary-v22-rerun-20260630T215300Z"
+  },
+  "blocked_successors": [
+    "stale runtime-marker post-minimal-entry preflight",
+    "packet I/O",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility/service readiness",
+    "ssh-ready=true",
+    "broad shell work",
+    "fake/kernel-backed command expansion",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Reconciled v22 as decisive selected-byte, serial-freshness, final-identity, and restore evidence for the repaired v21 console-boundary image."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "The first missing fact is selected-kernel entry visibility for the minimal-entry boundary path."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Removed stale runtime-marker, packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness, fake command expansion, broad shell work, and phase transition as mechanically unblocked successors."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No known-good control was required because identity, TFTP, serial freshness, final identity, and restore facts were decisive; the clean rerun addressed evidence hygiene."
+    }
+  ]
+}

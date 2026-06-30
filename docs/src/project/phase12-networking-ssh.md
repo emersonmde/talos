@@ -12738,3 +12738,21 @@ phase12-ssh-live-tcp-minimal-entry-console-boundary-closeout-v22-20260630;
 packet-I/O/OpenSSH/generated-root retry, remote receipt, compatibility/service
 readiness claim, ssh-ready=true, broad shell work, fake/kernel-backed command
 expansion, and phase transition remain blocked.
+
+phase12-ssh-live-tcp-minimal-entry-console-boundary-closeout-v22-20260630
+accepts minimal-entry-console-boundary-frontier-blocked-supervisor-planning. No
+hardware action, lab publication, boot snapshot mutation, Pi 5 power cycle,
+packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility claim,
+service success claim, ssh-ready=true, fake/kernel-backed command expansion,
+broad shell work, or phase transition was performed. The closeout preserves
+the accepted v22 facts: selected-byte service for the repaired v21
+console-boundary image, final pre-restore identity on tree 1bf796cf...,
+fresh serial capture with firmware output, and restore to a0452458.... The
+first missing fact is selected-kernel entry visibility for the minimal-entry
+boundary path: the fresh post-power serial window had zero
+capture-nonce=phase12-console-boundary-v21-static occurrences, including zero
+direct early boundary-marker and zero post-boot-identity ready-marker
+occurrences. selected_next_task is null and planningNeeded=true before another
+selected-kernel-entry discriminator or repair, packet-I/O/OpenSSH/generated-root
+retry, remote receipt, compatibility/service readiness, broad shell work, fake
+command expansion, or phase transition.

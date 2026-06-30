@@ -1,0 +1,31 @@
+{
+  "task_id": "phase12-ssh-live-tcp-minimal-entry-console-boundary-closeout-v22-20260630",
+  "classification": "minimal-entry-console-boundary-frontier-blocked-supervisor-planning",
+  "evidence_root": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-console-boundary-closeout-v22",
+  "retained_artifacts": {
+    "classification": "classification.json",
+    "accepted_v17_route_repair_task": "tasks/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17.md",
+    "accepted_v17_route_repair_evidence_map": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/evidence-map.json",
+    "accepted_v19_handoff_discriminator_task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19.md",
+    "accepted_v19_handoff_discriminator_evidence_map": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19/evidence-map.json",
+    "accepted_v20_polled_console_preflight_task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-polled-console-preflight-v20.md",
+    "accepted_v20_polled_console_preflight_evidence_map": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-polled-console-preflight-v20/evidence-map.json",
+    "accepted_v20_polled_console_closeout_task": "tasks/2026-06-30-phase12-ssh-live-tcp-minimal-entry-polled-console-closeout-v20.md",
+    "accepted_v20_polled_console_closeout_evidence_map": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-polled-console-closeout-v20/evidence-map.json",
+    "accepted_v21_console_boundary_reconciliation_task": "tasks/2026-06-30-phase12-ssh-live-tcp-minimal-entry-console-boundary-reconciliation-v21.md",
+    "accepted_v21_console_boundary_reconciliation_evidence_map": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-console-boundary-reconciliation-v21/evidence-map.json",
+    "accepted_v22_console_boundary_preflight_task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-console-boundary-preflight-v22.md",
+    "accepted_v22_console_boundary_preflight_classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-console-boundary-preflight-v22/classification.json",
+    "accepted_v22_console_boundary_preflight_evidence_map": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-console-boundary-preflight-v22/evidence-map.json"
+  },
+  "validation_plan": [
+    "git status --short --branch before edits/action",
+    "jq empty on task-owned JSON evidence",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "git diff --cached --check before commit"
+  ],
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "first_missing_fact": "zero capture-nonce=phase12-console-boundary-v21-static occurrences in the fresh post-power serial window after selected-byte service"
+}
