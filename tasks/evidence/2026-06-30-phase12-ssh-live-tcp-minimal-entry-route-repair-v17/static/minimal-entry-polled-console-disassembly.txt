@@ -1,0 +1,180 @@
+
+target/aarch64-talos-rpi5-bcm2712/debug/talos:	file format elf64-littleaarch64
+
+Disassembly of section .text.boot:
+
+0000000000200000 <_start>:
+  200000:      	b	0x200040 <_start+0x40>
+		...
+  200010: f8 cd 00 00  	.word	0x0000cdf8
+  200014: 00 00 00 00  	.word	0x00000000
+  200018: 0c 00 00 00  	.word	0x0000000c
+		...
+  200038: 41 52 4d 64  	.word	0x644d5241
+  20003c: 00 00 00 00  	.word	0x00000000
+  200040:      	mov	x19, x0
+  200044:      	adrp	x0, 0x200000 <_start>
+  200048:      	add	x0, x0, #0x114
+  20004c:      	mov	x1, #0x12               // =18
+  200050:      	bl	0x2000b0 <talos_rpi5_early_uart_write>
+  200054:      	mrs	x0, CPACR_EL1
+  200058:      	orr	x0, x0, #0x300000
+  20005c:      	msr	CPACR_EL1, x0
+  200060:      	isb
+  200064:      	nop
+  200068:      	adr	x0, 0x20ce00 <__bss_start>
+  20006c:      	nop
+  200070:      	adr	x1, 0x20ce10 <__heap_start>
+  200074:      	cmp	x0, x1
+  200078:      	b.hs	0x200084 <_start+0x84>
+  20007c:      	str	xzr, [x0], #0x8
+  200080:      	b	0x200074 <_start+0x74>
+  200084:      	adrp	x0, 0x34c000 <__stack_bottom+0x3f1f0>
+  200088:      	add	x0, x0, #0xe10
+  20008c:      	mov	sp, x0
+  200090:      	adrp	x0, 0x200000 <_start>
+  200094:      	add	x0, x0, #0x126
+  200098:      	mov	x1, #0x1b               // =27
+  20009c:      	bl	0x2000b0 <talos_rpi5_early_uart_write>
+  2000a0:      	mov	x0, x19
+  2000a4:      	bl	0x202f2c <rust_entry>
+  2000a8:      	wfe
+  2000ac:      	b	0x2000a8 <_start+0xa8>
+
+00000000002000b0 <talos_rpi5_early_uart_write>:
+  2000b0:      	mov	x22, x30
+  2000b4:      	cbz	x1, 0x2000cc <talos_rpi5_early_uart_write+0x1c>
+  2000b8:      	ldrb	w11, [x0], #0x1
+  2000bc:      	bl	0x2000d0 <talos_rpi5_early_uart_putc>
+  2000c0:      	subs	x1, x1, #0x1
+  2000c4:      	b.ne	0x2000b8 <talos_rpi5_early_uart_write+0x8>
+  2000c8:      	bl	0x2000ec <talos_rpi5_early_uart_wait_empty>
+  2000cc:      	br	x22
+
+00000000002000d0 <talos_rpi5_early_uart_putc>:
+  2000d0:      	mov	x9, #0x1000             // =4096
+  2000d4:      	movk	x9, #0x7d00, lsl #16
+  2000d8:      	movk	x9, #0x10, lsl #32
+  2000dc:      	str	w11, [x9]
+  2000e0:      	ldr	w10, [x9, #0x18]
+  2000e4:      	dsb	sy
+  2000e8:      	ret
+
+00000000002000ec <talos_rpi5_early_uart_wait_empty>:
+  2000ec:      	mov	x9, #0x1000             // =4096
+  2000f0:      	movk	x9, #0x7d00, lsl #16
+  2000f4:      	movk	x9, #0x10, lsl #32
+  2000f8:      	mov	x21, #0x200000          // =2097152
+  2000fc:      	ldr	w10, [x9, #0x18]
+  200100:      	tbnz	w10, #0x7, 0x20010c <talos_rpi5_early_uart_wait_empty+0x20>
+  200104:      	subs	x21, x21, #0x1
+  200108:      	b.ne	0x2000fc <talos_rpi5_early_uart_wait_empty+0x10>
+  20010c:      	dsb	sy
+  200110:      	ret
+
+0000000000200114 <talos_rpi5_asm_start_line>:
+  200114: 54 41 4c 4f  	.word	0x4f4c4154
+  200118: 53 3a 20 61  	.word	0x61203a53
+  20011c: 73 6d 5f 73  	.word	0x735f6d73
+  200120: 74 61 72 74  	.word	0x74726174
+  200124: 0d 0a	.short	0x0a0d
+
+0000000000200126 <talos_rpi5_asm_start_line_end>:
+  200126: 54 41 4c 4f  	.word	0x4f4c4154
+  20012a: 53 3a 20 61  	.word	0x61203a53
+  20012e: 73 6d 5f 70  	.word	0x705f6d73
+  200132: 72 65 5f 72  	.word	0x725f6572
+  200136: 75 73 74 5f  	.word	0x5f747375
+  20013a: 65 6e 74 72  	.word	0x72746e65
+  20013e: 79 0d	.short	0x0d79
+  200140: 0a   	.byte	0x0a
+
+0000000000200141 <talos_rpi5_asm_pre_rust_line_end>:
+  200141: 00 00	.short	0x0000
+  200143: 00   	.byte	0x00
+
+Disassembly of section .vectors:
+
+0000000000200800 <__exception_vectors>:
+  200800:      	sub	sp, sp, #0x20
+  200804:      	stp	x0, x1, [sp]
+  200808:      	mov	x0, #0x0                // =0
+  20080c:      	str	x0, [sp, #0x10]
+  200810:      	b	0x207fb8 <__exception_entry_frame>
+  200814:      	nop
+  200818:      	nop
+  20081c:      	nop
+  200820:      	nop
+  200824:      	nop
+  200828:      	nop
+  20082c:      	nop
+  200830:      	nop
+  200834:      	nop
+  200838:      	nop
+  20083c:      	nop
+  200840:      	nop
+  200844:      	nop
+  200848:      	nop
+  20084c:      	nop
+  200850:      	nop
+  200854:      	nop
+  200858:      	nop
+  20085c:      	nop
+  200860:      	nop
+  200864:      	nop
+  200868:      	nop
+  20086c:      	nop
+  200870:      	nop
+  200874:      	nop
+  200878:      	nop
+  20087c:      	nop
+  200880:      	sub	sp, sp, #0x20
+  200884:      	stp	x0, x1, [sp]
+  200888:      	mov	x0, #0x1                // =1
+  20088c:      	str	x0, [sp, #0x10]
+  200890:      	b	0x207fb8 <__exception_entry_frame>
+  200894:      	nop
+  200898:      	nop
+  20089c:      	nop
+  2008a0:      	nop
+  2008a4:      	nop
+  2008a8:      	nop
+  2008ac:      	nop
+  2008b0:      	nop
+  2008b4:      	nop
+  2008b8:      	nop
+  2008bc:      	nop
+  2008c0:      	nop
+  2008c4:      	nop
+  2008c8:      	nop
+  2008cc:      	nop
+  2008d0:      	nop
+  2008d4:      	nop
+  2008d8:      	nop
+  2008dc:      	nop
+  2008e0:      	nop
+  2008e4:      	nop
+  2008e8:      	nop
+  2008ec:      	nop
+  2008f0:      	nop
+  2008f4:      	nop
+  2008f8:      	nop
+  2008fc:      	nop
+  200900:      	sub	sp, sp, #0x20
+  200904:      	stp	x0, x1, [sp]
+  200908:      	mov	x0, #0x2                // =2
+  20090c:      	str	x0, [sp, #0x10]
+  200910:      	b	0x207fb8 <__exception_entry_frame>
+  200914:      	nop
+  200918:      	nop
+  20091c:      	nop
+  200920:      	nop
+  200924:      	nop
+  200928:      	nop
+  20092c:      	nop
+  200930:      	nop
+  200934:      	nop
+  200938:      	nop
+  20093c:      	nop
+  200940:      	nop
+  200944:      	nop

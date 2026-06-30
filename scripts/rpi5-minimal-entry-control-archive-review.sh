@@ -43,7 +43,7 @@ for token in \
     "contract-id=phase12-ssh-live-tcp-minimal-entry-control-v1" \
     "selected-fetch-path=da591740/kernel_2712.img" \
     "expected-previous-marker=kernel_main" \
-    "source=kernel-main-entry-control" \
+    "source=kernel-main-entry-control-polled-console" \
     "live-tcp-route=false" \
     "packet-io=false" \
     "openssh=false" \

@@ -1,0 +1,2 @@
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/classification.json
+tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/evidence-map.json

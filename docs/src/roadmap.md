@@ -21396,6 +21396,18 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   with dependencies refreshed to require this v19 closeout; packet-I/O,
   OpenSSH/generated-root retry, compatibility or service-readiness claims,
   broad shell work, and phase transition remain blocked.
+- phase12-ssh-live-tcp-minimal-entry-route-repair-v17-20260630 accepts
+  minimal-entry-polled-console-repair-supervisor-preflight-required. The
+  no-hardware repair moves the minimal-entry-control-ready marker from the
+  unpolled early UART writer to the same polled runtime console path that v19
+  proved can retain a downstream selected-image marker, and updates the archive
+  review to require source=kernel-main-entry-control-polled-console while
+  preserving selected-fetch/no-service-claim guards. Non-published static
+  review retained a 52,728-byte selected kernel with SHA-256 ccc95535... and
+  valid Image header fields. No existing queued hardware preflight has this
+  repaired v17 predecessor and exact marker contract, so planningNeeded=true;
+  packet-I/O, OpenSSH/generated-root retry, compatibility or service-readiness
+  claims, broad shell work, and phase transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

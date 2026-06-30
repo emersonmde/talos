@@ -12631,3 +12631,26 @@ phase12-ssh-live-tcp-minimal-entry-route-repair-v17-20260630, with dependencies
 refreshed to require this v19 closeout; packet-I/O/OpenSSH/generated-root
 retry, remote receipt, compatibility/service readiness, broad shell work, and
 phase transition remain blocked.
+
+phase12-ssh-live-tcp-minimal-entry-route-repair-v17-20260630 accepts
+minimal-entry-polled-console-repair-supervisor-preflight-required. No hardware
+action, lab publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The repair reconciles the v15
+selected-byte/no-marker minimal-entry blocker with the v19 selected-image
+handoff proof: v19 retained the downstream production-timer PASS marker from
+the polled runtime console path, while early/kernel_main phase-line markers
+were still absent from the retained direct-read window. The minimal-entry
+marker now emits through crate::print!/println! and
+source=kernel-main-entry-control-polled-console; the archive review helper
+requires that source token while preserving da591740/kernel_2712.img and the
+live-tcp-route=false, packet-io=false, openssh=false, ssh-ready=false, and
+claims-service-success=false guards. Non-published static review retained a
+52,728-byte selected kernel with SHA-256 ccc95535..., valid Image header
+fields, root/selected equality, and the repaired marker/no-claim token set.
+No existing queued hardware preflight has this repaired v17 predecessor and
+exact polled-console marker contract, so selected_next_task is null and
+planningNeeded=true before any hardware run, packet-I/O/OpenSSH/generated-root
+retry, remote receipt, compatibility/service readiness claim, broad shell work,
+or phase transition.

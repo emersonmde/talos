@@ -1,0 +1,60 @@
+{
+  "task_id": "phase12-ssh-live-tcp-minimal-entry-route-repair-v17-20260630",
+  "classification": "minimal-entry-polled-console-repair-supervisor-preflight-required",
+  "classification_file": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/classification.json",
+  "predecessor_evidence": {
+    "v15_repair_task": "tasks/2026-06-30-phase12-ssh-live-tcp-selected-image-entry-invariant-reconciliation-v15.md",
+    "v15_hardware_task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15.md",
+    "v15_hardware_classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-entry-preflight-v15/classification.json",
+    "v19_handoff_task": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19.md",
+    "v19_handoff_classification": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19/classification.json",
+    "v19_closeout_task": "tasks/2026-06-30-phase12-ssh-live-tcp-selected-image-handoff-discriminator-closeout-v19.md"
+  },
+  "changed_files": [
+    "src/target/rpi5.rs",
+    "scripts/rpi5-minimal-entry-control-archive-review.sh",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md",
+    "tasks/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17.md",
+    "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/classification.json",
+    "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/evidence-map.json"
+  ],
+  "static_evidence": {
+    "kernel_sha256": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/static/kernel-sha256.txt",
+    "kernel_size": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/static/kernel-size.txt",
+    "image_header": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/static/image-header.txt",
+    "token_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/static/token-review.txt",
+    "disassembly": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/static/minimal-entry-polled-console-disassembly.txt",
+    "final_image_path": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/static/final-image-path.txt",
+    "final_image_build_stderr": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/static/final-image-build.stderr.txt",
+    "boot_artifact_bytes_retained": false
+  },
+  "materialized_evidence": {
+    "archive_sha256": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/materialized/archive-sha256.txt",
+    "boot_tree_files": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/materialized/boot-tree-files.txt",
+    "note": "The non-published boot tree and archive were removed after metadata, token, and hash evidence were retained."
+  },
+  "validation": {
+    "git_status_before": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/validation/git-status-before.txt",
+    "sh_n_boot_tree": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/validation/sh-n-boot-tree.stdout.txt",
+    "sh_n_archive_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/validation/sh-n-archive-review.stdout.txt",
+    "cargo_fmt": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/validation/cargo-fmt.stdout.txt",
+    "cargo_build": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/validation/cargo-build.stdout.txt",
+    "archive_review": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/validation/minimal-entry-control-archive-review.stdout.txt",
+    "jq_empty": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/validation/jq-empty.stdout.txt",
+    "git_diff_check": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/validation/git-diff-check.stdout.txt",
+    "mdbook_build": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/validation/mdbook-build.stdout.txt",
+    "git_diff_cached_check": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-minimal-entry-route-repair-v17/validation/git-diff-cached-check.stdout.txt"
+  },
+  "non_claims": [
+    "no hardware action",
+    "no lab publication",
+    "no boot snapshot mutation",
+    "no Pi 5 power cycle",
+    "no packet I/O",
+    "no OpenSSH/generated-root retry",
+    "no remote receipt",
+    "no compatibility/service readiness claim",
+    "no phase transition"
+  ]
+}

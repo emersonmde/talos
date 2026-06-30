@@ -13011,20 +13011,15 @@ pub fn run_rp1_ethernet_kernel_entry_serial_beacon() -> ! {
 
 #[cfg(talos_boot_scenario = "rpi5_minimal_entry_control")]
 pub fn run_minimal_entry_control_marker() -> ! {
-    write_early_static("TALOS: minimal-entry-control-ready");
+    crate::print!("TALOS: minimal-entry-control-ready");
     if let Some(nonce) = option_env!("TALOS_CAPTURE_NONCE") {
         if !nonce.is_empty() {
-            write_early_static(" capture-nonce=");
-            write_early_static(nonce);
+            crate::print!(" capture-nonce={}", nonce);
         }
     }
-    write_early_static(" contract-id=phase12-ssh-live-tcp-minimal-entry-control-v1");
-    write_early_static(" selected-fetch-path=da591740/kernel_2712.img");
-    write_early_static(" expected-previous-marker=kernel_main");
-    write_early_static(" source=kernel-main-entry-control");
-    write_early_static(" live-tcp-route=false packet-io=false openssh=false");
-    write_early_static(" ssh-ready=false claims-service-success=false");
-    write_early_static(" claims-phase-transition=false\n");
+    crate::println!(
+        " contract-id=phase12-ssh-live-tcp-minimal-entry-control-v1 selected-fetch-path=da591740/kernel_2712.img expected-previous-marker=kernel_main source=kernel-main-entry-control-polled-console live-tcp-route=false packet-io=false openssh=false ssh-ready=false claims-service-success=false claims-phase-transition=false"
+    );
     wait_uart10_empty_early_phase();
     loop {
         core::hint::spin_loop();

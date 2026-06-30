@@ -1,0 +1,72 @@
+{
+  "task_id": "phase12-ssh-live-tcp-minimal-entry-route-repair-v17-20260630",
+  "terminal_classification": "minimal-entry-polled-console-repair-supervisor-preflight-required",
+  "planningNeeded": true,
+  "planningReason": "The no-hardware repair moves the minimal-entry-control-ready marker from the unpolled early UART writer to the same polled firmware_console runtime console path that v19 proved can retain the production-timer PASS marker. No existing queued hardware preflight has this repaired v17 predecessor and exact marker contract, so supervisor planning must define the next serialized Pi 5 preflight before any hardware run, packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness claim, broad shell work, or phase transition.",
+  "selected_next_task": null,
+  "hardwareAction": false,
+  "labPublication": false,
+  "bootSnapshotMutation": false,
+  "pi5PowerAction": false,
+  "packetIo": false,
+  "opensshGeneratedRootRetry": false,
+  "remoteReceipt": false,
+  "compatibilityOrServiceReadinessClaim": false,
+  "phaseTransition": false,
+  "repair": {
+    "source_file": "src/target/rpi5.rs",
+    "helper_file": "scripts/rpi5-minimal-entry-control-archive-review.sh",
+    "old_marker_source": "kernel-main-entry-control via write_early_static/write_uart10_byte_early_phase",
+    "new_marker_source": "kernel-main-entry-control-polled-console via crate::print!/println! and firmware_console",
+    "basis": "Accepted v19 selected-image handoff proof retained rpi5-production-timer-preemption: PASS from the polled runtime console path while retaining no kernel_main/early-phase line. The minimal route previously depended on the early direct UART writer for its decisive marker."
+  },
+  "static_archive_review": {
+    "capture_nonce": "phase12-route-repair-v17-static",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "kernel_bytes": 52728,
+    "kernel_sha256": "ccc95535706f1d896788800c8bba712cdeaac8bc6fedbbae313de06623040b33",
+    "archive_sha256": "c5c48060056f7e945f8c333dec893d4ebe10885d2b0886419937ab0a9611389f",
+    "header_text_offset": 0,
+    "header_image_size": 52728,
+    "header_flags": 12,
+    "required_tokens": [
+      "TALOS: asm_start",
+      "TALOS: asm_pre_rust_entry",
+      "TALOS: minimal-entry-control-ready",
+      "capture-nonce=",
+      "phase12-route-repair-v17-static",
+      "contract-id=phase12-ssh-live-tcp-minimal-entry-control-v1",
+      "selected-fetch-path=da591740/kernel_2712.img",
+      "expected-previous-marker=kernel_main",
+      "source=kernel-main-entry-control-polled-console",
+      "live-tcp-route=false",
+      "packet-io=false",
+      "openssh=false",
+      "ssh-ready=false",
+      "claims-service-success=false",
+      "claims-phase-transition=false"
+    ]
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "minimal-entry-control-ready used the early direct UART writer even though v19 selected-image evidence only proved downstream polled runtime-console output visibility."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "minimal entry-control archive review now requires source=kernel-main-entry-control-polled-console so stale early-writer-only artifacts fail closed."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "A serialized Pi 5 preflight must prove whether the repaired polled-console minimal-entry marker is retained after selected-byte service."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "The assembly-entry provenance strings remain in the artifact as diagnostic context, but the repaired acceptance marker no longer depends on them as the decisive selected-path marker."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Immediate packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness claims, broad shell work, and phase transition remain unauthorized."
+    }
+  ]
+}
