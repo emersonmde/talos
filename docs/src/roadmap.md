@@ -21066,6 +21066,18 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   service success, ssh-ready=true, broad shell work, and phase transition
   remain blocked until v12 accepts candidate-capture-ready under the repaired
   TFTP contract.
+- phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12-20260630
+  accepts blocked-candidate-kernel-not-starting. The repaired TFTP contract
+  captured selected candidate identity in-window: 13 pre-restore TFTP events,
+  including two da591740/kernel_2712.img serves at 152,176 bytes, with final
+  pre-restore identity still on candidate tree 400bf7c5... . The retained
+  serial window had firmware NETWORK output but no TALOS: kernel_main and no
+  nonce-bearing route-start/runtime-ready markers, so candidate-capture-ready
+  remains rejected. The lab restored to the a0452458... selected-control tree.
+  selected_next_task is
+  phase12-ssh-live-tcp-tftp-capture-boundary-closeout-v12-20260630; packet-I/O,
+  OpenSSH/generated-root retry, remote receipt, compatibility, service success,
+  ssh-ready=true, broad shell work, and phase transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

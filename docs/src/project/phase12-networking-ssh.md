@@ -12195,3 +12195,22 @@ packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility,
 service success, ssh-ready=true, broad shell work, and phase transition remain
 blocked until that serialized hardware task accepts candidate-capture-ready
 under the repaired TFTP contract.
+
+phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12-20260630
+accepts blocked-candidate-kernel-not-starting. The serialized Pi 5 run
+published the repaired-contract runtime-marker candidate from source commit
+1a199ad3f5f8416af2d5088214c5a6d3bf433433, with selected
+da591740/kernel_2712.img at 152,176 bytes and SHA-256
+76cf4214a0ced6fc85c107bbc123a703133f72999c112abcb9786ab5018a6050. The
+repaired same-cursor TFTP helper captured 13 pre-restore events, including two
+selected kernel serves with matching bytes, and final pre-restore identity
+stayed on candidate tree
+400bf7c5f4ae49ca484322499c7d2ec06cd7f8f57961241d705f01b823035ca9. The
+retained serial window still had no TALOS: kernel_main and no nonce-bearing
+route-start/runtime-ready markers, so candidate-capture-ready remains rejected.
+The lab was restored to phase12-ssh-v10-openssh-clean-pre-20260624T074100Z /
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. The
+selected next task is
+phase12-ssh-live-tcp-tftp-capture-boundary-closeout-v12-20260630; packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility, service success,
+ssh-ready=true, broad shell work, and phase transition remain blocked.

@@ -1,0 +1,12 @@
+{
+  "checker": "retained-serial-required-marker-pair",
+  "required_markers": [
+    "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=candidate-runtime-marker-preflight-v12-20260630T094011Z",
+    "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=candidate-runtime-marker-preflight-v12-20260630T094011Z"
+  ],
+  "route_start_present": false,
+  "runtime_ready_present": false,
+  "route_start_occurrences": 0,
+  "runtime_ready_occurrences": 0,
+  "marker_pair_present": false
+}

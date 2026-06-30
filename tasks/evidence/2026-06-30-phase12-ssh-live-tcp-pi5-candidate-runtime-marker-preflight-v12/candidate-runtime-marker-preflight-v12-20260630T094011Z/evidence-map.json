@@ -1,0 +1,101 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12-20260630",
+  "run_label": "candidate-runtime-marker-preflight-v12-20260630T094011Z",
+  "terminal_classification": "blocked-candidate-kernel-not-starting",
+  "first_missing_fact": "candidate runtime markers absent after selected TFTP fetch proof; no TALOS: kernel_main, route-start, or runtime-ready marker visible in the retained serial window",
+  "planningNeeded": false,
+  "selected_next_task": "phase12-ssh-live-tcp-tftp-capture-boundary-closeout-v12-20260630",
+  "hardwareAction": true,
+  "labPublication": true,
+  "bootSnapshotMutation": false,
+  "pi5PowerAction": true,
+  "packetIo": false,
+  "opensshGeneratedRootRetry": false,
+  "no_fake_kernel_backed_command_expansion": true,
+  "evidence_summary": {
+    "source_commit": "1a199ad3f5f8416af2d5088214c5a6d3bf433433",
+    "archive_sha256": "054be8c7b6a44e9c221d85121974ff323d4ec91c642e6bc1f081861187ad6042",
+    "selected_kernel_bytes": 152176,
+    "selected_kernel_sha256": "76cf4214a0ced6fc85c107bbc123a703133f72999c112abcb9786ab5018a6050",
+    "post_publication_tree_hash": "400bf7c5f4ae49ca484322499c7d2ec06cd7f8f57961241d705f01b823035ca9",
+    "tftp_event_count": 13,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "final_pre_restore_tree_hash": "400bf7c5f4ae49ca484322499c7d2ec06cd7f8f57961241d705f01b823035ca9",
+    "restored_to_selected_control": true,
+    "capture_checker_classification": "capture-staging-blocked",
+    "checker_rejection_reasons": [
+      "run-unique-capture-nonce-not-present-after-power",
+      "required-marker-not-present-after-power"
+    ],
+    "marker_pair_check": {
+      "checker": "retained-serial-required-marker-pair",
+      "required_markers": [
+        "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=candidate-runtime-marker-preflight-v12-20260630T094011Z",
+        "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=candidate-runtime-marker-preflight-v12-20260630T094011Z"
+      ],
+      "route_start_present": false,
+      "runtime_ready_present": false,
+      "route_start_occurrences": 0,
+      "runtime_ready_occurrences": 0,
+      "marker_pair_present": false
+    },
+    "serial_window": {
+      "has_kernel_main": false,
+      "has_firmware_network": true,
+      "firmware_network_occurrences": 2,
+      "response_bytes": 4475
+    }
+  },
+  "findings": [
+    {
+      "finding": "Repaired TFTP helper captured a clean in-window candidate selected fetch",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "candidate-capture-ready is rejected because nonce-bearing route-start/runtime-ready markers are absent",
+      "disposition": "blocked"
+    },
+    {
+      "finding": "Lab restore returned to the selected control tree",
+      "disposition": "fixed"
+    },
+    {
+      "finding": "Packet-I/O and OpenSSH/generated-root retry remain blocked",
+      "disposition": "deferred"
+    }
+  ],
+  "validation_results": {
+    "git_status_before_action": "pass; recorded in validation/git-status-before-action.txt",
+    "candidate_archive_materialization_static_marker_review": "pass",
+    "lab_api_status_files_snapshots_before_after_restore": "pass",
+    "fresh_serial_cursor_before_power": "pass",
+    "repaired_tftp_capture_contract": "pass; stable same-cursor pre-restore delta contained selected da591740/kernel_2712.img fetches",
+    "marker_capture_checker": "blocked; route-start/runtime-ready nonce markers absent",
+    "restore_confirmation": "pass",
+    "jq_empty_task_evidence": "pass",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass",
+    "git_diff_cached_check": "pass"
+  },
+  "evidence_paths": {
+    "run_dir": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12/candidate-runtime-marker-preflight-v12-20260630T094011Z/",
+    "archive_metadata": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12/candidate-runtime-marker-preflight-v12-20260630T094011Z/candidate-identity/archive-metadata.json",
+    "publish_candidate": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12/candidate-runtime-marker-preflight-v12-20260630T094011Z/candidate-identity/publish-candidate.json",
+    "capture_summary": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12/candidate-runtime-marker-preflight-v12-20260630T094011Z/candidate-run/capture-invariant-summary.json",
+    "tftp_delta": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12/candidate-runtime-marker-preflight-v12-20260630T094011Z/candidate-run/tftp-delta-stable-pre-restore.json",
+    "marker_pair_check": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12/candidate-runtime-marker-preflight-v12-20260630T094011Z/candidate-run/route-start-runtime-ready-marker-check.json",
+    "capture_window_check": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12/candidate-runtime-marker-preflight-v12-20260630T094011Z/candidate-run/capture-window-v5-check.json",
+    "restore_snapshot": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12/candidate-runtime-marker-preflight-v12-20260630T094011Z/candidate-run/restore-snapshot.json",
+    "post_restore_status": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12/candidate-runtime-marker-preflight-v12-20260630T094011Z/status-after-manual-restore.json"
+  },
+  "redaction_review": {
+    "summary_omits_raw_serial_text_and_peer_fields": true,
+    "raw_serial_and_tftp_peer_logs_retained_as_task_owned_hardware_evidence": true,
+    "packet_payloads_retained": false,
+    "key_or_session_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false
+  },
+  "commit": null
+}

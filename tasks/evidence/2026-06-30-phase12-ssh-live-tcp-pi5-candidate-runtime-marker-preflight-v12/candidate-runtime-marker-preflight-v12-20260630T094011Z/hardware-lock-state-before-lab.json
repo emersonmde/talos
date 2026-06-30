@@ -1,0 +1,26 @@
+{
+  "captured_state_summary": {
+    "currentTask": {
+      "id": "phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12-20260630",
+      "status": "in_progress",
+      "startedAt": "2026-06-30T09:36:53Z"
+    },
+    "workerRunInProgress": true,
+    "workerRunTaskId": "phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12-20260630",
+    "hardwareTestLock": {
+      "locked": true,
+      "owner": "worker",
+      "taskId": "phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12-20260630",
+      "acquiredAt": "2026-06-30T09:40:11Z",
+      "releasedAt": null,
+      "restored": false,
+      "note": "Worker acquired hardwareTestLock for phase12-ssh-live-tcp-pi5-candidate-runtime-marker-preflight-v12-20260630 repaired TFTP/runtime-marker preflight."
+    },
+    "supervisorIntervention": {
+      "active": false,
+      "taskId": "phase12-ssh-tftp-capture-invariant-reconciliation-v9-20260624"
+    },
+    "planningNeeded": false,
+    "planningReason": null
+  }
+}
