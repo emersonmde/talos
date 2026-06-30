@@ -1,0 +1,29 @@
+archive=target/tmp/current-tree-production-timer-entry-baseline-20260630T050929Z-boot.tar.gz
+sha256=1fd60a7275883b5e8fd6385ebdae1769bf9c8c6b075e73f10564f2ba9095b606
+file_count=19
+kernel_size=104136
+header_image_size=104136
+text_offset=0
+flags=12
+loader_diagnostic=false
+circle_config_loader_diagnostic=false
+manifest:
+  bcm2712-rpi-5-b.dtb
+  cmdline.txt
+  config.txt
+  da591740
+  da591740/bcm2712-rpi-5-b.dtb
+  da591740/cmdline.txt
+  da591740/config.txt
+  da591740/kernel8.img
+  da591740/kernel_2712.img
+  da591740/overlays
+  da591740/overlays/bcm2712d0.dtbo
+  da591740/overlays/overlay_map.dtb
+  da591740/overlays/uart0-pi5.dtbo
+  kernel8.img
+  kernel_2712.img
+  overlays
+  overlays/bcm2712d0.dtbo
+  overlays/overlay_map.dtb
+  overlays/uart0-pi5.dtbo

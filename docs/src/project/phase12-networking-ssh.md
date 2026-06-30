@@ -12060,3 +12060,24 @@ minimal-control v2 hardware, live TCP candidate preflight, packet-I/O,
 OpenSSH/generated-root retry, remote receipt, compatibility, service success,
 ssh-ready=true, broad shell work, and phase transition remain blocked until
 that explicit Pi 5 discriminator is accepted.
+
+phase12-ssh-live-tcp-pi5-current-tree-production-timer-entry-baseline-discriminator-20260630
+accepts current-tree-entry-path-passes-control. The serialized Pi 5 proof
+published a current-tree production-timer archive with 104,136-byte
+root/selected da591740/kernel_2712.img, source commit
+1b428d0e4fda3fd26fe3869c7e5f43d648bba11a, kernel SHA-256
+2343a009a14972d050ccf0fc706539163b6b5cb3ee3717b9cb6753f2ec7c2328, and lab
+tree hash 4edd4f1dad12ea06e3c45b1435f9a2d16e9c2046226d8963a0d8413a9f7226d1.
+Two retained same-contract Pi 5 runs each observed selected
+da591740/kernel_2712.img TFTP serves, firmware NETWORK serial output,
+rpi5-production-timer-preemption: PASS, valid readiness-v3 classification, and
+restore proof back to the phase12-ssh-v10-openssh-clean-pre-20260624T074100Z
+a0452458... selected-control tree. TALOS: kernel_main remained metadata-only
+absent, matching the selected known-good baseline policy when downstream PASS
+is present. The
+selected next task is
+phase12-ssh-live-tcp-minimal-control-scenario-specific-reconciliation-20260630;
+live TCP candidate preflight, packet-I/O, OpenSSH/generated-root retry, remote
+receipt, compatibility, service success, ssh-ready=true, broad shell work, and
+phase transition remain blocked until that scenario-specific reconciliation is
+accepted.

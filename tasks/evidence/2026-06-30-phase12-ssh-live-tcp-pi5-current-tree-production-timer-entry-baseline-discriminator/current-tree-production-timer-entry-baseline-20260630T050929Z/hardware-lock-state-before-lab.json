@@ -1,0 +1,17 @@
+{
+  "locked": true,
+  "owner": "worker",
+  "taskId": "phase12-ssh-live-tcp-pi5-current-tree-production-timer-entry-baseline-discriminator-20260630",
+  "acquiredAt": "2026-06-30T05:07:06Z",
+  "releasedAt": null,
+  "restored": false,
+  "note": "Acquired for serialized Pi 5 current-tree production-timer entry baseline discriminator before lab publication or Pi power action."
+}
+{
+  "workerRunInProgress": true,
+  "workerRunTaskId": "phase12-ssh-live-tcp-pi5-current-tree-production-timer-entry-baseline-discriminator-20260630",
+  "currentTask": {
+    "id": "phase12-ssh-live-tcp-pi5-current-tree-production-timer-entry-baseline-discriminator-20260630",
+    "status": "in_progress"
+  }
+}

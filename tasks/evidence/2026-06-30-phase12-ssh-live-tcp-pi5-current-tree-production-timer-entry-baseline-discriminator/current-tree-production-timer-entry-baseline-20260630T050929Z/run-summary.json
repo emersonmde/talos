@@ -1,0 +1,36 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-current-tree-production-timer-entry-baseline-discriminator-20260630",
+  "run_label": "current-tree-production-timer-entry-baseline-20260630T050929Z",
+  "expected_marker": "rpi5-production-timer-preemption: PASS",
+  "restore_target": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+  "helper_exit_codes": {
+    "runtime_readiness_retain": 1,
+    "tftp_stable_delta": 0,
+    "readiness_v3_classifier": 0
+  },
+  "observed": {
+    "pre_tree_hash": "4edd4f1dad12ea06e3c45b1435f9a2d16e9c2046226d8963a0d8413a9f7226d1",
+    "final_tree_hash": "4edd4f1dad12ea06e3c45b1435f9a2d16e9c2046226d8963a0d8413a9f7226d1",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "serial_capture_mode": "read",
+    "serial_response_bytes": 8203,
+    "has_required_marker": true,
+    "required_marker_occurrences": 1,
+    "has_kernel_main": false,
+    "has_firmware_network": true,
+    "firmware_network_occurrences": 2,
+    "stable_tftp": true,
+    "served_selected_kernel_fetches": 2,
+    "valid_known_good_talos_readiness_v3": true,
+    "readiness_rejection_reasons": []
+  },
+  "evidence_paths": {
+    "run_dir": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-current-tree-production-timer-entry-baseline-discriminator/current-tree-production-timer-entry-baseline-20260630T050929Z/",
+    "primary_serial": "current-tree-production-timer-entry-baseline-20260630T050929Z-runtime-readiness-primary.json",
+    "tftp_delta": "tftp-delta-stable-pre-restore.json",
+    "readiness_v3_classification": "readiness-v3-classification.json",
+    "restore_snapshot": "restore-snapshot.json",
+    "post_restore_status": "post-restore-status.json"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "contract": "valid-known-good-talos-readiness-v3",
+  "contract_version": 3,
+  "input_artifacts": {
+    "retained_primary_artifact": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-current-tree-production-timer-entry-baseline-discriminator/current-tree-production-timer-entry-baseline-20260630T051123Z/current-tree-production-timer-entry-baseline-20260630T051123Z-runtime-readiness-primary.json",
+    "tftp_delta": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-current-tree-production-timer-entry-baseline-discriminator/current-tree-production-timer-entry-baseline-20260630T051123Z/tftp-delta-stable-pre-restore.json",
+    "pre_status": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-current-tree-production-timer-entry-baseline-discriminator/current-tree-production-timer-entry-baseline-20260630T051123Z/pre-status.json",
+    "final_status": "tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-current-tree-production-timer-entry-baseline-discriminator/current-tree-production-timer-entry-baseline-20260630T051123Z/final-pre-restore-status.json"
+  },
+  "contract_policy": {
+    "primary_artifact_policy": "retained-run-label-qualified-artifact-only",
+    "mutable_latest_artifact_policy": "rejected-by-wrapper",
+    "same_run_join_policy": "caller-provided retained primary, stable TFTP delta, and pre/final status tuple from one proof run",
+    "success_marker_policy": "required",
+    "kernel_main_policy": "metadata-only-not-required-for-v3-known-good-readiness",
+    "required_success_marker": "rpi5-production-timer-preemption: PASS"
+  },
+  "checks": {
+    "has_required_success_marker": true,
+    "has_kernel_main_metadata": false,
+    "stable_boot_identity": true,
+    "pre_tree_hash": "4edd4f1dad12ea06e3c45b1435f9a2d16e9c2046226d8963a0d8413a9f7226d1",
+    "final_tree_hash": "4edd4f1dad12ea06e3c45b1435f9a2d16e9c2046226d8963a0d8413a9f7226d1",
+    "effective_kernel": "kernel_2712.img",
+    "stable_tftp_delta": true,
+    "served_effective_kernel_fetch_count": 2,
+    "retained_primary_cursor_window": true,
+    "tftp_cursor_window": true
+  },
+  "retained_risks": [
+    "TALOS: kernel_main absent from retained primary serial window; v3 records this as metadata rather than a mandatory readiness marker"
+  ],
+  "rejection_reasons": [],
+  "talos_runtime_readiness_v3": {
+    "valid_known_good_talos_readiness_v3": true,
+    "classification": "valid-known-good-talos-readiness-v3",
+    "evidence_level": "local/static classification over retained serial hardware artifact plus lab-controller status and stable TFTP evidence",
+    "required_success_marker": "rpi5-production-timer-preemption: PASS",
+    "has_required_success_marker": true,
+    "has_kernel_main": false,
+    "kernel_main_policy": "metadata-only-not-required",
+    "stable_boot_identity": true,
+    "stable_tftp_delta": true,
+    "served_effective_kernel_fetch_count": 2
+  },
+  "rejected_claims": [
+    "GPIO32 write/restore authorization by classifier alone",
+    "PHY reset behavior",
+    "Ethernet driver behavior",
+    "DMA/descriptors",
+    "interrupts",
+    "packet I/O",
+    "networking",
+    "sockets",
+    "SSH",
+    "Phase 12.2",
+    "phase transition"
+  ]
+}

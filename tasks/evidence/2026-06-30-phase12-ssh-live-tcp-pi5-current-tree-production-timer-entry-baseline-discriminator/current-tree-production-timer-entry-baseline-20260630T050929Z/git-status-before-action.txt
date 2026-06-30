@@ -1,0 +1,2 @@
+## main...origin/main [ahead 193]
+?? tasks/evidence/2026-06-30-phase12-ssh-live-tcp-pi5-current-tree-production-timer-entry-baseline-discriminator/
