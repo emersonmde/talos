@@ -1,0 +1,21 @@
+{
+  "task_record": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-marker-family-closeout-v57.md",
+  "classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-marker-family-closeout-v57/classification.json",
+  "static": {
+    "reconciliation_summary": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-marker-family-closeout-v57/static/reconciliation-summary.md"
+  },
+  "predecessors": {
+    "v56_task": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-marker-family-reconciliation-v56.md",
+    "v56_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-marker-family-reconciliation-v56/classification.json",
+    "v57_task": "tasks/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-marker-family-preflight-v57.md",
+    "v57_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-marker-family-preflight-v57/classification.json",
+    "v57_evidence_map": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-marker-family-preflight-v57/evidence-map.json",
+    "v57_archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-marker-family-preflight-v57/validation/archive-review.stdout.txt",
+    "v57_known_good_control_summary": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-marker-family-preflight-v57/lab/v57-control/control-summary.json",
+    "v57_candidate_rerun_summary": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-marker-family-preflight-v57/lab/v57-candidate-rerun/candidate-rerun-summary.json"
+  },
+  "redaction_review": {
+    "raw_serial_or_tftp_peer_line_fields_retained_by_closeout": false,
+    "references_predecessor_redacted_summaries": true
+  }
+}

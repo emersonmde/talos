@@ -1,0 +1,84 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-marker-family-closeout-v57-20260701",
+  "status": "accepted",
+  "terminalClassification": "blocked-selected-normal-runtime-runtime-ready-marker-family-frontier",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "first_missing_fact": "selected Pi 5 serial retention of any Talos marker-family member at or after TALOS: asm_start",
+  "evidence_level": "accepted v56 marker-family contract + accepted v57 Pi 5 preflight evidence + selected identity/TFTP/final identity + serial marker-family summary + known-good control + candidate rerun + restore proof + task-owned JSON evidence + docs build + diff checks",
+  "frontier": {
+    "classification": "selected-normal-runtime-no-route-start-after-selected-identity-and-tftp",
+    "runtime_ready_proved": false,
+    "packet_io_mechanically_unblocked": false,
+    "blocked_successor": "phase12-ssh-live-tcp-selected-normal-runtime-packet-io-continuation-reconciliation-v53-20260701"
+  },
+  "v57_preflight": {
+    "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-marker-family-preflight-v57-20260701",
+    "classification": "selected-normal-runtime-no-route-start-marker-retained",
+    "archive_sha256": "44afdb8b849bd2fb1878a1b280e8e46b66cbcb5b48fc40dd2822fe06091c84e9",
+    "selected_tree": "c49997afe4dd2136706ad4f0dc05326d93abf60593c8a01104472984d5481bbc",
+    "selected_fetch": "da591740/kernel_2712.img",
+    "selected_kernel_bytes": 152144,
+    "selected_kernel_sha256": "b3d4ff79d0790980f68ef446a7c41dcbe2858824bd29ce7f150f86fa053c7982",
+    "post_power_identity_retained": true,
+    "selected_tftp_event_count": 2,
+    "selected_tftp_bytes": [
+      152144,
+      152144
+    ],
+    "final_selected_identity_retained": true,
+    "restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "marker_family": {
+      "deepest_present_marker": null,
+      "markers": [
+        {
+          "marker": "TALOS: asm_start",
+          "occurrences": 0
+        },
+        {
+          "marker": "TALOS: asm_pre_rust_entry",
+          "occurrences": 0
+        },
+        {
+          "marker": "TALOS: kernel_main",
+          "occurrences": 0
+        },
+        {
+          "marker": "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=runtime-ready-static",
+          "occurrences": 0
+        },
+        {
+          "marker": "TALOS: ssh-service-smoltcp-runtime-blocked capture-nonce=runtime-ready-static",
+          "occurrences": 0
+        },
+        {
+          "marker": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-ready-static",
+          "occurrences": 0
+        }
+      ]
+    }
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Reconciled v57 no-route-start marker-family evidence against the v56 contract and blocked packet-I/O because runtime-ready is not proved."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No additional hardware action is required for closeout because v57 already captured selected identity, TFTP, serial marker-family, known-good control, candidate rerun, restore, and redaction evidence."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Supervisor must plan the next bounded repair or discriminator around selected no-route-start evidence."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Removed packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness, ssh-ready=true, fake command expansion, broad shell work, hardware action, and phase transition as immediate successors."
+    }
+  ],
+  "redaction_review": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_peer_or_log_line_fields_retained": false,
+    "secret_or_operator_identifiers_retained": false
+  }
+}
