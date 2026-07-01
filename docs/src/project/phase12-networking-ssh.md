@@ -13386,3 +13386,22 @@ readiness, ssh-ready, fake command expansion, broad shell work, or phase
 transition. selected_next_task is
 phase12-ssh-live-tcp-selected-normal-runtime-exceptions-continuation-closeout-v44-20260701;
 planningNeeded=false.
+
+phase12-ssh-live-tcp-selected-normal-runtime-exceptions-continuation-closeout-v44-20260701
+accepts selected-normal-runtime-exceptions-frontier-proved. No hardware
+action, lab publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The closeout reconciles v44
+against v34, v36, v38, v40, v42, and v43: v34 proves selected normal-runtime
+assembly entry at TALOS: asm_start, v36 proves selected TALOS:
+asm_pre_rust_entry, v38 proves TALOS: rust_entry, v40 proves TALOS: boot info
+parsed, v42 proves TALOS: target init, v43 defines the selected
+exceptions-ready marker-loop contract, and v44 proves the selected 152,880-byte
+archive reaches TALOS: exceptions ready 2,145 times with selected-byte TFTP
+service and restore proof. The next unresolved continuation facts are
+kernel_main, route-start, runtime-ready, packet-I/O, remote receipt,
+compatibility/service readiness, OpenSSH, ssh-ready=true, fake command
+expansion, broad shell work, and phase transition. selected_next_task is
+phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-continuation-reconciliation-v45-20260701;
+planningNeeded=false.
