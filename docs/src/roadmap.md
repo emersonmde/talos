@@ -22268,6 +22268,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   runtime-ready is proved. selected_next_task is
   phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-marker-family-preflight-v57-20260701
   and planningNeeded=false.
+- phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-marker-family-preflight-v57-20260701
+  accepts selected-normal-runtime-no-route-start-marker-retained. Under
+  hardwareTestLock, the worker republished the v51 selected runtime-ready
+  archive. The first candidate evidence was treated as inconclusive after
+  capture-helper/manual continuation evidence became contaminated after restore,
+  so the worker ran the required known-good control and then a fresh selected
+  candidate rerun. The control proved the TFTP cursor/delta path still reported
+  baseline da591740/kernel_2712.img serves at 104,136 bytes. The selected rerun
+  retained selected post-power identity, served da591740/kernel_2712.img twice
+  at 152,144 bytes, retained final selected pre-restore identity, and restored
+  to a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. The
+  serial marker family retained zero occurrences of asm_start,
+  asm_pre_rust_entry, kernel_main, route-start, runtime-blocked, and
+  runtime-ready. Runtime-ready, packet-I/O, OpenSSH compatibility, service
+  readiness, ssh-ready=true, fake command expansion, broad shell work, and
+  phase transition remain unproved. selected_next_task is
+  phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-marker-family-closeout-v57-20260701
+  and planningNeeded=false.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

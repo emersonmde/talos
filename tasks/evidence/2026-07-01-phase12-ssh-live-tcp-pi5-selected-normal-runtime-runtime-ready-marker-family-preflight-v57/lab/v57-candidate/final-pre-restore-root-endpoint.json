@@ -1,0 +1,6 @@
+{
+  "endpoint": "GET /",
+  "body_bytes": 0,
+  "selected_tree_identity_source": "/boot/files",
+  "fallback_used": true
+}

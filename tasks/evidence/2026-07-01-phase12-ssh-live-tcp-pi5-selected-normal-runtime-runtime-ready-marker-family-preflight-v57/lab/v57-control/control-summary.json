@@ -1,0 +1,41 @@
+{
+  "classification": "known-good-control-capture-recorded",
+  "pre_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "post_power_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "final_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "serial": {
+    "bytes": 2746,
+    "firmware_network": 0,
+    "marker_family": {
+      "markers": [
+        "NETWORK"
+      ],
+      "counts": [
+        {
+          "marker": "NETWORK",
+          "present": false,
+          "occurrences": 0,
+          "first_index": null
+        }
+      ],
+      "deepest_present_marker": null,
+      "all_present": false,
+      "present_count": 0
+    }
+  },
+  "tftp": {
+    "stable": true,
+    "event_count": 13,
+    "fetch_events": [
+      {
+        "bytes": 104136,
+        "status": "served"
+      },
+      {
+        "bytes": 104136,
+        "status": "served"
+      }
+    ]
+  }
+}

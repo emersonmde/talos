@@ -1,0 +1,143 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-marker-family-preflight-v57-20260701",
+  "status": "accepted",
+  "terminalClassification": "selected-normal-runtime-no-route-start-marker-retained",
+  "selected_next_task": "phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-marker-family-closeout-v57-20260701",
+  "planningNeeded": false,
+  "evidence_level": "static archive/image review + lab-controller API + serial hardware boot/output summary + TFTP log delta + known-good control + candidate rerun + restore proof + task-owned JSON evidence + redaction review",
+  "archive": {
+    "path": "target/tmp/selected-normal-runtime-runtime-ready-v51.tar.gz",
+    "sha256": "44afdb8b849bd2fb1878a1b280e8e46b66cbcb5b48fc40dd2822fe06091c84e9",
+    "selected_fetch": "da591740/kernel_2712.img",
+    "selected_kernel_sha256": "b3d4ff79d0790980f68ef446a7c41dcbe2858824bd29ce7f150f86fa053c7982",
+    "selected_kernel_bytes": 152144
+  },
+  "candidate_rerun": {
+    "classification": "selected-normal-runtime-no-route-start-marker-retained",
+    "selected_tree": "c49997afe4dd2136706ad4f0dc05326d93abf60593c8a01104472984d5481bbc",
+    "post_power_tree": "c49997afe4dd2136706ad4f0dc05326d93abf60593c8a01104472984d5481bbc",
+    "final_tree": "c49997afe4dd2136706ad4f0dc05326d93abf60593c8a01104472984d5481bbc",
+    "restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "selected_fetch_bytes_post_publication": 152144,
+    "selected_fetch_bytes_final": 152144,
+    "serial": {
+      "bytes": 2748,
+      "capture_mode": "read",
+      "deepest_present_marker": null,
+      "marker_family_counts": [
+        {
+          "marker": "TALOS: asm_start",
+          "present": false,
+          "occurrences": 0,
+          "first_index": null
+        },
+        {
+          "marker": "TALOS: asm_pre_rust_entry",
+          "present": false,
+          "occurrences": 0,
+          "first_index": null
+        },
+        {
+          "marker": "TALOS: kernel_main",
+          "present": false,
+          "occurrences": 0,
+          "first_index": null
+        },
+        {
+          "marker": "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=runtime-ready-static",
+          "present": false,
+          "occurrences": 0,
+          "first_index": null
+        },
+        {
+          "marker": "TALOS: ssh-service-smoltcp-runtime-blocked capture-nonce=runtime-ready-static",
+          "present": false,
+          "occurrences": 0,
+          "first_index": null
+        },
+        {
+          "marker": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-ready-static",
+          "present": false,
+          "occurrences": 0,
+          "first_index": null
+        }
+      ],
+      "required_marker_occurrences": 0,
+      "nonce_occurrences": 0
+    },
+    "tftp": {
+      "stable": true,
+      "event_count": 13,
+      "selected_fetch_event_count": 2,
+      "selected_fetch_bytes": [
+        152144,
+        152144
+      ]
+    },
+    "findings": [
+      {
+        "disposition": "fixed",
+        "finding": "Reran after first v57 capture-helper/manual evidence contamination with known-good control and fresh selected candidate rerun."
+      },
+      {
+        "disposition": "not-an-issue",
+        "finding": "Known-good control proved the TFTP cursor/delta path still reports baseline kernel_2712.img serves in the candidate capture style."
+      },
+      {
+        "disposition": "deferred",
+        "finding": "No runtime-ready, runtime-blocked, route-start, kernel_main, asm_pre_rust_entry, or asm_start marker was retained in the selected candidate rerun serial window; packet-I/O remains blocked."
+      }
+    ]
+  },
+  "known_good_control": {
+    "classification": "known-good-control-capture-recorded",
+    "pre_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "post_power_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "final_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "serial": {
+      "bytes": 2746,
+      "firmware_network": 0,
+      "marker_family": {
+        "markers": [
+          "NETWORK"
+        ],
+        "counts": [
+          {
+            "marker": "NETWORK",
+            "present": false,
+            "occurrences": 0,
+            "first_index": null
+          }
+        ],
+        "deepest_present_marker": null,
+        "all_present": false,
+        "present_count": 0
+      }
+    },
+    "tftp": {
+      "stable": true,
+      "event_count": 13,
+      "fetch_events": [
+        {
+          "bytes": 104136,
+          "status": "served"
+        },
+        {
+          "bytes": 104136,
+          "status": "served"
+        }
+      ]
+    }
+  },
+  "redaction_review": {
+    "raw_serial_text_base64_redacted": true,
+    "raw_tftp_peer_line_fields_redacted": true,
+    "retained": "counts, filenames, byte counts, cursor metadata, tree hashes, marker-family classifications, and restore status"
+  },
+  "hardware_lock": {
+    "acquiredAt": "2026-07-01T23:17:00Z",
+    "releasedAt": null,
+    "restored": true
+  }
+}

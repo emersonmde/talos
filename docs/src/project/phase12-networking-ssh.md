@@ -13703,3 +13703,27 @@ readiness, ssh-ready=true, fake command expansion, broad shell work, or phase
 transition. selected_next_task is
 phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-marker-family-preflight-v57-20260701;
 planningNeeded=false.
+
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-marker-family-preflight-v57-20260701
+accepts selected-normal-runtime-no-route-start-marker-retained. Under
+hardwareTestLock, the worker republished the authoritative v51 selected
+runtime-ready archive. The first candidate evidence was marked inconclusive
+because the capture-helper/manual continuation evidence became contaminated
+after restore and was not used for acceptance. The required known-good control
+then proved the same TFTP cursor/delta path reported baseline
+da591740/kernel_2712.img serves at 104,136 bytes. The fresh selected candidate
+rerun retained selected post-power identity, served da591740/kernel_2712.img
+twice at 152,144 bytes, retained final selected pre-restore identity, and
+restored to
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. The serial
+marker family retained zero occurrences of TALOS: asm_start, TALOS:
+asm_pre_rust_entry, TALOS: kernel_main, TALOS:
+ssh-service-smoltcp-runtime-route-start capture-nonce=runtime-ready-static,
+TALOS: ssh-service-smoltcp-runtime-blocked capture-nonce=runtime-ready-static,
+and TALOS: ssh-service-smoltcp-runtime-ready
+capture-nonce=runtime-ready-static. This is a selected no-route-start frontier,
+not runtime-ready proof; packet-I/O, OpenSSH compatibility, service readiness,
+ssh-ready=true, fake command expansion, broad shell work, and phase transition
+remain unproved. selected_next_task is
+phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-marker-family-closeout-v57-20260701;
+planningNeeded=false.

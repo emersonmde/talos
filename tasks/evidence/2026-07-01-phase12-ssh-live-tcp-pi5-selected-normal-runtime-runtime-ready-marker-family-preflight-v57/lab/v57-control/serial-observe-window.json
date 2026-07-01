@@ -1,0 +1,52 @@
+{
+  "action": "serial read",
+  "base64": "REDACTED",
+  "bytes": 2746,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "REDACTED",
+  "truncated": false,
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "talos_serial_window": {
+    "requested_timeout_seconds": 10,
+    "elapsed_seconds": 10,
+    "settle_ms": 1000,
+    "max_bytes": 262144,
+    "observe_attempts": 2,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 2746,
+    "required_marker": "NETWORK",
+    "kernel_marker": "TALOS: kernel_main",
+    "firmware_network_marker": "NETWORK",
+    "has_kernel_main": false,
+    "has_required_marker": false,
+    "marker_family": {
+      "markers": [
+        "NETWORK"
+      ],
+      "counts": [
+        {
+          "marker": "NETWORK",
+          "present": false,
+          "occurrences": 0,
+          "first_index": null
+        }
+      ],
+      "deepest_present_marker": null,
+      "all_present": false,
+      "present_count": 0
+    },
+    "has_firmware_network": false,
+    "firmware_network_occurrences": 0,
+    "required_marker_occurrences": 0,
+    "marker_nonce": null,
+    "nonce_token": null,
+    "nonce_token_occurrences": 0,
+    "required_marker_excerpt": "REDACTED"
+  }
+}

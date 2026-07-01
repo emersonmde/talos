@@ -1,0 +1,25 @@
+{
+  "action": "tftp logs",
+  "ok": true,
+  "tftp": {
+    "cursor_end": 4748863,
+    "cursor_start": 3700287,
+    "events": [
+      {
+        "bytes": 104136,
+        "client_ip": "REDACTED",
+        "client_mac": "REDACTED",
+        "filename": "da591740/kernel_2712.img",
+        "line": "REDACTED",
+        "status": "served"
+      }
+    ],
+    "lines": [
+      "Jul  1 23:19:21 dnsmasq-tftp[1]: sent /var/tftpboot/da591740/kernel_2712.img to 10.42.1.4"
+    ],
+    "log": "/state/tftp.log",
+    "log_size": 4748863,
+    "tail_mode": true,
+    "truncated": true
+  }
+}
