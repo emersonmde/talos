@@ -1,0 +1,40 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-entry-repair-closeout-v34-20260701",
+  "classification": "selected-normal-runtime-entry-frontier-proved-supervisor-planning",
+  "evidence_root": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-entry-repair-closeout-v34",
+  "retained_artifacts": {
+    "classification": "classification.json",
+    "accepted_v26_selected_entry_closeout": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-entry-boot-path-closeout-v26.md",
+    "accepted_v26_selected_entry_closeout_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-entry-boot-path-closeout-v26/classification.json",
+    "accepted_v32_selected_normal_runtime_pre_entry_closeout": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-entry-closeout-v32.md",
+    "accepted_v32_selected_normal_runtime_pre_entry_closeout_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-entry-closeout-v32/classification.json",
+    "accepted_v33_static_entry_reconciliation": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-entry-static-reconciliation-v33.md",
+    "accepted_v33_static_entry_reconciliation_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-entry-static-reconciliation-v33/classification.json",
+    "accepted_v34_preflight": "tasks/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-entry-repair-preflight-v34.md",
+    "accepted_v34_preflight_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-entry-repair-preflight-v34/classification.json",
+    "accepted_v34_preflight_evidence_map": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-entry-repair-preflight-v34/evidence-map.json",
+    "accepted_v34_authoritative_summary": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-entry-repair-preflight-v34/lab/candidate/original-helper-summary.json",
+    "phase12_architecture_note": "docs/src/project/phase12-networking-ssh.md",
+    "roadmap": "docs/src/roadmap.md"
+  },
+  "validation_plan": [
+    "git status --short --branch before edits/action",
+    "jq empty on task-owned JSON evidence and supervisor state",
+    "git diff --check",
+    "/home/node/.cargo/bin/mdbook build",
+    "git diff --cached --check before commit"
+  ],
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "first_missing_fact": "The selected 152144-byte normal-runtime feature archive has not yet been proved past the assembly entry boundary into rust_entry, BootInfo parsing, target init, exceptions, kernel_main, packet-I/O, remote receipt, compatibility/service readiness, or OpenSSH.",
+  "redaction": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_peer_or_log_lines_retained": false,
+    "packet_payloads_retained": false,
+    "ssh_session_or_key_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false,
+    "stable_secret_derived_identifiers_retained": false,
+    "note": "This closeout references accepted predecessor summaries and JSON metadata only."
+  }
+}

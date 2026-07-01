@@ -13085,3 +13085,22 @@ not prove rust_entry, kernel_main, packet-I/O, OpenSSH/generated-root retry,
 remote receipt, compatibility/service readiness, ssh-ready=true, fake command
 expansion, broad shell work, or phase transition. selected_next_task is
 phase12-ssh-live-tcp-selected-normal-runtime-entry-repair-closeout-v34-20260701.
+
+phase12-ssh-live-tcp-selected-normal-runtime-entry-repair-closeout-v34-20260701
+accepts selected-normal-runtime-entry-frontier-proved-supervisor-planning. No
+hardware action, lab publication, boot snapshot mutation, Pi 5 power cycle,
+packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility claim,
+service success claim, ssh-ready=true, fake/kernel-backed command expansion,
+broad shell work, or phase transition was performed. The closeout reconciles
+v34 against v26, v32, and v33: the accepted rust_entry/UART10 proof applies to
+the earlier 45,400-byte selected-entry marker-loop image, v32 proves the later
+152,144-byte selected normal-runtime feature image is served but retains no
+TALOS: asm_start, and v34 proves the 152,144-byte selected normal-runtime
+entry-loop archive can reach TALOS: asm_start on Pi 5. The next unresolved
+continuation fact is whether the selected 152,144-byte normal-runtime feature
+archive reaches rust_entry and later normal-runtime milestones beyond the
+assembly entry boundary. selected_next_task is null and planningNeeded=true
+pending supervisor planning for the next bounded continuation step;
+packet-I/O/OpenSSH/generated-root retry, remote receipt,
+compatibility/service readiness, ssh-ready=true, fake command expansion, broad
+shell work, and phase transition remain blocked.
