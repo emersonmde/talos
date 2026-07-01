@@ -1,0 +1,1 @@
+b3d4ff79d0790980f68ef446a7c41dcbe2858824bd29ce7f150f86fa053c7982  tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/static/selected-kernel_2712.img

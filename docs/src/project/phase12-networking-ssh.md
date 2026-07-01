@@ -13585,3 +13585,22 @@ broad shell work, and phase transition remain unproved. selected_next_task is
 phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52-20260701;
 planningNeeded=true because no explicit v52 hardware preflight task exists in
 taskQueue.
+
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52-20260701
+accepts blocked-selected-normal-runtime-runtime-ready-preflight. Under
+hardwareTestLock, the worker republished the v51 selected runtime-ready archive
+with tree c49997afe4dd2136706ad4f0dc05326d93abf60593c8a01104472984d5481bbc
+and expected da591740/kernel_2712.img size 152,144 bytes. The candidate rerun
+retained selected preflight identity before power action, but stable
+same-cursor TFTP then served da591740/kernel_2712.img twice at the 104,136-byte
+baseline size and final pre-restore identity was the accepted baseline tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. The
+saturated direct-read serial window retained zero occurrences of TALOS:
+ssh-service-smoltcp-runtime-ready capture-nonce=runtime-ready-static. The lab
+was restored to phase12-ssh-v10-openssh-clean-pre-20260624T074100Z. This is a
+blocked preflight result, not runtime-ready marker proof; packet-I/O, OpenSSH
+compatibility, remote receipt, service readiness, ssh-ready=true, fake command
+expansion, broad shell work, and phase transition remain unproved.
+selected_next_task is
+phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-closeout-v52-20260701;
+planningNeeded=false.

@@ -1,0 +1,34 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52-20260701",
+  "classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/classification.json",
+  "static_contract": {
+    "archive_sha256": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/static/archive-sha256.txt",
+    "archive_size": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/static/archive-size.txt",
+    "selected_kernel_sha256": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/static/kernel-sha256.txt",
+    "selected_kernel_size": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/static/kernel-size.txt",
+    "archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/validation/runtime-ready-archive-review.stdout.txt",
+    "capture_bundle_dry_run": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/validation/capture-bundle-dry-run.json"
+  },
+  "first_candidate": {
+    "capture_summary": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/lab/v52-candidate/capture-invariant-summary.json",
+    "boot_staging_identity_check": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/lab/v52-candidate/boot-staging-identity-check.json",
+    "capture_window_v5_check": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/lab/v52-candidate/capture-window-v5-check.json",
+    "tftp_delta_after_aborted_helper": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/lab/v52-candidate/tftp-delta-after-aborted-helper.json"
+  },
+  "candidate_rerun": {
+    "run_summary_redacted": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/lab/v52-candidate-rerun/run-summary-redacted.json",
+    "capture_summary": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/lab/v52-candidate-rerun/capture-invariant-summary.json",
+    "preflight_identity": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/lab/v52-candidate-rerun/preflight-identity.json",
+    "serial_cursor_before_power": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/lab/v52-candidate-rerun/serial-cursor-before-power.txt",
+    "serial_drain_before_power": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/lab/v52-candidate-rerun/serial-drain-before-power.json",
+    "serial_observe_window": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/lab/v52-candidate-rerun/serial-observe-window.json",
+    "tftp_cursor_before_power": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/lab/v52-candidate-rerun/tftp-cursor-before-power.json",
+    "tftp_delta_stable_pre_restore": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/lab/v52-candidate-rerun/tftp-delta-stable-pre-restore.json",
+    "final_pre_restore_status": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/lab/v52-candidate-rerun/final-pre-restore-status.json",
+    "restore_snapshot": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/lab/v52-candidate-rerun/restore-snapshot.json",
+    "post_restore_status": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/lab/v52-candidate-rerun/post-restore-status.json",
+    "boot_staging_identity_check": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/lab/v52-candidate-rerun/boot-staging-identity-check.json",
+    "capture_window_v5_check": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/lab/v52-candidate-rerun/capture-window-v5-check.json"
+  },
+  "redaction_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/lab/run-summary-redacted.json"
+}

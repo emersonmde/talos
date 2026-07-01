@@ -1,0 +1,52 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52-20260701",
+  "terminal_classification": "blocked-selected-normal-runtime-runtime-ready-preflight",
+  "accepted_status": true,
+  "selected_next_task": "phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-closeout-v52-20260701",
+  "planningNeeded": false,
+  "evidence_level": [
+    "static inspection",
+    "lab-controller API",
+    "serial hardware boot/output",
+    "TFTP log delta",
+    "image/archive inspection",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "summary": {
+    "archive_sha256": "44afdb8b849bd2fb1878a1b280e8e46b66cbcb5b48fc40dd2822fe06091c84e9",
+    "selected_tree_hash": "c49997afe4dd2136706ad4f0dc05326d93abf60593c8a01104472984d5481bbc",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 152144,
+    "selected_kernel_sha256": "b3d4ff79d0790980f68ef446a7c41dcbe2858824bd29ce7f150f86fa053c7982",
+    "required_marker": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-ready-static",
+    "rerun_tftp_expected_fetch_count": 2,
+    "rerun_tftp_expected_fetch_byte_match_count": 0,
+    "rerun_tftp_expected_fetch_bytes_seen": [
+      104136,
+      104136
+    ],
+    "rerun_final_pre_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "rerun_serial_required_marker_occurrences": 0,
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "acceptance_disposition": {
+    "terminal_classification_allowed_by_task": true,
+    "runtime_ready_marker_retained": false,
+    "selected_tftp_byte_agreement": false,
+    "final_pre_restore_selected_identity": false,
+    "reason": "The rerun retained selected preflight identity and a restored baseline, but same-window TFTP served baseline-sized 104136-byte kernel_2712.img entries and final pre-restore identity was the accepted baseline tree, so runtime-ready hardware proof is blocked rather than accepted as marker-retained."
+  },
+  "explicit_non_claims": [
+    "packet-I/O",
+    "OpenSSH compatibility",
+    "remote receipt",
+    "service readiness",
+    "ssh-ready=true",
+    "fake command expansion",
+    "broad shell work",
+    "phase transition"
+  ]
+}
