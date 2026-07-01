@@ -1,0 +1,40 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-pre-entry-closeout-v32-20260701",
+  "classification": "selected-normal-runtime-pre-entry-frontier-blocked-supervisor-planning",
+  "references": {
+    "v26_selected_entry_closeout_task": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-entry-boot-path-closeout-v26.md",
+    "v26_selected_entry_closeout_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-entry-boot-path-closeout-v26/classification.json",
+    "v30_selected_runtime_phase_marker_closeout_task": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-runtime-phase-marker-closeout-v30.md",
+    "v30_selected_runtime_phase_marker_closeout_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-runtime-phase-marker-closeout-v30/classification.json",
+    "v31_selected_normal_runtime_pre_entry_reconciliation_task": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-entry-reconciliation-v31.md",
+    "v31_selected_normal_runtime_pre_entry_reconciliation_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-entry-reconciliation-v31/classification.json",
+    "v32_selected_normal_runtime_pre_entry_preflight_task": "tasks/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-entry-preflight-v32.md",
+    "v32_selected_normal_runtime_pre_entry_preflight_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-entry-preflight-v32/classification.json",
+    "v32_selected_normal_runtime_pre_entry_preflight_evidence_map": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-entry-preflight-v32/evidence-map.json",
+    "closeout_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-entry-closeout-v32/classification.json",
+    "closeout_task_record": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-entry-closeout-v32.md",
+    "validation_jq_empty": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-entry-closeout-v32/validation/jq-empty.exit",
+    "validation_git_diff_check": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-entry-closeout-v32/validation/git-diff-check.exit",
+    "validation_mdbook_build": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-entry-closeout-v32/validation/mdbook-build.exit",
+    "validation_git_diff_cached_check": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-entry-closeout-v32/validation/git-diff-cached-check.exit"
+  },
+  "evidence_levels": [
+    "accepted predecessor task inspection",
+    "task-owned JSON evidence",
+    "static closeout reconciliation",
+    "documentation update",
+    "docs build",
+    "diff checks"
+  ],
+  "first_missing_fact": "Selected rpi5_ssh_service_smoltcp_runtime_ready Image is served by TFTP in the primary run and unchanged rerun, but Pi 5 serial retains no TALOS: asm_start from that selected normal-runtime image.",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "redaction_review": {
+    "summary_excludes_raw_serial_text": true,
+    "summary_excludes_raw_tftp_peer_or_log_lines": true,
+    "summary_excludes_packet_payloads": true,
+    "summary_excludes_ssh_session_or_key_material": true,
+    "summary_excludes_boot_artifact_bytes": true,
+    "retained_files_include_raw_lab_json_for_local_review": false
+  }
+}
