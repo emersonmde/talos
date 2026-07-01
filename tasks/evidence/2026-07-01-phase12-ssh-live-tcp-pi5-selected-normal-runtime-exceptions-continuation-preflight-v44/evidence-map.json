@@ -1,0 +1,24 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-continuation-preflight-v44-20260701",
+  "classification": "selected-normal-runtime-exceptions-ready-marker-retained",
+  "files": {
+    "classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-continuation-preflight-v44/classification.json",
+    "run_summary_redacted": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-continuation-preflight-v44/lab/run-summary-redacted.json",
+    "accepted_candidate": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-continuation-preflight-v44/lab/v44-candidate/",
+    "archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-continuation-preflight-v44/validation/archive-review.stdout.txt",
+    "exceptions_ready_archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-continuation-preflight-v44/validation/exceptions-ready-archive-review.stdout.txt",
+    "static_archive_sha": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-continuation-preflight-v44/static/archive-sha256.txt",
+    "static_kernel_sha": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-continuation-preflight-v44/static/kernel-sha256.txt",
+    "selected_tree_hash": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-continuation-preflight-v44/static/selected-tree-hash.txt"
+  },
+  "evidence_levels": [
+    "hardwareTestLock",
+    "static archive/image inspection",
+    "lab-controller API identity",
+    "fresh serial cursor/drain",
+    "stable same-cursor TFTP delta before restore",
+    "serial hardware output marker summary",
+    "restore proof",
+    "redacted task-owned JSON evidence"
+  ]
+}

@@ -21973,6 +21973,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   retry, compatibility and service readiness, ssh-ready=true, fake command
   expansion, broad shell work, hardware action, and phase transition remain
   blocked until supervisor planning adds that task.
+- phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-continuation-preflight-v44-20260701
+  accepts selected-normal-runtime-exceptions-ready-marker-retained. The
+  serialized Pi 5 preflight published only the v43 exceptions-ready archive
+  under hardwareTestLock. The accepted run kept selected tree
+  2c0d4152ebae130632caa5a9e8fa776704ec0336d2c54609ab00a5981328fcde through
+  final pre-restore identity, observed da591740/kernel_2712.img served twice at
+  152,880 bytes, retained TALOS: exceptions ready 2,145 times without accepting
+  TALOS: kernel_main, and restored to
+  a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. This
+  proves the selected normal-runtime archive reaches exceptions ready after
+  target init and arch::aarch64::exceptions::init(), while kernel_main,
+  route-start, runtime-ready, packet-I/O, OpenSSH compatibility, service
+  readiness, ssh-ready=true, fake command expansion, broad shell work, and
+  phase transition remain unproved. selected_next_task is
+  phase12-ssh-live-tcp-selected-normal-runtime-exceptions-continuation-closeout-v44-20260701;
+  planningNeeded=false.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

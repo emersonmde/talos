@@ -13368,3 +13368,21 @@ exceptions-ready Pi 5 hardware preflight task exists in taskQueue; packet-I/O,
 OpenSSH/generated-root retry, remote receipt, compatibility/service readiness,
 ssh-ready=true, fake command expansion, broad shell work, hardware action, and
 phase transition remain blocked until supervisor planning adds that task.
+
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-continuation-preflight-v44-20260701
+accepts selected-normal-runtime-exceptions-ready-marker-retained. Under
+hardwareTestLock, the worker published only the v43 exceptions-ready archive
+and captured selected tree
+2c0d4152ebae130632caa5a9e8fa776704ec0336d2c54609ab00a5981328fcde through
+final pre-restore identity. Stable same-cursor TFTP served
+da591740/kernel_2712.img twice at 152,880 bytes, and the saturated serial
+direct-read window retained TALOS: exceptions ready 2,145 times while
+withholding kernel_main and later claims. The lab was restored to
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. This proves
+the selected normal-runtime archive reaches exceptions ready after target init
+and arch::aarch64::exceptions::init(); it does not prove kernel_main,
+route-start, runtime-ready, packet-I/O, OpenSSH compatibility, service
+readiness, ssh-ready, fake command expansion, broad shell work, or phase
+transition. selected_next_task is
+phase12-ssh-live-tcp-selected-normal-runtime-exceptions-continuation-closeout-v44-20260701;
+planningNeeded=false.
