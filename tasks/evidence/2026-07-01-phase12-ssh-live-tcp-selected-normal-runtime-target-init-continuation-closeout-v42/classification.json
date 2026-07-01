@@ -1,0 +1,57 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-target-init-continuation-closeout-v42-20260701",
+  "classification": "selected-normal-runtime-target-init-frontier-proved",
+  "status": "accepted",
+  "selected_next_task": "phase12-ssh-live-tcp-selected-normal-runtime-exceptions-continuation-reconciliation-v43-20260701",
+  "planning_needed": false,
+  "hardware_action": false,
+  "lab_publication": false,
+  "boot_snapshot_mutation": false,
+  "pi5_power_action": false,
+  "packet_io": false,
+  "openssh_generated_root_retry": false,
+  "fake_command_expansion": false,
+  "broad_shell_work": false,
+  "phase_transition": false,
+  "accepted_predecessors": {
+    "selected_normal_runtime_asm_start_closeout_v34": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-entry-repair-closeout-v34.md",
+    "selected_normal_runtime_pre_rust_closeout_v36": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-continuation-closeout-v36.md",
+    "selected_normal_runtime_rust_entry_closeout_v38": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-continuation-closeout-v38.md",
+    "selected_normal_runtime_bootinfo_closeout_v40": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-continuation-closeout-v40.md",
+    "selected_normal_runtime_target_init_reconciliation_v41": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-target-init-continuation-reconciliation-v41.md",
+    "selected_normal_runtime_target_init_preflight_v42": "tasks/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-continuation-preflight-v42.md"
+  },
+  "decisive_v42_facts": {
+    "classification": "selected-normal-runtime-target-init-marker-retained",
+    "selected_tree_hash": "478473f46d7dd2d64a42a9fd8f9e56e68de691a1237cb85108ef972f31045305",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 152880,
+    "expected_fetch_count": 2,
+    "serial_required_marker": "TALOS: target init",
+    "serial_required_marker_occurrences": 3006,
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "first_unresolved_facts": [
+    "exceptions ready",
+    "kernel_main",
+    "route-start",
+    "runtime-ready",
+    "packet-I/O",
+    "remote receipt",
+    "compatibility/service readiness",
+    "OpenSSH",
+    "ssh-ready=true",
+    "fake command expansion",
+    "broad shell work",
+    "phase transition"
+  ],
+  "redaction_review": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_peer_or_log_lines_retained": false,
+    "packet_payloads_retained": false,
+    "ssh_session_or_key_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false,
+    "stable_secret_derived_identifiers_retained": false
+  }
+}
