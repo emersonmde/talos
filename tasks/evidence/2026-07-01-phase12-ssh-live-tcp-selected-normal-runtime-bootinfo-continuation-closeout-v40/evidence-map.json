@@ -1,0 +1,26 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-continuation-closeout-v40-20260701",
+  "classification": "selected-normal-runtime-bootinfo-frontier-proved",
+  "files": {
+    "classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-continuation-closeout-v40/classification.json",
+    "task_record": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-continuation-closeout-v40.md",
+    "accepted_v34_closeout": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-entry-repair-closeout-v34.md",
+    "accepted_v36_closeout": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-continuation-closeout-v36.md",
+    "accepted_v38_closeout": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-continuation-closeout-v38.md",
+    "accepted_v39_reconciliation": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-continuation-reconciliation-v39.md",
+    "accepted_v40_preflight": "tasks/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-continuation-preflight-v40.md",
+    "accepted_v40_preflight_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-continuation-preflight-v40/classification.json",
+    "accepted_v40_preflight_evidence_map": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-continuation-preflight-v40/evidence-map.json"
+  },
+  "evidence_levels": [
+    "accepted predecessor static inspection",
+    "accepted v40 serial hardware output summary",
+    "accepted v40 stable same-cursor TFTP summary",
+    "accepted v40 restore proof",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "selected_next_task": "phase12-ssh-live-tcp-selected-normal-runtime-target-init-continuation-reconciliation-v41-20260701",
+  "planning_needed": false
+}
