@@ -21652,6 +21652,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
   ssh-ready=true, broad shell work, fake command expansion, and phase
   transition remain blocked.
+- phase12-ssh-live-tcp-selected-runtime-phase-marker-closeout-v30-20260701
+  accepts selected-runtime-phase-marker-frontier-blocked-supervisor-planning.
+  The closeout reconciles v30 against the v26 rust_entry/UART10 proof, v27
+  selected normal-runtime contract, v28 marker-missing boundary, and v29
+  marker-family evidence repair. The accepted frontier is now precise: the
+  earlier 45,400-byte selected-entry marker-loop image reaches
+  rust_entry/UART10, while the 152,144-byte selected normal-runtime image is
+  served by TFTP but retains no ordered normal-runtime marker family member.
+  The first missing fact is TALOS: rust_entry in that selected normal-runtime
+  image. selected_next_task is null and planningNeeded=true pending supervisor
+  planning for the next bounded repair or discriminator; packet-I/O,
+  OpenSSH/generated-root retry, compatibility/service readiness, ssh-ready=true,
+  broad shell work, fake command expansion, and phase transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

@@ -1,0 +1,117 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-runtime-phase-marker-closeout-v30-20260701",
+  "classification": "selected-runtime-phase-marker-frontier-blocked-supervisor-planning",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "v30 reconciles the selected normal-runtime early-phase marker frontier as marker-missing before TALOS: rust_entry. No queued successor has refreshed dependencies for the next smallest feature repair or discriminator, so the supervisor must plan before packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness, ssh-ready=true, fake command expansion, broad shell work, or phase transition.",
+  "first_missing_fact": "Selected rpi5_ssh_service_smoltcp_runtime_ready Image is served by TFTP, but Pi 5 serial retains no ordered normal-runtime marker family member; the first missing marker is TALOS: rust_entry.",
+  "evidence_level": "accepted v26 selected-entry closeout, v27 selected normal-runtime contract, v28 selected normal-runtime continuation preflight and closeout, v29 marker-family reconciliation, v30 serialized Pi 5 hardware preflight evidence, task-owned JSON evidence, docs build, and diff checks; no hardware action, lab publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility claim, service success claim, ssh-ready=true, fake/kernel-backed command expansion, broad shell work, or phase transition",
+  "reconciled_boundary": {
+    "accepted": "Selected Image execution is proved through v26 to reach rust_entry and the UART10 early output path for the 45400-byte rust_entry marker-loop image; v30 proves the 152144-byte selected normal-runtime image is served by TFTP in both primary and unchanged rerun but retains no ordered normal-runtime marker, including TALOS: rust_entry.",
+    "v26_evidence": {
+      "selected_fetch_path": "da591740/kernel_2712.img",
+      "selected_fetch_byte_count": 45400,
+      "serial_marker": "TALOS: reu10-loop",
+      "serial_marker_occurrences": 13796,
+      "proved_boundary": "selected Image reaches rust_entry and UART10 early output path before BootInfo parsing"
+    },
+    "v27_contract": {
+      "selected_fetch_path": "da591740/kernel_2712.img",
+      "selected_fetch_byte_count": 152144,
+      "expected_marker_family": [
+        "TALOS: rust_entry",
+        "TALOS: boot info parsed",
+        "TALOS: target init",
+        "TALOS: exceptions ready",
+        "TALOS: kernel_main",
+        "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=runtime-marker-route-static source=network-device-smoltcp-runtime",
+        "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-marker-route-static"
+      ]
+    },
+    "v28_boundary": {
+      "selected_fetch_byte_count": 152144,
+      "known_good_control_marker": "rpi5-production-timer-preemption: PASS",
+      "first_missing_fact": "Selected normal-runtime Image is served by TFTP, but retained evidence did not reach kernel_main or the contracted runtime marker."
+    },
+    "v29_evidence_contract": {
+      "disposition": "fixed ordered marker-family retention for v30",
+      "archive_sha256": "6dd1a37c9979bfee4ef83d6b2bb12863a07ed4f7451434d3e011d8e68eb589d1",
+      "selected_kernel_sha256": "665d993ab7c36065fa4810ae09613ed9d92aba30cdd5881e06e23b50b4d25a72",
+      "selected_kernel_size": 152144
+    },
+    "v30_evidence": {
+      "selected_fetch_path": "da591740/kernel_2712.img",
+      "selected_fetch_byte_count": 152144,
+      "primary_selected_fetch_count": 2,
+      "rerun_selected_fetch_count": 2,
+      "known_good_control_marker": "rpi5-production-timer-preemption: PASS",
+      "known_good_control_marker_occurrences": 1,
+      "deepest_present_marker": null,
+      "present_marker_count": 0,
+      "first_missing_marker": "TALOS: rust_entry",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    },
+    "not_proved": [
+      "TALOS: rust_entry in the 152144-byte selected normal-runtime image",
+      "BootInfo parsing in the selected normal-runtime path",
+      "target init in the selected normal-runtime path",
+      "exceptions ready in the selected normal-runtime path",
+      "kernel_main in the selected normal-runtime path",
+      "ssh-service-smoltcp runtime route start",
+      "ssh-service-smoltcp runtime readiness",
+      "packet I/O",
+      "remote receipt",
+      "compatibility/service readiness",
+      "ssh-ready=true",
+      "broad shell work",
+      "phase transition"
+    ]
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Reconciled v30 against v26, v27, v28, and v29: the accepted rust_entry/UART10 proof applies to the earlier 45400-byte rust_entry marker-loop image, while v30 proves the 152144-byte selected normal-runtime image is served but does not retain TALOS: rust_entry."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Accepted the current selected normal-runtime boundary as marker-missing before TALOS: rust_entry, not merely before kernel_main or the final runtime-ready marker."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No additional hardware action is needed for closeout because v30 already captured selected-byte primary service, known-good serial visibility, unchanged candidate rerun, final pre-restore identity, restore proof, and redaction review."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "The cause of the 152144-byte selected normal-runtime image failing to retain TALOS: rust_entry requires a supervisor-planned bounded repair or discriminator; this closeout does not authorize a phase transition or packet-I/O/OpenSSH work."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "scripts/rpi5-capture-invariant-proof-bundle.sh final summary generation has a known jq $marker_family argument bug from v30; task-owned summaries are adequate for this closeout, but the helper should be repaired before future runs depend on that generated summary."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness, ssh-ready=true, fake command expansion, broad shell work, and phase transition are not mechanically unblocked by this closeout."
+    }
+  ],
+  "rejected_claims": [
+    "packet I/O",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility/service readiness",
+    "ssh-ready=true",
+    "broad shell work",
+    "fake/kernel-backed command expansion",
+    "phase transition"
+  ],
+  "redaction_review": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_peer_or_log_lines_retained": false,
+    "packet_payloads_retained": false,
+    "ssh_session_or_key_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false,
+    "stable_secret_derived_identifiers_retained": false,
+    "note": "Closeout retains only task ids, classifications, hashes, byte counts, marker names, counts, selected tree hashes, and summaries from accepted predecessor evidence."
+  },
+  "commit": null
+}
