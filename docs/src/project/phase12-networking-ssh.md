@@ -13662,3 +13662,21 @@ command expansion, broad shell work, and phase transition remain unproved.
 selected_next_task is
 phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-repair-closeout-v55-20260701;
 planningNeeded=false.
+
+phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-repair-closeout-v55-20260701
+accepts blocked-selected-normal-runtime-runtime-ready-frontier. No hardware
+action, lab publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The closeout reconciles v55
+against the accepted v54 discriminator and v55 Pi 5 evidence: selected
+post-power identity, selected same-window TFTP byte service, and selected final
+pre-restore identity are no longer the missing facts. Runtime-ready remains
+blocked because the selected candidate serial window retained zero occurrences
+of TALOS: ssh-service-smoltcp-runtime-ready
+capture-nonce=runtime-ready-static. The selected normal-runtime frontier
+therefore remains route-start-retained; packet-I/O, OpenSSH compatibility,
+service readiness, ssh-ready=true, fake command expansion, broad shell work,
+and phase transition remain unproved. selected_next_task is null and
+planningNeeded=true for supervisor planning of the next bounded runtime-ready
+marker repair or discriminator.

@@ -1,0 +1,53 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-repair-closeout-v55-20260701",
+  "classification": "blocked-selected-normal-runtime-runtime-ready-frontier",
+  "selected_next_task": null,
+  "planning_needed": true,
+  "first_missing_fact": "A selected Pi 5 candidate serial window retaining TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-ready-static after selected post-power identity, selected TFTP byte service, and final selected pre-restore identity are all established.",
+  "evidence_level": [
+    "accepted v54 static repair/discriminator contract",
+    "accepted v55 serial hardware boot/output summary",
+    "accepted v55 selected post-power identity",
+    "accepted v55 selected TFTP log delta",
+    "accepted v55 restore proof",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "frontier": {
+    "accepted_selected_normal_runtime_frontier": "route-start-retained",
+    "runtime_ready_proved": false,
+    "packet_io_unblocked": false,
+    "reason": "v55 proved selected post-power identity, selected same-window TFTP service, and selected final pre-restore identity, but retained zero required runtime-ready marker occurrences in the candidate serial window."
+  },
+  "v55_reconciliation": {
+    "selected_tree_hash": "c49997afe4dd2136706ad4f0dc05326d93abf60593c8a01104472984d5481bbc",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 152144,
+    "post_power_selected_identity_retained": true,
+    "final_pre_restore_selected_identity_retained": true,
+    "tftp_expected_fetch_count": 2,
+    "tftp_expected_fetch_byte_match_count": 2,
+    "serial_marker_occurrences_after_saved_cursor": 0,
+    "known_good_control_required": false,
+    "known_good_control_reason": "The v55 candidate evidence was decisive, selected, and internally consistent rather than stale, missing, or contradicted.",
+    "candidate_rerun_required": false,
+    "candidate_rerun_reason": "The first v55 run was not inconclusive.",
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "blocked_successors": [
+    "phase12-ssh-live-tcp-selected-normal-runtime-packet-io-continuation-reconciliation-v53-20260701",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility/service readiness",
+    "ssh-ready=true",
+    "fake command expansion",
+    "broad shell work",
+    "phase transition"
+  ],
+  "redaction_review": {
+    "private_key_seed_public_key_blob_signature_fingerprint_digest_operator_identity_or_stable_secret_derived_identifier_retained": false,
+    "raw_serial_or_tftp_peer_line_fields_retained": false
+  }
+}
