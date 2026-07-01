@@ -21829,6 +21829,25 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   ssh-ready=true, fake command expansion, broad shell work, or phase
   transition. selected_next_task is
   phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-continuation-closeout-v38-20260701.
+- phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-continuation-closeout-v38-20260701
+  accepts selected-normal-runtime-rust-entry-frontier-proved-supervisor-planning.
+  No hardware action, lab publication, boot snapshot mutation, Pi 5 power
+  cycle, packet-I/O, OpenSSH/generated-root retry, remote receipt,
+  compatibility claim, service success claim, ssh-ready=true,
+  fake/kernel-backed command expansion, broad shell work, or phase transition
+  was performed. The closeout reconciles v38 against v34, v36, and v37: v34
+  proves the selected normal-runtime archive class reaches TALOS: asm_start on
+  Pi 5, v36 proves selected TALOS: asm_pre_rust_entry handoff, v37 defines the
+  selected rust_entry marker-loop contract, and v38 proves that selected
+  152,816-byte archive reaches TALOS: rust_entry 208 times with selected-byte
+  TFTP service and restore proof. The next unresolved continuation fact is
+  whether the selected normal-runtime feature archive proceeds through
+  BootInfo parsing, target init, exceptions, kernel_main, and later
+  runtime/service milestones. selected_next_task is null and
+  planningNeeded=true pending supervisor planning for the next bounded
+  continuation step; packet-I/O/OpenSSH/generated-root retry, compatibility
+  and service readiness, ssh-ready=true, fake command expansion, broad shell
+  work, hardware action, and phase transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

@@ -1,0 +1,30 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-continuation-closeout-v38-20260701",
+  "classification": "selected-normal-runtime-rust-entry-frontier-proved-supervisor-planning",
+  "references": {
+    "v34_closeout_task": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-entry-repair-closeout-v34.md",
+    "v34_closeout_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-entry-repair-closeout-v34/classification.json",
+    "v36_closeout_task": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-continuation-closeout-v36.md",
+    "v36_closeout_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-continuation-closeout-v36/classification.json",
+    "v37_task": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-continuation-reconciliation-v37.md",
+    "v37_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-continuation-reconciliation-v37/classification.json",
+    "v38_preflight_task": "tasks/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-continuation-preflight-v38.md",
+    "v38_preflight_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-continuation-preflight-v38/classification.json",
+    "v38_preflight_evidence_map": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-continuation-preflight-v38/evidence-map.json",
+    "classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-continuation-closeout-v38/classification.json"
+  },
+  "evidence_levels": [
+    "accepted v34 selected normal-runtime assembly-entry proof",
+    "accepted v36 selected normal-runtime pre-rust proof",
+    "accepted v37 static rust_entry discriminator contract",
+    "accepted v38 serialized Pi 5 hardware preflight evidence",
+    "task-owned JSON evidence"
+  ],
+  "selected_next_task": null,
+  "planning_needed": true,
+  "first_missing_fact": "BootInfo parsing, target init, exceptions, kernel_main, packet-I/O, remote receipt, compatibility/service readiness, OpenSSH, ssh-ready=true, fake command expansion, broad shell work, and phase transition remain unproved.",
+  "redaction_review": {
+    "aggregate_summaries_redacted": true,
+    "raw_lab_json_local_only": true
+  }
+}
