@@ -1,0 +1,83 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-runtime-continuation-closeout-v28-20260701",
+  "classification": "selected-runtime-continuation-frontier-blocked-supervisor-planning",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "v28 reconciles the selected normal-runtime continuation frontier as marker-missing before kernel_main. No queued successor has refreshed dependencies for the next smallest feature step, so the supervisor must plan before packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness, ssh-ready=true, fake command expansion, broad shell work, or phase transition.",
+  "first_missing_fact": "Selected rpi5_ssh_service_smoltcp_runtime_ready Image is served by TFTP, but Pi 5 serial does not reach kernel_main or the contracted ssh-service-smoltcp runtime marker.",
+  "evidence_level": "accepted v26 selected-entry closeout, v27 selected normal-runtime continuation contract, v28 serialized Pi 5 hardware preflight evidence, task-owned JSON evidence, docs build, and diff checks; no hardware action, lab publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility claim, service success claim, ssh-ready=true, fake/kernel-backed command expansion, broad shell work, or phase transition",
+  "reconciled_boundary": {
+    "accepted": "Selected Image execution is proved through v26 to reach rust_entry and the UART10 early output path; v28 proves the v27 normal-runtime continuation Image is served by TFTP but does not reach kernel_main or the contracted runtime marker in retained serial evidence.",
+    "v26_evidence": {
+      "selected_fetch_path": "da591740/kernel_2712.img",
+      "selected_fetch_byte_count": 45400,
+      "serial_marker": "TALOS: reu10-loop",
+      "serial_marker_occurrences": 13796
+    },
+    "v28_evidence": {
+      "selected_fetch_path": "da591740/kernel_2712.img",
+      "selected_fetch_byte_count": 152144,
+      "primary_selected_fetch_count": 2,
+      "rerun_selected_fetch_count": 2,
+      "known_good_control_marker": "rpi5-production-timer-preemption: PASS",
+      "known_good_control_marker_occurrences": 1,
+      "kernel_main_present": false,
+      "runtime_marker": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-marker-route-static",
+      "runtime_marker_present": false,
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    },
+    "not_proved": [
+      "kernel_main",
+      "ssh-service-smoltcp runtime route start",
+      "ssh-service-smoltcp runtime readiness",
+      "packet I/O",
+      "remote receipt",
+      "compatibility/service readiness",
+      "ssh-ready=true",
+      "broad shell work",
+      "phase transition"
+    ]
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Reconciled v28 against v26 and v27, preserving that selected Image execution was previously proved to rust_entry/UART10 while the selected normal-runtime continuation Image is served by TFTP."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Accepted the current missing boundary as normal runtime continuation before kernel_main and the contracted ssh-service-smoltcp runtime marker."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "v28 selected-byte service, known-good control marker visibility, unchanged candidate rerun, final restore proof, and redaction review were sufficient for closeout without another hardware action."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "kernel_main, smoltcp runtime route start, ssh-service-smoltcp runtime readiness, packet I/O, remote receipt, compatibility/service readiness, and ssh-ready=true remain unproved and require refreshed supervisor planning."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness, ssh-ready=true, fake command expansion, broad shell work, and phase transition are not mechanically unblocked by this closeout."
+    }
+  ],
+  "rejected_claims": [
+    "packet I/O",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility/service readiness",
+    "ssh-ready=true",
+    "broad shell work",
+    "fake/kernel-backed command expansion",
+    "phase transition"
+  ],
+  "redaction_review": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_peer_or_log_lines_retained": false,
+    "packet_payloads_retained": false,
+    "ssh_session_or_key_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false,
+    "stable_secret_derived_identifiers_retained": false,
+    "note": "Closeout retains only task ids, classifications, hashes, byte counts, marker names, counts, and summaries from accepted predecessor evidence."
+  }
+}

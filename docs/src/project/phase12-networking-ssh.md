@@ -12910,3 +12910,19 @@ phase12-ssh-live-tcp-selected-runtime-continuation-closeout-v28-20260701;
 packet-I/O/OpenSSH/generated-root retry, remote receipt,
 compatibility/service readiness, ssh-ready=true, broad shell work, fake command
 expansion, and phase transition remain blocked.
+
+phase12-ssh-live-tcp-selected-runtime-continuation-closeout-v28-20260701
+accepts selected-runtime-continuation-frontier-blocked-supervisor-planning. No
+hardware action, lab publication, boot snapshot mutation, Pi 5 power cycle,
+packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility claim,
+service success claim, ssh-ready=true, fake/kernel-backed command expansion,
+broad shell work, or phase transition was performed. The closeout reconciles
+v28 against the v26 selected-entry rust_entry/UART10 proof and the v27
+normal-runtime contract. The accepted boundary is now that selected Image
+execution is proved to rust_entry/UART10 and the v27 normal-runtime Image is
+served by TFTP, but retained Pi 5 serial evidence does not reach kernel_main or
+the contracted ssh-service-smoltcp runtime marker. selected_next_task is null
+and planningNeeded=true because no queued successor has refreshed dependencies
+for the next smallest feature step; packet-I/O/OpenSSH/generated-root retry,
+remote receipt, compatibility/service readiness, ssh-ready=true, broad shell
+work, fake command expansion, and phase transition remain blocked.

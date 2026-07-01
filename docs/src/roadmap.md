@@ -21613,6 +21613,18 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
   ssh-ready=true, broad shell work, fake command expansion, and phase
   transition remain blocked.
+- phase12-ssh-live-tcp-selected-runtime-continuation-closeout-v28-20260701
+  accepts selected-runtime-continuation-frontier-blocked-supervisor-planning.
+  The closeout reconciles v28 against the v26 selected-entry rust_entry/UART10
+  proof and the v27 normal-runtime contract. The accepted boundary is selected
+  Image execution proved to rust_entry/UART10 plus selected v27
+  normal-runtime Image service by TFTP, with the first missing fact preserved:
+  Pi 5 serial does not reach kernel_main or the contracted
+  ssh-service-smoltcp runtime marker. selected_next_task is null and
+  planningNeeded=true pending supervisor planning for the next bounded feature
+  task; packet-I/O/OpenSSH/generated-root retry, compatibility/service
+  readiness, ssh-ready=true, broad shell work, fake command expansion, and
+  phase transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
