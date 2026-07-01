@@ -1,0 +1,12 @@
+TALOS: asm_start
+TALOS: asm_pre_rust_entry
+runtime-marker-route-staticTALOS: ssh-service-smoltcp-runtime-route-start capture-nonce= source=network-device-smoltcp-runtime
+TALOS: ssh-service-smoltcp-runtime-blocked runtime-binding=accepted-deterministic-device-interface-deliveryblocked-missing-descriptor-deliveryblocked-missing-device-interface-bindingblocked-missing-hardware-frame-provider ssh-ready=false claims-service-success=false
+TALOS: ssh-service-smoltcp-runtime-ready runtime-binding=accepted-deterministic-device-interface-delivery descriptor-facing-connection-delivered= deterministic-device-interface-bound= hardware-frame-provider-bound= driver-packet-rx-frames= driver-packet-tx-frames= live-packet-io-accepted= live-reachability-accepted= remote-receipt-accepted= compatibility-accepted= ssh-ready= claims-service-success=false claims-phase-transition=false
+ runtime-binding=error ssh-ready=false claims-service-success=false
+TALOS: target init selected-normal-runtime-target-init=true claims-bootinfo-parsed=true claims-exceptions-ready=false claims-kernel-main=false claims-route-start=false claims-runtime-ready=false claims-packet-io=false claims-service-success=false claims-ssh-ready=false claims-phase-transition=false
+TALOS: panic handler entered
+TALOS: nested panic
+TALOS: dtb memory scan unavailable
+TALOS: reserved-memory start
+TALOS: reserved-memory done

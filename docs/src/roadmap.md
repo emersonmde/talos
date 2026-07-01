@@ -21900,6 +21900,25 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   expansion, broad shell work, and phase transition. selected_next_task is
   phase12-ssh-live-tcp-selected-normal-runtime-target-init-continuation-reconciliation-v41-20260701;
   planningNeeded=false.
+- phase12-ssh-live-tcp-selected-normal-runtime-target-init-continuation-reconciliation-v41-20260701
+  accepts selected-normal-runtime-target-init-discriminator-ready. No hardware
+  action, lab publication, boot snapshot mutation, Pi 5 power cycle,
+  packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility
+  claim, service success claim, ssh-ready=true, fake/kernel-backed command
+  expansion, broad shell work, or phase transition was performed. The
+  reconciliation preserves the v40 selected-byte BootInfo parsed fact, then
+  adds a selected normal-runtime target-init marker-loop archive. The artifact
+  emits TALOS: target init only after target::init(&boot_info) returns and
+  before exceptions, kernel_main, route-start, runtime-ready, packet-I/O,
+  service success, ssh-ready, or phase transition. The non-published v41
+  archive serves da591740/kernel_2712.img at 152,880 bytes with SHA-256
+  9bbea12314f09731a458cb6b7dbdf4071bd8eca4419f61af1d44251af98c0326 and archive
+  SHA-256 b3d56e302e816c68c7fbdbeb007ef70861e690587a80579f2ef2eeccc054ae47.
+  selected_next_task is null and planningNeeded=true because no explicit v42
+  hardware preflight task exists in taskQueue; packet-I/O/OpenSSH/generated-root
+  retry, compatibility and service readiness, ssh-ready=true, fake command
+  expansion, broad shell work, hardware action, and phase transition remain
+  blocked until supervisor planning adds that task.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

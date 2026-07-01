@@ -13287,3 +13287,25 @@ command expansion, broad shell work, and phase transition. selected_next_task
 is
 phase12-ssh-live-tcp-selected-normal-runtime-target-init-continuation-reconciliation-v41-20260701;
 planningNeeded=false.
+
+phase12-ssh-live-tcp-selected-normal-runtime-target-init-continuation-reconciliation-v41-20260701
+accepts selected-normal-runtime-target-init-discriminator-ready. No hardware
+action, lab publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The reconciliation preserves
+the v40 fact that selected-byte Pi 5 evidence reaches TALOS: boot info parsed,
+then adds a separate selected normal-runtime target-init marker-loop archive.
+The new artifact emits TALOS: target init only after target::init(&boot_info)
+returns, keeps the selected runtime route linked in the artifact, and
+explicitly withholds exceptions, kernel_main, route-start, runtime-ready,
+packet-I/O, service success, ssh-ready, and phase-transition claims. The
+non-published v41 archive serves da591740/kernel_2712.img at 152,880 bytes
+with SHA-256
+9bbea12314f09731a458cb6b7dbdf4071bd8eca4419f61af1d44251af98c0326 and archive
+SHA-256 b3d56e302e816c68c7fbdbeb007ef70861e690587a80579f2ef2eeccc054ae47.
+selected_next_task is null and planningNeeded=true because no explicit v42
+target-init Pi 5 hardware preflight task exists in taskQueue; packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility/service readiness,
+ssh-ready=true, fake command expansion, broad shell work, hardware action, and
+phase transition remain blocked until supervisor planning adds that task.
