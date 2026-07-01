@@ -1,0 +1,32 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-closeout-v52-20260701",
+  "classification": "blocked-selected-normal-runtime-runtime-ready-frontier",
+  "files": {
+    "classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-closeout-v52/classification.json",
+    "task_record": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-closeout-v52.md",
+    "reconciliation_summary": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-closeout-v52/static/reconciliation-summary.md",
+    "accepted_v51_reconciliation": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-reconciliation-v51.md",
+    "accepted_v51_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-reconciliation-v51/classification.json",
+    "accepted_v51_evidence_map": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-reconciliation-v51/evidence-map.json",
+    "accepted_v52_preflight": "tasks/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52.md",
+    "accepted_v52_preflight_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/classification.json",
+    "accepted_v52_preflight_evidence_map": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/evidence-map.json",
+    "accepted_v52_preflight_run_summary": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/lab/run-summary-redacted.json",
+    "accepted_v52_candidate_rerun_summary": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/lab/v52-candidate-rerun/run-summary-redacted.json",
+    "accepted_v52_candidate_rerun_tftp_delta": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/lab/v52-candidate-rerun/tftp-delta-stable-pre-restore.json",
+    "accepted_v52_candidate_rerun_serial_window": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/lab/v52-candidate-rerun/serial-observe-window.json",
+    "accepted_v52_candidate_rerun_final_pre_restore_status": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/lab/v52-candidate-rerun/final-pre-restore-status.json",
+    "accepted_v52_candidate_rerun_post_restore_status": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/lab/v52-candidate-rerun/post-restore-status.json"
+  },
+  "evidence_levels": [
+    "accepted predecessor static inspection",
+    "accepted v52 serial hardware output summary",
+    "accepted v52 stable same-cursor TFTP summary",
+    "accepted v52 restore proof",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "selected_next_task": null,
+  "planning_needed": true
+}

@@ -1,0 +1,49 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-closeout-v52-20260701",
+  "terminal_classification": "blocked-selected-normal-runtime-runtime-ready-frontier",
+  "accepted_status": true,
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "evidence_level": [
+    "accepted predecessor static inspection",
+    "accepted v52 serial hardware output summary",
+    "accepted v52 stable same-cursor TFTP summary",
+    "accepted v52 restore proof",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "summary": {
+    "accepted_route_start_frontier": "selected-normal-runtime-route-start-frontier-proved",
+    "v51_runtime_ready_contract": "selected-normal-runtime-runtime-ready-discriminator-ready",
+    "v52_preflight_classification": "blocked-selected-normal-runtime-runtime-ready-preflight",
+    "expected_fetch": "da591740/kernel_2712.img",
+    "expected_fetch_bytes": 152144,
+    "rerun_tftp_expected_fetch_count": 2,
+    "rerun_tftp_expected_fetch_byte_match_count": 0,
+    "rerun_tftp_expected_fetch_bytes_seen": [
+      104136,
+      104136
+    ],
+    "rerun_final_pre_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "rerun_serial_required_marker_occurrences": 0,
+    "required_marker": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-ready-static",
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z"
+  },
+  "first_missing_fact": "No decisive Pi 5 hardware window yet proves selected v51 runtime-ready kernel service, selected final pre-restore identity, and retained TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-ready-static after route-start.",
+  "dependency_decision": {
+    "packet_io_successor_selected": false,
+    "reason": "phase12-ssh-live-tcp-selected-normal-runtime-packet-io-continuation-reconciliation-v53-20260701 requires v52 closeout terminalClassification selected-normal-runtime-runtime-ready-frontier-proved, but this closeout is blocked-selected-normal-runtime-runtime-ready-frontier."
+  },
+  "explicit_non_claims": [
+    "runtime-ready marker retained",
+    "packet-I/O",
+    "OpenSSH compatibility",
+    "remote receipt",
+    "service readiness",
+    "ssh-ready=true",
+    "fake command expansion",
+    "broad shell work",
+    "phase transition"
+  ]
+}
