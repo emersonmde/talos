@@ -1,0 +1,27 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-route-start-continuation-closeout-v50-20260701",
+  "classification": "selected-normal-runtime-route-start-frontier-proved",
+  "files": {
+    "classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-route-start-continuation-closeout-v50/classification.json",
+    "task_record": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-route-start-continuation-closeout-v50.md",
+    "reconciliation_summary": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-route-start-continuation-closeout-v50/static/reconciliation-summary.md",
+    "accepted_v49_reconciliation": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-route-start-continuation-reconciliation-v49.md",
+    "accepted_v49_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-route-start-continuation-reconciliation-v49/classification.json",
+    "accepted_v49_evidence_map": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-route-start-continuation-reconciliation-v49/evidence-map.json",
+    "accepted_v50_preflight": "tasks/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-route-start-continuation-preflight-v50.md",
+    "accepted_v50_preflight_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-route-start-continuation-preflight-v50/classification.json",
+    "accepted_v50_preflight_evidence_map": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-route-start-continuation-preflight-v50/evidence-map.json",
+    "accepted_v50_preflight_run_summary": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-route-start-continuation-preflight-v50/lab/run-summary-redacted.json"
+  },
+  "evidence_levels": [
+    "accepted predecessor static inspection",
+    "accepted v50 serial hardware output summary",
+    "accepted v50 stable same-cursor TFTP summary",
+    "accepted v50 restore proof",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "selected_next_task": "phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-reconciliation-v51-20260701",
+  "planning_needed": false
+}

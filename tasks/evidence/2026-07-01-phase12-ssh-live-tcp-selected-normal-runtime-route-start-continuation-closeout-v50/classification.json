@@ -1,0 +1,52 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-route-start-continuation-closeout-v50-20260701",
+  "classification": "selected-normal-runtime-route-start-frontier-proved",
+  "status": "accepted",
+  "selected_next_task": "phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-reconciliation-v51-20260701",
+  "planning_needed": false,
+  "hardware_action": false,
+  "lab_publication": false,
+  "boot_snapshot_mutation": false,
+  "pi5_power_action": false,
+  "packet_io": false,
+  "openssh_generated_root_retry": false,
+  "fake_command_expansion": false,
+  "broad_shell_work": false,
+  "phase_transition": false,
+  "accepted_predecessors": {
+    "selected_normal_runtime_route_start_reconciliation_v49": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-route-start-continuation-reconciliation-v49.md",
+    "selected_normal_runtime_route_start_preflight_v50": "tasks/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-route-start-continuation-preflight-v50.md"
+  },
+  "decisive_v50_facts": {
+    "classification": "selected-normal-runtime-route-start-marker-retained",
+    "archive_sha256": "16a8c14c33430f09682b6cb5a725c75f1e392f2372671ed3fea4a8b39ac609a4",
+    "selected_tree_hash": "e1c8ce434afb82517063c9535f53d127ae220b76e2756d65b110fc808193ac63",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "selected_kernel_sha256": "370cbe055e4836d9605a318704e9337e112f9cbdf57743addc7ec9b13ef28467",
+    "expected_fetch_byte_count": 152640,
+    "expected_fetch_count": 2,
+    "serial_required_marker": "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=runtime-marker-route-static",
+    "serial_required_marker_occurrences": 2326,
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "first_unresolved_facts": [
+    "runtime-ready",
+    "packet-I/O",
+    "remote receipt",
+    "compatibility/service readiness",
+    "OpenSSH",
+    "ssh-ready=true",
+    "fake command expansion",
+    "broad shell work",
+    "phase transition"
+  ],
+  "redaction_review": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_peer_or_log_lines_retained": false,
+    "packet_payloads_retained": false,
+    "ssh_session_or_key_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false,
+    "stable_secret_derived_identifiers_retained": false
+  }
+}
