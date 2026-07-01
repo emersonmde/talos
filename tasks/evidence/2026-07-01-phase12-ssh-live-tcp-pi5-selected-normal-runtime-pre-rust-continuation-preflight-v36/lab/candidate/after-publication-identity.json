@@ -1,0 +1,10 @@
+{
+  "tree_hash": "28e048845ae76bc90c6227959536e079d007e7d1e71a17122ddc1011cb42d345",
+  "effective_kernel": "kernel_2712.img",
+  "configured_kernel": "kernel_2712.img",
+  "file_count": 16,
+  "expected_fetch": {
+    "name": "da591740/kernel_2712.img",
+    "bytes": 152144
+  }
+}

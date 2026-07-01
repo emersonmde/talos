@@ -1,0 +1,10 @@
+{
+  "action": "serial read",
+  "base64": "VEFMT1M6IGFzbV9zdGFydA0K",
+  "bytes": 18,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "TALOS: asm_start\r\n",
+  "truncated": false
+}

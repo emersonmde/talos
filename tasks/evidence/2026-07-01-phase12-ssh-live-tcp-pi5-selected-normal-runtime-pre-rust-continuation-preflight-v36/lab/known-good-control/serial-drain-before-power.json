@@ -1,0 +1,979 @@
+{
+  "action": "serial drain before power",
+  "ok": true,
+  "responses": [
+    {
+      "action": "serial read",
+      "base64": "X3ByZV9ydXN0X2VudHJ5DQo=",
+      "bytes": 17,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0K",
+      "bytes": 27,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "TALOS: asm_pre_rust_entry\r\n",
+      "truncated": false
+    }
+  ],
+  "talos_serial_drain": {
+    "contract_version": "pi5-capture-transaction-v2",
+    "attempts": 96,
+    "attempt_limit": 96,
+    "read_timeout_seconds": 1,
+    "settle_ms": 100,
+    "max_bytes_per_read": 65536,
+    "total_bytes": 2582,
+    "final_cursor": 4194304,
+    "empty_before_power": false,
+    "discriminator": "bounded-drain-exhausted-before-power",
+    "rule": "empty pre-power /serial/read is strong positive evidence; non-empty drain requires cursor-nonce-post-power-freshness-v1"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-continuation-preflight-v36-20260701",
+  "classification": "selected-normal-runtime-pre-rust-marker-retained",
+  "selected_next_task": "phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-continuation-closeout-v36-20260701",
+  "planning_needed": false,
+  "first_missing_fact": "Whether the selected 152144-byte normal-runtime feature archive proceeds from the assembly pre-rust marker loop into rust_entry and later normal-runtime milestones.",
+  "hardware_action": true,
+  "lab_publication": true,
+  "boot_snapshot_mutation": false,
+  "pi5_power_action": true,
+  "packet_io": false,
+  "openssh_generated_root_retry": false,
+  "ssh_ready": false,
+  "service_readiness_claim": false,
+  "phase_transition": false
+}

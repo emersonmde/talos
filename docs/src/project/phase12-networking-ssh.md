@@ -13126,3 +13126,27 @@ phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-continuation-preflight
 packet-I/O/OpenSSH/generated-root retry, remote receipt,
 compatibility/service readiness, ssh-ready=true, fake command expansion, broad
 shell work, and phase transition remain blocked.
+
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-continuation-preflight-v36-20260701
+accepts selected-normal-runtime-pre-rust-marker-retained. The worker published
+only the v35-selected pre-rust archive under hardwareTestLock, then restored
+the lab to phase12-ssh-v10-openssh-clean-pre-20260624T074100Z. The primary
+candidate preflight matched selected tree
+28e048845ae76bc90c6227959536e079d007e7d1e71a17122ddc1011cb42d345 and manual
+serial rescue saw TALOS: asm_pre_rust_entry 13 times, but that helper window
+was not used for terminal classification because TFTP/final identity had
+already reverted to the restored 104,136-byte tree. The known-good control
+served the restored 104,136-byte kernel and retained
+rpi5-production-timer-preemption: PASS once, but stale retained control
+markers caused serial-freshness-v1 rejection. The unchanged candidate rerun was
+decisive: it served da591740/kernel_2712.img twice at 152,144 bytes, retained
+selected final pre-restore identity on tree
+28e048845ae76bc90c6227959536e079d007e7d1e71a17122ddc1011cb42d345, and retained
+TALOS: asm_pre_rust_entry 542 times. Post-restore identity returned to tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. This proves
+the selected normal-runtime archive can reach the pre-rust assembly marker on
+Pi 5; it does not prove rust_entry, kernel_main, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility/service readiness,
+ssh-ready=true, fake command expansion, broad shell work, or phase transition.
+selected_next_task is
+phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-continuation-closeout-v36-20260701.

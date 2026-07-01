@@ -21763,6 +21763,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
   ssh-ready=true, broad shell work, fake command expansion, and phase
   transition remain blocked.
+- phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-continuation-preflight-v36-20260701
+  accepts selected-normal-runtime-pre-rust-marker-retained. The decisive
+  unchanged candidate rerun served da591740/kernel_2712.img twice at 152,144
+  bytes, retained final pre-restore identity on selected tree
+  28e048845ae76bc90c6227959536e079d007e7d1e71a17122ddc1011cb42d345, and
+  retained TALOS: asm_pre_rust_entry 542 times. The primary helper window is
+  recorded as contaminated before restore, and the known-good control served
+  the restored 104,136-byte kernel with the production-timer PASS marker but
+  was freshness-rejected due stale retained control markers. The lab was
+  restored to tree
+  a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. This
+  proves selected normal-runtime assembly setup can reach the pre-rust marker
+  on Pi 5; rust_entry and later normal-runtime milestones remain the next
+  missing facts. selected_next_task is
+  phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-continuation-closeout-v36-20260701;
+  packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
+  ssh-ready=true, broad shell work, fake command expansion, and phase
+  transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

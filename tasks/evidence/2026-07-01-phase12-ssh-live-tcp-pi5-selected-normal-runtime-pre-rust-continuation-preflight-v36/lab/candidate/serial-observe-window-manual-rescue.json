@@ -1,0 +1,64 @@
+{
+  "action": "serial read",
+  "base64": "VEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0KVEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0KVEFMT1M6IGFzbV9wcmVfcnVzdF9lbnRyeQ0KdHJ5DQpUQUxPUzogYXNtX3ByZV9ydXN0X2VudHJ5DQpUQUxPUzogYXNtX3ByZV9ydXN0X2VudHJ5DQpUQUxPUzogYXNtX3ByZV9ydXN0X2VudHJ5DQpUQUxPUzogYXNtX3ByZV9ydXN0X2VudHJ5DQpUQUxPUzogYXNtX3ByZV9ydXN0X2VudHJ5DQpUQUxPUzogYXNtX3ByZV9ydXN0X2VudHJ5DQpUQUxPUzogYXNtX3ByZV9ydXN0X2VudHJ5DQpUQUxPUzogYXNtX3ByZV9ydXN0X2VudHJ5DQpUQUxPUzogYXNtX3ByZV9ydXN0X2VudHJ5DQpUQUxPUzogYXNtX3ByZV9ydXN0X2VudHJ5DQo=",
+  "bytes": 356,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "TALOS: asm_pre_rust_entry\r\nTALOS: asm_pre_rust_entry\r\nTALOS: asm_pre_rust_entry\r\ntry\r\nTALOS: asm_pre_rust_entry\r\nTALOS: asm_pre_rust_entry\r\nTALOS: asm_pre_rust_entry\r\nTALOS: asm_pre_rust_entry\r\nTALOS: asm_pre_rust_entry\r\nTALOS: asm_pre_rust_entry\r\nTALOS: asm_pre_rust_entry\r\nTALOS: asm_pre_rust_entry\r\nTALOS: asm_pre_rust_entry\r\nTALOS: asm_pre_rust_entry\r\n",
+  "truncated": false,
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "talos_serial_window": {
+    "requested_timeout_seconds": 5,
+    "elapsed_seconds": 5,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "observe_attempts": 1,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 356,
+    "required_marker": "TALOS: asm_pre_rust_entry",
+    "kernel_marker": "TALOS: kernel_main",
+    "firmware_network_marker": "NETWORK",
+    "has_kernel_main": false,
+    "has_required_marker": true,
+    "marker_family": {
+      "markers": [
+        "TALOS: asm_start",
+        "TALOS: asm_pre_rust_entry"
+      ],
+      "counts": [
+        {
+          "marker": "TALOS: asm_start",
+          "present": false,
+          "occurrences": 0,
+          "first_index": null
+        },
+        {
+          "marker": "TALOS: asm_pre_rust_entry",
+          "present": true,
+          "occurrences": 13,
+          "first_index": 0
+        }
+      ],
+      "deepest_present_marker": {
+        "marker": "TALOS: asm_pre_rust_entry",
+        "present": true,
+        "occurrences": 13,
+        "first_index": 0
+      },
+      "all_present": false,
+      "present_count": 1
+    },
+    "has_firmware_network": false,
+    "firmware_network_occurrences": 0,
+    "required_marker_occurrences": 13,
+    "marker_nonce": null,
+    "nonce_token": null,
+    "nonce_token_occurrences": 0,
+    "required_marker_excerpt": "TALOS: asm_pre_rust_entry\r\nTALOS: asm_pre_rust_entry\r\nTALOS: asm_pre_rust_entry\r\ntry\r\nTALOS: asm_pre_rust_entry\r\nTALOS: asm_pre_rust_entry\r\nTALOS: asm_pre_rust_entry\r\nTALOS: asm_pre_rus"
+  }
+}
