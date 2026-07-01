@@ -1,0 +1,1 @@
+152144 target/tmp/selected-runtime-continuation-v27-boot-tree/kernel_2712.img

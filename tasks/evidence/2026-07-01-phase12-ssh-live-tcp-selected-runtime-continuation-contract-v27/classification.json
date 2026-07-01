@@ -1,0 +1,70 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-runtime-continuation-contract-v27-20260701",
+  "classification": "selected-runtime-continuation-contract-ready",
+  "status": "accepted",
+  "planningNeeded": false,
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-runtime-continuation-preflight-v28-20260701",
+  "first_missing_fact": null,
+  "source_commit": "fa2ae39ff6a96fdcc175b2b29deb1f02d6777828",
+  "selected_contract": {
+    "scenario": "rpi5_ssh_service_smoltcp_runtime_ready",
+    "archive_materialization": "scripts/rpi5-ssh-service-smoltcp-runtime-ready-boot-tree.sh target/timer-irq-boot-source target/tmp/selected-runtime-continuation-v27-boot-tree && tar -czf target/tmp/selected-runtime-continuation-v27.tar.gz -C target/tmp/selected-runtime-continuation-v27-boot-tree .",
+    "archive_path": "target/tmp/selected-runtime-continuation-v27.tar.gz",
+    "archive_sha256": "d8b5c23fd26d2dd236a3cd6206d7367832358b874f96b0b6ecf3f7fea1b439dc",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "kernel_2712_sha256": "665d993ab7c36065fa4810ae09613ed9d92aba30cdd5881e06e23b50b4d25a72",
+    "kernel_2712_size": 152144,
+    "image_header": {
+      "text_offset": 0,
+      "header_image_size": 152144,
+      "flags": 12
+    },
+    "root_selected_kernel_equal": true,
+    "capture_nonce": "runtime-marker-route-static",
+    "expected_marker_family": [
+      "TALOS: rust_entry",
+      "TALOS: boot info parsed",
+      "TALOS: target init",
+      "TALOS: exceptions ready",
+      "TALOS: kernel_main",
+      "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=runtime-marker-route-static source=network-device-smoltcp-runtime",
+      "TALOS: ssh-service-smoltcp-runtime-ready runtime-binding=accepted-deterministic-device-interface-delivery descriptor-facing-connection-delivered=true deterministic-device-interface-bound=true hardware-frame-provider-bound=false driver-packet-rx-frames=<nonzero> driver-packet-tx-frames=<same-as-rx> live-packet-io-accepted=false live-reachability-accepted=false remote-receipt-accepted=false compatibility-accepted=false ssh-ready=false claims-service-success=false claims-phase-transition=false"
+    ],
+    "fail_closed_alternates": [
+      "TALOS: ssh-service-smoltcp-runtime-blocked ... ssh-ready=false claims-service-success=false",
+      "missing selected normal-runtime marker family after decisive selected TFTP identity"
+    ]
+  },
+  "blocked_claims": [
+    "packet-I/O",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility/service readiness",
+    "ssh-ready=true",
+    "fake command expansion",
+    "broad shell work",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Selected the existing normal runtime route as the next thinnest feature path after the v26 rust_entry boundary."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "rpi5_ssh_service_smoltcp_runtime_ready falls through the normal rust_entry/BootInfo/target-init/exceptions/kernel_main path before route marker emission."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Non-published archive review passed with root/selected equality, selected da591740/kernel_2712.img mirror, valid Image header fields, and expected byte count/hash."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Recorded a fail-closed runtime contract that can prove deterministic descriptor/device runtime binding while rejecting live packet I/O, remote receipt, compatibility, service success, ssh-ready=true, and phase transition claims."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness, ssh-ready=true, fake command expansion, broad shell work, and phase transition remain blocked."
+    }
+  ]
+}

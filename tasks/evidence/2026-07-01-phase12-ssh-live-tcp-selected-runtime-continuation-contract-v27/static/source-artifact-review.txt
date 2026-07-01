@@ -1,0 +1,65 @@
+source_commit=fa2ae39ff6a96fdcc175b2b29deb1f02d6777828
+
+scenario_route:
+src/boot/rpi5.rs:31:    target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::KernelMain);
+src/boot/rpi5.rs:53:    #[cfg(talos_boot_scenario = "rpi5_ssh_service_smoltcp_runtime_ready")]
+src/boot/rpi5.rs:54:    target::rpi5::run_ssh_service_smoltcp_runtime_ready_route();
+src/main.rs:126:            talos_boot_scenario = "rpi5_ssh_service_smoltcp_runtime_ready",
+src/main.rs:398:        target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::RustEntry);
+src/main.rs:1389:        target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::RustEntry);
+src/main.rs:1478:        target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::RustEntry);
+src/main.rs:1483:        target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::BootInfoParsed);
+src/main.rs:1488:        target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::TargetInit);
+src/main.rs:1493:        target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::ExceptionsReady);
+src/target/rpi5.rs:9188:        EarlyPhaseLine::KernelMain => {
+src/target/rpi5.rs:25818:    talos_boot_scenario = "rpi5_ssh_service_smoltcp_runtime_ready"
+src/target/rpi5.rs:26059:#[cfg(talos_boot_scenario = "rpi5_ssh_service_smoltcp_runtime_ready")]
+src/target/rpi5.rs:26060:pub fn run_ssh_service_smoltcp_runtime_ready_route() -> ! {
+
+network_runtime_contract:
+2581:    AcceptedDeterministicDeviceInterfaceDelivery,
+2669:    descriptor_facing_connection_delivered: bool,
+2694:    pub(crate) const fn descriptor_facing_connection_delivered(self) -> bool {
+2695:        self.descriptor_facing_connection_delivered
+2724:    descriptor_facing_connection_delivered: bool,
+2726:    hardware_frame_provider_bound: bool,
+2765:    pub(crate) const fn descriptor_facing_connection_delivered(self) -> bool {
+2766:        self.descriptor_facing_connection_delivered
+2773:    pub(crate) const fn hardware_frame_provider_bound(self) -> bool {
+2774:        self.hardware_frame_provider_bound
+2843:    let marker_route_ready = runtime_report.binding_state()
+2844:        == LiveTcpNetworkDeviceRuntimeBindingState::AcceptedDeterministicDeviceInterfaceDelivery
+2845:        && runtime_report.descriptor_facing_connection_delivered()
+2847:        && !runtime_report.hardware_frame_provider_bound()
+2849:        && runtime_report.driver_packet_rx_frames() == runtime_report.driver_packet_tx_frames()
+2850:        && !runtime_report.live_packet_io_accepted()
+2852:        && !runtime_report.remote_receipt_accepted()
+2853:        && !runtime_report.compatibility_accepted()
+2854:        && !runtime_report.ssh_ready();
+3375:        let descriptor_facing_connection_delivered = matches!(
+3384:                if descriptor_facing_connection_delivered =>
+3396:        let descriptor_facing_connection_delivered = delivery_state
+3404:            descriptor_facing_connection_delivered,
+3429:                descriptor_facing_connection_delivered: false,
+3431:                hardware_frame_provider_bound: false,
+3448:                descriptor_facing_connection_delivered: true,
+3450:                hardware_frame_provider_bound: false,
+3467:                descriptor_facing_connection_delivered: true,
+3469:                hardware_frame_provider_bound: false,
+3485:            binding_state: LiveTcpNetworkDeviceRuntimeBindingState::AcceptedDeterministicDeviceInterfaceDelivery,
+3487:            descriptor_facing_connection_delivered: true,
+3489:            hardware_frame_provider_bound: false,
+6931:        assert!(!pre_accept_delivery.descriptor_facing_connection_delivered());
+6997:        assert!(accept_delivery.descriptor_facing_connection_delivered());
+7032:        assert!(!live_required_delivery.descriptor_facing_connection_delivered());
+7093:        assert!(host_only.descriptor_facing_connection_delivered());
+7103:            LiveTcpNetworkDeviceRuntimeBindingState::AcceptedDeterministicDeviceInterfaceDelivery
+7109:        assert!(runtime.descriptor_facing_connection_delivered());
+7111:        assert!(!runtime.hardware_frame_provider_bound());
+7146:            LiveTcpNetworkDeviceRuntimeBindingState::AcceptedDeterministicDeviceInterfaceDelivery
+7148:        assert!(runtime.descriptor_facing_connection_delivered());
+7150:        assert!(!runtime.hardware_frame_provider_bound());
+7204:        assert!(!missing_descriptor.descriptor_facing_connection_delivered());
+7230:        assert!(missing_interface.descriptor_facing_connection_delivered());
+7243:        assert!(missing_hardware.descriptor_facing_connection_delivered());
+7245:        assert!(!missing_hardware.hardware_frame_provider_bound());

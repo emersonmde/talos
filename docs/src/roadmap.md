@@ -21577,6 +21577,26 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   for the next smallest feature step; packet-I/O/OpenSSH/generated-root retry,
   compatibility/service readiness, ssh-ready=true, broad shell work, fake
   command expansion, and phase transition remain blocked.
+- phase12-ssh-live-tcp-selected-runtime-continuation-contract-v27-20260701
+  accepts selected-runtime-continuation-contract-ready. No hardware action, lab
+  publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+  OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+  success claim, ssh-ready=true, fake command expansion, broad shell work, or
+  phase transition was performed. The selected
+  rpi5_ssh_service_smoltcp_runtime_ready archive is built from commit
+  fa2ae39f..., has archive SHA-256 d8b5c23f..., and serves
+  da591740/kernel_2712.img at 152,144 bytes with SHA-256 665d993a.... The
+  next serialized Pi 5 preflight is contracted to classify the normal runtime
+  marker family through TALOS: rust_entry, boot info parsed, target init,
+  exceptions ready, kernel_main, ssh-service-smoltcp-runtime-route-start, and
+  ssh-service-smoltcp-runtime-ready with accepted deterministic descriptor/device
+  runtime binding while live packet I/O, remote receipt, compatibility,
+  service success, ssh-ready=true, and phase transition remain rejected.
+  selected_next_task is
+  phase12-ssh-live-tcp-pi5-selected-runtime-continuation-preflight-v28-20260701;
+  packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
+  ssh-ready=true, broad shell work, fake command expansion, and phase
+  transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

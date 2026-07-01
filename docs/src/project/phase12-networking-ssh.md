@@ -12867,3 +12867,27 @@ successor has refreshed dependencies for the next smallest feature step;
 packet-I/O/OpenSSH/generated-root retry, remote receipt,
 compatibility/service readiness, ssh-ready=true, broad shell work, fake command
 expansion, and phase transition remain blocked.
+
+phase12-ssh-live-tcp-selected-runtime-continuation-contract-v27-20260701
+accepts selected-runtime-continuation-contract-ready. No hardware action, lab
+publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The selected
+rpi5_ssh_service_smoltcp_runtime_ready archive is built from source commit
+fa2ae39ff6a96fdcc175b2b29deb1f02d6777828, has archive SHA-256
+d8b5c23fd26d2dd236a3cd6206d7367832358b874f96b0b6ecf3f7fea1b439dc, and serves
+da591740/kernel_2712.img at 152,144 bytes with SHA-256
+665d993ab7c36065fa4810ae09613ed9d92aba30cdd5881e06e23b50b4d25a72. The
+expected marker family for the next serialized Pi 5 preflight is the normal
+runtime path TALOS: rust_entry, TALOS: boot info parsed, TALOS: target init,
+TALOS: exceptions ready, TALOS: kernel_main, TALOS:
+ssh-service-smoltcp-runtime-route-start, and TALOS:
+ssh-service-smoltcp-runtime-ready with accepted deterministic descriptor/device
+runtime binding while live-packet-io-accepted=false, remote-receipt-accepted=false,
+compatibility-accepted=false, ssh-ready=false, claims-service-success=false,
+and claims-phase-transition=false. selected_next_task is
+phase12-ssh-live-tcp-pi5-selected-runtime-continuation-preflight-v28-20260701;
+packet-I/O/OpenSSH/generated-root retry, remote receipt,
+compatibility/service readiness, ssh-ready=true, broad shell work, fake command
+expansion, and phase transition remain blocked.
