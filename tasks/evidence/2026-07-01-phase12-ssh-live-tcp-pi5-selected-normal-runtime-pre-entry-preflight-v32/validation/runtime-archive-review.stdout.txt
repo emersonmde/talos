@@ -1,0 +1,32 @@
+archive=target/tmp/selected-normal-runtime-pre-entry-v31.tar.gz
+sha256=a1227502fa059774e04c3ebc0b2c819305defa88abd4fbc07254e3166fcad451
+file_count=19
+kernel_size=152144
+header_image_size=152144
+text_offset=0
+flags=12
+loader_diagnostic=false
+circle_config_loader_diagnostic=false
+manifest:
+  bcm2712-rpi-5-b.dtb
+  cmdline.txt
+  config.txt
+  da591740
+  da591740/bcm2712-rpi-5-b.dtb
+  da591740/cmdline.txt
+  da591740/config.txt
+  da591740/kernel8.img
+  da591740/kernel_2712.img
+  da591740/overlays
+  da591740/overlays/bcm2712d0.dtbo
+  da591740/overlays/overlay_map.dtb
+  da591740/overlays/uart0-pi5.dtbo
+  kernel8.img
+  kernel_2712.img
+  overlays
+  overlays/bcm2712d0.dtbo
+  overlays/overlay_map.dtb
+  overlays/uart0-pi5.dtbo
+runtime_marker_route=ready
+required_marker=TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-marker-route-static
+archive=target/tmp/selected-normal-runtime-pre-entry-v31.tar.gz

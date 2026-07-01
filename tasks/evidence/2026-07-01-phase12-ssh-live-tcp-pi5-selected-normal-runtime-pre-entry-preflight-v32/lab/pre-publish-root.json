@@ -1,0 +1,7 @@
+{
+  "endpoint": "GET /",
+  "http_status": 404,
+  "curl_exit": 22,
+  "usable_for_identity": false,
+  "fallback": "GET /status and GET /boot/files"
+}

@@ -1,0 +1,38 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-entry-preflight-v32-20260701",
+  "classification": "blocked-selected-normal-runtime-rust-entry-missing",
+  "references": {
+    "v31_task": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-entry-reconciliation-v31.md",
+    "v31_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-entry-reconciliation-v31/classification.json",
+    "v32_task": "tasks/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-entry-preflight-v32.md",
+    "v32_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-entry-preflight-v32/classification.json",
+    "v32_primary_candidate": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-entry-preflight-v32/lab/candidate/",
+    "v32_known_good_control": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-entry-preflight-v32/lab/known-good-control/",
+    "v32_candidate_rerun": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-entry-preflight-v32/lab/candidate-rerun/",
+    "archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-entry-preflight-v32/validation/archive-review.stdout.txt",
+    "runtime_archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-entry-preflight-v32/validation/runtime-archive-review.stdout.txt",
+    "archive_sha256": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-entry-preflight-v32/static/archive-sha256.txt",
+    "kernel_sha256": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-entry-preflight-v32/static/kernel-sha256.txt",
+    "kernel_size": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-entry-preflight-v32/static/kernel-size.txt",
+    "final_restore_status": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-entry-preflight-v32/lab/final-post-restore-status-before-lock-release.json"
+  },
+  "evidence_levels": [
+    "static archive/image review",
+    "lab-controller API status/boot-files before publication, after publication, pre-power, final pre-restore, and after restore",
+    "fresh serial cursor/drain before power action",
+    "serial hardware boot/output",
+    "stable same-cursor TFTP delta before restore",
+    "known-good control",
+    "unchanged candidate rerun",
+    "restore proof",
+    "task-owned JSON evidence"
+  ],
+  "redaction_review": {
+    "summary_excludes_raw_serial_text": true,
+    "summary_excludes_raw_tftp_peer_or_log_lines": true,
+    "summary_excludes_packet_payloads": true,
+    "summary_excludes_ssh_session_or_key_material": true,
+    "summary_excludes_boot_artifact_bytes": true,
+    "retained_files_include_raw_lab_json_for_local_review": true
+  }
+}
