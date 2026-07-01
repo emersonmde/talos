@@ -1,0 +1,12 @@
+{
+  "source": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-entry-repair-preflight-v34/lab/candidate/capture-invariant-summary.json",
+  "original_suggested_classification": "reset-side-effect-without-visible-marker-candidate",
+  "original_has_required_marker_field": false,
+  "required_marker": "TALOS: asm_start",
+  "required_marker_occurrences": 504,
+  "marker_occurrences_after_saved_cursor": 504,
+  "marker_family_fresh": true,
+  "patched_rule_result": "post-handoff-marker-visible",
+  "disposition": "fixed",
+  "note": "Patched rpi5-capture-invariant-proof-bundle.sh now treats retained required-marker occurrences or fresh marker-family evidence as marker-visible for suggested_classification."
+}

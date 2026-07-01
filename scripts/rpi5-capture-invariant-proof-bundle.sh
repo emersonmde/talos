@@ -729,7 +729,7 @@ jq -n \
              (
              if (($identity_join_rejection_reasons | length) > 0) then "identity-join-mismatch"
              elif $preflight_mismatch then "staging-publication-mismatch"
-             elif ($sw.has_required_marker == true) then "post-handoff-marker-visible"
+             elif (($sw.has_required_marker == true) or ($post_power_marker_count > 0) or $marker_family_fresh) then "post-handoff-marker-visible"
              elif (($fetch_events | length) >= 2 and (($sw.firmware_network_occurrences // 0) >= 2)) then "reset-side-effect-without-visible-marker-candidate"
              elif (($fetch_events | length) > 0) then "candidate-fetch-observed-without-marker"
              elif ($stable_zero_tftp and ($sw.has_firmware_network == true) and $final_tree_ok and ($final_fetch != null) and $final_bytes_ok) then "tftp-capture-logging-blindness"

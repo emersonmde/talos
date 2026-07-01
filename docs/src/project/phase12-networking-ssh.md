@@ -13104,3 +13104,25 @@ pending supervisor planning for the next bounded continuation step;
 packet-I/O/OpenSSH/generated-root retry, remote receipt,
 compatibility/service readiness, ssh-ready=true, fake command expansion, broad
 shell work, and phase transition remain blocked.
+
+phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-continuation-reconciliation-v35-20260701
+accepts selected-normal-runtime-pre-rust-discriminator-ready. No hardware
+action, lab publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The reconciliation preserves
+the v34 proof that the 152,144-byte selected normal-runtime entry-loop archive
+reaches TALOS: asm_start on Pi 5, then adds a separate selected normal-runtime
+pre-rust loop archive that emits TALOS: asm_start once and loops on
+TALOS: asm_pre_rust_entry after CPACR setup, BSS clear, and stack setup but
+before rust_entry. The non-published v35 archive serves
+da591740/kernel_2712.img at 152,144 bytes with SHA-256
+afd9f9550e2abbdcba80520eb7c3527f1f3a3c3b383a432e8fe98c2381f8c7c1 and archive
+SHA-256 2e2f538a7453c6fbce6b05c0c053b282d5e24c8f2d798e4893a2607fc7e7a0b2. The
+capture helper classification mismatch observed in v34 was fixed so retained
+required-marker occurrences or fresh marker-family evidence classify as
+post-handoff-marker-visible in future summaries. selected_next_task is
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-continuation-preflight-v36-20260701;
+packet-I/O/OpenSSH/generated-root retry, remote receipt,
+compatibility/service readiness, ssh-ready=true, fake command expansion, broad
+shell work, and phase transition remain blocked.

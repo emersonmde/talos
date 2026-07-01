@@ -70,7 +70,7 @@ _start:
     b 4b
 #endif
 
-#if defined(TALOS_RPI5_SMP_BOOT_SCENARIO) || defined(TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO)
+#if defined(TALOS_RPI5_SMP_BOOT_SCENARIO) || defined(TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO) || defined(TALOS_RPI5_PRE_RUST_ENTRY_LOOP_SCENARIO)
     adrp x0, talos_rpi5_asm_start_line
     add x0, x0, :lo12:talos_rpi5_asm_start_line
     mov x1, #(talos_rpi5_asm_start_line_end - talos_rpi5_asm_start_line)
@@ -109,7 +109,18 @@ _start:
     add x0, x0, :lo12:__stack_top
     mov sp, x0
 
-#if defined(TALOS_RPI5_SMP_BOOT_SCENARIO) || defined(TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO)
+#if defined(TALOS_RPI5_PRE_RUST_ENTRY_LOOP_SCENARIO)
+4:
+    adrp x0, talos_rpi5_asm_pre_rust_line
+    add x0, x0, :lo12:talos_rpi5_asm_pre_rust_line
+    mov x1, #(talos_rpi5_asm_pre_rust_line_end - talos_rpi5_asm_pre_rust_line)
+    bl talos_rpi5_early_uart_write
+    mov x21, #0x80000
+5:
+    subs x21, x21, #1
+    b.ne 5b
+    b 4b
+#elif defined(TALOS_RPI5_SMP_BOOT_SCENARIO) || defined(TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO)
     adrp x0, talos_rpi5_asm_pre_rust_line
     add x0, x0, :lo12:talos_rpi5_asm_pre_rust_line
     mov x1, #(talos_rpi5_asm_pre_rust_line_end - talos_rpi5_asm_pre_rust_line)
@@ -125,7 +136,7 @@ _start:
 
 .size _start, . - _start
 
-#if defined(TALOS_RPI5_SMP_BOOT_SCENARIO) || defined(TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO) || defined(TALOS_RPI5_EARLY_ENTRY_LOOP_SCENARIO) || defined(TALOS_RPI5_SELECTED_KERNEL_ENTRY_DISCRIMINATOR_SCENARIO) || defined(TALOS_RPI5_HANDOFF_SENTINEL_SCENARIO) || defined(TALOS_RPI5_BOOT_CONTRACT_DISCRIMINATOR_SCENARIO)
+#if defined(TALOS_RPI5_SMP_BOOT_SCENARIO) || defined(TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO) || defined(TALOS_RPI5_EARLY_ENTRY_LOOP_SCENARIO) || defined(TALOS_RPI5_PRE_RUST_ENTRY_LOOP_SCENARIO) || defined(TALOS_RPI5_SELECTED_KERNEL_ENTRY_DISCRIMINATOR_SCENARIO) || defined(TALOS_RPI5_HANDOFF_SENTINEL_SCENARIO) || defined(TALOS_RPI5_BOOT_CONTRACT_DISCRIMINATOR_SCENARIO)
 talos_rpi5_early_uart_write:
     mov x22, x30
     cbz x1, 2f
@@ -161,7 +172,7 @@ talos_rpi5_early_uart_wait_empty:
     dsb sy
     ret
 
-#if defined(TALOS_RPI5_SMP_BOOT_SCENARIO) || defined(TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO) || defined(TALOS_RPI5_EARLY_ENTRY_LOOP_SCENARIO)
+#if defined(TALOS_RPI5_SMP_BOOT_SCENARIO) || defined(TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO) || defined(TALOS_RPI5_EARLY_ENTRY_LOOP_SCENARIO) || defined(TALOS_RPI5_PRE_RUST_ENTRY_LOOP_SCENARIO)
 talos_rpi5_asm_start_line:
     .ascii "TALOS: asm_start\r\n"
 talos_rpi5_asm_start_line_end:

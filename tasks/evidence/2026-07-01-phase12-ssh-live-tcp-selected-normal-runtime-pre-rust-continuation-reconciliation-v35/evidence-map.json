@@ -1,0 +1,38 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-continuation-reconciliation-v35-20260701",
+  "classification": "selected-normal-runtime-pre-rust-discriminator-ready",
+  "predecessor": {
+    "v34_closeout_task": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-entry-repair-closeout-v34.md",
+    "v34_commit": "c150e4a72aef12090bc1a82325d57deed86fe016",
+    "v34_hardware_summary": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-entry-repair-preflight-v34/lab/candidate/capture-invariant-summary.json"
+  },
+  "source_changes": {
+    "boot_scenario": "build.rs",
+    "assembly_entry": "src/arch/aarch64/boot.S",
+    "boot_tree_helper": "scripts/rpi5-ssh-service-smoltcp-pre-rust-marker-loop-boot-tree.sh",
+    "capture_helper_classification_fix": "scripts/rpi5-capture-invariant-proof-bundle.sh"
+  },
+  "static_archive": {
+    "archive": "target/tmp/selected-normal-runtime-pre-rust-v35.tar.gz",
+    "archive_sha256": "2e2f538a7453c6fbce6b05c0c053b282d5e24c8f2d798e4893a2607fc7e7a0b2",
+    "kernel_path": "target/tmp/selected-normal-runtime-pre-rust-v35-boot-tree/kernel_2712.img",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "kernel_sha256": "afd9f9550e2abbdcba80520eb7c3527f1f3a3c3b383a432e8fe98c2381f8c7c1",
+    "kernel_size_bytes": 152144,
+    "header_image_size": 152144,
+    "text_offset": 0,
+    "flags": 12,
+    "root_selected_kernel_cmp": "byte-identical"
+  },
+  "evidence_files": {
+    "archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-continuation-reconciliation-v35/validation/archive-review.stdout.txt",
+    "runtime_archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-continuation-reconciliation-v35/validation/runtime-archive-review.stdout.txt",
+    "disassembly": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-continuation-reconciliation-v35/static/start-disassembly.txt",
+    "marker_strings": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-continuation-reconciliation-v35/static/marker-strings.txt",
+    "capture_bundle_dry_run": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-continuation-reconciliation-v35/validation/capture-bundle-dry-run.json",
+    "v34_helper_classification_replay": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-continuation-reconciliation-v35/validation/v34-helper-classification-replay.json",
+    "static_report": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-continuation-reconciliation-v35/static/static-comparison-report.md"
+  },
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-continuation-preflight-v36-20260701",
+  "planning_needed": false
+}
