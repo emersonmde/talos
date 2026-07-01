@@ -1,0 +1,31 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-continuation-reconciliation-v45-20260701",
+  "classification": "selected-normal-runtime-kernel-main-discriminator-ready",
+  "files": {
+    "classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-continuation-reconciliation-v45/classification.json",
+    "task_record": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-continuation-reconciliation-v45.md",
+    "static_comparison_report": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-continuation-reconciliation-v45/static/static-comparison-report.md",
+    "archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-continuation-reconciliation-v45/validation/archive-review.stdout.txt",
+    "kernel_main_archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-continuation-reconciliation-v45/validation/kernel-main-archive-review.stdout.txt",
+    "capture_bundle_dry_run": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-continuation-reconciliation-v45/validation/capture-bundle-dry-run.json",
+    "accepted_v44_closeout": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-exceptions-continuation-closeout-v44.md"
+  },
+  "touched_sources": [
+    "build.rs",
+    "src/boot/rpi5.rs",
+    "src/target/rpi5.rs",
+    "scripts/rpi5-ssh-service-smoltcp-kernel-main-marker-loop-boot-tree.sh",
+    "scripts/rpi5-ssh-service-smoltcp-kernel-main-marker-loop-archive-review.sh"
+  ],
+  "evidence_levels": [
+    "static inspection",
+    "fmt/lint/typecheck",
+    "non-published archive materialization and archive review",
+    "capture helper dry-run",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v46-20260701",
+  "planning_needed": true
+}

@@ -13405,3 +13405,27 @@ compatibility/service readiness, OpenSSH, ssh-ready=true, fake command
 expansion, broad shell work, and phase transition. selected_next_task is
 phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-continuation-reconciliation-v45-20260701;
 planningNeeded=false.
+
+phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-continuation-reconciliation-v45-20260701
+accepts selected-normal-runtime-kernel-main-discriminator-ready. No hardware
+action, lab publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The reconciliation preserves
+the v44 selected-byte exceptions-ready fact, then adds a selected
+normal-runtime kernel_main marker-loop archive. The new artifact emits
+TALOS: kernel_main capture-nonce=runtime-marker-route-static immediately after
+boot::rpi5::kernel_main starts and before boot identity, route-start,
+runtime-ready, packet-I/O, service success, ssh-ready, or phase-transition
+paths. It keeps the downstream selected runtime route linked in the artifact
+while explicitly withholding later milestone claims. The non-published v45
+archive serves da591740/kernel_2712.img at 152,896 bytes with SHA-256
+96057d2f8970808011a308f7b3a92da6feb85097b44590947a1ac145f85c6be6 and archive
+SHA-256 72c28bafe9bedd1474fd1dfb19db101e9078122506db1b6f13bbbebdad383f19.
+selected_next_task is
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v46-20260701
+and planningNeeded=true because no explicit v46 hardware preflight task exists
+in taskQueue; route-start, runtime-ready, packet-I/O, OpenSSH/generated-root
+retry, remote receipt, compatibility/service readiness, ssh-ready=true, fake
+command expansion, broad shell work, hardware action, and phase transition
+remain blocked until supervisor planning adds that task.

@@ -30,6 +30,12 @@ fn report_unavailable(line: &'static str) {
 pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
     target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::KernelMain);
 
+    #[cfg(talos_boot_scenario = "rpi5_ssh_service_smoltcp_kernel_main_marker_loop")]
+    {
+        let _ = &boot_info;
+        target::rpi5::run_ssh_service_smoltcp_kernel_main_marker_loop();
+    }
+
     #[cfg(talos_boot_scenario = "rpi5_minimal_entry_control")]
     target::rpi5::write_minimal_entry_console_boundary_start();
 
