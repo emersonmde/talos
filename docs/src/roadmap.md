@@ -21848,6 +21848,25 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   continuation step; packet-I/O/OpenSSH/generated-root retry, compatibility
   and service readiness, ssh-ready=true, fake command expansion, broad shell
   work, hardware action, and phase transition remain blocked.
+- phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-continuation-reconciliation-v39-20260701
+  accepts selected-normal-runtime-bootinfo-discriminator-ready. No hardware
+  action, lab publication, boot snapshot mutation, Pi 5 power cycle,
+  packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility
+  claim, service success claim, ssh-ready=true, fake/kernel-backed command
+  expansion, broad shell work, or phase transition was performed. The
+  reconciliation preserves the v38 rust_entry proof, then adds a selected
+  normal-runtime BootInfo marker-loop artifact that emits TALOS: boot info
+  parsed only after BootInfo::from_aarch64_x0(dtb_pa) returns and before
+  target init, exceptions, kernel_main, route-start, runtime-ready,
+  packet-I/O, or service readiness. The non-published v39 archive serves
+  da591740/kernel_2712.img at 152,880 bytes with SHA-256
+  62c285790a87b3ab8395aa9dcbd8167318506c940fe5a4f61e07371c0806486b and archive
+  SHA-256 23ba0d4dee7cde85e6b6ef914528f209c20cebf0edc022723a4bd1c84ea4cec5.
+  selected_next_task is
+  phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-continuation-preflight-v40-20260701;
+  packet-I/O/OpenSSH/generated-root retry, compatibility and service readiness,
+  ssh-ready=true, fake command expansion, broad shell work, hardware action
+  outside the queued v40 preflight, and phase transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

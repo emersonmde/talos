@@ -1,0 +1,16 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-continuation-reconciliation-v39-20260701",
+  "classification": "selected-normal-runtime-bootinfo-discriminator-ready",
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-continuation-preflight-v40-20260701",
+  "planning_needed": false,
+  "first_missing_fact": "Whether the selected 152880-byte normal-runtime BootInfo marker-loop archive that preserves the selected runtime route shape reaches and retains TALOS: boot info parsed on Pi 5 after rust_entry parses the firmware handoff and before target init, exceptions, kernel_main, route-start, runtime-ready, packet-I/O, OpenSSH, or service readiness.",
+  "hardware_action": false,
+  "lab_publication": false,
+  "boot_snapshot_mutation": false,
+  "pi5_power_action": false,
+  "packet_io": false,
+  "openssh_generated_root_retry": false,
+  "ssh_ready": false,
+  "service_readiness_claim": false,
+  "phase_transition": false
+}

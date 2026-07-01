@@ -1492,6 +1492,15 @@ pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
         #[cfg(talos_target_rpi5_bcm2712)]
         target::rpi5::write_early_phase_line(target::rpi5::EarlyPhaseLine::BootInfoParsed);
 
+        #[cfg(all(
+            talos_target_rpi5_bcm2712,
+            talos_boot_scenario = "rpi5_ssh_service_smoltcp_bootinfo_marker_loop"
+        ))]
+        {
+            let _ = &boot_info;
+            target::rpi5::run_ssh_service_smoltcp_bootinfo_marker_loop();
+        }
+
         target::init(&boot_info);
 
         #[cfg(talos_target_rpi5_bcm2712)]

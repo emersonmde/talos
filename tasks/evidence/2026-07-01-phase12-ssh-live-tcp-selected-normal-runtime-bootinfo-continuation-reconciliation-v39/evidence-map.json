@@ -1,0 +1,63 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-continuation-reconciliation-v39-20260701",
+  "classification": "selected-normal-runtime-bootinfo-discriminator-ready",
+  "predecessor": {
+    "v34_entry_repair_preflight_task": "tasks/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-entry-repair-preflight-v34.md",
+    "v34_entry_repair_closeout_task": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-entry-repair-closeout-v34.md",
+    "v34_closeout_commit": "c150e4a72aef12090bc1a82325d57deed86fe016",
+    "v36_pre_rust_preflight_task": "tasks/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-continuation-preflight-v36.md",
+    "v36_closeout_task": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-continuation-closeout-v36.md",
+    "v36_closeout_commit": "993a23c41877881e2a166e0941f1bb2206b893a9",
+    "v37_rust_entry_reconciliation_task": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-continuation-reconciliation-v37.md",
+    "v38_rust_entry_preflight_task": "tasks/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-continuation-preflight-v38.md",
+    "v38_closeout_task": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-continuation-closeout-v38.md",
+    "v38_closeout_commit": "205e31e25ef73ef7a7c5195679622bfccccdb54d"
+  },
+  "source_changes": {
+    "boot_scenario": "build.rs",
+    "bootinfo_marker_dispatch": "src/main.rs",
+    "bootinfo_marker_loop": "src/target/rpi5.rs",
+    "boot_tree_helper": "scripts/rpi5-ssh-service-smoltcp-bootinfo-marker-loop-boot-tree.sh",
+    "archive_review_helper": "scripts/rpi5-ssh-service-smoltcp-bootinfo-marker-loop-archive-review.sh"
+  },
+  "static_archive": {
+    "archive": "target/tmp/selected-normal-runtime-bootinfo-v39.tar.gz",
+    "archive_sha256": "23ba0d4dee7cde85e6b6ef914528f209c20cebf0edc022723a4bd1c84ea4cec5",
+    "kernel_path": "target/tmp/selected-normal-runtime-bootinfo-v39-boot-tree/kernel_2712.img",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "kernel_sha256": "62c285790a87b3ab8395aa9dcbd8167318506c940fe5a4f61e07371c0806486b",
+    "kernel_size_bytes": 152880,
+    "header_image_size": 152880,
+    "text_offset": 0,
+    "flags": 12,
+    "root_selected_kernel_cmp": "byte-identical",
+    "required_marker": "TALOS: boot info parsed",
+    "marker_family": [
+      "TALOS: asm_start",
+      "TALOS: asm_pre_rust_entry",
+      "TALOS: rust_entry",
+      "TALOS: boot info parsed"
+    ],
+    "restore_target": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z"
+  },
+  "evidence_files": {
+    "classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-continuation-reconciliation-v39/classification.json",
+    "archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-continuation-reconciliation-v39/validation/archive-review.stdout.txt",
+    "bootinfo_archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-continuation-reconciliation-v39/validation/bootinfo-archive-review.stdout.txt",
+    "marker_strings": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-continuation-reconciliation-v39/static/marker-strings.txt",
+    "capture_bundle_dry_run": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-continuation-reconciliation-v39/validation/capture-bundle-dry-run.json",
+    "static_report": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-continuation-reconciliation-v39/static/static-comparison-report.md"
+  },
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-continuation-preflight-v40-20260701",
+  "planning_needed": false,
+  "redaction_review": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_peer_or_log_lines_retained": false,
+    "packet_payloads_retained": false,
+    "ssh_session_or_key_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false,
+    "stable_secret_derived_identifiers_retained": false,
+    "note": "Archive and boot tree remain under target/tmp and are not committed; retained evidence contains source paths, task labels, hashes, byte counts, marker names, helper arguments, classifications, and validation outcomes only."
+  }
+}
