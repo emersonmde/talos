@@ -21639,6 +21639,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
   ssh-ready=true, broad shell work, fake command expansion, and phase
   transition remain blocked.
+- phase12-ssh-live-tcp-pi5-selected-runtime-phase-marker-preflight-v30-20260701
+  accepts blocked-selected-runtime-phase-marker-missing. The v29-selected
+  archive served da591740/kernel_2712.img twice at 152,144 bytes in both the
+  primary run and unchanged rerun, but retained zero ordered normal-runtime
+  markers; the known-good production-timer control retained
+  rpi5-production-timer-preemption: PASS on the same capture path. The first
+  missing fact is that selected rpi5_ssh_service_smoltcp_runtime_ready Image
+  service by TFTP does not currently retain even TALOS: rust_entry from that
+  selected runtime Image. selected_next_task is
+  phase12-ssh-live-tcp-selected-runtime-phase-marker-closeout-v30-20260701;
+  packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
+  ssh-ready=true, broad shell work, fake command expansion, and phase
+  transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

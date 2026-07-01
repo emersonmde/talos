@@ -1,0 +1,75 @@
+{
+  "generated_by": "worker-summary-after-helper-final-jq-marker-family-defect",
+  "run": "known-good-control",
+  "label": "selected-runtime-phase-marker-v30-known-good-control",
+  "preflight_identity": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_bytes_match": true,
+    "staging_publication_mismatch": null
+  },
+  "serial_window": {
+    "requested_timeout_seconds": 90,
+    "elapsed_seconds": 26,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "observe_attempts": 6,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 6532,
+    "required_marker": "rpi5-production-timer-preemption: PASS",
+    "kernel_marker": "TALOS: kernel_main",
+    "firmware_network_marker": "NETWORK",
+    "has_kernel_main": false,
+    "has_required_marker": true,
+    "marker_family": {
+      "markers": [
+        "rpi5-production-timer-preemption: PASS"
+      ],
+      "counts": [
+        {
+          "marker": "rpi5-production-timer-preemption: PASS",
+          "present": true,
+          "occurrences": 1,
+          "first_index": 6492
+        }
+      ],
+      "deepest_present_marker": {
+        "marker": "rpi5-production-timer-preemption: PASS",
+        "present": true,
+        "occurrences": 1,
+        "first_index": 6492
+      },
+      "all_present": true,
+      "present_count": 1
+    },
+    "has_firmware_network": true,
+    "firmware_network_occurrences": 2,
+    "required_marker_occurrences": 1,
+    "marker_nonce": null,
+    "nonce_token": null,
+    "nonce_token_occurrences": 0,
+    "required_marker_excerpt": "it-remaining=199997245 classification=pi5-production-timer-preemption-complete\r\nrpi5-production-timer-preemption: PASS\r\n"
+  },
+  "tftp_stability": {
+    "stable": true,
+    "reason": "stable",
+    "stable_samples": 3,
+    "required_samples": 3
+  },
+  "expected_fetch_events": [
+    {
+      "status": "served",
+      "bytes": 104136
+    },
+    {
+      "status": "served",
+      "bytes": 104136
+    }
+  ],
+  "final_pre_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "redacted_summary": true
+}

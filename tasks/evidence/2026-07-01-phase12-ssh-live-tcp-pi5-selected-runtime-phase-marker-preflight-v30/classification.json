@@ -1,0 +1,247 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-runtime-phase-marker-preflight-v30-20260701",
+  "classification": "blocked-selected-runtime-phase-marker-missing",
+  "status": "accepted-pending-final-commit",
+  "selected_next_task": "phase12-ssh-live-tcp-selected-runtime-phase-marker-closeout-v30-20260701",
+  "planningNeeded": false,
+  "first_missing_fact": "Selected rpi5_ssh_service_smoltcp_runtime_ready Image was served by TFTP in the primary run and unchanged rerun, but Pi 5 serial retained no ordered normal-runtime marker family member; the first missing marker is TALOS: rust_entry.",
+  "hardware_lock": {
+    "owner": "worker",
+    "acquired": true,
+    "released_after_restore": true,
+    "restored_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z"
+  },
+  "selected_archive": {
+    "archive_path": "target/tmp/selected-runtime-phase-marker-v30.tar.gz",
+    "archive_sha256": "6dd1a37c9979bfee4ef83d6b2bb12863a07ed4f7451434d3e011d8e68eb589d1",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "kernel_2712_sha256": "665d993ab7c36065fa4810ae09613ed9d92aba30cdd5881e06e23b50b4d25a72",
+    "kernel_2712_size": 152144,
+    "source_commit_for_archive": "7001a4e0227a48cac4a02547fd1eec62f0b3bf8c",
+    "expected_tree_hash": "1960865e6b41617c966d322d9a6bb972cd9c6ffe805005b0779057268127d61b"
+  },
+  "runs": {
+    "primary_candidate": {
+      "label": "selected-runtime-phase-marker-v30-candidate",
+      "selected_kernel_fetch_count": 2,
+      "selected_kernel_fetch_byte_match_count": 2,
+      "tftp_stable": true,
+      "final_pre_restore_tree_hash": "1960865e6b41617c966d322d9a6bb972cd9c6ffe805005b0779057268127d61b",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "serial": {
+        "has_required_marker": false,
+        "required_marker_occurrences": 0,
+        "has_kernel_main": false,
+        "firmware_network_occurrences": 2,
+        "capture_mode": "read",
+        "response_bytes": 4475,
+        "marker_family": {
+          "markers": [
+            "TALOS: rust_entry",
+            "TALOS: boot info parsed",
+            "TALOS: target init",
+            "TALOS: exceptions ready",
+            "TALOS: kernel_main",
+            "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=runtime-marker-route-static source=network-device-smoltcp-runtime",
+            "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-marker-route-static"
+          ],
+          "counts": [
+            {
+              "marker": "TALOS: rust_entry",
+              "present": false,
+              "occurrences": 0,
+              "first_index": null
+            },
+            {
+              "marker": "TALOS: boot info parsed",
+              "present": false,
+              "occurrences": 0,
+              "first_index": null
+            },
+            {
+              "marker": "TALOS: target init",
+              "present": false,
+              "occurrences": 0,
+              "first_index": null
+            },
+            {
+              "marker": "TALOS: exceptions ready",
+              "present": false,
+              "occurrences": 0,
+              "first_index": null
+            },
+            {
+              "marker": "TALOS: kernel_main",
+              "present": false,
+              "occurrences": 0,
+              "first_index": null
+            },
+            {
+              "marker": "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=runtime-marker-route-static source=network-device-smoltcp-runtime",
+              "present": false,
+              "occurrences": 0,
+              "first_index": null
+            },
+            {
+              "marker": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-marker-route-static",
+              "present": false,
+              "occurrences": 0,
+              "first_index": null
+            }
+          ],
+          "deepest_present_marker": null,
+          "all_present": false,
+          "present_count": 0
+        }
+      }
+    },
+    "known_good_control": {
+      "label": "selected-runtime-phase-marker-v30-known-good-control",
+      "selected_kernel_fetch_count": 2,
+      "selected_kernel_fetch_byte_match_count": 2,
+      "tftp_stable": true,
+      "final_pre_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "serial": {
+        "has_required_marker": true,
+        "required_marker_occurrences": 1,
+        "has_kernel_main": false,
+        "firmware_network_occurrences": 2,
+        "capture_mode": "read",
+        "response_bytes": 6532,
+        "marker_family": {
+          "markers": [
+            "rpi5-production-timer-preemption: PASS"
+          ],
+          "counts": [
+            {
+              "marker": "rpi5-production-timer-preemption: PASS",
+              "present": true,
+              "occurrences": 1,
+              "first_index": 6492
+            }
+          ],
+          "deepest_present_marker": {
+            "marker": "rpi5-production-timer-preemption: PASS",
+            "present": true,
+            "occurrences": 1,
+            "first_index": 6492
+          },
+          "all_present": true,
+          "present_count": 1
+        }
+      },
+      "control_marker": "rpi5-production-timer-preemption: PASS"
+    },
+    "unchanged_candidate_rerun": {
+      "label": "selected-runtime-phase-marker-v30-candidate-rerun",
+      "selected_kernel_fetch_count": 2,
+      "selected_kernel_fetch_byte_match_count": 2,
+      "tftp_stable": true,
+      "final_pre_restore_tree_hash": "1960865e6b41617c966d322d9a6bb972cd9c6ffe805005b0779057268127d61b",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "serial": {
+        "has_required_marker": false,
+        "required_marker_occurrences": 0,
+        "has_kernel_main": false,
+        "firmware_network_occurrences": 2,
+        "capture_mode": "read",
+        "response_bytes": 4473,
+        "marker_family": {
+          "markers": [
+            "TALOS: rust_entry",
+            "TALOS: boot info parsed",
+            "TALOS: target init",
+            "TALOS: exceptions ready",
+            "TALOS: kernel_main",
+            "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=runtime-marker-route-static source=network-device-smoltcp-runtime",
+            "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-marker-route-static"
+          ],
+          "counts": [
+            {
+              "marker": "TALOS: rust_entry",
+              "present": false,
+              "occurrences": 0,
+              "first_index": null
+            },
+            {
+              "marker": "TALOS: boot info parsed",
+              "present": false,
+              "occurrences": 0,
+              "first_index": null
+            },
+            {
+              "marker": "TALOS: target init",
+              "present": false,
+              "occurrences": 0,
+              "first_index": null
+            },
+            {
+              "marker": "TALOS: exceptions ready",
+              "present": false,
+              "occurrences": 0,
+              "first_index": null
+            },
+            {
+              "marker": "TALOS: kernel_main",
+              "present": false,
+              "occurrences": 0,
+              "first_index": null
+            },
+            {
+              "marker": "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=runtime-marker-route-static source=network-device-smoltcp-runtime",
+              "present": false,
+              "occurrences": 0,
+              "first_index": null
+            },
+            {
+              "marker": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-marker-route-static",
+              "present": false,
+              "occurrences": 0,
+              "first_index": null
+            }
+          ],
+          "deepest_present_marker": null,
+          "all_present": false,
+          "present_count": 0
+        }
+      }
+    }
+  },
+  "triage_outcome": "Known-good control retained rpi5-production-timer-preemption: PASS once with stable 104136-byte selected-kernel TFTP service; unchanged v30 candidate rerun again served the 152144-byte selected kernel twice and retained no normal-runtime marker family member.",
+  "helper_findings": [
+    {
+      "disposition": "deferred",
+      "finding": "scripts/rpi5-capture-invariant-proof-bundle.sh captured and restored the hardware runs, but final capture-invariant-summary.json generation failed because the final jq program references $marker_family without passing --arg marker_family. Task-owned classification and evidence-map JSON summarize the retained evidence without changing source in this no-source-change hardware task."
+    }
+  ],
+  "rejected_claims": [
+    "packet I/O",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility/service readiness",
+    "ssh-ready=true",
+    "fake command expansion",
+    "broad shell work",
+    "phase transition"
+  ],
+  "redaction_review": {
+    "raw_serial_text_retained_in_summary": false,
+    "raw_tftp_peer_or_log_lines_retained_in_summary": false,
+    "packet_payloads_retained": false,
+    "ssh_session_or_key_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false
+  },
+  "commit": null,
+  "validation": {
+    "git_status_before_lab_action": "## main...origin/main [ahead 239]",
+    "archive_review": "scripts/rpi5-archive-review.sh target/tmp/selected-runtime-phase-marker-v30.tar.gz passed.",
+    "lab_api_identity": "Captured status/boot-files before publication, after publication, final pre-restore, and after restore.",
+    "serial_and_tftp": "Fresh serial cursor/drain, stable same-cursor TFTP delta, known-good control, and unchanged candidate rerun captured.",
+    "jq_empty": "jq empty on task-owned JSON evidence and supervisor state passed.",
+    "git_diff_check": "git diff --check passed.",
+    "mdbook_build": "/home/node/.cargo/bin/mdbook build passed.",
+    "git_diff_cached_check": "git diff --cached --check passed."
+  }
+}

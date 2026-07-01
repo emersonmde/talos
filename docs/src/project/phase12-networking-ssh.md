@@ -12949,3 +12949,23 @@ phase12-ssh-live-tcp-pi5-selected-runtime-phase-marker-preflight-v30-20260701;
 packet-I/O/OpenSSH/generated-root retry, remote receipt,
 compatibility/service readiness, ssh-ready=true, fake command expansion, broad
 shell work, and phase transition remain blocked.
+
+phase12-ssh-live-tcp-pi5-selected-runtime-phase-marker-preflight-v30-20260701
+accepts blocked-selected-runtime-phase-marker-missing. The worker published the
+v29-selected marker-family archive under hardwareTestLock, then restored the
+lab to phase12-ssh-v10-openssh-clean-pre-20260624T074100Z. The primary run
+served da591740/kernel_2712.img twice at 152,144 bytes, retained firmware
+NETWORK serial output, but retained zero occurrences of rust_entry, boot info
+parsed, target init, exceptions ready, kernel_main, route-start, or
+runtime-ready markers. Required triage then proved the serial path with a
+known-good production-timer control retaining
+rpi5-production-timer-preemption: PASS, followed by an unchanged candidate
+rerun that again served the selected image twice at 152,144 bytes and retained
+no ordered normal-runtime marker family member. The first missing fact is now:
+selected rpi5_ssh_service_smoltcp_runtime_ready Image is served by TFTP, but
+Pi 5 serial does not retain even TALOS: rust_entry from that selected runtime
+Image. selected_next_task is
+phase12-ssh-live-tcp-selected-runtime-phase-marker-closeout-v30-20260701;
+packet-I/O/OpenSSH/generated-root retry, remote receipt,
+compatibility/service readiness, ssh-ready=true, fake command expansion, broad
+shell work, and phase transition remain blocked.

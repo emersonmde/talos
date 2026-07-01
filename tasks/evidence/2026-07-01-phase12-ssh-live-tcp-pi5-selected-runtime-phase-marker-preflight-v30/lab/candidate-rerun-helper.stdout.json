@@ -1,0 +1,3 @@
+{
+  "note": "helper stdout was empty because final summary jq failed after restore; see sibling stderr and run capture-invariant-summary.json generated from retained evidence"
+}

@@ -1,0 +1,12 @@
+{
+  "control_label": "selected-runtime-phase-marker-v30-known-good-control",
+  "control_marker_present": true,
+  "control_marker_occurrences": 1,
+  "control_fetch_count": 2,
+  "rerun_label": "selected-runtime-phase-marker-v30-candidate-rerun",
+  "rerun_marker_family_present_count": 0,
+  "rerun_deepest_present_marker": null,
+  "rerun_selected_fetch_count": 2,
+  "first_missing_fact": "Selected rpi5_ssh_service_smoltcp_runtime_ready Image was served by TFTP in the primary run and unchanged rerun, but Pi 5 serial retained no ordered normal-runtime marker family member; the first missing marker is TALOS: rust_entry.",
+  "triage_outcome": "Known-good control retained rpi5-production-timer-preemption: PASS once with stable 104136-byte selected-kernel TFTP service; unchanged v30 candidate rerun again served the 152144-byte selected kernel twice and retained no normal-runtime marker family member."
+}

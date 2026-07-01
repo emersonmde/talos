@@ -1,0 +1,36 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-runtime-phase-marker-preflight-v30-20260701",
+  "classification": "blocked-selected-runtime-phase-marker-missing",
+  "references": {
+    "v29_task": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-runtime-phase-marker-reconciliation-v29.md",
+    "v29_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-runtime-phase-marker-reconciliation-v29/classification.json",
+    "v30_task": "tasks/2026-07-01-phase12-ssh-live-tcp-pi5-selected-runtime-phase-marker-preflight-v30.md",
+    "v30_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-runtime-phase-marker-preflight-v30/classification.json",
+    "v30_primary_candidate": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-runtime-phase-marker-preflight-v30/lab/candidate/",
+    "v30_known_good_control": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-runtime-phase-marker-preflight-v30/lab/known-good-control/",
+    "v30_candidate_rerun": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-runtime-phase-marker-preflight-v30/lab/candidate-rerun/",
+    "archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-runtime-phase-marker-preflight-v30/validation/archive-review.stdout.txt",
+    "archive_sha256": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-runtime-phase-marker-preflight-v30/static/archive-sha256.txt",
+    "kernel_sha256": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-runtime-phase-marker-preflight-v30/static/kernel-sha256.txt",
+    "kernel_size": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-runtime-phase-marker-preflight-v30/static/kernel-size.txt"
+  },
+  "evidence_levels": [
+    "static archive/image review",
+    "lab-controller API status/boot-files before publication, after publication, final pre-restore, and after restore",
+    "fresh serial cursor/drain before power action",
+    "serial hardware boot/output",
+    "stable same-cursor TFTP delta before restore",
+    "known-good control",
+    "unchanged candidate rerun",
+    "restore proof",
+    "task-owned JSON evidence"
+  ],
+  "redaction_review": {
+    "summary_excludes_raw_serial_text": true,
+    "summary_excludes_raw_tftp_peer_or_log_lines": true,
+    "summary_excludes_packet_payloads": true,
+    "summary_excludes_ssh_session_or_key_material": true,
+    "summary_excludes_boot_artifact_bytes": true,
+    "retained_files_include_raw_lab_json_for_local_review": true
+  }
+}
