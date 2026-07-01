@@ -1,0 +1,2 @@
+tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-entry-static-reconciliation-v33/classification.json
+tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-entry-static-reconciliation-v33/evidence-map.json

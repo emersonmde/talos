@@ -21709,6 +21709,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   planning for the next bounded repair or discriminator; packet-I/O,
   OpenSSH/generated-root retry, compatibility/service readiness, ssh-ready=true,
   broad shell work, fake command expansion, and phase transition remain blocked.
+- phase12-ssh-live-tcp-selected-normal-runtime-entry-static-reconciliation-v33-20260701
+  accepts selected-normal-runtime-entry-static-discriminator-ready. No hardware
+  action or lab publication was performed. v33 preserves the accepted v26
+  rust_entry/UART10 fact for the earlier 45,400-byte selected-entry artifact
+  and the accepted v32 selected-byte/no-asm_start fact for the 152,144-byte
+  normal-runtime artifact, then adds a separate selected normal-runtime
+  entry-loop discriminator. The non-published v33 archive serves
+  da591740/kernel_2712.img at 152,144 bytes with SHA-256
+  5aa2b4ab51afa018d4c39fc5843e5df01a76dbc42bce2b40287693b5c77d311d and archive
+  SHA-256 cf57163942a3cc9989b6346a7c3bc3a30dd295118cbc86afbd5f0844118db0f3,
+  and loops on TALOS: asm_start before Rust-side work. selected_next_task is
+  phase12-ssh-live-tcp-pi5-selected-normal-runtime-entry-repair-preflight-v34-20260701;
+  packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
+  ssh-ready=true, broad shell work, fake command expansion, and phase
+  transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

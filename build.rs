@@ -13,6 +13,7 @@ struct BootScenario {
 const QEMU_SMP_ASM: &str = "TALOS_QEMU_SMP_BOOT_SCENARIO";
 const RPI5_SMP_ASM: &str = "TALOS_RPI5_SMP_BOOT_SCENARIO";
 const RPI5_EARLY_ENTRY_PROVENANCE_ASM: &str = "TALOS_RPI5_EARLY_ENTRY_PROVENANCE_SCENARIO";
+const RPI5_EARLY_ENTRY_LOOP_ASM: &str = "TALOS_RPI5_EARLY_ENTRY_LOOP_SCENARIO";
 const RPI5_HANDOFF_SENTINEL_ASM: &str = "TALOS_RPI5_HANDOFF_SENTINEL_SCENARIO";
 const RPI5_BOOT_CONTRACT_DISCRIMINATOR_ASM: &str =
     "TALOS_RPI5_BOOT_CONTRACT_DISCRIMINATOR_SCENARIO";
@@ -577,6 +578,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         value: "rpi5_ssh_service_smoltcp_runtime_ready",
         implied_values: &[],
         asm_defines: &[RPI5_EARLY_ENTRY_PROVENANCE_ASM],
+    },
+    BootScenario {
+        value: "rpi5_ssh_service_smoltcp_entry_marker_loop",
+        implied_values: &["rpi5_ssh_service_smoltcp_runtime_ready"],
+        asm_defines: &[RPI5_EARLY_ENTRY_LOOP_ASM],
     },
     BootScenario {
         value: "rpi5_minimal_entry_control",

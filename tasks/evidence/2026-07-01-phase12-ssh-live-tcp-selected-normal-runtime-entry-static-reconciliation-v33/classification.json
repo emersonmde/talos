@@ -1,0 +1,97 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-entry-static-reconciliation-v33-20260701",
+  "classification": "selected-normal-runtime-entry-static-discriminator-ready",
+  "status": "accepted-pending-final-commit",
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-entry-repair-preflight-v34-20260701",
+  "planningNeeded": false,
+  "first_missing_fact": "The selected 152144-byte rpi5_ssh_service_smoltcp_runtime_ready Image is served by TFTP in primary and unchanged rerun, but retained Pi 5 serial shows no TALOS: asm_start from that selected normal-runtime image.",
+  "source_base_before_task": "ec154f4c001f2e0e47184e642879a0fec6d70a32",
+  "changed_files": [
+    "build.rs",
+    "src/arch/aarch64/boot.S",
+    "scripts/rpi5-ssh-service-smoltcp-entry-marker-loop-boot-tree.sh"
+  ],
+  "discriminator": {
+    "scenario": "rpi5_ssh_service_smoltcp_entry_marker_loop",
+    "implied_rust_cfg": "rpi5_ssh_service_smoltcp_runtime_ready",
+    "archive_materialization": "TALOS_CAPTURE_NONCE=runtime-marker-route-static scripts/rpi5-ssh-service-smoltcp-entry-marker-loop-boot-tree.sh target/timer-irq-boot-source target/tmp/selected-normal-runtime-entry-loop-v33-boot-tree && tar -czf target/tmp/selected-normal-runtime-entry-loop-v33.tar.gz -C target/tmp/selected-normal-runtime-entry-loop-v33-boot-tree .",
+    "archive_path": "target/tmp/selected-normal-runtime-entry-loop-v33.tar.gz",
+    "archive_sha256": "cf57163942a3cc9989b6346a7c3bc3a30dd295118cbc86afbd5f0844118db0f3",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "kernel_2712_sha256": "5aa2b4ab51afa018d4c39fc5843e5df01a76dbc42bce2b40287693b5c77d311d",
+    "kernel_2712_size": 152144,
+    "image_header": {
+      "text_offset": 0,
+      "header_image_size": 152144,
+      "flags": 12,
+      "magic": "ARMd"
+    },
+    "root_selected_kernel_equal": true,
+    "expected_marker_family": [
+      "TALOS: asm_start"
+    ],
+    "marker_output_path": "_start -> repeated assembly TALOS: asm_start loop via talos_rpi5_early_uart_write before CPACR setup, BSS clear, stack setup, rust_entry, BootInfo, target init, exceptions, kernel_main, networking, or service code",
+    "restore_target": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "fail_closed_classifications": [
+      "selected-normal-runtime-entry-marker-retained",
+      "blocked-selected-normal-runtime-entry-marker-missing",
+      "selected-normal-runtime-entry-inconclusive-after-triage"
+    ],
+    "qualitatively_different_from_v32": "v32 used one-shot assembly provenance and then continued into the normal runtime path; v33 uses the same selected normal-runtime Rust cfg and selected archive shape but stops in a repeated assembly asm_start loop so hardware can distinguish no selected Image entry from later Rust/runtime failure."
+  },
+  "reconciled_evidence": {
+    "v26_selected_entry_boundary": "Earlier 45400-byte selected-entry marker-loop image reached rust_entry and UART10.",
+    "v31_static_contract": "The 152144-byte selected normal-runtime image contained assembly pre-entry markers and normal-runtime marker strings with a valid Image header and selected mirror.",
+    "v32_hardware_result": "The 152144-byte selected normal-runtime pre-entry image was served twice in primary and rerun but retained no asm_start or later marker; known-good control retained PASS.",
+    "v33_static_result": "A separate entry-loop discriminator archive preserves selected normal-runtime cfg/strings and root/selected equality while repeating TALOS: asm_start before Rust-side work."
+  },
+  "blocked_claims": [
+    "packet-I/O",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility/service readiness",
+    "ssh-ready=true",
+    "fake command expansion",
+    "broad shell work",
+    "phase transition"
+  ],
+  "hardwareAction": false,
+  "labPublication": false,
+  "pi5PowerAction": false,
+  "bootSnapshotMutation": false,
+  "packetIo": false,
+  "opensshGeneratedRootRetry": false,
+  "remoteReceipt": false,
+  "compatibilityServiceReadiness": false,
+  "sshReady": false,
+  "fakeCommandExpansion": false,
+  "broadShellWork": false,
+  "phaseTransition": false,
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Added a separate rpi5_ssh_service_smoltcp_entry_marker_loop discriminator rather than changing the existing runtime-ready continuation scenario."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The discriminator preserves the selected normal-runtime Rust cfg and runtime marker strings while looping on TALOS: asm_start before Rust-side work."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Materialized and reviewed a non-published selected archive with valid Image header, selected mirror equality, and embedded expected markers."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "v26 proves rust_entry/UART10 only for the earlier 45400-byte selected-entry marker-loop artifact, not for the 152144-byte normal-runtime image."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "v34 must run serialized Pi 5 hardware evidence for this exact archive contract before any continuation repair is selected."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness, ssh-ready=true, fake command expansion, broad shell work, and phase transition remain blocked."
+    }
+  ],
+  "commit": null
+}

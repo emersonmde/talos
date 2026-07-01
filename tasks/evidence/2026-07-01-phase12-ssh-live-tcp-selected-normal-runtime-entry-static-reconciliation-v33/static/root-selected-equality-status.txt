@@ -1,0 +1,2 @@
+root_selected_kernel_equal=true
+cmp_exit=0

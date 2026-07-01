@@ -13046,3 +13046,25 @@ pending supervisor planning for the next bounded repair or discriminator;
 packet-I/O/OpenSSH/generated-root retry, remote receipt,
 compatibility/service readiness, ssh-ready=true, fake command expansion, broad
 shell work, and phase transition remain blocked.
+
+phase12-ssh-live-tcp-selected-normal-runtime-entry-static-reconciliation-v33-20260701
+accepts selected-normal-runtime-entry-static-discriminator-ready. No hardware
+action, lab publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The reconciliation preserves the
+v26 fact that the earlier 45,400-byte selected-entry marker-loop image reaches
+rust_entry/UART10 and the v32 fact that the 152,144-byte selected
+normal-runtime pre-entry image is served but retains no TALOS: asm_start. The
+next discriminator keeps the selected normal-runtime service cfg and archive
+shape but uses a repeated assembly TALOS: asm_start loop before CPACR setup,
+BSS clear, stack setup, rust_entry, BootInfo parsing, target init, exceptions,
+kernel_main, networking, or service code. The non-published v33 archive serves
+da591740/kernel_2712.img at 152,144 bytes with SHA-256
+5aa2b4ab51afa018d4c39fc5843e5df01a76dbc42bce2b40287693b5c77d311d and archive
+SHA-256 cf57163942a3cc9989b6346a7c3bc3a30dd295118cbc86afbd5f0844118db0f3.
+selected_next_task is
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-entry-repair-preflight-v34-20260701;
+packet-I/O/OpenSSH/generated-root retry, remote receipt,
+compatibility/service readiness, ssh-ready=true, fake command expansion, broad
+shell work, and phase transition remain blocked.

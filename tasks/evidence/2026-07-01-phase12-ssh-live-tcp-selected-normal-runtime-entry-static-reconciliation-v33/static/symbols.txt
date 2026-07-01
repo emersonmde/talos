@@ -1,0 +1,12 @@
+  4395: 0000000000200114     0 NOTYPE  LOCAL  DEFAULT    1 talos_rpi5_asm_start_line
+  4396: 0000000000200126     0 NOTYPE  LOCAL  DEFAULT    1 talos_rpi5_asm_start_line_end
+  4397: 00000000002000b0     0 NOTYPE  LOCAL  DEFAULT    1 talos_rpi5_early_uart_write
+  4398: 00000000002000d0     0 NOTYPE  LOCAL  DEFAULT    1 talos_rpi5_early_uart_putc
+  4399: 00000000002000ec     0 NOTYPE  LOCAL  DEFAULT    1 talos_rpi5_early_uart_wait_empty
+  4401: 0000000000200126     0 NOTYPE  LOCAL  DEFAULT    1 talos_rpi5_asm_pre_rust_line
+  4402: 0000000000200141     0 NOTYPE  LOCAL  DEFAULT    1 talos_rpi5_asm_pre_rust_line_end
+  4406: 000000000020924c    88 FUNC    GLOBAL DEFAULT    3 rust_entry
+  4667: 0000000000200000   176 FUNC    GLOBAL DEFAULT    1 _start
+  4669: 0000000000225250     0 NOTYPE  GLOBAL DEFAULT    4 __kernel_image_end
+  4670: 0000000000225250     0 NOTYPE  GLOBAL DEFAULT    5 __bss_start
+  4672: 0000000000365260     0 NOTYPE  GLOBAL DEFAULT    5 __stack_top

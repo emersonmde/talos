@@ -1,0 +1,8 @@
+## main...origin/main [ahead 244]
+ M build.rs
+ M docs/src/project/phase12-networking-ssh.md
+ M docs/src/roadmap.md
+ M src/arch/aarch64/boot.S
+?? scripts/rpi5-ssh-service-smoltcp-entry-marker-loop-boot-tree.sh
+?? tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-entry-static-reconciliation-v33.md
+?? tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-entry-static-reconciliation-v33/
