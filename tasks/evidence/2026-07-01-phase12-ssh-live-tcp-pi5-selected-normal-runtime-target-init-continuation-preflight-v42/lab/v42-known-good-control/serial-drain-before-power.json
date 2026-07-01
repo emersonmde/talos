@@ -1,0 +1,9 @@
+{
+  "talos_serial_drain": {
+    "attempts": 16,
+    "total_bytes": 182528,
+    "final_cursor": 4194304,
+    "empty_before_power": false,
+    "discriminator": "bounded-drain-exhausted-before-power"
+  }
+}

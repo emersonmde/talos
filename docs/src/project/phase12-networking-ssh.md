@@ -13309,3 +13309,23 @@ target-init Pi 5 hardware preflight task exists in taskQueue; packet-I/O,
 OpenSSH/generated-root retry, remote receipt, compatibility/service readiness,
 ssh-ready=true, fake command expansion, broad shell work, hardware action, and
 phase transition remain blocked until supervisor planning adds that task.
+
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-continuation-preflight-v42-20260701
+accepts selected-normal-runtime-target-init-marker-retained. Under
+hardwareTestLock, the worker published only the v41 target-init archive and
+ran the Pi 5 discriminator. The first candidate attempt was inconclusive after
+a lab serial-read failure and a restored/baseline final identity, so the worker
+ran the required known-good control and reran the candidate with changed
+capture ordering. The accepted rerun kept selected tree
+478473f46d7dd2d64a42a9fd8f9e56e68de691a1237cb85108ef972f31045305 through
+final pre-restore identity, observed da591740/kernel_2712.img served twice at
+152,880 bytes in stable same-window TFTP evidence, retained TALOS: target init
+3,006 times in the saturated direct-read serial window, and restored to
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. This proves
+the selected normal-runtime archive reaches target init after BootInfo parsing
+and target::init(&boot_info); it does not prove exceptions ready, kernel_main,
+route-start, runtime-ready, packet-I/O, OpenSSH compatibility, service
+readiness, ssh-ready=true, fake command expansion, broad shell work, or phase
+transition. selected_next_task is
+phase12-ssh-live-tcp-selected-normal-runtime-target-init-continuation-closeout-v42-20260701;
+planningNeeded=false.

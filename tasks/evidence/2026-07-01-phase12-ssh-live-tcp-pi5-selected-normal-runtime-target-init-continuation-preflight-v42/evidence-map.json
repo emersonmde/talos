@@ -1,0 +1,28 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-continuation-preflight-v42-20260701",
+  "classification": "selected-normal-runtime-target-init-marker-retained",
+  "files": {
+    "classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-continuation-preflight-v42/classification.json",
+    "run_summary_redacted": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-continuation-preflight-v42/lab/run-summary-redacted.json",
+    "initial_candidate": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-continuation-preflight-v42/lab/v42-candidate/",
+    "known_good_control": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-continuation-preflight-v42/lab/v42-known-good-control/",
+    "accepted_candidate_rerun": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-continuation-preflight-v42/lab/v42-candidate-rerun/",
+    "archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-continuation-preflight-v42/validation/archive-review.stdout.txt",
+    "target_init_archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-continuation-preflight-v42/validation/target-init-archive-review.stdout.txt",
+    "static_archive_sha": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-continuation-preflight-v42/static/archive-sha256.txt",
+    "static_kernel_sha": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-continuation-preflight-v42/static/kernel-sha256.txt",
+    "selected_tree_hash": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-continuation-preflight-v42/static/selected-tree-hash.txt"
+  },
+  "evidence_levels": [
+    "hardwareTestLock",
+    "static archive/image inspection",
+    "lab-controller API identity",
+    "fresh serial cursor/drain",
+    "stable same-cursor TFTP delta before restore",
+    "known-good control",
+    "candidate rerun with changed capture ordering",
+    "serial hardware output marker summary",
+    "restore proof",
+    "task-owned JSON evidence"
+  ]
+}

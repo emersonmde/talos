@@ -21919,6 +21919,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   retry, compatibility and service readiness, ssh-ready=true, fake command
   expansion, broad shell work, hardware action, and phase transition remain
   blocked until supervisor planning adds that task.
+- phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-continuation-preflight-v42-20260701
+  accepts selected-normal-runtime-target-init-marker-retained. The serialized
+  Pi 5 preflight published only the v41 target-init archive under
+  hardwareTestLock. After an initial inconclusive helper-owned capture, the
+  worker ran the required known-good control and reran the candidate with
+  changed capture ordering. The accepted rerun kept selected tree
+  478473f46d7dd2d64a42a9fd8f9e56e68de691a1237cb85108ef972f31045305 through
+  final pre-restore identity, observed da591740/kernel_2712.img served twice at
+  152,880 bytes, retained TALOS: target init 3,006 times, and restored to
+  a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. This
+  proves the selected normal-runtime archive reaches target init after
+  BootInfo parsing and target::init(&boot_info), while exceptions ready,
+  kernel_main, route-start, runtime-ready, packet-I/O, OpenSSH compatibility,
+  service readiness, ssh-ready=true, fake command expansion, broad shell work,
+  and phase transition remain unproved. selected_next_task is
+  phase12-ssh-live-tcp-selected-normal-runtime-target-init-continuation-closeout-v42-20260701;
+  planningNeeded=false.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
