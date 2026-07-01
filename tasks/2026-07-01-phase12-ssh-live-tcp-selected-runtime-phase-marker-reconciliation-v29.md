@@ -153,4 +153,4 @@ phase12-ssh-live-tcp-pi5-selected-runtime-phase-marker-preflight-v30-20260701.
 
 planningNeeded: false.
 
-Commit: recorded in talos-supervisor-state.json after final commit.
+Implementation commit: ec950e11e6dadc1f4db879db3365ab04b5048125.

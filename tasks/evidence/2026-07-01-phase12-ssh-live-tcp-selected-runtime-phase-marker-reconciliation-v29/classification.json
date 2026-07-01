@@ -97,5 +97,5 @@
     "mdbook_build": "/home/node/.cargo/bin/mdbook build passed.",
     "git_diff_cached_check": "git diff --cached --check passed before commit."
   },
-  "commit": null
+  "commit": "ec950e11e6dadc1f4db879db3365ab04b5048125"
 }
