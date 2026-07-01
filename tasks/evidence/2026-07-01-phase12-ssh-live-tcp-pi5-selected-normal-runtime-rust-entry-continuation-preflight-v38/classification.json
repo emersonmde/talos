@@ -1,0 +1,186 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-continuation-preflight-v38-20260701",
+  "classification": "selected-normal-runtime-rust-entry-marker-retained",
+  "selected_next_task": "phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-continuation-closeout-v38-20260701",
+  "planning_needed": false,
+  "hardware_action": true,
+  "lab_publication": true,
+  "boot_snapshot_mutation": false,
+  "pi5_power_action": true,
+  "packet_io": false,
+  "openssh_generated_root_retry": false,
+  "ssh_ready": false,
+  "service_readiness_claim": false,
+  "phase_transition": false,
+  "archive_contract": {
+    "archive_sha256": "b8014b4b935bd81c3fdb077046cc5b10071b57d71af628678c9def68f8b43053",
+    "kernel_sha256": "c1c1c864ca89babb516c11ce0f52357c69b79c2c6034e42150494a043658f9bc",
+    "kernel_size_bytes": 152816,
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "required_marker": "TALOS: rust_entry",
+    "marker_family": [
+      "TALOS: asm_start",
+      "TALOS: asm_pre_rust_entry",
+      "TALOS: rust_entry"
+    ],
+    "selected_tree_hash": "74c090dd99abf3b3b6cc49bb2bc6a52f3e79f193632f7e9c4b17ab9a1514baed",
+    "restore_target": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z"
+  },
+  "evidence": {
+    "candidate_summary": {
+      "run_label": "selected-normal-runtime-rust-entry-v38-candidate",
+      "suggested_classification": "post-handoff-marker-visible",
+      "terminal_classification": "selected-normal-runtime-rust-entry-marker-retained",
+      "expected": {
+        "tree_hash": "74c090dd99abf3b3b6cc49bb2bc6a52f3e79f193632f7e9c4b17ab9a1514baed",
+        "effective_kernel": "kernel_2712.img",
+        "fetch": "da591740/kernel_2712.img",
+        "fetch_bytes": 152816
+      },
+      "preflight_identity": {
+        "expected_tree_hash": "74c090dd99abf3b3b6cc49bb2bc6a52f3e79f193632f7e9c4b17ab9a1514baed",
+        "observed_tree_hash": "74c090dd99abf3b3b6cc49bb2bc6a52f3e79f193632f7e9c4b17ab9a1514baed",
+        "expected_kernel": "kernel_2712.img",
+        "observed_effective_kernel": "kernel_2712.img",
+        "expected_fetch": "da591740/kernel_2712.img",
+        "expected_fetch_bytes": 152816,
+        "observed_fetch_bytes": 152816,
+        "selected_tree_identity_source": "/boot/files",
+        "root_endpoint": {
+          "endpoint": "GET /",
+          "curl_exit": 0,
+          "http_code": 404,
+          "body_bytes": 55,
+          "usable_for_selected_tree_identity": false,
+          "selected_tree_identity_source": "/boot/files",
+          "fallback_used": true,
+          "fallback_reason": "root-endpoint-http-non-2xx"
+        },
+        "tree_matches": true,
+        "effective_kernel_matches": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes_match": true,
+        "staging_publication_mismatch": false
+      },
+      "final_pre_restore_identity": {
+        "tree_hash": "74c090dd99abf3b3b6cc49bb2bc6a52f3e79f193632f7e9c4b17ab9a1514baed",
+        "effective_kernel": "kernel_2712.img",
+        "expected_tree_still_staged": true,
+        "expected_fetch_present": true,
+        "expected_fetch_bytes_match": true
+      },
+      "serial_marker_summary": {
+        "required_marker": "TALOS: rust_entry",
+        "required_marker_occurrences": 208,
+        "marker_family": {
+          "markers": [
+            "TALOS: asm_start",
+            "TALOS: asm_pre_rust_entry",
+            "TALOS: rust_entry"
+          ],
+          "counts": [
+            {
+              "marker": "TALOS: asm_start",
+              "present": false,
+              "occurrences": 0,
+              "first_index": null
+            },
+            {
+              "marker": "TALOS: asm_pre_rust_entry",
+              "present": false,
+              "occurrences": 0,
+              "first_index": null
+            },
+            {
+              "marker": "TALOS: rust_entry",
+              "present": true,
+              "occurrences": 208,
+              "first_index": 4512
+            }
+          ],
+          "deepest_present_marker": {
+            "marker": "TALOS: rust_entry",
+            "present": true,
+            "occurrences": 208,
+            "first_index": 4512
+          },
+          "all_present": false,
+          "present_count": 1
+        },
+        "has_required_marker": true,
+        "has_firmware_network": true,
+        "firmware_network_occurrences": 2,
+        "freshness_contract": {
+          "contract_version": "cursor-nonce-post-power-freshness-v1",
+          "marker_nonce": null,
+          "nonce_token": null,
+          "marker_occurrences_after_saved_cursor": 208,
+          "nonce_occurrences_after_saved_cursor": 0,
+          "post_power_capture_bound": true,
+          "cursor_nonce_fresh": false,
+          "marker_family_fresh": true,
+          "marker_family_freshness": [
+            {
+              "marker": "TALOS: asm_start",
+              "pre_power_occurrences": 552,
+              "post_power_occurrences": 0,
+              "fresh_after_saved_cursor": false
+            },
+            {
+              "marker": "TALOS: asm_pre_rust_entry",
+              "pre_power_occurrences": 1171,
+              "post_power_occurrences": 0,
+              "fresh_after_saved_cursor": false
+            },
+            {
+              "marker": "TALOS: rust_entry",
+              "pre_power_occurrences": 0,
+              "post_power_occurrences": 208,
+              "fresh_after_saved_cursor": true
+            }
+          ],
+          "serial_freshness_ok": true
+        }
+      },
+      "tftp_summary": {
+        "stable": true,
+        "reason": "stable",
+        "event_count": 13,
+        "expected_fetch_count": 2,
+        "expected_fetch_byte_match_count": 2,
+        "cursor_start": 4729949,
+        "cursor_end": 4731300
+      },
+      "identity_join_contract": {
+        "contract_version": "pi5-capture-transaction-v2",
+        "decisive_rp1_hardware_classification_allowed": true,
+        "rejection_reasons": [],
+        "rejected_classification": null,
+        "rule": "missing or mismatched candidate identity, serial-window, or TFTP fields prevent decisive RP1 hardware classification"
+      },
+      "restore_summary": {
+        "snapshot_name": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+        "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+      },
+      "redaction_note": "Redacted summary excludes raw serial text, raw TFTP peer/log-line fields, packet payloads, SSH/session/key material, boot artifact bytes, private data, and stable secret-derived identifiers."
+    },
+    "decisive_facts": [
+      "selected archive published and effective kernel/fetch identity matched before power",
+      "same-window stable TFTP delta served da591740/kernel_2712.img twice at 152816 bytes",
+      "final pre-restore identity remained on the selected tree",
+      "serial hardware output retained TALOS: rust_entry 208 times",
+      "restore returned the lab to the v37-named baseline tree"
+    ],
+    "first_missing_fact": "BootInfo parsing, target init, exceptions, kernel_main, packet-I/O, OpenSSH compatibility, service readiness, ssh-ready=true, fake command expansion, broad shell work, and phase transition remain unproved."
+  },
+  "redaction_review": {
+    "summaries_exclude_raw_serial_text": true,
+    "summaries_exclude_raw_tftp_peer_or_log_lines": true,
+    "summaries_exclude_packet_payloads": true,
+    "summaries_exclude_ssh_session_or_key_material": true,
+    "summaries_exclude_boot_artifact_bytes": true,
+    "private_user_data_retained": false,
+    "stable_secret_derived_identifiers_retained": false,
+    "retained_raw_lab_json_for_local_review_only": true
+  }
+}

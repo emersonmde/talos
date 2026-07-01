@@ -1,0 +1,30 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-continuation-preflight-v38-20260701",
+  "classification": "selected-normal-runtime-rust-entry-marker-retained",
+  "references": {
+    "v37_task": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-continuation-reconciliation-v37.md",
+    "v37_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-continuation-reconciliation-v37/classification.json",
+    "candidate": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-continuation-preflight-v38/lab/candidate/",
+    "redacted_candidate_summary": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-continuation-preflight-v38/lab/candidate/run-summary-redacted.json",
+    "archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-continuation-preflight-v38/validation/archive-review.stdout.txt",
+    "rust_entry_archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-continuation-preflight-v38/validation/rust-entry-archive-review.stdout.txt",
+    "classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-continuation-preflight-v38/classification.json"
+  },
+  "evidence_levels": [
+    "hardwareTestLock",
+    "static archive/image review",
+    "lab-controller API candidate identity before power",
+    "fresh serial cursor/drain before power",
+    "stable same-cursor TFTP delta before restore",
+    "serial hardware output marker-family summary",
+    "final pre-restore identity",
+    "restore proof",
+    "task-owned JSON evidence"
+  ],
+  "selected_next_task": "phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-continuation-closeout-v38-20260701",
+  "planning_needed": false,
+  "redaction_review": {
+    "aggregate_summaries_redacted": true,
+    "raw_lab_json_local_only": true
+  }
+}

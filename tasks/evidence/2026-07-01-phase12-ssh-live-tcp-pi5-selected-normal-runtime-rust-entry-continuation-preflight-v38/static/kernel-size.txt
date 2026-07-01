@@ -1,0 +1,1 @@
+152816 target/tmp/selected-normal-runtime-rust-entry-v37-boot-tree/kernel_2712.img

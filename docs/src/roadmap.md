@@ -21813,6 +21813,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
   ssh-ready=true, broad shell work, fake command expansion, hardware action
   outside the queued v38 preflight, and phase transition remain blocked.
+- phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-continuation-preflight-v38-20260701
+  accepts selected-normal-runtime-rust-entry-marker-retained. The worker
+  published only the v37-selected rust_entry marker-loop archive under
+  hardwareTestLock, then restored the lab to
+  phase12-ssh-v10-openssh-clean-pre-20260624T074100Z. The selected archive
+  served da591740/kernel_2712.img twice at 152,816 bytes, retained final
+  pre-restore identity on selected tree
+  74c090dd99abf3b3b6cc49bb2bc6a52f3e79f193632f7e9c4b17ab9a1514baed, and
+  retained TALOS: rust_entry 208 times. Post-restore identity returned to tree
+  a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. This
+  proves the selected normal-runtime archive can enter rust_entry on Pi 5; it
+  does not prove BootInfo parsing, target init, exceptions, kernel_main,
+  packet-I/O, OpenSSH/generated-root retry, compatibility/service readiness,
+  ssh-ready=true, fake command expansion, broad shell work, or phase
+  transition. selected_next_task is
+  phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-continuation-closeout-v38-20260701.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
