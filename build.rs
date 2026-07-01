@@ -606,6 +606,11 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
         asm_defines: &[RPI5_EARLY_ENTRY_PROVENANCE_ASM],
     },
     BootScenario {
+        value: "rpi5_ssh_service_smoltcp_exceptions_ready_marker_loop",
+        implied_values: &["rpi5_ssh_service_smoltcp_runtime_ready"],
+        asm_defines: &[RPI5_EARLY_ENTRY_PROVENANCE_ASM],
+    },
+    BootScenario {
         value: "rpi5_minimal_entry_control",
         implied_values: &[],
         asm_defines: &[RPI5_EARLY_ENTRY_PROVENANCE_ASM],

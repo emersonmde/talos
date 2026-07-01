@@ -1,0 +1,38 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-exceptions-continuation-reconciliation-v43-20260701",
+  "classification": "selected-normal-runtime-exceptions-discriminator-ready",
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "No explicit v44 exceptions-ready Pi 5 hardware preflight task exists in taskQueue; supervisor must instantiate the next bounded serialized hardware preflight before any lab action.",
+  "hardware_action": false,
+  "lab_publication": false,
+  "boot_snapshot_mutation": false,
+  "pi5_power_action": false,
+  "packet_io": false,
+  "openssh_generated_root_retry": false,
+  "fake_command_expansion": false,
+  "broad_shell_work": false,
+  "phase_transition": false,
+  "archive_contract": {
+    "path": "target/tmp/selected-normal-runtime-exceptions-ready-v43.tar.gz",
+    "sha256": "44733062c516f899b43b3a31241ac19c1bec4dd51d768260e56b066c0db15fed",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "selected_kernel_sha256": "34f17bf595aef2c658f9b95b81703a0c62c0051b6793ab8c7d527882dc164682",
+    "selected_kernel_bytes": 152880,
+    "required_marker": "TALOS: exceptions ready capture-nonce=runtime-marker-route-static",
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z"
+  },
+  "unproved_facts": [
+    "kernel_main",
+    "route-start",
+    "runtime-ready",
+    "packet-I/O",
+    "OpenSSH compatibility",
+    "service readiness",
+    "ssh-ready=true",
+    "fake command expansion",
+    "broad shell work",
+    "phase transition"
+  ],
+  "redaction_review": "Task-owned evidence retains task ids, source/path labels, hashes, byte counts, marker names, helper arguments, classifications, and validation outcomes. It does not retain raw serial text, raw TFTP peer/log-line fields, packet payloads, SSH/session/key material, boot artifact bytes, private data, or stable secret-derived identifiers."
+}

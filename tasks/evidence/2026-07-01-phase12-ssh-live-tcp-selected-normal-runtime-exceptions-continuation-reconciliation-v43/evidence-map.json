@@ -1,0 +1,24 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-exceptions-continuation-reconciliation-v43-20260701",
+  "classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-exceptions-continuation-reconciliation-v43/classification.json",
+  "static_comparison_report": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-exceptions-continuation-reconciliation-v43/static/static-comparison-report.md",
+  "validation": {
+    "archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-exceptions-continuation-reconciliation-v43/validation/archive-review.stdout.txt",
+    "exceptions_ready_archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-exceptions-continuation-reconciliation-v43/validation/exceptions-ready-archive-review.stdout.txt",
+    "capture_bundle_dry_run": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-exceptions-continuation-reconciliation-v43/validation/capture-bundle-dry-run.json"
+  },
+  "accepted_predecessors": {
+    "v34_entry_closeout": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-entry-repair-closeout-v34.md",
+    "v36_pre_rust_closeout": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-continuation-closeout-v36.md",
+    "v38_rust_entry_closeout": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-continuation-closeout-v38.md",
+    "v40_bootinfo_closeout": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-continuation-closeout-v40.md",
+    "v42_target_init_closeout": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-target-init-continuation-closeout-v42.md"
+  },
+  "touched_sources": [
+    "build.rs",
+    "src/main.rs",
+    "src/target/rpi5.rs",
+    "scripts/rpi5-ssh-service-smoltcp-exceptions-ready-marker-loop-boot-tree.sh",
+    "scripts/rpi5-ssh-service-smoltcp-exceptions-ready-marker-loop-archive-review.sh"
+  ]
+}
