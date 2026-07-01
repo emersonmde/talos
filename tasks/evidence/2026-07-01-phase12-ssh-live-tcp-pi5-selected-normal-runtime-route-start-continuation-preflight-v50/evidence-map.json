@@ -1,0 +1,15 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-route-start-continuation-preflight-v50-20260701",
+  "classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-route-start-continuation-preflight-v50/classification.json",
+  "run_summary_redacted": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-route-start-continuation-preflight-v50/lab/run-summary-redacted.json",
+  "accepted_candidate_dir": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-route-start-continuation-preflight-v50/lab/v50-candidate",
+  "archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-route-start-continuation-preflight-v50/validation/route-start-archive-review.stdout.txt",
+  "git_status_before_lab": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-route-start-continuation-preflight-v50/validation/git-status-before-lab.txt",
+  "static_archive_sha256": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-route-start-continuation-preflight-v50/static/archive-sha256.txt",
+  "static_kernel_sha256": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-route-start-continuation-preflight-v50/static/kernel-sha256.txt",
+  "static_kernel_size": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-route-start-continuation-preflight-v50/static/kernel-size.txt",
+  "capture_summary": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-route-start-continuation-preflight-v50/lab/v50-candidate/capture-invariant-summary.json",
+  "boot_staging_identity_check": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-route-start-continuation-preflight-v50/lab/v50-candidate/boot-staging-identity-check.json",
+  "optional_capture_window_v5_check": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-route-start-continuation-preflight-v50/lab/v50-candidate/capture-window-v5-check-candidate-kind.json",
+  "redaction_scan": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-route-start-continuation-preflight-v50/validation/redaction-scan-after.txt"
+}

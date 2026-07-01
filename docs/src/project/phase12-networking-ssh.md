@@ -13527,3 +13527,20 @@ broad shell work, and phase transition remain unproved. selected_next_task is
 phase12-ssh-live-tcp-pi5-selected-normal-runtime-route-start-continuation-preflight-v50-20260701;
 planningNeeded=true because no explicit v50 hardware preflight task exists in
 taskQueue.
+
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-route-start-continuation-preflight-v50-20260701
+accepts selected-normal-runtime-route-start-marker-retained. Under
+hardwareTestLock, the worker published only the v49-selected route-start
+marker-loop archive and captured selected tree
+e1c8ce434afb82517063c9535f53d127ae220b76e2756d65b110fc808193ac63 through
+final pre-restore identity. Stable same-cursor TFTP served
+da591740/kernel_2712.img twice at 152,640 bytes, and the saturated direct-read
+serial window retained TALOS: ssh-service-smoltcp-runtime-route-start
+capture-nonce=runtime-marker-route-static 2,326 times. The lab was restored to
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. This proves
+the selected normal-runtime archive reaches the route-start marker on Pi 5; it
+does not prove runtime-ready, packet-I/O, OpenSSH compatibility, remote
+receipt, service readiness, ssh-ready=true, fake command expansion, broad shell
+work, or phase transition. selected_next_task is
+phase12-ssh-live-tcp-selected-normal-runtime-route-start-continuation-closeout-v50-20260701;
+planningNeeded=false.
