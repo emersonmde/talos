@@ -1,0 +1,1 @@
+[redacted helper stdout; retained structured summary is capture-invariant-summary.json]

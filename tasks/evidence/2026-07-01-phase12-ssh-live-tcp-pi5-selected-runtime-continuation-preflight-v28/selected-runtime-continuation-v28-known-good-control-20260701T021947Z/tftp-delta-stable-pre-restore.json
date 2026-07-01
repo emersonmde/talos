@@ -1,0 +1,86 @@
+{
+  "action": "tftp logs",
+  "ok": true,
+  "tftp": {
+    "cursor_end": 4715088,
+    "cursor_start": 4713737,
+    "events": [
+      {
+        "bytes": 118,
+        "filename": "da591740/config.txt",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "filename": "da591740/config.txt",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "filename": "da591740/pieeprom.sig",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "filename": "da591740//config.txt",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "filename": "da591740//config.txt",
+        "status": "served"
+      },
+      {
+        "bytes": 104136,
+        "filename": "da591740/kernel_2712.img",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "filename": "da591740//config.txt",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "filename": "da591740//cmdline.txt",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "filename": "da591740/armstub8-2712.bin",
+        "status": "not_found"
+      },
+      {
+        "bytes": 104136,
+        "filename": "da591740/kernel_2712.img",
+        "status": "served"
+      }
+    ],
+    "log": "/state/tftp.log",
+    "log_size": 4715088,
+    "tail_mode": false,
+    "truncated": false
+  },
+  "talos_tftp_stability": {
+    "stable": true,
+    "reason": "stable",
+    "stable_samples": 3,
+    "required_samples": 3
+  },
+  "raw_tftp_peer_or_log_lines_redacted": true
+}

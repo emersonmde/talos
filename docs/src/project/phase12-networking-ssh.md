@@ -12891,3 +12891,22 @@ phase12-ssh-live-tcp-pi5-selected-runtime-continuation-preflight-v28-20260701;
 packet-I/O/OpenSSH/generated-root retry, remote receipt,
 compatibility/service readiness, ssh-ready=true, broad shell work, fake command
 expansion, and phase transition remain blocked.
+
+phase12-ssh-live-tcp-pi5-selected-runtime-continuation-preflight-v28-20260701
+accepts blocked-selected-runtime-continuation-marker-missing. The worker
+published the v27 selected normal-runtime continuation archive under
+hardwareTestLock, then restored the lab to
+phase12-ssh-v10-openssh-clean-pre-20260624T074100Z. The primary run served
+da591740/kernel_2712.img twice at 152,144 bytes but retained no TALOS:
+kernel_main and no ssh-service-smoltcp-runtime-ready marker. Required triage
+then proved the serial path with a known-good control retaining
+rpi5-production-timer-preemption: PASS, followed by an unchanged candidate
+rerun that again served the selected image twice at 152,144 bytes and retained
+neither kernel_main nor the contracted runtime marker. The first missing fact
+is now: selected rpi5_ssh_service_smoltcp_runtime_ready Image is served by
+TFTP, but Pi 5 serial does not reach kernel_main or the contracted runtime
+marker. selected_next_task is
+phase12-ssh-live-tcp-selected-runtime-continuation-closeout-v28-20260701;
+packet-I/O/OpenSSH/generated-root retry, remote receipt,
+compatibility/service readiness, ssh-ready=true, broad shell work, fake command
+expansion, and phase transition remain blocked.

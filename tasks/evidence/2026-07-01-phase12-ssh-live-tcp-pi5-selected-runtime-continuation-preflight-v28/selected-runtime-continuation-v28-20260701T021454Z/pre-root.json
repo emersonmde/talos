@@ -1,0 +1,100 @@
+{
+  "action": "boot files",
+  "boot": {
+    "active_name": "kernel8.img",
+    "config": {
+      "enable_rp1_uart": "1",
+      "kernel": "kernel_2712.img",
+      "os_check": "0"
+    },
+    "configured_kernel": "kernel_2712.img",
+    "effective_kernel": "kernel_2712.img",
+    "files": [
+      {
+        "bytes": 78679,
+        "mtime": 1782872094,
+        "name": "bcm2712-rpi-5-b.dtb"
+      },
+      {
+        "bytes": 81,
+        "mtime": 1782872095,
+        "name": "cmdline.txt"
+      },
+      {
+        "bytes": 118,
+        "mtime": 1782872095,
+        "name": "config.txt"
+      },
+      {
+        "bytes": 78679,
+        "mtime": 1782872095,
+        "name": "da591740/bcm2712-rpi-5-b.dtb"
+      },
+      {
+        "bytes": 81,
+        "mtime": 1782872095,
+        "name": "da591740/cmdline.txt"
+      },
+      {
+        "bytes": 118,
+        "mtime": 1782872095,
+        "name": "da591740/config.txt"
+      },
+      {
+        "bytes": 152144,
+        "mtime": 1782872095,
+        "name": "da591740/kernel8.img"
+      },
+      {
+        "bytes": 152144,
+        "mtime": 1782872095,
+        "name": "da591740/kernel_2712.img"
+      },
+      {
+        "bytes": 1363,
+        "mtime": 1782872095,
+        "name": "da591740/overlays/bcm2712d0.dtbo"
+      },
+      {
+        "bytes": 5971,
+        "mtime": 1782872095,
+        "name": "da591740/overlays/overlay_map.dtb"
+      },
+      {
+        "bytes": 1071,
+        "mtime": 1782872095,
+        "name": "da591740/overlays/uart0-pi5.dtbo"
+      },
+      {
+        "bytes": 152144,
+        "mtime": 1782872095,
+        "name": "kernel8.img"
+      },
+      {
+        "bytes": 152144,
+        "mtime": 1782872094,
+        "name": "kernel_2712.img"
+      },
+      {
+        "bytes": 1363,
+        "mtime": 1782872095,
+        "name": "overlays/bcm2712d0.dtbo"
+      },
+      {
+        "bytes": 5971,
+        "mtime": 1782872095,
+        "name": "overlays/overlay_map.dtb"
+      },
+      {
+        "bytes": 1071,
+        "mtime": 1782872095,
+        "name": "overlays/uart0-pi5.dtbo"
+      }
+    ],
+    "publish_dir": "/boot-root",
+    "rollback_available": true,
+    "rollback_name": "kernel8.img.previous",
+    "tree_hash": "1960865e6b41617c966d322d9a6bb972cd9c6ffe805005b0779057268127d61b"
+  },
+  "ok": true
+}

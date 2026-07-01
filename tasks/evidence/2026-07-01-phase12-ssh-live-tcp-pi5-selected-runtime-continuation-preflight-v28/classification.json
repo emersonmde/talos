@@ -1,0 +1,97 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-runtime-continuation-preflight-v28-20260701",
+  "run_label": "selected-runtime-continuation-v28-20260701T021454Z",
+  "classification": "blocked-selected-runtime-continuation-marker-missing",
+  "selected_next_task": "phase12-ssh-live-tcp-selected-runtime-continuation-closeout-v28-20260701",
+  "planningNeeded": false,
+  "first_missing_fact": "Selected rpi5_ssh_service_smoltcp_runtime_ready Image is served by TFTP, but Pi 5 serial does not reach kernel_main or the contracted ssh-service-smoltcp runtime marker.",
+  "expected_marker": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-marker-route-static",
+  "static_archive_review": {
+    "archive_sha256_line": "92a54ac63c21be683a9e273323e7417900253867acc876a849ac06f4df13d5a6  target/tmp/selected-runtime-continuation-v28.tar.gz",
+    "kernel_sha256_line": "665d993ab7c36065fa4810ae09613ed9d92aba30cdd5881e06e23b50b4d25a72  target/tmp/selected-runtime-continuation-v28-boot-tree/kernel_2712.img",
+    "kernel_size": 152144
+  },
+  "hardware_summary": {
+    "primary": {
+      "label": "selected-runtime-continuation-v28-20260701T021454Z",
+      "selected_tree_hash": "1960865e6b41617c966d322d9a6bb972cd9c6ffe805005b0779057268127d61b",
+      "effective_kernel": "kernel_2712.img",
+      "expected_fetch_path": "da591740/kernel_2712.img",
+      "expected_fetch_byte_count": 152144,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "stable_tftp_event_count": 13,
+      "serial_required_marker": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-marker-route-static",
+      "serial_marker_present": false,
+      "serial_marker_occurrences": 0,
+      "kernel_main_present": false,
+      "final_pre_restore_selected_tree": true,
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "identity_join_rejection_reasons": [
+        "serial-freshness-v1-not-proven"
+      ]
+    },
+    "known_good_control": {
+      "label": "selected-runtime-continuation-v28-known-good-control-20260701T021947Z",
+      "classification": "post-handoff-marker-visible",
+      "marker_present": true,
+      "marker_occurrences": 1,
+      "rejection_reasons": []
+    },
+    "unchanged_candidate_rerun": {
+      "label": "selected-runtime-continuation-v28-rerun-20260701T021947Z",
+      "classification": "reset-side-effect-without-visible-marker-candidate",
+      "selected_tree_hash": "1960865e6b41617c966d322d9a6bb972cd9c6ffe805005b0779057268127d61b",
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2,
+      "marker_present": false,
+      "marker_occurrences": 0,
+      "kernel_main_present": false,
+      "rejection_reasons": [],
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    },
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "final_lab_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Executed the v27 selected normal-runtime continuation archive under hardwareTestLock with serialized Pi 5 capture-chain evidence."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Ran required triage after the first serial-freshness mismatch: known-good control retained its PASS marker, and the unchanged candidate rerun again served the selected image twice."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "The contracted selected normal-runtime marker was not retained; closeout must preserve the first missing post-rust_entry fact before any packet-I/O/OpenSSH work."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Selected-byte service, final pre-restore identity, control marker visibility, unchanged candidate rerun, and restore proof were checked before accepting the marker-missing classification."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness, ssh-ready=true, fake command expansion, broad shell work, and phase transition remain rejected as successors."
+    }
+  ],
+  "rejected_claims": [
+    "packet I/O",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility/service readiness",
+    "ssh-ready=true",
+    "fake command expansion",
+    "broad shell work",
+    "phase transition"
+  ],
+  "redaction_review": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_peer_or_log_lines_retained": false,
+    "packet_payloads_retained": false,
+    "ssh_session_or_key_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false,
+    "stable_secret_derived_identifiers_retained": false
+  }
+}

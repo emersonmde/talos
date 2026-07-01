@@ -1,0 +1,16 @@
+{
+  "control_label": "selected-runtime-continuation-v28-known-good-control-20260701T021947Z",
+  "control_exit_class": "post-handoff-marker-visible",
+  "control_marker_present": true,
+  "control_marker_occurrences": 1,
+  "control_rejection_reasons": [],
+  "rerun_label": "selected-runtime-continuation-v28-rerun-20260701T021947Z",
+  "rerun_exit_class": "reset-side-effect-without-visible-marker-candidate",
+  "rerun_marker_present": false,
+  "rerun_marker_occurrences": 0,
+  "rerun_kernel_main_present": false,
+  "rerun_rejection_reasons": [],
+  "rerun_expected_fetch_count": 2,
+  "rerun_expected_fetch_byte_match_count": 2,
+  "rerun_post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+}
