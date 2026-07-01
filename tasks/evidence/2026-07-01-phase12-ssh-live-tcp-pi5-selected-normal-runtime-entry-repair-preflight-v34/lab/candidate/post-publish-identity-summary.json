@@ -1,0 +1,9 @@
+{
+  "tree_hash": "23d7eecf13a716d6e762318df5375d567b0abbfb209d37e4cd40e3a46b79cc7f",
+  "effective_kernel": "kernel_2712.img",
+  "expected_fetch": "da591740/kernel_2712.img",
+  "expected_bytes": 152144,
+  "observed_fetch_bytes": 152144,
+  "expected_fetch_present": true,
+  "expected_fetch_bytes_match": true
+}

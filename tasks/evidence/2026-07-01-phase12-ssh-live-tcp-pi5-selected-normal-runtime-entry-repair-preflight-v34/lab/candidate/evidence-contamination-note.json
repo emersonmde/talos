@@ -1,0 +1,17 @@
+{
+  "note": "The foreground helper completed candidate capture and restore at 2026-07-01T06:45:13Z and wrote the authoritative original summary to helper.stdout.json. A later manual salvage attempt after restore overwrote some per-file serial/TFTP/final identity JSON files; those overwritten per-file artifacts are quarantined by evidence policy and are not used for terminal classification. original-helper-summary.json/capture-invariant-summary.json preserve the decisive original helper summary.",
+  "authoritative_for_classification": [
+    "helper.stdout.json",
+    "original-helper-summary.json",
+    "capture-invariant-summary.json"
+  ],
+  "not_used_for_classification_after_salvage": [
+    "serial-observe-window.json",
+    "tftp-delta-stable-pre-restore.json",
+    "final-pre-restore-status.json",
+    "final-pre-restore-boot-files.json",
+    "restore-snapshot.json",
+    "post-restore-status.json"
+  ],
+  "reason": "post-restore salvage contamination risk; terminal classification uses the pre-salvage helper stdout summary only"
+}

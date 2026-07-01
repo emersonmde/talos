@@ -13068,3 +13068,20 @@ phase12-ssh-live-tcp-pi5-selected-normal-runtime-entry-repair-preflight-v34-2026
 packet-I/O/OpenSSH/generated-root retry, remote receipt,
 compatibility/service readiness, ssh-ready=true, fake command expansion, broad
 shell work, and phase transition remain blocked.
+
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-entry-repair-preflight-v34-20260701
+accepts selected-normal-runtime-entry-marker-retained. The worker published
+only the v33-selected entry-loop archive under hardwareTestLock, then restored
+the lab to phase12-ssh-v10-openssh-clean-pre-20260624T074100Z. The selected
+archive served da591740/kernel_2712.img twice at 152,144 bytes with SHA-256
+5aa2b4ab51afa018d4c39fc5843e5df01a76dbc42bce2b40287693b5c77d311d, and the
+authoritative helper summary retained TALOS: asm_start 504 times. Final
+pre-restore identity remained on selected tree
+23d7eecf13a716d6e762318df5375d567b0abbfb209d37e4cd40e3a46b79cc7f, and
+post-restore identity returned to tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. This proves
+the selected normal-runtime archive can reach assembly entry on Pi 5; it does
+not prove rust_entry, kernel_main, packet-I/O, OpenSSH/generated-root retry,
+remote receipt, compatibility/service readiness, ssh-ready=true, fake command
+expansion, broad shell work, or phase transition. selected_next_task is
+phase12-ssh-live-tcp-selected-normal-runtime-entry-repair-closeout-v34-20260701.

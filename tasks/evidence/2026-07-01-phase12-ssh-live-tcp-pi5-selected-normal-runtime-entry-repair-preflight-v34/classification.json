@@ -1,0 +1,128 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-entry-repair-preflight-v34-20260701",
+  "classification": "selected-normal-runtime-entry-marker-retained",
+  "status": "accepted-pending-final-commit",
+  "selected_next_task": "phase12-ssh-live-tcp-selected-normal-runtime-entry-repair-closeout-v34-20260701",
+  "planningNeeded": false,
+  "hardwareAction": true,
+  "labPublication": true,
+  "pi5PowerAction": true,
+  "bootSnapshotMutation": true,
+  "packetIo": false,
+  "opensshGeneratedRootRetry": false,
+  "remoteReceipt": false,
+  "compatibilityServiceReadiness": false,
+  "sshReady": false,
+  "fakeCommandExpansion": false,
+  "broadShellWork": false,
+  "phaseTransition": false,
+  "first_missing_fact": null,
+  "archive": {
+    "path": "target/tmp/selected-normal-runtime-entry-loop-v33.tar.gz",
+    "archive_sha256_line": "cf57163942a3cc9989b6346a7c3bc3a30dd295118cbc86afbd5f0844118db0f3  target/tmp/selected-normal-runtime-entry-loop-v33.tar.gz",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "kernel_sha256_line": "5aa2b4ab51afa018d4c39fc5843e5df01a76dbc42bce2b40287693b5c77d311d  target/tmp/selected-normal-runtime-entry-loop-v33-boot-tree/kernel_2712.img",
+    "kernel_size": 152144,
+    "expected_fetch_bytes": 152144
+  },
+  "run": {
+    "label": "selected-normal-runtime-entry-v34-candidate",
+    "helper_suggested_classification": "reset-side-effect-without-visible-marker-candidate",
+    "decisive_identity_join": true,
+    "rejection_reasons": [],
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "tftp": {
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2
+    },
+    "marker_family": {
+      "markers": [
+        "TALOS: asm_start"
+      ],
+      "counts": [
+        {
+          "marker": "TALOS: asm_start",
+          "present": true,
+          "occurrences": 504,
+          "first_index": 4473
+        }
+      ],
+      "deepest_present_marker": {
+        "marker": "TALOS: asm_start",
+        "present": true,
+        "occurrences": 504,
+        "first_index": 4473
+      },
+      "all_present": true,
+      "present_count": 1
+    },
+    "required_marker": "TALOS: asm_start",
+    "required_marker_occurrences": 504,
+    "has_required_marker_field": false,
+    "deepest_present_marker": {
+      "marker": "TALOS: asm_start",
+      "present": true,
+      "occurrences": 504,
+      "first_index": 4473
+    },
+    "final_pre_restore_identity": {
+      "tree_hash": "23d7eecf13a716d6e762318df5375d567b0abbfb209d37e4cd40e3a46b79cc7f",
+      "effective_kernel": "kernel_2712.img",
+      "expected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes_match": true
+    },
+    "restore": {
+      "snapshot_name": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "hardware_lock": {
+    "acquired_at": "2026-07-01T06:41:43Z",
+    "released_at": "2026-07-01T06:49:53Z",
+    "restored": true,
+    "final_post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z"
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Published and ran the v33-selected normal-runtime entry-loop discriminator under hardwareTestLock with selected-byte TFTP evidence and restore proof."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The selected 152144-byte da591740/kernel_2712.img served twice and retained TALOS: asm_start 504 times in the authoritative helper summary marker-family counts."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Known-good control and unchanged candidate rerun were not required because the primary selected run retained the predecessor-named earliest marker."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "The helper suggested_classification remained reset-side-effect-without-visible-marker-candidate because has_required_marker was false despite marker_family and required_marker_occurrences proving TALOS: asm_start retention; script repair is outside this no-source-edits-after-hardware task."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness, ssh-ready=true, fake command expansion, broad shell work, and phase transition remain blocked."
+    }
+  ],
+  "validation": [
+    "git status --short --branch before lab action",
+    "static archive/image review before publication",
+    "Lab API GET /status, /boot/files, and nonfatal GET / root-endpoint metadata before publication, after publication, before power, final pre-restore, and after restore",
+    "fresh serial cursor/drain and GET /tftp/logs cursor before Pi 5 power action",
+    "stable same-cursor TFTP delta before restore from authoritative helper summary",
+    "restore to phase12-ssh-v10-openssh-clean-pre-20260624T074100Z and final Lab API GET /status before lock release"
+  ],
+  "redaction_review": {
+    "summary_excludes_raw_serial_text": true,
+    "summary_excludes_raw_tftp_peer_or_log_lines": true,
+    "summary_excludes_packet_payloads": true,
+    "summary_excludes_ssh_session_or_key_material": true,
+    "summary_excludes_boot_artifact_bytes": true,
+    "retained_files_include_raw_lab_json_for_local_review": true
+  }
+}

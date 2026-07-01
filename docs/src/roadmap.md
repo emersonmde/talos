@@ -21724,6 +21724,18 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
   ssh-ready=true, broad shell work, fake command expansion, and phase
   transition remain blocked.
+- phase12-ssh-live-tcp-pi5-selected-normal-runtime-entry-repair-preflight-v34-20260701
+  accepts selected-normal-runtime-entry-marker-retained. The v33-selected
+  entry-loop archive served da591740/kernel_2712.img twice at 152,144 bytes
+  under hardwareTestLock, and the authoritative Pi 5 serial helper summary
+  retained TALOS: asm_start 504 times. The lab was restored to
+  phase12-ssh-v10-openssh-clean-pre-20260624T074100Z with tree
+  a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+  selected_next_task is
+  phase12-ssh-live-tcp-selected-normal-runtime-entry-repair-closeout-v34-20260701;
+  packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
+  ssh-ready=true, broad shell work, fake command expansion, and phase
+  transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
