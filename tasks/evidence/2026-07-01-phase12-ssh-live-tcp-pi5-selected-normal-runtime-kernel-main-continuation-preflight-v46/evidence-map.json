@@ -1,0 +1,23 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v46-20260701",
+  "classification": "blocked-selected-normal-runtime-kernel-main-preflight",
+  "files": {
+    "classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v46/classification.json",
+    "task_record": "tasks/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v46.md",
+    "archive_sha": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v46/static/archive-sha256.txt",
+    "kernel_sha": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v46/static/kernel-sha256.txt",
+    "kernel_size": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v46/static/kernel-size.txt",
+    "kernel_main_archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v46/validation/kernel-main-archive-review.stdout.txt",
+    "git_status_before_action": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v46/validation/git-status-before-action.txt"
+  },
+  "evidence_levels": [
+    "static archive/image inspection",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "hardware_lock_acquired": false,
+  "lab_publication": false,
+  "selected_next_task": null,
+  "planning_needed": true
+}

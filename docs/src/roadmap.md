@@ -22025,6 +22025,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   compatibility/service readiness, ssh-ready=true, fake command expansion,
   broad shell work, hardware action, and phase transition remain blocked until
   supervisor planning adds that task.
+- phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v46-20260701
+  accepts blocked-selected-normal-runtime-kernel-main-preflight. The worker
+  promoted the ready task but stopped before hardwareTestLock acquisition, lab
+  publication, boot snapshot mutation, or Pi 5 power action because the
+  pre-publication static contract was inconsistent. The v45 archive SHA-256
+  still matched
+  72c28bafe9bedd1474fd1dfb19db101e9078122506db1b6f13bbbebdad383f19 and the
+  archive review retained the required kernel_main marker-loop contract, but
+  the v46 validation gate required selected kernel SHA-256
+  96057d2f8970808011a308f7b3a92da6feb85097b44590947a1ac145f85c6be6 while the
+  committed v45 static evidence and current archive kernel bytes hash to
+  2f89f98cf9403ccee58c20f8014f3c5fd83accb2f99da2f35b4b1eec6928cdc5.
+  selected_next_task is null and planningNeeded=true pending supervisor
+  reconciliation before any serialized Pi 5 kernel_main preflight.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

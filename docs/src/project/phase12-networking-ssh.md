@@ -13429,3 +13429,22 @@ in taskQueue; route-start, runtime-ready, packet-I/O, OpenSSH/generated-root
 retry, remote receipt, compatibility/service readiness, ssh-ready=true, fake
 command expansion, broad shell work, hardware action, and phase transition
 remain blocked until supervisor planning adds that task.
+
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v46-20260701
+accepts blocked-selected-normal-runtime-kernel-main-preflight. No
+hardwareTestLock acquisition, lab publication, boot snapshot mutation, Pi 5
+power cycle, serial/TFTP capture, packet-I/O, OpenSSH/generated-root retry,
+remote receipt, compatibility claim, service success claim, ssh-ready=true,
+fake/kernel-backed command expansion, broad shell work, or phase transition was
+performed. The worker promoted the ready task and rechecked the v45
+non-published archive before hardware action. The archive SHA-256 still matched
+72c28bafe9bedd1474fd1dfb19db101e9078122506db1b6f13bbbebdad383f19 and the
+kernel_main archive review still found the required
+TALOS: kernel_main capture-nonce=runtime-marker-route-static marker-loop
+contract, but the v46 validation gate named selected kernel SHA-256
+96057d2f8970808011a308f7b3a92da6feb85097b44590947a1ac145f85c6be6 while the
+committed v45 static evidence and the current archive kernel bytes hash to
+2f89f98cf9403ccee58c20f8014f3c5fd83accb2f99da2f35b4b1eec6928cdc5. The archive
+was not published. selected_next_task is null and planningNeeded=true pending
+supervisor reconciliation of the authoritative v45/v46 kernel hash contract
+before any Pi 5 preflight.
