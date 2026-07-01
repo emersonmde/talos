@@ -1,0 +1,101 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-runtime-phase-marker-reconciliation-v29-20260701",
+  "classification": "selected-runtime-phase-marker-discriminator-ready",
+  "status": "accepted-pending-final-commit",
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-runtime-phase-marker-preflight-v30-20260701",
+  "planningNeeded": false,
+  "first_missing_fact": "Selected rpi5_ssh_service_smoltcp_runtime_ready Image is served by TFTP, but retained v28 evidence does not identify the deepest reached early normal-runtime marker before kernel_main/runtime marker absence.",
+  "source_commit_for_v30_archive": "7001a4e0227a48cac4a02547fd1eec62f0b3bf8c",
+  "archive_materialization": {
+    "command": "TALOS_CAPTURE_NONCE=runtime-marker-route-static scripts/rpi5-ssh-service-smoltcp-runtime-ready-boot-tree.sh target/timer-irq-boot-source target/tmp/selected-runtime-phase-marker-v30-boot-tree && tar -czf target/tmp/selected-runtime-phase-marker-v30.tar.gz -C target/tmp/selected-runtime-phase-marker-v30-boot-tree .",
+    "archive_path": "target/tmp/selected-runtime-phase-marker-v30.tar.gz",
+    "archive_sha256": "6dd1a37c9979bfee4ef83d6b2bb12863a07ed4f7451434d3e011d8e68eb589d1",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "kernel_2712_sha256": "665d993ab7c36065fa4810ae09613ed9d92aba30cdd5881e06e23b50b4d25a72",
+    "kernel_2712_size": 152144,
+    "image_header": {
+      "text_offset": 0,
+      "header_image_size": 152144,
+      "flags": 12
+    },
+    "root_selected_kernel_equal": true
+  },
+  "v30_contract": {
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "serial_marker_primary": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-marker-route-static",
+    "serial_marker_family": [
+      "TALOS: rust_entry",
+      "TALOS: boot info parsed",
+      "TALOS: target init",
+      "TALOS: exceptions ready",
+      "TALOS: kernel_main",
+      "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=runtime-marker-route-static source=network-device-smoltcp-runtime",
+      "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-marker-route-static"
+    ],
+    "marker_source": "src/main.rs rust_entry normal path, src/boot/rpi5.rs kernel_main, and src/target/rpi5.rs run_ssh_service_smoltcp_runtime_ready_route via UART10 early-phase writes",
+    "capture_helper_contract": "scripts/rpi5-observe-serial-window.sh now records ordered marker_family counts/deepest_present_marker; scripts/rpi5-capture-invariant-proof-bundle.sh carries the marker family into task summaries and freshness checks.",
+    "fail_closed_classifications": [
+      "deepest-marker-retained-before-runtime-ready",
+      "blocked-selected-runtime-phase-marker-missing",
+      "selected-runtime-phase-marker-inconclusive-after-triage",
+      "staging-publication-mismatch"
+    ],
+    "redaction_rules": [
+      "Retain marker names, counts, hashes, byte counts, classifications, and lab identity summaries.",
+      "Do not retain raw serial text, raw TFTP peer/log-line fields, packet payloads, SSH/session/key material, boot artifact bytes, private user data, stable secret-derived identifiers, or unnecessary hardware data."
+    ],
+    "qualitatively_different_from_v28": "v28 counted only kernel_main and the final runtime-ready marker in retained summaries; v30 must retain the ordered early-phase marker family and deepest reached marker before interpreting final marker absence."
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Early-phase marker routing is already present on the normal path: rust_entry, BootInfoParsed, TargetInit, ExceptionsReady, kernel_main, route-start, and runtime-ready all emit through the Pi 5 early UART path for rpi5_ssh_service_smoltcp_runtime_ready."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "UART10 early-phase writes flush after each byte and at route completion; no source flush defect was found."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Panic and allocation-error visibility already emits retained TALOS panic/alloc text and flushes UART10 before halting/spinning."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Scenario cfg inclusion/exclusion is correct: rpi5_ssh_service_smoltcp_runtime_ready is included in the Pi 5 scenario list and is not excluded from the normal rust_entry -> BootInfo -> target init -> exceptions -> kernel_main path."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "v28 marker-search adequacy was insufficient for the next boundary because retained summaries did not count the full early-phase marker family; capture helpers now record marker_family counts and deepest_present_marker."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Selected archive identity remains unchanged from the v27/v28 boot-image contract: da591740/kernel_2712.img is 152,144 bytes with SHA-256 665d993ab7c36065fa4810ae09613ed9d92aba30cdd5881e06e23b50b4d25a72."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness, ssh-ready=true, fake command expansion, broad shell work, and phase transition remain rejected as successors."
+    }
+  ],
+  "rejected_claims": [
+    "packet I/O",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility/service readiness",
+    "ssh-ready=true",
+    "fake command expansion",
+    "broad shell work",
+    "phase transition"
+  ],
+  "validation": {
+    "git_status_before_edits": "## main...origin/main [ahead 237]",
+    "sh_n": "scripts/rpi5-observe-serial-window.sh and scripts/rpi5-capture-invariant-proof-bundle.sh passed.",
+    "dry_run": "TALOS_SERIAL_MARKER_FAMILY dry-run exposed the ordered marker family in the capture bundle contract.",
+    "archive_review": "scripts/rpi5-archive-review.sh target/tmp/selected-runtime-phase-marker-v30.tar.gz passed.",
+    "cargo_build": "cargo -Zjson-target-spec build --target targets/aarch64-talos-rpi5-bcm2712.json passed.",
+    "jq_empty": "jq empty on task-owned JSON evidence and supervisor state passed.",
+    "git_diff_check": "git diff --check passed.",
+    "mdbook_build": "/home/node/.cargo/bin/mdbook build passed.",
+    "git_diff_cached_check": "git diff --cached --check passed before commit."
+  },
+  "commit": null
+}

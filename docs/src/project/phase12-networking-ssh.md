@@ -12926,3 +12926,26 @@ and planningNeeded=true because no queued successor has refreshed dependencies
 for the next smallest feature step; packet-I/O/OpenSSH/generated-root retry,
 remote receipt, compatibility/service readiness, ssh-ready=true, broad shell
 work, fake command expansion, and phase transition remain blocked.
+
+phase12-ssh-live-tcp-selected-runtime-phase-marker-reconciliation-v29-20260701
+accepts selected-runtime-phase-marker-discriminator-ready. No hardware action,
+lab publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The reconciliation keeps the
+v28 selected-byte/kernel_main/runtime-marker absence as the frontier, but fixes
+the evidence contract for the next feature discriminator: retained serial
+summaries now record ordered early-phase marker-family counts and
+deepest_present_marker. The non-published v30 selected archive serves
+da591740/kernel_2712.img at 152,144 bytes with SHA-256
+665d993ab7c36065fa4810ae09613ed9d92aba30cdd5881e06e23b50b4d25a72 and archive
+SHA-256 6dd1a37c9979bfee4ef83d6b2bb12863a07ed4f7451434d3e011d8e68eb589d1.
+The next serialized Pi 5 preflight must search the ordered marker family:
+rust_entry, boot info parsed, target init, exceptions ready, kernel_main,
+ssh-service-smoltcp-runtime-route-start, and
+ssh-service-smoltcp-runtime-ready with capture-nonce=runtime-marker-route-static.
+selected_next_task is
+phase12-ssh-live-tcp-pi5-selected-runtime-phase-marker-preflight-v30-20260701;
+packet-I/O/OpenSSH/generated-root retry, remote receipt,
+compatibility/service readiness, ssh-ready=true, fake command expansion, broad
+shell work, and phase transition remain blocked.

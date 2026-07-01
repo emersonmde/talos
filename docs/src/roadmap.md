@@ -21625,6 +21625,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   task; packet-I/O/OpenSSH/generated-root retry, compatibility/service
   readiness, ssh-ready=true, broad shell work, fake command expansion, and
   phase transition remain blocked.
+- phase12-ssh-live-tcp-selected-runtime-phase-marker-reconciliation-v29-20260701
+  accepts selected-runtime-phase-marker-discriminator-ready. No hardware action
+  or lab publication was performed. v29 fixes the retained evidence contract
+  for the next selected normal-runtime feature run: the serial capture helper
+  now records ordered marker-family counts and deepest_present_marker, and the
+  capture bundle carries that family into freshness summaries. The non-published
+  v30 archive serves da591740/kernel_2712.img at 152,144 bytes with SHA-256
+  665d993ab7c36065fa4810ae09613ed9d92aba30cdd5881e06e23b50b4d25a72 and archive
+  SHA-256 6dd1a37c9979bfee4ef83d6b2bb12863a07ed4f7451434d3e011d8e68eb589d1.
+  selected_next_task is
+  phase12-ssh-live-tcp-pi5-selected-runtime-phase-marker-preflight-v30-20260701;
+  packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
+  ssh-ready=true, broad shell work, fake command expansion, and phase
+  transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

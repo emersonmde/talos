@@ -14,6 +14,7 @@ MAX_BYTES="${4:-65536}"
 MARKER="${5:-rpi5-rp1-post-handoff-marker-reset}"
 CAPTURE_MODE="${TALOS_SERIAL_CAPTURE_MODE:-auto}"
 SATURATION_LIMIT="${TALOS_SERIAL_CURSOR_SATURATION_LIMIT:-4194304}"
+MARKER_FAMILY="${TALOS_SERIAL_MARKER_FAMILY:-}"
 
 case "$SERIAL_CURSOR" in
     ''|*[!0-9]*)
@@ -95,6 +96,7 @@ while :; do
 
     annotated="$(jq -s \
         --arg marker "$MARKER" \
+        --arg marker_family "$MARKER_FAMILY" \
         --argjson cursor_start "$SERIAL_CURSOR" \
         --argjson cursor_end "$observe_cursor" \
         --argjson requested_timeout_seconds "$TIMEOUT_SECONDS" \
@@ -106,6 +108,12 @@ while :; do
         --argjson saturation_limit "$SATURATION_LIMIT" \
         '(if length == 0 then {} else .[-1] end) as $last
          | (map(.text // "") | add) as $text
+         | (if $marker_family == "" then [$marker]
+            else ($marker_family | split("|") | map(select(. != "")))
+            end) as $configured_marker_family
+         | (if ($configured_marker_family | length) == 0 then [$marker]
+            else $configured_marker_family
+            end) as $markers
          | (map((.bytes // ((.text // "") | length)) | tonumber) | add) as $response_bytes
          | ($text | contains("TALOS: kernel_main")) as $has_kernel_main
          | ($text | contains($marker)) as $has_marker
@@ -114,6 +122,15 @@ while :; do
          | ($text | contains("NETWORK")) as $has_firmware_network
          | (if $text == "" then 0 else (($text | split("NETWORK") | length) - 1) end) as $firmware_network_occurrences
          | (if $text == "" then 0 else (($text | split($marker) | length) - 1) end) as $marker_occurrences
+         | ($markers | map(. as $family_marker
+            | ($text | index($family_marker)) as $first_index
+            | {
+                marker: $family_marker,
+                present: ($first_index != null),
+                occurrences: (if $text == "" then 0 else (($text | split($family_marker) | length) - 1) end),
+                first_index: $first_index
+              })) as $marker_family_counts
+         | ($marker_family_counts | map(select(.present)) | last // null) as $deepest_present_marker
          | (if $nonce_token == "" then 0 else (($text | split($nonce_token) | length) - 1) end) as $nonce_occurrences
          | ($text | index($marker)) as $marker_index
          | (if $marker_index == null then ""
@@ -145,6 +162,13 @@ while :; do
                  firmware_network_marker: "NETWORK",
                  has_kernel_main: $has_kernel_main,
                  has_required_marker: $has_marker,
+                 marker_family: {
+                     markers: $markers,
+                     counts: $marker_family_counts,
+                     deepest_present_marker: $deepest_present_marker,
+                     all_present: (all($marker_family_counts[]; .present == true)),
+                     present_count: ($marker_family_counts | map(select(.present)) | length)
+                 },
                  has_firmware_network: $has_firmware_network,
                  firmware_network_occurrences: $firmware_network_occurrences,
                  required_marker_occurrences: $marker_occurrences,
@@ -171,13 +195,20 @@ done
 if [ -z "$annotated" ]; then
     annotated="$(jq -n \
         --arg marker "$MARKER" \
+        --arg marker_family "$MARKER_FAMILY" \
         --argjson cursor_start "$SERIAL_CURSOR" \
         --argjson requested_timeout_seconds "$TIMEOUT_SECONDS" \
         --argjson settle_ms "$SETTLE_MS" \
         --argjson max_bytes "$MAX_BYTES" \
         --arg capture_mode "$CAPTURE_MODE" \
         --argjson saturation_limit "$SATURATION_LIMIT" \
-        '{cursor_start: $cursor_start,
+        '(if $marker_family == "" then [$marker]
+          else ($marker_family | split("|") | map(select(. != "")))
+          end) as $configured_marker_family
+         | (if ($configured_marker_family | length) == 0 then [$marker]
+            else $configured_marker_family
+            end) as $markers
+         | {cursor_start: $cursor_start,
           cursor_end: $cursor_start,
           bytes: 0,
           text: "",
@@ -198,6 +229,18 @@ if [ -z "$annotated" ]; then
               firmware_network_marker: "NETWORK",
               has_kernel_main: false,
               has_required_marker: false,
+              marker_family: {
+                  markers: $markers,
+                  counts: ($markers | map({
+                      marker: .,
+                      present: false,
+                      occurrences: 0,
+                      first_index: null
+                  })),
+                  deepest_present_marker: null,
+                  all_present: false,
+                  present_count: 0
+              },
               has_firmware_network: false,
               firmware_network_occurrences: 0,
               required_marker_occurrences: 0,

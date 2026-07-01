@@ -46,6 +46,7 @@ SETTLE_MS=1000
 MAX_BYTES=65536
 TFTP_TIMEOUT=90
 STABLE_SAMPLES=3
+MARKER_FAMILY="${TALOS_SERIAL_MARKER_FAMILY:-}"
 
 while [ "$#" -gt 0 ]; do
     case "$1" in
@@ -173,6 +174,7 @@ if [ "$DRY_RUN" = true ]; then
         --arg expected_fetch "$EXPECTED_FETCH" \
         --arg expected_fetch_bytes "$EXPECTED_FETCH_BYTES" \
         --arg serial_marker "$SERIAL_MARKER" \
+        --arg marker_family "$MARKER_FAMILY" \
         --argjson serial_drain_attempts "$SERIAL_DRAIN_ATTEMPTS" \
         --argjson serial_drain_read_timeout "$SERIAL_DRAIN_READ_TIMEOUT" \
         --argjson serial_drain_settle_ms "$SERIAL_DRAIN_SETTLE_MS" \
@@ -255,6 +257,8 @@ if [ "$DRY_RUN" = true ]; then
               serial_observe_contract: "serial-window-helper-auto-observe-or-direct-read",
               saturated_cursor_fallback: "direct-/serial/read when the saved cursor is at TALOS_SERIAL_CURSOR_SATURATION_LIMIT",
               tftp_contract: "stable-same-cursor-delta-before-restore",
+              serial_marker_family: (if $marker_family == "" then [$serial_marker]
+                  else ($marker_family | split("|") | map(select(. != ""))) end),
               serial_timeout_seconds: $serial_timeout,
               settle_ms: $settle_ms,
               max_bytes: $max_bytes,
@@ -367,6 +371,7 @@ jq -n \
     --arg expected_kernel "$EXPECTED_KERNEL" \
     --arg expected_fetch "$EXPECTED_FETCH" \
     --arg expected_fetch_bytes "$EXPECTED_FETCH_BYTES" \
+    --arg marker_family "$MARKER_FAMILY" \
     --slurpfile status "$EVIDENCE_DIR/pre-status.json" \
     --slurpfile files "$EVIDENCE_DIR/pre-boot-files.json" \
     --slurpfile root_endpoint "$EVIDENCE_DIR/pre-root-endpoint.json" \
@@ -561,8 +566,21 @@ jq -n \
      | (if $marker_nonce == "" then "" else ("capture-nonce=" + $marker_nonce) end) as $nonce_token
      | (($pp.text // "") | tostring) as $pre_power_retained_text
      | (($serial[0].text // "") | tostring) as $post_power_serial_text
+     | (if $marker_family == "" then []
+        else ($marker_family | split("|") | map(select(. != "")))
+        end) as $configured_marker_family
+     | (if ($configured_marker_family | length) == 0 then [$required_marker]
+        else $configured_marker_family
+        end) as $markers
      | (if $required_marker == "" then 0 else (($pre_power_retained_text | split($required_marker) | length) - 1) end) as $pre_power_marker_count
      | (if $required_marker == "" then 0 else (($post_power_serial_text | split($required_marker) | length) - 1) end) as $post_power_marker_count
+     | ($markers | map(. as $family_marker
+        | {
+            marker: $family_marker,
+            pre_power_occurrences: (if $pre_power_retained_text == "" then 0 else (($pre_power_retained_text | split($family_marker) | length) - 1) end),
+            post_power_occurrences: (if $post_power_serial_text == "" then 0 else (($post_power_serial_text | split($family_marker) | length) - 1) end)
+          }
+        | . + {fresh_after_saved_cursor: (.pre_power_occurrences == 0 and .post_power_occurrences > 0)})) as $family_freshness
      | (if $nonce_token == "" then 0 else (($pre_power_retained_text | split($nonce_token) | length) - 1) end) as $pre_power_nonce_count
      | (if $nonce_token == "" then 0 else (($post_power_serial_text | split($nonce_token) | length) - 1) end) as $post_power_nonce_count
      | (($pp.cursor // null) | tonumber?) as $pre_power_peek_cursor
@@ -577,7 +595,8 @@ jq -n \
      | ($saturated_direct_read and ($sw.start_cursor_saturated // false) == true and (($sw.response_bytes // 0) > 0)) as $saturated_direct_read_bound
      | ($observe_cursor_bound or $saturated_direct_read_bound) as $post_power_capture_bound
      | ($nonce_fresh and $marker_fresh and $post_power_capture_bound) as $cursor_nonce_fresh
-     | (($sd.empty_before_power // false) == true or $cursor_nonce_fresh) as $serial_freshness_ok
+     | (($family_freshness | map(select(.fresh_after_saved_cursor)) | length) > 0 and $post_power_capture_bound) as $marker_family_fresh
+     | (($sd.empty_before_power // false) == true or $cursor_nonce_fresh or $marker_family_fresh) as $serial_freshness_ok
      | [
          (if $proof_label == "" then "missing-run-label" else empty end),
          (if $preflight_mismatch then "preflight-staging-publication-mismatch" else empty end),
@@ -669,6 +688,8 @@ jq -n \
                      nonce_occurrences_after_saved_cursor: $post_power_nonce_count,
                      post_power_capture_bound: $post_power_capture_bound,
                      cursor_nonce_fresh: $cursor_nonce_fresh,
+                     marker_family_fresh: $marker_family_fresh,
+                     marker_family_freshness: $family_freshness,
                      serial_freshness_ok: $serial_freshness_ok
                  }
              },

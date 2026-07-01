@@ -1,0 +1,46 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-runtime-phase-marker-reconciliation-v29-20260701",
+  "classification": "selected-runtime-phase-marker-discriminator-ready",
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-runtime-phase-marker-preflight-v30-20260701",
+  "references": {
+    "accepted_v26_closeout": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-entry-boot-path-closeout-v26.md",
+    "accepted_v27_contract": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-runtime-continuation-contract-v27.md",
+    "accepted_v28_preflight": "tasks/2026-07-01-phase12-ssh-live-tcp-pi5-selected-runtime-continuation-preflight-v28.md",
+    "accepted_v28_closeout": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-runtime-continuation-closeout-v28.md",
+    "v29_task_record": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-runtime-phase-marker-reconciliation-v29.md",
+    "v29_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-runtime-phase-marker-reconciliation-v29/classification.json",
+    "v29_archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-runtime-phase-marker-reconciliation-v29/validation/archive-review.stdout.txt",
+    "v29_archive_sha256": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-runtime-phase-marker-reconciliation-v29/static/archive-sha256.txt",
+    "v29_kernel_sha256": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-runtime-phase-marker-reconciliation-v29/static/kernel-sha256.txt",
+    "v29_kernel_size": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-runtime-phase-marker-reconciliation-v29/static/kernel-size.txt",
+    "source_change_observe_serial_window": "scripts/rpi5-observe-serial-window.sh",
+    "source_change_capture_bundle": "scripts/rpi5-capture-invariant-proof-bundle.sh",
+    "source_static_path_review": [
+      "src/main.rs",
+      "src/boot/rpi5.rs",
+      "src/target/rpi5.rs",
+      "src/network.rs"
+    ]
+  },
+  "evidence_levels": [
+    "static source inspection",
+    "shell helper implementation",
+    "non-published archive materialization",
+    "archive/header/root-selected equality review",
+    "shell syntax validation",
+    "dry-run marker-family contract validation",
+    "cargo target build",
+    "JSON validation",
+    "docs build"
+  ],
+  "redaction_review": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_peer_or_log_lines_retained": false,
+    "packet_payloads_retained": false,
+    "ssh_session_or_key_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false,
+    "stable_secret_derived_identifiers_retained": false,
+    "note": "Archive and boot tree remain under target/tmp and are not committed; retained evidence contains metadata only."
+  }
+}
