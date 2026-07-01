@@ -1,0 +1,74 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-staging-reconciliation-v54-20260701",
+  "terminal_classification": "selected-normal-runtime-runtime-ready-control-discriminator-ready",
+  "accepted_status": true,
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-repair-preflight-v55-20260701",
+  "planningNeeded": false,
+  "evidence_level": [
+    "static inspection",
+    "accepted v51 archive contract review",
+    "accepted v52 hardware evidence review",
+    "bounded shell helper change",
+    "capture helper dry-run",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "authoritative_archive_contract": {
+    "path": "target/tmp/selected-normal-runtime-runtime-ready-v51.tar.gz",
+    "sha256": "44afdb8b849bd2fb1878a1b280e8e46b66cbcb5b48fc40dd2822fe06091c84e9",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "selected_kernel_sha256": "b3d4ff79d0790980f68ef446a7c41dcbe2858824bd29ce7f150f86fa053c7982",
+    "selected_kernel_bytes": 152144,
+    "selected_tree_hash": "c49997afe4dd2136706ad4f0dc05326d93abf60593c8a01104472984d5481bbc",
+    "required_marker": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-ready-static",
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z"
+  },
+  "v52_observed_gap": {
+    "preflight_selected_identity": true,
+    "tftp_expected_fetch_count": 2,
+    "tftp_expected_fetch_byte_match_count": 0,
+    "tftp_expected_fetch_bytes_seen": [
+      104136,
+      104136
+    ],
+    "final_pre_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "final_pre_restore_is_baseline": true,
+    "runtime_ready_marker_occurrences": 0
+  },
+  "accepted_change": {
+    "file": "scripts/rpi5-capture-invariant-proof-bundle.sh",
+    "new_capture_window_stage": "post_power_pre_observe_identity",
+    "new_summary_fields": [
+      "post_power_pre_observe_identity",
+      "proof_run_identity.post_power_pre_observe"
+    ],
+    "discriminator": "immediate-status-and-boot-files-after-power-before-serial-observe",
+    "why_next_run_is_decisive": "The next Pi 5 preflight will show whether selected identity is lost immediately after power cycle, remains selected while dnsmasq serves baseline bytes, or remains selected through TFTP/final identity but fails before the runtime-ready marker."
+  },
+  "explicit_non_claims": [
+    "runtime-ready marker retained",
+    "packet-I/O",
+    "OpenSSH compatibility",
+    "remote receipt",
+    "service readiness",
+    "ssh-ready=true",
+    "fake command expansion",
+    "broad shell work",
+    "phase transition"
+  ],
+  "redaction_review": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_peer_or_log_lines_retained": false,
+    "packet_payloads_retained": false,
+    "ssh_session_or_key_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false,
+    "stable_secret_derived_identifiers_retained": false,
+    "public_key_blob_retained": false,
+    "signature_retained": false,
+    "fingerprint_retained": false,
+    "operator_identity_retained": false
+  },
+  "commit": "recorded-in-supervisor-state-after-final-commit"
+}

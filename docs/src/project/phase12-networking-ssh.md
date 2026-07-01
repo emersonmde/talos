@@ -13621,3 +13621,25 @@ compatibility, service readiness, ssh-ready=true, fake command expansion, broad
 shell work, and phase transition remain unproved. selected_next_task is null;
 planningNeeded=true for supervisor planning of the next bounded runtime-ready
 repair or discriminator.
+
+phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-staging-reconciliation-v54-20260701
+accepts selected-normal-runtime-runtime-ready-control-discriminator-ready. No
+hardware action, lab publication, boot snapshot mutation, Pi 5 power cycle,
+packet-I/O, OpenSSH/generated-root retry, service readiness, ssh-ready=true,
+fake/kernel-backed command expansion, broad shell work, or phase transition was
+performed. The reconciliation keeps the v51 selected archive contract
+authoritative: da591740/kernel_2712.img is 152,144 bytes with SHA-256
+b3d4ff79d0790980f68ef446a7c41dcbe2858824bd29ce7f150f86fa053c7982, selected
+tree c49997afe4dd2136706ad4f0dc05326d93abf60593c8a01104472984d5481bbc, and
+required marker TALOS: ssh-service-smoltcp-runtime-ready
+capture-nonce=runtime-ready-static. v52 proved selected preflight identity
+before power, but then served baseline-sized 104,136-byte TFTP entries and
+ended with baseline final pre-restore identity. v54 updates
+scripts/rpi5-capture-invariant-proof-bundle.sh so the next run records an
+immediate post-power, pre-serial-observe identity checkpoint in
+post_power_pre_observe_identity. That checkpoint can distinguish selected
+identity lost immediately after power, selected identity retained while dnsmasq
+serves baseline bytes, or selected identity/TFTP retained while runtime-ready
+marker execution fails. selected_next_task is
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-repair-preflight-v55-20260701;
+planningNeeded=false.

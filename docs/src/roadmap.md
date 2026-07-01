@@ -22197,6 +22197,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   broad shell work, and phase transition remain unproved. selected_next_task is
   null and planningNeeded=true for supervisor planning of the next bounded
   runtime-ready repair or discriminator.
+- phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-staging-reconciliation-v54-20260701
+  accepts selected-normal-runtime-runtime-ready-control-discriminator-ready. No
+  hardware action, lab publication, boot snapshot mutation, Pi 5 power cycle,
+  packet-I/O, OpenSSH/generated-root retry, service readiness, ssh-ready=true,
+  fake/kernel-backed command expansion, broad shell work, or phase transition
+  was performed. The v51 selected archive remains authoritative at
+  da591740/kernel_2712.img size 152,144 bytes with SHA-256
+  b3d4ff79d0790980f68ef446a7c41dcbe2858824bd29ce7f150f86fa053c7982 and
+  selected tree
+  c49997afe4dd2136706ad4f0dc05326d93abf60593c8a01104472984d5481bbc. v52
+  proved selected preflight identity before power, then observed
+  baseline-sized TFTP service, baseline final pre-restore identity, and zero
+  runtime-ready marker retention. v54 adds an immediate post-power,
+  pre-serial-observe identity checkpoint to the capture helper so the next Pi 5
+  run can distinguish power-cycle staging loss, dnsmasq/tree divergence, or
+  selected-runtime execution failure. selected_next_task is
+  phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-repair-preflight-v55-20260701
+  and planningNeeded=false.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

@@ -1,0 +1,29 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-staging-reconciliation-v54-20260701",
+  "classification": "selected-normal-runtime-runtime-ready-control-discriminator-ready",
+  "files": {
+    "task_record": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-staging-reconciliation-v54.md",
+    "classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-staging-reconciliation-v54/classification.json",
+    "staging_reconciliation_report": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-staging-reconciliation-v54/static/staging-reconciliation-report.md",
+    "capture_helper_dry_run": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-staging-reconciliation-v54/validation/capture-bundle-dry-run.json",
+    "accepted_v51_task_record": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-reconciliation-v51.md",
+    "accepted_v51_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-reconciliation-v51/classification.json",
+    "accepted_v52_preflight_task_record": "tasks/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52.md",
+    "accepted_v52_preflight_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52/classification.json",
+    "accepted_v52_closeout_task_record": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-closeout-v52.md"
+  },
+  "evidence_levels": [
+    "static inspection",
+    "accepted predecessor evidence",
+    "bounded shell helper change",
+    "capture helper dry-run",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-repair-preflight-v55-20260701",
+  "planning_needed": false,
+  "redaction_review": {
+    "private_key_seed_public_key_blob_signature_fingerprint_digest_operator_identity_or_stable_secret_derived_identifier_retained": false
+  }
+}

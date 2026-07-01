@@ -21,9 +21,10 @@ usage: rpi5-capture-invariant-proof-bundle.sh [--dry-run]
        [--stable-samples COUNT]
 
 Captures one Pi 5 proof bundle after the caller has staged the intended boot
-tree. The script records boot identity, fresh serial/TFTP cursors, bounded
-serial output, stable same-cursor TFTP delta before restore, final pre-restore
-identity, restore evidence, and an annotated summary.
+tree. The script records boot identity, fresh serial/TFTP cursors, immediate
+post-power boot identity, bounded serial output, stable same-cursor TFTP delta
+before restore, final pre-restore identity, restore evidence, and an annotated
+summary.
 EOF
 }
 
@@ -199,6 +200,11 @@ if [ "$DRY_RUN" = true ]; then
               serial_read_empty_before_power: "serial-read-empty-before-power.json",
               tftp_cursor_before_power: "tftp-cursor-before-power.json",
               power_cycle: "power-cycle.json",
+              post_power_pre_observe_root_endpoint: "post-power-pre-observe-root-endpoint.json",
+              post_power_pre_observe_root_endpoint_body: "post-power-pre-observe-root-endpoint-body.txt",
+              post_power_pre_observe_root: "post-power-pre-observe-root.json",
+              post_power_pre_observe_status: "post-power-pre-observe-status.json",
+              post_power_pre_observe_boot_files: "post-power-pre-observe-boot-files.json",
               serial_observe_window: "serial-observe-window.json",
               tftp_delta_stable_pre_restore: "tftp-delta-stable-pre-restore.json",
               capture_window_order: "capture-window-order.json",
@@ -236,6 +242,7 @@ if [ "$DRY_RUN" = true ]; then
                       "pre_power_serial_peek_cursor",
                       "pre_power_serial_retained_nonce_absence",
                       "pre_power_serial_drain_empty",
+                      "post_power_pre_observe_identity",
                       "serial_cursor_nonce_freshness",
                       "tftp_cursor_and_stable_delta",
                       "final_pre_restore_identity",
@@ -488,6 +495,15 @@ append_capture_window_event pre_power_cursors \
 curl -fsS -X POST "${API_BASE}/power/cycle" > "$EVIDENCE_DIR/power-cycle.json"
 append_capture_window_event power_cycle power-cycle.json
 
+curl -fsS "${API_BASE}/status" > "$EVIDENCE_DIR/post-power-pre-observe-status.json"
+capture_root_endpoint "$EVIDENCE_DIR/post-power-pre-observe-root-endpoint-body.txt" "$EVIDENCE_DIR/post-power-pre-observe-root-endpoint.json"
+curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/post-power-pre-observe-root.json"
+curl -fsS "${API_BASE}/boot/files" > "$EVIDENCE_DIR/post-power-pre-observe-boot-files.json"
+append_capture_window_event post_power_pre_observe_identity \
+    post-power-pre-observe-status.json post-power-pre-observe-root-endpoint.json \
+    post-power-pre-observe-root-endpoint-body.txt post-power-pre-observe-root.json \
+    post-power-pre-observe-boot-files.json
+
 set +e
 ./scripts/rpi5-observe-serial-window.sh \
     "$serial_cursor" "$SERIAL_TIMEOUT" "$SETTLE_MS" "$MAX_BYTES" "$SERIAL_MARKER" \
@@ -539,6 +555,8 @@ jq -n \
     --slurpfile preflight "$EVIDENCE_DIR/preflight-identity.json" \
     --slurpfile pre_power_peek "$EVIDENCE_DIR/pre-power-serial-peek.json" \
     --slurpfile drain "$EVIDENCE_DIR/serial-drain-before-power.json" \
+    --slurpfile post_power_status "$EVIDENCE_DIR/post-power-pre-observe-status.json" \
+    --slurpfile post_power_files "$EVIDENCE_DIR/post-power-pre-observe-boot-files.json" \
     --slurpfile serial "$EVIDENCE_DIR/serial-observe-window.json" \
     --slurpfile tftp "$EVIDENCE_DIR/tftp-delta-stable-pre-restore.json" \
     --slurpfile final_status "$EVIDENCE_DIR/final-pre-restore-status.json" \
@@ -552,12 +570,17 @@ jq -n \
      | ($tftp[0].talos_tftp_stability // {}) as $ts
      | (($tftp[0].tftp.events // []) | map(select(.filename == $expected_fetch))) as $fetch_events
      | ($fetch_events | map(select(.status == "served" and .bytes == $expected_bytes))) as $matching_fetch_events
+     | (($post_power_files[0].boot.files // []) | map(select(.name == $expected_fetch)) | first) as $post_power_fetch
+     | ($post_power_status[0].boot.tree_hash // null) as $post_power_tree_hash
+     | ($post_power_status[0].boot.effective_kernel // null) as $post_power_kernel
      | (($final_files[0].boot.files // []) | map(select(.name == $expected_fetch)) | first) as $final_fetch
      | ($final_status[0].boot.tree_hash // null) as $final_tree_hash
      | ($final_status[0].boot.effective_kernel // null) as $final_kernel
      | ($post_restore[0].boot.tree_hash // null) as $post_restore_tree_hash
      | ($preflight[0].staging_publication_mismatch // false) as $preflight_mismatch
      | ($preflight[0].observed_tree_hash // null) as $selected_tree_hash
+     | ($selected_tree_hash != null and $post_power_tree_hash == $selected_tree_hash) as $post_power_selected_tree_ok
+     | ($expected_bytes == null or ($post_power_fetch.bytes // null) == $expected_bytes) as $post_power_bytes_ok
      | ($expected_tree_hash == "" or $final_tree_hash == $expected_tree_hash) as $final_tree_ok
      | ($selected_tree_hash != null and $final_tree_hash == $selected_tree_hash) as $final_selected_tree_ok
      | ($expected_bytes == null or ($final_fetch.bytes // null) == $expected_bytes) as $final_bytes_ok
@@ -636,6 +659,14 @@ jq -n \
          },
          preflight_identity: $preflight[0],
          capture_chain_contract_version: "pi5-capture-chain-v4",
+         post_power_pre_observe_identity: {
+             tree_hash: $post_power_tree_hash,
+             effective_kernel: $post_power_kernel,
+             selected_tree_still_staged: $post_power_selected_tree_ok,
+             expected_fetch_present: ($post_power_fetch != null),
+             expected_fetch_bytes_match: $post_power_bytes_ok,
+             discriminator: "immediate-status-and-boot-files-after-power-before-serial-observe"
+         },
          final_pre_restore_identity: {
              tree_hash: $final_tree_hash,
              effective_kernel: $final_kernel,
@@ -702,6 +733,13 @@ jq -n \
                  expected_fetch_count: ($fetch_events | length),
                  expected_fetch_byte_match_count: ($matching_fetch_events | length)
              },
+             post_power_pre_observe: {
+                 tree_hash: $post_power_tree_hash,
+                 effective_kernel: $post_power_kernel,
+                 selected_tree_still_staged: $post_power_selected_tree_ok,
+                 expected_fetch_present: ($post_power_fetch != null),
+                 expected_fetch_bytes_match: $post_power_bytes_ok
+             },
              final_pre_restore: {
                  tree_hash: $final_tree_hash,
                  effective_kernel: $final_kernel,
@@ -742,6 +780,7 @@ jq -n \
              serial_capture_mode: ($sw.capture_mode // "observe"),
              serial_start_cursor_saturated: ($sw.start_cursor_saturated // false),
              tftp_contract: "stable-same-cursor-delta-before-restore",
+             post_power_identity_contract: "immediate-status-and-boot-files-after-power-before-serial-observe",
              zero_event_tftp_meaningful_only_before_restore: true,
              firmware_network_is_not_talos_entry: true
          }
