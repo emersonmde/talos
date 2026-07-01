@@ -12851,3 +12851,19 @@ phase12-ssh-live-tcp-selected-entry-boot-path-closeout-v26-20260701;
 packet-I/O/OpenSSH/generated-root retry, remote receipt,
 compatibility/service readiness, ssh-ready=true, broad shell work,
 fake/kernel-backed command expansion, and phase transition remain blocked.
+
+phase12-ssh-live-tcp-selected-entry-boot-path-closeout-v26-20260701 accepts
+selected-entry-boot-path-frontier-reconciled-supervisor-planning. No hardware
+action, lab publication, boot snapshot mutation, Pi 5 power cycle,
+packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility claim,
+service success claim, ssh-ready=true, fake/kernel-backed command expansion,
+broad shell work, or phase transition was performed. The closeout reconciles
+v26 against the v19 selected-image handoff proof and the v20/v22/v24
+selected-byte/no-marker chain. The accepted boundary is now selected Image
+execution reaching rust_entry and the UART10 early output path before BootInfo,
+target init, allocator, scheduler, RP1 MMIO, networking, service code, or shell
+behavior. selected_next_task is null and planningNeeded=true because no queued
+successor has refreshed dependencies for the next smallest feature step;
+packet-I/O/OpenSSH/generated-root retry, remote receipt,
+compatibility/service readiness, ssh-ready=true, broad shell work, fake command
+expansion, and phase transition remain blocked.

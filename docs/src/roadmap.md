@@ -21563,6 +21563,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
   ssh-ready=true, broad shell work, fake command expansion, and phase transition
   remain blocked.
+- phase12-ssh-live-tcp-selected-entry-boot-path-closeout-v26-20260701 accepts
+  selected-entry-boot-path-frontier-reconciled-supervisor-planning. No hardware
+  action, lab publication, boot snapshot mutation, Pi 5 power cycle,
+  packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility claim,
+  service success claim, ssh-ready=true, fake/kernel-backed command expansion,
+  broad shell work, or phase transition was performed. The closeout reconciles
+  v26 against v19/v20/v22/v24 and accepts the first newly proved boundary:
+  selected Image execution reaches rust_entry and the UART10 early output path
+  before BootInfo, target init, allocator, scheduler, RP1 MMIO, networking,
+  service code, or shell behavior. selected_next_task is null and
+  planningNeeded=true because no queued successor has refreshed dependencies
+  for the next smallest feature step; packet-I/O/OpenSSH/generated-root retry,
+  compatibility/service readiness, ssh-ready=true, broad shell work, fake
+  command expansion, and phase transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

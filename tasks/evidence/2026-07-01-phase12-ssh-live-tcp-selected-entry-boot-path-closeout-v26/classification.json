@@ -1,0 +1,77 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-entry-boot-path-closeout-v26-20260701",
+  "classification": "selected-entry-boot-path-frontier-reconciled-supervisor-planning",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "v26 proves selected Image execution reaches rust_entry and the UART10 early output path, resolving the selected-entry boot-path blocker that remained after v24. No queued successor has refreshed dependencies for the next smallest feature step, so the supervisor must plan before any packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness, ssh-ready=true, fake command expansion, broad shell work, or phase transition.",
+  "evidence_level": "accepted task/evidence inspection, task-owned JSON evidence, docs build, and diff checks; no hardware action, lab publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility claim, service success claim, ssh-ready=true, fake command expansion, broad shell work, or phase transition",
+  "reconciled_boundary": {
+    "accepted": "Selected da591740/kernel_2712.img service reaches rust_entry and the UART10 early output path in the v25 replacement discriminator.",
+    "evidence": {
+      "selected_fetch_path": "da591740/kernel_2712.img",
+      "selected_fetch_byte_count": 45400,
+      "selected_fetch_count": 2,
+      "kernel_sha256": "b597bc0d28aeda702492b9846ce9110ec5a99db6343c617a319ba265a0c59fa7",
+      "selected_tree_hash": "a8da6043eecde204c1f58a612d25aa4939ad54084b0c1aa90a56da44ecae3e3a",
+      "serial_marker": "TALOS: reu10-loop",
+      "serial_marker_occurrences": 13796,
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    },
+    "not_proved": [
+      "BootInfo parsing",
+      "target init",
+      "allocator",
+      "scheduler",
+      "RP1 MMIO",
+      "networking",
+      "packet I/O",
+      "OpenSSH/generated-root retry",
+      "remote receipt",
+      "compatibility/service readiness",
+      "ssh-ready=true",
+      "shell behavior"
+    ]
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Reconciled v19/v20/v22/v24 selected-byte and no-marker evidence with v26's retained rust_entry UART10 marker loop."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Accepted the first newly proved boundary as selected Image execution reaching rust_entry and the UART10 early output path."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "The v24 compact _start marker absence no longer blocks the selected-entry boot-path boundary because v25/v26 used a qualitatively different repeated rust_entry UART10 discriminator."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "BootInfo, target init, allocator, scheduler, RP1 MMIO, networking, service code, and shell behavior remain unproved and require a refreshed successor task."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness, ssh-ready=true, fake command expansion, broad shell work, and phase transition are not mechanically unblocked by this closeout."
+    }
+  ],
+  "rejected_claims": [
+    "packet I/O",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility/service readiness",
+    "ssh-ready=true",
+    "broad shell work",
+    "fake/kernel-backed command expansion",
+    "phase transition"
+  ],
+  "redaction_review": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_peer_or_log_lines_retained": false,
+    "packet_payloads_retained": false,
+    "ssh_session_or_key_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false,
+    "stable_secret_derived_identifiers_retained": false,
+    "note": "Closeout retains only task ids, classifications, hashes, byte counts, marker names, counts, and summaries from accepted predecessor evidence."
+  }
+}
