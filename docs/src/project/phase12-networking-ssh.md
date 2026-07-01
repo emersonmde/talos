@@ -13251,3 +13251,20 @@ packet-I/O/OpenSSH/generated-root retry, remote receipt,
 compatibility/service readiness, ssh-ready=true, fake command expansion, broad
 shell work, hardware action outside the queued v40 preflight, and phase
 transition remain blocked.
+
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-continuation-preflight-v40-20260701
+accepts selected-normal-runtime-bootinfo-marker-retained. The worker published
+only the v39-selected BootInfo marker-loop archive under hardwareTestLock,
+then restored the lab to
+phase12-ssh-v10-openssh-clean-pre-20260624T074100Z. The selected archive served
+da591740/kernel_2712.img twice at 152,880 bytes, retained final pre-restore
+identity on selected tree
+1682bbc6158a718b5f630b9a42762b2e1e39a38f7137764b4fde5de16b81b0b0, and
+retained TALOS: boot info parsed 1,826 times. Post-restore identity returned
+to tree a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+This proves the selected normal-runtime archive reaches BootInfo parsing on
+Pi 5; it does not prove target init, exceptions, kernel_main, route-start,
+runtime-ready, packet-I/O, OpenSSH/generated-root retry, remote receipt,
+compatibility/service readiness, ssh-ready=true, fake command expansion, broad
+shell work, or phase transition. selected_next_task is
+phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-continuation-closeout-v40-20260701.

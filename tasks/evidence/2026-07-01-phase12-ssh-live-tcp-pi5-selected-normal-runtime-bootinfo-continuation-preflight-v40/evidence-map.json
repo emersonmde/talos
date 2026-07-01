@@ -1,0 +1,25 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-continuation-preflight-v40-20260701",
+  "classification": "selected-normal-runtime-bootinfo-marker-retained",
+  "files": {
+    "classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-continuation-preflight-v40/classification.json",
+    "run_summary_redacted": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-continuation-preflight-v40/lab/v40-candidate/run-summary-redacted.json",
+    "capture_summary": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-continuation-preflight-v40/lab/v40-candidate/capture-invariant-summary.json",
+    "capture_window_order": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-continuation-preflight-v40/lab/v40-candidate/capture-window-order.json",
+    "archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-continuation-preflight-v40/validation/archive-review.stdout.txt",
+    "bootinfo_archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-continuation-preflight-v40/validation/bootinfo-archive-review.stdout.txt",
+    "static_archive_sha": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-continuation-preflight-v40/static/archive-sha256.txt",
+    "static_kernel_sha": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-continuation-preflight-v40/static/kernel-sha256.txt",
+    "selected_tree_hash": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-continuation-preflight-v40/static/selected-tree-hash.txt"
+  },
+  "evidence_levels": [
+    "hardwareTestLock",
+    "static archive/image inspection",
+    "lab-controller API identity",
+    "fresh serial cursor/drain",
+    "stable same-cursor TFTP delta before restore",
+    "serial hardware output marker summary",
+    "restore proof",
+    "task-owned JSON evidence"
+  ]
+}
