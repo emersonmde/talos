@@ -1,0 +1,39 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-marker-family-reconciliation-v56-20260701",
+  "classification": "selected-normal-runtime-runtime-ready-marker-family-discriminator-ready",
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-marker-family-preflight-v57-20260701",
+  "planningNeeded": false,
+  "first_missing_fact": null,
+  "archive": {
+    "path": "target/tmp/selected-normal-runtime-runtime-ready-v51.tar.gz",
+    "sha256": "44afdb8b849bd2fb1878a1b280e8e46b66cbcb5b48fc40dd2822fe06091c84e9",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "selected_kernel_sha256": "b3d4ff79d0790980f68ef446a7c41dcbe2858824bd29ce7f150f86fa053c7982",
+    "selected_kernel_bytes": 152144,
+    "root_and_selected_kernel_byte_identical": true
+  },
+  "capture_contract": {
+    "capture_nonce": "runtime-ready-static",
+    "required_success_marker": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-ready-static",
+    "marker_family": [
+      "TALOS: asm_start",
+      "TALOS: asm_pre_rust_entry",
+      "TALOS: kernel_main",
+      "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=runtime-ready-static",
+      "TALOS: ssh-service-smoltcp-runtime-blocked capture-nonce=runtime-ready-static",
+      "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-ready-static"
+    ],
+    "expected_fail_closed_classifications": [
+      "selected-normal-runtime-no-route-start-marker-retained",
+      "selected-normal-runtime-route-start-only-marker-retained",
+      "selected-normal-runtime-runtime-blocked-marker-retained",
+      "selected-normal-runtime-runtime-ready-marker-retained",
+      "inconclusive-selected-normal-runtime-runtime-ready-marker-family-evidence"
+    ],
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z"
+  },
+  "successor": {
+    "id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-marker-family-preflight-v57-20260701",
+    "reason": "This is the next smallest hardware discriminator after v55 proved selected identity and selected TFTP but retained no runtime-ready marker; the marker family can distinguish no-route-start, route-start-only, runtime-blocked, and runtime-ready without packet-I/O, OpenSSH, service readiness, ssh-ready, fake command expansion, broad shell work, or phase transition."
+  }
+}

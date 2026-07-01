@@ -48,6 +48,7 @@ MAX_BYTES=65536
 TFTP_TIMEOUT=90
 STABLE_SAMPLES=3
 MARKER_FAMILY="${TALOS_SERIAL_MARKER_FAMILY:-}"
+EXPECTED_FAIL_CLOSED_CLASSIFICATIONS="${TALOS_EXPECTED_FAIL_CLOSED_CLASSIFICATIONS:-}"
 
 while [ "$#" -gt 0 ]; do
     case "$1" in
@@ -176,6 +177,7 @@ if [ "$DRY_RUN" = true ]; then
         --arg expected_fetch_bytes "$EXPECTED_FETCH_BYTES" \
         --arg serial_marker "$SERIAL_MARKER" \
         --arg marker_family "$MARKER_FAMILY" \
+        --arg expected_fail_closed_classifications "$EXPECTED_FAIL_CLOSED_CLASSIFICATIONS" \
         --argjson serial_drain_attempts "$SERIAL_DRAIN_ATTEMPTS" \
         --argjson serial_drain_read_timeout "$SERIAL_DRAIN_READ_TIMEOUT" \
         --argjson serial_drain_settle_ms "$SERIAL_DRAIN_SETTLE_MS" \
@@ -252,6 +254,10 @@ if [ "$DRY_RUN" = true ]; then
                   rejection_rule: "missing or mismatched candidate identity, serial-drain, serial-window, TFTP, or final identity fields prevent decisive hardware classification"
               },
               serial_marker: $serial_marker,
+              required_success_marker: $serial_marker,
+              fail_closed_marker_family_rule: "classify the deepest retained nonce-bearing marker; route-start-only and runtime-blocked are not runtime-ready",
+              expected_fail_closed_classifications: (if $expected_fail_closed_classifications == "" then []
+                  else ($expected_fail_closed_classifications | split("|") | map(select(. != ""))) end),
               pre_power_serial_drain_contract: {
                   discriminator: "empty-read-or-bounded-drain-exhausted",
                   attempts: $serial_drain_attempts,

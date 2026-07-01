@@ -28,11 +28,16 @@ tar -xzf "$ARCHIVE" -C "$work_dir"
 
 strings "$work_dir/kernel_2712.img" > "$work_dir/kernel_2712.strings"
 
+route_start_token="TALOS: ssh-service-smoltcp-runtime-route-start"
+runtime_blocked_token="TALOS: ssh-service-smoltcp-runtime-blocked"
+route_start_marker="$route_start_token capture-nonce=$CAPTURE_NONCE"
+runtime_blocked_marker="$runtime_blocked_token capture-nonce=$CAPTURE_NONCE"
 required_marker="TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=$CAPTURE_NONCE"
 for token in \
     "TALOS: asm_start" \
     "TALOS: asm_pre_rust_entry" \
-    "TALOS: ssh-service-smoltcp-runtime-route-start" \
+    "$route_start_token" \
+    "$runtime_blocked_token" \
     "TALOS: ssh-service-smoltcp-runtime-ready" \
     "capture-nonce=" \
     "$CAPTURE_NONCE" \
@@ -57,5 +62,11 @@ do
 done
 
 printf 'runtime_marker_route=ready\n'
+printf 'route_start_marker=%s\n' "$route_start_marker"
+printf 'runtime_blocked_marker=%s\n' "$runtime_blocked_marker"
 printf 'required_marker=%s\n' "$required_marker"
+printf 'marker_family=%s|%s|%s\n' \
+    "$route_start_marker" \
+    "$runtime_blocked_marker" \
+    "$required_marker"
 printf 'archive=%s\n' "$ARCHIVE"

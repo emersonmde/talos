@@ -13680,3 +13680,26 @@ service readiness, ssh-ready=true, fake command expansion, broad shell work,
 and phase transition remain unproved. selected_next_task is null and
 planningNeeded=true for supervisor planning of the next bounded runtime-ready
 marker repair or discriminator.
+
+phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-marker-family-reconciliation-v56-20260701
+accepts selected-normal-runtime-runtime-ready-marker-family-discriminator-ready.
+No hardware action, lab publication, boot snapshot mutation, Pi 5 power cycle,
+packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility claim,
+service readiness, ssh-ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The reconciliation keeps the
+v51 selected archive authoritative: target/tmp/selected-normal-runtime-runtime-ready-v51.tar.gz
+with SHA-256 44afdb8b849bd2fb1878a1b280e8e46b66cbcb5b48fc40dd2822fe06091c84e9,
+da591740/kernel_2712.img at 152,144 bytes, and selected kernel SHA-256
+b3d4ff79d0790980f68ef446a7c41dcbe2858824bd29ce7f150f86fa053c7982. The
+archive review and capture dry-run now define a nonce-bearing marker family:
+TALOS: asm_start, TALOS: asm_pre_rust_entry, TALOS: kernel_main, TALOS:
+ssh-service-smoltcp-runtime-route-start capture-nonce=runtime-ready-static,
+TALOS: ssh-service-smoltcp-runtime-blocked capture-nonce=runtime-ready-static,
+and TALOS: ssh-service-smoltcp-runtime-ready
+capture-nonce=runtime-ready-static. The v57 preflight must classify no
+route-start, route-start-only, runtime-blocked, runtime-ready, or inconclusive
+evidence without accepting packet-I/O, OpenSSH compatibility, service
+readiness, ssh-ready=true, fake command expansion, broad shell work, or phase
+transition. selected_next_task is
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-marker-family-preflight-v57-20260701;
+planningNeeded=false.

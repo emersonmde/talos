@@ -1,0 +1,20 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-marker-family-reconciliation-v56-20260701",
+  "classification": "selected-normal-runtime-runtime-ready-marker-family-discriminator-ready",
+  "artifacts": {
+    "classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-marker-family-reconciliation-v56/classification.json",
+    "task_record": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-marker-family-reconciliation-v56.md",
+    "static_comparison_report": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-marker-family-reconciliation-v56/static/static-comparison-report.md",
+    "archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-marker-family-reconciliation-v56/validation/archive-review.stdout.txt",
+    "capture_bundle_dry_run": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-marker-family-reconciliation-v56/validation/capture-bundle-dry-run.json",
+    "accepted_v51_reconciliation": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-reconciliation-v51.md",
+    "accepted_v55_preflight": "tasks/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-repair-preflight-v55.md",
+    "accepted_v55_closeout": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-repair-closeout-v55.md"
+  },
+  "redaction": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_peer_or_log_lines_retained": false,
+    "ssh_or_key_material_retained": false,
+    "private_user_data_retained": false
+  }
+}
