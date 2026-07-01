@@ -22142,6 +22142,25 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   selected_next_task is
   phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-reconciliation-v51-20260701
   and planningNeeded=false.
+- phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-reconciliation-v51-20260701
+  accepts selected-normal-runtime-runtime-ready-discriminator-ready. No
+  hardware action, lab publication, boot snapshot mutation, Pi 5 power cycle,
+  packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility
+  claim, service success claim, ssh-ready=true, fake/kernel-backed command
+  expansion, broad shell work, or phase transition was performed. The worker
+  reconciled the accepted v50 route-start frontier with the existing selected
+  normal-runtime runtime-ready route. The first required successor marker is
+  TALOS: ssh-service-smoltcp-runtime-ready
+  capture-nonce=runtime-ready-static after route-start and before packet-I/O,
+  OpenSSH/service readiness, ssh-ready, fake command expansion, broad shell
+  work, or phase-transition claims. The non-published archive SHA-256 is
+  44afdb8b849bd2fb1878a1b280e8e46b66cbcb5b48fc40dd2822fe06091c84e9 and the
+  selected da591740/kernel_2712.img is 152,144 bytes with SHA-256
+  b3d4ff79d0790980f68ef446a7c41dcbe2858824bd29ce7f150f86fa053c7982.
+  selected_next_task is
+  phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52-20260701
+  and planningNeeded=true because no explicit v52 hardware preflight task
+  exists in taskQueue.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

@@ -1,0 +1,28 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-reconciliation-v51-20260701",
+  "classification": "selected-normal-runtime-runtime-ready-discriminator-ready",
+  "files": {
+    "classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-reconciliation-v51/classification.json",
+    "task_record": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-reconciliation-v51.md",
+    "static_comparison_report": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-reconciliation-v51/static/static-comparison-report.md",
+    "archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-reconciliation-v51/validation/archive-review.stdout.txt",
+    "archive_hashes": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-reconciliation-v51/validation/sha256.txt",
+    "boot_tree_files": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-reconciliation-v51/validation/boot-tree-files.txt",
+    "capture_helper_dry_run": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-reconciliation-v51/validation/capture-bundle-dry-run.json",
+    "accepted_v50_closeout": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-route-start-continuation-closeout-v50.md",
+    "accepted_v50_closeout_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-route-start-continuation-closeout-v50/classification.json"
+  },
+  "evidence_levels": [
+    "static inspection",
+    "existing source contract review",
+    "targeted unit test",
+    "non-published archive materialization",
+    "image/archive inspection",
+    "capture helper dry-run",
+    "task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52-20260701",
+  "planning_needed": true
+}

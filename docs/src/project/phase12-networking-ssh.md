@@ -13560,3 +13560,28 @@ command expansion, broad shell work, and phase transition remain unproved.
 selected_next_task is
 phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-reconciliation-v51-20260701;
 planningNeeded=false.
+
+phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-reconciliation-v51-20260701
+accepts selected-normal-runtime-runtime-ready-discriminator-ready. No hardware
+action, lab publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The worker reconciled the
+accepted v50 route-start frontier against the existing selected normal-runtime
+rpi5_ssh_service_smoltcp_runtime_ready route. The first required successor
+marker is TALOS: ssh-service-smoltcp-runtime-ready
+capture-nonce=runtime-ready-static after route-start and only when
+live_tcp_runtime_marker_route_report().marker_route_ready() accepts
+deterministic descriptor/device-interface delivery while packet-I/O,
+reachability, remote receipt, compatibility, ssh-ready, service success, and
+phase transition remain false. The non-published archive is
+target/tmp/selected-normal-runtime-runtime-ready-v51.tar.gz with SHA-256
+44afdb8b849bd2fb1878a1b280e8e46b66cbcb5b48fc40dd2822fe06091c84e9;
+da591740/kernel_2712.img is 152,144 bytes with SHA-256
+b3d4ff79d0790980f68ef446a7c41dcbe2858824bd29ce7f150f86fa053c7982 and is
+byte-identical to root kernel_2712.img. Packet-I/O, OpenSSH compatibility,
+remote receipt, service readiness, ssh-ready=true, fake command expansion,
+broad shell work, and phase transition remain unproved. selected_next_task is
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-continuation-preflight-v52-20260701;
+planningNeeded=true because no explicit v52 hardware preflight task exists in
+taskQueue.
