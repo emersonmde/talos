@@ -1,0 +1,9 @@
+candidate_archive=target/tmp/selected-entry-boot-path-v26-rust-entry-uart10.tar.gz
+candidate_archive_sha256=a88bfaacd07f4d2263b3fd90db54d9231e3f76c58e8e31cd55ba32de31ceeb95
+kernel_2712_sha256=b597bc0d28aeda702492b9846ce9110ec5a99db6343c617a319ba265a0c59fa7
+kernel_2712_size=45400
+header_image_size=45400
+text_offset=0
+flags=12
+marker=TALOS: reu10-loop
+forbidden_rp1_fr_read_strings_absent=true

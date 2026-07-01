@@ -21550,6 +21550,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   is phase12-ssh-live-tcp-pi5-selected-entry-boot-path-preflight-v26-20260701;
   packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
   broad shell work, fake command expansion, and phase transition remain blocked.
+- phase12-ssh-live-tcp-pi5-selected-entry-boot-path-preflight-v26-20260701
+  accepts selected-entry-boot-path-marker-retained. The worker published the v25
+  rust_entry UART10 marker-loop selected archive under hardwareTestLock,
+  captured two selected da591740/kernel_2712.img serves at 45,400 bytes, final
+  pre-restore identity on tree a8da6043..., 13,796 retained TALOS: reu10-loop
+  serial occurrences, and restore proof to tree a0452458.... This proves the
+  selected Image reaches rust_entry and the UART10 early output path before
+  BootInfo, target init, allocator, scheduler, RP1 MMIO, networking, service
+  code, or shell behavior. selected_next_task is
+  phase12-ssh-live-tcp-selected-entry-boot-path-closeout-v26-20260701;
+  packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
+  ssh-ready=true, broad shell work, fake command expansion, and phase transition
+  remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

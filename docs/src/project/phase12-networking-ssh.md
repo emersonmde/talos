@@ -12835,3 +12835,19 @@ phase12-ssh-live-tcp-pi5-selected-entry-boot-path-preflight-v26-20260701;
 packet-I/O/OpenSSH/generated-root retry, remote receipt,
 compatibility/service readiness, ssh-ready=true, broad shell work,
 fake/kernel-backed command expansion, and phase transition remain blocked.
+
+phase12-ssh-live-tcp-pi5-selected-entry-boot-path-preflight-v26-20260701
+accepts selected-entry-boot-path-marker-retained. The serialized Pi 5 run
+published the v25 rust_entry UART10 marker-loop selected archive under
+hardwareTestLock, then restored the lab to
+phase12-ssh-v10-openssh-clean-pre-20260624T074100Z. The selected archive served
+da591740/kernel_2712.img twice at 45,400 bytes, final pre-restore identity
+remained on tree a8da6043..., and the fresh post-power serial window retained
+13,796 TALOS: reu10-loop occurrences. The accepted result proves selected
+Image execution reaches rust_entry and its UART10 output path before BootInfo,
+target init, allocator, scheduler, RP1 MMIO, networking, service code, or shell
+behavior. selected_next_task is
+phase12-ssh-live-tcp-selected-entry-boot-path-closeout-v26-20260701;
+packet-I/O/OpenSSH/generated-root retry, remote receipt,
+compatibility/service readiness, ssh-ready=true, broad shell work,
+fake/kernel-backed command expansion, and phase transition remain blocked.

@@ -1,0 +1,70 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-entry-boot-path-preflight-v26-20260701",
+  "run_label": "selected-entry-boot-path-v26-20260701T004528Z",
+  "classification": "selected-entry-boot-path-marker-retained",
+  "selected_next_task": "phase12-ssh-live-tcp-selected-entry-boot-path-closeout-v26-20260701",
+  "planningNeeded": false,
+  "evidence_level": "serialized Pi 5 hardware preflight with selected-tree identity, stable same-cursor TFTP selected-byte evidence before restore, fresh post-power serial window, final pre-restore identity, restore proof, task-owned JSON evidence, docs build, and diff checks",
+  "static_archive_review": {
+    "archive_review_stdout": "candidate_archive=target/tmp/selected-entry-boot-path-v26-rust-entry-uart10.tar.gz\ncandidate_archive_sha256=a88bfaacd07f4d2263b3fd90db54d9231e3f76c58e8e31cd55ba32de31ceeb95\nkernel_2712_sha256=b597bc0d28aeda702492b9846ce9110ec5a99db6343c617a319ba265a0c59fa7\nkernel_2712_size=45400\nheader_image_size=45400\ntext_offset=0\nflags=12\nmarker=TALOS: reu10-loop\nforbidden_rp1_fr_read_strings_absent=true\n",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "required_marker": "TALOS: reu10-loop"
+  },
+  "hardware_summary": {
+    "selected_tree_hash": "a8da6043eecde204c1f58a612d25aa4939ad54084b0c1aa90a56da44ecae3e3a",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 45400,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "stable_tftp_event_count": 13,
+    "serial_required_marker": "TALOS: reu10-loop",
+    "serial_marker_present": true,
+    "serial_marker_occurrences": 13796,
+    "firmware_network_occurrences": 2,
+    "pre_power_drain_empty": true,
+    "final_pre_restore_selected_tree": true,
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "identity_join_rejection_reasons": [],
+    "helper_suggested_classification": "post-handoff-marker-visible"
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Executed the v25 rust_entry UART10 marker-loop replacement discriminator under hardwareTestLock with the exact selected archive contract."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Selected-byte service, final pre-restore identity, serial freshness, and restore proof were checked against the v25 discriminator contract."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "The repeated rust_entry UART10 marker was retained in the fresh post-power serial window."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness, ssh-ready=true, fake command expansion, broad shell work, and phase transition remain rejected as successors."
+    }
+  ],
+  "rejected_claims": [
+    "packet I/O",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility/service readiness",
+    "ssh-ready=true",
+    "broad shell work",
+    "fake/kernel-backed command expansion",
+    "phase transition"
+  ],
+  "redaction_review": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_peer_or_log_lines_retained": false,
+    "packet_payloads_retained": false,
+    "ssh_session_or_key_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false,
+    "stable_secret_derived_identifiers_retained": false,
+    "note": "Raw serial text and root endpoint bodies were redacted after capture summary/classification extraction; retained evidence preserves counts, hashes, byte counts, marker names, and lab status metadata."
+  }
+}
