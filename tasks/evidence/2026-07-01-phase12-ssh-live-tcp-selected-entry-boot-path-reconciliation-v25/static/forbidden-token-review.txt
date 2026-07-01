@@ -1,0 +1,5 @@
+absent:TALOS: selected-kernel-entry-discriminator-v23
+absent:TALOS: minimal-entry-control-ready
+absent:TALOS: ssh-service-smoltcp-runtime
+absent:packet-io
+absent:openssh

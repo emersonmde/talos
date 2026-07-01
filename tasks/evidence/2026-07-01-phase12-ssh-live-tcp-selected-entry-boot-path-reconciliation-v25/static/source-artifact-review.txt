@@ -1,0 +1,66 @@
+Task: phase12-ssh-live-tcp-selected-entry-boot-path-reconciliation-v25-20260701
+
+Reviewed surface:
+- accepted v19 current-tree selected-path PASS proof;
+- accepted v20/v22 minimal-entry selected-byte/no-marker hardware results;
+- accepted v23 _start selected-kernel-entry discriminator materialization;
+- accepted v24 selected-byte/no-_start-marker hardware result;
+- current source commit 3d5f507a2f3fa6e122d0069ea53d0c15a4f4713c;
+- linker-rpi5.ld, src/arch/aarch64/boot.S, build.rs scenario routing,
+  scripts/rpi5-rust-entry-uart10-marker-loop-*.sh, and the non-published
+  rust-entry UART10 marker-loop selected archive.
+
+Findings:
+- fixed: Reconciled selected-byte service versus absent earliest marker as an
+  artifact/output-path discriminator issue, not packet-I/O/OpenSSH progress.
+  v24 proved the selected v23 image bytes were served and kept staged, but it
+  did not prove observable execution of the one-shot _start marker.
+- not-an-issue: Image header/linker provenance remains internally consistent
+  for the selected-path archive: _start and __kernel_start are at 0x200000,
+  KERNEL_IMAGE_TEXT_OFFSET is 0, the materialized Image header reports
+  text_offset=0, header_image_size=45400, flags=12, and root/selected
+  kernel_2712.img bytes are identical.
+- not-an-issue: Scenario-selection routing for the replacement discriminator
+  is already accepted and current: TALOS_BOOT_SCENARIO
+  rpi5_rust_entry_uart10_marker_loop routes rust_entry directly into
+  run_rust_entry_uart10_marker_loop before BootInfo parsing, target init,
+  allocator, scheduler, RP1 MMIO, networking, service code, or shell behavior.
+- fixed: Selected a replacement discriminator with prior hardware-proven output
+  retention instead of retrying the same compact _start UART marker shape.
+  Phase 11 accepted the same selected-path marker loop with 2,961 retained
+  TALOS: reu10-loop occurrences after stable selected TFTP service.
+- deferred: The v26 hardware preflight must reprove the current materialized
+  archive in the Phase 12 frontier. It may not inherit the old Phase 11 run as
+  current hardware evidence; that older run only justifies the discriminator
+  choice and expected output path.
+- removed: Packet-I/O, OpenSSH/generated-root retry, remote receipt,
+  compatibility/service readiness, ssh-ready=true, fake command expansion,
+  broad shell work, and phase transition remain blocked.
+
+Replacement discriminator contract for v26:
+- Source commit: 3d5f507a2f3fa6e122d0069ea53d0c15a4f4713c.
+- Archive materialization: scripts/rpi5-rust-entry-uart10-marker-loop-archive.sh
+  target/timer-irq-boot-source
+  target/tmp/selected-entry-boot-path-v25-rust-entry-uart10.tar.gz.
+- Selected fetch path: da591740/kernel_2712.img.
+- Kernel byte count: 45400.
+- Kernel SHA-256:
+  b597bc0d28aeda702492b9846ce9110ec5a99db6343c617a319ba265a0c59fa7.
+- Archive SHA-256:
+  c24545db454f37bb830a2b3fbe06e9cf80fac6296b440f4305db9e7a4cc85ca2.
+- Expected marker: TALOS: reu10-loop.
+- Marker/output source path: _start -> rust_entry ->
+  run_rust_entry_uart10_marker_loop through the accepted UART10 early-phase
+  writer, repeated before BootInfo parsing or runtime/service code.
+- Restore target: phase12-ssh-v10-openssh-clean-pre-20260624T074100Z.
+- Fail-closed classifications: selected-entry-boot-path-marker-retained if
+  selected-byte/final-identity/restore proof and fresh TALOS: reu10-loop
+  evidence are decisive; blocked-selected-entry-boot-path-marker-missing if
+  those identity/restore facts are decisive but the marker is absent;
+  selected-entry-boot-path-inconclusive-after-triage only for a named
+  identity, TFTP, serial freshness, capture, or restore gap after required
+  triage.
+- Redaction rules: retain task ids, labels, hashes, byte counts, marker names,
+  classification, and validation outcomes; do not retain packet payloads,
+  SSH/session/key material, boot artifact bytes, private data, raw serial/TFTP
+  peers or log lines, or stable secret-derived identifiers unnecessarily.

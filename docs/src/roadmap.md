@@ -21534,6 +21534,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   discriminator, dependency refresh, packet-I/O/OpenSSH/generated-root retry,
   compatibility/service readiness, broad shell work, fake command expansion, or
   phase transition.
+- phase12-ssh-live-tcp-selected-entry-boot-path-reconciliation-v25-20260701
+  accepts selected-entry-boot-path-rust-entry-discriminator-ready. No hardware
+  action, lab publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+  OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+  success claim, ssh-ready=true, fake command expansion, broad shell work, or
+  phase transition was performed. The reconciliation preserves v24's
+  selected-byte service and marker-missing fact, then selects the accepted
+  rpi5_rust_entry_uart10_marker_loop path as the replacement selected-entry
+  discriminator. Static non-published review retained a 45,400-byte selected
+  kernel with SHA-256 b597bc0d..., valid Image header fields, root/selected
+  equality, selected da591740/kernel_2712.img path, and expected
+  TALOS: reu10-loop output before BootInfo, target init, allocator, scheduler,
+  RP1 MMIO, networking, service code, or shell behavior. The selected next task
+  is phase12-ssh-live-tcp-pi5-selected-entry-boot-path-preflight-v26-20260701;
+  packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
+  broad shell work, fake command expansion, and phase transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

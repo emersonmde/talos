@@ -1,0 +1,3 @@
+45400 /opt/strider/openclaw/current/workspace/tmp/talos-v25-rust-entry-review/kernel_2712.img
+45400 /opt/strider/openclaw/current/workspace/tmp/talos-v25-rust-entry-review/da591740/kernel_2712.img
+90800 total

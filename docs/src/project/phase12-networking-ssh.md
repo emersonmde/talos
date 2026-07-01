@@ -12815,3 +12815,23 @@ planningNeeded=true before another selected-kernel-entry repair, lab
 discriminator, dependency refresh, packet-I/O/OpenSSH/generated-root retry,
 remote receipt, compatibility/service readiness, broad shell work,
 fake/kernel-backed command expansion, or phase transition.
+
+phase12-ssh-live-tcp-selected-entry-boot-path-reconciliation-v25-20260701
+accepts selected-entry-boot-path-rust-entry-discriminator-ready. No hardware
+action, lab publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The reconciliation preserves
+v24's selected-byte service and marker-missing fact, then replaces the compact
+_start marker assumption with the accepted rpi5_rust_entry_uart10_marker_loop
+discriminator. The non-published selected archive preserves
+da591740/kernel_2712.img, root/selected equality, text_offset=0,
+header_image_size=45,400, flags=12, kernel SHA-256 b597bc0d..., and expected
+TALOS: reu10-loop output from _start -> rust_entry ->
+run_rust_entry_uart10_marker_loop before BootInfo, target init, allocator,
+scheduler, RP1 MMIO, networking, service code, or shell behavior. The selected
+next task is
+phase12-ssh-live-tcp-pi5-selected-entry-boot-path-preflight-v26-20260701;
+packet-I/O/OpenSSH/generated-root retry, remote receipt,
+compatibility/service readiness, ssh-ready=true, broad shell work,
+fake/kernel-backed command expansion, and phase transition remain blocked.

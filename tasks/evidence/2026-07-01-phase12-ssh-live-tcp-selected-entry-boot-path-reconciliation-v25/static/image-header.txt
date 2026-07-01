@@ -1,0 +1,6 @@
+text_offset=0
+
+header_image_size=45400
+
+flags=12
+

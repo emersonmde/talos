@@ -1,0 +1,60 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-entry-boot-path-reconciliation-v25-20260701",
+  "classification": "selected-entry-boot-path-rust-entry-discriminator-ready",
+  "status": "accepted",
+  "planningNeeded": false,
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-entry-boot-path-preflight-v26-20260701",
+  "first_missing_fact": null,
+  "reconciled_fact": "v24 selected-byte service was decisive, but absent compact _start marker evidence did not prove selected Image execution; v25 selects the previously hardware-proven repeated rust_entry UART10 marker-loop path as the replacement discriminator.",
+  "replacement_discriminator": {
+    "scenario": "rpi5_rust_entry_uart10_marker_loop",
+    "archive_materialization": "scripts/rpi5-rust-entry-uart10-marker-loop-archive.sh target/timer-irq-boot-source target/tmp/selected-entry-boot-path-v25-rust-entry-uart10.tar.gz",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "source_commit": "3d5f507a2f3fa6e122d0069ea53d0c15a4f4713c",
+    "archive_sha256": "c24545db454f37bb830a2b3fbe06e9cf80fac6296b440f4305db9e7a4cc85ca2",
+    "kernel_2712_sha256": "b597bc0d28aeda702492b9846ce9110ec5a99db6343c617a319ba265a0c59fa7",
+    "kernel_2712_size": 45400,
+    "image_header": {
+      "text_offset": 0,
+      "header_image_size": 45400,
+      "flags": 12
+    },
+    "root_selected_kernel_equal": true,
+    "expected_marker": "TALOS: reu10-loop",
+    "marker_output_path": "_start -> rust_entry -> run_rust_entry_uart10_marker_loop via UART10 early-phase writer before BootInfo, target init, allocator, scheduler, RP1 MMIO, networking, service code, or shell behavior",
+    "restore_target": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "qualitatively_different_from_v24": "The v24 compact _start marker was one-shot and not previously accepted as retained in this frontier; the replacement discriminator uses the existing repeated rust_entry UART10 marker loop, which Phase 11 hardware accepted with stable selected TFTP service and thousands of retained marker occurrences."
+  },
+  "blocked_claims": [
+    "packet-I/O",
+    "OpenSSH/generated-root retry",
+    "remote receipt",
+    "compatibility/service readiness",
+    "ssh-ready=true",
+    "fake command expansion",
+    "broad shell work",
+    "phase transition"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Reconciled v24 as selected-byte service without observable selected-entry marker proof and selected a replacement discriminator rather than packet-I/O/OpenSSH work."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "Image header, linker base, _start symbol, selected path mirroring, and scenario routing are internally consistent in the materialized replacement archive."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Replacement artifact uses the previously hardware-proven repeated rust_entry UART10 marker loop and preserves the da591740/kernel_2712.img selected fetch path."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Current Phase 12 hardware must still run v26; old Phase 11 evidence justifies discriminator choice but is not current acceptance."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility/service readiness, ssh-ready=true, fake command expansion, broad shell work, and phase transition remain blocked."
+    }
+  ]
+}

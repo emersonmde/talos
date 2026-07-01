@@ -1,0 +1,2 @@
+b597bc0d28aeda702492b9846ce9110ec5a99db6343c617a319ba265a0c59fa7  /opt/strider/openclaw/current/workspace/tmp/talos-v25-rust-entry-review/kernel_2712.img
+b597bc0d28aeda702492b9846ce9110ec5a99db6343c617a319ba265a0c59fa7  /opt/strider/openclaw/current/workspace/tmp/talos-v25-rust-entry-review/da591740/kernel_2712.img

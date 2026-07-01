@@ -1,0 +1,5 @@
+0000000000200000 T __kernel_start
+0000000000200000 T _start
+00000000002014c4 t _RNvNtNtCsgchfY6xkV2w_5talos6target4rpi533run_rust_entry_uart10_marker_loop
+00000000002015f8 T rust_entry
+000000000020b158 R __kernel_image_end

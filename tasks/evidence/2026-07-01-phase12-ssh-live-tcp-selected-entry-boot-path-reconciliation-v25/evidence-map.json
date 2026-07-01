@@ -1,0 +1,48 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-entry-boot-path-reconciliation-v25-20260701",
+  "classification": "selected-entry-boot-path-rust-entry-discriminator-ready",
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-entry-boot-path-preflight-v26-20260701",
+  "accepted_predecessors": {
+    "v19_handoff_hardware": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-selected-image-handoff-discriminator-v19.md",
+    "v20_polled_console_hardware": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-polled-console-preflight-v20.md",
+    "v22_console_boundary_hardware": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-minimal-entry-console-boundary-preflight-v22.md",
+    "v23_selected_kernel_entry_reconciliation": "tasks/2026-06-30-phase12-ssh-live-tcp-selected-kernel-entry-discriminator-reconciliation-v23.md",
+    "v24_selected_kernel_entry_hardware": "tasks/2026-06-30-phase12-ssh-live-tcp-pi5-selected-kernel-entry-discriminator-preflight-v24.md",
+    "v24_closeout": "tasks/2026-06-30-phase12-ssh-live-tcp-selected-kernel-entry-discriminator-closeout-v24.md",
+    "phase11_rust_entry_uart10_marker_loop_core": "tasks/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-core.md",
+    "phase11_rust_entry_uart10_marker_loop_hardware": "tasks/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-pi5-discriminator.md",
+    "phase11_rust_entry_uart10_marker_loop_closeout": "tasks/2026-06-06-phase11-rp1-rust-entry-uart10-marker-loop-closeout.md"
+  },
+  "source_and_artifact_review": {
+    "source_artifact_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-entry-boot-path-reconciliation-v25/static/source-artifact-review.txt",
+    "source_commit": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-entry-boot-path-reconciliation-v25/static/source-commit.txt",
+    "symbols": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-entry-boot-path-reconciliation-v25/static/symbols.txt",
+    "image_header": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-entry-boot-path-reconciliation-v25/static/image-header.txt",
+    "root_selected_equality": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-entry-boot-path-reconciliation-v25/static/root-selected-equality.txt",
+    "kernel_sha256": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-entry-boot-path-reconciliation-v25/static/kernel-sha256.txt",
+    "kernel_size": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-entry-boot-path-reconciliation-v25/static/kernel-size.txt",
+    "marker_string_scan": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-entry-boot-path-reconciliation-v25/static/marker-string-scan.txt",
+    "forbidden_token_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-entry-boot-path-reconciliation-v25/static/forbidden-token-review.txt"
+  },
+  "materialization": {
+    "archive_path_record": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-entry-boot-path-reconciliation-v25/materialized/archive-path.txt",
+    "archive_listing": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-entry-boot-path-reconciliation-v25/materialized/archive-listing.txt",
+    "archive_sha256": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-entry-boot-path-reconciliation-v25/static/archive-sha256.txt",
+    "archive_bytes_retained": false
+  },
+  "validation": {
+    "git_status_before_edits_action": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-entry-boot-path-reconciliation-v25/validation/git-status-before-edits-action.txt",
+    "git_status_before": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-entry-boot-path-reconciliation-v25/validation/git-status-before.txt",
+    "archive_review_stdout": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-entry-boot-path-reconciliation-v25/validation/archive-review.stdout.txt",
+    "archive_review_stderr": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-entry-boot-path-reconciliation-v25/validation/archive-review.stderr.txt"
+  },
+  "redaction": {
+    "raw_serial_retained": false,
+    "raw_tftp_peer_or_log_lines_retained": false,
+    "packet_payloads_retained": false,
+    "ssh_session_or_key_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false,
+    "stable_secret_derived_identifiers_retained": false
+  }
+}
