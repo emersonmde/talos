@@ -1,0 +1,6 @@
+target/aarch64-talos-rpi5-bcm2712/debug/talos: ELF 64-bit LSB executable, ARM aarch64, version 1 (SYSV), statically linked, with debug_info, not stripped
+
+target/aarch64-talos-rpi5-bcm2712/debug/talos:     file format elf64-little
+
+objdump: can't disassemble for architecture UNKNOWN!
+

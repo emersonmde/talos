@@ -13168,3 +13168,26 @@ planningNeeded=true pending supervisor planning for the next bounded
 continuation step; packet-I/O/OpenSSH/generated-root retry, remote receipt,
 compatibility/service readiness, ssh-ready=true, fake command expansion, broad
 shell work, hardware action, and phase transition remain blocked.
+
+phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-continuation-reconciliation-v37-20260701
+accepts selected-normal-runtime-rust-entry-discriminator-ready. No hardware
+action, lab publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The reconciliation preserves
+the v36 fact that selected-byte Pi 5 evidence reaches TALOS:
+asm_pre_rust_entry, then adds a separate selected normal-runtime rust_entry
+marker-loop archive. The new artifact emits TALOS: asm_start and TALOS:
+asm_pre_rust_entry from assembly provenance, enters rust_entry, loops on
+TALOS: rust_entry from Rust, and explicitly withholds BootInfo parsing, target
+init, exceptions, kernel_main, packet-I/O, service success, ssh-ready, and
+phase-transition claims. The non-published v37 archive serves
+da591740/kernel_2712.img at 152,816 bytes with SHA-256
+c1c1c864ca89babb516c11ce0f52357c69b79c2c6034e42150494a043658f9bc and archive
+SHA-256 b8014b4b935bd81c3fdb077046cc5b10071b57d71af628678c9def68f8b43053.
+selected_next_task is
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-continuation-preflight-v38-20260701;
+packet-I/O/OpenSSH/generated-root retry, remote receipt,
+compatibility/service readiness, ssh-ready=true, fake command expansion, broad
+shell work, hardware action outside the queued v38 preflight, and phase
+transition remain blocked.

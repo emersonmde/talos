@@ -124,6 +124,7 @@
             talos_boot_scenario = "rpi5_rp1_ethernet_bcm54213pe_boot_transport_sentinel_control",
             talos_boot_scenario = "rpi5_rp1_ethernet_kernel_entry_serial_beacon",
             talos_boot_scenario = "rpi5_ssh_service_smoltcp_runtime_ready",
+            talos_boot_scenario = "rpi5_ssh_service_smoltcp_rust_entry_marker_loop",
             talos_boot_scenario = "rpi5_minimal_entry_control",
             talos_boot_scenario = "rpi5_selected_kernel_entry_discriminator",
             talos_boot_scenario = "rpi5_rp1_ethernet_bootinfo_report_serial_visibility_candidate",
@@ -406,6 +407,15 @@ pub extern "C" fn rust_entry(dtb_pa: usize) -> ! {
     {
         let _ = dtb_pa;
         target::rpi5::run_rust_entry_uart10_marker_loop();
+    }
+
+    #[cfg(all(
+        talos_target_rpi5_bcm2712,
+        talos_boot_scenario = "rpi5_ssh_service_smoltcp_rust_entry_marker_loop"
+    ))]
+    {
+        let _ = dtb_pa;
+        target::rpi5::run_ssh_service_smoltcp_rust_entry_marker_loop();
     }
 
     #[cfg(all(

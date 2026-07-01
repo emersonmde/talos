@@ -21796,6 +21796,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   planningNeeded=true for supervisor planning; packet-I/O/OpenSSH/generated-root
   retry, compatibility/service readiness, ssh-ready=true, broad shell work,
   fake command expansion, hardware action, and phase transition remain blocked.
+- phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-continuation-reconciliation-v37-20260701
+  accepts selected-normal-runtime-rust-entry-discriminator-ready. No hardware
+  action or lab publication was performed. v37 adds a separate selected
+  normal-runtime rust_entry marker-loop archive that keeps the selected
+  rpi5_ssh_service_smoltcp_runtime_ready route linked, emits TALOS: asm_start
+  and TALOS: asm_pre_rust_entry through assembly provenance, enters rust_entry,
+  and loops on TALOS: rust_entry before BootInfo parsing, target init,
+  exceptions, kernel_main, packet-I/O, service readiness, or phase transition.
+  The non-published archive serves da591740/kernel_2712.img at 152,816 bytes
+  with SHA-256 c1c1c864ca89babb516c11ce0f52357c69b79c2c6034e42150494a043658f9bc
+  and archive SHA-256
+  b8014b4b935bd81c3fdb077046cc5b10071b57d71af628678c9def68f8b43053.
+  selected_next_task is
+  phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-continuation-preflight-v38-20260701;
+  packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
+  ssh-ready=true, broad shell work, fake command expansion, hardware action
+  outside the queued v38 preflight, and phase transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

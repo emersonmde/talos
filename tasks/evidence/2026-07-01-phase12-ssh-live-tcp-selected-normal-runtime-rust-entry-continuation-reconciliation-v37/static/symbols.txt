@@ -1,0 +1,4 @@
+   474: 0000000000205154   808 FUNC    LOCAL  HIDDEN     3 _RNvNtNtCsgchfY6xkV2w_5talos6target4rpi543run_ssh_service_smoltcp_runtime_ready_route
+   477: 000000000020547c   408 FUNC    LOCAL  HIDDEN     3 _RNvNtNtCsgchfY6xkV2w_5talos6target4rpi546run_ssh_service_smoltcp_rust_entry_marker_loop
+  4430: 00000000002093e4    92 FUNC    GLOBAL DEFAULT    3 rust_entry
+  4691: 0000000000200000   176 FUNC    GLOBAL DEFAULT    1 _start

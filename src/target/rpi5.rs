@@ -12965,6 +12965,39 @@ pub fn run_rust_entry_uart10_marker_loop() -> ! {
     }
 }
 
+#[cfg(all(
+    talos_target_rpi5_bcm2712,
+    talos_boot_scenario = "rpi5_ssh_service_smoltcp_rust_entry_marker_loop"
+))]
+static RUST_ENTRY_MARKER_LOOP_EXIT: core::sync::atomic::AtomicBool =
+    core::sync::atomic::AtomicBool::new(false);
+
+#[cfg(all(
+    talos_target_rpi5_bcm2712,
+    talos_boot_scenario = "rpi5_ssh_service_smoltcp_rust_entry_marker_loop"
+))]
+pub fn run_ssh_service_smoltcp_rust_entry_marker_loop() {
+    while !RUST_ENTRY_MARKER_LOOP_EXIT.load(core::sync::atomic::Ordering::Relaxed) {
+        write_early_static("TALOS: rust_entry");
+        if let Some(nonce) = option_env!("TALOS_CAPTURE_NONCE") {
+            if !nonce.is_empty() {
+                write_early_static(" capture-nonce=");
+                write_early_static(nonce);
+            }
+        }
+        write_early_static(" selected-normal-runtime-rust-entry=true");
+        write_early_static(" claims-bootinfo-parsed=false");
+        write_early_static(" claims-target-init=false");
+        write_early_static(" claims-exceptions-ready=false");
+        write_early_static(" claims-kernel-main=false");
+        write_early_static(" claims-packet-io=false");
+        write_early_static(" claims-service-success=false");
+        write_early_static(" claims-ssh-ready=false");
+        write_early_static(" claims-phase-transition=false\n");
+        wait_uart10_empty_early_phase();
+    }
+}
+
 #[cfg(talos_boot_scenario = "rpi5_rp1_ethernet_kernel_entry_serial_beacon")]
 pub fn run_rp1_ethernet_kernel_entry_serial_beacon() -> ! {
     loop {

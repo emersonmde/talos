@@ -1,0 +1,16 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-continuation-reconciliation-v37-20260701",
+  "classification": "selected-normal-runtime-rust-entry-discriminator-ready",
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-continuation-preflight-v38-20260701",
+  "planning_needed": false,
+  "first_missing_fact": "Whether the selected 152816-byte normal-runtime rust_entry marker-loop archive that retains asm_start and asm_pre_rust_entry strings also reaches and retains TALOS: rust_entry on Pi 5 before BootInfo parsing, target init, exceptions, kernel_main, packet-I/O, or service readiness.",
+  "hardware_action": false,
+  "lab_publication": false,
+  "boot_snapshot_mutation": false,
+  "pi5_power_action": false,
+  "packet_io": false,
+  "openssh_generated_root_retry": false,
+  "ssh_ready": false,
+  "service_readiness_claim": false,
+  "phase_transition": false
+}
