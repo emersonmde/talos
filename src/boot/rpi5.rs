@@ -56,6 +56,9 @@ pub(crate) fn kernel_main(boot_info: &BootInfo) -> ! {
     #[cfg(talos_boot_scenario = "rpi5_minimal_entry_control")]
     target::rpi5::run_minimal_entry_control_marker();
 
+    #[cfg(talos_boot_scenario = "rpi5_ssh_service_smoltcp_route_start_marker_loop")]
+    target::rpi5::run_ssh_service_smoltcp_route_start_marker_loop();
+
     #[cfg(talos_boot_scenario = "rpi5_ssh_service_smoltcp_runtime_ready")]
     target::rpi5::run_ssh_service_smoltcp_runtime_ready_route();
 

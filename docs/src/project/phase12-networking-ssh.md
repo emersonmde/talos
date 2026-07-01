@@ -13505,3 +13505,25 @@ readiness, ssh-ready=true, fake command expansion, broad shell work, and phase
 transition remain unproved. selected_next_task is
 phase12-ssh-live-tcp-selected-normal-runtime-route-start-continuation-reconciliation-v49-20260701;
 planningNeeded=false.
+
+phase12-ssh-live-tcp-selected-normal-runtime-route-start-continuation-reconciliation-v49-20260701
+accepts selected-normal-runtime-route-start-discriminator-ready. No hardware
+action, lab publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The worker added a selected
+normal-runtime route-start marker-loop scenario that emits TALOS:
+ssh-service-smoltcp-runtime-route-start
+capture-nonce=runtime-marker-route-static after the accepted kernel_main
+frontier and before runtime-ready, packet-I/O, service success, ssh-ready, or
+phase-transition claims. The non-published archive is
+target/tmp/selected-normal-runtime-route-start-v49.tar.gz with SHA-256
+16a8c14c33430f09682b6cb5a725c75f1e392f2372671ed3fea4a8b39ac609a4;
+da591740/kernel_2712.img is 152,640 bytes with SHA-256
+370cbe055e4836d9605a318704e9337e112f9cbdf57743addc7ec9b13ef28467 and is
+byte-identical to root kernel_2712.img. Runtime-ready, packet-I/O, OpenSSH
+compatibility, service readiness, ssh-ready=true, fake command expansion,
+broad shell work, and phase transition remain unproved. selected_next_task is
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-route-start-continuation-preflight-v50-20260701;
+planningNeeded=true because no explicit v50 hardware preflight task exists in
+taskQueue.
