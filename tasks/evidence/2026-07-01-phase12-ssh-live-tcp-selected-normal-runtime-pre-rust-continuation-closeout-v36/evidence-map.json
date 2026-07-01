@@ -1,0 +1,61 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-continuation-closeout-v36-20260701",
+  "classification": "selected-normal-runtime-pre-rust-frontier-proved-supervisor-planning",
+  "references": {
+    "v34_closeout_task": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-entry-repair-closeout-v34.md",
+    "v34_closeout_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-entry-repair-closeout-v34/classification.json",
+    "v35_reconciliation_task": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-continuation-reconciliation-v35.md",
+    "v35_reconciliation_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-continuation-reconciliation-v35/classification.json",
+    "v36_preflight_task": "tasks/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-continuation-preflight-v36.md",
+    "v36_preflight_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-continuation-preflight-v36/classification.json",
+    "v36_preflight_evidence_map": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-continuation-preflight-v36/evidence-map.json"
+  },
+  "accepted_facts": {
+    "v34": {
+      "classification": "selected-normal-runtime-entry-frontier-proved-supervisor-planning",
+      "selected_kernel_size_bytes": 152144,
+      "hardware_marker": "TALOS: asm_start",
+      "disposition": "selected normal-runtime assembly entry retained"
+    },
+    "v35": {
+      "classification": "selected-normal-runtime-pre-rust-discriminator-ready",
+      "archive": "target/tmp/selected-normal-runtime-pre-rust-v35.tar.gz",
+      "archive_sha256": "2e2f538a7453c6fbce6b05c0c053b282d5e24c8f2d798e4893a2607fc7e7a0b2",
+      "selected_fetch_path": "da591740/kernel_2712.img",
+      "selected_kernel_sha256": "afd9f9550e2abbdcba80520eb7c3527f1f3a3c3b383a432e8fe98c2381f8c7c1",
+      "selected_kernel_size_bytes": 152144,
+      "expected_marker": "TALOS: asm_pre_rust_entry",
+      "loop_position": "after CPACR setup, BSS clear, and stack setup; before rust_entry"
+    },
+    "v36": {
+      "classification": "selected-normal-runtime-pre-rust-marker-retained",
+      "decisive_run": "unchanged_candidate_rerun",
+      "selected_tree_hash": "28e048845ae76bc90c6227959536e079d007e7d1e71a17122ddc1011cb42d345",
+      "tftp_expected_fetch_count": 2,
+      "selected_fetch_bytes": 152144,
+      "required_marker": "TALOS: asm_pre_rust_entry",
+      "required_marker_occurrences": 542,
+      "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "first_missing_fact": "Whether the selected 152144-byte normal-runtime feature archive proceeds from TALOS: asm_pre_rust_entry into rust_entry and later normal-runtime milestones.",
+  "selected_next_task": null,
+  "planning_needed": true,
+  "evidence_levels": [
+    "accepted predecessor task inspection",
+    "accepted static archive/image review",
+    "accepted serial hardware boot/output",
+    "accepted lab-controller API/TFTP evidence",
+    "task-owned JSON evidence",
+    "docs validation",
+    "diff checks"
+  ],
+  "redaction_review": {
+    "summaries_exclude_raw_serial_text": true,
+    "summaries_exclude_raw_tftp_peer_or_log_lines": true,
+    "summaries_exclude_packet_payloads": true,
+    "summaries_exclude_ssh_session_or_key_material": true,
+    "summaries_exclude_boot_artifact_bytes": true,
+    "summaries_reference_predecessor_hardware_evidence_without_copying_raw_data": true
+  }
+}

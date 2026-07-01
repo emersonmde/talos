@@ -21781,6 +21781,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   packet-I/O/OpenSSH/generated-root retry, compatibility/service readiness,
   ssh-ready=true, broad shell work, fake command expansion, and phase
   transition remain blocked.
+- phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-continuation-closeout-v36-20260701
+  accepts selected-normal-runtime-pre-rust-frontier-proved-supervisor-planning.
+  No hardware action, lab publication, boot snapshot mutation, Pi 5 power
+  cycle, packet-I/O, OpenSSH/generated-root retry, remote receipt,
+  compatibility claim, service success claim, ssh-ready=true,
+  fake/kernel-backed command expansion, broad shell work, or phase transition
+  was performed. The closeout reconciles v36 against v34 and v35: v34 proves
+  selected normal-runtime assembly entry at TALOS: asm_start, v35 defines the
+  selected pre-rust loop after CPACR setup, BSS clear, and stack setup, and
+  v36 proves selected-byte TALOS: asm_pre_rust_entry retention 542 times on Pi
+  5. The first missing fact is rust_entry and later normal-runtime milestones
+  for the selected 152,144-byte feature archive. selected_next_task is null and
+  planningNeeded=true for supervisor planning; packet-I/O/OpenSSH/generated-root
+  retry, compatibility/service readiness, ssh-ready=true, broad shell work,
+  fake command expansion, hardware action, and phase transition remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
