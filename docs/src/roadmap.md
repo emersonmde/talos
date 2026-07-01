@@ -22215,6 +22215,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   selected-runtime execution failure. selected_next_task is
   phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-repair-preflight-v55-20260701
   and planningNeeded=false.
+- phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-repair-preflight-v55-20260701
+  accepts blocked-selected-normal-runtime-runtime-ready-preflight. Under
+  hardwareTestLock, the worker republished the v51 selected runtime-ready
+  archive and ran the revised capture helper. The new post-power,
+  pre-serial-observe checkpoint showed the selected tree
+  c49997afe4dd2136706ad4f0dc05326d93abf60593c8a01104472984d5481bbc still
+  staged with da591740/kernel_2712.img at 152,144 bytes; same-window TFTP
+  served that selected kernel twice at 152,144 bytes, and final pre-restore
+  identity remained selected. The lab restored to
+  phase12-ssh-v10-openssh-clean-pre-20260624T074100Z. The remaining first
+  missing fact is TALOS: ssh-service-smoltcp-runtime-ready
+  capture-nonce=runtime-ready-static in the candidate serial window, so this is
+  a blocked runtime-ready preflight rather than runtime-ready marker proof.
+  Packet-I/O, OpenSSH compatibility, service readiness, ssh-ready=true, fake
+  command expansion, broad shell work, and phase transition remain unproved.
+  selected_next_task is
+  phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-repair-closeout-v55-20260701
+  and planningNeeded=false.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

@@ -1,0 +1,59 @@
+{
+  "action": "serial read",
+  "base64": "",
+  "bytes": 4475,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "REDACTED",
+  "truncated": false,
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "talos_serial_window": {
+    "requested_timeout_seconds": 120,
+    "elapsed_seconds": 120,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "observe_attempts": 7,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 4475,
+    "required_marker": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-ready-static",
+    "kernel_marker": "TALOS: kernel_main",
+    "firmware_network_marker": "NETWORK",
+    "has_kernel_main": false,
+    "has_required_marker": false,
+    "marker_family": {
+      "markers": [
+        "TALOS: ssh-service-smoltcp-runtime-ready",
+        "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-ready-static"
+      ],
+      "counts": [
+        {
+          "marker": "TALOS: ssh-service-smoltcp-runtime-ready",
+          "present": false,
+          "occurrences": 0,
+          "first_index": null
+        },
+        {
+          "marker": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-ready-static",
+          "present": false,
+          "occurrences": 0,
+          "first_index": null
+        }
+      ],
+      "deepest_present_marker": null,
+      "all_present": false,
+      "present_count": 0
+    },
+    "has_firmware_network": true,
+    "firmware_network_occurrences": 2,
+    "required_marker_occurrences": 0,
+    "marker_nonce": "runtime-ready-static",
+    "nonce_token": "capture-nonce=runtime-ready-static",
+    "nonce_token_occurrences": 0,
+    "required_marker_excerpt": ""
+  }
+}

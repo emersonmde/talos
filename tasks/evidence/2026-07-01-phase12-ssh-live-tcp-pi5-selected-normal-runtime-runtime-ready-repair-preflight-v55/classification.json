@@ -1,0 +1,62 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-repair-preflight-v55-20260701",
+  "classification": "blocked-selected-normal-runtime-runtime-ready-preflight",
+  "selected_next_task": "phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-repair-closeout-v55-20260701",
+  "planning_needed": false,
+  "first_missing_fact": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-ready-static was not retained in the candidate serial window even though selected post-power identity, selected TFTP byte service, final selected identity, and restore proof were decisive.",
+  "evidence_level": [
+    "image/archive inspection",
+    "lab-controller API",
+    "serial hardware boot/output summary",
+    "TFTP log delta",
+    "task-owned JSON evidence",
+    "redaction review"
+  ],
+  "candidate": {
+    "selected_tree_hash": "c49997afe4dd2136706ad4f0dc05326d93abf60593c8a01104472984d5481bbc",
+    "expected_fetch_path": "da591740/kernel_2712.img",
+    "expected_fetch_byte_count": 152144,
+    "post_power_pre_observe_identity": {
+      "tree_hash": "c49997afe4dd2136706ad4f0dc05326d93abf60593c8a01104472984d5481bbc",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes_match": true
+    },
+    "final_pre_restore": {
+      "tree_hash": "c49997afe4dd2136706ad4f0dc05326d93abf60593c8a01104472984d5481bbc",
+      "effective_kernel": "kernel_2712.img",
+      "selected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes_match": true
+    },
+    "tftp": {
+      "cursor_start": 4744810,
+      "cursor_end": 4746161,
+      "stable": true,
+      "event_count": 13,
+      "expected_fetch_count": 2,
+      "expected_fetch_byte_match_count": 2
+    },
+    "serial_marker_occurrences_after_saved_cursor": 0,
+    "nonce_occurrences_after_saved_cursor": 0,
+    "helper_suggested_classification": "reset-side-effect-without-visible-marker-candidate",
+    "v4_marker_check_classification": "capture-staging-blocked",
+    "v4_marker_check_rejection_reasons": [
+      "run-unique-capture-nonce-not-present-after-power",
+      "required-marker-not-present-after-power"
+    ]
+  },
+  "restore": {
+    "snapshot_name": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "defensive_post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "redaction_review": {
+    "private_key_seed_public_key_blob_signature_fingerprint_digest_operator_identity_or_stable_secret_derived_identifier_retained": false,
+    "raw_serial_text_retained": false,
+    "raw_serial_base64_retained": false,
+    "raw_tftp_peer_or_log_line_retained": false,
+    "note": "Task-owned JSON evidence was redacted after derived checks; serial text/base64 and TFTP peer/line fields are replaced with REDACTED while counts, filenames, byte counts, cursor metadata, and classifications are retained."
+  }
+}

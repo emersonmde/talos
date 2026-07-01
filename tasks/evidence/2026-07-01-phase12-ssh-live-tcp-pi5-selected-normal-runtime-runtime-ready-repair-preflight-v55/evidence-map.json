@@ -1,0 +1,38 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-repair-preflight-v55-20260701",
+  "classification": "blocked-selected-normal-runtime-runtime-ready-preflight",
+  "files": {
+    "task_record": "tasks/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-repair-preflight-v55.md",
+    "classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-repair-preflight-v55/classification.json",
+    "archive_sha256": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-repair-preflight-v55/static/archive-sha256.txt",
+    "archive_size": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-repair-preflight-v55/static/archive-size.txt",
+    "archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-repair-preflight-v55/validation/runtime-ready-archive-review.stdout.txt",
+    "git_status_before_hardware": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-repair-preflight-v55/validation/git-status-before-hardware.txt",
+    "publish_archive": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-repair-preflight-v55/lab/v55-candidate/publish-archive.json",
+    "post_publish_status": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-repair-preflight-v55/lab/v55-candidate/post-publish-status.json",
+    "post_power_pre_observe_status": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-repair-preflight-v55/lab/v55-candidate/post-power-pre-observe-status.json",
+    "tftp_delta_stable_pre_restore": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-repair-preflight-v55/lab/v55-candidate/tftp-delta-stable-pre-restore.json",
+    "serial_observe_window": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-repair-preflight-v55/lab/v55-candidate/serial-observe-window.json",
+    "capture_summary": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-repair-preflight-v55/lab/v55-candidate/capture-invariant-summary.json",
+    "proof_identity_join_check": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-repair-preflight-v55/lab/v55-candidate/proof-identity-join-check.json",
+    "proof_identity_join_v4_check": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-repair-preflight-v55/lab/v55-candidate/proof-identity-join-v4-check.json",
+    "restore_proof": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-repair-preflight-v55/lab/v55-candidate/post-restore-status.json",
+    "defensive_restore_proof": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-repair-preflight-v55/lab/v55-candidate/manual-post-restore-status.json"
+  },
+  "evidence_levels": [
+    "git status --short --branch before lab publication/hardware action",
+    "image/archive inspection",
+    "lab-controller API",
+    "serial hardware boot/output summary",
+    "TFTP log delta",
+    "restore proof",
+    "task-owned JSON evidence",
+    "redaction review"
+  ],
+  "selected_next_task": "phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-repair-closeout-v55-20260701",
+  "planning_needed": false,
+  "redaction_review": {
+    "private_key_seed_public_key_blob_signature_fingerprint_digest_operator_identity_or_stable_secret_derived_identifier_retained": false,
+    "raw_serial_or_tftp_peer_line_fields_redacted": true
+  }
+}
