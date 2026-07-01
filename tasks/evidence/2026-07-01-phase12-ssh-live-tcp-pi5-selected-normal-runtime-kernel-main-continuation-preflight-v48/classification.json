@@ -1,0 +1,84 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v48-20260701",
+  "classification": "selected-normal-runtime-kernel-main-marker-retained",
+  "status": "accepted",
+  "selected_next_task": "phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-continuation-closeout-v48-20260701",
+  "planning_needed": false,
+  "hardware_action": true,
+  "hardware_lock_acquired": true,
+  "lab_publication": true,
+  "boot_snapshot_mutation": true,
+  "pi5_power_action": true,
+  "packet_io": false,
+  "openssh_generated_root_retry": false,
+  "fake_command_expansion": false,
+  "broad_shell_work": false,
+  "phase_transition": false,
+  "authoritative_archive_contract": {
+    "path": "target/tmp/selected-normal-runtime-kernel-main-v45.tar.gz",
+    "sha256": "72c28bafe9bedd1474fd1dfb19db101e9078122506db1b6f13bbbebdad383f19",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "selected_kernel_sha256": "2f89f98cf9403ccee58c20f8014f3c5fd83accb2f99da2f35b4b1eec6928cdc5",
+    "selected_kernel_bytes": 152896,
+    "required_marker": "TALOS: kernel_main capture-nonce=runtime-marker-route-static",
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "source_commit": "773dae203cbe36a0795e3a1d861587da8540e2d3"
+  },
+  "published_selected_tree": {
+    "tree_hash": "9d2f354810e8f445705dd083c8876f47bd25fa5f1aec52762c5af98662fdf60a",
+    "effective_kernel": "kernel_2712.img",
+    "expected_fetch_present": true,
+    "expected_fetch_bytes_match": true
+  },
+  "hardware_evidence": {
+    "run_label": "selected-normal-runtime-kernel-main-v48",
+    "identity_join_decisive": true,
+    "identity_join_rejection_reasons": [],
+    "serial_observe_exit": 1,
+    "tftp_delta_exit": 0,
+    "serial_capture_mode": "read",
+    "serial_response_bytes": 617115,
+    "required_marker_occurrences": 1794,
+    "deepest_present_marker": {
+      "marker": "TALOS: kernel_main capture-nonce=runtime-marker-route-static",
+      "present": true,
+      "occurrences": 1794,
+      "first_index": 4621
+    },
+    "selected_fetch_tftp_event_count": 2,
+    "selected_fetch_tftp_byte_match_count": 2,
+    "final_pre_restore_identity": {
+      "tree_hash": "9d2f354810e8f445705dd083c8876f47bd25fa5f1aec52762c5af98662fdf60a",
+      "effective_kernel": "kernel_2712.img",
+      "expected_tree_still_staged": true,
+      "expected_fetch_present": true,
+      "expected_fetch_bytes_match": true
+    },
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "known_good_control_decision": "not-run; first candidate run was decisive for selected identity, fresh serial capture, TFTP delta, final pre-restore identity, and restore proof",
+  "candidate_rerun_decision": "not-run; no inconclusive identity, serial freshness, or TFTP capture reason remained after the first candidate",
+  "first_missing_fact": null,
+  "unproved_facts": [
+    "route-start",
+    "runtime-ready",
+    "packet-I/O",
+    "remote receipt",
+    "OpenSSH compatibility",
+    "service readiness",
+    "ssh-ready=true",
+    "fake command expansion",
+    "broad shell work",
+    "phase transition"
+  ],
+  "redaction_review": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_peer_or_log_lines_retained": false,
+    "packet_payloads_retained": false,
+    "ssh_session_or_key_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false,
+    "stable_secret_derived_identifiers_retained": false
+  },
+  "commit": "recorded-in-supervisor-state-after-final-commit"
+}

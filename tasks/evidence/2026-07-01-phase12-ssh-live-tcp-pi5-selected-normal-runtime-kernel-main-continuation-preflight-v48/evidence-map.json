@@ -1,0 +1,35 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v48-20260701",
+  "classification": "selected-normal-runtime-kernel-main-marker-retained",
+  "evidence_level": [
+    "hardwareTestLock",
+    "static archive/image review",
+    "lab-controller API selected identity",
+    "fresh serial cursor/drain",
+    "stable same-cursor TFTP evidence",
+    "serial hardware marker summary",
+    "restore proof",
+    "redacted task-owned JSON evidence",
+    "docs build",
+    "diff checks"
+  ],
+  "files": {
+    "classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v48/classification.json",
+    "run_summary_redacted": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v48/lab/run-summary-redacted.json",
+    "candidate_dir": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v48/lab/v48-candidate",
+    "archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v48/validation/kernel-main-archive-review.stdout.txt",
+    "capture_dry_run": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v48/validation/capture-bundle-dry-run.json",
+    "static_archive_sha256": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v48/static/archive-sha256.txt",
+    "static_kernel_sha256": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v48/static/kernel-sha256.txt",
+    "static_kernel_size": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v48/static/kernel-size.txt"
+  },
+  "predecessor_evidence": {
+    "v47_classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-contract-reconciliation-v47/classification.json",
+    "v47_task_record": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-contract-reconciliation-v47.md"
+  },
+  "redaction": {
+    "scan_after": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v48/validation/redaction-scan-after.txt",
+    "raw_serial_text_retained": false,
+    "raw_tftp_peer_or_log_lines_retained": false
+  }
+}

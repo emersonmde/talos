@@ -1,0 +1,1 @@
+152896 target/tmp/selected-normal-runtime-kernel-main-v45-boot-tree/kernel_2712.img

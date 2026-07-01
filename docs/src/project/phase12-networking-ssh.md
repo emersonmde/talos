@@ -13473,3 +13473,20 @@ and planningNeeded=false. Later facts remain unproved: selected Pi 5
 kernel_main marker retention, route-start, runtime-ready, packet-I/O, OpenSSH
 compatibility, remote receipt, service readiness, ssh-ready=true, fake command
 expansion, broad shell work, and phase transition.
+
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v48-20260701
+accepts selected-normal-runtime-kernel-main-marker-retained. Under
+hardwareTestLock, the worker published only the reconciled v47-selected
+kernel_main archive and captured selected tree
+9d2f354810e8f445705dd083c8876f47bd25fa5f1aec52762c5af98662fdf60a through
+final pre-restore identity. Stable same-cursor TFTP served
+da591740/kernel_2712.img twice at 152,896 bytes, and the saturated direct-read
+serial window retained TALOS: kernel_main
+capture-nonce=runtime-marker-route-static 1,794 times. The lab was restored to
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. This proves
+the selected normal-runtime archive reaches boot::rpi5::kernel_main on Pi 5;
+it does not prove route-start, runtime-ready, packet-I/O, OpenSSH
+compatibility, remote receipt, service readiness, ssh-ready=true, fake command
+expansion, broad shell work, or phase transition. selected_next_task is
+phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-continuation-closeout-v48-20260701;
+planningNeeded=false.
