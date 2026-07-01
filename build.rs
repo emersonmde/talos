@@ -576,7 +576,7 @@ const BOOT_SCENARIOS: &[BootScenario] = &[
     BootScenario {
         value: "rpi5_ssh_service_smoltcp_runtime_ready",
         implied_values: &[],
-        asm_defines: &[],
+        asm_defines: &[RPI5_EARLY_ENTRY_PROVENANCE_ASM],
     },
     BootScenario {
         value: "rpi5_minimal_entry_control",

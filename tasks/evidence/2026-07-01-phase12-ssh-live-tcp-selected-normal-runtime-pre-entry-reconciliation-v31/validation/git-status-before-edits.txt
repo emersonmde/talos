@@ -1,0 +1,5 @@
+## main...origin/main [ahead 241]
+ M build.rs
+ M scripts/rpi5-capture-invariant-proof-bundle.sh
+ M scripts/rpi5-ssh-service-smoltcp-runtime-ready-archive-review.sh
+?? tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-pre-entry-reconciliation-v31/

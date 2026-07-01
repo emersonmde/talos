@@ -30,6 +30,8 @@ strings "$work_dir/kernel_2712.img" > "$work_dir/kernel_2712.strings"
 
 required_marker="TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=$CAPTURE_NONCE"
 for token in \
+    "TALOS: asm_start" \
+    "TALOS: asm_pre_rust_entry" \
     "TALOS: ssh-service-smoltcp-runtime-route-start" \
     "TALOS: ssh-service-smoltcp-runtime-ready" \
     "capture-nonce=" \

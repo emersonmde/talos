@@ -12987,3 +12987,24 @@ planningNeeded=true pending supervisor planning for the next bounded repair or
 discriminator; packet-I/O/OpenSSH/generated-root retry, remote receipt,
 compatibility/service readiness, ssh-ready=true, fake command expansion, broad
 shell work, and phase transition remain blocked.
+
+phase12-ssh-live-tcp-selected-normal-runtime-pre-entry-reconciliation-v31-20260701
+accepts selected-normal-runtime-pre-entry-discriminator-ready. No hardware
+action, lab publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The reconciliation preserves the
+v30 fact that the 152,144-byte selected normal-runtime Image was served by TFTP
+but retained no ordered normal-runtime marker, then changes the same feature
+image to include assembly early-entry provenance. The v31 selected archive
+serves da591740/kernel_2712.img at 152,144 bytes with SHA-256
+c169c9553096f3bae24802762f14c03588fc6d6e811b732c8ac6515c47ca8f95 and archive
+SHA-256 a1227502fa059774e04c3ebc0b2c819305defa88abd4fbc07254e3166fcad451.
+The next serialized Pi 5 preflight must search the ordered marker family:
+asm_start, asm_pre_rust_entry, rust_entry, boot info parsed, target init,
+exceptions ready, kernel_main, ssh-service-smoltcp-runtime-route-start, and
+ssh-service-smoltcp-runtime-ready. selected_next_task is
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-entry-preflight-v32-20260701;
+packet-I/O/OpenSSH/generated-root retry, remote receipt,
+compatibility/service readiness, ssh-ready=true, fake command expansion, broad
+shell work, and phase transition remain blocked.

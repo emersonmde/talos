@@ -533,6 +533,7 @@ jq -n \
     --arg expected_kernel "$EXPECTED_KERNEL" \
     --arg expected_fetch "$EXPECTED_FETCH" \
     --arg expected_fetch_bytes "$EXPECTED_FETCH_BYTES" \
+    --arg marker_family "$MARKER_FAMILY" \
     --argjson serial_exit "$serial_exit" \
     --argjson tftp_exit "$tftp_exit" \
     --slurpfile preflight "$EVIDENCE_DIR/preflight-identity.json" \
