@@ -13420,8 +13420,11 @@ runtime-ready, packet-I/O, service success, ssh-ready, or phase-transition
 paths. It keeps the downstream selected runtime route linked in the artifact
 while explicitly withholding later milestone claims. The non-published v45
 archive serves da591740/kernel_2712.img at 152,896 bytes with SHA-256
-96057d2f8970808011a308f7b3a92da6feb85097b44590947a1ac145f85c6be6 and archive
-SHA-256 72c28bafe9bedd1474fd1dfb19db101e9078122506db1b6f13bbbebdad383f19.
+2f89f98cf9403ccee58c20f8014f3c5fd83accb2f99da2f35b4b1eec6928cdc5 and archive
+SHA-256 72c28bafe9bedd1474fd1dfb19db101e9078122506db1b6f13bbbebdad383f19. v47
+corrected this selected-kernel SHA after recomputing exact tar member
+./da591740/kernel_2712.img; the previously recorded 96057d2f... value is
+quarantined as stale metadata and the v46 blocker reason.
 selected_next_task is
 phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v46-20260701
 and planningNeeded=true because no explicit v46 hardware preflight task exists
@@ -13448,3 +13451,25 @@ committed v45 static evidence and the current archive kernel bytes hash to
 was not published. selected_next_task is null and planningNeeded=true pending
 supervisor reconciliation of the authoritative v45/v46 kernel hash contract
 before any Pi 5 preflight.
+
+phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-contract-reconciliation-v47-20260701
+accepts selected-normal-runtime-kernel-main-contract-reconciled-ready. No
+hardwareTestLock acquisition, lab publication, boot snapshot mutation, Pi 5
+power cycle, serial/TFTP capture, packet-I/O, OpenSSH/generated-root retry,
+remote receipt, compatibility claim, service success claim, ssh-ready=true,
+fake/kernel-backed command expansion, broad shell work, or phase transition was
+performed. The worker recomputed archive SHA-256
+72c28bafe9bedd1474fd1dfb19db101e9078122506db1b6f13bbbebdad383f19 and exact tar
+member ./da591740/kernel_2712.img SHA-256
+2f89f98cf9403ccee58c20f8014f3c5fd83accb2f99da2f35b4b1eec6928cdc5 directly from
+target/tmp/selected-normal-runtime-kernel-main-v45.tar.gz. The archive review
+retained the kernel_main marker-loop contract with required marker
+TALOS: kernel_main capture-nonce=runtime-marker-route-static, and the successor
+capture helper dry-run targets da591740/kernel_2712.img at 152,896 bytes with
+restore snapshot phase12-ssh-v10-openssh-clean-pre-20260624T074100Z.
+selected_next_task is
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v48-20260701
+and planningNeeded=false. Later facts remain unproved: selected Pi 5
+kernel_main marker retention, route-start, runtime-ready, packet-I/O, OpenSSH
+compatibility, remote receipt, service readiness, ssh-ready=true, fake command
+expansion, broad shell work, and phase transition.

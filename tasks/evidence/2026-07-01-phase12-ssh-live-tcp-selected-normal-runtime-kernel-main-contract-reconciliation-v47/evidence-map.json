@@ -1,0 +1,35 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-contract-reconciliation-v47-20260701",
+  "classification": "selected-normal-runtime-kernel-main-contract-reconciled-ready",
+  "files": {
+    "classification": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-contract-reconciliation-v47/classification.json",
+    "task_record": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-contract-reconciliation-v47.md",
+    "hash_reconciliation_matrix": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-contract-reconciliation-v47/static/hash-reconciliation-matrix.md",
+    "archive_sha": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-contract-reconciliation-v47/static/archive-sha256.txt",
+    "recomputed_selected_kernel_sha": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-contract-reconciliation-v47/static/recomputed-da591740-kernel-sha256.txt",
+    "recomputed_selected_kernel_size": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-contract-reconciliation-v47/static/recomputed-da591740-kernel-size.txt",
+    "archive_members": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-contract-reconciliation-v47/static/archive-members.txt",
+    "kernel_main_archive_review": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-contract-reconciliation-v47/validation/kernel-main-archive-review.stdout.txt",
+    "capture_bundle_dry_run": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-contract-reconciliation-v47/validation/capture-bundle-dry-run.json",
+    "git_status_before_edits": "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-contract-reconciliation-v47/validation/git-status-before-edits.txt"
+  },
+  "compared_sources": [
+    "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-continuation-reconciliation-v45/classification.json",
+    "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-continuation-reconciliation-v45/static/kernel-sha256.txt",
+    "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-continuation-reconciliation-v45.md",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md",
+    "tasks/evidence/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v46/classification.json"
+  ],
+  "evidence_levels": [
+    "static archive/image inspection",
+    "task-owned JSON evidence",
+    "capture helper dry-run",
+    "docs build",
+    "diff checks"
+  ],
+  "hardware_lock_acquired": false,
+  "lab_publication": false,
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v48-20260701",
+  "planning_needed": false
+}

@@ -1,11 +1,11 @@
 {
-  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-continuation-reconciliation-v45-20260701",
-  "classification": "selected-normal-runtime-kernel-main-discriminator-ready",
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-contract-reconciliation-v47-20260701",
+  "classification": "selected-normal-runtime-kernel-main-contract-reconciled-ready",
   "status": "accepted",
-  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v46-20260701",
-  "planning_needed": true,
-  "planning_reason": "No explicit v46 kernel_main Pi 5 hardware preflight task exists in taskQueue; supervisor must instantiate the next bounded serialized hardware preflight before any lab action.",
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v48-20260701",
+  "planning_needed": false,
   "hardware_action": false,
+  "hardware_lock_acquired": false,
   "lab_publication": false,
   "boot_snapshot_mutation": false,
   "pi5_power_action": false,
@@ -14,22 +14,24 @@
   "fake_command_expansion": false,
   "broad_shell_work": false,
   "phase_transition": false,
-  "archive_contract": {
+  "authoritative_archive_contract": {
     "path": "target/tmp/selected-normal-runtime-kernel-main-v45.tar.gz",
     "sha256": "72c28bafe9bedd1474fd1dfb19db101e9078122506db1b6f13bbbebdad383f19",
     "selected_fetch_path": "da591740/kernel_2712.img",
+    "exact_tar_member_path": "./da591740/kernel_2712.img",
     "selected_kernel_sha256": "2f89f98cf9403ccee58c20f8014f3c5fd83accb2f99da2f35b4b1eec6928cdc5",
     "selected_kernel_bytes": 152896,
     "required_marker": "TALOS: kernel_main capture-nonce=runtime-marker-route-static",
-    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z"
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "source_commit": "773dae203cbe36a0795e3a1d861587da8540e2d3",
+    "successor_task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-kernel-main-continuation-preflight-v48-20260701"
   },
-  "correction": {
-    "corrected_by_task_id": "phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-contract-reconciliation-v47-20260701",
-    "reason": "v47 recomputed exact tar member ./da591740/kernel_2712.img from target/tmp/selected-normal-runtime-kernel-main-v45.tar.gz and confirmed the selected member hashes to 2f89f98cf9403ccee58c20f8014f3c5fd83accb2f99da2f35b4b1eec6928cdc5; the previous 96057d2f8970808011a308f7b3a92da6feb85097b44590947a1ac145f85c6be6 value was a stale metadata claim and v46 blocker gate.",
-    "previous_selected_kernel_sha256": "96057d2f8970808011a308f7b3a92da6feb85097b44590947a1ac145f85c6be6"
+  "quarantined_stale_contract": {
+    "stale_selected_kernel_sha256": "96057d2f8970808011a308f7b3a92da6feb85097b44590947a1ac145f85c6be6",
+    "disposition": "quarantined as stale v45 classification/task/docs claim and v46 blocker gate; not authoritative for publication"
   },
   "unproved_facts": [
-    "kernel_main hardware proof",
+    "selected Pi 5 kernel_main marker retention",
     "route-start",
     "runtime-ready",
     "packet-I/O",

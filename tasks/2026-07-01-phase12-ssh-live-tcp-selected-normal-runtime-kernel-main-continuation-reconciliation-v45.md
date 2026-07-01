@@ -66,11 +66,18 @@ Archive materialization:
   72c28bafe9bedd1474fd1dfb19db101e9078122506db1b6f13bbbebdad383f19.
 - Selected fetch path: da591740/kernel_2712.img.
 - Selected kernel SHA-256:
-  96057d2f8970808011a308f7b3a92da6feb85097b44590947a1ac145f85c6be6.
+  2f89f98cf9403ccee58c20f8014f3c5fd83accb2f99da2f35b4b1eec6928cdc5.
 - Selected kernel size: 152,896 bytes.
 - Image header: text_offset=0, header_image_size=152896, flags=12, magic=ARMd.
 - Root and selected da591740/kernel_2712.img are byte-identical.
 - Restore target: phase12-ssh-v10-openssh-clean-pre-20260624T074100Z.
+
+Correction: v47 recomputed exact archive member ./da591740/kernel_2712.img from
+target/tmp/selected-normal-runtime-kernel-main-v45.tar.gz and corrected the
+selected kernel SHA above. The previously recorded
+96057d2f8970808011a308f7b3a92da6feb85097b44590947a1ac145f85c6be6 value is
+preserved as the stale metadata claim and v46 blocker reason, not as an
+authoritative publication contract.
 
 Expected marker family for a future hardware preflight:
 
