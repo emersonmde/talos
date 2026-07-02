@@ -101,6 +101,24 @@ pub const RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_LINK_NOT_READY_CLASSIFICATION: &s
     "rp1-ethernet-hardware-frame-provider-link-not-ready-fail-closed";
 pub const RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_MISSING_CLASSIFICATION: &str =
     "no-rp1-ethernet-hardware-frame-provider-bound";
+pub const RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_SOURCE_CONTRACT_ID: &str =
+    "phase12-rp1-dma-rx-descriptor-ring-source-local-core-v1";
+pub const RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_SOURCE_READY_CLASSIFICATION: &str =
+    "rp1-dma-rx-descriptor-ring-source-ready-local-only";
+pub const RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_MISSING_CLASSIFICATION: &str =
+    "blocked-rp1-dma-rx-descriptor-ring-unavailable";
+pub const RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_LINK_NOT_READY_CLASSIFICATION: &str =
+    "blocked-rp1-dma-rx-link-not-ready";
+pub const RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_DMA_CACHE_UNAVAILABLE_CLASSIFICATION: &str =
+    "blocked-rp1-dma-rx-cache-dma-ownership-unavailable";
+pub const RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_PROVIDER_NOT_POLLED_CLASSIFICATION: &str =
+    "blocked-rp1-dma-rx-provider-not-polled";
+pub const RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_NO_COMPLETED_FRAME_CLASSIFICATION: &str =
+    "blocked-rp1-dma-rx-no-completed-frame";
+pub const RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_COMPLETION_UNPROVED_CLASSIFICATION: &str =
+    "blocked-rp1-dma-rx-completion-interrupt-unproved";
+pub const RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_HANDOFF_REJECTED_CLASSIFICATION: &str =
+    "blocked-rp1-dma-rx-driver-packet-handoff-rejected";
 
 pub const RP1_ETHERNET_COMPATIBLE: &[&str] = &["raspberrypi,rp1-gem", "cdns,macb"];
 pub const RP1_ETHERNET_CONTROLLER_NAME: &str = "rp1_eth";
@@ -629,6 +647,64 @@ pub const RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_RETAINED_RISKS: &[&str] = &[
     "RX/TX completion and interrupt routing are not proved",
     "link-ready is source metadata until a later hardware task proves packet ingress",
 ];
+pub const RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_SOURCE_EVIDENCE: &[&str] = &[
+    "tasks/evidence/2026-06-09-phase12-rp1-ethernet-source-inventory/source/linux-rpi-6.12-macb_main.c",
+    "macb_main.c DEFAULT_RX_RING_SIZE/MIN_RX_RING_SIZE/MAX_RX_RING_SIZE define the RX descriptor ring bounds",
+    "macb_main.c macb_rx_desc/macb_rx_ring_wrap identify the ring index and descriptor access model",
+    "macb_main.c RBQP/RBQPH programming identifies the RX queue base-address handoff to hardware",
+    "macb_main.c macb_set_addr/macb_get_addr document RX address ownership and RX_USED masking",
+    "macb_main.c macb_rx/gem_rx polling paths reclaim completed RX descriptors before payload delivery",
+];
+pub const RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_OWNER: &str =
+    "talos-rp1-ethernet-driver-source-model";
+pub const RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_LAYOUT: &[&str] = &[
+    "power-of-two RX ring indexed through macb_rx_ring_wrap",
+    "descriptor address word carries buffer address plus RX_USED/RX_WRAP ownership bits",
+    "descriptor control word carries RX frame length/status metadata",
+    "RBQP/RBQPH publish the descriptor-ring DMA base address to the MACB/GEM engine",
+];
+pub const RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_STATE_MODEL: &[&str] = &[
+    "driver-owned-empty: descriptor buffer is prepared and visible to DMA",
+    "hardware-owned-ready: RX_USED is clear and the controller may fill the buffer",
+    "hardware-completed-frame: RX_USED is set and frame length/status metadata is readable",
+    "driver-reclaimed-metadata-only: Talos records descriptor index and length, then returns ownership without retaining payload bytes",
+];
+pub const RP1_ETHERNET_DMA_RX_CACHE_OWNERSHIP_POLICY: &str =
+    "coherent-or-explicit-cache-maintenance-required-before-RX_USED-clear-and-after-RX_USED-set";
+pub const RP1_ETHERNET_DMA_RX_POLLING_COMPLETION_SEMANTICS: &str = "poll RX descriptor ownership first; interrupts are an optimization until RP1_INT_ETH routing is hardware-proved";
+pub const RP1_ETHERNET_DMA_RX_METADATA_RETAINED: &[&str] = &[
+    "descriptor-index",
+    "frame-length",
+    "ring-wrap",
+    "classification",
+];
+pub const RP1_ETHERNET_DMA_RX_REDACTION_POLICY: &str =
+    "metadata-only-no-packet-payloads-no-remote-identifiers-no-ssh-material";
+pub const RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_FAIL_CLOSED_STATES: &[&str] = &[
+    "descriptor-ring-unavailable",
+    "dma-cache-ownership-unavailable",
+    "link-not-ready",
+    "provider-not-polled",
+    "no-completed-frame",
+    "completion-interrupt-unproved",
+    "driver-packet-handoff-rejected",
+];
+pub const RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_REJECTED_RUNTIME_CLAIMS: &[&str] = &[
+    "packet payload retained",
+    "live_packet_io",
+    "live_reachability",
+    "remote_receipt",
+    "OpenSSH compatibility",
+    "service success",
+    "ssh_ready",
+    "phase transition",
+];
+pub const RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_RETAINED_RISKS: &[&str] = &[
+    "No Pi 5 hardware packet-ingress proof has consumed a completed descriptor",
+    "The packet stimulus source remains unowned",
+    "Interrupt delivery remains a later hardware optimization; polling is the accepted source boundary",
+    "DriverPacketAdapter still receives no packet payload bytes from RP1 in this task",
+];
 
 pub const RP1_ETHERNET_GPIO32_PHY_RESET_SOURCE_EVIDENCE: &[&str] = &[
     "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-source-contract.md",
@@ -746,6 +822,101 @@ impl Rp1EthernetHardwareFrameProviderBindingReport {
 
     pub const fn link_ready(self) -> bool {
         self.link_ready
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Rp1EthernetDmaRxDescriptorRingState {
+    MissingDescriptorRing,
+    LinkNotReady,
+    DmaCacheOwnershipUnavailable,
+    ProviderNotPolled,
+    NoCompletedFrame,
+    CompletionInterruptUnproved,
+    HandoffRejected,
+    SourceOwnedCompletedFrame,
+}
+
+impl Rp1EthernetDmaRxDescriptorRingState {
+    pub const fn classification(self) -> &'static str {
+        match self {
+            Self::MissingDescriptorRing => {
+                RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_MISSING_CLASSIFICATION
+            }
+            Self::LinkNotReady => RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_LINK_NOT_READY_CLASSIFICATION,
+            Self::DmaCacheOwnershipUnavailable => {
+                RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_DMA_CACHE_UNAVAILABLE_CLASSIFICATION
+            }
+            Self::ProviderNotPolled => {
+                RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_PROVIDER_NOT_POLLED_CLASSIFICATION
+            }
+            Self::NoCompletedFrame => {
+                RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_NO_COMPLETED_FRAME_CLASSIFICATION
+            }
+            Self::CompletionInterruptUnproved => {
+                RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_COMPLETION_UNPROVED_CLASSIFICATION
+            }
+            Self::HandoffRejected => {
+                RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_HANDOFF_REJECTED_CLASSIFICATION
+            }
+            Self::SourceOwnedCompletedFrame => {
+                RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_SOURCE_READY_CLASSIFICATION
+            }
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetDmaRxFrameMetadata {
+    pub descriptor_index: u16,
+    pub frame_len: usize,
+    pub ring_wrap: bool,
+    pub payload_retained: bool,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetDmaRxDescriptorRingContractEvidence {
+    pub contract_id: &'static str,
+    pub owner: &'static str,
+    pub layout: &'static [&'static str],
+    pub state_model: &'static [&'static str],
+    pub cache_dma_ownership_policy: &'static str,
+    pub polling_completion_semantics: &'static str,
+    pub metadata_retained: &'static [&'static str],
+    pub redaction_policy: &'static str,
+    pub fail_closed_states: &'static [&'static str],
+    pub source_evidence: &'static [&'static str],
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetDmaRxDescriptorRingReport {
+    pub contract: Rp1EthernetDmaRxDescriptorRingContractEvidence,
+    pub state: Rp1EthernetDmaRxDescriptorRingState,
+    pub classification: &'static str,
+    pub descriptor_ring_bound: bool,
+    pub cache_dma_ownership_ready: bool,
+    pub provider_polled: bool,
+    pub completion_interrupt_required: bool,
+    pub completed_frame_metadata: Option<Rp1EthernetDmaRxFrameMetadata>,
+    pub metadata_handoff_ready: bool,
+    pub packet_payload_available: bool,
+    pub live_packet_io_accepted: bool,
+    pub live_reachability_accepted: bool,
+    pub remote_receipt_accepted: bool,
+    pub compatibility_accepted: bool,
+    pub service_success: bool,
+    pub ssh_ready: bool,
+    pub rejected_runtime_claims: &'static [&'static str],
+    pub retained_risks: &'static [&'static str],
+}
+
+impl Rp1EthernetDmaRxDescriptorRingReport {
+    pub const fn metadata_handoff_ready(self) -> bool {
+        self.metadata_handoff_ready
+    }
+
+    pub const fn frame_metadata(self) -> Option<Rp1EthernetDmaRxFrameMetadata> {
+        self.completed_frame_metadata
     }
 }
 
@@ -2291,6 +2462,82 @@ pub const fn rp1_ethernet_hardware_frame_provider_binding_report(
         ssh_ready: false,
         rejected_runtime_claims: RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_REJECTED_RUNTIME_CLAIMS,
         retained_risks: RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_RETAINED_RISKS,
+    }
+}
+
+pub const fn rp1_ethernet_dma_rx_descriptor_ring_contract_evidence()
+-> Rp1EthernetDmaRxDescriptorRingContractEvidence {
+    Rp1EthernetDmaRxDescriptorRingContractEvidence {
+        contract_id: RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_SOURCE_CONTRACT_ID,
+        owner: RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_OWNER,
+        layout: RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_LAYOUT,
+        state_model: RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_STATE_MODEL,
+        cache_dma_ownership_policy: RP1_ETHERNET_DMA_RX_CACHE_OWNERSHIP_POLICY,
+        polling_completion_semantics: RP1_ETHERNET_DMA_RX_POLLING_COMPLETION_SEMANTICS,
+        metadata_retained: RP1_ETHERNET_DMA_RX_METADATA_RETAINED,
+        redaction_policy: RP1_ETHERNET_DMA_RX_REDACTION_POLICY,
+        fail_closed_states: RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_FAIL_CLOSED_STATES,
+        source_evidence: RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_SOURCE_EVIDENCE,
+    }
+}
+
+pub const fn rp1_ethernet_dma_rx_frame_metadata(
+    descriptor_index: u16,
+    frame_len: usize,
+    ring_wrap: bool,
+) -> Rp1EthernetDmaRxFrameMetadata {
+    Rp1EthernetDmaRxFrameMetadata {
+        descriptor_index,
+        frame_len,
+        ring_wrap,
+        payload_retained: false,
+    }
+}
+
+pub const fn rp1_ethernet_dma_rx_descriptor_ring_report(
+    state: Rp1EthernetDmaRxDescriptorRingState,
+    completed_frame_metadata: Option<Rp1EthernetDmaRxFrameMetadata>,
+) -> Rp1EthernetDmaRxDescriptorRingReport {
+    let metadata = match state {
+        Rp1EthernetDmaRxDescriptorRingState::SourceOwnedCompletedFrame => completed_frame_metadata,
+        _ => None,
+    };
+    let metadata_handoff_ready = match metadata {
+        Some(metadata) => !metadata.payload_retained && metadata.frame_len > 0,
+        None => false,
+    };
+    Rp1EthernetDmaRxDescriptorRingReport {
+        contract: rp1_ethernet_dma_rx_descriptor_ring_contract_evidence(),
+        state,
+        classification: state.classification(),
+        descriptor_ring_bound: !matches!(
+            state,
+            Rp1EthernetDmaRxDescriptorRingState::MissingDescriptorRing
+        ),
+        cache_dma_ownership_ready: !matches!(
+            state,
+            Rp1EthernetDmaRxDescriptorRingState::MissingDescriptorRing
+                | Rp1EthernetDmaRxDescriptorRingState::DmaCacheOwnershipUnavailable
+        ),
+        provider_polled: !matches!(
+            state,
+            Rp1EthernetDmaRxDescriptorRingState::MissingDescriptorRing
+                | Rp1EthernetDmaRxDescriptorRingState::DmaCacheOwnershipUnavailable
+                | Rp1EthernetDmaRxDescriptorRingState::LinkNotReady
+                | Rp1EthernetDmaRxDescriptorRingState::ProviderNotPolled
+        ),
+        completion_interrupt_required: false,
+        completed_frame_metadata: metadata,
+        metadata_handoff_ready,
+        packet_payload_available: false,
+        live_packet_io_accepted: false,
+        live_reachability_accepted: false,
+        remote_receipt_accepted: false,
+        compatibility_accepted: false,
+        service_success: false,
+        ssh_ready: false,
+        rejected_runtime_claims: RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_REJECTED_RUNTIME_CLAIMS,
+        retained_risks: RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_RETAINED_RISKS,
     }
 }
 
@@ -20648,5 +20895,104 @@ mod tests {
         assert!(!link_not_ready.link_ready());
         assert!(!link_not_ready.live_packet_io_accepted);
         assert!(!link_not_ready.ssh_ready);
+    }
+
+    #[test_case]
+    fn rp1_ethernet_dma_rx_descriptor_ring_source_model_reports_metadata_only_boundary() {
+        let evidence = rp1_ethernet_dma_rx_descriptor_ring_contract_evidence();
+        assert_eq!(
+            evidence.contract_id,
+            RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_SOURCE_CONTRACT_ID
+        );
+        assert_eq!(evidence.owner, RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_OWNER);
+        assert_eq!(
+            evidence.redaction_policy,
+            RP1_ETHERNET_DMA_RX_REDACTION_POLICY
+        );
+        assert!(evidence
+            .state_model
+            .contains(&"driver-reclaimed-metadata-only: Talos records descriptor index and length, then returns ownership without retaining payload bytes"));
+
+        let metadata = rp1_ethernet_dma_rx_frame_metadata(7, 128, true);
+        assert_eq!(metadata.descriptor_index, 7);
+        assert_eq!(metadata.frame_len, 128);
+        assert!(metadata.ring_wrap);
+        assert!(!metadata.payload_retained);
+
+        let report = rp1_ethernet_dma_rx_descriptor_ring_report(
+            Rp1EthernetDmaRxDescriptorRingState::SourceOwnedCompletedFrame,
+            Some(metadata),
+        );
+        assert_eq!(
+            report.classification,
+            RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_SOURCE_READY_CLASSIFICATION
+        );
+        assert!(report.descriptor_ring_bound);
+        assert!(report.cache_dma_ownership_ready);
+        assert!(report.provider_polled);
+        assert!(!report.completion_interrupt_required);
+        assert!(report.metadata_handoff_ready());
+        assert_eq!(report.frame_metadata(), Some(metadata));
+        assert!(!report.packet_payload_available);
+        assert!(!report.live_packet_io_accepted);
+        assert!(!report.live_reachability_accepted);
+        assert!(!report.remote_receipt_accepted);
+        assert!(!report.compatibility_accepted);
+        assert!(!report.service_success);
+        assert!(!report.ssh_ready);
+    }
+
+    #[test_case]
+    fn rp1_ethernet_dma_rx_descriptor_ring_source_model_fails_closed() {
+        let missing = rp1_ethernet_dma_rx_descriptor_ring_report(
+            Rp1EthernetDmaRxDescriptorRingState::MissingDescriptorRing,
+            Some(rp1_ethernet_dma_rx_frame_metadata(0, 64, false)),
+        );
+        assert_eq!(
+            missing.classification,
+            RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_MISSING_CLASSIFICATION
+        );
+        assert!(!missing.descriptor_ring_bound);
+        assert!(!missing.cache_dma_ownership_ready);
+        assert!(!missing.provider_polled);
+        assert!(!missing.metadata_handoff_ready());
+        assert_eq!(missing.frame_metadata(), None);
+
+        let cache_unavailable = rp1_ethernet_dma_rx_descriptor_ring_report(
+            Rp1EthernetDmaRxDescriptorRingState::DmaCacheOwnershipUnavailable,
+            None,
+        );
+        assert!(cache_unavailable.descriptor_ring_bound);
+        assert!(!cache_unavailable.cache_dma_ownership_ready);
+        assert!(!cache_unavailable.provider_polled);
+        assert!(!cache_unavailable.metadata_handoff_ready());
+
+        let no_frame = rp1_ethernet_dma_rx_descriptor_ring_report(
+            Rp1EthernetDmaRxDescriptorRingState::NoCompletedFrame,
+            None,
+        );
+        assert!(no_frame.descriptor_ring_bound);
+        assert!(no_frame.cache_dma_ownership_ready);
+        assert!(no_frame.provider_polled);
+        assert!(!no_frame.metadata_handoff_ready());
+        assert!(!no_frame.ssh_ready);
+
+        for state in [
+            Rp1EthernetDmaRxDescriptorRingState::LinkNotReady,
+            Rp1EthernetDmaRxDescriptorRingState::ProviderNotPolled,
+            Rp1EthernetDmaRxDescriptorRingState::CompletionInterruptUnproved,
+            Rp1EthernetDmaRxDescriptorRingState::HandoffRejected,
+        ] {
+            let report = rp1_ethernet_dma_rx_descriptor_ring_report(
+                state,
+                Some(rp1_ethernet_dma_rx_frame_metadata(1, 64, false)),
+            );
+            assert_eq!(report.classification, state.classification());
+            assert!(report.descriptor_ring_bound);
+            assert_eq!(report.frame_metadata(), None);
+            assert!(!report.metadata_handoff_ready());
+            assert!(!report.live_packet_io_accepted);
+            assert!(!report.ssh_ready);
+        }
     }
 }

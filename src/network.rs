@@ -2750,6 +2750,23 @@ pub(crate) struct LiveTcpRuntimeMarkerRouteReport {
     marker_route_ready: bool,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct LiveTcpRp1DmaRxDescriptorRingHandoffReport {
+    runtime_report: LiveTcpNetworkDeviceRuntimeReport,
+    descriptor_ring_classification: &'static str,
+    descriptor_ring_owner: &'static str,
+    metadata_handoff_ready: bool,
+    driver_packet_adapter_handoff_ready: bool,
+    frame_metadata_len: usize,
+    packet_payload_available: bool,
+    redaction_policy: &'static str,
+    live_packet_io_accepted: bool,
+    live_reachability_accepted: bool,
+    remote_receipt_accepted: bool,
+    compatibility_accepted: bool,
+    ssh_ready: bool,
+}
+
 impl LiveTcpRuntimeMarkerRouteReport {
     pub(crate) const fn runtime_report(self) -> LiveTcpNetworkDeviceRuntimeReport {
         self.runtime_report
@@ -2757,6 +2774,60 @@ impl LiveTcpRuntimeMarkerRouteReport {
 
     pub(crate) const fn marker_route_ready(self) -> bool {
         self.marker_route_ready
+    }
+}
+
+impl LiveTcpRp1DmaRxDescriptorRingHandoffReport {
+    pub(crate) const fn runtime_report(self) -> LiveTcpNetworkDeviceRuntimeReport {
+        self.runtime_report
+    }
+
+    pub(crate) const fn descriptor_ring_classification(self) -> &'static str {
+        self.descriptor_ring_classification
+    }
+
+    pub(crate) const fn descriptor_ring_owner(self) -> &'static str {
+        self.descriptor_ring_owner
+    }
+
+    pub(crate) const fn metadata_handoff_ready(self) -> bool {
+        self.metadata_handoff_ready
+    }
+
+    pub(crate) const fn driver_packet_adapter_handoff_ready(self) -> bool {
+        self.driver_packet_adapter_handoff_ready
+    }
+
+    pub(crate) const fn frame_metadata_len(self) -> usize {
+        self.frame_metadata_len
+    }
+
+    pub(crate) const fn packet_payload_available(self) -> bool {
+        self.packet_payload_available
+    }
+
+    pub(crate) const fn redaction_policy(self) -> &'static str {
+        self.redaction_policy
+    }
+
+    pub(crate) const fn live_packet_io_accepted(self) -> bool {
+        self.live_packet_io_accepted
+    }
+
+    pub(crate) const fn live_reachability_accepted(self) -> bool {
+        self.live_reachability_accepted
+    }
+
+    pub(crate) const fn remote_receipt_accepted(self) -> bool {
+        self.remote_receipt_accepted
+    }
+
+    pub(crate) const fn compatibility_accepted(self) -> bool {
+        self.compatibility_accepted
+    }
+
+    pub(crate) const fn ssh_ready(self) -> bool {
+        self.ssh_ready
     }
 }
 
@@ -2917,6 +2988,53 @@ pub(crate) fn live_tcp_runtime_marker_route_report_with_source_bound_rp1_provide
             ),
         ));
     live_tcp_runtime_marker_route_report_for_rp1_provider(Some(provider_report))
+}
+
+fn live_tcp_runtime_marker_route_report_with_rp1_dma_rx_descriptor_ring_report(
+    ring_report: crate::rp1_ethernet::Rp1EthernetDmaRxDescriptorRingReport,
+) -> Result<LiveTcpRp1DmaRxDescriptorRingHandoffReport, crate::posix::PosixError> {
+    let provider_report =
+        crate::rp1_ethernet::rp1_ethernet_hardware_frame_provider_binding_report(Some(
+            crate::rp1_ethernet::rp1_ethernet_hardware_frame_provider_contract_evidence(
+                crate::rp1_ethernet::Rp1EthernetHardwareFrameProviderState::SourceBoundLinkReady,
+            ),
+        ));
+    let route = live_tcp_runtime_marker_route_report_for_rp1_provider(Some(provider_report))?;
+    let frame_metadata_len = match ring_report.frame_metadata() {
+        Some(metadata) => metadata.frame_len,
+        None => 0,
+    };
+    let metadata_handoff_ready = ring_report.metadata_handoff_ready()
+        && route.marker_route_ready()
+        && frame_metadata_len > 0
+        && !ring_report.packet_payload_available;
+
+    Ok(LiveTcpRp1DmaRxDescriptorRingHandoffReport {
+        runtime_report: route.runtime_report(),
+        descriptor_ring_classification: ring_report.classification,
+        descriptor_ring_owner: ring_report.contract.owner,
+        metadata_handoff_ready,
+        driver_packet_adapter_handoff_ready: metadata_handoff_ready,
+        frame_metadata_len,
+        packet_payload_available: ring_report.packet_payload_available,
+        redaction_policy: ring_report.contract.redaction_policy,
+        live_packet_io_accepted: false,
+        live_reachability_accepted: false,
+        remote_receipt_accepted: false,
+        compatibility_accepted: false,
+        ssh_ready: false,
+    })
+}
+
+pub(crate) fn live_tcp_runtime_marker_route_report_with_source_owned_rp1_dma_rx_descriptor_ring()
+-> Result<LiveTcpRp1DmaRxDescriptorRingHandoffReport, crate::posix::PosixError> {
+    let ring_report = crate::rp1_ethernet::rp1_ethernet_dma_rx_descriptor_ring_report(
+        crate::rp1_ethernet::Rp1EthernetDmaRxDescriptorRingState::SourceOwnedCompletedFrame,
+        Some(crate::rp1_ethernet::rp1_ethernet_dma_rx_frame_metadata(
+            0, 64, false,
+        )),
+    );
+    live_tcp_runtime_marker_route_report_with_rp1_dma_rx_descriptor_ring_report(ring_report)
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -7481,6 +7599,75 @@ mod tests {
         assert!(!runtime.remote_receipt_accepted());
         assert!(!runtime.compatibility_accepted());
         assert!(!runtime.ssh_ready());
+    }
+
+    #[test_case]
+    fn live_tcp_runtime_marker_route_report_accepts_rp1_dma_rx_descriptor_ring_metadata_handoff() {
+        let handoff =
+            live_tcp_runtime_marker_route_report_with_source_owned_rp1_dma_rx_descriptor_ring()
+                .expect("descriptor-ring metadata handoff route");
+        let runtime = handoff.runtime_report();
+
+        assert_eq!(
+            handoff.descriptor_ring_classification(),
+            crate::rp1_ethernet::RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_SOURCE_READY_CLASSIFICATION
+        );
+        assert_eq!(
+            handoff.descriptor_ring_owner(),
+            crate::rp1_ethernet::RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_OWNER
+        );
+        assert!(handoff.metadata_handoff_ready());
+        assert!(handoff.driver_packet_adapter_handoff_ready());
+        assert_eq!(handoff.frame_metadata_len(), 64);
+        assert!(!handoff.packet_payload_available());
+        assert_eq!(
+            handoff.redaction_policy(),
+            crate::rp1_ethernet::RP1_ETHERNET_DMA_RX_REDACTION_POLICY
+        );
+        assert_eq!(
+            runtime.binding_state(),
+            LiveTcpNetworkDeviceRuntimeBindingState::AcceptedDeterministicDeviceInterfaceDelivery
+        );
+        assert!(runtime.descriptor_facing_connection_delivered());
+        assert!(runtime.deterministic_device_interface_bound());
+        assert!(runtime.hardware_frame_provider_bound());
+        assert_eq!(
+            runtime.live_packet_ingress_discriminator_classification(),
+            LIVE_PACKET_INGRESS_DISCRIMINATOR_NO_LIVE_FRAME_PROVIDER
+        );
+        assert!(runtime.driver_packet_rx_frames() > 0);
+        assert_eq!(
+            runtime.driver_packet_rx_frames(),
+            runtime.driver_packet_tx_frames()
+        );
+        assert!(!handoff.live_packet_io_accepted());
+        assert!(!handoff.live_reachability_accepted());
+        assert!(!handoff.remote_receipt_accepted());
+        assert!(!handoff.compatibility_accepted());
+        assert!(!handoff.ssh_ready());
+    }
+
+    #[test_case]
+    fn live_tcp_runtime_marker_route_report_fails_closed_for_rp1_dma_rx_descriptor_ring_without_metadata()
+     {
+        let ring_report = crate::rp1_ethernet::rp1_ethernet_dma_rx_descriptor_ring_report(
+            crate::rp1_ethernet::Rp1EthernetDmaRxDescriptorRingState::NoCompletedFrame,
+            None,
+        );
+        let handoff = live_tcp_runtime_marker_route_report_with_rp1_dma_rx_descriptor_ring_report(
+            ring_report,
+        )
+        .expect("no-frame descriptor-ring route");
+
+        assert_eq!(
+            handoff.descriptor_ring_classification(),
+            crate::rp1_ethernet::RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_NO_COMPLETED_FRAME_CLASSIFICATION
+        );
+        assert!(!handoff.metadata_handoff_ready());
+        assert!(!handoff.driver_packet_adapter_handoff_ready());
+        assert_eq!(handoff.frame_metadata_len(), 0);
+        assert!(!handoff.live_packet_io_accepted());
+        assert!(!handoff.ssh_ready());
     }
 
     #[test_case]

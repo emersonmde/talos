@@ -1,0 +1,45 @@
+{
+  "task_id": "phase12-ssh-live-tcp-rp1-dma-rx-descriptor-ring-source-core-v88-20260702",
+  "terminal_classification": "rp1-dma-rx-descriptor-ring-source-ready",
+  "source_owner": "talos-rp1-ethernet-driver-source-model",
+  "descriptor_layout": [
+    "power-of-two RX ring indexed through macb_rx_ring_wrap",
+    "descriptor address word carries buffer address plus RX_USED/RX_WRAP ownership bits",
+    "descriptor control word carries RX frame length/status metadata",
+    "RBQP/RBQPH publish the descriptor-ring DMA base address to the MACB/GEM engine"
+  ],
+  "state_model": [
+    "driver-owned-empty",
+    "hardware-owned-ready",
+    "hardware-completed-frame",
+    "driver-reclaimed-metadata-only"
+  ],
+  "cache_dma_ownership_policy": "coherent-or-explicit-cache-maintenance-required-before-RX_USED-clear-and-after-RX_USED-set",
+  "polling_completion_semantics": "poll RX descriptor ownership first; interrupts are an optimization until RP1_INT_ETH routing is hardware-proved",
+  "metadata_retained": [
+    "descriptor-index",
+    "frame-length",
+    "ring-wrap",
+    "classification"
+  ],
+  "redaction_policy": "metadata-only-no-packet-payloads-no-remote-identifiers-no-ssh-material",
+  "fail_closed_states": [
+    "descriptor-ring-unavailable",
+    "dma-cache-ownership-unavailable",
+    "link-not-ready",
+    "provider-not-polled",
+    "no-completed-frame",
+    "completion-interrupt-unproved",
+    "driver-packet-handoff-rejected"
+  ],
+  "driver_packet_adapter_handoff": {
+    "source": "src/network.rs live_tcp_runtime_marker_route_report_with_source_owned_rp1_dma_rx_descriptor_ring",
+    "requires_descriptor_delivery": true,
+    "requires_metadata_handoff_ready": true,
+    "packet_payload_available": false,
+    "live_packet_io_accepted": false
+  },
+  "selected_next_task": "phase12-ssh-live-tcp-bounded-packet-stimulus-contract-core-v84-20260702",
+  "planning_needed": false,
+  "redaction_review": "No packet payloads, SSH key/session material, private data, raw hardware logs, or external identifiers are retained."
+}

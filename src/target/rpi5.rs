@@ -26320,7 +26320,12 @@ fn write_runtime_ready_marker(runtime: crate::network::LiveTcpNetworkDeviceRunti
     write_early_dec_u64(runtime.driver_packet_tx_frames() as u64);
     write_early_static(" live-packet-ingress-discriminator=");
     write_early_static(runtime.live_packet_ingress_discriminator_classification());
-    write_early_static(" live-frame-provider-owner=missing-rp1-dma-rx-frame-provider");
+    write_early_static(
+        " live-frame-provider-owner=source-owned-rp1-dma-rx-descriptor-ring-metadata-only",
+    );
+    write_early_static(" dma-rx-descriptor-ring-owner=");
+    write_early_static(crate::rp1_ethernet::RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_OWNER);
+    write_early_static(" dma-rx-redaction=metadata-only-no-payloads");
     write_early_static(" packet-stimulus-owner=missing-lab-approved-packet-stimulus");
     write_early_static(" live-packet-io-accepted=");
     write_bool(runtime.live_packet_io_accepted());
@@ -26372,7 +26377,10 @@ fn write_runtime_blocked_marker(runtime: crate::network::LiveTcpNetworkDeviceRun
     write_bool(runtime.deterministic_device_interface_bound());
     write_early_static(" live-packet-ingress-discriminator=");
     write_early_static(runtime.live_packet_ingress_discriminator_classification());
-    write_early_static(" live-frame-provider-owner=missing-rp1-dma-rx-frame-provider");
+    write_early_static(" live-frame-provider-owner=rp1-dma-rx-descriptor-ring-fail-closed");
+    write_early_static(" dma-rx-descriptor-ring-owner=");
+    write_early_static(crate::rp1_ethernet::RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_OWNER);
+    write_early_static(" dma-rx-redaction=metadata-only-no-payloads");
     write_early_static(" packet-stimulus-owner=missing-lab-approved-packet-stimulus");
     write_early_static(" live-packet-io-accepted=false");
     write_early_static(" live-reachability-accepted=false");

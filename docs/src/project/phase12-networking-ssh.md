@@ -14376,3 +14376,22 @@ source-owned RP1 DMA RX descriptor/ring ownership path, including cache/DMA
 ownership and provider polling/completion semantics, before any bounded packet
 stimulus or Pi 5 live packet-ingress proof. selected_next_task=null and
 planningNeeded=true.
+
+phase12-ssh-live-tcp-rp1-dma-rx-descriptor-ring-source-core-v88-20260702 accepts
+rp1-dma-rx-descriptor-ring-source-ready. No lab publication, boot snapshot
+mutation, Pi 5 power cycle, serial/TFTP capture, packet stimulus, live
+packet-ingress hardware proof, remote receipt, OpenSSH/generated-root retry,
+compatibility claim, service success claim, ssh_ready=true, fake/kernel-backed
+command expansion, broad shell work, or phase transition was performed. The
+accepted source boundary names talos-rp1-ethernet-driver-source-model as the RP1
+DMA RX descriptor/ring owner and records the RX descriptor layout, RX_USED/RX_WRAP
+ownership model, RBQP/RBQPH base-address handoff, cache/DMA ownership policy,
+polling completion semantics, metadata retained, redaction policy, and
+fail-closed states. src/network.rs now ties metadata-only completed-frame records
+to the existing DriverPacketAdapter/smoltcp listener descriptor-delivery boundary
+without retaining payload bytes or accepting live packet I/O. The selected
+runtime-ready marker reports the source-owned descriptor/ring metadata owner and
+keeps packet-stimulus-owner=missing-lab-approved-packet-stimulus.
+selected_next_task is
+phase12-ssh-live-tcp-bounded-packet-stimulus-contract-core-v84-20260702 and
+planningNeeded=false.

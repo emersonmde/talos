@@ -12,6 +12,39 @@ ADR template:
 - Consequences:
 - Alternatives considered:
 
+## 2026-07-02 - Phase 12 RP1 DMA RX Descriptor/Ring Source Boundary
+
+- Status: accepted as the source-local descriptor/ring boundary in
+  phase12-ssh-live-tcp-rp1-dma-rx-descriptor-ring-source-core-v88-20260702.
+  No lab publication, boot snapshot mutation, Pi 5 power action, packet
+  stimulus, live packet-ingress hardware proof, remote receipt, OpenSSH
+  compatibility, service success, ssh_ready=true, fake command expansion, broad
+  shell work, or phase transition is accepted here.
+- Context: v83 failed closed because the existing RP1 hardware frame-provider
+  report was metadata-only and lacked a source-owned DMA RX descriptor/ring
+  owner, cache/DMA ownership policy, and provider polling/completion semantics.
+- Decision: Talos owns a source-local RP1 DMA RX descriptor/ring model before
+  packet stimulus or hardware proof. The model names
+  talos-rp1-ethernet-driver-source-model as owner, retains only descriptor
+  index/frame length/ring-wrap/classification metadata, requires coherent or
+  explicit cache maintenance around RX_USED ownership transitions, and accepts
+  polling as the source completion boundary while RP1_INT_ETH remains unproved.
+  Packet payload bytes are not retained, and DriverPacketAdapter receives only a
+  metadata-handoff report until a later task accepts packet stimulus and Pi 5
+  packet-ingress proof.
+- Evidence level: static source implementation, task record, unit tests, and
+  retained Linux macb_main.c source evidence for RX ring sizing, descriptor
+  indexing, RBQP/RBQPH base-address handoff, RX_USED/RX_WRAP ownership, and
+  polling/reclaim flow.
+- Consequences: The next bounded task may define a lab-approved packet-stimulus
+  contract. Live packet I/O, reachability, remote receipt, compatibility,
+  service success, ssh readiness, and phase transition remain false until
+  explicit later evidence accepts them.
+- Alternatives considered: Reusing deterministic DriverPacketAdapter frames as
+  live ingress was rejected because it would relabel host-only evidence. Requiring
+  interrupts before source acceptance was deferred because polling is sufficient
+  to define the source boundary and RP1_INT_ETH routing remains a hardware proof.
+
 ## 2026-06-22 - Phase 12 Shell Requests Are Recognized Before Shell Attachment
 
 - Status: accepted as the bounded SSH session shell-request contract in
