@@ -1,0 +1,12 @@
+{
+  "classification": "selected-normal-runtime-rust-entry-marker-retained",
+  "selected_tree_hash": "d0a5132b630258a98de56fa7e9c0eb9d1cdb41358b68e91321384461a835b6b2",
+  "required_marker_occurrences": 208,
+  "expected_fetch_count": 2,
+  "expected_fetch_byte_match_count": 2,
+  "restore": {
+    "snapshot_name": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "identity_allowed": true
+}

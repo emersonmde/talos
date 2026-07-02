@@ -1,0 +1,9 @@
+{
+  "archive_path": "target/tmp/selected-normal-runtime-rust-entry-v63.tar.gz",
+  "archive_sha256": "7211853ae0fe6008b10b340725799503ff3ff9be46518428d2e5d3fdbf4e641f",
+  "selected_kernel_sha256": "347679f5797d2c99d61a56d5b250ee0245a0f19e9ac5f927491c4b9a019709c6",
+  "selected_kernel_bytes": 152816,
+  "required_marker": "TALOS: rust_entry",
+  "archive_review": "validation/archive-review.stdout.txt",
+  "rust_entry_review": "validation/rust-entry-archive-review.stdout.txt"
+}

@@ -13878,3 +13878,20 @@ is
 phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-after-pre-rust-preflight-v64-20260702,
 but no such task is queued; planningNeeded=true for supervisor taskQueue
 planning.
+
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-after-pre-rust-preflight-v64-20260702
+accepts selected-normal-runtime-rust-entry-marker-retained. Under
+hardwareTestLock, the worker published the v63 selected rust_entry archive and
+captured decisive Pi 5 evidence: selected post-power identity held at tree
+d0a5132b630258a98de56fa7e9c0eb9d1cdb41358b68e91321384461a835b6b2, TFTP served
+da591740/kernel_2712.img twice at 152,816 bytes, final pre-restore identity
+remained selected, restore returned the lab to
+phase12-ssh-v10-openssh-clean-pre-20260624T074100Z, and the fresh serial window
+retained TALOS: rust_entry 208 times. BootInfo parsing, target init,
+exceptions, kernel_main, route-start, runtime-blocked, and runtime-ready
+markers were not retained, so this is selected rust_entry proof rather than a
+deeper runtime proof. selected_next_task is
+phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-closeout-v64-20260702
+and planningNeeded=false. Packet-I/O, OpenSSH compatibility, service readiness,
+ssh-ready=true, fake command expansion, broad shell work, and phase transition
+remain blocked.

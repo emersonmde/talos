@@ -1,0 +1,11 @@
+{
+  "pre_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "publish_tree": "d0a5132b630258a98de56fa7e9c0eb9d1cdb41358b68e91321384461a835b6b2",
+  "post_tree": "d0a5132b630258a98de56fa7e9c0eb9d1cdb41358b68e91321384461a835b6b2",
+  "effective_kernel": "kernel_2712.img",
+  "selected_fetch": {
+    "bytes": 152816,
+    "mtime": 1782962904,
+    "name": "da591740/kernel_2712.img"
+  }
+}

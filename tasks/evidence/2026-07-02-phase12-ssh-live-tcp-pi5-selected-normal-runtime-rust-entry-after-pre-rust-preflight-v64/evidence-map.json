@@ -1,0 +1,25 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-after-pre-rust-preflight-v64-20260702",
+  "classification": "classification.json",
+  "archive_review": "validation/archive-review.stdout.txt",
+  "rust_entry_archive_review": "validation/rust-entry-archive-review.stdout.txt",
+  "static_archive_review_summary": "validation/static-archive-review-summary.json",
+  "archive_sha256": "validation/archive.sha256",
+  "kernel_sha256": "validation/kernel.sha256",
+  "lab": {
+    "candidate_summary": "lab/v64-candidate/candidate-summary.json",
+    "capture_helper_summary": "lab/v64-candidate/capture-helper.stdout.json",
+    "capture_invariant_summary": "lab/v64-candidate/capture-invariant-summary.json",
+    "publication_summary": "lab/v64-candidate/publication-summary.json",
+    "publish_archive": "lab/v64-candidate/publish-archive.json",
+    "pre_publication_status": "lab/v64-candidate/pre-publication-status.json",
+    "post_publication_status": "lab/v64-candidate/post-publication-status.json",
+    "preflight_identity": "lab/v64-candidate/preflight-identity.json",
+    "serial_observe_window": "lab/v64-candidate/serial-observe-window.json",
+    "tftp_delta_stable_pre_restore": "lab/v64-candidate/tftp-delta-stable-pre-restore.json",
+    "final_pre_restore_status": "lab/v64-candidate/final-pre-restore-status.json",
+    "restore_snapshot": "lab/v64-candidate/restore-snapshot.json",
+    "post_restore_status": "lab/v64-candidate/post-restore-status.json"
+  },
+  "redaction_review": "Raw serial text and raw TFTP peer/log-line fields are retained only in task-owned local evidence. The task record and classification retain derived counts, cursors, hashes, byte counts, tree identities, restore status, and marker-family summaries."
+}
