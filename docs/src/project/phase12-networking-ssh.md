@@ -14414,3 +14414,23 @@ frames remain a regression/control surface and cannot satisfy the lab stimulus
 proof. selected_next_task is
 phase12-ssh-live-tcp-live-packet-ingress-candidate-materialization-v85-20260702
 and planningNeeded=false.
+
+phase12-ssh-live-tcp-live-packet-ingress-candidate-materialization-v85-20260702
+accepts live-packet-ingress-provider-candidate-ready. No lab publication, boot
+snapshot mutation, Pi 5 power action, serial/TFTP capture, live packet proof,
+remote receipt, OpenSSH/generated-root retry, compatibility claim, service
+success claim, ssh_ready=true, fake/kernel-backed command expansion, broad shell
+work, or phase transition was performed. The non-published candidate archive is
+target/tmp/phase12-ssh-live-packet-ingress-v85-20260702.tar.gz with SHA-256
+6c7c8a60197b2ae27ada837b72db3e6b21ea6d49e17f5cbad4952b57d7e8ef79 and size
+309638 bytes. The selected kernel_2712.img has SHA-256
+8ada0e2dc610236569358f5cac0367516aa6c88ae369f4eb8d843089ee896921 and size
+160088 bytes. The capture nonce is live-packet-ingress-v85-20260702 and the
+later restore target is phase12-ssh-v10-openssh-clean-pre-20260624T074100Z.
+src/target/rpi5.rs now requires the source-owned RP1 DMA RX descriptor/ring
+handoff and bounded packet-stimulus contract before emitting the runtime-ready
+candidate marker. The archive review gate now requires descriptor/ring owner,
+canonical redaction, bounded packet-stimulus contract, nonce strategy, timing
+window, host-only discriminator, and fail-closed claim tokens. selected_next_task
+is phase12-ssh-live-tcp-pi5-live-packet-ingress-provider-preflight-v86-20260702
+and planningNeeded=false.

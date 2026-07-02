@@ -1,0 +1,37 @@
+archive=target/tmp/phase12-ssh-live-packet-ingress-v85-20260702.tar.gz
+sha256=6c7c8a60197b2ae27ada837b72db3e6b21ea6d49e17f5cbad4952b57d7e8ef79
+file_count=19
+kernel_size=160088
+header_image_size=160088
+text_offset=0
+flags=12
+loader_diagnostic=false
+circle_config_loader_diagnostic=false
+manifest:
+  bcm2712-rpi-5-b.dtb
+  cmdline.txt
+  config.txt
+  da591740
+  da591740/bcm2712-rpi-5-b.dtb
+  da591740/cmdline.txt
+  da591740/config.txt
+  da591740/kernel8.img
+  da591740/kernel_2712.img
+  da591740/overlays
+  da591740/overlays/bcm2712d0.dtbo
+  da591740/overlays/overlay_map.dtb
+  da591740/overlays/uart0-pi5.dtbo
+  kernel8.img
+  kernel_2712.img
+  overlays
+  overlays/bcm2712d0.dtbo
+  overlays/overlay_map.dtb
+  overlays/uart0-pi5.dtbo
+runtime_marker_route=ready
+early_marker_hierarchy=asm_start|asm_pre_rust_entry|rust_entry|boot info parsed|target init|exceptions ready|kernel_main_retention|report_boot_identity|route_start_retention|runtime_blocked_retention|runtime_ready_retention
+route_start_marker=TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=live-packet-ingress-v85-20260702
+runtime_blocked_marker=TALOS: ssh-service-smoltcp-runtime-blocked capture-nonce=live-packet-ingress-v85-20260702
+required_marker=TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=live-packet-ingress-v85-20260702
+retention_contract=selected-kernel-entry-retention-v78
+marker_family=TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=live-packet-ingress-v85-20260702|TALOS: ssh-service-smoltcp-runtime-blocked capture-nonce=live-packet-ingress-v85-20260702|TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=live-packet-ingress-v85-20260702
+archive=target/tmp/phase12-ssh-live-packet-ingress-v85-20260702.tar.gz

@@ -66,8 +66,27 @@ for token in \
     "driver-packet-tx-frames=" \
     "live-packet-ingress-discriminator=" \
     "blocked-no-live-frame-provider" \
-    "live-frame-provider-owner=missing-rp1-dma-rx-frame-provider" \
-    "packet-stimulus-owner=missing-lab-approved-packet-stimulus" \
+    "live-frame-provider-owner=source-owned-rp1-dma-rx-descriptor-ring-metadata-only" \
+    "dma-rx-descriptor-ring-owner=talos-rp1-ethernet-driver-source-model" \
+    "dma-rx-redaction=metadata-only-no-packet-payloads-no-remote-identifiers-no-ssh-material" \
+    "packet-stimulus-owner=bounded-lab-network-icmp-echo-contract" \
+    "packet-stimulus-contract-id=" \
+    "phase12-bounded-packet-stimulus-contract-v1" \
+    "packet-stimulus-classification=" \
+    "bounded-packet-stimulus-contract-ready" \
+    "packet-stimulus-source=" \
+    "lab-network-peer-icmp-echo-to-documented-talos-pi5-target" \
+    "packet-stimulus-nonce-strategy=" \
+    "run-unique-ascii-nonce-in-icmp-echo-payload-retain-only-sha256-and-length" \
+    "packet-stimulus-redaction=" \
+    "retain-protocol-length-nonce-sha256-and-descriptor-metadata-no-payload-bytes" \
+    "packet-stimulus-timing-window=" \
+    "after-runtime-ready-marker-and-serial-cursor-before-final-pre-restore-identity" \
+    "packet-stimulus-descriptor-handoff-ready=" \
+    "packet-stimulus-host-only-discriminator=" \
+    "deterministic-driver-packet-adapter-host-only" \
+    "packet-stimulus-distinguishes-host-only=" \
+    "packet-stimulus-payload-retained=" \
     "live-packet-io-accepted=" \
     "live-reachability-accepted=" \
     "remote-receipt-accepted=" \

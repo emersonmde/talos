@@ -26297,7 +26297,10 @@ fn write_runtime_ready_route_start_marker(retention_replay: bool) {
 }
 
 #[cfg(talos_boot_scenario = "rpi5_ssh_service_smoltcp_runtime_ready")]
-fn write_runtime_ready_marker(runtime: crate::network::LiveTcpNetworkDeviceRuntimeReport) {
+fn write_runtime_ready_marker(
+    runtime: crate::network::LiveTcpNetworkDeviceRuntimeReport,
+    stimulus: crate::network::LivePacketStimulusContractReport,
+) {
     write_early_static("TALOS: ssh-service-smoltcp-runtime-ready");
     write_runtime_ready_capture_nonce();
     write_early_static(" runtime-binding=accepted-deterministic-device-interface-delivery");
@@ -26325,8 +26328,29 @@ fn write_runtime_ready_marker(runtime: crate::network::LiveTcpNetworkDeviceRunti
     );
     write_early_static(" dma-rx-descriptor-ring-owner=");
     write_early_static(crate::rp1_ethernet::RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_OWNER);
-    write_early_static(" dma-rx-redaction=metadata-only-no-payloads");
-    write_early_static(" packet-stimulus-owner=missing-lab-approved-packet-stimulus");
+    write_early_static(" dma-rx-redaction=");
+    write_early_static(crate::rp1_ethernet::RP1_ETHERNET_DMA_RX_REDACTION_POLICY);
+    write_early_static(" packet-stimulus-owner=bounded-lab-network-icmp-echo-contract");
+    write_early_static(" packet-stimulus-contract-id=");
+    write_early_static(stimulus.contract_id());
+    write_early_static(" packet-stimulus-classification=");
+    write_early_static(stimulus.classification());
+    write_early_static(" packet-stimulus-source=");
+    write_early_static(stimulus.permitted_stimulus_source());
+    write_early_static(" packet-stimulus-nonce-strategy=");
+    write_early_static(stimulus.nonce_strategy());
+    write_early_static(" packet-stimulus-redaction=");
+    write_early_static(stimulus.payload_redaction_policy());
+    write_early_static(" packet-stimulus-timing-window=");
+    write_early_static(stimulus.timing_window());
+    write_early_static(" packet-stimulus-descriptor-handoff-ready=");
+    write_bool(stimulus.descriptor_ring_handoff_ready());
+    write_early_static(" packet-stimulus-host-only-discriminator=");
+    write_early_static(stimulus.deterministic_host_only_discriminator());
+    write_early_static(" packet-stimulus-distinguishes-host-only=");
+    write_bool(stimulus.distinguishes_lab_stimulus_from_host_only());
+    write_early_static(" packet-stimulus-payload-retained=");
+    write_bool(stimulus.packet_payload_retained());
     write_early_static(" live-packet-io-accepted=");
     write_bool(runtime.live_packet_io_accepted());
     write_early_static(" live-reachability-accepted=");
@@ -26380,7 +26404,8 @@ fn write_runtime_blocked_marker(runtime: crate::network::LiveTcpNetworkDeviceRun
     write_early_static(" live-frame-provider-owner=rp1-dma-rx-descriptor-ring-fail-closed");
     write_early_static(" dma-rx-descriptor-ring-owner=");
     write_early_static(crate::rp1_ethernet::RP1_ETHERNET_DMA_RX_DESCRIPTOR_RING_OWNER);
-    write_early_static(" dma-rx-redaction=metadata-only-no-payloads");
+    write_early_static(" dma-rx-redaction=");
+    write_early_static(crate::rp1_ethernet::RP1_ETHERNET_DMA_RX_REDACTION_POLICY);
     write_early_static(" packet-stimulus-owner=missing-lab-approved-packet-stimulus");
     write_early_static(" live-packet-io-accepted=false");
     write_early_static(" live-reachability-accepted=false");
@@ -26403,21 +26428,29 @@ fn write_runtime_error_marker() {
 pub fn run_ssh_service_smoltcp_runtime_ready_route() -> ! {
     write_runtime_ready_route_start_marker(false);
 
-    let marker_route_ready =
-        match crate::network::live_tcp_runtime_marker_route_report_with_source_bound_rp1_provider()
-        {
-            Ok(report) => Some((report.marker_route_ready(), report.runtime_report())),
-            Err(_) => None,
-        };
+    let marker_route_ready = match (
+        crate::network::live_tcp_runtime_marker_route_report_with_source_owned_rp1_dma_rx_descriptor_ring(),
+        crate::network::live_tcp_bounded_packet_stimulus_contract_report(),
+    ) {
+        (Ok(handoff), Ok(stimulus)) => Some((
+            handoff.metadata_handoff_ready()
+                && stimulus.classification()
+                    == crate::network::LIVE_PACKET_STIMULUS_READY_CLASSIFICATION
+                && stimulus.descriptor_ring_handoff_ready(),
+            handoff.runtime_report(),
+            stimulus,
+        )),
+        _ => None,
+    };
 
     loop {
         match marker_route_ready {
-            Some((true, runtime)) => {
+            Some((true, runtime, stimulus)) => {
                 write_runtime_ready_kernel_main_retention_marker(true);
                 write_runtime_ready_route_start_marker(true);
-                write_runtime_ready_marker(runtime);
+                write_runtime_ready_marker(runtime, stimulus);
             }
-            Some((false, runtime)) => {
+            Some((false, runtime, _stimulus)) => {
                 write_runtime_ready_kernel_main_retention_marker(false);
                 write_runtime_ready_route_start_marker(true);
                 write_runtime_blocked_marker(runtime);
