@@ -22672,6 +22672,28 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   remote receipt, compatibility, service success, and ssh_ready remain false.
   v72, v60, and v53 remain deferred or blocked pending the next explicit
   feature-required supervisor selection.
+- phase12-ssh-live-tcp-rp1-provider-runtime-marker-route-integration-v74-20260702
+  accepts rp1-provider-runtime-marker-route-integration-accepted. No lab
+  publication, boot snapshot mutation, Pi 5 power cycle, serial capture, TFTP
+  capture, hardwareTestLock acquisition, packet-I/O proof, remote receipt,
+  OpenSSH/generated-root retry, compatibility claim, service success claim,
+  ssh-ready=true, fake/kernel-backed command expansion, broad shell work, or
+  phase transition was performed. The selected
+  rpi5_ssh_service_smoltcp_runtime_ready route now consumes the accepted
+  source-bound RP1 Ethernet hardware frame-provider report and emits
+  hardware-frame-provider-classification with the ready/blocked marker output.
+  The source-bound ready marker keeps live packet I/O, reachability, remote
+  receipt, compatibility, service success, ssh_ready, and phase transition
+  false. Missing provider, link-not-ready provider, missing descriptor
+  delivery, and missing deterministic device-interface binding remain explicit
+  fail-closed states. A non-published v75 archive was materialized at
+  target/talos-rpi5-rp1-provider-runtime-marker-v74-boot.tar.gz with archive
+  SHA-256 15ac4dd758408676440babf4808adebbdd18bc0d9bbfc0e4a33a9f846b173665
+  and selected da591740/kernel_2712.img SHA-256
+  8402ca01172608252eec7f6a933fb024b0cf782e57208e7102f5d8225e9d59f2 at
+  154520 bytes. selected_next_task is
+  phase12-ssh-live-tcp-pi5-rp1-provider-runtime-marker-preflight-v75-20260702;
+  v72, v60, and v53 remain deferred or blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

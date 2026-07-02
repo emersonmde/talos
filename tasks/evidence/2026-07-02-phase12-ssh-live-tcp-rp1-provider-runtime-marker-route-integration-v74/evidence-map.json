@@ -1,0 +1,75 @@
+{
+  "task_id": "phase12-ssh-live-tcp-rp1-provider-runtime-marker-route-integration-v74-20260702",
+  "terminal_classification": "rp1-provider-runtime-marker-route-integration-accepted",
+  "predecessors": [
+    {
+      "task_id": "phase12-ssh-live-tcp-pi5-packet-ingress-prerequisite-contract-v73-20260702",
+      "classification": "packet-ingress-prerequisite-blocked-for-source-repair",
+      "commit": "6e95d96d4df44a6beb8d1f6e39e3b8960e02acbe",
+      "role": "Identified the missing RP1 Ethernet hardware frame-provider binding prerequisite."
+    },
+    {
+      "task_id": "phase12-ssh-live-tcp-rp1-hardware-frame-provider-binding-local-core-20260702",
+      "classification": "rp1-hardware-frame-provider-binding-local-core-accepted",
+      "commit": "9e94e981c5fb369957264e1d67e476600caaf7e0",
+      "role": "Accepted source-local missing-provider, link-not-ready, and source-bound provider reports."
+    },
+    {
+      "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-after-target-init-preflight-v71-20260702",
+      "classification": "selected-normal-runtime-exceptions-ready-marker-retained",
+      "role": "Most recent selected Pi 5 runtime frontier before the provider-bound marker route."
+    }
+  ],
+  "changed_files": [
+    "src/network.rs",
+    "src/target/rpi5.rs",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md",
+    "tasks/2026-07-02-phase12-ssh-live-tcp-rp1-provider-runtime-marker-route-integration-v74.md",
+    "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-rp1-provider-runtime-marker-route-integration-v74/evidence-map.json"
+  ],
+  "provider_bound_route": {
+    "selected_route": "rpi5_ssh_service_smoltcp_runtime_ready",
+    "network_entry": "live_tcp_runtime_marker_route_report_with_source_bound_rp1_provider",
+    "provider_classification": "rp1-ethernet-hardware-frame-provider-source-bound-local-only",
+    "hardware_frame_provider_bound": true,
+    "driver_packet_rx_frames": 6,
+    "driver_packet_tx_frames": 6,
+    "live_packet_io_accepted": false,
+    "live_reachability_accepted": false,
+    "remote_receipt_accepted": false,
+    "compatibility_accepted": false,
+    "service_success": false,
+    "ssh_ready": false,
+    "claims_phase_transition": false
+  },
+  "fail_closed_coverage": [
+    "missing RP1 provider -> blocked-missing-hardware-frame-provider",
+    "source-bound link-not-ready provider -> blocked-hardware-frame-provider-link-not-ready",
+    "missing descriptor delivery -> blocked-missing-descriptor-delivery",
+    "missing deterministic device interface -> blocked-missing-device-interface-binding"
+  ],
+  "candidate_archive": {
+    "published": false,
+    "path": "target/talos-rpi5-rp1-provider-runtime-marker-v74-boot.tar.gz",
+    "sha256": "15ac4dd758408676440babf4808adebbdd18bc0d9bbfc0e4a33a9f846b173665",
+    "file_count": 19,
+    "kernel_path": "da591740/kernel_2712.img",
+    "kernel_bytes": 154520,
+    "kernel_sha256": "8402ca01172608252eec7f6a933fb024b0cf782e57208e7102f5d8225e9d59f2",
+    "header_image_size": 154520,
+    "text_offset": 0,
+    "flags": 12,
+    "expected_marker": "TALOS: ssh-service-smoltcp-runtime-ready runtime-binding=accepted-deterministic-device-interface-delivery descriptor-facing-connection-delivered=true deterministic-device-interface-bound=true hardware-frame-provider-bound=true hardware-frame-provider-classification=rp1-ethernet-hardware-frame-provider-source-bound-local-only driver-packet-rx-frames=6 driver-packet-tx-frames=6 live-packet-io-accepted=false live-reachability-accepted=false remote-receipt-accepted=false compatibility-accepted=false ssh-ready=false claims-service-success=false claims-phase-transition=false",
+    "restore_target": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z"
+  },
+  "stale_task_dispositions": {
+    "phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-after-exceptions-reconciliation-v72-20260702": "deferred; provider-bound marker route selected a newer source/local route proof first",
+    "phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-after-no-route-start-repair-reconciliation-v60-20260702": "blocked/deferred; stale route/runtime marker dependency chain",
+    "phase12-ssh-live-tcp-selected-normal-runtime-packet-io-continuation-reconciliation-v53-20260701": "blocked/deferred; live packet-I/O still requires later explicit hardware evidence gates"
+  },
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-rp1-provider-runtime-marker-preflight-v75-20260702",
+  "planning_needed": false,
+  "redaction_review": "Evidence retains deterministic source metadata, test summaries, archive digests, and marker vocabulary only; no packet payload captures, SSH key/session material, private user data, hardware log bytes, or unnecessary stable external identifiers are retained.",
+  "commit": "pending"
+}

@@ -26266,7 +26266,7 @@ pub fn run_ssh_service_smoltcp_runtime_ready_route() -> ! {
     }
     write_early_static(" source=network-device-smoltcp-runtime\n");
 
-    match crate::network::live_tcp_runtime_marker_route_report() {
+    match crate::network::live_tcp_runtime_marker_route_report_with_source_bound_rp1_provider() {
         Ok(report) if report.marker_route_ready() => {
             let runtime = report.runtime_report();
             write_early_static("TALOS: ssh-service-smoltcp-runtime-ready");
@@ -26283,6 +26283,12 @@ pub fn run_ssh_service_smoltcp_runtime_ready_route() -> ! {
             write_bool(runtime.deterministic_device_interface_bound());
             write_early_static(" hardware-frame-provider-bound=");
             write_bool(runtime.hardware_frame_provider_bound());
+            write_early_static(" hardware-frame-provider-classification=");
+            write_early_static(
+                runtime
+                    .hardware_frame_provider_classification()
+                    .unwrap_or("none"),
+            );
             write_early_static(" driver-packet-rx-frames=");
             write_early_dec_u64(runtime.driver_packet_rx_frames() as u64);
             write_early_static(" driver-packet-tx-frames=");
@@ -26322,7 +26328,18 @@ pub fn run_ssh_service_smoltcp_runtime_ready_route() -> ! {
                 crate::network::LiveTcpNetworkDeviceRuntimeBindingState::BlockedMissingHardwareFrameProvider => {
                     "blocked-missing-hardware-frame-provider"
                 }
+                crate::network::LiveTcpNetworkDeviceRuntimeBindingState::BlockedHardwareFrameProviderLinkNotReady => {
+                    "blocked-hardware-frame-provider-link-not-ready"
+                }
             });
+            write_early_static(" hardware-frame-provider-bound=");
+            write_bool(runtime.hardware_frame_provider_bound());
+            write_early_static(" hardware-frame-provider-classification=");
+            write_early_static(
+                runtime
+                    .hardware_frame_provider_classification()
+                    .unwrap_or("none"),
+            );
             write_early_static(" ssh-ready=false claims-service-success=false\n");
         }
         Err(_) => {

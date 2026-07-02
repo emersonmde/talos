@@ -2809,8 +2809,9 @@ impl LiveTcpNetworkDeviceRuntimeReport {
     }
 }
 
-pub(crate) fn live_tcp_runtime_marker_route_report()
--> Result<LiveTcpRuntimeMarkerRouteReport, crate::posix::PosixError> {
+fn live_tcp_runtime_marker_route_report_for_rp1_provider(
+    provider_report: Option<crate::rp1_ethernet::Rp1EthernetHardwareFrameProviderBindingReport>,
+) -> Result<LiveTcpRuntimeMarkerRouteReport, crate::posix::PosixError> {
     let owner = crate::scheduler::ProcessOwnerId::new(79)
         .ok_or(crate::posix::PosixError::InvalidArgument)?;
     let endpoint = Ipv4Endpoint::new(SOCKET_SYNTHETIC_LOCAL_IPV4_BE, 22);
@@ -2844,13 +2845,37 @@ pub(crate) fn live_tcp_runtime_marker_route_report()
         return Err(crate::posix::PosixError::Io);
     }
 
-    let runtime_report =
-        sockets.live_tcp_network_device_smoltcp_runtime_binding(connection_id, true, false)?;
+    let runtime_report = match provider_report {
+        Some(provider_report) => sockets
+            .live_tcp_network_device_smoltcp_runtime_binding_with_rp1_provider(
+                connection_id,
+                true,
+                provider_report,
+            )?,
+        None => {
+            sockets.live_tcp_network_device_smoltcp_runtime_binding(connection_id, true, false)?
+        }
+    };
+    let provider_route_ready = match provider_report {
+        Some(provider_report) => {
+            provider_report.provider_bound()
+                && provider_report.link_ready()
+                && runtime_report.hardware_frame_provider_bound()
+                && runtime_report.hardware_frame_provider_classification()
+                    == Some(provider_report.classification)
+        }
+        None => {
+            !runtime_report.hardware_frame_provider_bound()
+                && runtime_report
+                    .hardware_frame_provider_classification()
+                    .is_none()
+        }
+    };
     let marker_route_ready = runtime_report.binding_state()
         == LiveTcpNetworkDeviceRuntimeBindingState::AcceptedDeterministicDeviceInterfaceDelivery
         && runtime_report.descriptor_facing_connection_delivered()
         && runtime_report.deterministic_device_interface_bound()
-        && !runtime_report.hardware_frame_provider_bound()
+        && provider_route_ready
         && runtime_report.driver_packet_rx_frames() > 0
         && runtime_report.driver_packet_rx_frames() == runtime_report.driver_packet_tx_frames()
         && !runtime_report.live_packet_io_accepted()
@@ -2863,6 +2888,22 @@ pub(crate) fn live_tcp_runtime_marker_route_report()
         runtime_report,
         marker_route_ready,
     })
+}
+
+pub(crate) fn live_tcp_runtime_marker_route_report()
+-> Result<LiveTcpRuntimeMarkerRouteReport, crate::posix::PosixError> {
+    live_tcp_runtime_marker_route_report_for_rp1_provider(None)
+}
+
+pub(crate) fn live_tcp_runtime_marker_route_report_with_source_bound_rp1_provider()
+-> Result<LiveTcpRuntimeMarkerRouteReport, crate::posix::PosixError> {
+    let provider_report =
+        crate::rp1_ethernet::rp1_ethernet_hardware_frame_provider_binding_report(Some(
+            crate::rp1_ethernet::rp1_ethernet_hardware_frame_provider_contract_evidence(
+                crate::rp1_ethernet::Rp1EthernetHardwareFrameProviderState::SourceBoundLinkReady,
+            ),
+        ));
+    live_tcp_runtime_marker_route_report_for_rp1_provider(Some(provider_report))
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -7235,7 +7276,7 @@ mod tests {
         assert!(runtime.descriptor_facing_connection_delivered());
         assert!(runtime.deterministic_device_interface_bound());
         assert!(!runtime.hardware_frame_provider_bound());
-        assert!(runtime.driver_packet_rx_frames() > 0);
+        assert_eq!(runtime.driver_packet_rx_frames(), 6);
         assert_eq!(
             runtime.driver_packet_rx_frames(),
             runtime.driver_packet_tx_frames()
@@ -7333,7 +7374,7 @@ mod tests {
             runtime.hardware_frame_provider_classification(),
             Some(crate::rp1_ethernet::RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_BOUND_CLASSIFICATION)
         );
-        assert!(runtime.driver_packet_rx_frames() > 0);
+        assert_eq!(runtime.driver_packet_rx_frames(), 6);
         assert_eq!(
             runtime.driver_packet_rx_frames(),
             runtime.driver_packet_tx_frames()
@@ -7367,6 +7408,83 @@ mod tests {
         assert!(!runtime.remote_receipt_accepted());
         assert!(!runtime.compatibility_accepted());
         assert!(!runtime.ssh_ready());
+    }
+
+    #[test_case]
+    fn live_tcp_runtime_marker_route_report_accepts_source_bound_rp1_provider_metadata_only() {
+        let report = live_tcp_runtime_marker_route_report_with_source_bound_rp1_provider()
+            .expect("provider-bound runtime marker route");
+        let runtime = report.runtime_report();
+
+        assert!(report.marker_route_ready());
+        assert_eq!(
+            runtime.binding_state(),
+            LiveTcpNetworkDeviceRuntimeBindingState::AcceptedDeterministicDeviceInterfaceDelivery
+        );
+        assert!(runtime.descriptor_facing_connection_delivered());
+        assert!(runtime.deterministic_device_interface_bound());
+        assert!(runtime.hardware_frame_provider_bound());
+        assert_eq!(
+            runtime.hardware_frame_provider_classification(),
+            Some(crate::rp1_ethernet::RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_BOUND_CLASSIFICATION)
+        );
+        assert!(runtime.driver_packet_rx_frames() > 0);
+        assert_eq!(
+            runtime.driver_packet_rx_frames(),
+            runtime.driver_packet_tx_frames()
+        );
+        assert!(!runtime.live_packet_io_accepted());
+        assert!(!runtime.live_reachability_accepted());
+        assert!(!runtime.remote_receipt_accepted());
+        assert!(!runtime.compatibility_accepted());
+        assert!(!runtime.ssh_ready());
+    }
+
+    #[test_case]
+    fn live_tcp_runtime_marker_route_report_fails_closed_for_missing_or_paused_rp1_provider() {
+        let missing_provider =
+            crate::rp1_ethernet::rp1_ethernet_hardware_frame_provider_binding_report(None);
+        let missing_report =
+            live_tcp_runtime_marker_route_report_for_rp1_provider(Some(missing_provider))
+                .expect("missing provider runtime marker route");
+        let missing_runtime = missing_report.runtime_report();
+        assert!(!missing_report.marker_route_ready());
+        assert_eq!(
+            missing_runtime.binding_state(),
+            LiveTcpNetworkDeviceRuntimeBindingState::BlockedMissingHardwareFrameProvider
+        );
+        assert!(!missing_runtime.hardware_frame_provider_bound());
+        assert_eq!(
+            missing_runtime.hardware_frame_provider_classification(),
+            Some(crate::rp1_ethernet::RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_MISSING_CLASSIFICATION)
+        );
+        assert!(!missing_runtime.ssh_ready());
+
+        let link_not_ready =
+            crate::rp1_ethernet::rp1_ethernet_hardware_frame_provider_binding_report(Some(
+                crate::rp1_ethernet::rp1_ethernet_hardware_frame_provider_contract_evidence(
+                    crate::rp1_ethernet::Rp1EthernetHardwareFrameProviderState::SourceBoundLinkNotReady,
+                ),
+            ));
+        let link_not_ready_report =
+            live_tcp_runtime_marker_route_report_for_rp1_provider(Some(link_not_ready))
+                .expect("link-not-ready provider runtime marker route");
+        let link_not_ready_runtime = link_not_ready_report.runtime_report();
+        assert!(!link_not_ready_report.marker_route_ready());
+        assert_eq!(
+            link_not_ready_runtime.binding_state(),
+            LiveTcpNetworkDeviceRuntimeBindingState::BlockedHardwareFrameProviderLinkNotReady
+        );
+        assert!(link_not_ready_runtime.hardware_frame_provider_bound());
+        assert_eq!(
+            link_not_ready_runtime.hardware_frame_provider_classification(),
+            Some(
+                crate::rp1_ethernet::RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_LINK_NOT_READY_CLASSIFICATION
+            )
+        );
+        assert_eq!(link_not_ready_runtime.driver_packet_rx_frames(), 0);
+        assert!(!link_not_ready_runtime.live_packet_io_accepted());
+        assert!(!link_not_ready_runtime.ssh_ready());
     }
 
     #[test_case]
