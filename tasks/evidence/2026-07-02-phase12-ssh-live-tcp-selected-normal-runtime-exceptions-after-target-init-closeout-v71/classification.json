@@ -1,0 +1,43 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-exceptions-after-target-init-closeout-v71-20260702",
+  "terminalClassification": "selected-normal-runtime-exceptions-frontier-proved",
+  "status": "accepted",
+  "selected_next_task": "phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-after-exceptions-reconciliation-v72-20260702",
+  "planningNeeded": false,
+  "evidence_level": [
+    "static inspection",
+    "v71 task record review",
+    "v71 task-owned JSON evidence review",
+    "docs build",
+    "diff checks"
+  ],
+  "retained": {
+    "source_preflight_task": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-after-target-init-preflight-v71-20260702",
+    "source_preflight_classification": "selected-normal-runtime-exceptions-marker-retained",
+    "selected_tree_hash": "b4c9bf0c09d122def872228a4e3d2a0f5836bfa0c7e4e4cdaa3b42ddf3e8ee9c",
+    "selected_archive": "target/tmp/selected-normal-runtime-exceptions-ready-v70.tar.gz",
+    "selected_archive_sha256": "18007965ceb10991766e01ab2cf4d6f468530eca97d1a8c3a016a39b0402396b",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "selected_fetch_bytes": 152880,
+    "selected_fetch_sha256": "7a62150e4232fc8215a7c7ec8e502697bdabb3a9e6bcd62f640c75aba722e455",
+    "tftp_expected_fetch_count": 4,
+    "tftp_expected_fetch_byte_match_count": 4,
+    "serial_required_marker": "TALOS: exceptions ready capture-nonce=runtime-marker-route-static",
+    "serial_required_marker_occurrences": 881,
+    "deepest_marker": "TALOS: exceptions ready",
+    "final_pre_restore_tree_hash": "b4c9bf0c09d122def872228a4e3d2a0f5836bfa0c7e4e4cdaa3b42ddf3e8ee9c",
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "first_missing_fact": null,
+  "unresolved_evidence_reason": null,
+  "next_boundary": {
+    "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-after-exceptions-reconciliation-v72-20260702",
+    "reason": "current taskQueue already contains an explicit no-hardware kernel_main reconciliation whose dependency is this proved exceptions-ready closeout"
+  },
+  "notes": [
+    "GET / 404 in v71 is endpoint semantics only; /status and /boot/files are the selected-tree identity sources.",
+    "The incomplete later v71 helper rerun remains quarantined as non-classification evidence.",
+    "No kernel_main, route-start, runtime-ready, packet-I/O, OpenSSH/generated-root, service-readiness, ssh-ready=true, broad shell, fake command expansion, or phase transition claim is accepted by this closeout."
+  ]
+}

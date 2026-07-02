@@ -1,0 +1,23 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-exceptions-after-target-init-closeout-v71-20260702",
+  "classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-exceptions-after-target-init-closeout-v71/classification.json",
+  "static_closeout_summary": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-exceptions-after-target-init-closeout-v71/static/closeout-summary.md",
+  "source_evidence": {
+    "v71_task_record": "tasks/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-after-target-init-preflight-v71.md",
+    "v71_classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-after-target-init-preflight-v71/classification.json",
+    "v71_evidence_map": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-after-target-init-preflight-v71/evidence-map.json",
+    "v71_accepted_run": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-after-target-init-preflight-v71/run-20260702T095454Z",
+    "v71_run_summary": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-after-target-init-preflight-v71/validation/run-summary.json"
+  },
+  "reviewed_facts": {
+    "selected_tftp_fetches": 4,
+    "selected_tftp_fetch_byte_matches": 4,
+    "serial_required_marker_occurrences": 881,
+    "final_pre_restore_identity_matches_selected_tree": true,
+    "restore_proof_present": true,
+    "identity_join_rejection_reasons": []
+  },
+  "redaction_review": {
+    "note": "Closeout evidence is task ids, source/path labels, hashes, byte counts, marker counts, classifications, and validation outcomes. It contains no private user data, credentials, packet payloads, SSH/session/key material, public-key blobs, signatures, fingerprints, operator identities, or external account data."
+  }
+}

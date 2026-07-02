@@ -14098,3 +14098,22 @@ selected-tree identity sources. selected_next_task is
 phase12-ssh-live-tcp-selected-normal-runtime-exceptions-after-target-init-closeout-v71-20260702
 and planningNeeded=false. Kernel_main and later runtime/network/service
 milestones remain blocked until closeout.
+
+phase12-ssh-live-tcp-selected-normal-runtime-exceptions-after-target-init-closeout-v71-20260702
+accepts selected-normal-runtime-exceptions-frontier-proved. No hardware action,
+lab publication, boot snapshot mutation, Pi 5 power cycle, serial capture,
+TFTP capture, kernel_main proof, route-start proof, runtime-ready proof,
+packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility claim,
+service success claim, ssh-ready=true, fake/kernel-backed command expansion,
+broad shell work, or phase transition was performed. The closeout reconciled
+v70 source/static ordering and v71 selected Pi 5 evidence: the selected tree
+b4c9bf0c09d122def872228a4e3d2a0f5836bfa0c7e4e4cdaa3b42ddf3e8ee9c served
+da591740/kernel_2712.img four times at 152,880 bytes, retained 881 occurrences
+of TALOS: exceptions ready capture-nonce=runtime-marker-route-static, preserved
+final pre-restore selected identity, and restored the lab to
+phase12-ssh-v10-openssh-clean-pre-20260624T074100Z. selected_next_task is
+phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-after-exceptions-reconciliation-v72-20260702
+and planningNeeded=false. Kernel_main marker retention on Pi 5, route-start,
+runtime-ready, packet-I/O, OpenSSH compatibility, service readiness,
+ssh-ready=true, fake command expansion, broad shell work, and phase transition
+remain unproved.
