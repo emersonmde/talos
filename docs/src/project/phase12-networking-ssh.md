@@ -14250,3 +14250,23 @@ bytes. The refreshed marker hierarchy for the next Pi 5 proof is early Talos,
 provider route-start, provider runtime-blocked/error, then provider
 runtime-ready. selected_next_task is
 phase12-ssh-live-tcp-pi5-rp1-provider-route-entry-preflight-v77-20260702.
+
+phase12-ssh-live-tcp-pi5-rp1-provider-route-entry-preflight-v77-20260702
+accepts provider-route-entry-blocked-before-kernel-main. Under
+hardwareTestLock, the worker published the v76 route-entry archive, staged
+selected tree 051125b2e9111036f7b5310634078a1e4e673bacbd53f4d05803f0882a460a70,
+and captured a serialized Pi 5 run. Stable same-cursor TFTP before restore
+retained 13 events, including two selected da591740/kernel_2712.img serves at
+155,096 bytes, and final pre-restore identity still matched the selected tree.
+Serial used the saturated-cursor direct-read fallback, retained 4,475 bytes
+with two firmware NETWORK markers, and retained no kernel_main, provider
+route-start, runtime-blocked, or runtime-ready marker. The first missing fact
+is now before kernel_main after selected kernel TFTP service and final selected
+identity. The lab restored to
+phase12-ssh-v10-openssh-clean-pre-20260624T074100Z with tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+selected_next_task is
+phase12-ssh-live-tcp-rp1-provider-route-entry-closeout-v77-20260702. Live
+packet I/O, remote receipt, OpenSSH compatibility, service success,
+ssh_ready=true, fake command expansion, broad shell work, and phase transition
+remain unaccepted.
