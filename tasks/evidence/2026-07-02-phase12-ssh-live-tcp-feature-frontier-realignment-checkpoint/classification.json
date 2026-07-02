@@ -1,0 +1,56 @@
+{
+  "task_id": "phase12-ssh-live-tcp-feature-frontier-realignment-checkpoint-20260702",
+  "terminalClassification": "feature-frontier-blocked-for-supervisor-planning",
+  "status": "accepted",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "evidence_level": [
+    "git status inspection",
+    "supervisor-state JSON validation",
+    "roadmap/static architecture review",
+    "early POSIX/VFS frontier review",
+    "Phase 12 task-record review",
+    "recent git log review",
+    "docs build",
+    "diff checks"
+  ],
+  "accepted_frontiers": {
+    "architecture_quality_campaign": "complete-through-closeout",
+    "local_posix_vfs_foundation": "accepted-static-unit-qemu-substitute-frontier",
+    "phase12_local_networking": "accepted-local-static-descriptor-smoltcp-frontier",
+    "phase12_pi5_selected_runtime": "exceptions-ready-frontier-proved"
+  },
+  "v71_retained": {
+    "source_task": "phase12-ssh-live-tcp-selected-normal-runtime-exceptions-after-target-init-closeout-v71-20260702",
+    "classification": "selected-normal-runtime-exceptions-frontier-proved",
+    "selected_tree_hash": "b4c9bf0c09d122def872228a4e3d2a0f5836bfa0c7e4e4cdaa3b42ddf3e8ee9c",
+    "selected_fetch_path": "da591740/kernel_2712.img",
+    "selected_fetch_bytes": 152880,
+    "selected_tftp_fetches": 4,
+    "serial_required_marker": "TALOS: exceptions ready capture-nonce=runtime-marker-route-static",
+    "serial_required_marker_occurrences": 881,
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "stale_task_dispositions": {
+    "phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-after-exceptions-reconciliation-v72-20260702": {
+      "disposition": "deferred",
+      "reason": "Paused marker-chain successor is not accepted as the next feature-led task by this checkpoint; it requires explicit refreshed supervisor reselection."
+    },
+    "phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-after-no-route-start-repair-reconciliation-v60-20260702": {
+      "disposition": "deferred",
+      "reason": "Blocked older runtime-ready continuation has stale dependencies and is not refreshed from the accepted v71 exceptions-ready frontier."
+    },
+    "phase12-ssh-live-tcp-selected-normal-runtime-packet-io-continuation-reconciliation-v53-20260701": {
+      "disposition": "deferred",
+      "reason": "Blocked packet-I/O continuation is a later live-networking claim and lacks a refreshed feature-led evidence contract."
+    }
+  },
+  "first_missing_fact": "The next explicitly selected feature-led Phase 12 objective after accepted v71 exceptions-ready proof.",
+  "required_decision_or_evidence": "Supervisor must plan exactly one bounded successor that either reselects v72 as a feature-required kernel_main discriminator with refreshed dependencies or replaces it with a smaller implementation-sized/evidence-contract task tied directly to live TCP/SSH acceptance.",
+  "next_boundary": null,
+  "notes": [
+    "This checkpoint does not reopen the completed architecture review/refactor campaign or the accepted local POSIX/VFS foundation chain.",
+    "This checkpoint does not claim kernel_main, route-start, runtime-ready, packet-I/O, OpenSSH compatibility, service readiness, ssh-ready=true, broad shell work, fake command expansion, or phase transition.",
+    "No hardware action or lab mutation was performed."
+  ]
+}

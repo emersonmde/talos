@@ -14117,3 +14117,20 @@ and planningNeeded=false. Kernel_main marker retention on Pi 5, route-start,
 runtime-ready, packet-I/O, OpenSSH compatibility, service readiness,
 ssh-ready=true, fake command expansion, broad shell work, and phase transition
 remain unproved.
+
+phase12-ssh-live-tcp-feature-frontier-realignment-checkpoint-20260702 accepts
+feature-frontier-blocked-for-supervisor-planning. No hardware action, lab
+publication, boot snapshot mutation, Pi 5 power cycle, serial capture, TFTP
+capture, kernel_main proof, route-start proof, runtime-ready proof, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The checkpoint reconciled the
+completed architecture review/refactor campaign and accepted local POSIX/VFS
+foundation chain against the Phase 12 live TCP/SSH frontier. v71 remains the
+accepted Pi 5 selected-normal-runtime frontier at exceptions-ready, but the
+previous v72 kernel_main continuation is treated as a stale marker-chain
+successor unless a supervisor task explicitly reselects it as feature-required
+for live TCP/SSH. v60 runtime-ready and v53 packet-I/O continuations also
+remain blocked/deferred because their dependencies are stale and not refreshed
+from v71. selected_next_task=null and planningNeeded=true for exactly one
+bounded feature-led successor plan.

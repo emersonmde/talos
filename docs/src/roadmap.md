@@ -22628,6 +22628,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   runtime-ready, packet-I/O, OpenSSH compatibility, service readiness,
   ssh-ready=true, fake command expansion, broad shell work, and phase
   transition remain unproved.
+- phase12-ssh-live-tcp-feature-frontier-realignment-checkpoint-20260702 accepts
+  feature-frontier-blocked-for-supervisor-planning. No hardware action, lab
+  publication, boot snapshot mutation, Pi 5 power cycle, serial capture, TFTP
+  capture, kernel_main proof, route-start proof, runtime-ready proof,
+  packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility
+  claim, service success claim, ssh-ready=true, fake/kernel-backed command
+  expansion, broad shell work, or phase transition was performed. The
+  checkpoint preserves the completed architecture review/refactor campaign and
+  accepted local POSIX/VFS foundation chain as support for later SSH work, and
+  preserves v71 as the accepted exceptions-ready Pi 5 frontier. It does not
+  accept automatic promotion of the stale v72 marker-chain successor; v72 must
+  be explicitly reselected as feature-required or replaced by one smaller
+  feature-led task. v60 runtime-ready and v53 packet-I/O remain blocked/deferred
+  because their dependencies are stale. selected_next_task=null and
+  planningNeeded=true.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

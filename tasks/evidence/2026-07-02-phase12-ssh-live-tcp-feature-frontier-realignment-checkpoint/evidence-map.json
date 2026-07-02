@@ -1,0 +1,27 @@
+{
+  "task_id": "phase12-ssh-live-tcp-feature-frontier-realignment-checkpoint-20260702",
+  "classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-feature-frontier-realignment-checkpoint/classification.json",
+  "static_checkpoint_summary": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-feature-frontier-realignment-checkpoint/static/checkpoint-summary.md",
+  "reviewed_sources": {
+    "roadmap_current_status": "docs/src/roadmap.md",
+    "early_posix_vfs_frontier": "docs/src/project/early-posix-shape.md",
+    "phase12_frontier": "docs/src/project/phase12-networking-ssh.md",
+    "v71_closeout_task_record": "tasks/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-exceptions-after-target-init-closeout-v71.md",
+    "v71_closeout_classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-exceptions-after-target-init-closeout-v71/classification.json",
+    "supervisor_state": "/opt/strider/openclaw/current/workspace/memory/talos-supervisor-state.json",
+    "recent_git_log": "git log --oneline -12"
+  },
+  "reviewed_facts": {
+    "architecture_review_campaign_complete": true,
+    "local_posix_vfs_foundations_complete": true,
+    "v71_exceptions_ready_frontier_proved": true,
+    "v72_status_before_checkpoint": "paused",
+    "v60_status_before_checkpoint": "blocked",
+    "v53_status_before_checkpoint": "blocked",
+    "selected_next_task": null,
+    "planningNeeded": true
+  },
+  "redaction_review": {
+    "note": "Checkpoint evidence is task ids, source/path labels, hashes, byte counts, marker counts, classifications, and validation outcomes. It contains no private user data, credentials, packet payloads, SSH/session/key material, public-key blobs, signatures, fingerprints, operator identities, or external account data."
+  }
+}
