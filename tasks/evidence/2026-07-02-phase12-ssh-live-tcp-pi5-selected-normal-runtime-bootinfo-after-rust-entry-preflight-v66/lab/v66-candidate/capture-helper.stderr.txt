@@ -1,0 +1,1153 @@
++ set -eu
++ API_BASE=http://talos-lab-api:8080
++ DRY_RUN=false
++ EVIDENCE_DIR=
++ RESTORE_SNAPSHOT=
++ LABEL=
++ EXPECTED_TREE_HASH=
++ EXPECTED_KERNEL=kernel_2712.img
++ EXPECTED_FETCH=da591740/kernel_2712.img
++ EXPECTED_FETCH_BYTES=
++ SERIAL_MARKER=rpi5-rp1-post-handoff-marker-reset
++ SERIAL_DRAIN_ATTEMPTS=16
++ SERIAL_DRAIN_READ_TIMEOUT=1
++ SERIAL_DRAIN_SETTLE_MS=100
++ SERIAL_DRAIN_MAX_BYTES=65536
++ SERIAL_TIMEOUT=90
++ SETTLE_MS=1000
++ MAX_BYTES=65536
++ TFTP_TIMEOUT=90
++ STABLE_SAMPLES=3
++ MARKER_FAMILY='TALOS: asm_start|TALOS: asm_pre_rust_entry|TALOS: rust_entry|TALOS: boot info parsed|TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=runtime-marker-route-static|TALOS: ssh-service-smoltcp-runtime-blocked capture-nonce=runtime-marker-route-static|TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-marker-route-static'
++ EXPECTED_FAIL_CLOSED_CLASSIFICATIONS=
++ '[' 22 -gt 0 ']'
++ case "$1" in
++ EVIDENCE_DIR=tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate
++ shift 2
++ '[' 20 -gt 0 ']'
++ case "$1" in
++ RESTORE_SNAPSHOT=phase12-ssh-v10-openssh-clean-pre-20260624T074100Z
++ shift 2
++ '[' 18 -gt 0 ']'
++ case "$1" in
++ LABEL=selected-normal-runtime-bootinfo-v66-candidate
++ shift 2
++ '[' 16 -gt 0 ']'
++ case "$1" in
++ EXPECTED_TREE_HASH=f5b5d23af2dffc60fd61a8bb2ea5bdf9c1f433b69694fd3efdd7f51793a68632
++ shift 2
++ '[' 14 -gt 0 ']'
++ case "$1" in
++ EXPECTED_KERNEL=kernel_2712.img
++ shift 2
++ '[' 12 -gt 0 ']'
++ case "$1" in
++ EXPECTED_FETCH=da591740/kernel_2712.img
++ shift 2
++ '[' 10 -gt 0 ']'
++ case "$1" in
++ EXPECTED_FETCH_BYTES=152880
++ shift 2
++ '[' 8 -gt 0 ']'
++ case "$1" in
++ SERIAL_MARKER='TALOS: boot info parsed'
++ shift 2
++ '[' 6 -gt 0 ']'
++ case "$1" in
++ SERIAL_TIMEOUT=90
++ shift 2
++ '[' 4 -gt 0 ']'
++ case "$1" in
++ TFTP_TIMEOUT=90
++ shift 2
++ '[' 2 -gt 0 ']'
++ case "$1" in
++ STABLE_SAMPLES=3
++ shift 2
++ '[' 0 -gt 0 ']'
++ '[' -z tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate ']'
++ '[' -z phase12-ssh-v10-openssh-clean-pre-20260624T074100Z ']'
++ '[' -z selected-normal-runtime-bootinfo-v66-candidate ']'
++ validate_positive_uint --serial-drain-attempts 16
++ name=--serial-drain-attempts
++ value=16
++ case "$value" in
++ validate_positive_uint --serial-drain-read-timeout 1
++ name=--serial-drain-read-timeout
++ value=1
++ case "$value" in
++ validate_positive_uint --serial-drain-settle-ms 100
++ name=--serial-drain-settle-ms
++ value=100
++ case "$value" in
++ validate_positive_uint --serial-drain-max-bytes 65536
++ name=--serial-drain-max-bytes
++ value=65536
++ case "$value" in
++ validate_positive_uint --serial-timeout 90
++ name=--serial-timeout
++ value=90
++ case "$value" in
++ validate_positive_uint --settle-ms 1000
++ name=--settle-ms
++ value=1000
++ case "$value" in
++ validate_positive_uint --max-bytes 65536
++ name=--max-bytes
++ value=65536
++ case "$value" in
++ validate_positive_uint --tftp-timeout 90
++ name=--tftp-timeout
++ value=90
++ case "$value" in
++ validate_positive_uint --stable-samples 3
++ name=--stable-samples
++ value=3
++ case "$value" in
++ '[' false = true ']'
++ mkdir -p tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate
++ CAPTURE_WINDOW_ORDER=tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ jq -n --arg run_label selected-normal-runtime-bootinfo-v66-candidate --arg restore_snapshot phase12-ssh-v10-openssh-clean-pre-20260624T074100Z '{
+        contract_version: "pi5-candidate-capture-window-v5",
+        helper: "scripts/rpi5-capture-invariant-proof-bundle.sh",
+        run_label: $run_label,
+        restore_snapshot: $restore_snapshot,
+        helper_run_started_at: (now | todate),
+        helper_run_completed: false,
+        completed_at: null,
+        rule: "final-pre-restore identity and stable TFTP delta must be captured by this helper before restore; post-restore/control identity must never satisfy candidate pre-restore evidence; candidate-capture-ready also requires helper_run_completed=true from this foreground helper",
+        events: []
+    }'
++ capture_root_endpoint tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/pre-root-endpoint-body.txt tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/pre-root-endpoint.json
++ endpoint_file=tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/pre-root-endpoint-body.txt
++ meta_file=tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/pre-root-endpoint.json
+++ mktemp
++ body_tmp=/opt/strider/openclaw/current/workspace/tmp/tmp.uHLIiNrpnE
+++ mktemp
++ code_tmp=/opt/strider/openclaw/current/workspace/tmp/tmp.VKvgQymz74
++ curl -sS -o /opt/strider/openclaw/current/workspace/tmp/tmp.uHLIiNrpnE -w '%{http_code}' http://talos-lab-api:8080/
++ curl_exit=0
+++ cat /opt/strider/openclaw/current/workspace/tmp/tmp.VKvgQymz74
++ http_code=404
++ cp /opt/strider/openclaw/current/workspace/tmp/tmp.uHLIiNrpnE tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/pre-root-endpoint-body.txt
++ jq -n --arg endpoint 'GET /' --arg http_code 404 --argjson curl_exit 0 --rawfile body /opt/strider/openclaw/current/workspace/tmp/tmp.uHLIiNrpnE '{
+            endpoint: $endpoint,
+            curl_exit: $curl_exit,
+            http_code: (if ($http_code | test("^[0-9]+$")) then ($http_code | tonumber) else null end),
+            body_bytes: ($body | length),
+            usable_for_selected_tree_identity:
+                ($curl_exit == 0
+                 and ($http_code | test("^2[0-9][0-9]$"))
+                 and (($body | fromjson? | .boot.tree_hash? // "") != "")),
+            selected_tree_identity_source: "/boot/files",
+            fallback_used:
+                (($curl_exit != 0)
+                 or (($http_code | test("^2[0-9][0-9]$")) | not)
+                 or (($body | fromjson? | .boot.tree_hash? // "") == "")),
+            fallback_reason:
+                (if $curl_exit != 0 then "root-endpoint-curl-failed"
+                 elif (($http_code | test("^2[0-9][0-9]$")) | not) then "root-endpoint-http-non-2xx"
+                 elif (($body | fromjson? | .boot.tree_hash? // "") == "") then "root-endpoint-missing-boot-tree"
+                 else null end)
+        }'
++ rm -f /opt/strider/openclaw/current/workspace/tmp/tmp.uHLIiNrpnE /opt/strider/openclaw/current/workspace/tmp/tmp.VKvgQymz74
++ curl -fsS http://talos-lab-api:8080/boot/files
++ curl -fsS http://talos-lab-api:8080/status
++ curl -fsS http://talos-lab-api:8080/boot/files
++ curl -fsS http://talos-lab-api:8080/boot/snapshots
++ jq -n --arg expected_tree_hash f5b5d23af2dffc60fd61a8bb2ea5bdf9c1f433b69694fd3efdd7f51793a68632 --arg expected_kernel kernel_2712.img --arg expected_fetch da591740/kernel_2712.img --arg expected_fetch_bytes 152880 --arg marker_family 'TALOS: asm_start|TALOS: asm_pre_rust_entry|TALOS: rust_entry|TALOS: boot info parsed|TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=runtime-marker-route-static|TALOS: ssh-service-smoltcp-runtime-blocked capture-nonce=runtime-marker-route-static|TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-marker-route-static' --slurpfile status tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/pre-status.json --slurpfile files tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/pre-boot-files.json --slurpfile root_endpoint tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/pre-root-endpoint.json '(($expected_fetch_bytes | tonumber?) // null) as $expected_bytes
+     | ($status[0].boot.tree_hash // null) as $tree_hash
+     | ($status[0].boot.effective_kernel // null) as $effective_kernel
+     | (($files[0].boot.files // []) | map(select(.name == $expected_fetch)) | first) as $fetch
+     | {
+         expected_tree_hash: $expected_tree_hash,
+         observed_tree_hash: $tree_hash,
+         expected_kernel: $expected_kernel,
+         observed_effective_kernel: $effective_kernel,
+         expected_fetch: $expected_fetch,
+         expected_fetch_bytes: $expected_bytes,
+         observed_fetch_bytes: ($fetch.bytes // null),
+         selected_tree_identity_source: "/boot/files",
+         root_endpoint: $root_endpoint[0],
+         tree_matches: ($expected_tree_hash == "" or $tree_hash == $expected_tree_hash),
+         effective_kernel_matches: ($effective_kernel == $expected_kernel),
+         expected_fetch_present: ($fetch != null),
+         expected_fetch_bytes_match: ($expected_bytes == null or ($fetch.bytes // null) == $expected_bytes),
+         staging_publication_mismatch:
+             (($expected_tree_hash != "" and $tree_hash != $expected_tree_hash)
+              or ($effective_kernel != $expected_kernel)
+              or ($fetch == null)
+              or ($expected_bytes != null and ($fetch.bytes // null) != $expected_bytes))
+       }'
++ append_capture_window_event preflight_identity pre-root-endpoint.json pre-root.json pre-status.json pre-boot-files.json pre-snapshots.json preflight-identity.json
++ stage=preflight_identity
++ shift
+++ date -u +%Y-%m-%dT%H:%M:%SZ
++ now=2026-07-02T04:59:58Z
+++ printf '%s\n' pre-root-endpoint.json pre-root.json pre-status.json pre-boot-files.json pre-snapshots.json preflight-identity.json
+++ jq -R -s 'split("\n")[:-1]'
++ files_json='[
+  "pre-root-endpoint.json",
+  "pre-root.json",
+  "pre-status.json",
+  "pre-boot-files.json",
+  "pre-snapshots.json",
+  "preflight-identity.json"
+]'
++ order_tmp=tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json.tmp
+++ jq '(.events | length) + 1' tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ seq=1
++ jq --arg stage preflight_identity --arg captured_at 2026-07-02T04:59:58Z --argjson sequence 1 --argjson evidence_files '[
+  "pre-root-endpoint.json",
+  "pre-root.json",
+  "pre-status.json",
+  "pre-boot-files.json",
+  "pre-snapshots.json",
+  "preflight-identity.json"
+]' '.events += [{
+            sequence: $sequence,
+            stage: $stage,
+            captured_at: $captured_at,
+            evidence_files: $evidence_files
+        }]' tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ mv tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json.tmp tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ jq -e .staging_publication_mismatch tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/preflight-identity.json
++ curl -fsS 'http://talos-lab-api:8080/serial/peek?max_bytes=65536&drain=true'
+++ mktemp
++ serial_drain_tmp=/opt/strider/openclaw/current/workspace/tmp/tmp.ebOe7G89gt
+++ mktemp
++ serial_drain_last=/opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ trap 'rm -f "$serial_drain_tmp" "$serial_drain_last"' EXIT
++ drain_attempts=0
++ drain_total_bytes=0
++ drain_empty=false
++ drain_cursor=0
++ '[' 0 -lt 16 ']'
+++ jq -n --argjson timeout_seconds 1 --argjson settle_ms 100 --argjson max_bytes 65536 '{timeout_seconds: $timeout_seconds, settle_ms: $settle_ms, max_bytes: $max_bytes}'
++ drain_payload='{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}'
++ curl -fsS -X POST -H 'Content-Type: application/json' --data '{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}' http://talos-lab-api:8080/serial/read
++ cat /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ printf '\n'
++ drain_attempts=1
+++ jq -r '(.bytes // ((.text // "") | length))' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_bytes=1984
+++ jq -r '(.cursor // 0)' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_cursor=4194304
++ drain_total_bytes=1984
++ '[' 1984 -eq 0 ']'
++ '[' 1 -lt 16 ']'
+++ jq -n --argjson timeout_seconds 1 --argjson settle_ms 100 --argjson max_bytes 65536 '{timeout_seconds: $timeout_seconds, settle_ms: $settle_ms, max_bytes: $max_bytes}'
++ drain_payload='{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}'
++ curl -fsS -X POST -H 'Content-Type: application/json' --data '{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}' http://talos-lab-api:8080/serial/read
++ cat /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ printf '\n'
++ drain_attempts=2
+++ jq -r '(.bytes // ((.text // "") | length))' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_bytes=992
+++ jq -r '(.cursor // 0)' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_cursor=4194304
++ drain_total_bytes=2976
++ '[' 992 -eq 0 ']'
++ '[' 2 -lt 16 ']'
+++ jq -n --argjson timeout_seconds 1 --argjson settle_ms 100 --argjson max_bytes 65536 '{timeout_seconds: $timeout_seconds, settle_ms: $settle_ms, max_bytes: $max_bytes}'
++ drain_payload='{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}'
++ curl -fsS -X POST -H 'Content-Type: application/json' --data '{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}' http://talos-lab-api:8080/serial/read
++ cat /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ printf '\n'
++ drain_attempts=3
+++ jq -r '(.bytes // ((.text // "") | length))' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_bytes=496
+++ jq -r '(.cursor // 0)' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_cursor=4194304
++ drain_total_bytes=3472
++ '[' 496 -eq 0 ']'
++ '[' 3 -lt 16 ']'
+++ jq -n --argjson timeout_seconds 1 --argjson settle_ms 100 --argjson max_bytes 65536 '{timeout_seconds: $timeout_seconds, settle_ms: $settle_ms, max_bytes: $max_bytes}'
++ drain_payload='{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}'
++ curl -fsS -X POST -H 'Content-Type: application/json' --data '{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}' http://talos-lab-api:8080/serial/read
++ cat /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ printf '\n'
++ drain_attempts=4
+++ jq -r '(.bytes // ((.text // "") | length))' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_bytes=1488
+++ jq -r '(.cursor // 0)' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_cursor=4194304
++ drain_total_bytes=4960
++ '[' 1488 -eq 0 ']'
++ '[' 4 -lt 16 ']'
+++ jq -n --argjson timeout_seconds 1 --argjson settle_ms 100 --argjson max_bytes 65536 '{timeout_seconds: $timeout_seconds, settle_ms: $settle_ms, max_bytes: $max_bytes}'
++ drain_payload='{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}'
++ curl -fsS -X POST -H 'Content-Type: application/json' --data '{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}' http://talos-lab-api:8080/serial/read
++ cat /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ printf '\n'
++ drain_attempts=5
+++ jq -r '(.bytes // ((.text // "") | length))' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_bytes=496
+++ jq -r '(.cursor // 0)' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_cursor=4194304
++ drain_total_bytes=5456
++ '[' 496 -eq 0 ']'
++ '[' 5 -lt 16 ']'
+++ jq -n --argjson timeout_seconds 1 --argjson settle_ms 100 --argjson max_bytes 65536 '{timeout_seconds: $timeout_seconds, settle_ms: $settle_ms, max_bytes: $max_bytes}'
++ drain_payload='{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}'
++ curl -fsS -X POST -H 'Content-Type: application/json' --data '{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}' http://talos-lab-api:8080/serial/read
++ cat /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ printf '\n'
++ drain_attempts=6
+++ jq -r '(.bytes // ((.text // "") | length))' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_bytes=3968
+++ jq -r '(.cursor // 0)' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_cursor=4194304
++ drain_total_bytes=9424
++ '[' 3968 -eq 0 ']'
++ '[' 6 -lt 16 ']'
+++ jq -n --argjson timeout_seconds 1 --argjson settle_ms 100 --argjson max_bytes 65536 '{timeout_seconds: $timeout_seconds, settle_ms: $settle_ms, max_bytes: $max_bytes}'
++ drain_payload='{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}'
++ curl -fsS -X POST -H 'Content-Type: application/json' --data '{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}' http://talos-lab-api:8080/serial/read
++ cat /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ printf '\n'
++ drain_attempts=7
+++ jq -r '(.bytes // ((.text // "") | length))' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_bytes=992
+++ jq -r '(.cursor // 0)' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_cursor=4194304
++ drain_total_bytes=10416
++ '[' 992 -eq 0 ']'
++ '[' 7 -lt 16 ']'
+++ jq -n --argjson timeout_seconds 1 --argjson settle_ms 100 --argjson max_bytes 65536 '{timeout_seconds: $timeout_seconds, settle_ms: $settle_ms, max_bytes: $max_bytes}'
++ drain_payload='{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}'
++ curl -fsS -X POST -H 'Content-Type: application/json' --data '{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}' http://talos-lab-api:8080/serial/read
++ cat /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ printf '\n'
++ drain_attempts=8
+++ jq -r '(.bytes // ((.text // "") | length))' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_bytes=496
+++ jq -r '(.cursor // 0)' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_cursor=4194304
++ drain_total_bytes=10912
++ '[' 496 -eq 0 ']'
++ '[' 8 -lt 16 ']'
+++ jq -n --argjson timeout_seconds 1 --argjson settle_ms 100 --argjson max_bytes 65536 '{timeout_seconds: $timeout_seconds, settle_ms: $settle_ms, max_bytes: $max_bytes}'
++ drain_payload='{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}'
++ curl -fsS -X POST -H 'Content-Type: application/json' --data '{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}' http://talos-lab-api:8080/serial/read
++ cat /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ printf '\n'
++ drain_attempts=9
+++ jq -r '(.bytes // ((.text // "") | length))' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_bytes=992
+++ jq -r '(.cursor // 0)' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_cursor=4194304
++ drain_total_bytes=11904
++ '[' 992 -eq 0 ']'
++ '[' 9 -lt 16 ']'
+++ jq -n --argjson timeout_seconds 1 --argjson settle_ms 100 --argjson max_bytes 65536 '{timeout_seconds: $timeout_seconds, settle_ms: $settle_ms, max_bytes: $max_bytes}'
++ drain_payload='{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}'
++ curl -fsS -X POST -H 'Content-Type: application/json' --data '{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}' http://talos-lab-api:8080/serial/read
++ cat /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ printf '\n'
++ drain_attempts=10
+++ jq -r '(.bytes // ((.text // "") | length))' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_bytes=1984
+++ jq -r '(.cursor // 0)' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_cursor=4194304
++ drain_total_bytes=13888
++ '[' 1984 -eq 0 ']'
++ '[' 10 -lt 16 ']'
+++ jq -n --argjson timeout_seconds 1 --argjson settle_ms 100 --argjson max_bytes 65536 '{timeout_seconds: $timeout_seconds, settle_ms: $settle_ms, max_bytes: $max_bytes}'
++ drain_payload='{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}'
++ curl -fsS -X POST -H 'Content-Type: application/json' --data '{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}' http://talos-lab-api:8080/serial/read
++ cat /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ printf '\n'
++ drain_attempts=11
+++ jq -r '(.bytes // ((.text // "") | length))' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_bytes=992
+++ jq -r '(.cursor // 0)' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_cursor=4194304
++ drain_total_bytes=14880
++ '[' 992 -eq 0 ']'
++ '[' 11 -lt 16 ']'
+++ jq -n --argjson timeout_seconds 1 --argjson settle_ms 100 --argjson max_bytes 65536 '{timeout_seconds: $timeout_seconds, settle_ms: $settle_ms, max_bytes: $max_bytes}'
++ drain_payload='{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}'
++ curl -fsS -X POST -H 'Content-Type: application/json' --data '{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}' http://talos-lab-api:8080/serial/read
++ cat /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ printf '\n'
++ drain_attempts=12
+++ jq -r '(.bytes // ((.text // "") | length))' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_bytes=2480
+++ jq -r '(.cursor // 0)' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_cursor=4194304
++ drain_total_bytes=17360
++ '[' 2480 -eq 0 ']'
++ '[' 12 -lt 16 ']'
+++ jq -n --argjson timeout_seconds 1 --argjson settle_ms 100 --argjson max_bytes 65536 '{timeout_seconds: $timeout_seconds, settle_ms: $settle_ms, max_bytes: $max_bytes}'
++ drain_payload='{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}'
++ curl -fsS -X POST -H 'Content-Type: application/json' --data '{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}' http://talos-lab-api:8080/serial/read
++ cat /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ printf '\n'
++ drain_attempts=13
+++ jq -r '(.bytes // ((.text // "") | length))' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_bytes=496
+++ jq -r '(.cursor // 0)' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_cursor=4194304
++ drain_total_bytes=17856
++ '[' 496 -eq 0 ']'
++ '[' 13 -lt 16 ']'
+++ jq -n --argjson timeout_seconds 1 --argjson settle_ms 100 --argjson max_bytes 65536 '{timeout_seconds: $timeout_seconds, settle_ms: $settle_ms, max_bytes: $max_bytes}'
++ drain_payload='{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}'
++ curl -fsS -X POST -H 'Content-Type: application/json' --data '{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}' http://talos-lab-api:8080/serial/read
++ cat /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ printf '\n'
++ drain_attempts=14
+++ jq -r '(.bytes // ((.text // "") | length))' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_bytes=3472
+++ jq -r '(.cursor // 0)' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_cursor=4194304
++ drain_total_bytes=21328
++ '[' 3472 -eq 0 ']'
++ '[' 14 -lt 16 ']'
+++ jq -n --argjson timeout_seconds 1 --argjson settle_ms 100 --argjson max_bytes 65536 '{timeout_seconds: $timeout_seconds, settle_ms: $settle_ms, max_bytes: $max_bytes}'
++ drain_payload='{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}'
++ curl -fsS -X POST -H 'Content-Type: application/json' --data '{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}' http://talos-lab-api:8080/serial/read
++ cat /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ printf '\n'
++ drain_attempts=15
+++ jq -r '(.bytes // ((.text // "") | length))' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_bytes=4464
+++ jq -r '(.cursor // 0)' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_cursor=4194304
++ drain_total_bytes=25792
++ '[' 4464 -eq 0 ']'
++ '[' 15 -lt 16 ']'
+++ jq -n --argjson timeout_seconds 1 --argjson settle_ms 100 --argjson max_bytes 65536 '{timeout_seconds: $timeout_seconds, settle_ms: $settle_ms, max_bytes: $max_bytes}'
++ drain_payload='{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}'
++ curl -fsS -X POST -H 'Content-Type: application/json' --data '{
+  "timeout_seconds": 1,
+  "settle_ms": 100,
+  "max_bytes": 65536
+}' http://talos-lab-api:8080/serial/read
++ cat /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ printf '\n'
++ drain_attempts=16
+++ jq -r '(.bytes // ((.text // "") | length))' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_bytes=11408
+++ jq -r '(.cursor // 0)' /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI
++ drain_cursor=4194304
++ drain_total_bytes=37200
++ '[' 11408 -eq 0 ']'
++ '[' 16 -lt 16 ']'
++ cp /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/serial-read-empty-before-power.json
++ jq -s --argjson attempts 16 --argjson attempt_limit 16 --argjson total_bytes 37200 --argjson final_cursor 4194304 --argjson empty_before_power false --argjson read_timeout_seconds 1 --argjson settle_ms 100 --argjson max_bytes_per_read 65536 '{
+        action: "serial drain before power",
+        ok: true,
+        responses: .,
+        talos_serial_drain: {
+            contract_version: "pi5-capture-transaction-v2",
+            attempts: $attempts,
+            attempt_limit: $attempt_limit,
+            read_timeout_seconds: $read_timeout_seconds,
+            settle_ms: $settle_ms,
+            max_bytes_per_read: $max_bytes_per_read,
+            total_bytes: $total_bytes,
+            final_cursor: $final_cursor,
+            empty_before_power: $empty_before_power,
+            discriminator: (if $empty_before_power then "empty-read-before-power" else "bounded-drain-exhausted-before-power" end),
+            rule: "empty pre-power /serial/read is strong positive evidence; non-empty drain requires cursor-nonce-post-power-freshness-v1"
+        }
+    }' /opt/strider/openclaw/current/workspace/tmp/tmp.ebOe7G89gt
++ curl -fsS 'http://talos-lab-api:8080/tftp/logs?max_bytes=1048576&limit=1'
+++ jq -r .talos_serial_drain.final_cursor tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/serial-drain-before-power.json
++ serial_cursor=4194304
+++ jq -r .tftp.cursor_end tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/tftp-cursor-before-power.json
++ tftp_cursor=4756969
++ printf '%s\n' 4194304
++ printf '%s\n' 4756969
++ append_capture_window_event pre_power_cursors pre-power-serial-peek.json serial-drain-before-power.json serial-read-empty-before-power.json tftp-cursor-before-power.json serial-cursor-before-power.txt tftp-cursor-before-power.txt
++ stage=pre_power_cursors
++ shift
+++ date -u +%Y-%m-%dT%H:%M:%SZ
++ now=2026-07-02T05:00:06Z
+++ printf '%s\n' pre-power-serial-peek.json serial-drain-before-power.json serial-read-empty-before-power.json tftp-cursor-before-power.json serial-cursor-before-power.txt tftp-cursor-before-power.txt
+++ jq -R -s 'split("\n")[:-1]'
++ files_json='[
+  "pre-power-serial-peek.json",
+  "serial-drain-before-power.json",
+  "serial-read-empty-before-power.json",
+  "tftp-cursor-before-power.json",
+  "serial-cursor-before-power.txt",
+  "tftp-cursor-before-power.txt"
+]'
++ order_tmp=tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json.tmp
+++ jq '(.events | length) + 1' tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ seq=2
++ jq --arg stage pre_power_cursors --arg captured_at 2026-07-02T05:00:06Z --argjson sequence 2 --argjson evidence_files '[
+  "pre-power-serial-peek.json",
+  "serial-drain-before-power.json",
+  "serial-read-empty-before-power.json",
+  "tftp-cursor-before-power.json",
+  "serial-cursor-before-power.txt",
+  "tftp-cursor-before-power.txt"
+]' '.events += [{
+            sequence: $sequence,
+            stage: $stage,
+            captured_at: $captured_at,
+            evidence_files: $evidence_files
+        }]' tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ mv tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json.tmp tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ curl -fsS -X POST http://talos-lab-api:8080/power/cycle
++ append_capture_window_event power_cycle power-cycle.json
++ stage=power_cycle
++ shift
+++ date -u +%Y-%m-%dT%H:%M:%SZ
++ now=2026-07-02T05:00:06Z
+++ printf '%s\n' power-cycle.json
+++ jq -R -s 'split("\n")[:-1]'
++ files_json='[
+  "power-cycle.json"
+]'
++ order_tmp=tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json.tmp
+++ jq '(.events | length) + 1' tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ seq=3
++ jq --arg stage power_cycle --arg captured_at 2026-07-02T05:00:06Z --argjson sequence 3 --argjson evidence_files '[
+  "power-cycle.json"
+]' '.events += [{
+            sequence: $sequence,
+            stage: $stage,
+            captured_at: $captured_at,
+            evidence_files: $evidence_files
+        }]' tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ mv tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json.tmp tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ curl -fsS http://talos-lab-api:8080/status
++ capture_root_endpoint tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/post-power-pre-observe-root-endpoint-body.txt tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/post-power-pre-observe-root-endpoint.json
++ endpoint_file=tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/post-power-pre-observe-root-endpoint-body.txt
++ meta_file=tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/post-power-pre-observe-root-endpoint.json
+++ mktemp
++ body_tmp=/opt/strider/openclaw/current/workspace/tmp/tmp.xg5GNSlEl4
+++ mktemp
++ code_tmp=/opt/strider/openclaw/current/workspace/tmp/tmp.SRbgRLhBhp
++ curl -sS -o /opt/strider/openclaw/current/workspace/tmp/tmp.xg5GNSlEl4 -w '%{http_code}' http://talos-lab-api:8080/
++ curl_exit=0
+++ cat /opt/strider/openclaw/current/workspace/tmp/tmp.SRbgRLhBhp
++ http_code=404
++ cp /opt/strider/openclaw/current/workspace/tmp/tmp.xg5GNSlEl4 tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/post-power-pre-observe-root-endpoint-body.txt
++ jq -n --arg endpoint 'GET /' --arg http_code 404 --argjson curl_exit 0 --rawfile body /opt/strider/openclaw/current/workspace/tmp/tmp.xg5GNSlEl4 '{
+            endpoint: $endpoint,
+            curl_exit: $curl_exit,
+            http_code: (if ($http_code | test("^[0-9]+$")) then ($http_code | tonumber) else null end),
+            body_bytes: ($body | length),
+            usable_for_selected_tree_identity:
+                ($curl_exit == 0
+                 and ($http_code | test("^2[0-9][0-9]$"))
+                 and (($body | fromjson? | .boot.tree_hash? // "") != "")),
+            selected_tree_identity_source: "/boot/files",
+            fallback_used:
+                (($curl_exit != 0)
+                 or (($http_code | test("^2[0-9][0-9]$")) | not)
+                 or (($body | fromjson? | .boot.tree_hash? // "") == "")),
+            fallback_reason:
+                (if $curl_exit != 0 then "root-endpoint-curl-failed"
+                 elif (($http_code | test("^2[0-9][0-9]$")) | not) then "root-endpoint-http-non-2xx"
+                 elif (($body | fromjson? | .boot.tree_hash? // "") == "") then "root-endpoint-missing-boot-tree"
+                 else null end)
+        }'
++ rm -f /opt/strider/openclaw/current/workspace/tmp/tmp.xg5GNSlEl4 /opt/strider/openclaw/current/workspace/tmp/tmp.SRbgRLhBhp
++ curl -fsS http://talos-lab-api:8080/boot/files
++ curl -fsS http://talos-lab-api:8080/boot/files
++ append_capture_window_event post_power_pre_observe_identity post-power-pre-observe-status.json post-power-pre-observe-root-endpoint.json post-power-pre-observe-root-endpoint-body.txt post-power-pre-observe-root.json post-power-pre-observe-boot-files.json
++ stage=post_power_pre_observe_identity
++ shift
+++ date -u +%Y-%m-%dT%H:%M:%SZ
++ now=2026-07-02T05:00:06Z
+++ printf '%s\n' post-power-pre-observe-status.json post-power-pre-observe-root-endpoint.json post-power-pre-observe-root-endpoint-body.txt post-power-pre-observe-root.json post-power-pre-observe-boot-files.json
+++ jq -R -s 'split("\n")[:-1]'
++ files_json='[
+  "post-power-pre-observe-status.json",
+  "post-power-pre-observe-root-endpoint.json",
+  "post-power-pre-observe-root-endpoint-body.txt",
+  "post-power-pre-observe-root.json",
+  "post-power-pre-observe-boot-files.json"
+]'
++ order_tmp=tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json.tmp
+++ jq '(.events | length) + 1' tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ seq=4
++ jq --arg stage post_power_pre_observe_identity --arg captured_at 2026-07-02T05:00:06Z --argjson sequence 4 --argjson evidence_files '[
+  "post-power-pre-observe-status.json",
+  "post-power-pre-observe-root-endpoint.json",
+  "post-power-pre-observe-root-endpoint-body.txt",
+  "post-power-pre-observe-root.json",
+  "post-power-pre-observe-boot-files.json"
+]' '.events += [{
+            sequence: $sequence,
+            stage: $stage,
+            captured_at: $captured_at,
+            evidence_files: $evidence_files
+        }]' tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ mv tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json.tmp tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ set +e
++ ./scripts/rpi5-observe-serial-window.sh 4194304 90 1000 65536 'TALOS: boot info parsed'
++ serial_exit=0
++ set -e
++ printf '%s\n' 0
++ append_capture_window_event serial_observe_window serial-observe-window.json serial-observe-window.exit
++ stage=serial_observe_window
++ shift
+++ date -u +%Y-%m-%dT%H:%M:%SZ
++ now=2026-07-02T05:00:42Z
+++ printf '%s\n' serial-observe-window.json serial-observe-window.exit
+++ jq -R -s 'split("\n")[:-1]'
++ files_json='[
+  "serial-observe-window.json",
+  "serial-observe-window.exit"
+]'
++ order_tmp=tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json.tmp
+++ jq '(.events | length) + 1' tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ seq=5
++ jq --arg stage serial_observe_window --arg captured_at 2026-07-02T05:00:42Z --argjson sequence 5 --argjson evidence_files '[
+  "serial-observe-window.json",
+  "serial-observe-window.exit"
+]' '.events += [{
+            sequence: $sequence,
+            stage: $stage,
+            captured_at: $captured_at,
+            evidence_files: $evidence_files
+        }]' tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ mv tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json.tmp tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ set +e
++ ./scripts/rpi5-wait-tftp-delta.sh 4756969 90 3
++ tftp_exit=0
++ set -e
++ printf '%s\n' 0
++ append_capture_window_event tftp_delta_stable_pre_restore tftp-delta-stable-pre-restore.json tftp-delta-stable-pre-restore.exit
++ stage=tftp_delta_stable_pre_restore
++ shift
+++ date -u +%Y-%m-%dT%H:%M:%SZ
++ now=2026-07-02T05:00:46Z
+++ printf '%s\n' tftp-delta-stable-pre-restore.json tftp-delta-stable-pre-restore.exit
+++ jq -R -s 'split("\n")[:-1]'
++ files_json='[
+  "tftp-delta-stable-pre-restore.json",
+  "tftp-delta-stable-pre-restore.exit"
+]'
++ order_tmp=tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json.tmp
+++ jq '(.events | length) + 1' tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ seq=6
++ jq --arg stage tftp_delta_stable_pre_restore --arg captured_at 2026-07-02T05:00:46Z --argjson sequence 6 --argjson evidence_files '[
+  "tftp-delta-stable-pre-restore.json",
+  "tftp-delta-stable-pre-restore.exit"
+]' '.events += [{
+            sequence: $sequence,
+            stage: $stage,
+            captured_at: $captured_at,
+            evidence_files: $evidence_files
+        }]' tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ mv tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json.tmp tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ curl -fsS http://talos-lab-api:8080/status
++ capture_root_endpoint tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/final-pre-restore-root-endpoint-body.txt tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/final-pre-restore-root-endpoint.json
++ endpoint_file=tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/final-pre-restore-root-endpoint-body.txt
++ meta_file=tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/final-pre-restore-root-endpoint.json
+++ mktemp
++ body_tmp=/opt/strider/openclaw/current/workspace/tmp/tmp.Kn3DbkMc33
+++ mktemp
++ code_tmp=/opt/strider/openclaw/current/workspace/tmp/tmp.UVeYtDpNJy
++ curl -sS -o /opt/strider/openclaw/current/workspace/tmp/tmp.Kn3DbkMc33 -w '%{http_code}' http://talos-lab-api:8080/
++ curl_exit=0
+++ cat /opt/strider/openclaw/current/workspace/tmp/tmp.UVeYtDpNJy
++ http_code=404
++ cp /opt/strider/openclaw/current/workspace/tmp/tmp.Kn3DbkMc33 tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/final-pre-restore-root-endpoint-body.txt
++ jq -n --arg endpoint 'GET /' --arg http_code 404 --argjson curl_exit 0 --rawfile body /opt/strider/openclaw/current/workspace/tmp/tmp.Kn3DbkMc33 '{
+            endpoint: $endpoint,
+            curl_exit: $curl_exit,
+            http_code: (if ($http_code | test("^[0-9]+$")) then ($http_code | tonumber) else null end),
+            body_bytes: ($body | length),
+            usable_for_selected_tree_identity:
+                ($curl_exit == 0
+                 and ($http_code | test("^2[0-9][0-9]$"))
+                 and (($body | fromjson? | .boot.tree_hash? // "") != "")),
+            selected_tree_identity_source: "/boot/files",
+            fallback_used:
+                (($curl_exit != 0)
+                 or (($http_code | test("^2[0-9][0-9]$")) | not)
+                 or (($body | fromjson? | .boot.tree_hash? // "") == "")),
+            fallback_reason:
+                (if $curl_exit != 0 then "root-endpoint-curl-failed"
+                 elif (($http_code | test("^2[0-9][0-9]$")) | not) then "root-endpoint-http-non-2xx"
+                 elif (($body | fromjson? | .boot.tree_hash? // "") == "") then "root-endpoint-missing-boot-tree"
+                 else null end)
+        }'
++ rm -f /opt/strider/openclaw/current/workspace/tmp/tmp.Kn3DbkMc33 /opt/strider/openclaw/current/workspace/tmp/tmp.UVeYtDpNJy
++ curl -fsS http://talos-lab-api:8080/boot/files
++ curl -fsS http://talos-lab-api:8080/boot/files
++ append_capture_window_event final_pre_restore_identity final-pre-restore-status.json final-pre-restore-root-endpoint.json final-pre-restore-root-endpoint-body.txt final-pre-restore-root.json final-pre-restore-boot-files.json
++ stage=final_pre_restore_identity
++ shift
+++ date -u +%Y-%m-%dT%H:%M:%SZ
++ now=2026-07-02T05:00:47Z
+++ printf '%s\n' final-pre-restore-status.json final-pre-restore-root-endpoint.json final-pre-restore-root-endpoint-body.txt final-pre-restore-root.json final-pre-restore-boot-files.json
+++ jq -R -s 'split("\n")[:-1]'
++ files_json='[
+  "final-pre-restore-status.json",
+  "final-pre-restore-root-endpoint.json",
+  "final-pre-restore-root-endpoint-body.txt",
+  "final-pre-restore-root.json",
+  "final-pre-restore-boot-files.json"
+]'
++ order_tmp=tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json.tmp
+++ jq '(.events | length) + 1' tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ seq=7
++ jq --arg stage final_pre_restore_identity --arg captured_at 2026-07-02T05:00:47Z --argjson sequence 7 --argjson evidence_files '[
+  "final-pre-restore-status.json",
+  "final-pre-restore-root-endpoint.json",
+  "final-pre-restore-root-endpoint-body.txt",
+  "final-pre-restore-root.json",
+  "final-pre-restore-boot-files.json"
+]' '.events += [{
+            sequence: $sequence,
+            stage: $stage,
+            captured_at: $captured_at,
+            evidence_files: $evidence_files
+        }]' tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ mv tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json.tmp tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ curl -fsS -X POST 'http://talos-lab-api:8080/boot/restore?name=phase12-ssh-v10-openssh-clean-pre-20260624T074100Z'
++ append_capture_window_event restore_snapshot restore-snapshot.json
++ stage=restore_snapshot
++ shift
+++ date -u +%Y-%m-%dT%H:%M:%SZ
++ now=2026-07-02T05:00:47Z
+++ printf '%s\n' restore-snapshot.json
+++ jq -R -s 'split("\n")[:-1]'
++ files_json='[
+  "restore-snapshot.json"
+]'
++ order_tmp=tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json.tmp
+++ jq '(.events | length) + 1' tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ seq=8
++ jq --arg stage restore_snapshot --arg captured_at 2026-07-02T05:00:47Z --argjson sequence 8 --argjson evidence_files '[
+  "restore-snapshot.json"
+]' '.events += [{
+            sequence: $sequence,
+            stage: $stage,
+            captured_at: $captured_at,
+            evidence_files: $evidence_files
+        }]' tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ mv tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json.tmp tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ capture_root_endpoint tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/post-restore-root-endpoint-body.txt tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/post-restore-root-endpoint.json
++ endpoint_file=tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/post-restore-root-endpoint-body.txt
++ meta_file=tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/post-restore-root-endpoint.json
+++ mktemp
++ body_tmp=/opt/strider/openclaw/current/workspace/tmp/tmp.kSME7WfbhU
+++ mktemp
++ code_tmp=/opt/strider/openclaw/current/workspace/tmp/tmp.xgupt0Kbu8
++ curl -sS -o /opt/strider/openclaw/current/workspace/tmp/tmp.kSME7WfbhU -w '%{http_code}' http://talos-lab-api:8080/
++ curl_exit=0
+++ cat /opt/strider/openclaw/current/workspace/tmp/tmp.xgupt0Kbu8
++ http_code=404
++ cp /opt/strider/openclaw/current/workspace/tmp/tmp.kSME7WfbhU tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/post-restore-root-endpoint-body.txt
++ jq -n --arg endpoint 'GET /' --arg http_code 404 --argjson curl_exit 0 --rawfile body /opt/strider/openclaw/current/workspace/tmp/tmp.kSME7WfbhU '{
+            endpoint: $endpoint,
+            curl_exit: $curl_exit,
+            http_code: (if ($http_code | test("^[0-9]+$")) then ($http_code | tonumber) else null end),
+            body_bytes: ($body | length),
+            usable_for_selected_tree_identity:
+                ($curl_exit == 0
+                 and ($http_code | test("^2[0-9][0-9]$"))
+                 and (($body | fromjson? | .boot.tree_hash? // "") != "")),
+            selected_tree_identity_source: "/boot/files",
+            fallback_used:
+                (($curl_exit != 0)
+                 or (($http_code | test("^2[0-9][0-9]$")) | not)
+                 or (($body | fromjson? | .boot.tree_hash? // "") == "")),
+            fallback_reason:
+                (if $curl_exit != 0 then "root-endpoint-curl-failed"
+                 elif (($http_code | test("^2[0-9][0-9]$")) | not) then "root-endpoint-http-non-2xx"
+                 elif (($body | fromjson? | .boot.tree_hash? // "") == "") then "root-endpoint-missing-boot-tree"
+                 else null end)
+        }'
++ rm -f /opt/strider/openclaw/current/workspace/tmp/tmp.kSME7WfbhU /opt/strider/openclaw/current/workspace/tmp/tmp.xgupt0Kbu8
++ curl -fsS http://talos-lab-api:8080/boot/files
++ curl -fsS http://talos-lab-api:8080/status
++ curl -fsS http://talos-lab-api:8080/boot/files
++ append_capture_window_event post_restore_identity post-restore-root-endpoint.json post-restore-root-endpoint-body.txt post-restore-root.json post-restore-status.json post-restore-boot-files.json
++ stage=post_restore_identity
++ shift
+++ date -u +%Y-%m-%dT%H:%M:%SZ
++ now=2026-07-02T05:00:47Z
+++ printf '%s\n' post-restore-root-endpoint.json post-restore-root-endpoint-body.txt post-restore-root.json post-restore-status.json post-restore-boot-files.json
+++ jq -R -s 'split("\n")[:-1]'
++ files_json='[
+  "post-restore-root-endpoint.json",
+  "post-restore-root-endpoint-body.txt",
+  "post-restore-root.json",
+  "post-restore-status.json",
+  "post-restore-boot-files.json"
+]'
++ order_tmp=tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json.tmp
+++ jq '(.events | length) + 1' tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ seq=9
++ jq --arg stage post_restore_identity --arg captured_at 2026-07-02T05:00:47Z --argjson sequence 9 --argjson evidence_files '[
+  "post-restore-root-endpoint.json",
+  "post-restore-root-endpoint-body.txt",
+  "post-restore-root.json",
+  "post-restore-status.json",
+  "post-restore-boot-files.json"
+]' '.events += [{
+            sequence: $sequence,
+            stage: $stage,
+            captured_at: $captured_at,
+            evidence_files: $evidence_files
+        }]' tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ mv tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json.tmp tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ mark_capture_window_completed
+++ date -u +%Y-%m-%dT%H:%M:%SZ
++ now=2026-07-02T05:00:47Z
++ order_tmp=tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json.tmp
++ jq --arg completed_at 2026-07-02T05:00:47Z '.helper_run_completed = true
+         | .completed_at = $completed_at
+         | .completion_event_count = (.events | length)' tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ mv tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json.tmp tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-window-order.json
++ jq -n --arg proof_label selected-normal-runtime-bootinfo-v66-candidate --arg restore_snapshot phase12-ssh-v10-openssh-clean-pre-20260624T074100Z --arg expected_tree_hash f5b5d23af2dffc60fd61a8bb2ea5bdf9c1f433b69694fd3efdd7f51793a68632 --arg expected_kernel kernel_2712.img --arg expected_fetch da591740/kernel_2712.img --arg expected_fetch_bytes 152880 --arg marker_family 'TALOS: asm_start|TALOS: asm_pre_rust_entry|TALOS: rust_entry|TALOS: boot info parsed|TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=runtime-marker-route-static|TALOS: ssh-service-smoltcp-runtime-blocked capture-nonce=runtime-marker-route-static|TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-marker-route-static' --argjson serial_exit 0 --argjson tftp_exit 0 --slurpfile preflight tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/preflight-identity.json --slurpfile pre_power_peek tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/pre-power-serial-peek.json --slurpfile drain tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/serial-drain-before-power.json --slurpfile post_power_status tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/post-power-pre-observe-status.json --slurpfile post_power_files tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/post-power-pre-observe-boot-files.json --slurpfile serial tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/serial-observe-window.json --slurpfile tftp tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/tftp-delta-stable-pre-restore.json --slurpfile final_status tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/final-pre-restore-status.json --slurpfile final_files tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/final-pre-restore-boot-files.json --slurpfile restore tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/restore-snapshot.json --slurpfile post_restore tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/post-restore-status.json '(($expected_fetch_bytes | tonumber?) // null) as $expected_bytes
+     | ($pre_power_peek[0] // {}) as $pp
+     | ($serial[0].talos_serial_window // {}) as $sw
+     | ($drain[0].talos_serial_drain // {}) as $sd
+     | ($tftp[0].talos_tftp_stability // {}) as $ts
+     | (($tftp[0].tftp.events // []) | map(select(.filename == $expected_fetch))) as $fetch_events
+     | ($fetch_events | map(select(.status == "served" and .bytes == $expected_bytes))) as $matching_fetch_events
+     | (($post_power_files[0].boot.files // []) | map(select(.name == $expected_fetch)) | first) as $post_power_fetch
+     | ($post_power_status[0].boot.tree_hash // null) as $post_power_tree_hash
+     | ($post_power_status[0].boot.effective_kernel // null) as $post_power_kernel
+     | (($final_files[0].boot.files // []) | map(select(.name == $expected_fetch)) | first) as $final_fetch
+     | ($final_status[0].boot.tree_hash // null) as $final_tree_hash
+     | ($final_status[0].boot.effective_kernel // null) as $final_kernel
+     | ($post_restore[0].boot.tree_hash // null) as $post_restore_tree_hash
+     | ($preflight[0].staging_publication_mismatch // false) as $preflight_mismatch
+     | ($preflight[0].observed_tree_hash // null) as $selected_tree_hash
+     | ($selected_tree_hash != null and $post_power_tree_hash == $selected_tree_hash) as $post_power_selected_tree_ok
+     | ($expected_bytes == null or ($post_power_fetch.bytes // null) == $expected_bytes) as $post_power_bytes_ok
+     | ($expected_tree_hash == "" or $final_tree_hash == $expected_tree_hash) as $final_tree_ok
+     | ($selected_tree_hash != null and $final_tree_hash == $selected_tree_hash) as $final_selected_tree_ok
+     | ($expected_bytes == null or ($final_fetch.bytes // null) == $expected_bytes) as $final_bytes_ok
+     | (($ts.stable == true) and (($tftp[0].tftp.events // []) | length) == 0) as $stable_zero_tftp
+     | (($sw.required_marker // "") | tostring) as $required_marker
+     | (($sw.marker_nonce // "") | tostring) as $marker_nonce
+     | (if $marker_nonce == "" then "" else ("capture-nonce=" + $marker_nonce) end) as $nonce_token
+     | (($pp.text // "") | tostring) as $pre_power_retained_text
+     | (($serial[0].text // "") | tostring) as $post_power_serial_text
+     | (if $marker_family == "" then []
+        else ($marker_family | split("|") | map(select(. != "")))
+        end) as $configured_marker_family
+     | (if ($configured_marker_family | length) == 0 then [$required_marker]
+        else $configured_marker_family
+        end) as $markers
+     | (if $required_marker == "" then 0 else (($pre_power_retained_text | split($required_marker) | length) - 1) end) as $pre_power_marker_count
+     | (if $required_marker == "" then 0 else (($post_power_serial_text | split($required_marker) | length) - 1) end) as $post_power_marker_count
+     | ($markers | map(. as $family_marker
+        | {
+            marker: $family_marker,
+            pre_power_occurrences: (if $pre_power_retained_text == "" then 0 else (($pre_power_retained_text | split($family_marker) | length) - 1) end),
+            post_power_occurrences: (if $post_power_serial_text == "" then 0 else (($post_power_serial_text | split($family_marker) | length) - 1) end)
+          }
+        | . + {fresh_after_saved_cursor: (.pre_power_occurrences == 0 and .post_power_occurrences > 0)})) as $family_freshness
+     | (if $nonce_token == "" then 0 else (($pre_power_retained_text | split($nonce_token) | length) - 1) end) as $pre_power_nonce_count
+     | (if $nonce_token == "" then 0 else (($post_power_serial_text | split($nonce_token) | length) - 1) end) as $post_power_nonce_count
+     | (($pp.cursor // null) | tonumber?) as $pre_power_peek_cursor
+     | (($sd.final_cursor // null) | tonumber?) as $final_drain_cursor
+     | (($serial[0].cursor_start // null) | tonumber?) as $post_power_cursor_start
+     | (($serial[0].cursor_end // null) | tonumber?) as $post_power_cursor_end
+     | (($sw.capture_mode // "") == "read" and ($sw.start_cursor_saturated // false) == true) as $saturated_direct_read
+     | (($sw.capture_mode // "") == "observe") as $cursor_observe
+     | ($marker_nonce != "" and $pre_power_nonce_count == 0 and $post_power_nonce_count > 0) as $nonce_fresh
+     | ($required_marker != "" and $pre_power_marker_count == 0 and $post_power_marker_count > 0) as $marker_fresh
+     | ($cursor_observe and $final_drain_cursor != null and $post_power_cursor_start == $final_drain_cursor and $post_power_cursor_end != null and $post_power_cursor_end >= $post_power_cursor_start) as $observe_cursor_bound
+     | ($saturated_direct_read and ($sw.start_cursor_saturated // false) == true and (($sw.response_bytes // 0) > 0)) as $saturated_direct_read_bound
+     | ($observe_cursor_bound or $saturated_direct_read_bound) as $post_power_capture_bound
+     | ($nonce_fresh and $marker_fresh and $post_power_capture_bound) as $cursor_nonce_fresh
+     | (($family_freshness | map(select(.fresh_after_saved_cursor)) | length) > 0 and $post_power_capture_bound) as $marker_family_fresh
+     | (($sd.empty_before_power // false) == true or $cursor_nonce_fresh or $marker_family_fresh) as $serial_freshness_ok
+     | [
+         (if $proof_label == "" then "missing-run-label" else empty end),
+         (if $preflight_mismatch then "preflight-staging-publication-mismatch" else empty end),
+         (if (($selected_tree_hash // "") == "") then "missing-selected-tree-hash" else empty end),
+         (if ($preflight[0].effective_kernel_matches // false) != true then "effective-kernel-mismatch" else empty end),
+         (if ($preflight[0].expected_fetch_present // false) != true then "preflight-expected-fetch-missing" else empty end),
+         (if ($preflight[0].expected_fetch_bytes_match // false) != true then "preflight-expected-fetch-byte-mismatch" else empty end),
+         (if (($sd.contract_version // "") != "pi5-capture-transaction-v2") then "missing-v2-serial-drain-contract" else empty end),
+         (if $serial_freshness_ok != true then "serial-freshness-v1-not-proven" else empty end),
+         (if (($serial[0].cursor_start // null) == null) then "missing-serial-cursor-start" else empty end),
+         (if (($serial[0].cursor_end // null) == null) then "missing-serial-cursor-end" else empty end),
+         (if (($sw.capture_mode // "") == "") then "missing-serial-capture-mode" else empty end),
+         (if ($ts.stable // false) != true then "tftp-delta-not-stable" else empty end),
+         (if (($tftp[0].tftp.cursor_start // null) == null) then "missing-tftp-cursor-start" else empty end),
+         (if (($tftp[0].tftp.cursor_end // null) == null) then "missing-tftp-cursor-end" else empty end),
+         (if (($fetch_events | length) == 0) then "expected-fetch-not-observed-in-tftp-delta" else empty end),
+         (if (($fetch_events | length) > 0 and ($matching_fetch_events | length) != ($fetch_events | length)) then "tftp-expected-fetch-byte-mismatch" else empty end),
+         (if ($final_tree_ok != true) then "final-pre-restore-tree-mismatch" else empty end),
+         (if ($final_selected_tree_ok != true) then "final-pre-restore-selected-tree-mismatch" else empty end),
+         (if ($final_fetch == null) then "final-pre-restore-expected-fetch-missing" else empty end),
+         (if ($final_bytes_ok != true) then "final-pre-restore-expected-fetch-byte-mismatch" else empty end),
+         (if ($post_restore_tree_hash == null) then "missing-post-restore-tree-hash" else empty end)
+       ] as $identity_join_rejection_reasons
+     | {
+         "label": $proof_label,
+         restore_snapshot: $restore_snapshot,
+         expected: {
+             tree_hash: $expected_tree_hash,
+             effective_kernel: $expected_kernel,
+             fetch: $expected_fetch,
+             fetch_bytes: $expected_bytes
+         },
+         exits: {
+             serial_observe_window: $serial_exit,
+             tftp_delta_stable_pre_restore: $tftp_exit
+         },
+         preflight_identity: $preflight[0],
+         capture_chain_contract_version: "pi5-capture-chain-v4",
+         post_power_pre_observe_identity: {
+             tree_hash: $post_power_tree_hash,
+             effective_kernel: $post_power_kernel,
+             selected_tree_still_staged: $post_power_selected_tree_ok,
+             expected_fetch_present: ($post_power_fetch != null),
+             expected_fetch_bytes_match: $post_power_bytes_ok,
+             discriminator: "immediate-status-and-boot-files-after-power-before-serial-observe"
+         },
+         final_pre_restore_identity: {
+             tree_hash: $final_tree_hash,
+             effective_kernel: $final_kernel,
+             expected_tree_still_staged: $final_tree_ok,
+             expected_fetch_present: ($final_fetch != null),
+             expected_fetch_bytes_match: $final_bytes_ok
+         },
+         serial_window: $sw,
+         tftp_stability: $ts,
+         tftp_event_count: (($tftp[0].tftp.events // []) | length),
+         expected_fetch_count: ($fetch_events | length),
+         expected_fetch_byte_match_count: ($matching_fetch_events | length),
+         expected_fetch_events: $fetch_events,
+         proof_run_identity: {
+             contract_version: "pi5-capture-transaction-v2",
+             shared_run_label: $proof_label,
+             selected_tree_hash: $selected_tree_hash,
+             effective_kernel: ($preflight[0].observed_effective_kernel // null),
+             expected_fetch_path: $expected_fetch,
+             expected_fetch_byte_count: $expected_bytes,
+             serial: {
+                 pre_power_peek: {
+                     cursor: $pre_power_peek_cursor,
+                     bytes: ($pp.bytes // null),
+                     required_marker_occurrences: $pre_power_marker_count,
+                     nonce_token_occurrences: $pre_power_nonce_count
+                 },
+                 pre_power_drain: {
+                     attempts: ($sd.attempts // null),
+                     attempt_limit: ($sd.attempt_limit // null),
+                     read_timeout_seconds: ($sd.read_timeout_seconds // null),
+                     settle_ms: ($sd.settle_ms // null),
+                     max_bytes_per_read: ($sd.max_bytes_per_read // null),
+                     total_bytes: ($sd.total_bytes // null),
+                     final_cursor: ($sd.final_cursor // null),
+                     empty_before_power: ($sd.empty_before_power // false),
+                     discriminator: ($sd.discriminator // null)
+                 },
+                 cursor_start: ($serial[0].cursor_start // null),
+                 cursor_end: ($serial[0].cursor_end // null),
+                 window_bytes: ($serial[0].bytes // null),
+                 response_bytes: ($sw.response_bytes // null),
+                 capture_mode: ($sw.capture_mode // null),
+                 observe_contract: ($sw.observe_contract // null),
+                 required_marker: ($sw.required_marker // null),
+                 freshness_contract: {
+                     contract_version: "cursor-nonce-post-power-freshness-v1",
+                     marker_nonce: (if $marker_nonce == "" then null else $marker_nonce end),
+                     nonce_token: (if $nonce_token == "" then null else $nonce_token end),
+                     marker_occurrences_after_saved_cursor: $post_power_marker_count,
+                     nonce_occurrences_after_saved_cursor: $post_power_nonce_count,
+                     post_power_capture_bound: $post_power_capture_bound,
+                     cursor_nonce_fresh: $cursor_nonce_fresh,
+                     marker_family_fresh: $marker_family_fresh,
+                     marker_family_freshness: $family_freshness,
+                     serial_freshness_ok: $serial_freshness_ok
+                 }
+             },
+             tftp: {
+                 cursor_start: ($tftp[0].tftp.cursor_start // null),
+                 cursor_end: ($tftp[0].tftp.cursor_end // null),
+                 stable: ($ts.stable // false),
+                 event_count: (($tftp[0].tftp.events // []) | length),
+                 expected_fetch_count: ($fetch_events | length),
+                 expected_fetch_byte_match_count: ($matching_fetch_events | length)
+             },
+             post_power_pre_observe: {
+                 tree_hash: $post_power_tree_hash,
+                 effective_kernel: $post_power_kernel,
+                 selected_tree_still_staged: $post_power_selected_tree_ok,
+                 expected_fetch_present: ($post_power_fetch != null),
+                 expected_fetch_bytes_match: $post_power_bytes_ok
+             },
+             final_pre_restore: {
+                 tree_hash: $final_tree_hash,
+                 effective_kernel: $final_kernel,
+                 selected_tree_still_staged: $final_selected_tree_ok,
+                 expected_fetch_present: ($final_fetch != null),
+                 expected_fetch_bytes_match: $final_bytes_ok
+             },
+             restore: {
+                 snapshot_name: ($restore[0].archive.name // null),
+                 post_restore_tree_hash: $post_restore_tree_hash
+             }
+         },
+         identity_join_contract: {
+             contract_version: "pi5-capture-transaction-v2",
+             decisive_rp1_hardware_classification_allowed: (($identity_join_rejection_reasons | length) == 0),
+             rejection_reasons: $identity_join_rejection_reasons,
+             rejected_classification: (if (($identity_join_rejection_reasons | length) == 0) then null else "capture-staging-blocked" end),
+             rule: "missing or mismatched candidate identity, serial-window, or TFTP fields prevent decisive RP1 hardware classification"
+         },
+         restore: {
+             snapshot: $restore[0],
+             post_restore_tree_hash: $post_restore_tree_hash
+         },
+         suggested_classification:
+             (
+             if (($identity_join_rejection_reasons | length) > 0) then "identity-join-mismatch"
+             elif $preflight_mismatch then "staging-publication-mismatch"
+             elif (($sw.has_required_marker == true) or ($post_power_marker_count > 0) or $marker_family_fresh) then "post-handoff-marker-visible"
+             elif (($fetch_events | length) >= 2 and (($sw.firmware_network_occurrences // 0) >= 2)) then "reset-side-effect-without-visible-marker-candidate"
+             elif (($fetch_events | length) > 0) then "candidate-fetch-observed-without-marker"
+             elif ($stable_zero_tftp and ($sw.has_firmware_network == true) and $final_tree_ok and ($final_fetch != null) and $final_bytes_ok) then "tftp-capture-logging-blindness"
+             elif ($sw.has_firmware_network == true) then "serial-only-firmware-reboot"
+             else "still-blocked-without-fresh-boot-evidence"
+             end),
+         proof_contract: {
+             serial_freshness_contract: "cursor-nonce-post-power-freshness-v1",
+             serial_observe_contract: ($sw.observe_contract // "deadline-loop-accumulated-from-fresh-cursor"),
+             serial_capture_mode: ($sw.capture_mode // "observe"),
+             serial_start_cursor_saturated: ($sw.start_cursor_saturated // false),
+             tftp_contract: "stable-same-cursor-delta-before-restore",
+             post_power_identity_contract: "immediate-status-and-boot-files-after-power-before-serial-observe",
+             zero_event_tftp_meaningful_only_before_restore: true,
+             firmware_network_is_not_talos_entry: true
+         }
+       }'
++ jq . tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate/capture-invariant-summary.json
++ rm -f /opt/strider/openclaw/current/workspace/tmp/tmp.ebOe7G89gt /opt/strider/openclaw/current/workspace/tmp/tmp.opfLADE7qI

@@ -1,0 +1,17 @@
+{
+  "archive_sha256": "68a3e9356753c66b646477880f786fc10a01b021bd8758d19484f409df81ad9d",
+  "selected_kernel_sha256": "87bbaab6842cbd83c1dff548d81151af6f9ff5309236b7ba65481174560987a8",
+  "selected_kernel_bytes": 152880,
+  "archive_path": "target/tmp/selected-normal-runtime-bootinfo-v65.tar.gz",
+  "required_marker": "TALOS: boot info parsed",
+  "marker_family": [
+    "TALOS: asm_start",
+    "TALOS: asm_pre_rust_entry",
+    "TALOS: rust_entry",
+    "TALOS: boot info parsed",
+    "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=runtime-marker-route-static",
+    "TALOS: ssh-service-smoltcp-runtime-blocked capture-nonce=runtime-marker-route-static",
+    "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-marker-route-static"
+  ],
+  "restore_target": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z"
+}

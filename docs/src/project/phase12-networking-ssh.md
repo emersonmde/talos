@@ -13936,3 +13936,24 @@ serialized hardware successor is
 phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66-20260702,
 but no v66 task is queued; planningNeeded=true for supervisor taskQueue
 planning.
+
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66-20260702
+accepts inconclusive-selected-normal-runtime-bootinfo-preflight. Under
+hardwareTestLock, the worker published the v65 selected BootInfo archive and
+ran the serialized Pi 5 preflight. Static review identified archive SHA-256
+68a3e9356753c66b646477880f786fc10a01b021bd8758d19484f409df81ad9d and selected
+da591740/kernel_2712.img as 152,880 bytes with SHA-256
+87bbaab6842cbd83c1dff548d81151af6f9ff5309236b7ba65481174560987a8. The first
+candidate served the selected kernel twice and retained TALOS: boot info parsed
+184 times, but serial freshness rejected the identity join. The required
+triage then captured a known-good control with 13 TFTP events and a candidate
+rerun with decisive selected identity, two selected TFTP serves, final
+pre-restore selected identity, restore proof, and 192 TALOS: boot info parsed
+occurrences. The same selected serial window did not retain a separate TALOS:
+rust_entry line, so this remains an inconclusive BootInfo preflight rather than
+a selected-normal-runtime-bootinfo-marker-retained proof. selected_next_task is
+phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-after-rust-entry-closeout-v66-20260702
+and planningNeeded=false. Target init, exceptions, kernel_main, route-start,
+runtime-ready, packet-I/O, OpenSSH compatibility, service readiness,
+ssh-ready=true, fake command expansion, broad shell work, and phase transition
+remain blocked.

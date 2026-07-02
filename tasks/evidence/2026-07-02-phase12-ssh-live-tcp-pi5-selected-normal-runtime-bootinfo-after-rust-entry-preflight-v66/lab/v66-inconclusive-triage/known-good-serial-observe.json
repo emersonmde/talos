@@ -1,0 +1,57 @@
+{
+  "action": "serial read",
+  "base64": "YXJ0PWZhbHNlIGNsYWltcy1ydW50aW1lLXJlYWR5PWZhbHNlIGNsYWltcy1wYWNrZXQtaW89ZmFsc2UgY2xhaW1zLXNlcnZpY2Utc3VjY2Vzcz1mYWxzZSBjbGFpbXMtc3NoLXJlYWR5PWZhbHNlIGNsYWltcy1waGFzZS10cmFuc2l0aW9uPWZhbHNlDQpUQUxPUzogYm9vdCBpbmZvIHBhcnNlZCBjYXB0dXJlLW5vbmNlPXJ1bnRpbWUtbWFya2VyLXJvdXRlLXN0YXRpYyBzZWxlY3RlZC1ub3JtYWwtcnVudGltZS1ib290aW5mbz10cnVlIGNsYWltcy10YXJnZXQtaW5pdD1mYWxzZSBjbGFpbXMtZXhjZXB0aW9ucy1yZWFkeT1mYWxzZSBjbGFpbXMta2VybmVsLW1haW49ZmFsc2UgY2xhaW1zLXJvdXRlLXN0YXJ0PWZhbHNlIGNsYWltcy1ydW50aW1lLXJlYWR5PWZhbHNlIGNsYWltcy1wYWNrZXQtaW89ZmFsc2UgY2xhaW1zLXNlcnZpY2Utc3VjY2Vzcz1mYWxzZSBjbGFpbXMtc3NoLXJlYWR5PWZhbHNlIGNsYWltcy1waGFzZS10cmFuc2l0aW9uPWZhbHNlDQpUQUxPUzogYm9vdCBpbmZvIHBhcnNlZCBjYXB0dXJlLW5vbmNlPXJ1bnRpbWUtbWFya2VyLXJvdXRlLXN0YXRpYyBzZWzl",
+  "bytes": 555,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "art=false claims-runtime-ready=false claims-packet-io=false claims-service-success=false claims-ssh-ready=false claims-phase-transition=false\r\nTALOS: boot info parsed capture-nonce=runtime-marker-route-static selected-normal-runtime-bootinfo=true claims-target-init=false claims-exceptions-ready=false claims-kernel-main=false claims-route-start=false claims-runtime-ready=false claims-packet-io=false claims-service-success=false claims-ssh-ready=false claims-phase-transition=false\r\nTALOS: boot info parsed capture-nonce=runtime-marker-route-static sel�",
+  "truncated": false,
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "talos_serial_window": {
+    "requested_timeout_seconds": 45,
+    "elapsed_seconds": 1,
+    "settle_ms": 1000,
+    "max_bytes": 65536,
+    "observe_attempts": 1,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 555,
+    "required_marker": "TALOS:",
+    "kernel_marker": "TALOS: kernel_main",
+    "firmware_network_marker": "NETWORK",
+    "has_kernel_main": false,
+    "has_required_marker": true,
+    "marker_family": {
+      "markers": [
+        "TALOS:"
+      ],
+      "counts": [
+        {
+          "marker": "TALOS:",
+          "present": true,
+          "occurrences": 2,
+          "first_index": 143
+        }
+      ],
+      "deepest_present_marker": {
+        "marker": "TALOS:",
+        "present": true,
+        "occurrences": 2,
+        "first_index": 143
+      },
+      "all_present": true,
+      "present_count": 1
+    },
+    "has_firmware_network": false,
+    "firmware_network_occurrences": 0,
+    "required_marker_occurrences": 2,
+    "marker_nonce": null,
+    "nonce_token": null,
+    "nonce_token_occurrences": 0,
+    "required_marker_excerpt": "ims-service-success=false claims-ssh-ready=false claims-phase-transition=false\r\nTALOS: boot info parsed capture-nonce=runtime-marker-route-static selected-normal-runtime-bootinfo=true claims-target-init=false claims-exceptions-ready=false claims-"
+  }
+}

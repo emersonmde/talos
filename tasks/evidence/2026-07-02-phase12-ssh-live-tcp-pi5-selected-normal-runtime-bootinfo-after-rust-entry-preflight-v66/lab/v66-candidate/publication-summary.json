@@ -1,0 +1,12 @@
+{
+  "pre_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "publish_tree": "f5b5d23af2dffc60fd61a8bb2ea5bdf9c1f433b69694fd3efdd7f51793a68632",
+  "post_tree": "f5b5d23af2dffc60fd61a8bb2ea5bdf9c1f433b69694fd3efdd7f51793a68632",
+  "effective_kernel": "kernel_2712.img",
+  "selected_fetch": {
+    "bytes": 152880,
+    "mtime": 1782968333,
+    "name": "da591740/kernel_2712.img"
+  },
+  "selected_fetch_bytes_match": true
+}

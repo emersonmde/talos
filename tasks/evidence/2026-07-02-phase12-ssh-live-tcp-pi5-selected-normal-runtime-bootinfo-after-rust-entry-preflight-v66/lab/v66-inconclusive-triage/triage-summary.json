@@ -1,0 +1,13 @@
+{
+  "first_run_rejection": [
+    "serial-freshness-v1-not-proven"
+  ],
+  "known_good_tftp_events": 13,
+  "pre_rerun_empty": true,
+  "rerun_identity_allowed": true,
+  "rerun_suggested_classification": "post-handoff-marker-visible",
+  "rerun_marker_occurrences": 192,
+  "rerun_expected_fetch_count": 2,
+  "rerun_expected_fetch_byte_match_count": 2,
+  "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+}

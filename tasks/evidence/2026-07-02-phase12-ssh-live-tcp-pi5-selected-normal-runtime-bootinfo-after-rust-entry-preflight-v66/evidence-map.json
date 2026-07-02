@@ -1,0 +1,26 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66-20260702",
+  "classification": "classification.json",
+  "validation": {
+    "archive_review": "validation/archive-review.stdout.txt",
+    "bootinfo_archive_review": "validation/bootinfo-archive-review.stdout.txt",
+    "static_archive_review_summary": "validation/static-archive-review-summary.json",
+    "capture_helper_dry_run": "validation/capture-helper-dry-run.json",
+    "archive_sha256": "validation/archive.sha256",
+    "kernel_sha256": "validation/kernel.sha256",
+    "kernel_bytes": "validation/kernel.bytes"
+  },
+  "lab": {
+    "first_candidate_summary": "lab/v66-candidate/capture-invariant-summary.json",
+    "first_candidate_publication_summary": "lab/v66-candidate/publication-summary.json",
+    "first_candidate_capture_window_order": "lab/v66-candidate/capture-window-order.json",
+    "triage_summary": "lab/v66-inconclusive-triage/triage-summary.json",
+    "known_good_tftp_delta": "lab/v66-inconclusive-triage/known-good-tftp-delta.json",
+    "known_good_restore": "lab/v66-inconclusive-triage/known-good-restore.json",
+    "candidate_rerun_summary": "lab/v66-candidate-rerun/capture-invariant-summary.json",
+    "candidate_rerun_capture_window_order": "lab/v66-candidate-rerun/capture-window-order.json",
+    "candidate_rerun2_summary": "lab/v66-candidate-rerun2/capture-invariant-summary.json",
+    "rerun2_triage_summary": "lab/v66-inconclusive-triage/rerun2-summary.json"
+  },
+  "redaction_review": "Task record and classification retain derived counts, hashes, byte counts, marker names/counts, tree identities, classification, and validation outcomes. Raw serial text and raw TFTP peer/log-line fields remain only in task-owned local evidence."
+}

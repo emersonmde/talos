@@ -1,0 +1,56 @@
+{
+  "pre_rerun_empty": false,
+  "rerun_identity_allowed": false,
+  "rerun_rejection": [
+    "serial-freshness-v1-not-proven"
+  ],
+  "rerun_suggested_classification": "identity-join-mismatch",
+  "marker_counts": [
+    {
+      "marker": "TALOS: asm_start",
+      "present": false,
+      "occurrences": 0,
+      "first_index": null
+    },
+    {
+      "marker": "TALOS: asm_pre_rust_entry",
+      "present": false,
+      "occurrences": 0,
+      "first_index": null
+    },
+    {
+      "marker": "TALOS: rust_entry",
+      "present": false,
+      "occurrences": 0,
+      "first_index": null
+    },
+    {
+      "marker": "TALOS: boot info parsed",
+      "present": true,
+      "occurrences": 2102,
+      "first_index": 3879
+    },
+    {
+      "marker": "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=runtime-marker-route-static",
+      "present": false,
+      "occurrences": 0,
+      "first_index": null
+    },
+    {
+      "marker": "TALOS: ssh-service-smoltcp-runtime-blocked capture-nonce=runtime-marker-route-static",
+      "present": false,
+      "occurrences": 0,
+      "first_index": null
+    },
+    {
+      "marker": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-marker-route-static",
+      "present": false,
+      "occurrences": 0,
+      "first_index": null
+    }
+  ],
+  "rerun_marker_occurrences": 2102,
+  "rerun_expected_fetch_count": 2,
+  "rerun_expected_fetch_byte_match_count": 2,
+  "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+}
