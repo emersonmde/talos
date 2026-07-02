@@ -1,0 +1,24 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69-20260702",
+  "classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69/classification.json",
+  "validation": {
+    "git_status_before_lab_action": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69/validation/git-status-before-lab-action.txt",
+    "archive_sha256": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69/validation/archive-sha256.txt",
+    "archive_review": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69/validation/archive-review.stdout.txt",
+    "target_init_archive_review": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69/validation/target-init-archive-review.stdout.txt",
+    "pre_publication_status": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69/validation/pre-publication-status.json",
+    "publish_archive": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69/validation/publish-archive.json",
+    "post_publication_identity_check": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69/validation/post-publication-identity-check.json",
+    "run_summary": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69/validation/run-summary.json",
+    "inconclusive_triage_summary": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69/validation/inconclusive-triage-summary.json",
+    "post_triage_live_status": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69/validation/post-triage-live-status.json"
+  },
+  "candidate_runs": {
+    "first_run": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69/run-20260702T075703Z",
+    "known_good_control": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69/triage-known-good-control-20260702T080224Z",
+    "candidate_rerun": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69/triage-candidate-rerun-20260702T080419Z"
+  },
+  "redaction_review": {
+    "note": "Evidence is lab-controller boot, TFTP, and serial output only. No private user data, credentials, packet payloads, or external account data were collected."
+  }
+}

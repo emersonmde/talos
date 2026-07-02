@@ -1,0 +1,11 @@
+{
+  "tree_hash": "3a87fb0afcb024cd6cec78652e42935ce276f95471de525f697611c2bc8f4cf1",
+  "effective_kernel": "kernel_2712.img",
+  "expected_fetch": "da591740/kernel_2712.img",
+  "fetch": {
+    "bytes": 152880,
+    "mtime": 1782979024,
+    "name": "da591740/kernel_2712.img"
+  },
+  "ok": true
+}

@@ -1,0 +1,33 @@
+{
+  "first_run": {
+    "target_init": 1978,
+    "boot_info_parsed": 0,
+    "rust_entry": 0,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "identity_allowed": true,
+    "suggested_classification": "post-handoff-marker-visible"
+  },
+  "known_good_control_dir": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69/triage-known-good-control-20260702T080224Z",
+  "known_good_control": {
+    "target_init": 0,
+    "boot_info_parsed": 0,
+    "rust_entry": 0,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "identity_allowed": false,
+    "suggested_classification": "identity-join-mismatch"
+  },
+  "candidate_rerun_dir": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69/triage-candidate-rerun-20260702T080419Z",
+  "candidate_rerun": {
+    "target_init": 382,
+    "boot_info_parsed": 0,
+    "rust_entry": 0,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "identity_allowed": true,
+    "suggested_classification": "post-handoff-marker-visible"
+  },
+  "post_triage_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "post_triage_restore_effective_kernel": "kernel_2712.img"
+}

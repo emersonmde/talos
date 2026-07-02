@@ -1,0 +1,10 @@
+{
+  "endpoint": "GET /",
+  "http_code": 404,
+  "curl_exit": 0,
+  "body_bytes": 55,
+  "body_json": {
+    "error": "unknown endpoint: GET /",
+    "ok": false
+  }
+}

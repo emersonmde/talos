@@ -22533,6 +22533,26 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69-20260702,
   but that task is not currently in taskQueue, so planningNeeded=true for
   supervisor instantiation before any hardware action.
+- phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69-20260702
+  accepts inconclusive-selected-normal-runtime-target-init-preflight. Under
+  hardwareTestLock, the worker published the v67 selected target-init archive
+  (archive SHA-256
+  18270d2ca0bef45c72898beaa55971b48d748f3a87a767556074423821f17352; selected
+  da591740/kernel_2712.img 152,880 bytes, SHA-256
+  4513bd97689673f904a849b60aee0377d6ddcc813ad0d00a18e422b3cc52ef82) and ran
+  serialized Pi 5 evidence capture. The first selected run served the selected
+  kernel twice and retained 1,978 TALOS: target init occurrences. Because the
+  retained-proof gate also required a literal TALOS: boot info parsed marker in
+  the same selected window, the worker ran the required inconclusive triage:
+  known-good control plus candidate rerun. The candidate rerun again served
+  the selected kernel twice and retained 382 TALOS: target init occurrences,
+  while both selected windows retained zero literal TALOS: boot info parsed
+  occurrences. The target-init marker line carries claims-bootinfo-parsed=true,
+  so the selected no-hardware closeout must reconcile source/evidence lineage
+  before accepting a target-init frontier. The lab restored to tree
+  a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 and
+  selected_next_task is
+  phase12-ssh-live-tcp-selected-normal-runtime-target-init-after-bootinfo-closeout-v69-20260702.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

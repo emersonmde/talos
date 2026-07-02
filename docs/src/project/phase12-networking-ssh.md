@@ -14017,3 +14017,23 @@ phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-pref
 but that task is not currently in taskQueue, so planningNeeded=true for the
 supervisor to instantiate the exact bounded hardware task before any lab
 action.
+
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69-20260702
+accepts inconclusive-selected-normal-runtime-target-init-preflight. Under
+hardwareTestLock, the worker published the v67 selected target-init archive and
+captured serialized Pi 5 evidence. The first selected run staged tree
+3a87fb0afcb024cd6cec78652e42935ce276f95471de525f697611c2bc8f4cf1, served
+da591740/kernel_2712.img twice at 152,880 bytes, retained 1,978 TALOS: target
+init occurrences, and restored to
+phase12-ssh-v10-openssh-clean-pre-20260624T074100Z. Because the retained-proof
+gate also required a literal TALOS: boot info parsed marker in the same
+selected window, the worker ran the required inconclusive triage. The candidate
+rerun again served the selected kernel twice and retained 382 TALOS: target
+init occurrences, while both selected windows retained zero literal TALOS: boot
+info parsed occurrences. The target-init marker line carries
+claims-bootinfo-parsed=true, but the source/evidence lineage must be reconciled
+by the no-hardware closeout before accepting a target-init frontier. The lab
+was restored to tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 and
+selected_next_task is
+phase12-ssh-live-tcp-selected-normal-runtime-target-init-after-bootinfo-closeout-v69-20260702.

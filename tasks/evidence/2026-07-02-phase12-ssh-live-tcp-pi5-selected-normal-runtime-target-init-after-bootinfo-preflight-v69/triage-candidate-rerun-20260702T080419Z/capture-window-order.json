@@ -1,0 +1,109 @@
+{
+  "contract_version": "pi5-candidate-capture-window-v5",
+  "helper": "scripts/rpi5-capture-invariant-proof-bundle.sh",
+  "run_label": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69-rerun",
+  "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+  "helper_run_started_at": "2026-07-02T08:04:19Z",
+  "helper_run_completed": true,
+  "completed_at": "2026-07-02T08:05:03Z",
+  "rule": "final-pre-restore identity and stable TFTP delta must be captured by this helper before restore; post-restore/control identity must never satisfy candidate pre-restore evidence; candidate-capture-ready also requires helper_run_completed=true from this foreground helper",
+  "events": [
+    {
+      "sequence": 1,
+      "stage": "preflight_identity",
+      "captured_at": "2026-07-02T08:04:19Z",
+      "evidence_files": [
+        "pre-root-endpoint.json",
+        "pre-root.json",
+        "pre-status.json",
+        "pre-boot-files.json",
+        "pre-snapshots.json",
+        "preflight-identity.json"
+      ]
+    },
+    {
+      "sequence": 2,
+      "stage": "pre_power_cursors",
+      "captured_at": "2026-07-02T08:04:20Z",
+      "evidence_files": [
+        "pre-power-serial-peek.json",
+        "serial-drain-before-power.json",
+        "serial-read-empty-before-power.json",
+        "tftp-cursor-before-power.json",
+        "serial-cursor-before-power.txt",
+        "tftp-cursor-before-power.txt"
+      ]
+    },
+    {
+      "sequence": 3,
+      "stage": "power_cycle",
+      "captured_at": "2026-07-02T08:04:20Z",
+      "evidence_files": [
+        "power-cycle.json"
+      ]
+    },
+    {
+      "sequence": 4,
+      "stage": "post_power_pre_observe_identity",
+      "captured_at": "2026-07-02T08:04:21Z",
+      "evidence_files": [
+        "post-power-pre-observe-status.json",
+        "post-power-pre-observe-root-endpoint.json",
+        "post-power-pre-observe-root-endpoint-body.txt",
+        "post-power-pre-observe-root.json",
+        "post-power-pre-observe-boot-files.json"
+      ]
+    },
+    {
+      "sequence": 5,
+      "stage": "serial_observe_window",
+      "captured_at": "2026-07-02T08:04:58Z",
+      "evidence_files": [
+        "serial-observe-window.json",
+        "serial-observe-window.exit"
+      ]
+    },
+    {
+      "sequence": 6,
+      "stage": "tftp_delta_stable_pre_restore",
+      "captured_at": "2026-07-02T08:05:02Z",
+      "evidence_files": [
+        "tftp-delta-stable-pre-restore.json",
+        "tftp-delta-stable-pre-restore.exit"
+      ]
+    },
+    {
+      "sequence": 7,
+      "stage": "final_pre_restore_identity",
+      "captured_at": "2026-07-02T08:05:02Z",
+      "evidence_files": [
+        "final-pre-restore-status.json",
+        "final-pre-restore-root-endpoint.json",
+        "final-pre-restore-root-endpoint-body.txt",
+        "final-pre-restore-root.json",
+        "final-pre-restore-boot-files.json"
+      ]
+    },
+    {
+      "sequence": 8,
+      "stage": "restore_snapshot",
+      "captured_at": "2026-07-02T08:05:02Z",
+      "evidence_files": [
+        "restore-snapshot.json"
+      ]
+    },
+    {
+      "sequence": 9,
+      "stage": "post_restore_identity",
+      "captured_at": "2026-07-02T08:05:03Z",
+      "evidence_files": [
+        "post-restore-root-endpoint.json",
+        "post-restore-root-endpoint-body.txt",
+        "post-restore-root.json",
+        "post-restore-status.json",
+        "post-restore-boot-files.json"
+      ]
+    }
+  ],
+  "completion_event_count": 9
+}

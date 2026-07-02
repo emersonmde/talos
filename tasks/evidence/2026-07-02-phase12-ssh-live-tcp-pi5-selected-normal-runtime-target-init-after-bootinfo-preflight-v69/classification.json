@@ -1,0 +1,54 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69-20260702",
+  "terminal_classification": "inconclusive-selected-normal-runtime-target-init-preflight",
+  "selected_next_task": "phase12-ssh-live-tcp-selected-normal-runtime-target-init-after-bootinfo-closeout-v69-20260702",
+  "planning_needed": false,
+  "restore": {
+    "snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img",
+    "hardware_lock_released": true
+  },
+  "selected_archive": {
+    "path": "target/tmp/selected-normal-runtime-target-init-v67.tar.gz",
+    "sha256": "18270d2ca0bef45c72898beaa55971b48d748f3a87a767556074423821f17352",
+    "selected_kernel_path": "da591740/kernel_2712.img",
+    "selected_kernel_bytes": 152880,
+    "selected_kernel_sha256": "4513bd97689673f904a849b60aee0377d6ddcc813ad0d00a18e422b3cc52ef82",
+    "selected_tree_hash": "3a87fb0afcb024cd6cec78652e42935ce276f95471de525f697611c2bc8f4cf1"
+  },
+  "first_run": {
+    "run_dir": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69/run-20260702T075703Z",
+    "identity_join_allowed": true,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "target_init_occurrences": 1978,
+    "boot_info_parsed_occurrences": 0,
+    "rust_entry_occurrences": 0,
+    "suggested_classification": "post-handoff-marker-visible"
+  },
+  "inconclusive_triage": {
+    "known_good_control_dir": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69/triage-known-good-control-20260702T080224Z",
+    "known_good_control_expected_fetch_count": 2,
+    "known_good_control_expected_fetch_byte_match_count": 2,
+    "known_good_control_identity_join_allowed": false,
+    "candidate_rerun_dir": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69/triage-candidate-rerun-20260702T080419Z",
+    "candidate_rerun_identity_join_allowed": true,
+    "candidate_rerun_expected_fetch_count": 2,
+    "candidate_rerun_expected_fetch_byte_match_count": 2,
+    "candidate_rerun_target_init_occurrences": 382,
+    "candidate_rerun_boot_info_parsed_occurrences": 0
+  },
+  "first_unresolved_evidence_reason": "Both selected candidate windows retained selected TFTP service and TALOS: target init, but neither retained the literal TALOS: boot info parsed marker required by the v69 retained-proof acceptance gate. The target-init marker line carries claims-bootinfo-parsed=true, so the selected v69 closeout must reconcile that source/evidence lineage without additional hardware.",
+  "negative_claims": {
+    "exceptions_ready_proved": false,
+    "kernel_main_proved": false,
+    "route_start_proved": false,
+    "runtime_ready_proved": false,
+    "packet_io_proved": false,
+    "openssh_compatibility_proved": false,
+    "service_success_proved": false,
+    "ssh_ready": false,
+    "phase_transition": false
+  }
+}
