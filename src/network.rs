@@ -2582,6 +2582,7 @@ pub(crate) enum LiveTcpNetworkDeviceRuntimeBindingState {
     BlockedMissingDescriptorDelivery,
     BlockedMissingDeviceInterfaceBinding,
     BlockedMissingHardwareFrameProvider,
+    BlockedHardwareFrameProviderLinkNotReady,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -2724,6 +2725,7 @@ pub(crate) struct LiveTcpNetworkDeviceRuntimeReport {
     descriptor_facing_connection_delivered: bool,
     deterministic_device_interface_bound: bool,
     hardware_frame_provider_bound: bool,
+    hardware_frame_provider_classification: Option<&'static str>,
     driver_packet_rx_frames: usize,
     driver_packet_tx_frames: usize,
     live_packet_io_accepted: bool,
@@ -2772,6 +2774,10 @@ impl LiveTcpNetworkDeviceRuntimeReport {
 
     pub(crate) const fn hardware_frame_provider_bound(self) -> bool {
         self.hardware_frame_provider_bound
+    }
+
+    pub(crate) const fn hardware_frame_provider_classification(self) -> Option<&'static str> {
+        self.hardware_frame_provider_classification
     }
 
     pub(crate) const fn driver_packet_rx_frames(self) -> usize {
@@ -3429,6 +3435,7 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
                 descriptor_facing_connection_delivered: false,
                 deterministic_device_interface_bound: false,
                 hardware_frame_provider_bound: false,
+                hardware_frame_provider_classification: None,
                 driver_packet_rx_frames: 0,
                 driver_packet_tx_frames: 0,
                 live_packet_io_accepted: false,
@@ -3448,6 +3455,7 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
                 descriptor_facing_connection_delivered: true,
                 deterministic_device_interface_bound: false,
                 hardware_frame_provider_bound: false,
+                hardware_frame_provider_classification: None,
                 driver_packet_rx_frames: 0,
                 driver_packet_tx_frames: 0,
                 live_packet_io_accepted: false,
@@ -3467,6 +3475,9 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
                 descriptor_facing_connection_delivered: true,
                 deterministic_device_interface_bound: true,
                 hardware_frame_provider_bound: false,
+                hardware_frame_provider_classification: Some(
+                    crate::rp1_ethernet::RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_MISSING_CLASSIFICATION,
+                ),
                 driver_packet_rx_frames: 0,
                 driver_packet_tx_frames: 0,
                 live_packet_io_accepted: false,
@@ -3487,6 +3498,121 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
             descriptor_facing_connection_delivered: true,
             deterministic_device_interface_bound: true,
             hardware_frame_provider_bound: false,
+            hardware_frame_provider_classification: None,
+            driver_packet_rx_frames: runtime_observation.client_to_server_frames()
+                + runtime_observation.server_to_client_frames(),
+            driver_packet_tx_frames: runtime_observation.client_to_server_frames()
+                + runtime_observation.server_to_client_frames(),
+            live_packet_io_accepted: false,
+            live_reachability_accepted: false,
+            remote_receipt_accepted: false,
+            compatibility_accepted: false,
+            ssh_ready: false,
+        })
+    }
+
+    pub(crate) fn live_tcp_network_device_smoltcp_runtime_binding_with_rp1_provider(
+        &self,
+        connection_id: u64,
+        bind_deterministic_device_interface: bool,
+        provider_report: crate::rp1_ethernet::Rp1EthernetHardwareFrameProviderBindingReport,
+    ) -> Result<LiveTcpNetworkDeviceRuntimeReport, crate::posix::PosixError> {
+        let accept_report =
+            self.live_tcp_listener_descriptor_accept_delivery(connection_id, false)?;
+        if accept_report.delivery_state()
+            != LiveTcpAcceptedConnectionDeliveryState::AcceptedLocalDescriptorDelivery
+        {
+            return Ok(LiveTcpNetworkDeviceRuntimeReport {
+                accept_report,
+                binding_state:
+                    LiveTcpNetworkDeviceRuntimeBindingState::BlockedMissingDescriptorDelivery,
+                runtime_observation: None,
+                descriptor_facing_connection_delivered: false,
+                deterministic_device_interface_bound: false,
+                hardware_frame_provider_bound: false,
+                hardware_frame_provider_classification: None,
+                driver_packet_rx_frames: 0,
+                driver_packet_tx_frames: 0,
+                live_packet_io_accepted: false,
+                live_reachability_accepted: false,
+                remote_receipt_accepted: false,
+                compatibility_accepted: false,
+                ssh_ready: false,
+            });
+        }
+
+        if !bind_deterministic_device_interface {
+            return Ok(LiveTcpNetworkDeviceRuntimeReport {
+                accept_report,
+                binding_state:
+                    LiveTcpNetworkDeviceRuntimeBindingState::BlockedMissingDeviceInterfaceBinding,
+                runtime_observation: None,
+                descriptor_facing_connection_delivered: true,
+                deterministic_device_interface_bound: false,
+                hardware_frame_provider_bound: false,
+                hardware_frame_provider_classification: None,
+                driver_packet_rx_frames: 0,
+                driver_packet_tx_frames: 0,
+                live_packet_io_accepted: false,
+                live_reachability_accepted: false,
+                remote_receipt_accepted: false,
+                compatibility_accepted: false,
+                ssh_ready: false,
+            });
+        }
+
+        if !provider_report.provider_bound() {
+            return Ok(LiveTcpNetworkDeviceRuntimeReport {
+                accept_report,
+                binding_state:
+                    LiveTcpNetworkDeviceRuntimeBindingState::BlockedMissingHardwareFrameProvider,
+                runtime_observation: None,
+                descriptor_facing_connection_delivered: true,
+                deterministic_device_interface_bound: true,
+                hardware_frame_provider_bound: false,
+                hardware_frame_provider_classification: Some(provider_report.classification),
+                driver_packet_rx_frames: 0,
+                driver_packet_tx_frames: 0,
+                live_packet_io_accepted: false,
+                live_reachability_accepted: false,
+                remote_receipt_accepted: false,
+                compatibility_accepted: false,
+                ssh_ready: false,
+            });
+        }
+
+        if !provider_report.link_ready() {
+            return Ok(LiveTcpNetworkDeviceRuntimeReport {
+                accept_report,
+                binding_state:
+                    LiveTcpNetworkDeviceRuntimeBindingState::BlockedHardwareFrameProviderLinkNotReady,
+                runtime_observation: None,
+                descriptor_facing_connection_delivered: true,
+                deterministic_device_interface_bound: true,
+                hardware_frame_provider_bound: true,
+                hardware_frame_provider_classification: Some(provider_report.classification),
+                driver_packet_rx_frames: 0,
+                driver_packet_tx_frames: 0,
+                live_packet_io_accepted: false,
+                live_reachability_accepted: false,
+                remote_receipt_accepted: false,
+                compatibility_accepted: false,
+                ssh_ready: false,
+            });
+        }
+
+        let runtime_observation =
+            driver_packet_smoltcp_listener_transfer(LIVE_TCP_RUNTIME_DRIVER_PACKET_PAYLOAD)?;
+
+        Ok(LiveTcpNetworkDeviceRuntimeReport {
+            accept_report,
+            binding_state:
+                LiveTcpNetworkDeviceRuntimeBindingState::AcceptedDeterministicDeviceInterfaceDelivery,
+            runtime_observation: Some(runtime_observation),
+            descriptor_facing_connection_delivered: true,
+            deterministic_device_interface_bound: true,
+            hardware_frame_provider_bound: true,
+            hardware_frame_provider_classification: Some(provider_report.classification),
             driver_packet_rx_frames: runtime_observation.client_to_server_frames()
                 + runtime_observation.server_to_client_frames(),
             driver_packet_tx_frames: runtime_observation.client_to_server_frames()
@@ -7137,6 +7263,89 @@ mod tests {
     }
 
     #[test_case]
+    fn live_tcp_network_device_smoltcp_runtime_binding_accepts_source_bound_rp1_provider_only() {
+        let owner = crate::scheduler::ProcessOwnerId::new(80).expect("owner id");
+        let endpoint = Ipv4Endpoint::new(SOCKET_SYNTHETIC_LOCAL_IPV4_BE, 22);
+        let mut sockets = NetworkSocketDescriptorTable::<4>::new();
+        let listener = sockets
+            .open(
+                owner,
+                SOCKET_DOMAIN_AF_INET,
+                SOCKET_TYPE_STREAM,
+                SOCKET_PROTOCOL_DEFAULT,
+            )
+            .expect("listener socket");
+        sockets
+            .bind(owner, listener, endpoint)
+            .expect("bind listener");
+        sockets.listen(owner, listener, 1).expect("listen");
+        let client = sockets
+            .open(
+                owner,
+                SOCKET_DOMAIN_AF_INET,
+                SOCKET_TYPE_STREAM,
+                SOCKET_PROTOCOL_DEFAULT,
+            )
+            .expect("client socket");
+        sockets
+            .connect(owner, client, endpoint)
+            .expect("connect local client to listener");
+        let connection_id = match sockets.socket(client).expect("client state").state() {
+            NetworkSocketState::Connected { connection_id, .. } => connection_id,
+            state => panic!("unexpected client state {state:?}"),
+        };
+        let accepted = sockets
+            .accept(owner, listener)
+            .expect("accept local client");
+        sockets
+            .send(owner, client, b"tcp-runtime")
+            .expect("send over descriptor bridge");
+        let mut recv = [0u8; 11];
+        assert_eq!(
+            sockets
+                .recv_peek(owner, accepted, &mut recv)
+                .expect("accepted descriptor receives payload"),
+            recv.len()
+        );
+
+        let provider = crate::rp1_ethernet::rp1_ethernet_hardware_frame_provider_binding_report(
+            Some(
+                crate::rp1_ethernet::rp1_ethernet_hardware_frame_provider_contract_evidence(
+                    crate::rp1_ethernet::Rp1EthernetHardwareFrameProviderState::SourceBoundLinkReady,
+                ),
+            ),
+        );
+        let runtime = sockets
+            .live_tcp_network_device_smoltcp_runtime_binding_with_rp1_provider(
+                connection_id,
+                true,
+                provider,
+            )
+            .expect("source-bound RP1 provider report");
+        assert_eq!(
+            runtime.binding_state(),
+            LiveTcpNetworkDeviceRuntimeBindingState::AcceptedDeterministicDeviceInterfaceDelivery
+        );
+        assert!(runtime.descriptor_facing_connection_delivered());
+        assert!(runtime.deterministic_device_interface_bound());
+        assert!(runtime.hardware_frame_provider_bound());
+        assert_eq!(
+            runtime.hardware_frame_provider_classification(),
+            Some(crate::rp1_ethernet::RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_BOUND_CLASSIFICATION)
+        );
+        assert!(runtime.driver_packet_rx_frames() > 0);
+        assert_eq!(
+            runtime.driver_packet_rx_frames(),
+            runtime.driver_packet_tx_frames()
+        );
+        assert!(!runtime.live_packet_io_accepted());
+        assert!(!runtime.live_reachability_accepted());
+        assert!(!runtime.remote_receipt_accepted());
+        assert!(!runtime.compatibility_accepted());
+        assert!(!runtime.ssh_ready());
+    }
+
+    #[test_case]
     fn live_tcp_runtime_marker_route_report_reaches_fail_closed_runtime_path() {
         let report = live_tcp_runtime_marker_route_report().expect("runtime marker route");
         let runtime = report.runtime_report();
@@ -7247,6 +7456,101 @@ mod tests {
         assert!(!missing_hardware.remote_receipt_accepted());
         assert!(!missing_hardware.compatibility_accepted());
         assert!(!missing_hardware.ssh_ready());
+
+        let missing_provider =
+            crate::rp1_ethernet::rp1_ethernet_hardware_frame_provider_binding_report(None);
+        let missing_provider_report = sockets
+            .live_tcp_network_device_smoltcp_runtime_binding_with_rp1_provider(
+                connection_id,
+                true,
+                missing_provider,
+            )
+            .expect("missing RP1 provider report");
+        assert_eq!(
+            missing_provider_report.binding_state(),
+            LiveTcpNetworkDeviceRuntimeBindingState::BlockedMissingHardwareFrameProvider
+        );
+        assert!(!missing_provider_report.hardware_frame_provider_bound());
+        assert_eq!(
+            missing_provider_report.hardware_frame_provider_classification(),
+            Some(crate::rp1_ethernet::RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_MISSING_CLASSIFICATION)
+        );
+        assert!(!missing_provider_report.ssh_ready());
+
+        let link_not_ready =
+            crate::rp1_ethernet::rp1_ethernet_hardware_frame_provider_binding_report(Some(
+                crate::rp1_ethernet::rp1_ethernet_hardware_frame_provider_contract_evidence(
+                    crate::rp1_ethernet::Rp1EthernetHardwareFrameProviderState::SourceBoundLinkNotReady,
+                ),
+            ));
+        let link_not_ready_report = sockets
+            .live_tcp_network_device_smoltcp_runtime_binding_with_rp1_provider(
+                connection_id,
+                true,
+                link_not_ready,
+            )
+            .expect("link-not-ready RP1 provider report");
+        assert_eq!(
+            link_not_ready_report.binding_state(),
+            LiveTcpNetworkDeviceRuntimeBindingState::BlockedHardwareFrameProviderLinkNotReady
+        );
+        assert!(link_not_ready_report.hardware_frame_provider_bound());
+        assert_eq!(
+            link_not_ready_report.hardware_frame_provider_classification(),
+            Some(
+                crate::rp1_ethernet::RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_LINK_NOT_READY_CLASSIFICATION
+            )
+        );
+        assert_eq!(link_not_ready_report.driver_packet_rx_frames(), 0);
+        assert!(!link_not_ready_report.live_packet_io_accepted());
+        assert!(!link_not_ready_report.ssh_ready());
+
+        let mut no_accept_sockets = NetworkSocketDescriptorTable::<4>::new();
+        let no_accept_listener = no_accept_sockets
+            .open(
+                owner,
+                SOCKET_DOMAIN_AF_INET,
+                SOCKET_TYPE_STREAM,
+                SOCKET_PROTOCOL_DEFAULT,
+            )
+            .expect("no-accept listener socket");
+        no_accept_sockets
+            .bind(owner, no_accept_listener, endpoint)
+            .expect("bind no-accept listener");
+        no_accept_sockets
+            .listen(owner, no_accept_listener, 1)
+            .expect("listen no-accept");
+        let no_accept_client = no_accept_sockets
+            .open(
+                owner,
+                SOCKET_DOMAIN_AF_INET,
+                SOCKET_TYPE_STREAM,
+                SOCKET_PROTOCOL_DEFAULT,
+            )
+            .expect("no-accept client socket");
+        no_accept_sockets
+            .connect(owner, no_accept_client, endpoint)
+            .expect("connect no-accept client");
+        let no_accept_connection_id = match no_accept_sockets
+            .socket(no_accept_client)
+            .expect("no-accept client state")
+            .state()
+        {
+            NetworkSocketState::Connected { connection_id, .. } => connection_id,
+            state => panic!("unexpected no-accept client state {state:?}"),
+        };
+        let missing_descriptor_report = no_accept_sockets
+            .live_tcp_network_device_smoltcp_runtime_binding_with_rp1_provider(
+                no_accept_connection_id,
+                true,
+                link_not_ready,
+            )
+            .expect("missing descriptor report");
+        assert_eq!(
+            missing_descriptor_report.binding_state(),
+            LiveTcpNetworkDeviceRuntimeBindingState::BlockedMissingDescriptorDelivery
+        );
+        assert!(!missing_descriptor_report.hardware_frame_provider_bound());
     }
 
     #[test_case]

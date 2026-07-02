@@ -1,0 +1,53 @@
+{
+  "task_id": "phase12-ssh-live-tcp-rp1-hardware-frame-provider-binding-local-core-20260702",
+  "terminal_classification": "rp1-hardware-frame-provider-binding-local-core-accepted",
+  "source_files_changed": [
+    "src/rp1_ethernet.rs",
+    "src/network.rs",
+    "docs/src/project/phase12-networking-ssh.md",
+    "docs/src/roadmap.md"
+  ],
+  "predecessors": [
+    {
+      "task_id": "phase12-ssh-live-tcp-pi5-packet-ingress-prerequisite-contract-v73-20260702",
+      "commit": "6e95d96d4df44a6beb8d1f6e39e3b8960e02acbe",
+      "classification": "packet-ingress-prerequisite-blocked-for-source-repair"
+    },
+    {
+      "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-exceptions-after-target-init-closeout-v71-20260702",
+      "commit": "75e0dbdab8130b6531a6686e26038d505cdfef57",
+      "classification": "selected-normal-runtime-exceptions-frontier-proved"
+    }
+  ],
+  "provider_boundary": {
+    "contract_id": "phase12-rp1-ethernet-hardware-frame-provider-binding-local-core-v1",
+    "accepted_source_bound_classification": "rp1-ethernet-hardware-frame-provider-source-bound-local-only",
+    "missing_provider_classification": "no-rp1-ethernet-hardware-frame-provider-bound",
+    "link_not_ready_classification": "rp1-ethernet-hardware-frame-provider-link-not-ready-fail-closed",
+    "live_packet_io_accepted": false,
+    "live_reachability_accepted": false,
+    "remote_receipt_accepted": false,
+    "compatibility_accepted": false,
+    "service_success": false,
+    "ssh_ready": false
+  },
+  "validation": [
+    {
+      "level": "fmt/lint",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed"
+    },
+    {
+      "level": "unit/substitute",
+      "command": "cargo -Zjson-target-spec test --quiet",
+      "environment_note": "QEMU_SYSTEM_AARCH64 available via PATH=/opt/strider/openclaw/current/workspace/tools/qemu-9.2.0-install/bin:$PATH",
+      "result": "passed; 896 no_std tests"
+    }
+  ],
+  "stale_task_dispositions": {
+    "phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-after-exceptions-reconciliation-v72-20260702": "deferred; not reselected by this source-local provider binding",
+    "phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-after-no-route-start-repair-reconciliation-v60-20260702": "blocked/deferred; stale route/runtime marker dependency chain",
+    "phase12-ssh-live-tcp-selected-normal-runtime-packet-io-continuation-reconciliation-v53-20260701": "blocked/deferred; live packet-I/O still requires later explicit hardware evidence gates"
+  },
+  "redaction_review": "Retained evidence contains deterministic metadata and test summaries only; no secret seed/key/session material, private user data, hardware log bytes, or live packet captures are retained."
+}

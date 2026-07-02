@@ -14151,3 +14151,19 @@ generic kernel_main marker. v72 remains deferred, v60 remains blocked/deferred,
 and v53 remains blocked/deferred until that source repair is explicitly
 planned and accepted. selected_next_task=null and planningNeeded=true for
 supervisor planning of exactly one bounded source-repair implementation task.
+
+phase12-ssh-live-tcp-rp1-hardware-frame-provider-binding-local-core-20260702
+accepts rp1-hardware-frame-provider-binding-local-core-accepted. No hardware
+action, lab publication, boot snapshot mutation, Pi 5 power cycle, serial
+capture, TFTP capture, packet-I/O proof, remote receipt, OpenSSH/generated-root
+retry, compatibility claim, service success claim, ssh-ready=true,
+fake/kernel-backed command expansion, broad shell work, or phase transition was
+performed. src/rp1_ethernet.rs now exposes a source-local RP1 Ethernet
+hardware frame-provider contract/report with distinct missing-provider,
+link-not-ready, and source-bound classifications. src/network.rs consumes
+that report through the DriverPacketAdapter/smoltcp/listener/descriptor-delivery
+lineage: a source-bound provider may set only the
+hardware_frame_provider_bound local label, while live packet I/O,
+reachability, remote receipt, compatibility, service success, and ssh_ready
+remain false. v72, v60, and v53 remain deferred or blocked until a later
+supervisor task explicitly reselects the next feature-required proof.

@@ -93,6 +93,14 @@ pub const RP1_ETHERNET_GPIO32_PHY_RESET_PREFLIGHT_BOUNDARY_CLASSIFICATION: &str 
 pub const RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_BOUNDARY_CLASSIFICATION: &str =
     "hardware-proof-limited-to-gpio32-phy-reset-write-restore-control-output";
 pub const RP1_ETHERNET_REJECTED_INPUT_CLASSIFICATION: &str = "contract-rejected-input";
+pub const RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_BINDING_CONTRACT_ID: &str =
+    "phase12-rp1-ethernet-hardware-frame-provider-binding-local-core-v1";
+pub const RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_BOUND_CLASSIFICATION: &str =
+    "rp1-ethernet-hardware-frame-provider-source-bound-local-only";
+pub const RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_LINK_NOT_READY_CLASSIFICATION: &str =
+    "rp1-ethernet-hardware-frame-provider-link-not-ready-fail-closed";
+pub const RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_MISSING_CLASSIFICATION: &str =
+    "no-rp1-ethernet-hardware-frame-provider-bound";
 
 pub const RP1_ETHERNET_COMPATIBLE: &[&str] = &["raspberrypi,rp1-gem", "cdns,macb"];
 pub const RP1_ETHERNET_CONTROLLER_NAME: &str = "rp1_eth";
@@ -602,6 +610,25 @@ pub const RP1_ETHERNET_GPIO32_PHY_RESET_WRITE_RESTORE_RETAINED_RISKS: &[&str] = 
     "MDIO/PHY register ownership remains separate from GPIO32 ETH_RST_N assertion/deassertion",
     "Ethernet driver, interrupt, DMA, descriptor, packet, networking, socket, SSH, and Phase 12.2 behavior remain unaccepted",
 ];
+pub const RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_SOURCE_EVIDENCE: &[&str] = &[
+    "accepted RP1 Ethernet MACB_MID visibility context",
+    "accepted GPIO32 PHY reset and MDIO guard source contracts",
+    "source-local provider boundary only; no DMA descriptor ownership or packet I/O",
+];
+pub const RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_REJECTED_RUNTIME_CLAIMS: &[&str] = &[
+    "live_packet_io",
+    "live_reachability",
+    "remote_receipt",
+    "OpenSSH compatibility",
+    "service success",
+    "ssh_ready",
+    "phase transition",
+];
+pub const RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_RETAINED_RISKS: &[&str] = &[
+    "RP1 DMA descriptor rings are not owned or programmed",
+    "RX/TX completion and interrupt routing are not proved",
+    "link-ready is source metadata until a later hardware task proves packet ingress",
+];
 
 pub const RP1_ETHERNET_GPIO32_PHY_RESET_SOURCE_EVIDENCE: &[&str] = &[
     "tasks/2026-06-10-phase12-rp1-ethernet-gpio32-phy-reset-source-contract.md",
@@ -646,6 +673,80 @@ pub struct Rp1EthernetGemMidSourceContractEvidence {
     pub rev_offset: u8,
     pub rev_size: u8,
     pub source_evidence: &'static [&'static str],
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Rp1EthernetHardwareFrameProviderState {
+    MissingProvider,
+    SourceBoundLinkNotReady,
+    SourceBoundLinkReady,
+}
+
+impl Rp1EthernetHardwareFrameProviderState {
+    pub const fn classification(self) -> &'static str {
+        match self {
+            Self::MissingProvider => RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_MISSING_CLASSIFICATION,
+            Self::SourceBoundLinkNotReady => {
+                RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_LINK_NOT_READY_CLASSIFICATION
+            }
+            Self::SourceBoundLinkReady => RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_BOUND_CLASSIFICATION,
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetHardwareFrameProviderContractEvidence {
+    pub contract_id: &'static str,
+    pub controller: &'static str,
+    pub compatible: &'static [&'static str],
+    pub accepted_macb_mid_raw: u32,
+    pub accepted_macb_mid_idnum: u32,
+    pub accepted_macb_mid_rev: u32,
+    pub provider_state: Rp1EthernetHardwareFrameProviderState,
+    pub source_evidence: &'static [&'static str],
+}
+
+impl Rp1EthernetHardwareFrameProviderContractEvidence {
+    pub const fn provider_bound(self) -> bool {
+        !matches!(
+            self.provider_state,
+            Rp1EthernetHardwareFrameProviderState::MissingProvider
+        )
+    }
+
+    pub const fn link_ready(self) -> bool {
+        matches!(
+            self.provider_state,
+            Rp1EthernetHardwareFrameProviderState::SourceBoundLinkReady
+        )
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Rp1EthernetHardwareFrameProviderBindingReport {
+    pub contract: Option<Rp1EthernetHardwareFrameProviderContractEvidence>,
+    pub provider_state: Rp1EthernetHardwareFrameProviderState,
+    pub classification: &'static str,
+    pub provider_bound: bool,
+    pub link_ready: bool,
+    pub live_packet_io_accepted: bool,
+    pub live_reachability_accepted: bool,
+    pub remote_receipt_accepted: bool,
+    pub compatibility_accepted: bool,
+    pub service_success: bool,
+    pub ssh_ready: bool,
+    pub rejected_runtime_claims: &'static [&'static str],
+    pub retained_risks: &'static [&'static str],
+}
+
+impl Rp1EthernetHardwareFrameProviderBindingReport {
+    pub const fn provider_bound(self) -> bool {
+        self.provider_bound
+    }
+
+    pub const fn link_ready(self) -> bool {
+        self.link_ready
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -2144,6 +2245,52 @@ pub const fn rp1_ethernet_gem_mid_source_contract_evidence()
         rev_offset: RP1_ETHERNET_GEM_MID_REV_OFFSET,
         rev_size: RP1_ETHERNET_GEM_MID_REV_SIZE,
         source_evidence: RP1_ETHERNET_GEM_MID_SOURCE_EVIDENCE,
+    }
+}
+
+pub const fn rp1_ethernet_hardware_frame_provider_contract_evidence(
+    provider_state: Rp1EthernetHardwareFrameProviderState,
+) -> Rp1EthernetHardwareFrameProviderContractEvidence {
+    Rp1EthernetHardwareFrameProviderContractEvidence {
+        contract_id: RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_BINDING_CONTRACT_ID,
+        controller: RP1_ETHERNET_CONTROLLER_NAME,
+        compatible: RP1_ETHERNET_COMPATIBLE,
+        accepted_macb_mid_raw: RP1_ETHERNET_ACCEPTED_OBSERVED_MACB_MID_RAW,
+        accepted_macb_mid_idnum: RP1_ETHERNET_ACCEPTED_OBSERVED_MACB_MID_IDNUM,
+        accepted_macb_mid_rev: RP1_ETHERNET_ACCEPTED_OBSERVED_MACB_MID_REV,
+        provider_state,
+        source_evidence: RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_SOURCE_EVIDENCE,
+    }
+}
+
+pub const fn rp1_ethernet_hardware_frame_provider_binding_report(
+    contract: Option<Rp1EthernetHardwareFrameProviderContractEvidence>,
+) -> Rp1EthernetHardwareFrameProviderBindingReport {
+    let provider_state = match contract {
+        Some(contract) => contract.provider_state,
+        None => Rp1EthernetHardwareFrameProviderState::MissingProvider,
+    };
+    Rp1EthernetHardwareFrameProviderBindingReport {
+        contract,
+        provider_state,
+        classification: provider_state.classification(),
+        provider_bound: matches!(
+            provider_state,
+            Rp1EthernetHardwareFrameProviderState::SourceBoundLinkNotReady
+                | Rp1EthernetHardwareFrameProviderState::SourceBoundLinkReady
+        ),
+        link_ready: matches!(
+            provider_state,
+            Rp1EthernetHardwareFrameProviderState::SourceBoundLinkReady
+        ),
+        live_packet_io_accepted: false,
+        live_reachability_accepted: false,
+        remote_receipt_accepted: false,
+        compatibility_accepted: false,
+        service_success: false,
+        ssh_ready: false,
+        rejected_runtime_claims: RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_REJECTED_RUNTIME_CLAIMS,
+        retained_risks: RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_RETAINED_RISKS,
     }
 }
 
@@ -20428,5 +20575,78 @@ mod tests {
         assert!(!decoded.anlpar.capable_10_full);
         assert!(!decoded.anlpar.capable_100_tx_half);
         assert!(!decoded.anlpar.capable_100_tx_full);
+    }
+
+    #[test_case]
+    fn rp1_ethernet_hardware_frame_provider_binding_reports_source_bound_local_only() {
+        let contract = rp1_ethernet_hardware_frame_provider_contract_evidence(
+            Rp1EthernetHardwareFrameProviderState::SourceBoundLinkReady,
+        );
+        assert_eq!(
+            contract.contract_id,
+            RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_BINDING_CONTRACT_ID
+        );
+        assert_eq!(
+            contract.accepted_macb_mid_raw,
+            RP1_ETHERNET_ACCEPTED_OBSERVED_MACB_MID_RAW
+        );
+        assert!(contract.provider_bound());
+        assert!(contract.link_ready());
+
+        let report = rp1_ethernet_hardware_frame_provider_binding_report(Some(contract));
+        assert_eq!(
+            report.provider_state,
+            Rp1EthernetHardwareFrameProviderState::SourceBoundLinkReady
+        );
+        assert_eq!(
+            report.classification,
+            RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_BOUND_CLASSIFICATION
+        );
+        assert!(report.provider_bound());
+        assert!(report.link_ready());
+        assert!(!report.live_packet_io_accepted);
+        assert!(!report.live_reachability_accepted);
+        assert!(!report.remote_receipt_accepted);
+        assert!(!report.compatibility_accepted);
+        assert!(!report.service_success);
+        assert!(!report.ssh_ready);
+        assert_eq!(
+            report.rejected_runtime_claims,
+            RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_REJECTED_RUNTIME_CLAIMS
+        );
+    }
+
+    #[test_case]
+    fn rp1_ethernet_hardware_frame_provider_binding_reports_missing_and_link_not_ready() {
+        let missing = rp1_ethernet_hardware_frame_provider_binding_report(None);
+        assert_eq!(
+            missing.provider_state,
+            Rp1EthernetHardwareFrameProviderState::MissingProvider
+        );
+        assert_eq!(
+            missing.classification,
+            RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_MISSING_CLASSIFICATION
+        );
+        assert!(!missing.provider_bound());
+        assert!(!missing.link_ready());
+        assert!(!missing.ssh_ready);
+
+        let link_not_ready = rp1_ethernet_hardware_frame_provider_binding_report(Some(
+            rp1_ethernet_hardware_frame_provider_contract_evidence(
+                Rp1EthernetHardwareFrameProviderState::SourceBoundLinkNotReady,
+            ),
+        ));
+        assert_eq!(
+            link_not_ready.provider_state,
+            Rp1EthernetHardwareFrameProviderState::SourceBoundLinkNotReady
+        );
+        assert_eq!(
+            link_not_ready.classification,
+            RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_LINK_NOT_READY_CLASSIFICATION
+        );
+        assert!(link_not_ready.provider_bound());
+        assert!(!link_not_ready.link_ready());
+        assert!(!link_not_ready.live_packet_io_accepted);
+        assert!(!link_not_ready.ssh_ready);
     }
 }

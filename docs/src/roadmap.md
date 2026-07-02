@@ -22657,6 +22657,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   DriverPacketAdapter/smoltcp/listener/descriptor-delivery path. v72, v60, and
   v53 remain deferred or blocked until that source repair is explicitly planned
   and accepted. selected_next_task=null and planningNeeded=true.
+- phase12-ssh-live-tcp-rp1-hardware-frame-provider-binding-local-core-20260702
+  accepts rp1-hardware-frame-provider-binding-local-core-accepted. No hardware
+  action, lab publication, boot snapshot mutation, Pi 5 power cycle, serial
+  capture, TFTP capture, packet-I/O proof, remote receipt, OpenSSH/generated-root
+  retry, compatibility claim, service success claim, ssh-ready=true,
+  fake/kernel-backed command expansion, broad shell work, or phase transition
+  was performed. src/rp1_ethernet.rs exposes a source-local RP1 Ethernet
+  hardware frame-provider contract/report, and src/network.rs consumes it in
+  the accepted DriverPacketAdapter/smoltcp/listener/descriptor-delivery lineage.
+  Missing-provider, link-not-ready, and missing descriptor delivery fail closed
+  with distinct classifications. The source-bound provider case sets only a
+  local hardware_frame_provider_bound label; live packet I/O, reachability,
+  remote receipt, compatibility, service success, and ssh_ready remain false.
+  v72, v60, and v53 remain deferred or blocked pending the next explicit
+  feature-required supervisor selection.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
