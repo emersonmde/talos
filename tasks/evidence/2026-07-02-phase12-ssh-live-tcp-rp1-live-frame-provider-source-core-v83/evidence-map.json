@@ -1,0 +1,41 @@
+{
+  "task_id": "phase12-ssh-live-tcp-rp1-live-frame-provider-source-core-v83-20260702",
+  "terminal_classification": "blocked-rp1-live-frame-provider-prerequisite-missing",
+  "source_evidence": [
+    {
+      "level": "static inspection",
+      "path": "src/rp1_ethernet.rs",
+      "result": "RP1 hardware frame-provider binding report is source-local metadata only; source evidence explicitly excludes DMA descriptor ownership and packet I/O."
+    },
+    {
+      "level": "static inspection",
+      "path": "src/network.rs",
+      "result": "Runtime binding with an RP1 provider still uses deterministic host-local DriverPacketAdapter traffic and classifies live packet ingress as blocked-no-live-frame-provider."
+    },
+    {
+      "level": "static inspection",
+      "path": "src/target/rpi5.rs",
+      "result": "Runtime-ready and runtime-blocked markers emit the missing RP1 DMA RX frame-provider owner token and keep live packet, reachability, receipt, compatibility, service, ssh_ready, and phase-transition claims false."
+    }
+  ],
+  "first_missing_fact": "source-owned RP1 DMA RX descriptor/ring ownership path, including cache/DMA ownership and provider polling/completion semantics, before the network DriverPacketAdapter can receive metadata-only live ingress frames",
+  "selected_next_task": null,
+  "planning_needed": true,
+  "redaction_review": {
+    "packet_payloads_retained": false,
+    "ssh_key_or_session_material_retained": false,
+    "private_data_retained": false,
+    "raw_hardware_logs_retained": false,
+    "external_identifiers_retained": false
+  },
+  "validation": {
+    "git_status_before_edits": "## main...origin/main [ahead 314]",
+    "cargo_fmt": "passed",
+    "cargo_test": "passed by exit status",
+    "shell_syntax": "not run; no shell scripts touched",
+    "jq": "passed before commit; final post-commit supervisor-state check recorded in durable state",
+    "mdbook": "passed",
+    "git_diff_check": "passed",
+    "git_diff_cached_check": "passed before commit"
+  }
+}

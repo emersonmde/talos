@@ -14359,3 +14359,20 @@ counts remain deterministic host-local descriptor-delivery evidence only.
 selected_next_task=null and planningNeeded=true before any v81 hardware
 packet-ingress preflight, remote receipt, OpenSSH compatibility, service
 readiness, fake command expansion, broad shell work, or phase transition.
+
+phase12-ssh-live-tcp-rp1-live-frame-provider-source-core-v83-20260702 accepts
+blocked-rp1-live-frame-provider-prerequisite-missing. No lab publication, boot
+snapshot mutation, Pi 5 power cycle, serial capture, TFTP capture, live packet
+proof, remote receipt, OpenSSH/generated-root retry, compatibility claim,
+service success claim, ssh_ready=true, fake/kernel-backed command expansion,
+broad shell work, or phase transition was performed. The selected source
+boundary still has only the RP1 Ethernet source-local hardware frame-provider
+binding report. That report can classify missing, link-not-ready, and
+source-bound local-only provider metadata, but it explicitly excludes DMA
+descriptor ownership and packet I/O. src/network.rs therefore keeps the
+DriverPacketAdapter handoff deterministic and host-local and keeps the
+live-packet-ingress discriminator fail-closed. The first missing fact is a
+source-owned RP1 DMA RX descriptor/ring ownership path, including cache/DMA
+ownership and provider polling/completion semantics, before any bounded packet
+stimulus or Pi 5 live packet-ingress proof. selected_next_task=null and
+planningNeeded=true.

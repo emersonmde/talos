@@ -22845,6 +22845,19 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   planningNeeded=true before any v81 hardware packet-ingress preflight, remote
   receipt, OpenSSH compatibility, service readiness, fake command expansion,
   broad shell work, or phase transition.
+- phase12-ssh-live-tcp-rp1-live-frame-provider-source-core-v83-20260702 accepts
+  blocked-rp1-live-frame-provider-prerequisite-missing. No lab publication, boot
+  snapshot mutation, Pi 5 power cycle, serial capture, TFTP capture, live packet
+  proof, remote receipt, OpenSSH/generated-root retry, compatibility claim,
+  service success claim, ssh_ready=true, fake/kernel-backed command expansion,
+  broad shell work, or phase transition was performed. The current RP1 Ethernet
+  source-local frame-provider report remains metadata-only and explicitly
+  excludes DMA descriptor ownership and packet I/O, so the runtime
+  DriverPacketAdapter handoff remains deterministic host-local evidence. The
+  first missing fact is a source-owned RP1 DMA RX descriptor/ring ownership path,
+  including cache/DMA ownership and provider polling/completion semantics, before
+  packet stimulus or Pi 5 live packet-ingress proof. selected_next_task=null and
+  planningNeeded=true.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
