@@ -14134,3 +14134,20 @@ for live TCP/SSH. v60 runtime-ready and v53 packet-I/O continuations also
 remain blocked/deferred because their dependencies are stale and not refreshed
 from v71. selected_next_task=null and planningNeeded=true for exactly one
 bounded feature-led successor plan.
+
+phase12-ssh-live-tcp-pi5-packet-ingress-prerequisite-contract-v73-20260702
+accepts packet-ingress-prerequisite-blocked-for-source-repair. No hardware
+action, lab publication, boot snapshot mutation, Pi 5 power cycle, serial
+capture, TFTP capture, kernel_main proof, route-start proof, runtime-ready
+proof, packet-I/O, OpenSSH/generated-root retry, remote receipt,
+compatibility claim, service success claim, ssh-ready=true,
+fake/kernel-backed command expansion, broad shell work, or phase transition was
+performed. The contract reconciles the accepted local/static smoltcp
+descriptor-delivery frontier with the accepted v71 selected exceptions-ready
+Pi 5 frontier. The first live TCP packet-ingress prerequisite is now the
+missing source-level RP1 Ethernet hardware frame-provider binding into the
+accepted DriverPacketAdapter/smoltcp/listener/descriptor-delivery path, not a
+generic kernel_main marker. v72 remains deferred, v60 remains blocked/deferred,
+and v53 remains blocked/deferred until that source repair is explicitly
+planned and accepted. selected_next_task=null and planningNeeded=true for
+supervisor planning of exactly one bounded source-repair implementation task.

@@ -1,0 +1,33 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-packet-ingress-prerequisite-contract-v73-20260702",
+  "evidence": [
+    {
+      "level": "git status inspection",
+      "result": "Before edits/action: ## main...origin/main [ahead 301]. No hardware action, lab publication, boot mutation, or Pi 5 power action performed."
+    },
+    {
+      "level": "static roadmap and architecture review",
+      "result": "Reviewed docs/src/roadmap.md, docs/src/project/phase12-networking-ssh.md, and docs/src/project/early-posix-shape.md; architecture review campaign and local POSIX/VFS foundation remain complete support, not reopened work."
+    },
+    {
+      "level": "accepted local/static smoltcp descriptor-delivery frontier",
+      "result": "tasks/2026-06-29-phase12-ssh-live-tcp-listener-descriptor-accept-local-core.md and tasks/2026-06-29-phase12-ssh-live-tcp-network-device-smoltcp-runtime-closeout.md accept deterministic local descriptor-facing delivery while keeping hardware_frame_provider_bound, live_packet_io_accepted, remote_receipt_accepted, compatibility_accepted, and ssh_ready false."
+    },
+    {
+      "level": "accepted Pi 5 proof frontier",
+      "result": "tasks/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-exceptions-after-target-init-closeout-v71.md accepts selected-normal-runtime-exceptions-frontier-proved with selected TFTP identity, 881 exceptions-ready serial markers, final pre-restore selected identity, and restore proof; kernel_main, route-start, runtime-ready, packet-I/O, and service claims remain unproved."
+    },
+    {
+      "level": "source inspection",
+      "result": "src/network.rs exposes DriverPacketAdapter and LiveTcpNetworkDeviceRuntimeReport, but require_hardware_frame_provider=true still yields BlockedMissingHardwareFrameProvider. Source search found no RP1 Ethernet hardware frame provider accepted as a NetworkDevice or as a bound live frame source for the accepted smoltcp listener/descriptor path."
+    },
+    {
+      "level": "feature-frontier contract",
+      "result": "First missing prerequisite classified as RP1 Ethernet hardware frame-provider binding into the accepted DriverPacketAdapter/smoltcp/listener/descriptor-delivery path. v72/v60/v53 remain deferred or blocked; selected_next_task=null; planningNeeded=true."
+    },
+    {
+      "level": "redaction review",
+      "result": "Task-owned evidence retains only task ids, source/path labels, hashes, byte counts, marker counts, public enum/function names, classifications, and validation outcomes; no secrets, packet payloads, peer identifiers, private user data, or SSH/session/key material are retained."
+    }
+  ]
+}

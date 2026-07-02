@@ -1,0 +1,24 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-packet-ingress-prerequisite-contract-v73-20260702",
+  "classification": "packet-ingress-prerequisite-blocked-for-source-repair",
+  "terminal": true,
+  "hardware_action": false,
+  "lab_publication": false,
+  "boot_snapshot_mutation": false,
+  "pi5_power_action": false,
+  "packet_io_accepted": false,
+  "open_ssh_compatibility_accepted": false,
+  "service_success_accepted": false,
+  "ssh_ready": false,
+  "phase_transition": false,
+  "first_missing_prerequisite": "RP1 Ethernet hardware frame-provider binding into the accepted DriverPacketAdapter/smoltcp/listener/descriptor-delivery path",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "No queued task currently owns the bounded source-level hardware frame-provider binding repair needed before live TCP packet ingress or packet-I/O proof.",
+  "stale_task_dispositions": {
+    "phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-after-exceptions-reconciliation-v72-20260702": "deferred; kernel_main is not the first packet-ingress prerequisite without the hardware frame-provider binding",
+    "phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-after-no-route-start-repair-reconciliation-v60-20260702": "blocked/deferred; stale route/runtime marker dependency chain",
+    "phase12-ssh-live-tcp-selected-normal-runtime-packet-io-continuation-reconciliation-v53-20260701": "blocked/deferred; packet-I/O requires refreshed frame-provider and hardware evidence gates"
+  },
+  "redaction_review": "No private user data, credentials, packet payloads, peer identifiers, SSH/session/key material, public-key blobs, signatures, fingerprints, operator identities, or external account data retained."
+}
