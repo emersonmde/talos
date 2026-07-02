@@ -1,0 +1,28 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-provenance-reconciliation-v58-20260702",
+  "classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-provenance-reconciliation-v58/classification.json",
+  "static_comparison_report": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-provenance-reconciliation-v58/static/static-comparison-report.md",
+  "refreshed_archive": {
+    "path": "target/tmp/selected-normal-runtime-entry-loop-v58.tar.gz",
+    "sha256_file": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-provenance-reconciliation-v58/static/archive-sha256.txt",
+    "kernel_size_file": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-provenance-reconciliation-v58/static/kernel-size.txt",
+    "kernel_sha256_file": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-provenance-reconciliation-v58/static/kernel-sha256.txt",
+    "root_selected_equality": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-provenance-reconciliation-v58/static/root-selected-equality.txt",
+    "marker_strings": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-provenance-reconciliation-v58/static/marker-strings.txt"
+  },
+  "validation": {
+    "archive_review": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-provenance-reconciliation-v58/validation/archive-review.stdout.txt",
+    "runtime_archive_review": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-provenance-reconciliation-v58/validation/runtime-archive-review.stdout.txt",
+    "capture_bundle_dry_run": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-provenance-reconciliation-v58/validation/capture-bundle-dry-run.json"
+  },
+  "accepted_inputs": {
+    "route_start_reconciliation_v49": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-route-start-continuation-reconciliation-v49.md",
+    "route_start_preflight_v50": "tasks/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-route-start-continuation-preflight-v50.md",
+    "runtime_ready_reconciliation_v51": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-continuation-reconciliation-v51.md",
+    "marker_family_reconciliation_v56": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-marker-family-reconciliation-v56.md",
+    "marker_family_preflight_v57": "tasks/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-runtime-ready-marker-family-preflight-v57.md",
+    "marker_family_closeout_v57": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-marker-family-closeout-v57.md",
+    "prior_entry_static_reconciliation_v33": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-entry-static-reconciliation-v33.md",
+    "prior_entry_preflight_v34": "tasks/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-entry-repair-preflight-v34.md"
+  }
+}

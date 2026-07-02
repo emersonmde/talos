@@ -1,0 +1,37 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-provenance-reconciliation-v58-20260702",
+  "classification": "selected-normal-runtime-no-route-start-discriminator-ready",
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59-20260702",
+  "planningNeeded": false,
+  "first_missing_fact_if_blocked": null,
+  "source_commit_for_artifact": "f7f5133e3cc107d6d9079a9128effe38bb77b8c7",
+  "archive": {
+    "path": "target/tmp/selected-normal-runtime-entry-loop-v58.tar.gz",
+    "sha256": "9988a761539867a50db538d64533df78b0af6d9cd3277ee0a1189cd3b2effc37"
+  },
+  "selected_kernel": {
+    "fetch_path": "da591740/kernel_2712.img",
+    "size_bytes": 152144,
+    "sha256": "6a7b970144e43c5b57b343c5ee4ff1275b077403ee83c3806dedd740acc89301"
+  },
+  "restore_target": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+  "expected_marker_family": [
+    "TALOS: asm_start",
+    "TALOS: asm_pre_rust_entry",
+    "TALOS: kernel_main",
+    "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=runtime-no-route-start-v58",
+    "TALOS: ssh-service-smoltcp-runtime-blocked capture-nonce=runtime-no-route-start-v58",
+    "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-no-route-start-v58"
+  ],
+  "required_success_marker": "TALOS: asm_start",
+  "fail_closed_classifications": [
+    "selected-normal-runtime-no-route-start-preflight-blocked",
+    "selected-normal-runtime-entry-marker-retained",
+    "selected-normal-runtime-route-start-marker-retained",
+    "selected-normal-runtime-runtime-blocked-marker-retained",
+    "selected-normal-runtime-runtime-ready-marker-retained",
+    "inconclusive-selected-normal-runtime-no-route-start-preflight"
+  ],
+  "packet_io_unblocked": false,
+  "redaction_review": "No raw serial text, raw TFTP peer/log-line fields, packet payloads, SSH/session/key material, boot artifact bytes, private user data, stable secret-derived identifiers, public-key blobs, signatures, fingerprints, operator identities, or unnecessary hardware data are retained by this no-hardware reconciliation."
+}

@@ -13747,3 +13747,23 @@ compatibility, service readiness, ssh-ready=true, fake command expansion,
 broad shell work, and phase transition remain unproved. selected_next_task is
 null and planningNeeded=true for supervisor planning of the next bounded
 no-route-start repair or discriminator.
+
+phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-provenance-reconciliation-v58-20260702
+accepts selected-normal-runtime-no-route-start-discriminator-ready. No hardware
+action, lab publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The reconciliation preserves
+the v57 frontier: selected post-power identity, selected same-window TFTP
+service, selected final pre-restore identity, known-good control, candidate
+rerun, and restore proof are no longer the missing facts, but the v51
+runtime-ready archive retained zero marker-family occurrences. The worker
+refreshed the selected normal-runtime entry-loop discriminator from current
+source at target/tmp/selected-normal-runtime-entry-loop-v58.tar.gz with
+SHA-256 9988a761539867a50db538d64533df78b0af6d9cd3277ee0a1189cd3b2effc37,
+da591740/kernel_2712.img size 152,144 bytes, selected kernel SHA-256
+6a7b970144e43c5b57b343c5ee4ff1275b077403ee83c3806dedd740acc89301, and
+required marker TALOS: asm_start. selected_next_task is
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59-20260702
+and planningNeeded=false. Packet-I/O remains dependency-blocked until a later
+closeout proves runtime-ready with selected Pi 5 evidence.
