@@ -64,6 +64,10 @@ for token in \
     "rp1-ethernet-hardware-frame-provider-link-not-ready" \
     "driver-packet-rx-frames=" \
     "driver-packet-tx-frames=" \
+    "live-packet-ingress-discriminator=" \
+    "blocked-no-live-frame-provider" \
+    "live-frame-provider-owner=missing-rp1-dma-rx-frame-provider" \
+    "packet-stimulus-owner=missing-lab-approved-packet-stimulus" \
     "live-packet-io-accepted=" \
     "live-reachability-accepted=" \
     "remote-receipt-accepted=" \

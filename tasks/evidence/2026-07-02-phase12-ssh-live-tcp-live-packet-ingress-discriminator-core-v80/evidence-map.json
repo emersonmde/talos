@@ -1,0 +1,40 @@
+{
+  "task_id": "phase12-ssh-live-tcp-live-packet-ingress-discriminator-core-v80-20260702",
+  "terminal_classification": "blocked-no-live-frame-provider",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "first_missing_fact": "No source-owned live RP1 DMA RX frame provider and no bounded lab-approved packet stimulus hook are present after v79 local-only runtime-ready marker retention.",
+  "source_changes": [
+    {
+      "path": "src/network.rs",
+      "disposition": "fixed",
+      "summary": "Added live_packet_ingress_discriminator_classification to LiveTcpNetworkDeviceRuntimeReport and classified runtime prerequisite missing, deterministic host-only adapter traffic, source-bound provider without live frame provider, and provider link-not-ready cases."
+    },
+    {
+      "path": "src/target/rpi5.rs",
+      "disposition": "fixed",
+      "summary": "Emits nonce-bearing runtime markers with live-packet-ingress-discriminator=blocked-no-live-frame-provider plus missing RP1 DMA RX frame-provider and packet-stimulus owners."
+    },
+    {
+      "path": "scripts/rpi5-ssh-service-smoltcp-runtime-ready-archive-review.sh",
+      "disposition": "fixed",
+      "summary": "Requires the runtime-ready archive to contain the fail-closed packet-ingress discriminator and missing-owner tokens."
+    }
+  ],
+  "accepted_v79_dependency": {
+    "task_id": "phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-closeout-v79-20260702",
+    "commit": "4ae2a5060d48445996a1864ca297aee897a36426",
+    "terminal_classification": "provider-runtime-ready-local-only-proved"
+  },
+  "rejected_claims": {
+    "live_packet_io_accepted": false,
+    "live_reachability_accepted": false,
+    "remote_receipt_accepted": false,
+    "compatibility_accepted": false,
+    "service_success": false,
+    "ssh_ready": false,
+    "phase_transition": false
+  },
+  "candidate_archive": null,
+  "redaction_review": "No packet payloads, SSH key/session material, private data, raw hardware logs, or external identifiers retained."
+}

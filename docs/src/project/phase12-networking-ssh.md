@@ -14343,3 +14343,19 @@ v53 remain deferred or blocked unless explicitly reselected with refreshed
 dependencies and gates. selected_next_task=null and planningNeeded=true before
 packet-I/O, OpenSSH/generated-root retry, fake command expansion, broad shell
 work, or phase transition.
+
+phase12-ssh-live-tcp-live-packet-ingress-discriminator-core-v80-20260702
+accepts blocked-no-live-frame-provider. No lab publication, boot snapshot
+mutation, Pi 5 power cycle, serial capture, TFTP capture, live packet proof,
+remote receipt, OpenSSH/generated-root retry, compatibility claim, service
+success claim, ssh_ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The selected runtime-ready
+route now reports a nonce-bearing packet-ingress discriminator in the same
+marker family that v79 proved retained, but the accepted classification is
+fail-closed: live-packet-ingress-discriminator=blocked-no-live-frame-provider.
+The first missing owners are the source-owned RP1 DMA RX live frame provider
+and a bounded lab-approved packet stimulus hook. DriverPacketAdapter frame
+counts remain deterministic host-local descriptor-delivery evidence only.
+selected_next_task=null and planningNeeded=true before any v81 hardware
+packet-ingress preflight, remote receipt, OpenSSH compatibility, service
+readiness, fake command expansion, broad shell work, or phase transition.

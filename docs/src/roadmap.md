@@ -22830,6 +22830,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   selected_next_task=null and planningNeeded=true before packet-I/O,
   OpenSSH/generated-root retry, fake command expansion, broad shell work, or
   phase transition.
+- phase12-ssh-live-tcp-live-packet-ingress-discriminator-core-v80-20260702
+  accepts blocked-no-live-frame-provider. No lab publication, boot snapshot
+  mutation, Pi 5 power cycle, serial capture, TFTP capture, live packet proof,
+  remote receipt, OpenSSH/generated-root retry, compatibility claim, service
+  success claim, ssh_ready=true, fake/kernel-backed command expansion, broad
+  shell work, or phase transition was performed. src/network.rs now carries a
+  live_packet_ingress_discriminator_classification on the runtime report,
+  src/target/rpi5.rs emits the discriminator and missing-owner tokens in the
+  retained runtime marker family, and the runtime-ready archive review requires
+  those strings. The selected path remains fail-closed because the first
+  missing owners are source-owned RP1 DMA RX live frame provider and a bounded
+  lab-approved packet stimulus hook. selected_next_task=null and
+  planningNeeded=true before any v81 hardware packet-ingress preflight, remote
+  receipt, OpenSSH compatibility, service readiness, fake command expansion,
+  broad shell work, or phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

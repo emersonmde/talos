@@ -2200,6 +2200,14 @@ const SMOLTCP_SOCKET_BRIDGE_CLIENT_PORT: u16 = SOCKET_SYNTHETIC_CLIENT_PORT_BASE
 const SMOLTCP_SOCKET_BRIDGE_SERVER_PORT: u16 = 8080;
 const SMOLTCP_SOCKET_BRIDGE_MAX_STEPS: usize = 48;
 const LIVE_TCP_RUNTIME_DRIVER_PACKET_PAYLOAD: &[u8] = b"runtime-device";
+pub(crate) const LIVE_PACKET_INGRESS_DISCRIMINATOR_NO_LIVE_FRAME_PROVIDER: &str =
+    "blocked-no-live-frame-provider";
+pub(crate) const LIVE_PACKET_INGRESS_DISCRIMINATOR_DETERMINISTIC_HOST_ONLY: &str =
+    "deterministic-driver-packet-adapter-host-only";
+pub(crate) const LIVE_PACKET_INGRESS_DISCRIMINATOR_PROVIDER_LINK_NOT_READY: &str =
+    "blocked-hardware-frame-provider-link-not-ready";
+pub(crate) const LIVE_PACKET_INGRESS_DISCRIMINATOR_RUNTIME_PREREQUISITE_MISSING: &str =
+    "blocked-runtime-prerequisite-missing";
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct NetworkSocketDescriptor {
@@ -2726,6 +2734,7 @@ pub(crate) struct LiveTcpNetworkDeviceRuntimeReport {
     deterministic_device_interface_bound: bool,
     hardware_frame_provider_bound: bool,
     hardware_frame_provider_classification: Option<&'static str>,
+    live_packet_ingress_discriminator_classification: &'static str,
     driver_packet_rx_frames: usize,
     driver_packet_tx_frames: usize,
     live_packet_io_accepted: bool,
@@ -2778,6 +2787,10 @@ impl LiveTcpNetworkDeviceRuntimeReport {
 
     pub(crate) const fn hardware_frame_provider_classification(self) -> Option<&'static str> {
         self.hardware_frame_provider_classification
+    }
+
+    pub(crate) const fn live_packet_ingress_discriminator_classification(self) -> &'static str {
+        self.live_packet_ingress_discriminator_classification
     }
 
     pub(crate) const fn driver_packet_rx_frames(self) -> usize {
@@ -3477,6 +3490,8 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
                 deterministic_device_interface_bound: false,
                 hardware_frame_provider_bound: false,
                 hardware_frame_provider_classification: None,
+                live_packet_ingress_discriminator_classification:
+                    LIVE_PACKET_INGRESS_DISCRIMINATOR_RUNTIME_PREREQUISITE_MISSING,
                 driver_packet_rx_frames: 0,
                 driver_packet_tx_frames: 0,
                 live_packet_io_accepted: false,
@@ -3497,6 +3512,8 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
                 deterministic_device_interface_bound: false,
                 hardware_frame_provider_bound: false,
                 hardware_frame_provider_classification: None,
+                live_packet_ingress_discriminator_classification:
+                    LIVE_PACKET_INGRESS_DISCRIMINATOR_RUNTIME_PREREQUISITE_MISSING,
                 driver_packet_rx_frames: 0,
                 driver_packet_tx_frames: 0,
                 live_packet_io_accepted: false,
@@ -3519,6 +3536,8 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
                 hardware_frame_provider_classification: Some(
                     crate::rp1_ethernet::RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_MISSING_CLASSIFICATION,
                 ),
+                live_packet_ingress_discriminator_classification:
+                    LIVE_PACKET_INGRESS_DISCRIMINATOR_NO_LIVE_FRAME_PROVIDER,
                 driver_packet_rx_frames: 0,
                 driver_packet_tx_frames: 0,
                 live_packet_io_accepted: false,
@@ -3540,6 +3559,8 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
             deterministic_device_interface_bound: true,
             hardware_frame_provider_bound: false,
             hardware_frame_provider_classification: None,
+            live_packet_ingress_discriminator_classification:
+                LIVE_PACKET_INGRESS_DISCRIMINATOR_DETERMINISTIC_HOST_ONLY,
             driver_packet_rx_frames: runtime_observation.client_to_server_frames()
                 + runtime_observation.server_to_client_frames(),
             driver_packet_tx_frames: runtime_observation.client_to_server_frames()
@@ -3572,6 +3593,8 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
                 deterministic_device_interface_bound: false,
                 hardware_frame_provider_bound: false,
                 hardware_frame_provider_classification: None,
+                live_packet_ingress_discriminator_classification:
+                    LIVE_PACKET_INGRESS_DISCRIMINATOR_RUNTIME_PREREQUISITE_MISSING,
                 driver_packet_rx_frames: 0,
                 driver_packet_tx_frames: 0,
                 live_packet_io_accepted: false,
@@ -3592,6 +3615,8 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
                 deterministic_device_interface_bound: false,
                 hardware_frame_provider_bound: false,
                 hardware_frame_provider_classification: None,
+                live_packet_ingress_discriminator_classification:
+                    LIVE_PACKET_INGRESS_DISCRIMINATOR_RUNTIME_PREREQUISITE_MISSING,
                 driver_packet_rx_frames: 0,
                 driver_packet_tx_frames: 0,
                 live_packet_io_accepted: false,
@@ -3612,6 +3637,8 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
                 deterministic_device_interface_bound: true,
                 hardware_frame_provider_bound: false,
                 hardware_frame_provider_classification: Some(provider_report.classification),
+                live_packet_ingress_discriminator_classification:
+                    LIVE_PACKET_INGRESS_DISCRIMINATOR_NO_LIVE_FRAME_PROVIDER,
                 driver_packet_rx_frames: 0,
                 driver_packet_tx_frames: 0,
                 live_packet_io_accepted: false,
@@ -3632,6 +3659,8 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
                 deterministic_device_interface_bound: true,
                 hardware_frame_provider_bound: true,
                 hardware_frame_provider_classification: Some(provider_report.classification),
+                live_packet_ingress_discriminator_classification:
+                    LIVE_PACKET_INGRESS_DISCRIMINATOR_PROVIDER_LINK_NOT_READY,
                 driver_packet_rx_frames: 0,
                 driver_packet_tx_frames: 0,
                 live_packet_io_accepted: false,
@@ -3654,6 +3683,8 @@ impl<const CAPACITY: usize> NetworkSocketDescriptorTable<CAPACITY> {
             deterministic_device_interface_bound: true,
             hardware_frame_provider_bound: true,
             hardware_frame_provider_classification: Some(provider_report.classification),
+            live_packet_ingress_discriminator_classification:
+                LIVE_PACKET_INGRESS_DISCRIMINATOR_NO_LIVE_FRAME_PROVIDER,
             driver_packet_rx_frames: runtime_observation.client_to_server_frames()
                 + runtime_observation.server_to_client_frames(),
             driver_packet_tx_frames: runtime_observation.client_to_server_frames()
@@ -7374,6 +7405,10 @@ mod tests {
             runtime.hardware_frame_provider_classification(),
             Some(crate::rp1_ethernet::RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_BOUND_CLASSIFICATION)
         );
+        assert_eq!(
+            runtime.live_packet_ingress_discriminator_classification(),
+            LIVE_PACKET_INGRESS_DISCRIMINATOR_NO_LIVE_FRAME_PROVIDER
+        );
         assert_eq!(runtime.driver_packet_rx_frames(), 6);
         assert_eq!(
             runtime.driver_packet_rx_frames(),
@@ -7398,6 +7433,10 @@ mod tests {
         assert!(runtime.descriptor_facing_connection_delivered());
         assert!(runtime.deterministic_device_interface_bound());
         assert!(!runtime.hardware_frame_provider_bound());
+        assert_eq!(
+            runtime.live_packet_ingress_discriminator_classification(),
+            LIVE_PACKET_INGRESS_DISCRIMINATOR_DETERMINISTIC_HOST_ONLY
+        );
         assert!(runtime.driver_packet_rx_frames() > 0);
         assert_eq!(
             runtime.driver_packet_rx_frames(),
@@ -7427,6 +7466,10 @@ mod tests {
         assert_eq!(
             runtime.hardware_frame_provider_classification(),
             Some(crate::rp1_ethernet::RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_BOUND_CLASSIFICATION)
+        );
+        assert_eq!(
+            runtime.live_packet_ingress_discriminator_classification(),
+            LIVE_PACKET_INGRESS_DISCRIMINATOR_NO_LIVE_FRAME_PROVIDER
         );
         assert!(runtime.driver_packet_rx_frames() > 0);
         assert_eq!(
@@ -7458,6 +7501,10 @@ mod tests {
             missing_runtime.hardware_frame_provider_classification(),
             Some(crate::rp1_ethernet::RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_MISSING_CLASSIFICATION)
         );
+        assert_eq!(
+            missing_runtime.live_packet_ingress_discriminator_classification(),
+            LIVE_PACKET_INGRESS_DISCRIMINATOR_NO_LIVE_FRAME_PROVIDER
+        );
         assert!(!missing_runtime.ssh_ready());
 
         let link_not_ready =
@@ -7481,6 +7528,10 @@ mod tests {
             Some(
                 crate::rp1_ethernet::RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_LINK_NOT_READY_CLASSIFICATION
             )
+        );
+        assert_eq!(
+            link_not_ready_runtime.live_packet_ingress_discriminator_classification(),
+            LIVE_PACKET_INGRESS_DISCRIMINATOR_PROVIDER_LINK_NOT_READY
         );
         assert_eq!(link_not_ready_runtime.driver_packet_rx_frames(), 0);
         assert!(!link_not_ready_runtime.live_packet_io_accepted());
@@ -7528,6 +7579,10 @@ mod tests {
             missing_descriptor.binding_state(),
             LiveTcpNetworkDeviceRuntimeBindingState::BlockedMissingDescriptorDelivery
         );
+        assert_eq!(
+            missing_descriptor.live_packet_ingress_discriminator_classification(),
+            LIVE_PACKET_INGRESS_DISCRIMINATOR_RUNTIME_PREREQUISITE_MISSING
+        );
         assert!(!missing_descriptor.descriptor_facing_connection_delivered());
         assert!(!missing_descriptor.deterministic_device_interface_bound());
         assert!(!missing_descriptor.live_reachability_accepted());
@@ -7557,6 +7612,10 @@ mod tests {
         assert!(missing_interface.descriptor_facing_connection_delivered());
         assert!(!missing_interface.deterministic_device_interface_bound());
         assert_eq!(missing_interface.driver_packet_rx_frames(), 0);
+        assert_eq!(
+            missing_interface.live_packet_ingress_discriminator_classification(),
+            LIVE_PACKET_INGRESS_DISCRIMINATOR_RUNTIME_PREREQUISITE_MISSING
+        );
         assert!(!missing_interface.live_packet_io_accepted());
         assert!(!missing_interface.ssh_ready());
 
@@ -7571,6 +7630,10 @@ mod tests {
         assert!(missing_hardware.deterministic_device_interface_bound());
         assert!(!missing_hardware.hardware_frame_provider_bound());
         assert_eq!(missing_hardware.driver_packet_tx_frames(), 0);
+        assert_eq!(
+            missing_hardware.live_packet_ingress_discriminator_classification(),
+            LIVE_PACKET_INGRESS_DISCRIMINATOR_NO_LIVE_FRAME_PROVIDER
+        );
         assert!(!missing_hardware.remote_receipt_accepted());
         assert!(!missing_hardware.compatibility_accepted());
         assert!(!missing_hardware.ssh_ready());
@@ -7592,6 +7655,10 @@ mod tests {
         assert_eq!(
             missing_provider_report.hardware_frame_provider_classification(),
             Some(crate::rp1_ethernet::RP1_ETHERNET_HARDWARE_FRAME_PROVIDER_MISSING_CLASSIFICATION)
+        );
+        assert_eq!(
+            missing_provider_report.live_packet_ingress_discriminator_classification(),
+            LIVE_PACKET_INGRESS_DISCRIMINATOR_NO_LIVE_FRAME_PROVIDER
         );
         assert!(!missing_provider_report.ssh_ready());
 
@@ -7620,6 +7687,10 @@ mod tests {
             )
         );
         assert_eq!(link_not_ready_report.driver_packet_rx_frames(), 0);
+        assert_eq!(
+            link_not_ready_report.live_packet_ingress_discriminator_classification(),
+            LIVE_PACKET_INGRESS_DISCRIMINATOR_PROVIDER_LINK_NOT_READY
+        );
         assert!(!link_not_ready_report.live_packet_io_accepted());
         assert!(!link_not_ready_report.ssh_ready());
 

@@ -26318,6 +26318,10 @@ fn write_runtime_ready_marker(runtime: crate::network::LiveTcpNetworkDeviceRunti
     write_early_dec_u64(runtime.driver_packet_rx_frames() as u64);
     write_early_static(" driver-packet-tx-frames=");
     write_early_dec_u64(runtime.driver_packet_tx_frames() as u64);
+    write_early_static(" live-packet-ingress-discriminator=");
+    write_early_static(runtime.live_packet_ingress_discriminator_classification());
+    write_early_static(" live-frame-provider-owner=missing-rp1-dma-rx-frame-provider");
+    write_early_static(" packet-stimulus-owner=missing-lab-approved-packet-stimulus");
     write_early_static(" live-packet-io-accepted=");
     write_bool(runtime.live_packet_io_accepted());
     write_early_static(" live-reachability-accepted=");
@@ -26366,6 +26370,10 @@ fn write_runtime_blocked_marker(runtime: crate::network::LiveTcpNetworkDeviceRun
     write_bool(runtime.descriptor_facing_connection_delivered());
     write_early_static(" deterministic-device-interface-bound=");
     write_bool(runtime.deterministic_device_interface_bound());
+    write_early_static(" live-packet-ingress-discriminator=");
+    write_early_static(runtime.live_packet_ingress_discriminator_classification());
+    write_early_static(" live-frame-provider-owner=missing-rp1-dma-rx-frame-provider");
+    write_early_static(" packet-stimulus-owner=missing-lab-approved-packet-stimulus");
     write_early_static(" live-packet-io-accepted=false");
     write_early_static(" live-reachability-accepted=false");
     write_early_static(" remote-receipt-accepted=false");
