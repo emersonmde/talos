@@ -14080,3 +14080,21 @@ service success, ssh-ready, and phase transition. selected_next_task is
 phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-after-target-init-preflight-v71-20260702
 and planningNeeded=false. Later kernel_main, route-start, runtime/network, and
 service milestones remain blocked.
+
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-after-target-init-preflight-v71-20260702
+accepts selected-normal-runtime-exceptions-marker-retained. Under
+hardwareTestLock, the worker published the v70 selected exceptions-ready
+archive, staged selected tree
+b4c9bf0c09d122def872228a4e3d2a0f5836bfa0c7e4e4cdaa3b42ddf3e8ee9c, and
+captured serialized Pi 5 evidence. The selected da591740/kernel_2712.img was
+served four times at 152,880 bytes, and the serial window retained 881
+occurrences of TALOS: exceptions ready
+capture-nonce=runtime-marker-route-static. Final pre-restore identity still
+reported the selected tree and selected fetch bytes, then restore returned the
+lab to phase12-ssh-v10-openssh-clean-pre-20260624T074100Z with tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. GET /
+returned 404 in this lab revision, so /status and /boot/files are the retained
+selected-tree identity sources. selected_next_task is
+phase12-ssh-live-tcp-selected-normal-runtime-exceptions-after-target-init-closeout-v71-20260702
+and planningNeeded=false. Kernel_main and later runtime/network/service
+milestones remain blocked until closeout.

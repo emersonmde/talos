@@ -1,0 +1,22 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-after-target-init-preflight-v71-20260702",
+  "classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-after-target-init-preflight-v71/classification.json",
+  "validation": {
+    "git_status_before_lab_action": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-after-target-init-preflight-v71/validation/git-status-before-lab-action.txt",
+    "archive_sha256": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-after-target-init-preflight-v71/validation/archive-sha256.txt",
+    "archive_review": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-after-target-init-preflight-v71/validation/archive-review.stdout.txt",
+    "exceptions_ready_archive_review": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-after-target-init-preflight-v71/validation/exceptions-ready-archive-review.stdout.txt",
+    "pre_publication_status": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-after-target-init-preflight-v71/validation/pre-publication-status.json",
+    "publish_archive": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-after-target-init-preflight-v71/validation/publish-archive.json",
+    "post_publication_status": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-after-target-init-preflight-v71/validation/post-publication-status.json",
+    "run_summary": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-after-target-init-preflight-v71/validation/run-summary.json",
+    "post_second_run_restore": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-after-target-init-preflight-v71/validation/post-second-run-post-restore-status.json"
+  },
+  "candidate_runs": {
+    "accepted_run": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-after-target-init-preflight-v71/run-20260702T095454Z",
+    "incomplete_helper_rerun_not_used_for_classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-after-target-init-preflight-v71/run-20260702T095558Z"
+  },
+  "redaction_review": {
+    "note": "Evidence is lab-controller boot identity, TFTP event summaries, and serial marker output from Talos. It contains no private user data, credentials, packet payloads, SSH/session/key material, or external account data."
+  }
+}
