@@ -13856,3 +13856,25 @@ of those markers. The first missing fact is now after TALOS:
 asm_pre_rust_entry and before TALOS: rust_entry. selected_next_task is
 phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63-20260702
 and planningNeeded=false.
+
+phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63-20260702
+accepts selected-normal-runtime-rust-entry-discriminator-ready. No hardware
+action, lab publication, boot snapshot mutation, Pi 5 power cycle, BootInfo
+parsing proof, target-init proof, exceptions proof, kernel_main proof,
+route-start proof, runtime-ready proof, packet-I/O, OpenSSH/generated-root
+retry, remote receipt, compatibility claim, service success claim,
+ssh-ready=true, fake/kernel-backed command expansion, broad shell work, or
+phase transition was performed. The worker refreshed the current-source
+selected normal-runtime rust_entry marker-loop archive from commit
+ca15cbd2c36619813ff70517c1e99c6c7d018bbd. The archive is
+target/tmp/selected-normal-runtime-rust-entry-v63.tar.gz with SHA-256
+7211853ae0fe6008b10b340725799503ff3ff9be46518428d2e5d3fdbf4e641f; selected
+da591740/kernel_2712.img is 152,816 bytes with SHA-256
+347679f5797d2c99d61a56d5b250ee0245a0f19e9ac5f927491c4b9a019709c6. Static
+review proves TALOS: rust_entry is embedded with negative claims for BootInfo,
+target init, exceptions, kernel_main, packet-I/O, service success, ssh-ready,
+and phase transition. The objectively specified next serialized hardware task
+is
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-after-pre-rust-preflight-v64-20260702,
+but no such task is queued; planningNeeded=true for supervisor taskQueue
+planning.

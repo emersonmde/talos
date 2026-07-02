@@ -1,0 +1,49 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63-20260702",
+  "classification": "selected-normal-runtime-rust-entry-discriminator-ready",
+  "status": "accepted",
+  "planning_needed": true,
+  "planning_reason": "The refreshed current-source selected normal-runtime rust_entry archive contract is ready, but no serialized v64 Pi 5 rust_entry preflight task is present in taskQueue and the worker may not create new queued tasks.",
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-after-pre-rust-preflight-v64-20260702",
+  "first_missing_fact": "Pi 5 selected hardware evidence for TALOS: rust_entry from the refreshed v63 archive is not yet captured.",
+  "source_commit": "ca15cbd2c36619813ff70517c1e99c6c7d018bbd",
+  "archive": {
+    "path": "target/tmp/selected-normal-runtime-rust-entry-v63.tar.gz",
+    "sha256": "7211853ae0fe6008b10b340725799503ff3ff9be46518428d2e5d3fdbf4e641f"
+  },
+  "selected_fetch": {
+    "path": "da591740/kernel_2712.img",
+    "bytes": 152816,
+    "sha256": "347679f5797d2c99d61a56d5b250ee0245a0f19e9ac5f927491c4b9a019709c6"
+  },
+  "required_marker": "TALOS: rust_entry",
+  "marker_family": [
+    "TALOS: asm_start",
+    "TALOS: asm_pre_rust_entry",
+    "TALOS: rust_entry",
+    "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=runtime-marker-route-static",
+    "TALOS: ssh-service-smoltcp-runtime-blocked capture-nonce=runtime-marker-route-static",
+    "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-marker-route-static"
+  ],
+  "non_goals_preserved": [
+    "hardware_action",
+    "lab_publication",
+    "boot_snapshot_mutation",
+    "pi5_power_action",
+    "bootinfo_parsing_proof",
+    "target_init_proof",
+    "exceptions_proof",
+    "kernel_main_proof",
+    "route_start_proof",
+    "runtime_ready_proof",
+    "packet_io",
+    "openssh_generated_root_retry",
+    "remote_receipt",
+    "service_readiness",
+    "ssh_ready_true",
+    "fake_command_expansion",
+    "broad_shell_work",
+    "phase_transition"
+  ],
+  "commit": "recorded-in-supervisor-state-after-final-commit"
+}

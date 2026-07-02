@@ -1,0 +1,16 @@
+target/tmp/selected-normal-runtime-rust-entry-v63-boot-tree/bcm2712-rpi-5-b.dtb
+target/tmp/selected-normal-runtime-rust-entry-v63-boot-tree/cmdline.txt
+target/tmp/selected-normal-runtime-rust-entry-v63-boot-tree/config.txt
+target/tmp/selected-normal-runtime-rust-entry-v63-boot-tree/da591740/bcm2712-rpi-5-b.dtb
+target/tmp/selected-normal-runtime-rust-entry-v63-boot-tree/da591740/cmdline.txt
+target/tmp/selected-normal-runtime-rust-entry-v63-boot-tree/da591740/config.txt
+target/tmp/selected-normal-runtime-rust-entry-v63-boot-tree/da591740/kernel8.img
+target/tmp/selected-normal-runtime-rust-entry-v63-boot-tree/da591740/kernel_2712.img
+target/tmp/selected-normal-runtime-rust-entry-v63-boot-tree/da591740/overlays/bcm2712d0.dtbo
+target/tmp/selected-normal-runtime-rust-entry-v63-boot-tree/da591740/overlays/overlay_map.dtb
+target/tmp/selected-normal-runtime-rust-entry-v63-boot-tree/da591740/overlays/uart0-pi5.dtbo
+target/tmp/selected-normal-runtime-rust-entry-v63-boot-tree/kernel8.img
+target/tmp/selected-normal-runtime-rust-entry-v63-boot-tree/kernel_2712.img
+target/tmp/selected-normal-runtime-rust-entry-v63-boot-tree/overlays/bcm2712d0.dtbo
+target/tmp/selected-normal-runtime-rust-entry-v63-boot-tree/overlays/overlay_map.dtb
+target/tmp/selected-normal-runtime-rust-entry-v63-boot-tree/overlays/uart0-pi5.dtbo

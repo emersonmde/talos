@@ -1,0 +1,43 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63-20260702",
+  "classification": "selected-normal-runtime-rust-entry-discriminator-ready",
+  "sources": {
+    "accepted_v62_closeout": "tasks/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-closeout-v62.md",
+    "accepted_v37_reconciliation": "tasks/2026-07-01-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-continuation-reconciliation-v37.md",
+    "accepted_v38_preflight": "tasks/2026-07-01-phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-continuation-preflight-v38.md",
+    "boot_tree_helper": "scripts/rpi5-ssh-service-smoltcp-rust-entry-marker-loop-boot-tree.sh",
+    "archive_review_helper": "scripts/rpi5-ssh-service-smoltcp-rust-entry-marker-loop-archive-review.sh",
+    "capture_helper": "scripts/rpi5-capture-invariant-proof-bundle.sh"
+  },
+  "static_evidence": {
+    "source_commit": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63/static/source-commit.txt",
+    "archive_sha256": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63/static/archive-sha256.txt",
+    "kernel_sha256": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63/static/kernel-sha256.txt",
+    "kernel_size": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63/static/kernel-size.txt",
+    "marker_strings": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63/static/marker-strings.txt",
+    "header_text_offset": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63/static/text-offset.txt",
+    "header_image_size": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63/static/header-image-size.txt",
+    "header_flags": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63/static/flags.txt",
+    "header_magic": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63/static/image-magic.txt",
+    "root_selected_cmp": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63/static/root-selected-kernel-cmp.txt",
+    "static_comparison_report": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63/static/static-comparison-report.md"
+  },
+  "validation": {
+    "git_status_before": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63/validation/git-status-before.txt",
+    "cargo_fmt_check": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63/validation/cargo-fmt-check.log",
+    "cargo_build": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63/validation/cargo-build.log",
+    "archive_review_stdout": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63/validation/archive-review.stdout.txt",
+    "archive_review_stderr": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63/validation/archive-review.stderr.txt",
+    "rust_entry_archive_review_stdout": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63/validation/rust-entry-archive-review.stdout.txt",
+    "rust_entry_archive_review_stderr": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63/validation/rust-entry-archive-review.stderr.txt",
+    "capture_bundle_dry_run": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63/validation/capture-bundle-dry-run.json"
+  },
+  "redaction": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_peer_or_log_lines_retained": false,
+    "packet_payloads_retained": false,
+    "ssh_or_key_material_retained": false,
+    "boot_artifact_bytes_committed": false,
+    "private_user_data_retained": false
+  }
+}

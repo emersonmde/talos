@@ -1,0 +1,32 @@
+archive=target/tmp/selected-normal-runtime-rust-entry-v63.tar.gz
+sha256=7211853ae0fe6008b10b340725799503ff3ff9be46518428d2e5d3fdbf4e641f
+file_count=19
+kernel_size=152816
+header_image_size=152816
+text_offset=0
+flags=12
+loader_diagnostic=false
+circle_config_loader_diagnostic=false
+manifest:
+  bcm2712-rpi-5-b.dtb
+  cmdline.txt
+  config.txt
+  da591740
+  da591740/bcm2712-rpi-5-b.dtb
+  da591740/cmdline.txt
+  da591740/config.txt
+  da591740/kernel8.img
+  da591740/kernel_2712.img
+  da591740/overlays
+  da591740/overlays/bcm2712d0.dtbo
+  da591740/overlays/overlay_map.dtb
+  da591740/overlays/uart0-pi5.dtbo
+  kernel8.img
+  kernel_2712.img
+  overlays
+  overlays/bcm2712d0.dtbo
+  overlays/overlay_map.dtb
+  overlays/uart0-pi5.dtbo
+rust_entry_marker_loop=ready
+required_marker=TALOS: rust_entry capture-nonce=runtime-marker-route-static
+archive=target/tmp/selected-normal-runtime-rust-entry-v63.tar.gz
