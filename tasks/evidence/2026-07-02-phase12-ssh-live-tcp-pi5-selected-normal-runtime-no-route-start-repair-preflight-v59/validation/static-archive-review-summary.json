@@ -1,0 +1,9 @@
+{
+  "archive": "target/tmp/selected-normal-runtime-entry-loop-v58.tar.gz",
+  "archive_sha256": "9988a761539867a50db538d64533df78b0af6d9cd3277ee0a1189cd3b2effc37",
+  "selected_fetch": "da591740/kernel_2712.img",
+  "selected_kernel_sha256": "6a7b970144e43c5b57b343c5ee4ff1275b077403ee83c3806dedd740acc89301",
+  "selected_kernel_bytes": 152144,
+  "required_success_marker": "TALOS: asm_start",
+  "static_archive_review": "pass"
+}

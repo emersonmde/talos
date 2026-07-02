@@ -1,0 +1,141 @@
+{
+  "action": "tftp logs",
+  "ok": true,
+  "tftp": {
+    "cursor_end": 4752916,
+    "cursor_start": 4751565,
+    "events": [
+      {
+        "bytes": 118,
+        "client_ip": "REDACTED",
+        "client_mac": "REDACTED",
+        "filename": "da591740/config.txt",
+        "line": "REDACTED",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "REDACTED",
+        "client_mac": "REDACTED",
+        "filename": "da591740/config.txt",
+        "line": "REDACTED",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "REDACTED",
+        "client_mac": "REDACTED",
+        "filename": "da591740/pieeprom.sig",
+        "line": "REDACTED",
+        "status": "not_found"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "REDACTED",
+        "client_mac": "REDACTED",
+        "filename": "da591740//config.txt",
+        "line": "REDACTED",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "REDACTED",
+        "client_mac": "REDACTED",
+        "filename": "da591740//config.txt",
+        "line": "REDACTED",
+        "status": "served"
+      },
+      {
+        "bytes": 152144,
+        "client_ip": "REDACTED",
+        "client_mac": "REDACTED",
+        "filename": "da591740/kernel_2712.img",
+        "line": "REDACTED",
+        "status": "served"
+      },
+      {
+        "bytes": 78679,
+        "client_ip": "REDACTED",
+        "client_mac": "REDACTED",
+        "filename": "da591740/bcm2712-rpi-5-b.dtb",
+        "line": "REDACTED",
+        "status": "served"
+      },
+      {
+        "bytes": 5971,
+        "client_ip": "REDACTED",
+        "client_mac": "REDACTED",
+        "filename": "da591740//overlays/overlay_map.dtb",
+        "line": "REDACTED",
+        "status": "served"
+      },
+      {
+        "bytes": 1363,
+        "client_ip": "REDACTED",
+        "client_mac": "REDACTED",
+        "filename": "da591740//overlays/bcm2712d0.dtbo",
+        "line": "REDACTED",
+        "status": "served"
+      },
+      {
+        "bytes": 118,
+        "client_ip": "REDACTED",
+        "client_mac": "REDACTED",
+        "filename": "da591740//config.txt",
+        "line": "REDACTED",
+        "status": "served"
+      },
+      {
+        "bytes": 81,
+        "client_ip": "REDACTED",
+        "client_mac": "REDACTED",
+        "filename": "da591740//cmdline.txt",
+        "line": "REDACTED",
+        "status": "served"
+      },
+      {
+        "bytes": null,
+        "client_ip": "REDACTED",
+        "client_mac": "REDACTED",
+        "filename": "da591740/armstub8-2712.bin",
+        "line": "REDACTED",
+        "status": "not_found"
+      },
+      {
+        "bytes": 152144,
+        "client_ip": "REDACTED",
+        "client_mac": "REDACTED",
+        "filename": "da591740/kernel_2712.img",
+        "line": "REDACTED",
+        "status": "served"
+      }
+    ],
+    "lines": [
+      "REDACTED",
+      "REDACTED",
+      "REDACTED",
+      "REDACTED",
+      "REDACTED",
+      "REDACTED",
+      "REDACTED",
+      "REDACTED",
+      "REDACTED",
+      "REDACTED",
+      "REDACTED",
+      "REDACTED",
+      "REDACTED",
+      "REDACTED",
+      "REDACTED"
+    ],
+    "log": "/state/tftp.log",
+    "log_size": 4752916,
+    "tail_mode": false,
+    "truncated": false
+  },
+  "talos_tftp_stability": {
+    "stable": true,
+    "reason": "stable",
+    "stable_samples": 3,
+    "required_samples": 3
+  }
+}

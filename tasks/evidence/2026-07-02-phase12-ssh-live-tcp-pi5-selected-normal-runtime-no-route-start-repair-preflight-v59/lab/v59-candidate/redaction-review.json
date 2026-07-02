@@ -1,0 +1,5 @@
+{
+  "raw_serial_text_base64_redacted": true,
+  "raw_tftp_peer_line_fields_redacted": true,
+  "retained": "counts, filenames, byte counts, cursor metadata, tree hashes, marker-family classifications, and restore status"
+}

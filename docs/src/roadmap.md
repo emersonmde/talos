@@ -22321,6 +22321,17 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59-20260702
   and planningNeeded=false. Packet-I/O remains dependency-blocked until
   runtime-ready is proved by a later closeout.
+- phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59-20260702
+  accepts selected-normal-runtime-entry-marker-retained. Under hardwareTestLock,
+  the worker published the v58 selected entry-loop archive and captured selected
+  post-power identity, two selected da591740/kernel_2712.img TFTP serves at
+  152,144 bytes, final pre-restore identity, and restore proof. The serial
+  window retained TALOS: asm_start 547 times and retained zero occurrences of
+  asm_pre_rust_entry, kernel_main, route-start, runtime-blocked, and
+  runtime-ready markers. selected_next_task is
+  phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-repair-closeout-v59-20260702
+  and planningNeeded=false. Packet-I/O/OpenSSH/service readiness remains
+  blocked until a deeper runtime frontier is proved by closeout and follow-up.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

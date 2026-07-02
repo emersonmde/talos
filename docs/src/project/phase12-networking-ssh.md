@@ -13767,3 +13767,20 @@ required marker TALOS: asm_start. selected_next_task is
 phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59-20260702
 and planningNeeded=false. Packet-I/O remains dependency-blocked until a later
 closeout proves runtime-ready with selected Pi 5 evidence.
+
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59-20260702
+accepts selected-normal-runtime-entry-marker-retained. Under hardwareTestLock,
+the worker published the v58 selected entry-loop archive and captured decisive
+Pi 5 evidence: selected post-power identity held at tree
+c8a7e7d3de13900ab5d87b17040f82b85e6e2a557a9de1e6f882812c448f6a0f, TFTP served
+da591740/kernel_2712.img twice at 152,144 bytes, final pre-restore identity
+remained selected, restore returned the lab to
+phase12-ssh-v10-openssh-clean-pre-20260624T074100Z, and the serial window
+retained TALOS: asm_start 547 times. No asm_pre_rust_entry, kernel_main,
+route-start, runtime-blocked, or runtime-ready marker was retained, so this is
+selected entry proof rather than route-start/runtime-ready proof. selected_next_task
+is
+phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-repair-closeout-v59-20260702
+and planningNeeded=false. Packet-I/O, OpenSSH compatibility, service readiness,
+ssh-ready=true, fake command expansion, broad shell work, and phase transition
+remain blocked.

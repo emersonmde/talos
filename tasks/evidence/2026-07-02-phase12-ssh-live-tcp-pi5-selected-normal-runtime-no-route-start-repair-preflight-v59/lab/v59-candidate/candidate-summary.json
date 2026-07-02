@@ -1,0 +1,85 @@
+{
+  "classification": "selected-normal-runtime-entry-marker-retained",
+  "selected_tree": "c8a7e7d3de13900ab5d87b17040f82b85e6e2a557a9de1e6f882812c448f6a0f",
+  "post_power_tree": "c8a7e7d3de13900ab5d87b17040f82b85e6e2a557a9de1e6f882812c448f6a0f",
+  "final_tree": "c8a7e7d3de13900ab5d87b17040f82b85e6e2a557a9de1e6f882812c448f6a0f",
+  "restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "selected_fetch_bytes_post_publication": 152144,
+  "selected_fetch_bytes_final": 152144,
+  "serial": {
+    "bytes": 14319,
+    "capture_mode": "read",
+    "deepest_present_marker": {
+      "marker": "TALOS: asm_start",
+      "present": true,
+      "occurrences": 547,
+      "first_index": 4473
+    },
+    "marker_family_counts": [
+      {
+        "marker": "TALOS: asm_start",
+        "present": true,
+        "occurrences": 547,
+        "first_index": 4473
+      },
+      {
+        "marker": "TALOS: asm_pre_rust_entry",
+        "present": false,
+        "occurrences": 0,
+        "first_index": null
+      },
+      {
+        "marker": "TALOS: kernel_main",
+        "present": false,
+        "occurrences": 0,
+        "first_index": null
+      },
+      {
+        "marker": "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=runtime-no-route-start-v58",
+        "present": false,
+        "occurrences": 0,
+        "first_index": null
+      },
+      {
+        "marker": "TALOS: ssh-service-smoltcp-runtime-blocked capture-nonce=runtime-no-route-start-v58",
+        "present": false,
+        "occurrences": 0,
+        "first_index": null
+      },
+      {
+        "marker": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-no-route-start-v58",
+        "present": false,
+        "occurrences": 0,
+        "first_index": null
+      }
+    ],
+    "required_marker_occurrences": 547,
+    "firmware_network_occurrences": 2
+  },
+  "tftp": {
+    "stable": true,
+    "event_count": 13,
+    "selected_fetch_event_count": 2,
+    "selected_fetch_bytes": [
+      152144,
+      152144
+    ]
+  },
+  "identity_join_decisive": true,
+  "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+  "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Selected entry-loop discriminator retained fresh TALOS: asm_start output on Pi 5 after selected identity and selected TFTP service."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Captured candidate identity, fresh serial window, same-cursor TFTP delta, final pre-restore identity, and restore proof in one foreground helper chain."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "No asm_pre_rust_entry, kernel_main, route-start, runtime-blocked, or runtime-ready marker was retained; closeout must preserve packet-I/O/OpenSSH as blocked until a deeper runtime frontier is proved."
+    }
+  ]
+}

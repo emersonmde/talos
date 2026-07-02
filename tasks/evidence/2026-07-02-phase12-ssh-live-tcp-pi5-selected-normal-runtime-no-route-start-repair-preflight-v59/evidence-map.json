@@ -1,0 +1,25 @@
+{
+  "task_record": "tasks/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59.md",
+  "classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59/classification.json",
+  "validation": {
+    "git_status_before_lab": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59/validation/git-status-before-lab.txt",
+    "archive_review": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59/validation/archive-review.stdout.txt",
+    "static_archive_summary": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59/validation/static-archive-review-summary.json",
+    "archive_sha256": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59/validation/archive.sha256",
+    "selected_kernel_sha256": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59/validation/selected-kernel.sha256",
+    "marker_strings": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59/validation/marker-strings.txt"
+  },
+  "lab": {
+    "candidate_dir": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59/lab/v59-candidate",
+    "candidate_summary": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59/lab/v59-candidate/candidate-summary.json",
+    "capture_summary": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59/lab/v59-candidate/capture-invariant-summary.json",
+    "publish_archive": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59/lab/v59-candidate/publish-archive.json",
+    "post_power_identity": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59/lab/v59-candidate/post-power-pre-observe-status.json",
+    "tftp_delta": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59/lab/v59-candidate/tftp-delta-stable-pre-restore.json",
+    "serial_window": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59/lab/v59-candidate/serial-observe-window.json",
+    "final_pre_restore_identity": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59/lab/v59-candidate/final-pre-restore-status.json",
+    "restore_proof": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59/lab/v59-candidate/restore-snapshot.json",
+    "post_restore_identity": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59/lab/v59-candidate/post-restore-status.json"
+  },
+  "redaction_review": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59/lab/v59-candidate/redaction-review.json"
+}
