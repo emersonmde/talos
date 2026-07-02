@@ -22515,6 +22515,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   phase12-ssh-live-tcp-selected-normal-runtime-post-bootinfo-continuation-reconciliation-v67-20260702
   and planningNeeded=false. Target init and all later runtime/network/service
   milestones remain blocked.
+- phase12-ssh-live-tcp-selected-normal-runtime-post-bootinfo-continuation-reconciliation-v67-20260702
+  accepts selected-normal-runtime-post-bootinfo-discriminator-ready. No
+  hardware action, lab publication, boot snapshot mutation, Pi 5 power cycle,
+  route-start proof, runtime-ready proof, packet-I/O,
+  OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+  success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+  shell work, or phase transition was performed. The worker reconciled the v68
+  BootInfo frontier with current target-init marker-loop source/helper state
+  and materialized a fresh non-published selected target-init archive. The
+  archive SHA-256 is
+  18270d2ca0bef45c72898beaa55971b48d748f3a87a767556074423821f17352; selected
+  da591740/kernel_2712.img is 152,880 bytes with SHA-256
+  4513bd97689673f904a849b60aee0377d6ddcc813ad0d00a18e422b3cc52ef82. The next
+  required marker is TALOS: target init. The objectively specified serialized
+  hardware successor is
+  phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69-20260702,
+  but that task is not currently in taskQueue, so planningNeeded=true for
+  supervisor instantiation before any hardware action.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

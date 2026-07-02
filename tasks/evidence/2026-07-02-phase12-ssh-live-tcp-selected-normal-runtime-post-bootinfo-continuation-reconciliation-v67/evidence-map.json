@@ -1,0 +1,30 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-post-bootinfo-continuation-reconciliation-v67-20260702",
+  "classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-post-bootinfo-continuation-reconciliation-v67/classification.json",
+  "static_comparison_report": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-post-bootinfo-continuation-reconciliation-v67/static/static-comparison-report.md",
+  "validation": {
+    "git_status_before": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-post-bootinfo-continuation-reconciliation-v67/validation/git-status-before.txt",
+    "archive_review": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-post-bootinfo-continuation-reconciliation-v67/validation/archive-review.stdout.txt",
+    "target_init_archive_review": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-post-bootinfo-continuation-reconciliation-v67/validation/target-init-archive-review.stdout.txt",
+    "archive_sha256": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-post-bootinfo-continuation-reconciliation-v67/validation/archive-sha256.txt",
+    "root_selected_equality": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-post-bootinfo-continuation-reconciliation-v67/validation/root-selected-equality.txt",
+    "capture_bundle_dry_run": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-post-bootinfo-continuation-reconciliation-v67/validation/capture-bundle-dry-run.json"
+  },
+  "accepted_inputs": {
+    "v65_bootinfo_contract": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-post-rust-entry-continuation-reconciliation-v65/classification.json",
+    "v66_bootinfo_closeout": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-after-rust-entry-closeout-v66/classification.json",
+    "v68_lineage": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-rust-entry-lineage-reconciliation-v68/classification.json"
+  },
+  "non_committed_artifacts": {
+    "archive": "target/tmp/selected-normal-runtime-target-init-v67.tar.gz",
+    "boot_tree": "target/tmp/selected-normal-runtime-target-init-v67-boot-tree",
+    "selected_kernel_path": "target/tmp/selected-normal-runtime-target-init-v67-boot-tree/da591740/kernel_2712.img"
+  },
+  "redaction": {
+    "raw_serial_text": "not retained",
+    "raw_tftp_peer_or_log_lines": "not retained",
+    "packet_payloads": "not retained",
+    "ssh_session_or_key_material": "not retained",
+    "boot_artifact_bytes": "not committed"
+  }
+}

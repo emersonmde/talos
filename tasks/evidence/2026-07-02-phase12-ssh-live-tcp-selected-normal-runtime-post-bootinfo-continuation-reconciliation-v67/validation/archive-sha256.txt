@@ -1,0 +1,3 @@
+18270d2ca0bef45c72898beaa55971b48d748f3a87a767556074423821f17352  target/tmp/selected-normal-runtime-target-init-v67.tar.gz
+4513bd97689673f904a849b60aee0377d6ddcc813ad0d00a18e422b3cc52ef82  target/tmp/selected-normal-runtime-target-init-v67-boot-tree/kernel_2712.img
+4513bd97689673f904a849b60aee0377d6ddcc813ad0d00a18e422b3cc52ef82  target/tmp/selected-normal-runtime-target-init-v67-boot-tree/da591740/kernel_2712.img

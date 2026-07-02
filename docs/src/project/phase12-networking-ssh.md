@@ -13995,3 +13995,25 @@ not retain a separate TALOS: rust_entry line. selected_next_task is
 phase12-ssh-live-tcp-selected-normal-runtime-post-bootinfo-continuation-reconciliation-v67-20260702
 and planningNeeded=false. Target init and all later runtime/network/service
 milestones remain blocked.
+
+phase12-ssh-live-tcp-selected-normal-runtime-post-bootinfo-continuation-reconciliation-v67-20260702
+accepts selected-normal-runtime-post-bootinfo-discriminator-ready. No hardware
+action, lab publication, boot snapshot mutation, Pi 5 power cycle, route-start
+proof, runtime-ready proof, packet-I/O, OpenSSH/generated-root retry, remote
+receipt, compatibility claim, service success claim, ssh-ready=true,
+fake/kernel-backed command expansion, broad shell work, or phase transition was
+performed. The worker reconciled the v68 BootInfo frontier against current
+source and helper state, then materialized a fresh selected target-init
+marker-loop archive. The archive is
+target/tmp/selected-normal-runtime-target-init-v67.tar.gz with SHA-256
+18270d2ca0bef45c72898beaa55971b48d748f3a87a767556074423821f17352; selected
+da591740/kernel_2712.img is 152,880 bytes with SHA-256
+4513bd97689673f904a849b60aee0377d6ddcc813ad0d00a18e422b3cc52ef82. Static
+review proves TALOS: target init is embedded after target::init(&boot_info)
+and with negative claims for exceptions ready, kernel_main, route-start,
+runtime-ready, packet-I/O, service success, ssh-ready, and phase transition.
+The objectively specified serialized hardware successor is
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69-20260702,
+but that task is not currently in taskQueue, so planningNeeded=true for the
+supervisor to instantiate the exact bounded hardware task before any lab
+action.
