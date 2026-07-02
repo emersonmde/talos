@@ -22495,6 +22495,26 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   planningNeeded=true for supervisor replanning; v67 is not mechanically
   unblocked because it depends on
   selected-normal-runtime-bootinfo-frontier-proved.
+- phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-rust-entry-lineage-reconciliation-v68-20260702
+  accepts selected-normal-runtime-bootinfo-frontier-proved-by-lineage. No
+  hardware action, lab publication, boot snapshot mutation, Pi 5 power cycle,
+  target-init proof, exceptions proof, kernel_main proof, route-start proof,
+  runtime-ready proof, packet-I/O, OpenSSH/generated-root retry, remote receipt,
+  compatibility claim, service success claim, ssh-ready=true,
+  fake/kernel-backed command expansion, broad shell work, or phase transition
+  was performed. The worker reconciled accepted v64 rust_entry proof, the v65
+  selected BootInfo archive/source contract, and v66 selected TFTP plus BootInfo
+  marker evidence. Static source review shows the selected
+  rpi5_ssh_service_smoltcp_bootinfo_marker_loop path enters rust_entry, parses
+  BootInfo, writes the BootInfoParsed early-phase line, and only then emits
+  TALOS: boot info parsed. The v66 candidate rerun retained TALOS: boot info
+  parsed 192 times with selected TFTP byte service, so the selected
+  normal-runtime BootInfo frontier is proved by lineage even though the v66
+  same-window serial window did not retain a separate TALOS: rust_entry line.
+  selected_next_task is
+  phase12-ssh-live-tcp-selected-normal-runtime-post-bootinfo-continuation-reconciliation-v67-20260702
+  and planningNeeded=false. Target init and all later runtime/network/service
+  milestones remain blocked.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

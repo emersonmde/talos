@@ -1,0 +1,43 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-rust-entry-lineage-reconciliation-v68-20260702",
+  "classification": "selected-normal-runtime-bootinfo-frontier-proved-by-lineage",
+  "matrix": [
+    {
+      "lineage_step": "selected archive can execute rust_entry on Pi 5",
+      "evidence_source": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-after-pre-rust-preflight-v64/classification.json",
+      "evidence_level": "serial hardware boot/output plus selected TFTP service",
+      "result": "v64 retained TALOS: rust_entry 208 times with selected TFTP byte service and restore proof",
+      "disposition": "proved"
+    },
+    {
+      "lineage_step": "selected BootInfo archive contract",
+      "evidence_source": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-post-rust-entry-continuation-reconciliation-v65/classification.json",
+      "evidence_level": "non-published archive/source contract and archive review",
+      "result": "v65 selected BootInfo archive embeds TALOS: boot info parsed and negative later-milestone claims",
+      "disposition": "proved"
+    },
+    {
+      "lineage_step": "selected BootInfo archive ran on Pi 5",
+      "evidence_source": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/classification.json",
+      "evidence_level": "serial hardware boot/output plus selected TFTP service",
+      "result": "v66 candidate rerun served selected da591740/kernel_2712.img twice at 152,880 bytes and retained TALOS: boot info parsed 192 times",
+      "disposition": "proved"
+    },
+    {
+      "lineage_step": "TALOS: boot info parsed emission path",
+      "evidence_source": "src/main.rs and src/target/rpi5.rs static inspection",
+      "evidence_level": "static source/control-flow review",
+      "result": "rpi5_ssh_service_smoltcp_bootinfo_marker_loop reaches run_ssh_service_smoltcp_bootinfo_marker_loop only after rust_entry writes RustEntry, parses BootInfo, and writes BootInfoParsed",
+      "disposition": "proved"
+    },
+    {
+      "lineage_step": "same-window TALOS: rust_entry absence in v66",
+      "evidence_source": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/classification.json",
+      "evidence_level": "serial hardware boot/output",
+      "result": "v66 decisive serial window retained zero TALOS: rust_entry occurrences, but source lineage proves BootInfo marker emission depends on rust_entry",
+      "disposition": "not-an-issue-for-lineage-proof"
+    }
+  ],
+  "selected_next_task": "phase12-ssh-live-tcp-selected-normal-runtime-post-bootinfo-continuation-reconciliation-v67-20260702",
+  "planningNeeded": false
+}

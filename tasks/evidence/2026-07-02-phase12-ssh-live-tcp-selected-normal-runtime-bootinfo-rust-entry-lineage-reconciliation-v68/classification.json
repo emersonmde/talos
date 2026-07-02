@@ -1,0 +1,114 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-rust-entry-lineage-reconciliation-v68-20260702",
+  "status": "accepted",
+  "terminalClassification": "selected-normal-runtime-bootinfo-frontier-proved-by-lineage",
+  "selected_next_task": "phase12-ssh-live-tcp-selected-normal-runtime-post-bootinfo-continuation-reconciliation-v67-20260702",
+  "planningNeeded": false,
+  "hardware_action": false,
+  "hardware_test_lock_acquired": false,
+  "lab_publication": false,
+  "boot_snapshot_mutation": false,
+  "pi5_power_action": false,
+  "packet_io": false,
+  "openssh_generated_root_retry": false,
+  "fake_command_expansion": false,
+  "broad_shell_work": false,
+  "phase_transition": false,
+  "accepted_inputs": {
+    "v64_rust_entry_preflight": {
+      "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-after-pre-rust-preflight-v64-20260702",
+      "terminal_classification": "selected-normal-runtime-rust-entry-marker-retained",
+      "selected_kernel_bytes": 152816,
+      "selected_kernel_sha256": "347679f5797d2c99d61a56d5b250ee0245a0f19e9ac5f927491c4b9a019709c6",
+      "rust_entry_occurrences": 208,
+      "selected_tftp_expected_fetch_count": 2,
+      "selected_tftp_expected_fetch_byte_match_count": 2,
+      "restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    },
+    "v65_bootinfo_contract": {
+      "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-post-rust-entry-continuation-reconciliation-v65-20260702",
+      "terminalClassification": "selected-normal-runtime-post-rust-entry-discriminator-ready",
+      "archive_sha256": "68a3e9356753c66b646477880f786fc10a01b021bd8758d19484f409df81ad9d",
+      "selected_kernel_bytes": 152880,
+      "selected_kernel_sha256": "87bbaab6842cbd83c1dff548d81151af6f9ff5309236b7ba65481174560987a8",
+      "required_marker": "TALOS: boot info parsed",
+      "source_scenario": "rpi5_ssh_service_smoltcp_bootinfo_marker_loop"
+    },
+    "v66_bootinfo_preflight": {
+      "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66-20260702",
+      "terminal_classification": "inconclusive-selected-normal-runtime-bootinfo-preflight",
+      "candidate_rerun_identity_allowed": true,
+      "candidate_rerun_expected_fetch_count": 2,
+      "candidate_rerun_expected_fetch_byte_match_count": 2,
+      "candidate_rerun_selected_tree_hash": "f5b5d23af2dffc60fd61a8bb2ea5bdf9c1f433b69694fd3efdd7f51793a68632",
+      "candidate_rerun_final_pre_restore_tree_hash": "f5b5d23af2dffc60fd61a8bb2ea5bdf9c1f433b69694fd3efdd7f51793a68632",
+      "bootinfo_occurrences": 192,
+      "same_window_rust_entry_occurrences": 0,
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+    }
+  },
+  "lineage_result": {
+    "source_ordering": [
+      "src/main.rs rust_entry(dtb_pa)",
+      "write_early_phase_line(EarlyPhaseLine::RustEntry)",
+      "BootInfo::from_aarch64_x0(dtb_pa)",
+      "write_early_phase_line(EarlyPhaseLine::BootInfoParsed)",
+      "run_ssh_service_smoltcp_bootinfo_marker_loop()",
+      "write_early_static(\"TALOS: boot info parsed\")"
+    ],
+    "bootinfo_marker_emission_requires_rust_entry": true,
+    "bootinfo_marker_emission_requires_bootinfo_parse": true,
+    "same_window_rust_entry_absence_disposition": "not-an-issue-for-lineage-proof; retained as v66 marker-capture limitation",
+    "first_missing_fact": "after TALOS: boot info parsed and before target init",
+    "blocked_successors": [
+      "target-init proof",
+      "exceptions proof",
+      "kernel_main proof",
+      "route-start proof",
+      "runtime-ready proof",
+      "packet-I/O",
+      "OpenSSH/generated-root retry",
+      "remote receipt",
+      "compatibility/service readiness",
+      "ssh-ready=true",
+      "fake/kernel-backed command expansion",
+      "broad shell work",
+      "phase transition"
+    ]
+  },
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Reconciled v64 rust_entry proof, v65 selected BootInfo source/archive contract, and v66 selected BootInfo hardware evidence into a lineage proof."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Identified that TALOS: boot info parsed is emitted only after rust_entry and BootInfo parsing in the selected source path."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Selected the already queued v67 post-BootInfo continuation reconciliation and cleared planningNeeded."
+    },
+    {
+      "disposition": "not-an-issue",
+      "finding": "No source edit is required; current source already orders rust_entry -> BootInfo parse -> BootInfo marker loop."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Target init and all later runtime/network/service milestones remain unproved."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Immediate hardware retry removed from this task because retained hardware evidence plus source lineage is decisive."
+    }
+  ],
+  "redaction_review": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_peer_or_log_lines_retained": false,
+    "packet_payloads_retained": false,
+    "ssh_session_or_key_material_retained": false,
+    "boot_artifact_bytes_retained": false,
+    "private_user_data_retained": false,
+    "stable_secret_derived_identifiers_retained": false
+  }
+}
