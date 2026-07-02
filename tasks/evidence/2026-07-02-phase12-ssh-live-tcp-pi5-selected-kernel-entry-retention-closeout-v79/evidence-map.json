@@ -1,0 +1,54 @@
+{
+  "task": "phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-closeout-v79-20260702",
+  "terminal_classification": "provider-runtime-ready-local-only-proved",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "first_missing_fact": "live packet ingress and remote receipt remain unproved after selected Pi 5 TFTP service, final selected identity, and local-only runtime-ready marker retention",
+  "inputs": {
+    "v78_repair_task": "tasks/2026-07-02-phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-repair-v78.md",
+    "v78_evidence_map": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-repair-v78/evidence-map.json",
+    "v79_preflight_task": "tasks/2026-07-02-phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79.md",
+    "v79_evidence_map": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79/evidence-map.json",
+    "v79_key_summary": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79/candidate-selected-20260702T184500Z/key-summary.json"
+  },
+  "accepted_facts": {
+    "archive": "target/talos-rpi5-selected-kernel-entry-retention-v78-boot.tar.gz",
+    "archive_sha256": "7149fcad9aa29159b3e68e0875c89b41930cd1c39ca382a1cd409593972ebcb6",
+    "archive_bytes": 302817,
+    "selected_kernel_path": "da591740/kernel_2712.img",
+    "selected_kernel_sha256": "ba899e55a5ebe6beeac441d74590985b6aa1be046f57d13324f2d9e953ea9650",
+    "selected_kernel_bytes": 156040,
+    "capture_nonce": "entry-retention-v78",
+    "selected_tree_hash": "c7699880cfc54c80ee1e6a9bd05c7ae7c32e9284f5a84cf08d409719ac5c4e3e",
+    "restored_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "selected_kernel_tftp_serves": 2,
+    "tftp_event_count": 13,
+    "serial_response_bytes": 70015,
+    "firmware_network_marker_occurrences": 2,
+    "kernel_main_marker_occurrences": 53,
+    "provider_route_start_marker_occurrences": 53,
+    "runtime_ready_marker_occurrences": 53,
+    "runtime_blocked_marker_occurrences": 0
+  },
+  "rejected_claims": {
+    "live_packet_io_accepted": false,
+    "live_reachability_accepted": false,
+    "remote_receipt_accepted": false,
+    "openssh_compatibility_accepted": false,
+    "service_success_accepted": false,
+    "ssh_ready": false,
+    "phase_transition": false
+  },
+  "stale_task_dispositions": {
+    "phase12-ssh-live-tcp-kernel-main-marker-route-v72-20260702": "deferred: stale marker-chain task; v79 supersedes the missing kernel_main fact and any successor needs refreshed packet-ingress dependencies",
+    "phase12-ssh-live-tcp-runtime-ready-marker-route-v60-20260701": "deferred: stale marker-chain task; local-only runtime-ready retention is now proved but live packet ingress remains unproved",
+    "phase12-ssh-live-tcp-packet-io-v53-20260701": "blocked: packet-I/O proof requires supervisor-planned live packet ingress dependencies and gates"
+  },
+  "redaction_review": {
+    "packet_payloads_retained": false,
+    "ssh_key_or_session_material_retained": false,
+    "private_user_data_retained": false,
+    "raw_serial_text_retained": false,
+    "raw_tftp_client_identifiers_retained": false
+  }
+}
