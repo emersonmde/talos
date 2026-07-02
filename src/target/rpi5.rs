@@ -26264,7 +26264,9 @@ pub fn run_ssh_service_smoltcp_runtime_ready_route() -> ! {
             write_early_static(nonce);
         }
     }
-    write_early_static(" source=network-device-smoltcp-runtime\n");
+    write_early_static(
+        " source=network-device-smoltcp-runtime provider-route-entry=source-bound-rp1 claims-runtime-ready=false\n",
+    );
 
     match crate::network::live_tcp_runtime_marker_route_report_with_source_bound_rp1_provider() {
         Ok(report) if report.marker_route_ready() => {
@@ -26340,7 +26342,16 @@ pub fn run_ssh_service_smoltcp_runtime_ready_route() -> ! {
                     .hardware_frame_provider_classification()
                     .unwrap_or("none"),
             );
-            write_early_static(" ssh-ready=false claims-service-success=false\n");
+            write_early_static(" descriptor-facing-connection-delivered=");
+            write_bool(runtime.descriptor_facing_connection_delivered());
+            write_early_static(" deterministic-device-interface-bound=");
+            write_bool(runtime.deterministic_device_interface_bound());
+            write_early_static(" live-packet-io-accepted=false");
+            write_early_static(" live-reachability-accepted=false");
+            write_early_static(" remote-receipt-accepted=false");
+            write_early_static(" compatibility-accepted=false");
+            write_early_static(" ssh-ready=false");
+            write_early_static(" claims-service-success=false claims-phase-transition=false\n");
         }
         Err(_) => {
             write_early_static("TALOS: ssh-service-smoltcp-runtime-blocked");
@@ -26351,7 +26362,7 @@ pub fn run_ssh_service_smoltcp_runtime_ready_route() -> ! {
                 }
             }
             write_early_static(
-                " runtime-binding=error ssh-ready=false claims-service-success=false\n",
+                " runtime-binding=error live-packet-io-accepted=false live-reachability-accepted=false remote-receipt-accepted=false compatibility-accepted=false ssh-ready=false claims-service-success=false claims-phase-transition=false\n",
             );
         }
     }

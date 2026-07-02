@@ -36,15 +36,22 @@ required_marker="TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=$CAPTURE
 for token in \
     "TALOS: asm_start" \
     "TALOS: asm_pre_rust_entry" \
+    "talos: boot start" \
     "$route_start_token" \
     "$runtime_blocked_token" \
     "TALOS: ssh-service-smoltcp-runtime-ready" \
     "capture-nonce=" \
     "$CAPTURE_NONCE" \
+    "source=network-device-smoltcp-runtime provider-route-entry=source-bound-rp1 claims-runtime-ready=false" \
     "runtime-binding=accepted-deterministic-device-interface-delivery" \
+    "runtime-binding=error live-packet-io-accepted=false live-reachability-accepted=false remote-receipt-accepted=false compatibility-accepted=false ssh-ready=false claims-service-success=false claims-phase-transition=false" \
     "descriptor-facing-connection-delivered=" \
     "deterministic-device-interface-bound=" \
     "hardware-frame-provider-bound=" \
+    "hardware-frame-provider-classification=" \
+    "rp1-ethernet-hardware-frame-provider-source-bound-local-only" \
+    "no-rp1-ethernet-hardware-frame-provider-bound" \
+    "rp1-ethernet-hardware-frame-provider-link-not-ready" \
     "driver-packet-rx-frames=" \
     "driver-packet-tx-frames=" \
     "live-packet-io-accepted=" \
@@ -62,6 +69,7 @@ do
 done
 
 printf 'runtime_marker_route=ready\n'
+printf 'early_marker_hierarchy=%s\n' "asm_start|asm_pre_rust_entry|rust_entry|boot info parsed|target init|exceptions ready|kernel_main|report_boot_identity|route_start|runtime_blocked|runtime_ready"
 printf 'route_start_marker=%s\n' "$route_start_marker"
 printf 'runtime_blocked_marker=%s\n' "$runtime_blocked_marker"
 printf 'required_marker=%s\n' "$required_marker"

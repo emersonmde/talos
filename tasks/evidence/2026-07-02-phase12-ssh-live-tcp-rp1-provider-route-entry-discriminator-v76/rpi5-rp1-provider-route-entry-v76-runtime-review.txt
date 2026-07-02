@@ -1,0 +1,36 @@
+archive=target/talos-rpi5-rp1-provider-route-entry-v76-boot.tar.gz
+sha256=e2779312ef50ddb55573524c4079608c2d0ee0626cdb1e57e8e30b1c43269332
+file_count=19
+kernel_size=155096
+header_image_size=155096
+text_offset=0
+flags=12
+loader_diagnostic=false
+circle_config_loader_diagnostic=false
+manifest:
+  bcm2712-rpi-5-b.dtb
+  cmdline.txt
+  config.txt
+  da591740
+  da591740/bcm2712-rpi-5-b.dtb
+  da591740/cmdline.txt
+  da591740/config.txt
+  da591740/kernel8.img
+  da591740/kernel_2712.img
+  da591740/overlays
+  da591740/overlays/bcm2712d0.dtbo
+  da591740/overlays/overlay_map.dtb
+  da591740/overlays/uart0-pi5.dtbo
+  kernel8.img
+  kernel_2712.img
+  overlays
+  overlays/bcm2712d0.dtbo
+  overlays/overlay_map.dtb
+  overlays/uart0-pi5.dtbo
+runtime_marker_route=ready
+early_marker_hierarchy=asm_start|asm_pre_rust_entry|rust_entry|boot info parsed|target init|exceptions ready|kernel_main|report_boot_identity|route_start|runtime_blocked|runtime_ready
+route_start_marker=TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=route-entry-v76
+runtime_blocked_marker=TALOS: ssh-service-smoltcp-runtime-blocked capture-nonce=route-entry-v76
+required_marker=TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=route-entry-v76
+marker_family=TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=route-entry-v76|TALOS: ssh-service-smoltcp-runtime-blocked capture-nonce=route-entry-v76|TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=route-entry-v76
+archive=target/talos-rpi5-rp1-provider-route-entry-v76-boot.tar.gz

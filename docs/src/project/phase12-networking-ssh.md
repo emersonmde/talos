@@ -14230,3 +14230,23 @@ dependencies and gates. selected_next_task=null and planningNeeded=true for a
 supervisor-planned feature-led repair or discriminator before packet-I/O,
 OpenSSH/generated-root retry, fake command expansion, broad shell work, or
 phase transition.
+
+phase12-ssh-live-tcp-rp1-provider-route-entry-discriminator-v76-20260702
+accepts provider-route-entry-source-repaired. No lab publication, boot snapshot
+mutation, Pi 5 power cycle, serial capture, TFTP capture, packet-I/O proof,
+remote receipt, OpenSSH/generated-root retry, compatibility claim, service
+success claim, ssh_ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The source repair makes the
+selected runtime route emit a provider-route-entry route-start marker before
+calling the source-bound RP1 provider runtime report, and makes both
+runtime-blocked/error marker outputs explicitly preserve false live packet I/O,
+reachability, remote receipt, compatibility, ssh_ready, service success, and
+phase-transition claims. A non-published v76 archive was materialized at
+target/talos-rpi5-rp1-provider-route-entry-v76-boot.tar.gz with archive SHA-256
+e2779312ef50ddb55573524c4079608c2d0ee0626cdb1e57e8e30b1c43269332 and selected
+da591740/kernel_2712.img SHA-256
+6fc026100f0ea9e5157997eec12e1b3cc12000fdae243067f4349c7f4abffc20 at 155096
+bytes. The refreshed marker hierarchy for the next Pi 5 proof is early Talos,
+provider route-start, provider runtime-blocked/error, then provider
+runtime-ready. selected_next_task is
+phase12-ssh-live-tcp-pi5-rp1-provider-route-entry-preflight-v77-20260702.

@@ -22730,6 +22730,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   refreshed dependencies and gates. selected_next_task=null and
   planningNeeded=true before packet-I/O, OpenSSH/generated-root retry, fake
   command expansion, broad shell work, or phase transition.
+- phase12-ssh-live-tcp-rp1-provider-route-entry-discriminator-v76-20260702
+  accepts provider-route-entry-source-repaired. The selected route now emits a
+  provider-route-entry route-start marker before the provider-bound runtime
+  report and its runtime-blocked/error markers explicitly retain false packet
+  I/O, reachability, remote receipt, compatibility, ssh_ready, service success,
+  and phase-transition claims. The non-published v76 archive is
+  target/talos-rpi5-rp1-provider-route-entry-v76-boot.tar.gz, SHA-256
+  e2779312ef50ddb55573524c4079608c2d0ee0626cdb1e57e8e30b1c43269332, with
+  selected da591740/kernel_2712.img SHA-256
+  6fc026100f0ea9e5157997eec12e1b3cc12000fdae243067f4349c7f4abffc20 at 155096
+  bytes and capture nonce route-entry-v76. selected_next_task is
+  phase12-ssh-live-tcp-pi5-rp1-provider-route-entry-preflight-v77-20260702.
+  Live packet I/O, remote receipt, OpenSSH compatibility, service success,
+  ssh_ready=true, fake command expansion, broad shell work, and phase
+  transition remain unaccepted.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

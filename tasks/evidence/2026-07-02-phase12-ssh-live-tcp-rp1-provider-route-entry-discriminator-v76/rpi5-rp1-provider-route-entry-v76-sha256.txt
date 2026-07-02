@@ -1,0 +1,2 @@
+e2779312ef50ddb55573524c4079608c2d0ee0626cdb1e57e8e30b1c43269332  target/talos-rpi5-rp1-provider-route-entry-v76-boot.tar.gz
+6fc026100f0ea9e5157997eec12e1b3cc12000fdae243067f4349c7f4abffc20  target/rpi5-rp1-provider-route-entry-v76-boot-tree/kernel_2712.img
