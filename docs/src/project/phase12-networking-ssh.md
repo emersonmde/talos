@@ -14058,3 +14058,25 @@ because the selected target-init marker is unreachable before BootInfo parsing
 and target::init return. selected_next_task=null and planningNeeded=true
 because no explicit queued successor exists for the next exceptions/kernel_main
 boundary. Later runtime/network/service milestones remain blocked.
+
+phase12-ssh-live-tcp-selected-normal-runtime-exceptions-after-target-init-reconciliation-v70-20260702
+accepts selected-normal-runtime-exceptions-discriminator-ready. No hardware
+action, lab publication, boot snapshot mutation, Pi 5 power cycle, serial
+capture, TFTP capture, kernel_main proof, route-start proof, runtime-ready
+proof, packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility
+claim, service success claim, ssh-ready=true, fake/kernel-backed command
+expansion, broad shell work, or phase transition was performed. The worker
+reconciled the accepted v69 target-init frontier with current exceptions-ready
+marker-loop source/helper state and materialized a fresh non-published selected
+exceptions-ready archive. The archive is
+target/tmp/selected-normal-runtime-exceptions-ready-v70.tar.gz with SHA-256
+18007965ceb10991766e01ab2cf4d6f468530eca97d1a8c3a016a39b0402396b; selected
+da591740/kernel_2712.img is 152,880 bytes with SHA-256
+7a62150e4232fc8215a7c7ec8e502697bdabb3a9e6bcd62f640c75aba722e455. Static
+review proves TALOS: exceptions ready is embedded after
+arch::aarch64::exceptions::init() and with claims-target-init=true plus
+negative claims for kernel_main, route-start, runtime-ready, packet-I/O,
+service success, ssh-ready, and phase transition. selected_next_task is
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-exceptions-after-target-init-preflight-v71-20260702
+and planningNeeded=false. Later kernel_main, route-start, runtime/network, and
+service milestones remain blocked.

@@ -1,0 +1,31 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-exceptions-after-target-init-reconciliation-v70-20260702",
+  "classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-exceptions-after-target-init-reconciliation-v70/classification.json",
+  "static_comparison_report": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-exceptions-after-target-init-reconciliation-v70/static/static-comparison-report.md",
+  "validation": {
+    "git_status_before": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-exceptions-after-target-init-reconciliation-v70/validation/git-status-before.txt",
+    "boot_tree_files": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-exceptions-after-target-init-reconciliation-v70/validation/boot-tree-files.txt",
+    "archive_review": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-exceptions-after-target-init-reconciliation-v70/validation/archive-review.stdout.txt",
+    "exceptions_ready_archive_review": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-exceptions-after-target-init-reconciliation-v70/validation/exceptions-ready-archive-review.stdout.txt",
+    "archive_sha256": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-exceptions-after-target-init-reconciliation-v70/validation/archive-sha256.txt",
+    "root_selected_equality": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-exceptions-after-target-init-reconciliation-v70/validation/root-selected-equality.txt",
+    "capture_bundle_dry_run": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-exceptions-after-target-init-reconciliation-v70/validation/capture-bundle-dry-run.json"
+  },
+  "accepted_inputs": {
+    "v67_target_init_contract": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-post-bootinfo-continuation-reconciliation-v67/classification.json",
+    "v69_target_init_preflight": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69/classification.json",
+    "v69_target_init_closeout": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-target-init-after-bootinfo-closeout-v69/classification.json"
+  },
+  "non_committed_artifacts": {
+    "archive": "target/tmp/selected-normal-runtime-exceptions-ready-v70.tar.gz",
+    "boot_tree": "target/tmp/selected-normal-runtime-exceptions-ready-v70-boot-tree",
+    "selected_kernel_path": "target/tmp/selected-normal-runtime-exceptions-ready-v70-boot-tree/da591740/kernel_2712.img"
+  },
+  "redaction": {
+    "raw_serial_text": "not retained",
+    "raw_tftp_peer_or_log_lines": "not retained",
+    "packet_payloads": "not retained",
+    "ssh_session_or_key_material": "not retained",
+    "boot_artifact_bytes": "not committed"
+  }
+}

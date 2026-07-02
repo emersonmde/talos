@@ -1,0 +1,3 @@
+root kernel_2712.img and da591740/kernel_2712.img are byte-identical.
+cmp target/tmp/selected-normal-runtime-exceptions-ready-v70-boot-tree/kernel_2712.img target/tmp/selected-normal-runtime-exceptions-ready-v70-boot-tree/da591740/kernel_2712.img: pass
+
