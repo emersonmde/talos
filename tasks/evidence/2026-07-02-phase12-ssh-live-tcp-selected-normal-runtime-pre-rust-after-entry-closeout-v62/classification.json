@@ -1,0 +1,80 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-closeout-v62-20260702",
+  "status": "accepted",
+  "terminalClassification": "selected-normal-runtime-pre-rust-frontier-proved",
+  "selected_next_task": "phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63-20260702",
+  "planningNeeded": false,
+  "hardware_action": false,
+  "hardware_test_lock_acquired": false,
+  "lab_publication": false,
+  "boot_snapshot_mutation": false,
+  "summary": {
+    "accepted_predecessors": [
+      "phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-reconciliation-v61-20260702",
+      "phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-after-entry-preflight-v62-20260702"
+    ],
+    "frontier_proved": "TALOS: asm_pre_rust_entry",
+    "first_missing_fact": "after TALOS: asm_pre_rust_entry and before TALOS: rust_entry",
+    "selected_tree": "2f4d07fc983ec52c2a23dbc358f7730bd608ed27ff95fea3a5ebc7784b1c6823",
+    "selected_fetch": "da591740/kernel_2712.img",
+    "selected_kernel_bytes": 152144,
+    "selected_kernel_sha256": "90c72361bc67be8933436ddc5e6807dc127a8cb329a3fcab49404c10f8086d59",
+    "archive_sha256": "6e7a35f4d875a510719ca8fbdb256f6513d8d0b1eb6c5e321e198b75f8878cd9",
+    "same_window_tftp_selected_fetch_count": 2,
+    "restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "marker_family_counts": [
+      {
+        "marker": "TALOS: asm_start",
+        "occurrences": 0
+      },
+      {
+        "marker": "TALOS: asm_pre_rust_entry",
+        "occurrences": 535
+      },
+      {
+        "marker": "TALOS: rust_entry",
+        "occurrences": 0
+      },
+      {
+        "marker": "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=runtime-pre-rust-v61",
+        "occurrences": 0
+      },
+      {
+        "marker": "TALOS: ssh-service-smoltcp-runtime-blocked capture-nonce=runtime-pre-rust-v61",
+        "occurrences": 0
+      },
+      {
+        "marker": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-pre-rust-v61",
+        "occurrences": 0
+      }
+    ],
+    "blocked_successors": [
+      "packet-I/O",
+      "OpenSSH/generated-root retry",
+      "remote receipt",
+      "compatibility/service readiness",
+      "ssh-ready=true",
+      "fake/kernel-backed command expansion",
+      "broad shell work",
+      "phase transition"
+    ],
+    "findings": [
+      {
+        "disposition": "fixed",
+        "finding": "Reconciled v62 against v61 and accepted selected normal-runtime pre-rust as the current hardware-proved frontier."
+      },
+      {
+        "disposition": "fixed",
+        "finding": "Selected the queued v63 rust_entry-after-pre-rust reconciliation as the next bounded no-hardware task."
+      },
+      {
+        "disposition": "not-an-issue",
+        "finding": "Known-good control and candidate rerun were not required because v62 first-candidate evidence was decisive."
+      },
+      {
+        "disposition": "deferred",
+        "finding": "rust_entry and deeper runtime markers remain unproved and require later bounded tasks before packet-I/O/OpenSSH work."
+      }
+    ]
+  }
+}

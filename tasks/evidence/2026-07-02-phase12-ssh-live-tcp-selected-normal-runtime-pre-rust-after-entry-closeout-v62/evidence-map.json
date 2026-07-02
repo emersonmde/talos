@@ -1,0 +1,24 @@
+{
+  "task_record": "tasks/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-closeout-v62.md",
+  "classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-closeout-v62/classification.json",
+  "static": {
+    "reconciliation_summary": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-closeout-v62/static/reconciliation-summary.md"
+  },
+  "predecessors": {
+    "v61_task_record": "tasks/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-reconciliation-v61.md",
+    "v61_classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-reconciliation-v61/classification.json",
+    "v61_evidence_map": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-reconciliation-v61/evidence-map.json",
+    "v62_task_record": "tasks/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-after-entry-preflight-v62.md",
+    "v62_classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-after-entry-preflight-v62/classification.json",
+    "v62_evidence_map": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-after-entry-preflight-v62/evidence-map.json",
+    "v62_candidate_summary": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-after-entry-preflight-v62/lab/v62-candidate/candidate-summary.json",
+    "v62_redaction_review": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-after-entry-preflight-v62/lab/v62-candidate/redaction-review.json"
+  },
+  "validation": {
+    "git_status_before_edits": "## main...origin/main [ahead 285]",
+    "jq_empty": "task-owned JSON evidence and supervisor state",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass because docs/src files were touched",
+    "git_diff_cached_check": "pass before commit"
+  }
+}
