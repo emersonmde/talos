@@ -14212,3 +14212,21 @@ phase12-ssh-live-tcp-rp1-provider-runtime-marker-closeout-v75-20260702.
 Live packet I/O, remote receipt, OpenSSH compatibility, service success,
 ssh_ready=true, fake command expansion, broad shell work, and phase transition
 remain unaccepted.
+
+phase12-ssh-live-tcp-rp1-provider-runtime-marker-closeout-v75-20260702
+accepts rp1-provider-runtime-marker-frontier-blocked. No code implementation,
+lab publication, boot snapshot mutation, Pi 5 power cycle, serial capture, TFTP
+capture, packet-I/O proof, remote receipt, OpenSSH/generated-root retry,
+compatibility claim, service success claim, ssh_ready=true,
+fake/kernel-backed command expansion, broad shell work, or phase transition was
+performed. The closeout reconciles v74 and v75: the selected source route now
+uses the accepted source-bound RP1 hardware frame-provider report, but the
+selected Pi 5 run served the v74 kernel and retained final selected identity
+without retaining the expected provider-bound runtime-ready marker. The first
+missing fact is still the absent provider-bound runtime-ready marker in the
+selected Pi 5 serial window after selected kernel TFTP service. v72, v60, and
+v53 remain deferred or blocked unless explicitly reselected with refreshed
+dependencies and gates. selected_next_task=null and planningNeeded=true for a
+supervisor-planned feature-led repair or discriminator before packet-I/O,
+OpenSSH/generated-root retry, fake command expansion, broad shell work, or
+phase transition.

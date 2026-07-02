@@ -1,0 +1,58 @@
+{
+  "task_id": "phase12-ssh-live-tcp-rp1-provider-runtime-marker-closeout-v75-20260702",
+  "terminal_classification": "rp1-provider-runtime-marker-frontier-blocked",
+  "source_route_evidence": {
+    "task_id": "phase12-ssh-live-tcp-rp1-provider-runtime-marker-route-integration-v74-20260702",
+    "classification": "rp1-provider-runtime-marker-route-integration-accepted",
+    "provider_route": "selected rpi5_ssh_service_smoltcp_runtime_ready route consumes source-bound RP1 Ethernet hardware frame-provider report",
+    "hardware_frame_provider_bound_source_label": true,
+    "provider_classification": "rp1-ethernet-hardware-frame-provider-source-bound-local-only",
+    "live_packet_io_accepted": false,
+    "live_reachability_accepted": false,
+    "remote_receipt_accepted": false,
+    "compatibility_accepted": false,
+    "service_success": false,
+    "ssh_ready": false,
+    "claims_phase_transition": false
+  },
+  "hardware_preflight_evidence": {
+    "task_id": "phase12-ssh-live-tcp-pi5-rp1-provider-runtime-marker-preflight-v75-20260702",
+    "classification": "pi5-rp1-provider-runtime-marker-blocked",
+    "archive": "target/talos-rpi5-rp1-provider-runtime-marker-v74-boot.tar.gz",
+    "archive_sha256": "15ac4dd758408676440babf4808adebbdd18bc0d9bbfc0e4a33a9f846b173665",
+    "selected_kernel_path": "da591740/kernel_2712.img",
+    "selected_kernel_bytes": 154520,
+    "selected_kernel_sha256": "8402ca01172608252eec7f6a933fb024b0cf782e57208e7102f5d8225e9d59f2",
+    "selected_tree_hash": "997bd5ddeaade62681e3d44481eb99b52bf253023a609c25d47fe1a1f11520dd",
+    "selected_kernel_tftp_serves": 2,
+    "serial_window_bytes": 4479,
+    "firmware_network_occurrences": 2,
+    "provider_runtime_ready_marker_occurrences": 0,
+    "required_marker_present": false,
+    "final_pre_restore_selected_tree": true,
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10"
+  },
+  "stale_task_dispositions": [
+    {
+      "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-kernel-main-after-exceptions-reconciliation-v72-20260702",
+      "disposition": "deferred",
+      "reason": "stale marker-chain successor; not explicitly reselected with refreshed feature-led dependencies"
+    },
+    {
+      "task_id": "phase12-ssh-live-tcp-runtime-ready-continuation-v60-20260702",
+      "disposition": "blocked-or-deferred",
+      "reason": "stale runtime-ready continuation; dependencies are not refreshed from the current provider-bound marker blocker"
+    },
+    {
+      "task_id": "phase12-ssh-live-tcp-packet-io-continuation-v53-20260701",
+      "disposition": "blocked-or-deferred",
+      "reason": "packet-I/O remains unauthorized until provider-bound marker and live ingress prerequisites are directly proved"
+    }
+  ],
+  "first_missing_fact": "selected Pi 5 serial window did not retain the provider-bound runtime-ready marker after selected kernel TFTP service and final pre-restore selected identity",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "planningReason": "v75 proves selected kernel service and selected-tree identity but the provider-bound runtime-ready marker is absent, so the next bounded feature-led repair/discriminator needs supervisor planning before packet-I/O, OpenSSH/generated-root retry, stale marker-chain work, fake command expansion, broad shell work, or phase transition.",
+  "redaction_review": "Retained closeout evidence is limited to task ids, classifications, archive/kernel digests, tree hashes, TFTP event counts, serial marker counts, restore identity, and disposition notes. No packet payloads, SSH key/session material, private user data, hardware log bytes, or stable external identifiers are newly retained by this closeout."
+}
