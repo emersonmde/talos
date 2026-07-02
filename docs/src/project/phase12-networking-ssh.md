@@ -14192,3 +14192,23 @@ selected da591740/kernel_2712.img SHA-256
 bytes. selected_next_task is
 phase12-ssh-live-tcp-pi5-rp1-provider-runtime-marker-preflight-v75-20260702;
 v72, v60, and v53 remain deferred or blocked.
+
+phase12-ssh-live-tcp-pi5-rp1-provider-runtime-marker-preflight-v75-20260702
+accepts pi5-rp1-provider-runtime-marker-blocked. Under hardwareTestLock, the
+worker published the v74 provider-bound runtime marker archive, staged selected
+tree 997bd5ddeaade62681e3d44481eb99b52bf253023a609c25d47fe1a1f11520dd, and
+captured a clean serialized rerun after excluding two overlapped helper
+attempts from acceptance. Stable same-cursor TFTP before restore retained 13
+events, including two selected da591740/kernel_2712.img serves at 154,520
+bytes, and final pre-restore identity still matched the selected tree. Serial
+used the saturated-cursor direct-read fallback after an empty pre-power read,
+retained 4,479 bytes with two firmware NETWORK markers, and retained zero
+occurrences of the expected provider-bound TALOS:
+ssh-service-smoltcp-runtime-ready marker. The lab restored to
+phase12-ssh-v10-openssh-clean-pre-20260624T074100Z with tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+selected_next_task is
+phase12-ssh-live-tcp-rp1-provider-runtime-marker-closeout-v75-20260702.
+Live packet I/O, remote receipt, OpenSSH compatibility, service success,
+ssh_ready=true, fake command expansion, broad shell work, and phase transition
+remain unaccepted.

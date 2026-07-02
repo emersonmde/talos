@@ -1,0 +1,51 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-rp1-provider-runtime-marker-preflight-v75-20260702",
+  "terminal_classification": "pi5-rp1-provider-runtime-marker-blocked",
+  "accepted_evidence_run": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-rp1-provider-runtime-marker-preflight-v75/candidate-rerun-clean-20260702T155657Z",
+  "excluded_runs": [
+    {
+      "path": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-rp1-provider-runtime-marker-preflight-v75/candidate-run-20260702T155149Z",
+      "reason": "partial static/preflight attempt; no publication or hardware evidence; discarded from committed evidence"
+    },
+    {
+      "path": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-rp1-provider-runtime-marker-preflight-v75/candidate-run-20260702T155221Z",
+      "reason": "partial static/preflight attempt; no publication or hardware evidence; discarded from committed evidence"
+    },
+    {
+      "path": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-rp1-provider-runtime-marker-preflight-v75/candidate-run-20260702T155256Z",
+      "reason": "overlapped helper attempt; discarded from committed evidence and not used for acceptance classification"
+    },
+    {
+      "path": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-rp1-provider-runtime-marker-preflight-v75/candidate-run-20260702T155423Z",
+      "reason": "overlapped helper attempt; discarded from committed evidence and not used for acceptance classification"
+    }
+  ],
+  "candidate_archive": {
+    "path": "target/talos-rpi5-rp1-provider-runtime-marker-v74-boot.tar.gz",
+    "sha256": "15ac4dd758408676440babf4808adebbdd18bc0d9bbfc0e4a33a9f846b173665",
+    "selected_kernel_path": "da591740/kernel_2712.img",
+    "selected_kernel_bytes": 154520,
+    "selected_kernel_sha256": "8402ca01172608252eec7f6a933fb024b0cf782e57208e7102f5d8225e9d59f2"
+  },
+  "clean_run": {
+    "label": "candidate-v75-provider-runtime-marker-clean",
+    "selected_tree_hash": "997bd5ddeaade62681e3d44481eb99b52bf253023a609c25d47fe1a1f11520dd",
+    "restore_snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "serial_window_bytes": 4479,
+    "serial_capture_mode": "read",
+    "serial_observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "pre_power_empty_read": true,
+    "firmware_network_occurrences": 2,
+    "required_marker_present": false,
+    "provider_runtime_ready_marker_occurrences": 0,
+    "tftp_event_count": 13,
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "final_pre_restore_selected_tree": true,
+    "identity_join_allowed": true
+  },
+  "first_missing_fact": "selected Pi 5 serial window did not retain the provider-bound runtime-ready marker after selected kernel TFTP service and final pre-restore selected identity",
+  "selected_next_task": "phase12-ssh-live-tcp-rp1-provider-runtime-marker-closeout-v75-20260702",
+  "redaction_review": "Retained evidence is limited to lab identity summaries, TFTP file-event metadata, serial marker counts/excerpts, archive digests, and restore proof. No packet payloads, SSH key/session material, private user data, unnecessary hardware log bytes, or stable external identifiers are retained."
+}
