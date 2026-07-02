@@ -22779,6 +22779,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   selected_next_task=null and planningNeeded=true before packet-I/O,
   OpenSSH/generated-root retry, fake command expansion, broad shell work, or
   phase transition.
+- phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-repair-v78-20260702
+  accepts selected-kernel-entry-retention-repair-ready. No hardware action, lab
+  publication, boot snapshot mutation, Pi 5 power cycle, serial capture, TFTP
+  capture, packet-I/O proof, remote receipt, OpenSSH/generated-root retry,
+  compatibility claim, service success claim, ssh_ready=true,
+  fake/kernel-backed command expansion, broad shell work, or phase transition
+  was performed. The selected runtime-ready provider route now retains the
+  kernel_main, provider route-entry, and terminal runtime ready/blocked/error
+  marker hierarchy after the source-bound RP1 provider report reaches a local
+  terminal outcome. The non-published v78 archive is
+  target/talos-rpi5-selected-kernel-entry-retention-v78-boot.tar.gz with
+  archive SHA-256 7149fcad9aa29159b3e68e0875c89b41930cd1c39ca382a1cd409593972ebcb6
+  and selected da591740/kernel_2712.img SHA-256
+  ba899e55a5ebe6beeac441d74590985b6aa1be046f57d13324f2d9e953ea9650 at 156,040
+  bytes. The first missing hardware fact remains selected Pi 5 serial retention
+  of kernel_main until the queued v79 serialized preflight runs.
+  selected_next_task is
+  phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79-20260702.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

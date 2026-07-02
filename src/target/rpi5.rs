@@ -26256,120 +26256,163 @@ pub fn write_early_static(s: &str) {
 }
 
 #[cfg(talos_boot_scenario = "rpi5_ssh_service_smoltcp_runtime_ready")]
-pub fn run_ssh_service_smoltcp_runtime_ready_route() -> ! {
-    write_early_static("TALOS: ssh-service-smoltcp-runtime-route-start");
+fn write_runtime_ready_capture_nonce() {
     if let Some(nonce) = option_env!("TALOS_CAPTURE_NONCE") {
         if !nonce.is_empty() {
             write_early_static(" capture-nonce=");
             write_early_static(nonce);
         }
     }
+}
+
+#[cfg(talos_boot_scenario = "rpi5_ssh_service_smoltcp_runtime_ready")]
+fn write_runtime_ready_kernel_main_retention_marker(runtime_ready: bool) {
+    write_early_static("TALOS: kernel_main");
+    write_runtime_ready_capture_nonce();
+    write_early_static(" selected-kernel-entry-retention=v78");
+    write_early_static(" source=runtime-ready-route-retention-loop");
+    write_early_static(" retention-replay=true");
+    write_early_static(" claims-bootinfo-parsed=true");
+    write_early_static(" claims-target-init=true");
+    write_early_static(" claims-exceptions-ready=true");
+    write_early_static(" claims-route-start=true");
+    write_early_static(" claims-runtime-ready=");
+    write_bool(runtime_ready);
+    write_early_static(" claims-packet-io=false");
+    write_early_static(" claims-service-success=false");
+    write_early_static(" claims-ssh-ready=false");
+    write_early_static(" claims-phase-transition=false\n");
+}
+
+#[cfg(talos_boot_scenario = "rpi5_ssh_service_smoltcp_runtime_ready")]
+fn write_runtime_ready_route_start_marker(retention_replay: bool) {
+    write_early_static("TALOS: ssh-service-smoltcp-runtime-route-start");
+    write_runtime_ready_capture_nonce();
     write_early_static(
-        " source=network-device-smoltcp-runtime provider-route-entry=source-bound-rp1 claims-runtime-ready=false\n",
+        " source=network-device-smoltcp-runtime provider-route-entry=source-bound-rp1",
     );
+    write_early_static(" retention-replay=");
+    write_bool(retention_replay);
+    write_early_static(" claims-runtime-ready=false\n");
+}
 
-    match crate::network::live_tcp_runtime_marker_route_report_with_source_bound_rp1_provider() {
-        Ok(report) if report.marker_route_ready() => {
-            let runtime = report.runtime_report();
-            write_early_static("TALOS: ssh-service-smoltcp-runtime-ready");
-            if let Some(nonce) = option_env!("TALOS_CAPTURE_NONCE") {
-                if !nonce.is_empty() {
-                    write_early_static(" capture-nonce=");
-                    write_early_static(nonce);
-                }
-            }
-            write_early_static(" runtime-binding=accepted-deterministic-device-interface-delivery");
-            write_early_static(" descriptor-facing-connection-delivered=");
-            write_bool(runtime.descriptor_facing_connection_delivered());
-            write_early_static(" deterministic-device-interface-bound=");
-            write_bool(runtime.deterministic_device_interface_bound());
-            write_early_static(" hardware-frame-provider-bound=");
-            write_bool(runtime.hardware_frame_provider_bound());
-            write_early_static(" hardware-frame-provider-classification=");
-            write_early_static(
-                runtime
-                    .hardware_frame_provider_classification()
-                    .unwrap_or("none"),
-            );
-            write_early_static(" driver-packet-rx-frames=");
-            write_early_dec_u64(runtime.driver_packet_rx_frames() as u64);
-            write_early_static(" driver-packet-tx-frames=");
-            write_early_dec_u64(runtime.driver_packet_tx_frames() as u64);
-            write_early_static(" live-packet-io-accepted=");
-            write_bool(runtime.live_packet_io_accepted());
-            write_early_static(" live-reachability-accepted=");
-            write_bool(runtime.live_reachability_accepted());
-            write_early_static(" remote-receipt-accepted=");
-            write_bool(runtime.remote_receipt_accepted());
-            write_early_static(" compatibility-accepted=");
-            write_bool(runtime.compatibility_accepted());
-            write_early_static(" ssh-ready=");
-            write_bool(runtime.ssh_ready());
-            write_early_static(" claims-service-success=false claims-phase-transition=false\n");
-        }
-        Ok(runtime_not_ready) => {
-            let runtime = runtime_not_ready.runtime_report();
-            write_early_static("TALOS: ssh-service-smoltcp-runtime-blocked");
-            if let Some(nonce) = option_env!("TALOS_CAPTURE_NONCE") {
-                if !nonce.is_empty() {
-                    write_early_static(" capture-nonce=");
-                    write_early_static(nonce);
-                }
-            }
-            write_early_static(" runtime-binding=");
-            write_early_static(match runtime.binding_state() {
-                crate::network::LiveTcpNetworkDeviceRuntimeBindingState::AcceptedDeterministicDeviceInterfaceDelivery => {
-                    "accepted-deterministic-device-interface-delivery"
-                }
-                crate::network::LiveTcpNetworkDeviceRuntimeBindingState::BlockedMissingDescriptorDelivery => {
-                    "blocked-missing-descriptor-delivery"
-                }
-                crate::network::LiveTcpNetworkDeviceRuntimeBindingState::BlockedMissingDeviceInterfaceBinding => {
-                    "blocked-missing-device-interface-binding"
-                }
-                crate::network::LiveTcpNetworkDeviceRuntimeBindingState::BlockedMissingHardwareFrameProvider => {
-                    "blocked-missing-hardware-frame-provider"
-                }
-                crate::network::LiveTcpNetworkDeviceRuntimeBindingState::BlockedHardwareFrameProviderLinkNotReady => {
-                    "blocked-hardware-frame-provider-link-not-ready"
-                }
-            });
-            write_early_static(" hardware-frame-provider-bound=");
-            write_bool(runtime.hardware_frame_provider_bound());
-            write_early_static(" hardware-frame-provider-classification=");
-            write_early_static(
-                runtime
-                    .hardware_frame_provider_classification()
-                    .unwrap_or("none"),
-            );
-            write_early_static(" descriptor-facing-connection-delivered=");
-            write_bool(runtime.descriptor_facing_connection_delivered());
-            write_early_static(" deterministic-device-interface-bound=");
-            write_bool(runtime.deterministic_device_interface_bound());
-            write_early_static(" live-packet-io-accepted=false");
-            write_early_static(" live-reachability-accepted=false");
-            write_early_static(" remote-receipt-accepted=false");
-            write_early_static(" compatibility-accepted=false");
-            write_early_static(" ssh-ready=false");
-            write_early_static(" claims-service-success=false claims-phase-transition=false\n");
-        }
-        Err(_) => {
-            write_early_static("TALOS: ssh-service-smoltcp-runtime-blocked");
-            if let Some(nonce) = option_env!("TALOS_CAPTURE_NONCE") {
-                if !nonce.is_empty() {
-                    write_early_static(" capture-nonce=");
-                    write_early_static(nonce);
-                }
-            }
-            write_early_static(
-                " runtime-binding=error live-packet-io-accepted=false live-reachability-accepted=false remote-receipt-accepted=false compatibility-accepted=false ssh-ready=false claims-service-success=false claims-phase-transition=false\n",
-            );
-        }
-    }
+#[cfg(talos_boot_scenario = "rpi5_ssh_service_smoltcp_runtime_ready")]
+fn write_runtime_ready_marker(runtime: crate::network::LiveTcpNetworkDeviceRuntimeReport) {
+    write_early_static("TALOS: ssh-service-smoltcp-runtime-ready");
+    write_runtime_ready_capture_nonce();
+    write_early_static(" runtime-binding=accepted-deterministic-device-interface-delivery");
+    write_early_static(" retention-replay=true");
+    write_early_static(" descriptor-facing-connection-delivered=");
+    write_bool(runtime.descriptor_facing_connection_delivered());
+    write_early_static(" deterministic-device-interface-bound=");
+    write_bool(runtime.deterministic_device_interface_bound());
+    write_early_static(" hardware-frame-provider-bound=");
+    write_bool(runtime.hardware_frame_provider_bound());
+    write_early_static(" hardware-frame-provider-classification=");
+    write_early_static(
+        runtime
+            .hardware_frame_provider_classification()
+            .unwrap_or("none"),
+    );
+    write_early_static(" driver-packet-rx-frames=");
+    write_early_dec_u64(runtime.driver_packet_rx_frames() as u64);
+    write_early_static(" driver-packet-tx-frames=");
+    write_early_dec_u64(runtime.driver_packet_tx_frames() as u64);
+    write_early_static(" live-packet-io-accepted=");
+    write_bool(runtime.live_packet_io_accepted());
+    write_early_static(" live-reachability-accepted=");
+    write_bool(runtime.live_reachability_accepted());
+    write_early_static(" remote-receipt-accepted=");
+    write_bool(runtime.remote_receipt_accepted());
+    write_early_static(" compatibility-accepted=");
+    write_bool(runtime.compatibility_accepted());
+    write_early_static(" ssh-ready=");
+    write_bool(runtime.ssh_ready());
+    write_early_static(" claims-service-success=false claims-phase-transition=false\n");
+}
 
-    wait_uart10_empty_early_phase();
+#[cfg(talos_boot_scenario = "rpi5_ssh_service_smoltcp_runtime_ready")]
+fn write_runtime_blocked_marker(runtime: crate::network::LiveTcpNetworkDeviceRuntimeReport) {
+    write_early_static("TALOS: ssh-service-smoltcp-runtime-blocked");
+    write_runtime_ready_capture_nonce();
+    write_early_static(" runtime-binding=");
+    write_early_static(match runtime.binding_state() {
+        crate::network::LiveTcpNetworkDeviceRuntimeBindingState::AcceptedDeterministicDeviceInterfaceDelivery => {
+            "accepted-deterministic-device-interface-delivery"
+        }
+        crate::network::LiveTcpNetworkDeviceRuntimeBindingState::BlockedMissingDescriptorDelivery => {
+            "blocked-missing-descriptor-delivery"
+        }
+        crate::network::LiveTcpNetworkDeviceRuntimeBindingState::BlockedMissingDeviceInterfaceBinding => {
+            "blocked-missing-device-interface-binding"
+        }
+        crate::network::LiveTcpNetworkDeviceRuntimeBindingState::BlockedMissingHardwareFrameProvider => {
+            "blocked-missing-hardware-frame-provider"
+        }
+        crate::network::LiveTcpNetworkDeviceRuntimeBindingState::BlockedHardwareFrameProviderLinkNotReady => {
+            "blocked-hardware-frame-provider-link-not-ready"
+        }
+    });
+    write_early_static(" retention-replay=true");
+    write_early_static(" hardware-frame-provider-bound=");
+    write_bool(runtime.hardware_frame_provider_bound());
+    write_early_static(" hardware-frame-provider-classification=");
+    write_early_static(
+        runtime
+            .hardware_frame_provider_classification()
+            .unwrap_or("none"),
+    );
+    write_early_static(" descriptor-facing-connection-delivered=");
+    write_bool(runtime.descriptor_facing_connection_delivered());
+    write_early_static(" deterministic-device-interface-bound=");
+    write_bool(runtime.deterministic_device_interface_bound());
+    write_early_static(" live-packet-io-accepted=false");
+    write_early_static(" live-reachability-accepted=false");
+    write_early_static(" remote-receipt-accepted=false");
+    write_early_static(" compatibility-accepted=false");
+    write_early_static(" ssh-ready=false");
+    write_early_static(" claims-service-success=false claims-phase-transition=false\n");
+}
+
+#[cfg(talos_boot_scenario = "rpi5_ssh_service_smoltcp_runtime_ready")]
+fn write_runtime_error_marker() {
+    write_early_static("TALOS: ssh-service-smoltcp-runtime-blocked");
+    write_runtime_ready_capture_nonce();
+    write_early_static(
+        " runtime-binding=error retention-replay=true live-packet-io-accepted=false live-reachability-accepted=false remote-receipt-accepted=false compatibility-accepted=false ssh-ready=false claims-service-success=false claims-phase-transition=false\n",
+    );
+}
+
+#[cfg(talos_boot_scenario = "rpi5_ssh_service_smoltcp_runtime_ready")]
+pub fn run_ssh_service_smoltcp_runtime_ready_route() -> ! {
+    write_runtime_ready_route_start_marker(false);
+
+    let marker_route_ready =
+        match crate::network::live_tcp_runtime_marker_route_report_with_source_bound_rp1_provider()
+        {
+            Ok(report) => Some((report.marker_route_ready(), report.runtime_report())),
+            Err(_) => None,
+        };
+
     loop {
-        core::hint::spin_loop();
+        match marker_route_ready {
+            Some((true, runtime)) => {
+                write_runtime_ready_kernel_main_retention_marker(true);
+                write_runtime_ready_route_start_marker(true);
+                write_runtime_ready_marker(runtime);
+            }
+            Some((false, runtime)) => {
+                write_runtime_ready_kernel_main_retention_marker(false);
+                write_runtime_ready_route_start_marker(true);
+                write_runtime_blocked_marker(runtime);
+            }
+            None => {
+                write_runtime_ready_kernel_main_retention_marker(false);
+                write_runtime_ready_route_start_marker(true);
+                write_runtime_error_marker();
+            }
+        }
+        wait_uart10_empty_early_phase();
     }
 }
 

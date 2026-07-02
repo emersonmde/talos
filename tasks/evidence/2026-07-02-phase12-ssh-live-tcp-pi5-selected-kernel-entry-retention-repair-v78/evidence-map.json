@@ -1,0 +1,66 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-repair-v78-20260702",
+  "terminal_classification": "selected-kernel-entry-retention-repair-ready",
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79-20260702",
+  "planning_needed": false,
+  "comparison": {
+    "v71": {
+      "archive": "target/tmp/selected-normal-runtime-exceptions-ready-v70.tar.gz",
+      "archive_sha256": "18007965ceb10991766e01ab2cf4d6f468530eca97d1a8c3a016a39b0402396b",
+      "selected_kernel_path": "da591740/kernel_2712.img",
+      "selected_kernel_bytes": 152880,
+      "selected_kernel_sha256": "7a62150e4232fc8215a7c7ec8e502697bdabb3a9e6bcd62f640c75aba722e455",
+      "header_image_size": 152880,
+      "text_offset": 0,
+      "flags": 12,
+      "pi5_result": "selected-normal-runtime-exceptions-marker-retained"
+    },
+    "v76_v77": {
+      "archive": "target/talos-rpi5-rp1-provider-route-entry-v76-boot.tar.gz",
+      "archive_sha256": "e2779312ef50ddb55573524c4079608c2d0ee0626cdb1e57e8e30b1c43269332",
+      "selected_kernel_path": "da591740/kernel_2712.img",
+      "selected_kernel_bytes": 155096,
+      "selected_kernel_sha256": "6fc026100f0ea9e5157997eec12e1b3cc12000fdae243067f4349c7f4abffc20",
+      "header_image_size": 155096,
+      "text_offset": 0,
+      "flags": 12,
+      "pi5_result": "provider-route-entry-blocked-before-kernel-main"
+    },
+    "v78": {
+      "archive": "target/talos-rpi5-selected-kernel-entry-retention-v78-boot.tar.gz",
+      "archive_sha256": "7149fcad9aa29159b3e68e0875c89b41930cd1c39ca382a1cd409593972ebcb6",
+      "archive_bytes": 302817,
+      "selected_kernel_path": "da591740/kernel_2712.img",
+      "selected_kernel_bytes": 156040,
+      "selected_kernel_sha256": "ba899e55a5ebe6beeac441d74590985b6aa1be046f57d13324f2d9e953ea9650",
+      "header_image_size": 156040,
+      "text_offset": 0,
+      "flags": 12,
+      "capture_nonce": "entry-retention-v78",
+      "restore_target": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+      "expected_marker_hierarchy": [
+        "TALOS: kernel_main capture-nonce=entry-retention-v78 selected-kernel-entry-retention=v78",
+        "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=entry-retention-v78",
+        "TALOS: ssh-service-smoltcp-runtime-blocked capture-nonce=entry-retention-v78",
+        "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=entry-retention-v78"
+      ]
+    }
+  },
+  "source_diff_summary": [
+    "src/target/rpi5.rs retains the selected-kernel entry/provider route/runtime marker hierarchy after the source-bound RP1 provider report reaches a terminal local outcome.",
+    "scripts/rpi5-ssh-service-smoltcp-runtime-ready-archive-review.sh now requires the v78 retention contract and fail-closed runtime marker vocabulary."
+  ],
+  "validation": {
+    "git_status_before_edits": "## main...origin/main [ahead 310]",
+    "cargo_fmt_check": "passed",
+    "cargo_json_target_spec_test_quiet": "passed; 898 tests",
+    "shell_syntax": "passed",
+    "rpi5_archive_review": "passed",
+    "runtime_ready_archive_review": "passed",
+    "jq_empty": "passed",
+    "mdbook_build": "passed",
+    "git_diff_check": "passed",
+    "git_diff_cached_check": "passed"
+  },
+  "redaction_review": "Retained evidence is limited to source-path notes, task ids, archive/kernel digests and byte counts, marker vocabulary, validation summaries, and restore target. No packet payloads, SSH key/session material, private user data, raw hardware log bytes, or stable external identifiers are retained."
+}

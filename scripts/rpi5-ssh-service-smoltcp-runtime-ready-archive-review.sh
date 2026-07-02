@@ -37,14 +37,24 @@ for token in \
     "TALOS: asm_start" \
     "TALOS: asm_pre_rust_entry" \
     "talos: boot start" \
+    "TALOS: kernel_main" \
     "$route_start_token" \
     "$runtime_blocked_token" \
     "TALOS: ssh-service-smoltcp-runtime-ready" \
     "capture-nonce=" \
     "$CAPTURE_NONCE" \
-    "source=network-device-smoltcp-runtime provider-route-entry=source-bound-rp1 claims-runtime-ready=false" \
+    "selected-kernel-entry-retention=v78" \
+    "source=runtime-ready-route-retention-loop" \
+    "claims-bootinfo-parsed=true" \
+    "claims-target-init=true" \
+    "claims-exceptions-ready=true" \
+    "claims-route-start=true" \
+    "source=network-device-smoltcp-runtime provider-route-entry=source-bound-rp1" \
+    "retention-replay=true" \
+    "retention-replay=" \
+    "claims-runtime-ready=false" \
     "runtime-binding=accepted-deterministic-device-interface-delivery" \
-    "runtime-binding=error live-packet-io-accepted=false live-reachability-accepted=false remote-receipt-accepted=false compatibility-accepted=false ssh-ready=false claims-service-success=false claims-phase-transition=false" \
+    "runtime-binding=error retention-replay=true live-packet-io-accepted=false live-reachability-accepted=false remote-receipt-accepted=false compatibility-accepted=false ssh-ready=false claims-service-success=false claims-phase-transition=false" \
     "descriptor-facing-connection-delivered=" \
     "deterministic-device-interface-bound=" \
     "hardware-frame-provider-bound=" \
@@ -69,10 +79,11 @@ do
 done
 
 printf 'runtime_marker_route=ready\n'
-printf 'early_marker_hierarchy=%s\n' "asm_start|asm_pre_rust_entry|rust_entry|boot info parsed|target init|exceptions ready|kernel_main|report_boot_identity|route_start|runtime_blocked|runtime_ready"
+printf 'early_marker_hierarchy=%s\n' "asm_start|asm_pre_rust_entry|rust_entry|boot info parsed|target init|exceptions ready|kernel_main_retention|report_boot_identity|route_start_retention|runtime_blocked_retention|runtime_ready_retention"
 printf 'route_start_marker=%s\n' "$route_start_marker"
 printf 'runtime_blocked_marker=%s\n' "$runtime_blocked_marker"
 printf 'required_marker=%s\n' "$required_marker"
+printf 'retention_contract=%s\n' "selected-kernel-entry-retention-v78"
 printf 'marker_family=%s|%s|%s\n' \
     "$route_start_marker" \
     "$runtime_blocked_marker" \
