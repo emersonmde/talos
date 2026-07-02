@@ -1,0 +1,30 @@
+{
+  "task_record": "tasks/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-post-rust-entry-continuation-reconciliation-v65.md",
+  "classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-post-rust-entry-continuation-reconciliation-v65/classification.json",
+  "static": {
+    "static_comparison_report": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-post-rust-entry-continuation-reconciliation-v65/static/static-comparison-report.md",
+    "boot_tree_files": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-post-rust-entry-continuation-reconciliation-v65/static/boot-tree-files.txt",
+    "archive_sha256": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-post-rust-entry-continuation-reconciliation-v65/static/archive-sha256.txt",
+    "kernel_sha256": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-post-rust-entry-continuation-reconciliation-v65/static/kernel-sha256.txt",
+    "kernel_size": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-post-rust-entry-continuation-reconciliation-v65/static/kernel-size.txt",
+    "root_selected_kernel_cmp": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-post-rust-entry-continuation-reconciliation-v65/static/root-selected-kernel-cmp.exit",
+    "marker_strings": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-post-rust-entry-continuation-reconciliation-v65/static/marker-strings.txt"
+  },
+  "validation": {
+    "archive_review": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-post-rust-entry-continuation-reconciliation-v65/validation/archive-review.stdout.txt",
+    "bootinfo_archive_review": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-post-rust-entry-continuation-reconciliation-v65/validation/bootinfo-archive-review.stdout.txt",
+    "capture_helper_dry_run": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-post-rust-entry-continuation-reconciliation-v65/validation/capture-bundle-dry-run.json",
+    "git_status_before_edits": "## main...origin/main [ahead 289]",
+    "sh_n": "pass for scripts/rpi5-ssh-service-smoltcp-bootinfo-marker-loop-boot-tree.sh, scripts/rpi5-ssh-service-smoltcp-bootinfo-marker-loop-archive-review.sh, and scripts/rpi5-capture-invariant-proof-bundle.sh",
+    "cargo_build": "pass through non-published archive materialization",
+    "jq_empty": "task-owned JSON evidence and supervisor state",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass because docs/src files were touched",
+    "git_diff_cached_check": "pass before commit"
+  },
+  "predecessors": {
+    "v64_closeout_task": "tasks/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-closeout-v64.md",
+    "v64_closeout_classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-closeout-v64/classification.json",
+    "v64_closeout_evidence_map": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-closeout-v64/evidence-map.json"
+  }
+}

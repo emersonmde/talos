@@ -1,0 +1,68 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-post-rust-entry-continuation-reconciliation-v65-20260702",
+  "status": "accepted",
+  "terminalClassification": "selected-normal-runtime-post-rust-entry-discriminator-ready",
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66-20260702",
+  "planningNeeded": true,
+  "planningReason": "The BootInfo preflight contract is objectively specified, but no v66 serialized Pi 5 preflight task currently exists in taskQueue.",
+  "hardware_action": false,
+  "hardware_test_lock_acquired": false,
+  "lab_publication": false,
+  "boot_snapshot_mutation": false,
+  "summary": {
+    "accepted_predecessor": "phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-closeout-v64-20260702",
+    "frontier_input": "TALOS: rust_entry",
+    "next_required_marker": "TALOS: boot info parsed",
+    "first_missing_fact": "after TALOS: rust_entry and before TALOS: boot info parsed",
+    "archive_path": "target/tmp/selected-normal-runtime-bootinfo-v65.tar.gz",
+    "archive_sha256": "68a3e9356753c66b646477880f786fc10a01b021bd8758d19484f409df81ad9d",
+    "selected_fetch": "da591740/kernel_2712.img",
+    "selected_kernel_bytes": 152880,
+    "selected_kernel_sha256": "87bbaab6842cbd83c1dff548d81151af6f9ff5309236b7ba65481174560987a8",
+    "image_header": {
+      "text_offset": 0,
+      "header_image_size": 152880,
+      "flags": 12,
+      "magic": "ARMd"
+    },
+    "marker_family": [
+      "TALOS: asm_start",
+      "TALOS: asm_pre_rust_entry",
+      "TALOS: rust_entry",
+      "TALOS: boot info parsed"
+    ],
+    "blocked_successors": [
+      "target-init proof",
+      "exceptions proof",
+      "kernel_main proof",
+      "route-start proof",
+      "runtime-ready proof",
+      "packet-I/O",
+      "OpenSSH/generated-root retry",
+      "remote receipt",
+      "compatibility/service readiness",
+      "ssh-ready=true",
+      "fake/kernel-backed command expansion",
+      "broad shell work",
+      "phase transition"
+    ],
+    "findings": [
+      {
+        "disposition": "fixed",
+        "finding": "Reconciled v64 selected rust_entry proof with the current BootInfo marker-loop source/helper contract."
+      },
+      {
+        "disposition": "fixed",
+        "finding": "Materialized and reviewed a fresh non-published selected BootInfo archive."
+      },
+      {
+        "disposition": "not-an-issue",
+        "finding": "No source edit was needed because the current BootInfo marker-loop path already provides the smallest post-rust-entry discriminator."
+      },
+      {
+        "disposition": "deferred",
+        "finding": "A serialized Pi 5 run must prove TALOS: boot info parsed before accepting BootInfo or later milestones."
+      }
+    ]
+  }
+}
