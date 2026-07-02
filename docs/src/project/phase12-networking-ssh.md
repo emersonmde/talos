@@ -14395,3 +14395,22 @@ keeps packet-stimulus-owner=missing-lab-approved-packet-stimulus.
 selected_next_task is
 phase12-ssh-live-tcp-bounded-packet-stimulus-contract-core-v84-20260702 and
 planningNeeded=false.
+
+phase12-ssh-live-tcp-bounded-packet-stimulus-contract-core-v84-20260702
+accepts bounded-packet-stimulus-contract-ready. No lab publication, boot
+snapshot mutation, Pi 5 power cycle, serial/TFTP capture, live packet proof,
+remote receipt, OpenSSH/generated-root retry, compatibility claim, service
+success claim, ssh_ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The accepted contract records the
+permitted stimulus source as a lab network peer sending an ICMP echo request to
+the documented Talos Pi 5 target, with a run-unique ASCII nonce retained only as
+SHA-256 plus length. Payload bytes are not retained. The timing window is after
+the runtime-ready marker and fresh serial cursor and before final pre-restore
+identity. Expected report fields include contract id, permitted source,
+nonce-sha256, nonce length, protocol, descriptor index, frame length, ring wrap,
+RP1 descriptor-ring classification, host-only frame count, and the false
+live-packet-io acceptance flag. Deterministic DriverPacketAdapter host-only
+frames remain a regression/control surface and cannot satisfy the lab stimulus
+proof. selected_next_task is
+phase12-ssh-live-tcp-live-packet-ingress-candidate-materialization-v85-20260702
+and planningNeeded=false.

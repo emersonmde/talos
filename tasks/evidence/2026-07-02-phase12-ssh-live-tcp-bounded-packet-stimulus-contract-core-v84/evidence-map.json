@@ -1,0 +1,51 @@
+{
+  "task_id": "phase12-ssh-live-tcp-bounded-packet-stimulus-contract-core-v84-20260702",
+  "terminal_classification": "bounded-packet-stimulus-contract-ready",
+  "selected_next_task": "phase12-ssh-live-tcp-live-packet-ingress-candidate-materialization-v85-20260702",
+  "planningNeeded": false,
+  "first_missing_fact": null,
+  "source_evidence": [
+    {
+      "path": "src/network.rs",
+      "evidence": "LivePacketStimulusContractReport records permitted lab-network ICMP echo stimulus, nonce strategy, redaction policy, timing window, expected report fields, host-only distinction, and fail-closed descriptor-handoff prerequisite."
+    },
+    {
+      "path": "src/rp1_ethernet.rs",
+      "evidence": "Accepted v88 source-owned RP1 DMA RX descriptor/ring metadata handoff remains the packet-stimulus prerequisite."
+    },
+    {
+      "path": "docs/src/project/lab-controller.md",
+      "evidence": "Lab target facts identify talos-pi5 and explicitly keep network-controller credentials/API mutation outside OpenClaw scope; no packet-injection endpoint is required or used by this task."
+    }
+  ],
+  "contract": {
+    "permitted_stimulus_source": "lab-network-peer-icmp-echo-to-documented-talos-pi5-target",
+    "nonce_strategy": "run-unique-ascii-nonce-in-icmp-echo-payload-retain-only-sha256-and-length",
+    "payload_redaction_policy": "retain-protocol-length-nonce-sha256-and-descriptor-metadata-no-payload-bytes",
+    "timing_window": "after-runtime-ready-marker-and-serial-cursor-before-final-pre-restore-identity",
+    "expected_report_fields": [
+      "contract-id",
+      "permitted-stimulus-source",
+      "nonce-sha256",
+      "nonce-length",
+      "stimulus-protocol",
+      "descriptor-index",
+      "frame-length",
+      "ring-wrap",
+      "rp1-descriptor-ring-classification",
+      "host-only-frame-count",
+      "live-packet-io-accepted"
+    ],
+    "distinguishes_from_host_only_frames": true
+  },
+  "claims": {
+    "live_packet_io_accepted": false,
+    "live_reachability_accepted": false,
+    "remote_receipt_accepted": false,
+    "compatibility_accepted": false,
+    "service_success": false,
+    "ssh_ready": false,
+    "phase_transition": false
+  },
+  "redaction_review": "No packet payloads, SSH key/session material, private data, raw hardware logs, or external identifiers retained."
+}

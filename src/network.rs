@@ -2208,6 +2208,40 @@ pub(crate) const LIVE_PACKET_INGRESS_DISCRIMINATOR_PROVIDER_LINK_NOT_READY: &str
     "blocked-hardware-frame-provider-link-not-ready";
 pub(crate) const LIVE_PACKET_INGRESS_DISCRIMINATOR_RUNTIME_PREREQUISITE_MISSING: &str =
     "blocked-runtime-prerequisite-missing";
+pub(crate) const LIVE_PACKET_STIMULUS_CONTRACT_ID: &str =
+    "phase12-bounded-packet-stimulus-contract-v1";
+pub(crate) const LIVE_PACKET_STIMULUS_READY_CLASSIFICATION: &str =
+    "bounded-packet-stimulus-contract-ready";
+pub(crate) const LIVE_PACKET_STIMULUS_BLOCKED_CLASSIFICATION: &str =
+    "blocked-bounded-packet-stimulus-prerequisite-missing";
+pub(crate) const LIVE_PACKET_STIMULUS_PERMITTED_SOURCE: &str =
+    "lab-network-peer-icmp-echo-to-documented-talos-pi5-target";
+pub(crate) const LIVE_PACKET_STIMULUS_NONCE_STRATEGY: &str =
+    "run-unique-ascii-nonce-in-icmp-echo-payload-retain-only-sha256-and-length";
+pub(crate) const LIVE_PACKET_STIMULUS_PAYLOAD_REDACTION_POLICY: &str =
+    "retain-protocol-length-nonce-sha256-and-descriptor-metadata-no-payload-bytes";
+pub(crate) const LIVE_PACKET_STIMULUS_TIMING_WINDOW: &str =
+    "after-runtime-ready-marker-and-serial-cursor-before-final-pre-restore-identity";
+pub(crate) const LIVE_PACKET_STIMULUS_EXPECTED_REPORT_FIELDS: &[&str] = &[
+    "contract-id",
+    "permitted-stimulus-source",
+    "nonce-sha256",
+    "nonce-length",
+    "stimulus-protocol",
+    "descriptor-index",
+    "frame-length",
+    "ring-wrap",
+    "rp1-descriptor-ring-classification",
+    "host-only-frame-count",
+    "live-packet-io-accepted",
+];
+pub(crate) const LIVE_PACKET_STIMULUS_DISTINGUISHING_RULES: &[&str] = &[
+    "stimulus source must be the lab network peer, not DriverPacketAdapter injection",
+    "run-unique nonce hash must be absent from deterministic host-only frames",
+    "RP1 descriptor metadata must be recorded from the source-owned RX descriptor/ring handoff",
+    "packet payload bytes are never retained",
+    "deterministic host-only DriverPacketAdapter delivery remains a regression/control surface only",
+];
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct NetworkSocketDescriptor {
@@ -2767,6 +2801,27 @@ pub(crate) struct LiveTcpRp1DmaRxDescriptorRingHandoffReport {
     ssh_ready: bool,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) struct LivePacketStimulusContractReport {
+    contract_id: &'static str,
+    classification: &'static str,
+    permitted_stimulus_source: &'static str,
+    nonce_strategy: &'static str,
+    payload_redaction_policy: &'static str,
+    timing_window: &'static str,
+    expected_report_fields: &'static [&'static str],
+    distinguishing_rules: &'static [&'static str],
+    descriptor_ring_handoff_ready: bool,
+    deterministic_host_only_discriminator: &'static str,
+    distinguishes_lab_stimulus_from_host_only: bool,
+    packet_payload_retained: bool,
+    live_packet_io_accepted: bool,
+    live_reachability_accepted: bool,
+    remote_receipt_accepted: bool,
+    compatibility_accepted: bool,
+    ssh_ready: bool,
+}
+
 impl LiveTcpRuntimeMarkerRouteReport {
     pub(crate) const fn runtime_report(self) -> LiveTcpNetworkDeviceRuntimeReport {
         self.runtime_report
@@ -2808,6 +2863,76 @@ impl LiveTcpRp1DmaRxDescriptorRingHandoffReport {
 
     pub(crate) const fn redaction_policy(self) -> &'static str {
         self.redaction_policy
+    }
+
+    pub(crate) const fn live_packet_io_accepted(self) -> bool {
+        self.live_packet_io_accepted
+    }
+
+    pub(crate) const fn live_reachability_accepted(self) -> bool {
+        self.live_reachability_accepted
+    }
+
+    pub(crate) const fn remote_receipt_accepted(self) -> bool {
+        self.remote_receipt_accepted
+    }
+
+    pub(crate) const fn compatibility_accepted(self) -> bool {
+        self.compatibility_accepted
+    }
+
+    pub(crate) const fn ssh_ready(self) -> bool {
+        self.ssh_ready
+    }
+}
+
+impl LivePacketStimulusContractReport {
+    pub(crate) const fn contract_id(self) -> &'static str {
+        self.contract_id
+    }
+
+    pub(crate) const fn classification(self) -> &'static str {
+        self.classification
+    }
+
+    pub(crate) const fn permitted_stimulus_source(self) -> &'static str {
+        self.permitted_stimulus_source
+    }
+
+    pub(crate) const fn nonce_strategy(self) -> &'static str {
+        self.nonce_strategy
+    }
+
+    pub(crate) const fn payload_redaction_policy(self) -> &'static str {
+        self.payload_redaction_policy
+    }
+
+    pub(crate) const fn timing_window(self) -> &'static str {
+        self.timing_window
+    }
+
+    pub(crate) const fn expected_report_fields(self) -> &'static [&'static str] {
+        self.expected_report_fields
+    }
+
+    pub(crate) const fn distinguishing_rules(self) -> &'static [&'static str] {
+        self.distinguishing_rules
+    }
+
+    pub(crate) const fn descriptor_ring_handoff_ready(self) -> bool {
+        self.descriptor_ring_handoff_ready
+    }
+
+    pub(crate) const fn deterministic_host_only_discriminator(self) -> &'static str {
+        self.deterministic_host_only_discriminator
+    }
+
+    pub(crate) const fn distinguishes_lab_stimulus_from_host_only(self) -> bool {
+        self.distinguishes_lab_stimulus_from_host_only
+    }
+
+    pub(crate) const fn packet_payload_retained(self) -> bool {
+        self.packet_payload_retained
     }
 
     pub(crate) const fn live_packet_io_accepted(self) -> bool {
@@ -3035,6 +3160,51 @@ pub(crate) fn live_tcp_runtime_marker_route_report_with_source_owned_rp1_dma_rx_
         )),
     );
     live_tcp_runtime_marker_route_report_with_rp1_dma_rx_descriptor_ring_report(ring_report)
+}
+
+fn bounded_packet_stimulus_contract_report_for_handoff(
+    handoff: LiveTcpRp1DmaRxDescriptorRingHandoffReport,
+) -> LivePacketStimulusContractReport {
+    let ready = handoff.metadata_handoff_ready()
+        && handoff.driver_packet_adapter_handoff_ready()
+        && !handoff.packet_payload_available()
+        && !handoff.live_packet_io_accepted()
+        && !handoff.remote_receipt_accepted()
+        && handoff
+            .runtime_report()
+            .live_packet_ingress_discriminator_classification()
+            == LIVE_PACKET_INGRESS_DISCRIMINATOR_NO_LIVE_FRAME_PROVIDER;
+    LivePacketStimulusContractReport {
+        contract_id: LIVE_PACKET_STIMULUS_CONTRACT_ID,
+        classification: if ready {
+            LIVE_PACKET_STIMULUS_READY_CLASSIFICATION
+        } else {
+            LIVE_PACKET_STIMULUS_BLOCKED_CLASSIFICATION
+        },
+        permitted_stimulus_source: LIVE_PACKET_STIMULUS_PERMITTED_SOURCE,
+        nonce_strategy: LIVE_PACKET_STIMULUS_NONCE_STRATEGY,
+        payload_redaction_policy: LIVE_PACKET_STIMULUS_PAYLOAD_REDACTION_POLICY,
+        timing_window: LIVE_PACKET_STIMULUS_TIMING_WINDOW,
+        expected_report_fields: LIVE_PACKET_STIMULUS_EXPECTED_REPORT_FIELDS,
+        distinguishing_rules: LIVE_PACKET_STIMULUS_DISTINGUISHING_RULES,
+        descriptor_ring_handoff_ready: ready,
+        deterministic_host_only_discriminator:
+            LIVE_PACKET_INGRESS_DISCRIMINATOR_DETERMINISTIC_HOST_ONLY,
+        distinguishes_lab_stimulus_from_host_only: ready,
+        packet_payload_retained: false,
+        live_packet_io_accepted: false,
+        live_reachability_accepted: false,
+        remote_receipt_accepted: false,
+        compatibility_accepted: false,
+        ssh_ready: false,
+    }
+}
+
+pub(crate) fn live_tcp_bounded_packet_stimulus_contract_report()
+-> Result<LivePacketStimulusContractReport, crate::posix::PosixError> {
+    let handoff =
+        live_tcp_runtime_marker_route_report_with_source_owned_rp1_dma_rx_descriptor_ring()?;
+    Ok(bounded_packet_stimulus_contract_report_for_handoff(handoff))
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -7668,6 +7838,66 @@ mod tests {
         assert_eq!(handoff.frame_metadata_len(), 0);
         assert!(!handoff.live_packet_io_accepted());
         assert!(!handoff.ssh_ready());
+    }
+
+    #[test_case]
+    fn bounded_packet_stimulus_contract_accepts_metadata_only_lab_stimulus_boundary() {
+        let report = live_tcp_bounded_packet_stimulus_contract_report()
+            .expect("bounded packet stimulus contract");
+
+        assert_eq!(report.contract_id(), LIVE_PACKET_STIMULUS_CONTRACT_ID);
+        assert_eq!(
+            report.classification(),
+            LIVE_PACKET_STIMULUS_READY_CLASSIFICATION
+        );
+        assert_eq!(
+            report.permitted_stimulus_source(),
+            LIVE_PACKET_STIMULUS_PERMITTED_SOURCE
+        );
+        assert_eq!(report.nonce_strategy(), LIVE_PACKET_STIMULUS_NONCE_STRATEGY);
+        assert_eq!(
+            report.payload_redaction_policy(),
+            LIVE_PACKET_STIMULUS_PAYLOAD_REDACTION_POLICY
+        );
+        assert_eq!(report.timing_window(), LIVE_PACKET_STIMULUS_TIMING_WINDOW);
+        assert!(report.expected_report_fields().contains(&"nonce-sha256"));
+        assert!(report
+            .distinguishing_rules()
+            .contains(&"deterministic host-only DriverPacketAdapter delivery remains a regression/control surface only"));
+        assert!(report.descriptor_ring_handoff_ready());
+        assert_eq!(
+            report.deterministic_host_only_discriminator(),
+            LIVE_PACKET_INGRESS_DISCRIMINATOR_DETERMINISTIC_HOST_ONLY
+        );
+        assert!(report.distinguishes_lab_stimulus_from_host_only());
+        assert!(!report.packet_payload_retained());
+        assert!(!report.live_packet_io_accepted());
+        assert!(!report.live_reachability_accepted());
+        assert!(!report.remote_receipt_accepted());
+        assert!(!report.compatibility_accepted());
+        assert!(!report.ssh_ready());
+    }
+
+    #[test_case]
+    fn bounded_packet_stimulus_contract_fails_closed_without_descriptor_metadata_handoff() {
+        let ring_report = crate::rp1_ethernet::rp1_ethernet_dma_rx_descriptor_ring_report(
+            crate::rp1_ethernet::Rp1EthernetDmaRxDescriptorRingState::NoCompletedFrame,
+            None,
+        );
+        let handoff = live_tcp_runtime_marker_route_report_with_rp1_dma_rx_descriptor_ring_report(
+            ring_report,
+        )
+        .expect("no-frame descriptor-ring route");
+        let report = bounded_packet_stimulus_contract_report_for_handoff(handoff);
+
+        assert_eq!(
+            report.classification(),
+            LIVE_PACKET_STIMULUS_BLOCKED_CLASSIFICATION
+        );
+        assert!(!report.descriptor_ring_handoff_ready());
+        assert!(!report.distinguishes_lab_stimulus_from_host_only());
+        assert!(!report.live_packet_io_accepted());
+        assert!(!report.ssh_ready());
     }
 
     #[test_case]

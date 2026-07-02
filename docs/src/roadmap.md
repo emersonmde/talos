@@ -22876,6 +22876,20 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   selected_next_task is
   phase12-ssh-live-tcp-bounded-packet-stimulus-contract-core-v84-20260702 and
   planningNeeded=false.
+- phase12-ssh-live-tcp-bounded-packet-stimulus-contract-core-v84-20260702
+  accepts bounded-packet-stimulus-contract-ready. No lab publication, boot
+  snapshot mutation, Pi 5 power cycle, serial/TFTP capture, live packet proof,
+  remote receipt, OpenSSH/generated-root retry, compatibility claim, service
+  success claim, ssh_ready=true, fake/kernel-backed command expansion, broad
+  shell work, or phase transition was performed. src/network.rs now records the
+  metadata-only packet-stimulus contract: lab-network-peer ICMP echo to the
+  documented Talos Pi 5 target, run-unique ASCII nonce retained only as SHA-256
+  plus length, payload redaction, timing after runtime-ready/fresh serial cursor
+  and before final pre-restore identity, expected report fields, and explicit
+  separation from deterministic DriverPacketAdapter host-only frames. The
+  selected_next_task is
+  phase12-ssh-live-tcp-live-packet-ingress-candidate-materialization-v85-20260702
+  and planningNeeded=false.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
