@@ -1,0 +1,24 @@
+{
+  "task_record": "tasks/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-repair-closeout-v59.md",
+  "classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-repair-closeout-v59/classification.json",
+  "static": {
+    "reconciliation_summary": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-repair-closeout-v59/static/reconciliation-summary.md"
+  },
+  "predecessors": {
+    "v58_task_record": "tasks/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-provenance-reconciliation-v58.md",
+    "v58_classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-provenance-reconciliation-v58/classification.json",
+    "v58_evidence_map": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-provenance-reconciliation-v58/evidence-map.json",
+    "v59_task_record": "tasks/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59.md",
+    "v59_classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59/classification.json",
+    "v59_evidence_map": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59/evidence-map.json",
+    "v59_candidate_summary": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59/lab/v59-candidate/candidate-summary.json",
+    "v59_redaction_review": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59/lab/v59-candidate/redaction-review.json"
+  },
+  "validation": {
+    "git_status_before_edits": "## main...origin/main [ahead 282]",
+    "jq_empty": "task-owned JSON evidence and supervisor state",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass because docs/src files were touched",
+    "git_diff_cached_check": "pass before commit"
+  }
+}

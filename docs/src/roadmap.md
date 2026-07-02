@@ -22332,6 +22332,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-repair-closeout-v59-20260702
   and planningNeeded=false. Packet-I/O/OpenSSH/service readiness remains
   blocked until a deeper runtime frontier is proved by closeout and follow-up.
+- phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-repair-closeout-v59-20260702
+  accepts selected-normal-runtime-entry-frontier-proved. No hardware action,
+  lab publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+  OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+  success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+  shell work, or phase transition was performed. The closeout reconciles v59
+  against the accepted v58 entry-loop discriminator and v59 Pi 5 evidence:
+  selected post-power identity, selected same-window TFTP byte service, selected
+  final pre-restore identity, marker-family serial observation, and restore
+  proof are no longer missing facts. The selected candidate reached TALOS:
+  asm_start on Pi 5 547 times. Route-start and runtime-ready remain blocked
+  because the same window retained zero occurrences of asm_pre_rust_entry,
+  kernel_main, route-start, runtime-blocked, and runtime-ready markers. The
+  first missing fact is now after TALOS: asm_start and before TALOS:
+  asm_pre_rust_entry. selected_next_task is null and planningNeeded=true for
+  supervisor planning of the next bounded post-entry repair or discriminator.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

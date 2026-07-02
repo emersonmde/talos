@@ -13784,3 +13784,21 @@ phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-repair-closeout-v59-
 and planningNeeded=false. Packet-I/O, OpenSSH compatibility, service readiness,
 ssh-ready=true, fake command expansion, broad shell work, and phase transition
 remain blocked.
+
+phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-repair-closeout-v59-20260702
+accepts selected-normal-runtime-entry-frontier-proved. No hardware action, lab
+publication, boot snapshot mutation, Pi 5 power cycle, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The closeout reconciles v59
+against the accepted v58 entry-loop discriminator and v59 Pi 5 evidence:
+selected post-power identity, selected same-window TFTP byte service, selected
+final pre-restore identity, marker-family serial observation, and restore proof
+are no longer missing facts. The selected candidate reached the assembly entry
+loop on Pi 5 and retained TALOS: asm_start 547 times. Route-start and
+runtime-ready remain blocked because the same window retained zero occurrences
+of asm_pre_rust_entry, kernel_main, route-start, runtime-blocked, and
+runtime-ready markers. The first missing fact is now after TALOS: asm_start and
+before TALOS: asm_pre_rust_entry. selected_next_task is null and
+planningNeeded=true for supervisor planning of the next bounded post-entry
+repair or discriminator.

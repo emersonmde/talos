@@ -1,0 +1,66 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-repair-closeout-v59-20260702",
+  "status": "accepted",
+  "terminalClassification": "selected-normal-runtime-entry-frontier-proved",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "first_missing_fact": "selected Pi 5 serial evidence after TALOS: asm_start and before TALOS: asm_pre_rust_entry",
+  "evidence_level": "accepted v58 static discriminator contract + accepted v59 serialized Pi 5 preflight evidence + selected post-power identity + selected TFTP byte service + selected final pre-restore identity + serial marker-family summary + restore proof + task-owned JSON evidence + docs build + diff checks",
+  "predecessors": {
+    "contract_task": "phase12-ssh-live-tcp-selected-normal-runtime-no-route-start-provenance-reconciliation-v58-20260702",
+    "hardware_task": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-no-route-start-repair-preflight-v59-20260702"
+  },
+  "accepted_facts": {
+    "selected_tree": "c8a7e7d3de13900ab5d87b17040f82b85e6e2a557a9de1e6f882812c448f6a0f",
+    "selected_fetch": "da591740/kernel_2712.img",
+    "selected_kernel_bytes": 152144,
+    "archive_sha256": "9988a761539867a50db538d64533df78b0af6d9cd3277ee0a1189cd3b2effc37",
+    "selected_kernel_sha256": "6a7b970144e43c5b57b343c5ee4ff1275b077403ee83c3806dedd740acc89301",
+    "post_power_tree": "c8a7e7d3de13900ab5d87b17040f82b85e6e2a557a9de1e6f882812c448f6a0f",
+    "final_pre_restore_tree": "c8a7e7d3de13900ab5d87b17040f82b85e6e2a557a9de1e6f882812c448f6a0f",
+    "post_restore_tree": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "tftp_selected_fetch_event_count": 2,
+    "tftp_selected_fetch_bytes": [
+      152144,
+      152144
+    ],
+    "deepest_retained_marker": "TALOS: asm_start",
+    "deepest_retained_marker_occurrences": 547,
+    "missing_markers": [
+      "TALOS: asm_pre_rust_entry",
+      "TALOS: kernel_main",
+      "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=runtime-no-route-start-v58",
+      "TALOS: ssh-service-smoltcp-runtime-blocked capture-nonce=runtime-no-route-start-v58",
+      "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-no-route-start-v58"
+    ]
+  },
+  "blocked_successors": [
+    "phase12-ssh-live-tcp-selected-normal-runtime-runtime-ready-after-no-route-start-repair-reconciliation-v60-20260702",
+    "phase12-ssh-live-tcp-selected-normal-runtime-packet-io-continuation-reconciliation-v53-20260701"
+  ],
+  "findings": [
+    {
+      "disposition": "fixed",
+      "finding": "Reconciled v59 as selected entry-frontier proof after selected identity, TFTP service, final identity, serial marker-family evidence, and restore proof."
+    },
+    {
+      "disposition": "fixed",
+      "finding": "Recorded the first missing fact after TALOS: asm_start and before TALOS: asm_pre_rust_entry."
+    },
+    {
+      "disposition": "removed",
+      "finding": "Did not select route-start, runtime-ready, packet-I/O, OpenSSH, service readiness, fake command expansion, broad shell work, hardware action, or a phase transition as an immediate successor."
+    },
+    {
+      "disposition": "deferred",
+      "finding": "Supervisor planning is needed for the next bounded repair or discriminator around the post-asm_start/pre-asm_pre_rust_entry frontier."
+    }
+  ],
+  "redaction_review": {
+    "retains_raw_serial": false,
+    "retains_raw_tftp_peer_or_log_line": false,
+    "retains_packet_payloads": false,
+    "retains_secret_or_operator_identity": false,
+    "references_predecessor_redacted_evidence": true
+  }
+}
