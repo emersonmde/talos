@@ -22762,6 +22762,23 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   packet I/O, remote receipt, OpenSSH compatibility, service success,
   ssh_ready=true, fake command expansion, broad shell work, and phase
   transition remain unaccepted.
+- phase12-ssh-live-tcp-rp1-provider-route-entry-closeout-v77-20260702 accepts
+  provider-route-entry-frontier-blocked. No code implementation, lab
+  publication, boot snapshot mutation, Pi 5 power cycle, serial capture, TFTP
+  capture, packet-I/O proof, remote receipt, OpenSSH/generated-root retry,
+  compatibility claim, service success claim, ssh_ready=true,
+  fake/kernel-backed command expansion, broad shell work, or phase transition
+  was performed. The closeout reconciles v76 and v77: the source route has an
+  accepted provider route-entry marker and fail-closed provider runtime
+  markers, but the selected Pi 5 run served the v76 kernel and retained final
+  selected identity without retaining kernel_main, provider route-start,
+  runtime-blocked, or runtime-ready markers. The first missing fact is selected
+  Pi 5 serial retention of kernel_main after selected kernel TFTP service and
+  final pre-restore selected identity. v72, v60, and v53 remain deferred or
+  blocked unless explicitly reselected with refreshed dependencies and gates.
+  selected_next_task=null and planningNeeded=true before packet-I/O,
+  OpenSSH/generated-root retry, fake command expansion, broad shell work, or
+  phase transition.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
