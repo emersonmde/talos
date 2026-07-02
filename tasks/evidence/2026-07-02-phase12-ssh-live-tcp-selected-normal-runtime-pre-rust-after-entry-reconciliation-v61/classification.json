@@ -1,0 +1,62 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-reconciliation-v61-20260702",
+  "classification": "selected-normal-runtime-pre-rust-discriminator-ready",
+  "status": "accepted",
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-after-entry-preflight-v62-20260702",
+  "planning_needed": false,
+  "hardware_action": false,
+  "hardware_test_lock_acquired": false,
+  "lab_publication": false,
+  "boot_snapshot_mutation": false,
+  "source_commit": "dc7f065f3fe6df3abfa874ddc65c47a5d371e2c6",
+  "archive": {
+    "path": "target/tmp/selected-normal-runtime-pre-rust-v61.tar.gz",
+    "sha256": "6e7a35f4d875a510719ca8fbdb256f6513d8d0b1eb6c5e321e198b75f8878cd9"
+  },
+  "selected_kernel": {
+    "path": "da591740/kernel_2712.img",
+    "source_path": "target/tmp/selected-normal-runtime-pre-rust-v61-boot-tree/kernel_2712.img",
+    "sha256": "90c72361bc67be8933436ddc5e6807dc127a8cb329a3fcab49404c10f8086d59",
+    "bytes": 152144,
+    "root_and_selected_byte_identical": true
+  },
+  "image_header": {
+    "text_offset": 0,
+    "header_image_size": 152144,
+    "flags": 12,
+    "magic": "ARMd"
+  },
+  "required_marker": "TALOS: asm_pre_rust_entry",
+  "marker_family": [
+    "TALOS: asm_start",
+    "TALOS: asm_pre_rust_entry",
+    "TALOS: rust_entry",
+    "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=runtime-pre-rust-v61",
+    "TALOS: ssh-service-smoltcp-runtime-blocked capture-nonce=runtime-pre-rust-v61",
+    "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-pre-rust-v61"
+  ],
+  "restore_target": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+  "fail_closed_classifications": [
+    "selected-normal-runtime-entry-marker-retained",
+    "blocked-selected-normal-runtime-pre-rust-marker-missing",
+    "selected-normal-runtime-pre-rust-marker-retained",
+    "selected-normal-runtime-rust-entry-marker-retained",
+    "selected-normal-runtime-route-start-marker-retained",
+    "selected-normal-runtime-runtime-blocked-marker-retained",
+    "selected-normal-runtime-runtime-ready-marker-retained",
+    "selected-normal-runtime-pre-rust-inconclusive-after-triage"
+  ],
+  "redaction": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_peer_or_log_lines_retained": false,
+    "packet_payloads_retained": false,
+    "ssh_or_key_material_retained": false,
+    "boot_artifact_bytes_committed": false,
+    "private_user_data_retained": false
+  },
+  "notes": [
+    "This is a no-hardware static/archive contract refresh after v59 proved selected TALOS: asm_start on Pi 5.",
+    "The successor v62 preflight is selected only because the current-source archive contract requires TALOS: asm_pre_rust_entry and stops before rust_entry.",
+    "No packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility claim, service success claim, ssh-ready=true, fake command expansion, broad shell work, or phase transition is accepted."
+  ]
+}

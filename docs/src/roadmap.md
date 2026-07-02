@@ -22348,6 +22348,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   first missing fact is now after TALOS: asm_start and before TALOS:
   asm_pre_rust_entry. selected_next_task is null and planningNeeded=true for
   supervisor planning of the next bounded post-entry repair or discriminator.
+- phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-reconciliation-v61-20260702
+  accepts selected-normal-runtime-pre-rust-discriminator-ready. No hardware
+  action, lab publication, boot snapshot mutation, Pi 5 power cycle,
+  packet-I/O, OpenSSH/generated-root retry, remote receipt, compatibility
+  claim, service success claim, ssh-ready=true, fake/kernel-backed command
+  expansion, broad shell work, or phase transition was performed. The worker
+  refreshed a current-source selected normal-runtime pre-rust marker-loop
+  archive from commit dc7f065f3fe6df3abfa874ddc65c47a5d371e2c6. The archive
+  SHA-256 is 6e7a35f4d875a510719ca8fbdb256f6513d8d0b1eb6c5e321e198b75f8878cd9;
+  selected da591740/kernel_2712.img is 152,144 bytes with SHA-256
+  90c72361bc67be8933436ddc5e6807dc127a8cb329a3fcab49404c10f8086d59. Static
+  disassembly shows TALOS: asm_start before CPACR/BSS/stack setup and a later
+  loop on TALOS: asm_pre_rust_entry before rust_entry. selected_next_task is
+  phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-after-entry-preflight-v62-20260702
+  and planningNeeded=false.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

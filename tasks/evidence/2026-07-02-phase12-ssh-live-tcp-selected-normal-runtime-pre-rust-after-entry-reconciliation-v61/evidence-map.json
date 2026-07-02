@@ -1,0 +1,49 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-reconciliation-v61-20260702",
+  "classification": "selected-normal-runtime-pre-rust-discriminator-ready",
+  "evidence": {
+    "classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-reconciliation-v61/classification.json",
+    "static_comparison_report": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-reconciliation-v61/static/static-comparison-report.md",
+    "source_commit": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-reconciliation-v61/static/source-commit.txt",
+    "archive_sha256": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-reconciliation-v61/static/archive-sha256.txt",
+    "selected_kernel_sha256": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-reconciliation-v61/static/kernel-sha256.txt",
+    "selected_kernel_size": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-reconciliation-v61/static/kernel-size.txt",
+    "image_header_size": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-reconciliation-v61/static/header-image-size.txt",
+    "image_text_offset": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-reconciliation-v61/static/text-offset.txt",
+    "image_flags": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-reconciliation-v61/static/flags.txt",
+    "image_magic": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-reconciliation-v61/static/image-magic.txt",
+    "root_selected_kernel_cmp": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-reconciliation-v61/static/root-selected-kernel-cmp.txt",
+    "marker_strings": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-reconciliation-v61/static/marker-strings.txt",
+    "start_disassembly": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-reconciliation-v61/static/start-disassembly.txt",
+    "boot_tree_files": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-reconciliation-v61/static/boot-tree-files.txt",
+    "archive_review": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-reconciliation-v61/validation/archive-review.stdout.txt",
+    "runtime_archive_review": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-reconciliation-v61/validation/runtime-archive-review.stdout.txt",
+    "capture_bundle_dry_run": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-reconciliation-v61/validation/capture-bundle-dry-run.json"
+  },
+  "validation": [
+    {
+      "level": "git status --short --branch before edits/action",
+      "result": "## main...origin/main [ahead 283] with only untracked v61 evidence from a previous partial wake."
+    },
+    {
+      "level": "non-published archive materialization and cargo build",
+      "result": "rpi5_ssh_service_smoltcp_pre_rust_marker_loop archive materialized from source commit dc7f065f3fe6df3abfa874ddc65c47a5d371e2c6; selected kernel is 152144 bytes."
+    },
+    {
+      "level": "archive/image/static inspection",
+      "result": "archive SHA-256 6e7a35f4d875a510719ca8fbdb256f6513d8d0b1eb6c5e321e198b75f8878cd9; selected kernel SHA-256 90c72361bc67be8933436ddc5e6807dc127a8cb329a3fcab49404c10f8086d59; root/da591740 equality pass; Image header text_offset=0 header_image_size=152144 flags=12 magic=ARMd."
+    },
+    {
+      "level": "static disassembly inspection",
+      "result": "_start emits TALOS: asm_start once, completes CPACR/BSS/stack setup, then loops at _start+0x90 through _start+0xac on TALOS: asm_pre_rust_entry before the later rust_entry branch at _start+0xb4."
+    },
+    {
+      "level": "capture helper --dry-run",
+      "result": "v62 dry-run records required_success_marker=TALOS: asm_pre_rust_entry, selected fetch da591740/kernel_2712.img, expected 152144 bytes, restore target phase12-ssh-v10-openssh-clean-pre-20260624T074100Z, and fail-closed classifications."
+    }
+  ],
+  "redaction": {
+    "committed_data": "Task ids, source/path labels, hashes, byte counts, marker names, classifications, validation summaries, static reports, and dry-run contracts only.",
+    "excluded_data": "Raw serial logs, raw TFTP peer/log-line fields, packet payloads, SSH/session/key material, boot artifact bytes, private user data, stable secret-derived identifiers, public-key blobs, signatures, fingerprints, operator identities, and unnecessary hardware data."
+  }
+}
