@@ -5,7 +5,7 @@ Status: accepted
 Terminal classification:
 inconclusive-selected-normal-runtime-target-init-preflight
 
-Commit: pending
+Evidence commit: 4f93bca8743be1860741f4e1e5ee3342bea5b235
 
 ## Scope
 

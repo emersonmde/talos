@@ -1,6 +1,7 @@
 {
   "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69-20260702",
   "terminal_classification": "inconclusive-selected-normal-runtime-target-init-preflight",
+  "evidence_commit": "4f93bca8743be1860741f4e1e5ee3342bea5b235",
   "selected_next_task": "phase12-ssh-live-tcp-selected-normal-runtime-target-init-after-bootinfo-closeout-v69-20260702",
   "planning_needed": false,
   "restore": {
