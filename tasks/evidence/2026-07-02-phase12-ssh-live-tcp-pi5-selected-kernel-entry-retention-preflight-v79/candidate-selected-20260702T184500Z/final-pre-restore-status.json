@@ -1,0 +1,9 @@
+{
+  "ok": true,
+  "boot": {
+    "effective_kernel": "kernel_2712.img",
+    "configured_kernel": "kernel_2712.img",
+    "tree_hash": "c7699880cfc54c80ee1e6a9bd05c7ae7c32e9284f5a84cf08d409719ac5c4e3e",
+    "selected_identity_summary": true
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "task": "phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79-20260702",
+  "terminal_classification": "provider-runtime-ready-local-only-retained",
+  "accepted_run": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79/candidate-selected-20260702T184500Z",
+  "candidate": {
+    "archive": "target/talos-rpi5-selected-kernel-entry-retention-v78-boot.tar.gz",
+    "archive_sha256_file": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79/candidate-archive-sha256.txt",
+    "archive_bytes_file": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79/candidate-archive-bytes.txt",
+    "archive_review": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79/candidate-archive-review.txt",
+    "selected_kernel_sha256_file": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79/candidate-selected-20260702T184500Z/selected-kernel-sha256.txt",
+    "selected_kernel_bytes_file": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79/candidate-selected-20260702T184500Z/selected-kernel-bytes.txt"
+  },
+  "lab_evidence": {
+    "pre_publication_status": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79/candidate-selected-20260702T184500Z/pre-publication-status.json",
+    "post_publication_status": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79/candidate-selected-20260702T184500Z/post-publication-status.json",
+    "power_cycle": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79/candidate-selected-20260702T184500Z/power-cycle.json",
+    "serial_cursor_before_power": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79/candidate-selected-20260702T184500Z/serial-cursor-before-power.txt",
+    "serial_window_summary": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79/candidate-selected-20260702T184500Z/serial-observe-window.json",
+    "tftp_cursor_before_power": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79/candidate-selected-20260702T184500Z/tftp-cursor-before-power.txt",
+    "tftp_delta_summary": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79/candidate-selected-20260702T184500Z/tftp-delta-before-restore.json",
+    "final_pre_restore_status": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79/candidate-selected-20260702T184500Z/final-pre-restore-status.json",
+    "restore_snapshot": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79/candidate-selected-20260702T184500Z/restore-snapshot.json",
+    "post_restore_status": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79/candidate-selected-20260702T184500Z/post-restore-status.json",
+    "key_summary": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79/candidate-selected-20260702T184500Z/key-summary.json"
+  },
+  "redaction": {
+    "raw_serial_text_retained": false,
+    "raw_tftp_client_identifiers_retained": false,
+    "packet_payloads_retained": false,
+    "ssh_key_or_session_material_retained": false
+  }
+}

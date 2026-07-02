@@ -1,0 +1,1 @@
+tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79/candidate-selected-20260702T184500Z

@@ -14306,3 +14306,23 @@ ba899e55a5ebe6beeac441d74590985b6aa1be046f57d13324f2d9e953ea9650 at 156,040
 bytes. The first missing hardware fact remains selected Pi 5 serial retention
 of kernel_main until the queued v79 serialized preflight runs. selected_next_task
 is phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79-20260702.
+
+phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79-20260702
+accepts provider-runtime-ready-local-only-retained. Under hardwareTestLock, the
+worker published the v78 selected-kernel entry-retention archive, staged selected
+tree c7699880cfc54c80ee1e6a9bd05c7ae7c32e9284f5a84cf08d409719ac5c4e3e, and
+captured a serialized Pi 5 run. Stable same-cursor TFTP before restore retained
+13 events, including two selected da591740/kernel_2712.img serves at 156,040
+bytes, and final pre-restore identity still matched the selected tree. Serial
+used the saturated-cursor direct-read fallback, retained 70,015 bytes with two
+firmware NETWORK markers, and retained 53 occurrences each of the v78
+kernel_main, provider route-start, and runtime-ready markers. The runtime-blocked
+marker had zero occurrences because this path reached the local-only
+runtime-ready marker. The lab restored to
+phase12-ssh-v10-openssh-clean-pre-20260624T074100Z with tree
+a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+selected_next_task is
+phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-closeout-v79-20260702.
+Live packet I/O, remote receipt, OpenSSH compatibility, service success,
+ssh_ready=true, fake command expansion, broad shell work, and phase transition
+remain unaccepted.

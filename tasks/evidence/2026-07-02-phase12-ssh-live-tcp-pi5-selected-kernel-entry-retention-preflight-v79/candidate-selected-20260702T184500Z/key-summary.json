@@ -1,0 +1,84 @@
+{
+  "task": "phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-preflight-v79-20260702",
+  "terminal_classification": "provider-runtime-ready-local-only-retained",
+  "candidate": {
+    "archive": "target/talos-rpi5-selected-kernel-entry-retention-v78-boot.tar.gz",
+    "archive_sha256": "7149fcad9aa29159b3e68e0875c89b41930cd1c39ca382a1cd409593972ebcb6",
+    "archive_bytes": 302817,
+    "selected_kernel_path": "da591740/kernel_2712.img",
+    "selected_kernel_bytes": 156040,
+    "selected_kernel_sha256": "ba899e55a5ebe6beeac441d74590985b6aa1be046f57d13324f2d9e953ea9650",
+    "capture_nonce": "entry-retention-v78"
+  },
+  "publication": {
+    "published_tree_hash": "c7699880cfc54c80ee1e6a9bd05c7ae7c32e9284f5a84cf08d409719ac5c4e3e",
+    "effective_kernel": "kernel_2712.img",
+    "configured_kernel": "kernel_2712.img",
+    "selected_kernel_bytes": 156040
+  },
+  "hardware": {
+    "final_pre_restore_tree_hash": "c7699880cfc54c80ee1e6a9bd05c7ae7c32e9284f5a84cf08d409719ac5c4e3e",
+    "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "expected_fetch_count": 2,
+    "expected_fetch_byte_match_count": 2,
+    "tftp_event_count": 13,
+    "tftp_stability": {
+      "stable": true,
+      "reason": "stable",
+      "stable_samples": 3,
+      "required_samples": 3
+    }
+  },
+  "serial": {
+    "has_kernel_main": true,
+    "has_required_marker": true,
+    "deepest_present_marker": {
+      "marker": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=entry-retention-v78",
+      "present": true,
+      "occurrences": 53,
+      "first_index": 4985
+    },
+    "marker_counts": [
+      {
+        "marker": "TALOS: kernel_main capture-nonce=entry-retention-v78 selected-kernel-entry-retention=v78",
+        "present": true,
+        "occurrences": 53,
+        "first_index": 5618
+      },
+      {
+        "marker": "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=entry-retention-v78",
+        "present": true,
+        "occurrences": 53,
+        "first_index": 4778
+      },
+      {
+        "marker": "TALOS: ssh-service-smoltcp-runtime-blocked capture-nonce=entry-retention-v78",
+        "present": false,
+        "occurrences": 0,
+        "first_index": null
+      },
+      {
+        "marker": "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=entry-retention-v78",
+        "present": true,
+        "occurrences": 53,
+        "first_index": 4985
+      }
+    ],
+    "firmware_network_occurrences": 2,
+    "response_bytes": 70015,
+    "capture_mode": "read",
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor"
+  },
+  "safety_claims": {
+    "live_packet_io_accepted": false,
+    "live_reachability_accepted": false,
+    "remote_receipt_accepted": false,
+    "compatibility_accepted": false,
+    "claims_service_success": false,
+    "ssh_ready": false,
+    "claims_phase_transition": false
+  },
+  "selected_next_task": "phase12-ssh-live-tcp-pi5-selected-kernel-entry-retention-closeout-v79-20260702",
+  "planningNeeded": false,
+  "redaction_review": "Retained evidence is limited to archive/kernel digests, file-event metadata without client identifiers, marker counts, concise serial classifications without raw serial text, lab tree identities, and restore proof. No packet payloads, SSH key/session material, private user data, raw hardware log bytes, or stable external identifiers are retained."
+}

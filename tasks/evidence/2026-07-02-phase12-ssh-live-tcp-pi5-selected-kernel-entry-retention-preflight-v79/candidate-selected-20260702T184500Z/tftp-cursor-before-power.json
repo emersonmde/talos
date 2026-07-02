@@ -1,0 +1,10 @@
+{
+  "action": "tftp logs",
+  "ok": true,
+  "tftp": {
+    "cursor_start": 3725956,
+    "cursor_end": 4774532,
+    "log_size": 4774532,
+    "event_count": 1
+  }
+}

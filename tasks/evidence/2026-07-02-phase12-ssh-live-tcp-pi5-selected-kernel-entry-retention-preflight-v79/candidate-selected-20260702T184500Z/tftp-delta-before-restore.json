@@ -1,0 +1,17 @@
+{
+  "ok": true,
+  "tftp": {
+    "event_count": 13,
+    "selected_kernel_event_count": 2,
+    "selected_kernel_byte_match_count": 2,
+    "selected_kernel_bytes": 156040,
+    "selected_kernel_path": "da591740/kernel_2712.img",
+    "events_redacted": true
+  },
+  "talos_tftp_stability": {
+    "stable": true,
+    "reason": "stable",
+    "stable_samples": 3,
+    "required_samples": 3
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "ok": true,
+  "action": "boot archive publish",
+  "boot": {
+    "effective_kernel": "kernel_2712.img",
+    "configured_kernel": "kernel_2712.img",
+    "tree_hash": "c7699880cfc54c80ee1e6a9bd05c7ae7c32e9284f5a84cf08d409719ac5c4e3e",
+    "config": {
+      "enable_rp1_uart": "1",
+      "kernel": "kernel_2712.img",
+      "os_check": "0"
+    }
+  },
+  "archive": {
+    "files": [
+      "bcm2712-rpi-5-b.dtb",
+      "cmdline.txt",
+      "config.txt",
+      "da591740/bcm2712-rpi-5-b.dtb",
+      "da591740/cmdline.txt",
+      "da591740/config.txt",
+      "da591740/kernel8.img",
+      "da591740/kernel_2712.img",
+      "da591740/overlays/bcm2712d0.dtbo",
+      "da591740/overlays/overlay_map.dtb",
+      "da591740/overlays/uart0-pi5.dtbo",
+      "kernel8.img",
+      "kernel_2712.img",
+      "overlays/bcm2712d0.dtbo",
+      "overlays/overlay_map.dtb",
+      "overlays/uart0-pi5.dtbo"
+    ],
+    "file_count": 16,
+    "extracted_bytes": 798726
+  }
+}
