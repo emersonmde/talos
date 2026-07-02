@@ -1,0 +1,51 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-target-init-after-bootinfo-closeout-v69-20260702",
+  "summary": "No-hardware closeout reconciled v69 selected target-init evidence with current source lineage.",
+  "v69_selected_evidence": {
+    "archive_sha256": "18270d2ca0bef45c72898beaa55971b48d748f3a87a767556074423821f17352",
+    "selected_kernel_path": "da591740/kernel_2712.img",
+    "selected_kernel_bytes": 152880,
+    "selected_kernel_sha256": "4513bd97689673f904a849b60aee0377d6ddcc813ad0d00a18e422b3cc52ef82",
+    "selected_tree_hash": "3a87fb0afcb024cd6cec78652e42935ce276f95471de525f697611c2bc8f4cf1",
+    "first_run": {
+      "selected_kernel_serves": 2,
+      "target_init_occurrences": 1978,
+      "literal_boot_info_parsed_occurrences": 0,
+      "identity_join_allowed": true
+    },
+    "candidate_rerun": {
+      "selected_kernel_serves": 2,
+      "target_init_occurrences": 382,
+      "literal_boot_info_parsed_occurrences": 0,
+      "identity_join_allowed": true
+    },
+    "restore": {
+      "snapshot": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z",
+      "post_restore_tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+      "effective_kernel": "kernel_2712.img"
+    }
+  },
+  "lineage_disposition": {
+    "literal_boot_info_marker_absence": "accepted as a capture-contract limitation for v69, not a blocker",
+    "reason": "The selected target-init marker-loop source can only emit TALOS: target init after BootInfo::from_aarch64_x0 returns, after the BootInfoParsed early-phase line is written, and after target::init(&boot_info) returns. The retained marker also carries claims-bootinfo-parsed=true.",
+    "terminal_classification": "selected-normal-runtime-target-init-frontier-proved"
+  },
+  "next": {
+    "selected_next_task": null,
+    "planning_needed": true,
+    "blocked_later_claims": [
+      "exceptions ready",
+      "kernel_main",
+      "route-start",
+      "runtime-ready",
+      "packet-I/O",
+      "OpenSSH/generated-root",
+      "remote receipt",
+      "compatibility/service readiness",
+      "ssh-ready=true",
+      "fake/kernel-backed command expansion",
+      "broad shell work",
+      "phase transition"
+    ]
+  }
+}

@@ -14037,3 +14037,24 @@ was restored to tree
 a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10 and
 selected_next_task is
 phase12-ssh-live-tcp-selected-normal-runtime-target-init-after-bootinfo-closeout-v69-20260702.
+
+phase12-ssh-live-tcp-selected-normal-runtime-target-init-after-bootinfo-closeout-v69-20260702
+accepts selected-normal-runtime-target-init-frontier-proved. No hardware
+action, lab publication, boot snapshot mutation, Pi 5 power cycle, serial
+capture, TFTP capture, route-start proof, runtime-ready proof, packet-I/O,
+OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+success claim, ssh-ready=true, fake/kernel-backed command expansion, broad
+shell work, or phase transition was performed. The worker reconciled v68
+BootInfo lineage proof, the v67 selected target-init archive/source contract,
+and v69 selected TFTP plus target-init marker evidence. Static source review
+shows the selected rpi5_ssh_service_smoltcp_target_init_marker_loop path parses
+BootInfo, calls target::init(&boot_info), writes the TargetInit early-phase
+line, and only then emits TALOS: target init with claims-bootinfo-parsed=true.
+The v69 first selected run retained TALOS: target init 1,978 times and the
+candidate rerun retained it 382 times with selected TFTP byte service. The
+absent literal TALOS: boot info parsed line in the same v69 serial windows is
+treated as a capture-contract limitation, not a source ordering contradiction,
+because the selected target-init marker is unreachable before BootInfo parsing
+and target::init return. selected_next_task=null and planningNeeded=true
+because no explicit queued successor exists for the next exceptions/kernel_main
+boundary. Later runtime/network/service milestones remain blocked.

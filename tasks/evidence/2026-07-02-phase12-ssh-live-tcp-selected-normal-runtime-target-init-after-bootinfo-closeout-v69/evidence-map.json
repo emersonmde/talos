@@ -1,0 +1,18 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-target-init-after-bootinfo-closeout-v69-20260702",
+  "classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-target-init-after-bootinfo-closeout-v69/classification.json",
+  "closeout_summary": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-target-init-after-bootinfo-closeout-v69/target-init-closeout-summary.json",
+  "static_lineage_review": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-target-init-after-bootinfo-closeout-v69/static/source-lineage-review.md",
+  "referenced_predecessor_evidence": {
+    "v68_bootinfo_lineage_task": "tasks/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-rust-entry-lineage-reconciliation-v68.md",
+    "v67_target_init_contract_task": "tasks/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-post-bootinfo-continuation-reconciliation-v67.md",
+    "v69_preflight_task": "tasks/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69.md",
+    "v69_preflight_classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69/classification.json",
+    "v69_preflight_evidence_map": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69/evidence-map.json",
+    "v69_run_summary": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69/validation/run-summary.json",
+    "v69_inconclusive_triage_summary": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69/validation/inconclusive-triage-summary.json"
+  },
+  "redaction_review": {
+    "note": "Closeout evidence retains task ids, source paths, hashes, byte counts, marker names, marker counts, selected-tree hashes, classifications, and validation outcomes. It does not retain raw serial text, raw TFTP peer/log-line fields, packet payloads, SSH/session/key material, boot artifact bytes, private data, stable secret-derived identifiers, public-key blobs, signatures, fingerprints, operator identities, or unnecessary hardware data."
+  }
+}

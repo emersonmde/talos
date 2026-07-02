@@ -1,0 +1,44 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-target-init-after-bootinfo-closeout-v69-20260702",
+  "terminal_classification": "selected-normal-runtime-target-init-frontier-proved",
+  "selected_next_task": null,
+  "planning_needed": true,
+  "planning_reason": "The selected normal-runtime target-init frontier is proved by retained v69 selected TFTP/target-init evidence plus source lineage, but taskQueue contains no explicit successor for the next exceptions/kernel_main boundary. Supervisor must instantiate the next bounded task before any further worker action.",
+  "lineage_basis": {
+    "predecessor_bootinfo_frontier": {
+      "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-rust-entry-lineage-reconciliation-v68-20260702",
+      "classification": "selected-normal-runtime-bootinfo-frontier-proved-by-lineage"
+    },
+    "target_init_preflight": {
+      "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-target-init-after-bootinfo-preflight-v69-20260702",
+      "classification": "inconclusive-selected-normal-runtime-target-init-preflight",
+      "first_run_target_init_occurrences": 1978,
+      "candidate_rerun_target_init_occurrences": 382,
+      "literal_boot_info_parsed_occurrences": 0,
+      "selected_kernel_serves_per_selected_window": 2
+    },
+    "source_ordering": [
+      "src/main.rs writes EarlyPhaseLine::RustEntry, parses BootInfo::from_aarch64_x0(dtb_pa), writes EarlyPhaseLine::BootInfoParsed, then calls target::init(&boot_info).",
+      "src/main.rs writes EarlyPhaseLine::TargetInit only after target::init(&boot_info) returns.",
+      "The rpi5_ssh_service_smoltcp_target_init_marker_loop scenario invokes run_ssh_service_smoltcp_target_init_marker_loop only after target::init(&boot_info) returns.",
+      "src/target/rpi5.rs emits TALOS: target init with claims-bootinfo-parsed=true and negative claims for exceptions, kernel_main, route-start, runtime-ready, packet-I/O, service success, ssh-ready, and phase transition."
+    ]
+  },
+  "frontier": {
+    "target_init_proved": true,
+    "bootinfo_predecessor_proved_by_lineage": true,
+    "literal_boot_info_marker_same_v69_window": false,
+    "literal_boot_info_marker_same_v69_window_disposition": "capture-contract limitation, not a control-flow contradiction; target-init marker emission is unreachable before BootInfo parsing and target::init return in the selected source/archive path"
+  },
+  "negative_claims": {
+    "exceptions_ready_proved": false,
+    "kernel_main_proved": false,
+    "route_start_proved": false,
+    "runtime_ready_proved": false,
+    "packet_io_proved": false,
+    "openssh_compatibility_proved": false,
+    "service_success_proved": false,
+    "ssh_ready": false,
+    "phase_transition": false
+  }
+}
