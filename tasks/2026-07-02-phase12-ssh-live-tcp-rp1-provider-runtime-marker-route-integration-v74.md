@@ -101,4 +101,4 @@ test summaries, archive digests, and marker vocabulary only; no packet payload
 captures, SSH key/session material, private user data, hardware log bytes, or
 unnecessary stable external identifiers are retained.
 
-Commit: pending
+Implementation commit: 2964adac0bdf5b2c07ab0c6942cca38aabbb2774
