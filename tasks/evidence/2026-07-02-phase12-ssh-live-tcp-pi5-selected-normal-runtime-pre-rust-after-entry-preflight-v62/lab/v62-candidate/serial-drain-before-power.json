@@ -1,0 +1,179 @@
+{
+  "action": "serial drain before power",
+  "ok": true,
+  "responses": [
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9zdGFydA0K",
+      "bytes": 18,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "REDACTED",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9zdGFydA0K",
+      "bytes": 18,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "REDACTED",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9zdGFydA0K",
+      "bytes": 18,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "REDACTED",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9zdGFydA0K",
+      "bytes": 18,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "REDACTED",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9zdGFydA0K",
+      "bytes": 18,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "REDACTED",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9zdGFydA0K",
+      "bytes": 18,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "REDACTED",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9zdGFydA0K",
+      "bytes": 18,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "REDACTED",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9zdGFydA0K",
+      "bytes": 18,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "REDACTED",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9zdGFydA0K",
+      "bytes": 18,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "REDACTED",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9zdGFydA0K",
+      "bytes": 18,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "REDACTED",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9zdGFydA0K",
+      "bytes": 18,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "REDACTED",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9zdGFydA0K",
+      "bytes": 18,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "REDACTED",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9zdGFydA0K",
+      "bytes": 18,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "REDACTED",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9zdGFydA0K",
+      "bytes": 18,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "REDACTED",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9zdGFydA0K",
+      "bytes": 18,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "REDACTED",
+      "truncated": false
+    },
+    {
+      "action": "serial read",
+      "base64": "VEFMT1M6IGFzbV9zdGFydA0K",
+      "bytes": 18,
+      "cursor": 4194304,
+      "encoding": "utf-8",
+      "ok": true,
+      "text": "REDACTED",
+      "truncated": false
+    }
+  ],
+  "talos_serial_drain": {
+    "contract_version": "pi5-capture-transaction-v2",
+    "attempts": 16,
+    "attempt_limit": 16,
+    "read_timeout_seconds": 1,
+    "settle_ms": 100,
+    "max_bytes_per_read": 65536,
+    "total_bytes": 288,
+    "final_cursor": 4194304,
+    "empty_before_power": false,
+    "discriminator": "bounded-drain-exhausted-before-power",
+    "rule": "empty pre-power /serial/read is strong positive evidence; non-empty drain requires cursor-nonce-post-power-freshness-v1"
+  }
+}

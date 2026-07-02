@@ -1,0 +1,17 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-after-entry-preflight-v62-20260702",
+  "classification": "selected-normal-runtime-pre-rust-marker-retained",
+  "files": {
+    "classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-after-entry-preflight-v62/classification.json",
+    "candidate_summary": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-after-entry-preflight-v62/lab/v62-candidate/candidate-summary.json",
+    "capture_helper": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-after-entry-preflight-v62/lab/v62-candidate/capture-helper.stdout.json",
+    "archive_review": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-after-entry-preflight-v62/validation/archive-review.stdout.txt",
+    "runtime_archive_review": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-after-entry-preflight-v62/validation/runtime-archive-review.stdout.txt",
+    "static_archive_summary": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-after-entry-preflight-v62/validation/static-archive-review-summary.json",
+    "redaction_review": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-after-entry-preflight-v62/lab/v62-candidate/redaction-review.json"
+  },
+  "validation": {
+    "known_good_control": "not-run-first-candidate-decisive",
+    "candidate_rerun": "not-run-first-candidate-decisive"
+  }
+}

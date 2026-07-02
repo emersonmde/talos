@@ -13822,3 +13822,20 @@ rust_entry branch. selected_next_task is
 phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-after-entry-preflight-v62-20260702
 and planningNeeded=false. Packet-I/O/OpenSSH/service readiness remains blocked
 until a later closeout proves the deeper runtime frontier.
+
+phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-after-entry-preflight-v62-20260702
+accepts selected-normal-runtime-pre-rust-marker-retained. Under hardwareTestLock,
+the worker published the v61 selected pre-rust archive and captured decisive
+Pi 5 evidence: selected post-power identity held at tree
+2f4d07fc983ec52c2a23dbc358f7730bd608ed27ff95fea3a5ebc7784b1c6823, TFTP served
+da591740/kernel_2712.img twice at 152,144 bytes, final pre-restore identity
+remained selected, restore returned the lab to
+phase12-ssh-v10-openssh-clean-pre-20260624T074100Z, and the fresh serial window
+retained TALOS: asm_pre_rust_entry 535 times. rust_entry, route-start,
+runtime-blocked, and runtime-ready markers were not retained, so this is
+selected pre-rust proof rather than a deeper runtime proof. selected_next_task
+is
+phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-closeout-v62-20260702
+and planningNeeded=false. Packet-I/O, OpenSSH compatibility, service readiness,
+ssh-ready=true, fake command expansion, broad shell work, and phase transition
+remain blocked.

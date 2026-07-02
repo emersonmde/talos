@@ -1,0 +1,28 @@
+{
+  "redaction": "pass",
+  "rule": "raw serial text and raw TFTP peer/log fields are redacted while retaining marker counts, byte counts, filenames, cursor metadata, tree hashes, and classifications",
+  "serial_text": "REDACTED",
+  "tftp_peer_and_line_fields": "REDACTED",
+  "retained": [
+    "task ids",
+    "tree hashes",
+    "archive and kernel hashes",
+    "byte counts",
+    "marker names",
+    "marker counts",
+    "classification labels",
+    "cursor metadata",
+    "restore status"
+  ],
+  "not_retained": [
+    "private key",
+    "seed",
+    "public-key blob",
+    "signature",
+    "fingerprint",
+    "operator identity",
+    "stable secret-derived identifier",
+    "raw serial text",
+    "raw TFTP peer/log line fields"
+  ]
+}

@@ -22363,6 +22363,18 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   loop on TALOS: asm_pre_rust_entry before rust_entry. selected_next_task is
   phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-after-entry-preflight-v62-20260702
   and planningNeeded=false.
+- phase12-ssh-live-tcp-pi5-selected-normal-runtime-pre-rust-after-entry-preflight-v62-20260702
+  accepts selected-normal-runtime-pre-rust-marker-retained. Under
+  hardwareTestLock, the worker published the v61 selected pre-rust archive and
+  captured selected post-power identity, two selected da591740/kernel_2712.img
+  TFTP serves at 152,144 bytes, final pre-restore identity, and restore proof.
+  The fresh serial window retained TALOS: asm_pre_rust_entry 535 times and
+  retained zero occurrences of rust_entry, route-start, runtime-blocked, and
+  runtime-ready markers. selected_next_task is
+  phase12-ssh-live-tcp-selected-normal-runtime-pre-rust-after-entry-closeout-v62-20260702
+  and planningNeeded=false. Packet-I/O/OpenSSH/service readiness remains
+  blocked until the no-hardware closeout reconciles the frontier and a deeper
+  runtime boundary is proved.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

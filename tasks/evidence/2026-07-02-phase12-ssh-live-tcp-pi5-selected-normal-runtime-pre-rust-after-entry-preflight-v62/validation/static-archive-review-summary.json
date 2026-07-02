@@ -1,0 +1,17 @@
+{
+  "archive_path": "target/tmp/selected-normal-runtime-pre-rust-v61.tar.gz",
+  "archive_sha256": "6e7a35f4d875a510719ca8fbdb256f6513d8d0b1eb6c5e321e198b75f8878cd9",
+  "selected_fetch": "da591740/kernel_2712.img",
+  "selected_kernel_sha256": "90c72361bc67be8933436ddc5e6807dc127a8cb329a3fcab49404c10f8086d59",
+  "selected_kernel_bytes": 152144,
+  "required_marker": "TALOS: asm_pre_rust_entry",
+  "marker_family": [
+    "TALOS: asm_start",
+    "TALOS: asm_pre_rust_entry",
+    "TALOS: rust_entry",
+    "TALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=runtime-pre-rust-v61",
+    "TALOS: ssh-service-smoltcp-runtime-blocked capture-nonce=runtime-pre-rust-v61",
+    "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=runtime-pre-rust-v61"
+  ],
+  "static_archive_review": "pass"
+}
