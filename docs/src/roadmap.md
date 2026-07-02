@@ -22457,8 +22457,7 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   required marker is TALOS: boot info parsed. The objectively specified
   serialized hardware successor is
   phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66-20260702,
-  but no v66 task is queued; planningNeeded=true for supervisor taskQueue
-  planning.
+  which the supervisor later queued as the bounded v66 Pi 5 preflight.
 - phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66-20260702
   accepts inconclusive-selected-normal-runtime-bootinfo-preflight. Under
   hardwareTestLock, the worker published the v65 selected BootInfo archive
@@ -22480,6 +22479,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   runtime-ready, packet-I/O, OpenSSH compatibility, service readiness,
   ssh-ready=true, fake command expansion, broad shell work, and phase transition
   remain blocked.
+- phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-after-rust-entry-closeout-v66-20260702
+  accepts inconclusive-selected-normal-runtime-bootinfo-closeout. No hardware
+  action, lab publication, boot snapshot mutation, Pi 5 power cycle,
+  target-init proof, exceptions proof, kernel_main proof, route-start proof,
+  runtime-ready proof, packet-I/O, OpenSSH/generated-root retry, remote receipt,
+  compatibility claim, service success claim, ssh-ready=true,
+  fake/kernel-backed command expansion, broad shell work, or phase transition
+  was performed. The closeout reconciles accepted v64 rust_entry evidence, the
+  v65 BootInfo discriminator contract, and accepted v66 Pi 5 evidence. The v66
+  candidate rerun proves selected TFTP service and 192 TALOS: boot info parsed
+  occurrences, but the same selected serial window retained zero TALOS:
+  rust_entry occurrences. The selected normal-runtime frontier therefore does
+  not advance to a proved BootInfo boundary. selected_next_task=null and
+  planningNeeded=true for supervisor replanning; v67 is not mechanically
+  unblocked because it depends on
+  selected-normal-runtime-bootinfo-frontier-proved.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

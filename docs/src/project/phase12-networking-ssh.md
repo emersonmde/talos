@@ -13934,8 +13934,7 @@ target init, exceptions, kernel_main, route-start, runtime-ready, packet-I/O,
 service success, ssh-ready, and phase transition. The objectively specified
 serialized hardware successor is
 phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66-20260702,
-but no v66 task is queued; planningNeeded=true for supervisor taskQueue
-planning.
+which the supervisor later queued as the bounded v66 Pi 5 preflight.
 
 phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66-20260702
 accepts inconclusive-selected-normal-runtime-bootinfo-preflight. Under
@@ -13957,3 +13956,22 @@ and planningNeeded=false. Target init, exceptions, kernel_main, route-start,
 runtime-ready, packet-I/O, OpenSSH compatibility, service readiness,
 ssh-ready=true, fake command expansion, broad shell work, and phase transition
 remain blocked.
+
+phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-after-rust-entry-closeout-v66-20260702
+accepts inconclusive-selected-normal-runtime-bootinfo-closeout. No hardware
+action, lab publication, boot snapshot mutation, Pi 5 power cycle,
+target-init proof, exceptions proof, kernel_main proof, route-start proof,
+runtime-ready proof, packet-I/O, OpenSSH/generated-root retry, remote receipt,
+compatibility claim, service success claim, ssh-ready=true,
+fake/kernel-backed command expansion, broad shell work, or phase transition was
+performed by the closeout. The worker reconciled accepted v64 rust_entry
+evidence, the v65 BootInfo discriminator contract, and the v66 Pi 5 evidence.
+The v66 candidate rerun proves selected TFTP service and 192 TALOS: boot info
+parsed occurrences, but the same selected serial window retained zero TALOS:
+rust_entry occurrences. The closeout therefore does not advance the selected
+normal-runtime frontier to a proved BootInfo boundary. The first unresolved
+evidence reason remains same-window TALOS: rust_entry before BootInfo parsed in
+the v66 selected candidate. selected_next_task=null and planningNeeded=true for
+supervisor replanning; the queued v67 post-BootInfo reconciliation is not
+mechanically unblocked because it depends on
+selected-normal-runtime-bootinfo-frontier-proved.

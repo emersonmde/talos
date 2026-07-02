@@ -1,0 +1,24 @@
+{
+  "task_id": "phase12-ssh-live-tcp-selected-normal-runtime-bootinfo-after-rust-entry-closeout-v66-20260702",
+  "classification": "classification.json",
+  "accepted_predecessors": {
+    "v64_rust_entry_closeout": "../../2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-closeout-v64.md",
+    "v65_post_rust_entry_reconciliation": "../../2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-post-rust-entry-continuation-reconciliation-v65.md",
+    "v66_bootinfo_preflight": "../../2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66.md"
+  },
+  "v66_preflight_evidence": {
+    "classification": "../2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/classification.json",
+    "evidence_map": "../2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/evidence-map.json",
+    "triage_summary": "../2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-inconclusive-triage/triage-summary.json",
+    "candidate_rerun_summary": "../2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-candidate-rerun/capture-invariant-summary.json",
+    "candidate_rerun2_summary": "../2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-bootinfo-after-rust-entry-preflight-v66/lab/v66-inconclusive-triage/rerun2-summary.json"
+  },
+  "reconciliation": {
+    "terminal_classification": "inconclusive-selected-normal-runtime-bootinfo-closeout",
+    "planning_needed": true,
+    "selected_next_task": null,
+    "blocked_successor": "phase12-ssh-live-tcp-selected-normal-runtime-post-bootinfo-continuation-reconciliation-v67-20260702",
+    "blocked_successor_reason": "v67 requires selected-normal-runtime-bootinfo-frontier-proved, but v66 closeout is inconclusive because same-window TALOS: rust_entry was not retained."
+  },
+  "redaction_review": "Task record and classification retain derived counts, hashes, byte counts, marker names/counts, tree identities, classification, and validation outcomes. Raw serial text and raw TFTP peer/log-line fields remain only in task-owned local evidence from the accepted preflight."
+}
