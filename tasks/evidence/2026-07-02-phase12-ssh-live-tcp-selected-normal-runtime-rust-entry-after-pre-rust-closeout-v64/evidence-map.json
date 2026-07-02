@@ -1,0 +1,24 @@
+{
+  "task_record": "tasks/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-closeout-v64.md",
+  "classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-closeout-v64/classification.json",
+  "static": {
+    "reconciliation_summary": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-closeout-v64/static/reconciliation-summary.md"
+  },
+  "predecessors": {
+    "v63_task_record": "tasks/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63.md",
+    "v63_classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63/classification.json",
+    "v63_evidence_map": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-reconciliation-v63/evidence-map.json",
+    "v64_task_record": "tasks/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-after-pre-rust-preflight-v64.md",
+    "v64_classification": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-after-pre-rust-preflight-v64/classification.json",
+    "v64_evidence_map": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-after-pre-rust-preflight-v64/evidence-map.json",
+    "v64_candidate_summary": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-after-pre-rust-preflight-v64/lab/v64-candidate/candidate-summary.json",
+    "v64_redaction_review": "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-selected-normal-runtime-rust-entry-after-pre-rust-preflight-v64/lab/v64-candidate/redaction-review.json"
+  },
+  "validation": {
+    "git_status_before_edits": "## main...origin/main [ahead 288]",
+    "jq_empty": "task-owned JSON evidence and supervisor state",
+    "git_diff_check": "pass",
+    "mdbook_build": "pass because docs/src files were touched",
+    "git_diff_cached_check": "pass before commit"
+  }
+}

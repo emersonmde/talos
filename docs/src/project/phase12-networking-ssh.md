@@ -13895,3 +13895,23 @@ phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-closeout-
 and planningNeeded=false. Packet-I/O, OpenSSH compatibility, service readiness,
 ssh-ready=true, fake command expansion, broad shell work, and phase transition
 remain blocked.
+
+phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-closeout-v64-20260702
+accepts selected-normal-runtime-rust-entry-frontier-proved. No hardware action,
+lab publication, boot snapshot mutation, Pi 5 power cycle, BootInfo parsing
+proof, target-init proof, exceptions proof, kernel_main proof, route-start
+proof, runtime-ready proof, packet-I/O, OpenSSH/generated-root retry, remote
+receipt, compatibility claim, service success claim, ssh-ready=true,
+fake/kernel-backed command expansion, broad shell work, or phase transition was
+performed by the closeout. The closeout reconciles v64 against the accepted v63
+discriminator and v64 Pi 5 evidence: selected post-power identity, selected
+same-window TFTP byte service, selected final pre-restore identity,
+marker-family serial observation, and restore proof are no longer missing
+facts. The selected candidate reached TALOS: rust_entry 208 times. BootInfo
+parsing, target init, exceptions, kernel_main, route-start, runtime-blocked,
+and runtime-ready remain blocked because the same window retained zero
+occurrences of those later markers. The first missing fact is now after TALOS:
+rust_entry and before the next explicit post-rust-entry normal-runtime
+boundary. selected_next_task is
+phase12-ssh-live-tcp-selected-normal-runtime-post-rust-entry-continuation-reconciliation-v65-20260702
+and planningNeeded=false.

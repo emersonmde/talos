@@ -22423,6 +22423,24 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   proof. selected_next_task is
   phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-closeout-v64-20260702
   and planningNeeded=false.
+- phase12-ssh-live-tcp-selected-normal-runtime-rust-entry-after-pre-rust-closeout-v64-20260702
+  accepts selected-normal-runtime-rust-entry-frontier-proved. No hardware
+  action, lab publication, boot snapshot mutation, Pi 5 power cycle, BootInfo
+  parsing proof, target-init proof, exceptions proof, kernel_main proof,
+  route-start proof, runtime-ready proof, packet-I/O, OpenSSH/generated-root
+  retry, remote receipt, compatibility claim, service success claim,
+  ssh-ready=true, fake/kernel-backed command expansion, broad shell work, or
+  phase transition was performed by the closeout. The closeout reconciles v64
+  against the accepted v63 discriminator and v64 Pi 5 evidence: selected
+  identity, selected TFTP byte service, final pre-restore identity,
+  marker-family serial observation, and restore proof are no longer missing
+  facts. The selected candidate retained TALOS: rust_entry 208 times; BootInfo
+  parsing, target init, exceptions, kernel_main, route-start, runtime-blocked,
+  and runtime-ready remain unproved. The first missing fact is now after TALOS:
+  rust_entry and before the next explicit post-rust-entry normal-runtime
+  boundary. selected_next_task is
+  phase12-ssh-live-tcp-selected-normal-runtime-post-rust-entry-continuation-reconciliation-v65-20260702
+  and planningNeeded=false.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
