@@ -1,0 +1,10 @@
+{
+  "action": "serial read",
+  "base64": "ZS1yZWFkeT10cnVlIGNsYWltcy1wYWNrZXQtaW89ZmFsc2UgY2xhaW1zLXNlcnZpY2Utc3VjY2Vzcz1mYWxzZSBjbGFpbXMtc3NoLXJlYWR5PWZhbHNlIGNsYWltcy1waGFzZS10cmFuc2l0aW9uPWZhbHNlDQpUQUxPUzogc3NoLXNlcnZpY2Utc21vbHRjcC1ydW50aW1lLXJvdXRlLXN0YXJ0IGNhcHR1cmUtbm9uY2U9bGl2ZS1wYWNrZXQtaW5ncmVzcy12ODUtMjAyNjA3MDIgc291cmNlPW5ldHdvcmstZGV2aWNlLXNtb2x0Y3AtcnVudGltZSBwcm92aWRlci1yb3V0ZS1lbnRyeT1zb3VyY2UtYm91bmQtcnAxIHJldGVudGlvbi1yZXBsYXk9dHJ1ZSBjbGFpbXMtcnVudGltZS1yZWFkeT1mYWxzZQ0KVEFMT1M6IHNzaC1zZXJ2aWNlLXNtb2x0Y3AtcnVudGltZS1yZWFkeSBjYXB0dXJlLW5vbmNlPWxpdmUtcGFja2V0LWluZ3Jlc3Mtdjg1LTIwMjYwNzAyIHJ1bnRpbWUtYmluZGluZz1hY2NlcHRlZC1kZXRlcm1pbmlzdGljLWRldmljZS1pbnRlcmZhY2UtZGVsaXZlcnkgcmV0ZW50aW9uLXJlcGxheT10cnVlIGRlc2NyaXB0b3ItZmFjaW5nLWNvbm5lY3Rpb24tZGVsaXZlcmVkPXRydWUgZGV0ZXJtaW5pc3RpYy1kZXZpY2UtaW50ZXJmYWNlLWJvdW5kPXRydWUgaGFyZHdhcmUtZnJhbWUtcHJvdmlkZXItYm91bmQ9dHJ1ZSBoYXJkd2FyZS1mcmFtZS1wcm92aWRlci1jbGFzc2lmaWNhdGlvbj1ycDEtZXRoZXJuZXQtaGFyZHdhcmUtZnJhbWUtcHJvdmlkZXItc291cmNlLWJvdW5kLWxvY2FsLW9ubHkgZHJpdmVyLXBhY2tldC1yeC1mcmFtZXM9NiBkcml2ZXItcGFja2V0LXR4LWZyYW1lcz02IGz9",
+  "bytes": 789,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "e-ready=true claims-packet-io=false claims-service-success=false claims-ssh-ready=false claims-phase-transition=false\r\nTALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=live-packet-ingress-v85-20260702 source=network-device-smoltcp-runtime provider-route-entry=source-bound-rp1 retention-replay=true claims-runtime-ready=false\r\nTALOS: ssh-service-smoltcp-runtime-ready capture-nonce=live-packet-ingress-v85-20260702 runtime-binding=accepted-deterministic-device-interface-delivery retention-replay=true descriptor-facing-connection-delivered=true deterministic-device-interface-bound=true hardware-frame-provider-bound=true hardware-frame-provider-classification=rp1-ethernet-hardware-frame-provider-source-bound-local-only driver-packet-rx-frames=6 driver-packet-tx-frames=6 l\ufffd",
+  "truncated": false
+}

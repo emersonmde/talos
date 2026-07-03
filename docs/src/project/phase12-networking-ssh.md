@@ -14434,3 +14434,22 @@ canonical redaction, bounded packet-stimulus contract, nonce strategy, timing
 window, host-only discriminator, and fail-closed claim tokens. selected_next_task
 is phase12-ssh-live-tcp-pi5-live-packet-ingress-provider-preflight-v86-20260702
 and planningNeeded=false.
+
+phase12-ssh-live-tcp-pi5-live-packet-ingress-provider-preflight-v86-20260702
+accepts inconclusive-after-control. The worker acquired hardwareTestLock,
+published the v85 candidate archive, power-cycled the Pi 5, captured serial and
+TFTP evidence, restored the lab, then ran the required known-good control plus
+one candidate rerun with manual direct /serial/read after the first serial window
+was contaminated by delayed buffered output. Both candidate runs staged selected
+tree 4c2590ce0a003847fe098f729a1e8ea5aaec71dd6de5d1314a89d1c03a260fb6 and
+served da591740/kernel_2712.img twice with the expected 160088-byte selected
+kernel size; final pre-restore identity remained selected and post-restore
+identity returned to a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10.
+Delayed serial bytes did expose the v85 runtime-ready marker family and
+live-packet-ingress-discriminator=blocked-no-live-frame-provider, but not in a
+clean candidate post-power/pre-restore window, so live packet ingress is not
+accepted and the proof remains inconclusive after control. Bounded packet
+stimulus was not accepted because a clean runtime-ready window was not
+established. selected_next_task is
+phase12-ssh-live-tcp-live-packet-ingress-provider-closeout-v87-20260702 and
+planningNeeded=false.

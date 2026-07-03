@@ -1,0 +1,9 @@
+{
+  "attempted": false,
+  "protocol": "icmp-echo",
+  "permitted_source": "lab-network-peer-icmp-echo-to-documented-talos-pi5-target",
+  "nonce_sha256": "",
+  "nonce_length": 0,
+  "ping_exit_code": 127,
+  "redaction": "packet payload not retained; nonce retained only as sha256 and length"
+}

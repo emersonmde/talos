@@ -1,0 +1,9 @@
+{
+  "drain_attempts": 2,
+  "bytes": [
+    2,
+    0
+  ],
+  "final_cursor": 4194304,
+  "reached_empty": true
+}

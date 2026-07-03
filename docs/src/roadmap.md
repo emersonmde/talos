@@ -22910,6 +22910,22 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   fail-closed claim tokens. selected_next_task is
   phase12-ssh-live-tcp-pi5-live-packet-ingress-provider-preflight-v86-20260702
   and planningNeeded=false.
+- phase12-ssh-live-tcp-pi5-live-packet-ingress-provider-preflight-v86-20260702
+  accepts inconclusive-after-control. The worker acquired hardwareTestLock,
+  published the v85 candidate, captured serial/TFTP evidence, restored the lab,
+  then ran the required known-good control plus one candidate rerun with manual
+  direct /serial/read after delayed serial output contaminated the first
+  candidate window. Both candidate runs staged selected tree
+  4c2590ce0a003847fe098f729a1e8ea5aaec71dd6de5d1314a89d1c03a260fb6 and served
+  da591740/kernel_2712.img twice at the expected 160088-byte selected size; the
+  lab restored to
+  a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10. Delayed
+  serial bytes exposed the v85 runtime-ready marker family and
+  live-packet-ingress-discriminator=blocked-no-live-frame-provider, but not in a
+  clean candidate post-power/pre-restore window, so live packet ingress and
+  packet stimulus remain unaccepted. selected_next_task is
+  phase12-ssh-live-tcp-live-packet-ingress-provider-closeout-v87-20260702 and
+  planningNeeded=false.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first

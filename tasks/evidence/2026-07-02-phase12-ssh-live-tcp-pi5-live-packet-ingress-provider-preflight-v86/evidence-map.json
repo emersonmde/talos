@@ -1,0 +1,29 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-live-packet-ingress-provider-preflight-v86-20260702",
+  "terminal_classification": "inconclusive-after-control",
+  "selected_next_task": "phase12-ssh-live-tcp-live-packet-ingress-provider-closeout-v87-20260702",
+  "planningNeeded": false,
+  "classification_reason": "Selected candidate TFTP service and final pre-restore identity were decisive, and delayed serial eventually exposed v85 runtime-ready markers with live-packet-ingress-discriminator=blocked-no-live-frame-provider, but marker bytes arrived in pre-control drain windows rather than a clean candidate post-power/pre-restore serial window; known-good control and one candidate rerun with manual direct /serial/read still left serial ordering contaminated, so the proof is classified inconclusive after control rather than accepted live ingress or before-kernel-main.",
+  "evidence_files": [
+    "00-pre-publish-status.json",
+    "01-publish-response.json",
+    "02-post-publish-status.json",
+    "03-pre-power-serial-read.json",
+    "03-pre-power-tftp-tail.json",
+    "04-power-cycle-response.json",
+    "v86-live-packet-ingress-provider-runtime-readiness-primary.json",
+    "08-tftp-delta.json",
+    "09-final-pre-restore-status.json",
+    "10-restore-response.json",
+    "11-post-restore-status.json",
+    "12-control-direct-serial-read.json",
+    "12-control-tftp-delta.json",
+    "13-rerun-direct-serial-read.json",
+    "15-rerun-tftp-delta.json",
+    "16-rerun-final-pre-restore-status.json",
+    "17-rerun-restore-response.json",
+    "18-rerun-post-restore-status.json",
+    "evidence-summary.json"
+  ],
+  "redaction_review": "No packet payloads, SSH key/session material, private data, remote receipt, or external packet identifiers retained. The attempted packet-stimulus evidence retains no payload and records only empty/false metadata because the clean candidate runtime-ready window was not established for stimulus."
+}

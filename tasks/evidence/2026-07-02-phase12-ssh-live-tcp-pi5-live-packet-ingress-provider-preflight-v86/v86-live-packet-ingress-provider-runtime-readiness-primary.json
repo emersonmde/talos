@@ -1,0 +1,37 @@
+{
+  "action": "serial read",
+  "base64": "YmlsaXR5LWFjY2VwdGVkPWZhbHNlIHNzaC1yZWFkeT1mYWxzZSBjbGFpbXMtc2VydmljZS1zdWNjZXNzPWZhbHNlIGNsYWltcy1waGFzZS10cmFuc2l0aW9uPWZhbHNlDQpUQUxPUzoga2VybmVsX21haW4gY2FwdHVyZS1ub25jZT1lbnRyeS1yZXRlbnRpb24tdjc4IHNlbGVjdGVkLWtlcm5lbC1lbnRyeS1yZXRlbnRpb249djc4IHNvdXJjZT1ydW50aW1lLXJlYWR5LXJvdXRlLXJldGVudGlvbi1sb29wIHJldGVudGlvbi1yZXBsYXk9dHJ1ZSBjbGFpbXMtYm9vdGluZm8tcGFyc2VkPXRydWUgY2xhaW1zLXRhcmdldC1pbml0PXRydWUgY2xhaW1zLWV4Y2VwdGlvbnMtcmVhZHk9dHJ1ZSBjbGFpbXMtcm91dGUtc3RhcnQ9dHJ1ZSBjbGFpbXMtcnVudGltZS1yZWFkeT10cnVlIGNsYWltcy1wYWNrZXQtaW89ZmFsc2UgY2xhaW1zLXNlcnZpY2Utc3VjY2Vzcz1mYWxzZSBjbGFpbXMtc3NoLXJlYWR5PWZhbHNlIGNsYWltcy1waGFzZS10cmFuc2l0aW9uPWZhbHNlDQpUQUxPUzogc3NoLXNlcnZpY2Utc21vbHRjcC1ydW50aW1lLXJvdXRlLXN0YXJ0IGNhcHR1cmUtbm9uY2U9ZW50cnktcmV0ZW50aW9uLXY3OCBzb3VyY2U9bmV0d29yay1kZXZpY2Utc21vbHRjcC1ydW50aW1lIHByb3ZpZGVyLXJvdXRlLWVudHJ5PXNvdXJjZS1ib3VuZC1ycDEgcmX0",
+  "bytes": 648,
+  "cursor": 4194304,
+  "encoding": "utf-8",
+  "ok": true,
+  "text": "bility-accepted=false ssh-ready=false claims-service-success=false claims-phase-transition=false\r\nTALOS: kernel_main capture-nonce=entry-retention-v78 selected-kernel-entry-retention=v78 source=runtime-ready-route-retention-loop retention-replay=true claims-bootinfo-parsed=true claims-target-init=true claims-exceptions-ready=true claims-route-start=true claims-runtime-ready=true claims-packet-io=false claims-service-success=false claims-ssh-ready=false claims-phase-transition=false\r\nTALOS: ssh-service-smoltcp-runtime-route-start capture-nonce=entry-retention-v78 source=network-device-smoltcp-runtime provider-route-entry=source-bound-rp1 re�",
+  "truncated": false,
+  "cursor_start": 4194304,
+  "cursor_end": 4194304,
+  "talos_runtime_readiness": {
+    "requested_timeout_seconds": 95,
+    "elapsed_seconds": 1,
+    "settle_ms": 1000,
+    "max_bytes": 131072,
+    "observe_attempts": 1,
+    "observe_contract": "deadline-loop-direct-read-after-saturated-cursor",
+    "capture_mode": "read",
+    "saturation_limit": 4194304,
+    "start_cursor_saturated": true,
+    "response_bytes": 648,
+    "required_kernel_marker": "TALOS: kernel_main",
+    "require_kernel_marker": true,
+    "required_success_marker": "rpi5-production-timer-preemption: PASS",
+    "required_success_markers": [
+      "TALOS: kernel_main capture-nonce=live-packet-ingress-v85-20260702",
+      "TALOS: ssh-service-smoltcp-runtime-ready capture-nonce=live-packet-ingress-v85-20260702"
+    ],
+    "prompt_marker": "talos>",
+    "has_kernel_main": true,
+    "has_required_success_marker": true,
+    "has_prompt_marker": false,
+    "valid_known_good_talos_readiness": true,
+    "classification": "valid-known-good-talos-readiness"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "protocol": "icmp-echo",
+  "permitted_source": "lab-network-peer-icmp-echo-to-documented-talos-pi5-target",
+  "attempted": false,
+  "reason": "runtime-ready marker absent; bounded packet stimulus not attempted"
+}

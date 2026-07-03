@@ -1,0 +1,67 @@
+{
+  "task_id": "phase12-ssh-live-tcp-pi5-live-packet-ingress-provider-preflight-v86-20260702",
+  "terminal_classification": "inconclusive-after-control",
+  "candidate": {
+    "archive": "target/tmp/phase12-ssh-live-packet-ingress-v85-20260702.tar.gz",
+    "archive_sha256": "6c7c8a60197b2ae27ada837b72db3e6b21ea6d49e17f5cbad4952b57d7e8ef79",
+    "archive_bytes": 309638,
+    "selected_kernel_sha256": "8ada0e2dc610236569358f5cac0367516aa6c88ae369f4eb8d843089ee896921",
+    "selected_kernel_bytes": 160088,
+    "capture_nonce": "live-packet-ingress-v85-20260702",
+    "restore_target": "phase12-ssh-v10-openssh-clean-pre-20260624T074100Z"
+  },
+  "changed_capture_condition": "known-good control plus candidate rerun used manual direct /serial/read windows instead of the runtime-readiness helper early-exit path",
+  "known_good_control": {
+    "tftp_stable": true,
+    "tftp_helper_exit_code": 0
+  },
+  "staged_selected_tree": {
+    "tree_hash": "4c2590ce0a003847fe098f729a1e8ea5aaec71dd6de5d1314a89d1c03a260fb6",
+    "effective_kernel": "kernel_2712.img"
+  },
+  "final_pre_restore_tree": {
+    "tree_hash": "4c2590ce0a003847fe098f729a1e8ea5aaec71dd6de5d1314a89d1c03a260fb6",
+    "effective_kernel": "kernel_2712.img"
+  },
+  "restored_tree": {
+    "tree_hash": "a0452458391d0e398b7e17e0f068bb652235f666bf277d004e0e214626128d10",
+    "effective_kernel": "kernel_2712.img"
+  },
+  "serial_window": {
+    "cursor_start": 4194304,
+    "kernel_main_count": 0,
+    "route_start_count": 0,
+    "runtime_blocked_count": 0,
+    "runtime_ready_count": 0,
+    "packet_ingress_marker_count": 0,
+    "post_stimulus_packet_ingress_marker_count": 0
+  },
+  "tftp_delta": {
+    "cursor_start": 4778585,
+    "stable": true,
+    "helper_exit_code": 0,
+    "selected_kernel_fetch_count": 2,
+    "selected_kernel_byte_match_count": 2
+  },
+  "packet_stimulus": {
+    "attempted": false,
+    "protocol": "icmp-echo",
+    "permitted_source": "lab-network-peer-icmp-echo-to-documented-talos-pi5-target",
+    "nonce_sha256": "",
+    "nonce_length": 0,
+    "ping_exit_code": 127,
+    "redaction": "packet payload not retained; nonce retained only as sha256 and length"
+  },
+  "claims": {
+    "remote_receipt_accepted": false,
+    "compatibility_accepted": false,
+    "service_success": false,
+    "ssh_ready": false,
+    "fake_command_expansion": false,
+    "broad_shell_work": false,
+    "phase_transition": false
+  },
+  "selected_next_task": "phase12-ssh-live-tcp-live-packet-ingress-provider-closeout-v87-20260702",
+  "planningNeeded": false,
+  "classification_reason": "Selected candidate TFTP service and final pre-restore identity were decisive, and delayed serial eventually exposed v85 runtime-ready markers with live-packet-ingress-discriminator=blocked-no-live-frame-provider, but marker bytes arrived in pre-control drain windows rather than a clean candidate post-power/pre-restore serial window; known-good control and one candidate rerun with manual direct /serial/read still left serial ordering contaminated, so the proof is classified inconclusive after control rather than accepted live ingress or before-kernel-main."
+}
