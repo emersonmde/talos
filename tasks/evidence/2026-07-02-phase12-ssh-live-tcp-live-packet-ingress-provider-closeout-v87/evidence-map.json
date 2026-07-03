@@ -1,0 +1,56 @@
+{
+  "task_id": "phase12-ssh-live-tcp-live-packet-ingress-provider-closeout-v87-20260702",
+  "terminal_classification": "inconclusive-after-control",
+  "selected_next_task": null,
+  "planningNeeded": true,
+  "first_missing_fact": "clean selected candidate post-power/pre-restore serial window for v85 runtime-ready/live-packet-ingress marker ordering before bounded packet stimulus or remote receipt",
+  "dispositions": {
+    "phase12-ssh-live-tcp-rp1-live-frame-provider-source-core-v83-20260702": {
+      "classification": "blocked-rp1-live-frame-provider-prerequisite-missing",
+      "disposition": "deferred",
+      "reason": "Old RP1 frame-provider boundary was metadata-only and correctly required source-owned DMA RX descriptor/ring ownership before packet stimulus or hardware packet-ingress proof."
+    },
+    "phase12-ssh-live-tcp-rp1-dma-rx-descriptor-ring-source-core-v88-20260702": {
+      "classification": "rp1-dma-rx-descriptor-ring-source-ready",
+      "disposition": "fixed",
+      "reason": "Provided source-owned descriptor/ring metadata and handoff boundary, still metadata-only and not live packet I/O proof."
+    },
+    "phase12-ssh-live-tcp-bounded-packet-stimulus-contract-core-v84-20260702": {
+      "classification": "bounded-packet-stimulus-contract-ready",
+      "disposition": "fixed",
+      "reason": "Defined metadata/redaction/timing contract for later bounded lab ICMP stimulus."
+    },
+    "phase12-ssh-live-tcp-live-packet-ingress-candidate-materialization-v85-20260702": {
+      "classification": "live-packet-ingress-provider-candidate-ready",
+      "disposition": "fixed",
+      "reason": "Materialized non-published candidate archive and expected marker contract."
+    },
+    "phase12-ssh-live-tcp-pi5-live-packet-ingress-provider-preflight-v86-20260702": {
+      "classification": "inconclusive-after-control",
+      "disposition": "deferred",
+      "reason": "Selected TFTP service, selected final identity, and restore proof were decisive, but clean runtime-ready/live-packet-ingress serial marker ordering was missing after control and rerun."
+    }
+  },
+  "evidence_references": [
+    "tasks/2026-07-02-phase12-ssh-live-tcp-rp1-live-frame-provider-source-core-v83.md",
+    "tasks/2026-07-02-phase12-ssh-live-tcp-rp1-dma-rx-descriptor-ring-source-core-v88.md",
+    "tasks/2026-07-02-phase12-ssh-live-tcp-bounded-packet-stimulus-contract-core-v84.md",
+    "tasks/2026-07-02-phase12-ssh-live-tcp-live-packet-ingress-candidate-materialization-v85.md",
+    "tasks/2026-07-02-phase12-ssh-live-tcp-pi5-live-packet-ingress-provider-preflight-v86.md",
+    "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-live-packet-ingress-candidate-materialization-v85/evidence-map.json",
+    "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-live-packet-ingress-provider-preflight-v86/evidence-summary.json",
+    "tasks/evidence/2026-07-02-phase12-ssh-live-tcp-pi5-live-packet-ingress-provider-preflight-v86/evidence-map.json"
+  ],
+  "claims": {
+    "live_packet_io_accepted": false,
+    "packet_stimulus_accepted": false,
+    "remote_receipt_accepted": false,
+    "compatibility_accepted": false,
+    "service_success": false,
+    "ssh_ready": false,
+    "fake_command_expansion": false,
+    "broad_shell_work": false,
+    "phase_transition": false
+  },
+  "redaction_review": "No packet payloads, SSH key/session material, private data, raw hardware logs, remote receipt, or external packet identifiers retained. The closeout references task IDs, classification labels, archive/kernel identity already accepted by v85/v86, marker field names, tree hashes, and validation labels only."
+}

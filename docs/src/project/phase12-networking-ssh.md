@@ -14453,3 +14453,19 @@ stimulus was not accepted because a clean runtime-ready window was not
 established. selected_next_task is
 phase12-ssh-live-tcp-live-packet-ingress-provider-closeout-v87-20260702 and
 planningNeeded=false.
+
+phase12-ssh-live-tcp-live-packet-ingress-provider-closeout-v87-20260702 accepts
+inconclusive-after-control. No lab publication, boot snapshot mutation, Pi 5
+power action, serial/TFTP capture, packet stimulus, OpenSSH/generated-root retry,
+remote receipt, compatibility claim, service success claim, ssh_ready=true,
+fake/kernel-backed command expansion, broad shell work, or phase transition was
+performed. The closeout reconciles v83, v88, v84, v85, and v86: the source path
+now has metadata-only RP1 DMA RX descriptor/ring ownership and a bounded
+lab-network ICMP stimulus contract, and the v85 candidate archive carries the
+expected runtime-ready/provider/stimulus marker family. The v86 hardware proof
+decisively staged and served the selected candidate and restored the baseline,
+but it did not establish a clean selected candidate post-power/pre-restore serial
+window for runtime-ready/live-packet-ingress marker ordering. Live packet ingress
+and packet stimulus remain unaccepted. selected_next_task=null and
+planningNeeded=true; the first missing fact before remote receipt is that clean
+selected candidate runtime-ready serial window.

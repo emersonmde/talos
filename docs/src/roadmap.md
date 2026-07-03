@@ -22926,6 +22926,21 @@ Milestone 12.5: Entropy, Crypto, and SSH Strategy
   packet stimulus remain unaccepted. selected_next_task is
   phase12-ssh-live-tcp-live-packet-ingress-provider-closeout-v87-20260702 and
   planningNeeded=false.
+- phase12-ssh-live-tcp-live-packet-ingress-provider-closeout-v87-20260702
+  accepts inconclusive-after-control. No lab publication, boot snapshot
+  mutation, Pi 5 power action, serial/TFTP capture, packet stimulus,
+  OpenSSH/generated-root retry, remote receipt, compatibility claim, service
+  success claim, ssh_ready=true, fake/kernel-backed command expansion, broad
+  shell work, or phase transition was performed. The closeout reconciles v83,
+  v88, v84, v85, and v86: the accepted source path has metadata-only RP1 DMA RX
+  descriptor/ring ownership and a bounded lab-network ICMP stimulus contract, and
+  the v85 candidate archive carries the expected marker family. The v86
+  hardware proof staged and served the selected candidate and restored the
+  baseline, but did not retain a clean selected candidate post-power/pre-restore
+  runtime-ready/live-packet-ingress serial window. Live packet ingress, bounded
+  packet stimulus, and remote receipt remain unaccepted. selected_next_task=null
+  and planningNeeded=true; the first missing fact before remote receipt is that
+  clean selected candidate runtime-ready serial window.
 - Bring up a kernel entropy source suitable for SSH host keys and session crypto.
 - Evaluate porting an existing SSH server before writing one. OpenSSH is the
   compatibility target, but a smaller Rust SSH server may be a better first
